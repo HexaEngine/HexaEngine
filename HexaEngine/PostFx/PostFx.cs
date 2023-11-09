@@ -78,7 +78,7 @@
             throw new NotImplementedException();
         }
 
-        public void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             throw new NotImplementedException();
         }
@@ -99,6 +99,11 @@
         }
 
         public void Update(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetupDependencies(PostFxDependencyBuilder builder)
         {
             throw new NotImplementedException();
         }

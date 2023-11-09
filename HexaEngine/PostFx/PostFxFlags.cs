@@ -24,5 +24,16 @@
         /// The Effect has a prepass.
         /// </summary>
         PrePass = 8,
+
+        /// <summary>
+        /// The Effect is optional, meaning it will be automatically enabled and disabled
+        /// based on whether it is needed by any other shader in the pipeline.
+        /// </summary>
+        Optional = 16,
+
+        /// <summary>
+        /// The Effect has conditional render code.
+        /// </summary>
+        Dynamic = 32,
     }
 }

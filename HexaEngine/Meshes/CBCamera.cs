@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Core;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -13,9 +14,15 @@
         public Matrix4x4 ViewProj;
         public Matrix4x4 ViewProjInv;
         public Matrix4x4 PrevViewProj;
+
         public float Far;
         public float Near;
         public Vector2 ScreenDim;
+
+        public uint Frame;
+        public float CumulativeTime;
+        public float DeltaTime;
+        public float GameTime;
 
         public CBCamera(Camera camera, Vector2 screenDim)
         {
@@ -26,9 +33,15 @@
             ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
             ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
             PrevViewProj = Matrix4x4.Transpose(camera.Transform.PrevViewProjection);
+
             Far = camera.Far;
             Near = camera.Near;
             ScreenDim = screenDim;
+
+            Frame = (uint)Time.Frame;
+            CumulativeTime = Time.CumulativeFrameTime;
+            DeltaTime = Time.Delta;
+            GameTime = Time.GameTime;
         }
 
         public CBCamera(Camera camera, Vector2 screenDim, Matrix4x4 last)
@@ -40,9 +53,15 @@
             ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
             ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
             PrevViewProj = Matrix4x4.Transpose(last);
+
             Far = camera.Far;
             Near = camera.Near;
             ScreenDim = screenDim;
+
+            Frame = (uint)Time.Frame;
+            CumulativeTime = Time.CumulativeFrameTime;
+            DeltaTime = Time.Delta;
+            GameTime = Time.GameTime;
         }
 
         public CBCamera(Camera camera, Vector2 screenDim, CBCamera last)
@@ -54,9 +73,15 @@
             ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
             ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
             PrevViewProj = last.ViewProj;
+
             Far = camera.Far;
             Near = camera.Near;
             ScreenDim = screenDim;
+
+            Frame = (uint)Time.Frame;
+            CumulativeTime = Time.CumulativeFrameTime;
+            DeltaTime = Time.Delta;
+            GameTime = Time.GameTime;
         }
 
         public CBCamera(CameraTransform camera, Vector2 screenDim)
@@ -68,9 +93,15 @@
             ViewProj = Matrix4x4.Transpose(camera.ViewProjection);
             ViewProjInv = Matrix4x4.Transpose(camera.ViewProjectionInv);
             PrevViewProj = Matrix4x4.Transpose(camera.PrevViewProjection);
+
             Far = camera.Far;
             Near = camera.Near;
             ScreenDim = screenDim;
+
+            Frame = (uint)Time.Frame;
+            CumulativeTime = Time.CumulativeFrameTime;
+            DeltaTime = Time.Delta;
+            GameTime = Time.GameTime;
         }
     }
 }

@@ -5,6 +5,9 @@
     using System.Runtime.CompilerServices;
     using static HexaEngine.Core.Utils;
 
+    /// <summary>
+    /// Represents a G-Buffer used for storing intermediate rendering results.
+    /// </summary>
     public unsafe class GBuffer : IDisposable
     {
         private readonly string dbgName;
@@ -20,26 +23,13 @@
         private unsafe void** pRTVs;
         private bool disposedValue;
 
-        public Format[] Formats => formats;
-
-        public int Width => width;
-
-        public int Height => height;
-
-        public uint Count => count;
-
-        public IShaderResourceView[] SRVs => srvs;
-
-        public IRenderTargetView[] RTVs => rtvs;
-
-        public void** PSRVs => pSRVs;
-
-        public void** PRTVs => pRTVs;
-
-        public Viewport Viewport => new(Width, Height);
-
-        public string DebugName => dbgName;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GBuffer"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="description">The G-Buffer description.</param>
+        /// <param name="filename">The file path where the constructor is called (automatically provided by the compiler).</param>
+        /// <param name="lineNumber">The line number where the constructor is called (automatically provided by the compiler).</param>
         public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -67,6 +57,15 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GBuffer"/> class with specified width, height, and formats.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="width">The width of the G-Buffer.</param>
+        /// <param name="height">The height of the G-Buffer.</param>
+        /// <param name="formats">An array of texture formats for the G-Buffer.</param>
+        /// <param name="filename">The file path where the constructor is called (automatically provided by the compiler).</param>
+        /// <param name="lineNumber">The line number where the constructor is called (automatically provided by the compiler).</param>
         public GBuffer(IGraphicsDevice device, int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -94,6 +93,61 @@
             }
         }
 
+        /// <summary>
+        /// Gets the array of texture formats used in the G-Buffer.
+        /// </summary>
+        public Format[] Formats => formats;
+
+        /// <summary>
+        /// Gets the width of the G-Buffer.
+        /// </summary>
+        public int Width => width;
+
+        /// <summary>
+        /// Gets the height of the G-Buffer.
+        /// </summary>
+        public int Height => height;
+
+        /// <summary>
+        /// Gets the count of textures in the G-Buffer.
+        /// </summary>
+        public uint Count => count;
+
+        /// <summary>
+        /// Gets an array of shader resource views (SRVs) for the G-Buffer.
+        /// </summary>
+        public IShaderResourceView[] SRVs => srvs;
+
+        /// <summary>
+        /// Gets an array of render target views (RTVs) for the G-Buffer.
+        /// </summary>
+        public IRenderTargetView[] RTVs => rtvs;
+
+        /// <summary>
+        /// Gets a pointer to the shader resource views (SRVs) for the G-Buffer.
+        /// </summary>
+        public void** PSRVs => pSRVs;
+
+        /// <summary>
+        /// Gets a pointer to the render target views (RTVs) for the G-Buffer.
+        /// </summary>
+        public void** PRTVs => pRTVs;
+
+        /// <summary>
+        /// Gets the viewport for the G-Buffer using its width and height.
+        /// </summary>
+        public Viewport Viewport => new(Width, Height);
+
+        /// <summary>
+        /// Gets a descriptive name for debugging purposes.
+        /// </summary>
+        public string DebugName => dbgName;
+
+        /// <summary>
+        /// Resizes the G-Buffer to the specified width and height.
+        /// </summary>
+        /// <param name="width">The new width of the G-Buffer.</param>
+        /// <param name="height">The new height of the G-Buffer.</param>
         public void Resize(int width, int height)
         {
             for (int i = 0; i < Count; i++)
@@ -119,6 +173,10 @@
             }
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -140,12 +198,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="GBuffer"/> class.
+        /// </summary>
         ~GBuffer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

@@ -25,7 +25,9 @@
             Color = light.Color * light.Intensity;
             Position = new Vector4(light.Transform.GlobalPosition, 1);
             Range = light.Range;
-            CastsShadows = light.ShadowMapEnable ? 1 : 0;
+            CastsShadows = 0;
+            SetBit(ref CastsShadows, 0, light.ShadowMapEnable);
+            SetBit(ref CastsShadows, 1, light.ContactShadowsEnable);
             ShadowMapIndex = light.QueueIndex;
         }
 
@@ -38,7 +40,9 @@
             OuterCosine = MathF.Cos((light.ConeAngle / 2).ToRad());
             InnerCosine = MathF.Cos((MathUtil.Lerp(0, light.ConeAngle, 1 - light.Blend) / 2).ToRad());
             Range = light.Range;
-            CastsShadows = light.ShadowMapEnable ? 1 : 0;
+            CastsShadows = 0;
+            SetBit(ref CastsShadows, 0, light.ShadowMapEnable);
+            SetBit(ref CastsShadows, 1, light.ContactShadowsEnable);
             ShadowMapIndex = light.QueueIndex;
         }
 
@@ -48,8 +52,29 @@
             Color = light.Color * light.Intensity;
             Direction = new Vector4(light.Transform.Forward, 1);
             Range = light.Range;
-            CastsShadows = light.ShadowMapEnable ? 1 : 0;
+            CastsShadows = 0;
+            SetBit(ref CastsShadows, 0, light.ShadowMapEnable);
+            SetBit(ref CastsShadows, 1, light.ContactShadowsEnable);
             ShadowMapIndex = light.QueueIndex;
+        }
+
+        public static void SetBit(ref int target, int bit, bool value)
+        {
+            if (value)
+            {
+                target |= 1 << bit;
+            }
+            else
+            {
+                target &= ~(1 << bit);
+            }
+        }
+
+        public static bool GetBit(int target, int bit)
+        {
+            int mask = 1 << bit;
+            target &= mask;
+            return target != 0;
         }
     }
 }

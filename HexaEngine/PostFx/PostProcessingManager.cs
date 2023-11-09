@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Effects;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
@@ -16,14 +17,13 @@
         private ShaderMacro[] macros;
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = new();
-        private readonly List<PostFxNode> nodes = new();
-        private readonly TopologicalSorter<PostFxNode> topologicalSorter = new();
         private readonly List<Texture2D> buffers = new();
         private readonly List<Texture2D> debugBuffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private readonly GraphResourceBuilder creator;
+        private readonly PostFxGraphBuilder graphBuilder = new();
         private readonly bool debug;
         private int width;
         private int height;
@@ -113,6 +113,9 @@
 
             this.width = width;
             this.height = height;
+
+            Sort();
+
             macros = new ShaderMacro[effects.Count];
             for (int i = 0; i < effects.Count; i++)
             {
@@ -122,14 +125,11 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                nodes[i].Clear();
                 if (effects[i].Enabled)
                 {
-                    effects[i].Initialize(device, nodes[i].Builder, creator, width, height, macros);
+                    effects[i].Initialize(device, creator, width, height, macros);
                 }
             }
-
-            Sort();
 
             isInitialized = true;
 
@@ -138,6 +138,10 @@
 
         private void OnEnabledChanged(IPostFx postFx, bool enabled)
         {
+            if (postFx.Flags.HasFlag(PostFxFlags.Optional))
+            {
+                return;
+            }
             ReloadAsync();
         }
 
@@ -146,7 +150,7 @@
             semaphore.Wait();
             int index = effects.IndexOf(postFx);
             postFx.Dispose();
-            postFx.Initialize(device, nodes[index].Builder, creator, width, height, macros);
+            postFx.Initialize(device, creator, width, height, macros);
             Invalidate();
             semaphore.Release();
         }
@@ -158,11 +162,16 @@
             semaphore.Release();
         }
 
+        public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : class, IPostFx, new()
+        {
+            Add(new T());
+        }
+
         public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T effect) where T : class, IPostFx
         {
             lock (effects)
             {
-                nodes.Add(new PostFxNode(effect));
+                graphBuilder.AddNode(new PostFxNode(effect));
                 effects.Add(effect);
             }
 
@@ -185,7 +194,7 @@
         {
             lock (effects)
             {
-                nodes.Remove(new PostFxNode(effect));
+                graphBuilder.RemoveNode(new PostFxNode(effect));
                 effects.Remove(effect);
             }
 
@@ -297,9 +306,14 @@
                 {
                     effect.Dispose();
                 }
+            }
 
+            Sort();
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                var effect = effects[i];
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-                nodes[i].Clear();
             }
 
             Parallel.For(0, effects.Count, i =>
@@ -307,11 +321,10 @@
                 var effect = effects[i];
                 if (effect.Enabled)
                 {
-                    effect.Initialize(device, nodes[i].Builder, creator, width, height, macros);
+                    effect.Initialize(device, creator, width, height, macros);
                 }
             });
 
-            Sort();
             Invalidate();
 
             isReloading = false;
@@ -327,8 +340,6 @@
 
                 isReloading = true;
 
-                macros = new ShaderMacro[effects.Count];
-
                 for (int i = 0; i < effects.Count; i++)
                 {
                     var effect = effects[i];
@@ -336,9 +347,16 @@
                     {
                         effect.Dispose();
                     }
+                }
 
+                Sort();
+
+                macros = new ShaderMacro[effects.Count];
+
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    var effect = effects[i];
                     macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-                    nodes[i].Clear();
                 }
 
                 Parallel.For(0, effects.Count, i =>
@@ -346,11 +364,10 @@
                     var effect = effects[i];
                     if (effect.Enabled)
                     {
-                        effect.Initialize(device, nodes[i].Builder, creator, width, height, macros);
+                        effect.Initialize(device, creator, width, height, macros);
                     }
                 });
 
-                Sort();
                 Invalidate();
 
                 isReloading = false;
@@ -546,25 +563,7 @@
         {
             lock (_lock)
             {
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    var node = nodes[i];
-                    if (node.Enabled)
-                    {
-                        node.Builder.Build(nodes, new List<ResourceBinding>());
-                    }
-                }
-
-                var sorted = topologicalSorter.TopologicalSort(nodes);
-
-                effectsSorted.Clear();
-                for (int i = 0; i < sorted.Count; i++)
-                {
-                    if (sorted[i].Enabled)
-                    {
-                        effectsSorted.Add(sorted[i].PostFx);
-                    }
-                }
+                graphBuilder.Build(effectsSorted);
             }
         }
 

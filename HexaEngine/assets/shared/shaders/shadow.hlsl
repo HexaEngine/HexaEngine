@@ -140,8 +140,7 @@ float CalcShadowFactor_PCF7x7(SamplerComparisonState samShadow,
 		{
 			for (int j = -3; j <= 3; ++j)
 			{
-				percentLit += shadowMap.SampleCmpLevelZero(samShadow,
-					shadowPosH.xy + float2(i * dx * softness, j * dx * softness), depth).r;
+				percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + float2(i * dx * softness, j * dx * softness), depth).r;
 			}
 		}
 
@@ -230,11 +229,10 @@ float CalcShadowFactor_Poisson(SamplerComparisonState samShadow,
 	float percentLit = 0.0f;
 
 	[unroll]
-		for (int i = 0; i < 64; ++i)
-		{
-			percentLit += shadowMap.SampleCmpLevelZero(samShadow,
-				shadowPosH.xy + PoissonSamples[i] * float2(dx * softness, dx * softness), depth).r;
-		}
+	for (int i = 0; i < 64; ++i)
+	{
+		percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + PoissonSamples[i] * float2(dx * softness, dx * softness), depth).r;
+	}
 
 	return percentLit /= 64;
 }

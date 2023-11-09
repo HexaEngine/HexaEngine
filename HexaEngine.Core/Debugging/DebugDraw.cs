@@ -13,7 +13,8 @@ namespace HexaEngine.Editor
     /// </summary>
     public static unsafe class DebugDraw
     {
-        private static readonly DebugDrawCommandQueue queue = new();
+        private static readonly DebugDrawCommandList immediateList = new(DebugDrawCommandListType.Immediate);
+        private static readonly DebugDrawData drawData = new();
 
         private static Viewport viewport;
         private static Matrix4x4 camera;
@@ -23,6 +24,11 @@ namespace HexaEngine.Editor
         private const int COL32_B_SHIFT = 16;
         private const int COL32_A_SHIFT = 24;
         private const uint COL32_A_MASK = 0xFF000000;
+
+        static DebugDraw()
+        {
+            drawData.CmdLists.Add(immediateList);
+        }
 
         /// <summary>
         /// Saturates a float value to the range [0, 1].
@@ -77,7 +83,43 @@ namespace HexaEngine.Editor
             {
                 verts[i].Position = Vector3.Transform(positions[i], matrix);
                 verts[i].Color = color;
+                verts[i].UV = default;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void TransformWithColor(Vector3[] positions, uint count, Matrix4x4 matrix, Vector4 color)
+        {
+            TransformWithColor(positions, count, matrix, ColorConvertFloat4ToU32(color));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void TransformWithColor(Vector3[] positions, uint count, Matrix4x4 matrix, uint color)
+        {
+            immediateList.ReserveVerts(count);
+            DebugDrawVert* verts = immediateList.Vertices + immediateList.VertexCount;
+            for (uint i = 0; i < count; i++)
+            {
+                verts[i].Position = Vector3.Transform(positions[i], matrix);
+                verts[i].Color = color;
+                verts[i].UV = default;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void DrawPreComputed(PrimitiveTopology topology, Vector3[] positions, uint[] indices, Matrix4x4 matrix, Vector4 color)
+        {
+            immediateList.AddIndexRange(indices);
+            immediateList.ReserveVerts((uint)positions.Length);
+            var col = ColorConvertFloat4ToU32(color);
+            DebugDrawVert* verts = immediateList.Vertices + immediateList.VertexCount;
+            for (uint i = 0; i < positions.Length; i++)
+            {
+                verts[i].Position = Vector3.Transform(positions[i], matrix);
+                verts[i].Color = col;
+                verts[i].UV = default;
+            }
+            immediateList.RecordCmd(topology);
         }
 
         /// <summary>
@@ -85,15 +127,28 @@ namespace HexaEngine.Editor
         /// </summary>
         public static void NewFrame()
         {
-            queue.Clear();
+            drawData.CmdLists.Clear();
+            drawData.CmdLists.Add(immediateList);
+            immediateList.Clear();
         }
 
         /// <summary>
         /// Renders the accumulated draw commands to the viewport.
         /// </summary>
-        public static void Render()
+        public static DebugDrawData Render()
         {
-            queue.ClearUnused();
+            for (int i = 0; i < drawData.CmdLists.Count; i++)
+            {
+                var list = drawData.CmdLists[i];
+                list.Compact();
+                drawData.TotalVertices += list.VertexCount;
+                drawData.TotalIndices += list.IndexCount;
+            }
+
+            drawData.Viewport = viewport;
+            drawData.Camera = camera;
+
+            return drawData;
         }
 
         /// <summary>
@@ -136,9 +191,16 @@ namespace HexaEngine.Editor
         /// Gets the queue of debug draw commands for immediate mode rendering.
         /// </summary>
         /// <returns>The debug draw command queue.</returns>
-        public static DebugDrawCommandQueue GetQueue()
+        public static DebugDrawCommandList GetImmediateCommandList()
         {
-            return queue;
+            return immediateList;
+        }
+
+        public static void ExecuteCommandList(DebugDrawCommandList commandList)
+        {
+            if (commandList.Type != DebugDrawCommandListType.Deferred)
+                throw new InvalidOperationException($"CommandList must be type of Deferred, but was {commandList.Type}");
+            drawData.CmdLists.Add(commandList);
         }
 
         /// <summary>
@@ -150,32 +212,33 @@ namespace HexaEngine.Editor
         public static void DrawFrustum(string id, BoundingFrustum frustum, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 24, BoundingFrustum.CornerCount, out var cmd))
-            {
-                cmd.Vertices = AllocT<DebugDrawVert>(BoundingFrustum.CornerCount);
-                cmd.Indices = AllocCopyT(new ushort[]
-                {
-                0,1,
-                1,2,
-                2,3,
-                3,0,
-                0,4,
-                1,5,
-                2,6,
-                3,7,
-                4,5,
-                5,6,
-                6,7,
-                7,4
-                });
-            }
+
+            immediateList.ReserveGeometry(BoundingFrustum.CornerCount, 24);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1;
+            indices[2] = 1; indices[3] = 2;
+            indices[4] = 2; indices[5] = 3;
+            indices[6] = 3; indices[7] = 0;
+            indices[8] = 0; indices[9] = 4;
+            indices[10] = 1; indices[11] = 5;
+            indices[12] = 2; indices[13] = 6;
+            indices[14] = 3; indices[15] = 7;
+            indices[16] = 4; indices[17] = 5;
+            indices[18] = 5; indices[19] = 6;
+            indices[20] = 6; indices[21] = 7;
+            indices[22] = 7; indices[23] = 4;
 
             var corners = frustum.Corners;
             for (int i = 0; i < BoundingFrustum.CornerCount; i++)
             {
-                cmd.Vertices[i].Color = color;
-                cmd.Vertices[i].Position = corners[i];
+                vertices[i].Color = color;
+                vertices[i].Position = corners[i];
+                vertices[i].UV = default;
             }
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
@@ -188,26 +251,43 @@ namespace HexaEngine.Editor
         {
             const uint vertexCount = 8;
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 24, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4 });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
 
-            cmd.Vertices[0].Position = new Vector3(box.Min.X, box.Max.Y, box.Min.Z);
-            cmd.Vertices[1].Position = new Vector3(box.Min.X, box.Min.Y, box.Min.Z);
-            cmd.Vertices[2].Position = new Vector3(box.Max.X, box.Min.Y, box.Min.Z);
-            cmd.Vertices[3].Position = new Vector3(box.Max.X, box.Max.Y, box.Min.Z);
-            cmd.Vertices[4].Position = new Vector3(box.Min.X, box.Max.Y, box.Max.Z);
-            cmd.Vertices[5].Position = new Vector3(box.Min.X, box.Min.Y, box.Max.Z);
-            cmd.Vertices[6].Position = new Vector3(box.Max.X, box.Min.Y, box.Max.Z);
-            cmd.Vertices[7].Position = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
+            immediateList.ReserveGeometry(vertexCount, 24);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1;
+            indices[2] = 1; indices[3] = 2;
+            indices[4] = 2; indices[5] = 3;
+            indices[6] = 3; indices[7] = 0;
+            indices[8] = 0; indices[9] = 4;
+            indices[10] = 1; indices[11] = 5;
+            indices[12] = 2; indices[13] = 6;
+            indices[14] = 3; indices[15] = 7;
+            indices[16] = 4; indices[17] = 5;
+            indices[18] = 5; indices[19] = 6;
+            indices[20] = 6; indices[21] = 7;
+            indices[22] = 7; indices[23] = 4;
+
+            vertices[0].Position = new Vector3(box.Min.X, box.Max.Y, box.Min.Z);
+            vertices[1].Position = new Vector3(box.Min.X, box.Min.Y, box.Min.Z);
+            vertices[2].Position = new Vector3(box.Max.X, box.Min.Y, box.Min.Z);
+            vertices[3].Position = new Vector3(box.Max.X, box.Max.Y, box.Min.Z);
+            vertices[4].Position = new Vector3(box.Min.X, box.Max.Y, box.Max.Z);
+            vertices[5].Position = new Vector3(box.Min.X, box.Min.Y, box.Max.Z);
+            vertices[6].Position = new Vector3(box.Max.X, box.Min.Y, box.Max.Z);
+            vertices[7].Position = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
 
             for (int i = 0; i < vertexCount; i++)
             {
-                cmd.Vertices[i].Color = color;
+                vertices[i].Color = color;
+                vertices[i].UV = default;
             }
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
+
+        #region Sphere Data
 
         private static readonly Vector3[] spherePositions =
         {
@@ -303,20 +383,7 @@ namespace HexaEngine.Editor
             new Vector3(-0.000000f,0.980785f,0.195090f),
         };
 
-        /// <summary>
-        /// Draws a bounding sphere in the specified color.
-        /// </summary>
-        /// <param name="id">A unique identifier for the sphere draw command.</param>
-        /// <param name="sphere">The bounding sphere to be drawn.</param>
-        /// <param name="col">The color of the sphere.</param>
-        public static void DrawBoundingSphere(string id, BoundingSphere sphere, Vector4 col)
-        {
-            const uint vertexCount = 90;
-
-            uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 96 * 2, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[]
+        private static uint[] sphereIndices = new uint[]
                 {
 0,1,
 1,2,
@@ -414,11 +481,19 @@ namespace HexaEngine.Editor
 31,82,
 75,74,
 32,61,
-            });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
+            };
 
-            TransformWithColor(cmd.Vertices, spherePositions, vertexCount, Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center), color);
+        #endregion Sphere Data
+
+        /// <summary>
+        /// Draws a bounding sphere in the specified color.
+        /// </summary>
+        /// <param name="id">A unique identifier for the sphere draw command.</param>
+        /// <param name="sphere">The bounding sphere to be drawn.</param>
+        /// <param name="col">The color of the sphere.</param>
+        public static void DrawBoundingSphere(string id, BoundingSphere sphere, Vector4 col)
+        {
+            DrawPreComputed(PrimitiveTopology.LineList, spherePositions, sphereIndices, Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center), col);
         }
 
         /// <summary>
@@ -432,13 +507,15 @@ namespace HexaEngine.Editor
         public static void DrawRay(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, 3, 3, out var cmd))
-            {
-                cmd.Vertices = AllocT<DebugDrawVert>(3);
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1, 2 });
-            }
 
-            cmd.Vertices[0].Position = origin;
+            immediateList.ReserveGeometry(3, 4);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1;
+            indices[2] = 1; indices[3] = 2;
+
+            vertices[0].Position = origin;
 
             Vector3 normDirection = Vector3.Normalize(direction);
             Vector3 rayDirection = normalize ? normDirection : direction;
@@ -451,16 +528,22 @@ namespace HexaEngine.Editor
             }
             perpVector = Vector3.Normalize(perpVector);
 
-            cmd.Vertices[1].Position = rayDirection + origin;
+            vertices[1].Position = rayDirection + origin;
             perpVector *= 0.0625f;
             normDirection *= -0.25f;
             rayDirection = perpVector + rayDirection;
             rayDirection = normDirection + rayDirection;
-            cmd.Vertices[2].Position = rayDirection + origin;
+            vertices[2].Position = rayDirection + origin;
 
-            cmd.Vertices[0].Color = color;
-            cmd.Vertices[1].Color = color;
-            cmd.Vertices[2].Color = color;
+            vertices[0].Color = color;
+            vertices[1].Color = color;
+            vertices[2].Color = color;
+
+            vertices[0].UV = default;
+            vertices[1].UV = default;
+            vertices[2].UV = default;
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
@@ -474,21 +557,29 @@ namespace HexaEngine.Editor
         public static void DrawLine(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
-            {
-                cmd.Vertices = AllocT<DebugDrawVert>(2);
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1 });
-            }
 
-            cmd.Vertices[0].Position = origin;
+            immediateList.ReserveGeometry(2, 2);
+
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0;
+            indices[1] = 1;
+
+            vertices[0].Position = origin;
 
             Vector3 normDirection = Vector3.Normalize(direction);
             Vector3 rayDirection = normalize ? normDirection : direction;
 
-            cmd.Vertices[1].Position = rayDirection + origin;
+            vertices[1].Position = rayDirection + origin;
 
-            cmd.Vertices[0].Color = color;
-            cmd.Vertices[1].Color = color;
+            vertices[0].Color = color;
+            vertices[1].Color = color;
+
+            vertices[0].UV = default;
+            vertices[1].UV = default;
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
@@ -501,17 +592,16 @@ namespace HexaEngine.Editor
         public static void DrawLine(string id, Vector3 origin, Vector3 destination, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
-            {
-                cmd.Vertices = AllocT<DebugDrawVert>(2);
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1 });
-            }
 
-            cmd.Vertices[0].Position = origin;
-            cmd.Vertices[1].Position = destination;
+            immediateList.ReserveGeometry(2, 2);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
 
-            cmd.Vertices[0].Color = color;
-            cmd.Vertices[1].Color = color;
+            indices[0] = 0;
+            indices[1] = 1;
+
+            vertices[0] = new(origin, default, color);
+            vertices[1] = new(destination, default, color);
         }
 
         /// <summary>
@@ -528,15 +618,17 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            immediateList.ReserveGeometry(c_ringSegments, c_ringSegments * 2);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            for (uint i = 0; i < c_ringSegments; i++)
             {
-                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
-                for (ushort i = 0; i < c_ringSegments + 1; i++)
-                {
-                    cmd.Indices[i] = i;
-                }
+                indices[i * 2] = i;
+                indices[i * 2 + 1] = i + 1;
             }
+
+            indices[(c_ringSegments - 1) * 2 + 1] = 0;
 
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
 
@@ -551,15 +643,17 @@ namespace HexaEngine.Editor
             {
                 Vector3 pos = majorAxis * incrementalCos;
                 pos = minorAxis * incrementalSin + pos;
-                cmd.Vertices[i].Position = Vector3.Transform(pos, orientation) + origin;
-                cmd.Vertices[i].Color = color;
+                vertices[i].Position = Vector3.Transform(pos, orientation) + origin;
+                vertices[i].UV = default;
+                vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
@@ -575,15 +669,17 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            immediateList.ReserveGeometry(c_ringSegments, c_ringSegments * 2);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            for (uint i = 0; i < c_ringSegments; i++)
             {
-                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
-                for (ushort i = 0; i < c_ringSegments + 1; i++)
-                {
-                    cmd.Indices[i] = i;
-                }
+                indices[i * 2] = i;
+                indices[i * 2 + 1] = i + 1;
             }
+
+            indices[(c_ringSegments - 1) * 2 + 1] = 0;
 
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
 
@@ -598,15 +694,17 @@ namespace HexaEngine.Editor
             {
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
-                cmd.Vertices[i].Position = pos;
-                cmd.Vertices[i].Color = color;
+                vertices[i].Position = pos;
+                vertices[i].UV = default;
+                vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
@@ -621,15 +719,18 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            immediateList.ReserveGeometry(c_ringSegments, c_ringSegments * 2);
+
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            for (uint i = 0; i < c_ringSegments; i++)
             {
-                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
-                for (ushort i = 0; i < c_ringSegments + 1; i++)
-                {
-                    cmd.Indices[i] = i;
-                }
+                indices[i * 2] = i;
+                indices[i * 2 + 1] = i + 1;
             }
+
+            indices[(c_ringSegments - 1) * 2 + 1] = 0;
 
             Vector3 majorAxis = ellipse.majorAxis;
             Vector3 minorAxis = ellipse.minorAxis;
@@ -646,16 +747,32 @@ namespace HexaEngine.Editor
             {
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
-                cmd.Vertices[i].Position = pos;
-                cmd.Vertices[i].Color = color;
+                vertices[i].Position = pos;
+                vertices[i].UV = default;
+                vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
+
+        private static readonly Vector3[] boxPositions =
+{
+new Vector3(-1, +1, -1),
+new Vector3(-1, -1, -1),
+new Vector3(+1, -1, -1),
+new Vector3(+1, +1, -1),
+new Vector3(-1, +1, +1),
+new Vector3(-1, -1, +1),
+new Vector3(+1, -1, +1),
+new Vector3(+1, +1, +1),
+            };
+
+        private static readonly uint[] boxIndices = [0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4];
 
         /// <summary>
         /// Draws a 3D box at a specified position with the given orientation and dimensions.
@@ -669,26 +786,7 @@ namespace HexaEngine.Editor
         /// <param name="col">The color of the box.</param>
         public static void DrawBox(string id, Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 col)
         {
-            const uint vertexCount = 8;
-            Vector3[] pos =
-          {
-new Vector3(-1, +1, -1),
-new Vector3(-1, -1, -1),
-new Vector3(+1, -1, -1),
-new Vector3(+1, +1, -1),
-new Vector3(-1, +1, +1),
-new Vector3(-1, -1, +1),
-new Vector3(+1, -1, +1),
-new Vector3(+1, +1, +1),
-            };
-            uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 24, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4 });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
-
-            TransformWithColor(cmd.Vertices, pos, vertexCount, Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
+            DrawPreComputed(PrimitiveTopology.LineList, boxPositions, boxIndices, Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
 
         /// <summary>
@@ -701,16 +799,10 @@ new Vector3(+1, +1, +1),
         /// <param name="col">The color of the sphere.</param>
         public static void DrawSphere(string id, Vector3 origin, Quaternion orientation, float radius, Vector4 col)
         {
-            const uint vertexCount = 90;
-            uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 96 * 2, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 31, 0, 33, 32, 34, 33, 35, 34, 36, 35, 37, 36, 38, 37, 39, 38, 40, 23, 41, 40, 42, 41, 43, 42, 44, 43, 45, 44, 46, 45, 47, 46, 48, 47, 49, 48, 50, 49, 51, 50, 52, 51, 53, 52, 54, 53, 55, 7, 56, 55, 57, 56, 58, 57, 59, 58, 60, 59, 61, 60, 62, 32, 63, 62, 64, 63, 65, 64, 66, 65, 67, 66, 15, 68, 69, 15, 70, 69, 71, 70, 72, 71, 73, 72, 74, 73, 47, 75, 76, 47, 77, 76, 78, 77, 79, 78, 80, 79, 81, 80, 82, 81, 83, 31, 84, 83, 85, 84, 86, 85, 87, 86, 88, 87, 32, 89, 7, 54, 68, 67, 23, 39, 89, 88, 30, 31, 31, 82, 75, 74, 32, 61 });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
-
-            TransformWithColor(cmd.Vertices, spherePositions, vertexCount, Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
+            DrawPreComputed(PrimitiveTopology.LineList, spherePositions, sphereIndices, Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
+
+        #region Capsule Data
 
         private static readonly Vector3[] capsulePositions =
         {
@@ -840,23 +932,7 @@ new Vector3(+1, +1, +1),
             new Vector3(0.195090f,0.990393f,-0.000000f),
         };
 
-        /// <summary>
-        /// Draws a 3D capsule at a specified position with the given orientation, radius, and length.
-        /// </summary>
-        /// <param name="id">A unique identifier for the capsule draw command.</param>
-        /// <param name="origin">The center point of the capsule.</param>
-        /// <param name="orientation">The orientation (rotation) of the capsule.</param>
-        /// <param name="radius">The radius of the capsule.</param>
-        /// <param name="length">The length of the capsule (excluding the two hemispheres).</param>
-        /// <param name="col">The color of the capsule.</param>
-        public static void DrawCapsule(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
-        {
-            const uint vertexCount = 124;
-
-            uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 132 * 2, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[]
+        private static readonly uint[] capsuleIndices =
                 {
 1,0,
 3,2,
@@ -990,12 +1066,25 @@ new Vector3(+1, +1, +1),
 120,119,
 122,121,
 109,123,
-            });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
+            };
 
-            TransformWithColor(cmd.Vertices, capsulePositions, vertexCount, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
+        #endregion Capsule Data
+
+        /// <summary>
+        /// Draws a 3D capsule at a specified position with the given orientation, radius, and length.
+        /// </summary>
+        /// <param name="id">A unique identifier for the capsule draw command.</param>
+        /// <param name="origin">The center point of the capsule.</param>
+        /// <param name="orientation">The orientation (rotation) of the capsule.</param>
+        /// <param name="radius">The radius of the capsule.</param>
+        /// <param name="length">The length of the capsule (excluding the two hemispheres).</param>
+        /// <param name="col">The color of the capsule.</param>
+        public static void DrawCapsule(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
+        {
+            DrawPreComputed(PrimitiveTopology.LineList, capsulePositions, capsuleIndices, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
+
+        #region Cylinder Data
 
         private static readonly Vector3[] cylinderPositions =
         {
@@ -1065,24 +1154,8 @@ new Vector3(+1, +1, +1),
             new Vector3(-0.195090f,-1.000000f,0.980785f),
         };
 
-        /// <summary>
-        /// Draws a 3D cylinder at a specified position with the given orientation, radius, and length.
-        /// </summary>
-        /// <param name="id">A unique identifier for the cylinder draw command.</param>
-        /// <param name="origin">The center point of the cylinder.</param>
-        /// <param name="orientation">The orientation (rotation) of the cylinder.</param>
-        /// <param name="radius">The radius of the cylinder.</param>
-        /// <param name="length">The length of the cylinder.</param>
-        /// <param name="col">The color of the cylinder.</param>
-        public static void DrawCylinder(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
+        private static readonly uint[] cylinderIndices =
         {
-            const uint vertexCount = 64;
-
-            uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, 68 * 2, vertexCount, out var cmd))
-            {
-                cmd.Indices = AllocCopyT(new ushort[]
-                {
 1,0,
 2,1,
 3,2,
@@ -1151,11 +1224,22 @@ new Vector3(+1, +1, +1),
 0,31,
 32,63,
 24,56,
-            });
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-            }
+            };
 
-            TransformWithColor(cmd.Vertices, cylinderPositions, vertexCount, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
+        #endregion Cylinder Data
+
+        /// <summary>
+        /// Draws a 3D cylinder at a specified position with the given orientation, radius, and length.
+        /// </summary>
+        /// <param name="id">A unique identifier for the cylinder draw command.</param>
+        /// <param name="origin">The center point of the cylinder.</param>
+        /// <param name="orientation">The orientation (rotation) of the cylinder.</param>
+        /// <param name="radius">The radius of the cylinder.</param>
+        /// <param name="length">The length of the cylinder.</param>
+        /// <param name="col">The color of the cylinder.</param>
+        public static void DrawCylinder(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
+        {
+            DrawPreComputed(PrimitiveTopology.LineList, cylinderPositions, cylinderIndices, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
 
         /// <summary>
@@ -1170,18 +1254,43 @@ new Vector3(+1, +1, +1),
         /// <param name="col">The color of the triangle.</param>
         public static void DrawTriangle(string id, Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 col)
         {
-            const uint vertexCount = 4;
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineStrip, 4, vertexCount, out var cmd))
-            {
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-                cmd.Indices = AllocCopyT(new ushort[] { 0, 1, 2, 3 });
-            }
 
-            cmd.Vertices[0] = new(Vector3.Transform(a, orientation) + origin, Vector2.Zero, color);
-            cmd.Vertices[1] = new(Vector3.Transform(b, orientation) + origin, Vector2.Zero, color);
-            cmd.Vertices[2] = new(Vector3.Transform(c, orientation) + origin, Vector2.Zero, color);
-            cmd.Vertices[3] = cmd.Vertices[0];
+            immediateList.ReserveGeometry(3, 6);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1;
+            indices[2] = 1; indices[3] = 2;
+            indices[4] = 2; indices[5] = 0;
+
+            vertices[0] = new(Vector3.Transform(a, orientation) + origin, default, color);
+            vertices[1] = new(Vector3.Transform(b, orientation) + origin, default, color);
+            vertices[2] = new(Vector3.Transform(c, orientation) + origin, default, color);
+        }
+
+        public static void DrawQuad(string id, Vector3 origin, Quaternion orientation, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
+        {
+            uint color = ColorConvertFloat4ToU32(col);
+
+            immediateList.ReserveGeometry(4, 6);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1; indices[2] = 2;
+            indices[3] = 1; indices[4] = 2; indices[5] = 3;
+
+            Vector3 p0 = new(-scale.X, -scale.Y, 0); // bottom left corner
+            Vector3 p1 = new(-scale.X, scale.Y, 0); // top left corner
+            Vector3 p2 = new(scale.X, scale.Y, 0); // top right corner
+            Vector3 p3 = new(scale.X, -scale.Y, 0); // bottom right corner
+
+            vertices[0] = new(Vector3.Transform(p0, orientation) + origin, new(uv0.X, uv1.Y), color);
+            vertices[1] = new(Vector3.Transform(p1, orientation) + origin, uv0, color);
+            vertices[2] = new(Vector3.Transform(p2, orientation) + origin, new(uv1.X, uv0.Y), color);
+            vertices[3] = new(Vector3.Transform(p3, orientation) + origin, uv1, color);
+
+            immediateList.RecordCmd(PrimitiveTopology.TriangleList, texId);
         }
 
         /// <summary>
@@ -1195,60 +1304,37 @@ new Vector3(+1, +1, +1),
         {
             uint vertexCount = 2u * (uint)size * 2u + 4;
             uint color = ColorConvertFloat4ToU32(col);
-            if (queue.Draw(id, PrimitiveTopology.LineList, vertexCount, vertexCount, out var cmd))
+
+            immediateList.ReserveGeometry(vertexCount, vertexCount);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            int half = size / 2;
+
+            uint i = 0;
+            for (int x = -half; x <= half; x++)
             {
-                cmd.EnableDepth = true;
-                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
-                cmd.Indices = AllocT<ushort>(vertexCount);
-
-                int half = size / 2;
-
-                int i = 0;
-                for (int x = -half; x <= half; x++)
-                {
-                    var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
-                    var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
-                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
-                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
-                    cmd.Indices[i] = (ushort)i;
-                    cmd.Indices[i + 1] = (ushort)(i + 1);
-                    i += 2;
-                }
-
-                for (int z = -half; z <= half; z++)
-                {
-                    var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
-                    var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
-                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
-                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
-                    cmd.Indices[i] = (ushort)i;
-                    cmd.Indices[i + 1] = (ushort)(i + 1);
-                    i += 2;
-                }
+                var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
+                var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
+                vertices[i] = new(pos0, default, color);
+                vertices[i + 1] = new(pos1, default, color);
+                indices[i] = i;
+                indices[i + 1] = i + 1;
+                i += 2;
             }
 
+            for (int z = -half; z <= half; z++)
             {
-                int half = size / 2;
-
-                int i = 0;
-                for (int x = -half; x <= half; x++)
-                {
-                    var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
-                    var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
-                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
-                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
-                    i += 2;
-                }
-
-                for (int z = -half; z <= half; z++)
-                {
-                    var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
-                    var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
-                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
-                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
-                    i += 2;
-                }
+                var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
+                var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
+                vertices[i] = new(pos0, default, color);
+                vertices[i + 1] = new(pos1, default, color);
+                indices[i] = i;
+                indices[i + 1] = i + 1;
+                i += 2;
             }
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
     }
 }

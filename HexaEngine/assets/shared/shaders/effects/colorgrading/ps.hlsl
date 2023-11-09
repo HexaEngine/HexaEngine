@@ -5,67 +5,73 @@ SamplerState linearClampSampler : register(s0);
 
 struct VSOut
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+    float4 Pos : SV_Position;
+    float2 Tex : TEXCOORD;
 };
 
 cbuffer TonemapParams
 {
-	float BlackIn; 		// Inner control point for the black point.
-	float WhiteIn; 		// Inner control point for the white point.
-	float BlackOut;		// Outer control point for the black point.
-	float WhiteOut;		// Outer control point for the white point.
-	float WhiteLevel;	// Pre - curve white point adjustment.
-	float WhiteClip;	// Post - curve white point adjustment.
-	float PostExposure;  // Adjusts overall exposure in EV units.
-	float Temperature;   // Sets the white balance to a custom color temperature.
-	float Tint;          // Sets the white balance to compensate for tint (green or magenta).
-	float HueShift;      // Shift the hue of all colors.
-	float Saturation;    // Adjusts saturation (color intensity).
-	float Contrast;      // Adjusts the contrast.
+    float BlackIn; // Inner control point for the black point.
+    float WhiteIn; // Inner control point for the white point.
+    float BlackOut; // Outer control point for the black point.
+    float WhiteOut; // Outer control point for the white point.
+    float WhiteLevel; // Pre - curve white point adjustment.
+    float WhiteClip; // Post - curve white point adjustment.
+    float PostExposure; // Adjusts overall exposure in EV units.
+    float Temperature; // Sets the white balance to a custom color temperature.
+    float Tint; // Sets the white balance to compensate for tint (green or magenta).
+    float HueShift; // Shift the hue of all colors.
+    float Saturation; // Adjusts saturation (color intensity).
+    float Contrast; // Adjusts the contrast.
 };
 
 #define GAMMA 2.2
 
 float3 NoneTonemap(float3 x)
 {
-	return x;
+    return x;
 }
 
 float3 HableHejlTonemap(float3 color)
 {
 	// Calculate linear scale and offset for black and white points
-	float scale = (WhiteOut - BlackOut) / (WhiteIn - BlackIn);
-	float offset = BlackOut - (BlackIn * scale);
+    float scale = (WhiteOut - BlackOut) / (WhiteIn - BlackIn);
+    float offset = BlackOut - (BlackIn * scale);
 
 	// Apply linear scale and offset
-	color = color * scale + offset;
+    color = color * scale + offset;
 
 	// Apply gamma correction (2.2)
-	color = pow(color, 1.0 / 2.2);
+    color = pow(color, 1.0 / 2.2);
 
 	// Pre-curve white point adjustment
-	color = color * (WhiteLevel / max(color.r, max(color.g, color.b)));
+    color = color * (WhiteLevel / max(color.r, max(color.g, color.b)));
 
 	// Post-curve white point adjustment
-	color = (color * (1.0 + color / (WhiteClip * WhiteClip))) / (1.0 + color);
+    color = (color * (1.0 + color / (WhiteClip * WhiteClip))) / (1.0 + color);
 
-	return color;
+    return color;
 }
 
 float3 ACESFilmTonemap(float3 x)
 {
-	return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+    return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+}
+
+float3 InverseToneMapACES(float3 sdr)
+{
+    const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+    return 0.5 * (D * sdr - sqrt(((D * D - 4 * C * E) * sdr + 4 * A * E - 2 * B * D) * sdr + B * B) - B) / (A - C * sdr);
 }
 
 float3 OECF_sRGBFast(float3 color)
 {
-	return pow(color.rgb, float3(1.0 / GAMMA, 1.0 / GAMMA, 1.0 / GAMMA));
+    return pow(color.rgb, float3(1.0 / GAMMA, 1.0 / GAMMA, 1.0 / GAMMA));
 }
 
 float3 AdjustWhiteBalance(float3 color)
 {
-	float t1 = Temperature * 10 / 6;
+    float t1 = Temperature * 10 / 6;
     float t2 = Tint * 10 / 6;
 
     // Get the CIE xy chromaticity of the reference white point.
@@ -88,41 +94,68 @@ float3 AdjustWhiteBalance(float3 color)
 
     float3 balance = float3(w1.x / w2.x, w1.y / w2.y, w1.z / w2.z);
 
-	float3 lms = LinearToLMS(color);
-	lms *= balance;
-	return LMSToLinear(lms);
+    float3 lms = LinearToLMS(color);
+    lms *= balance;
+    return LMSToLinear(lms);
 }
 
 float3 AdjustHueSaturation(float3 color, float hueShift, float saturation)
 {
 	// Convert RGB to HSL (Hue, Saturation, Lightness) color space.
-	float3 hsl = RGBtoHSL(color);
+    float3 hsl = RGBtoHSL(color);
 
 	// Adjust Hue and Saturation.
-	hsl.x += hueShift;
-	hsl.y = saturate(hsl.y * saturation);
+    hsl.x += hueShift;
+    hsl.y = saturate(hsl.y * saturation);
 
 	// Convert back to RGB color space.
-	return HSLtoRGB(hsl);
+    return HSLtoRGB(hsl);
 }
 
 float3 AdjustContrast(float3 color)
 {
-	return ((color - 0.5f) * Contrast) + 0.5f;
+    return ((color - 0.5f) * Contrast) + 0.5f;
 }
 
 float4 main(VSOut vs) : SV_Target
 {
-	float4 color = hdrTexture.Sample(linearClampSampler, vs.Tex);
+    float4 color = hdrTexture.Sample(linearClampSampler, vs.Tex);
 
-	color.rgb = ACESFilmTonemap(color.rgb);
+    color.rgb = ACESFilmTonemap(color.rgb);
 
-	color.rgb = color.rgb * PostExposure;
-	color.rgb = AdjustWhiteBalance(color.rgb);
-	color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
-	color.rgb = AdjustContrast(color.rgb);
+    color.rgb = color.rgb * PostExposure;
+    color.rgb = AdjustWhiteBalance(color.rgb);
+    color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
+    color.rgb = AdjustContrast(color.rgb);
 
-	color.rgb = OECF_sRGBFast(color.rgb);
+    color.rgb = OECF_sRGBFast(color.rgb);
 
-	return color;
+    return color;
+}
+
+#ifndef LUT_TileSizeXY
+#define LUT_TileSizeXY 32
+#endif
+#ifndef LUT_TileAmount
+#define LUT_TileAmount 32
+#endif
+
+cbuffer BakeCBuffer
+{
+    uint tileIndex;
+};
+
+float4 bake(VSOut vs)
+{
+    float2 tileCoord = vs.Tex;
+    float r = tileCoord.x;
+    float g = tileCoord.y;
+    float b = (float) tileIndex / (float) LUT_TileAmount;
+    float3 color = float3(r, g, b);
+
+    color.rgb = AdjustWhiteBalance(color.rgb);
+    color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
+    color.rgb = AdjustContrast(color.rgb);
+
+    return float4(color, 1);
 }

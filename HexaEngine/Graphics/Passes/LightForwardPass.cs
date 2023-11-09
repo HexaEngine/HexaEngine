@@ -48,8 +48,9 @@
         private const uint nForwardClusteredSRVs = 8 + 11;
         private const uint nForwardClusteredIndirectSRVsBase = 8 + 9;
 
-        public LightForwardPass() : base("LightForward")
+        public LightForwardPass(Windows.RendererFlags flags) : base("LightForward")
         {
+            forceForward = (flags & Windows.RendererFlags.ForceForward) != 0;
             AddWriteDependency(new("LightBuffer"));
             AddWriteDependency(new("GBuffer"));
             AddReadDependency(new("#AOBuffer"));
@@ -129,8 +130,6 @@
             forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];
-
-            context.ClearRenderTargetViews(1, &forwardRTVs[0], default);
 
             context.SetRenderTargets(nForwardRTVs, forwardRTVs, depthStencil.Value.DSV);
 

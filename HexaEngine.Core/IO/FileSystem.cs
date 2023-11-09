@@ -25,6 +25,8 @@
         private static readonly ConcurrentDictionary<string, Asset> pathToAssets = new();
         private static readonly List<Asset> assets = new();
 
+        private static readonly ManualResetEventSlim initLock = new(false);
+
         public static event Action? Initialized;
 
         public static event Action? Refreshed;
@@ -89,6 +91,8 @@
             }
 
             Initialized?.Invoke();
+
+            initLock.Set();
         }
 
         /// <summary>
@@ -96,6 +100,7 @@
         /// </summary>
         public static void Refresh()
         {
+            initLock.Reset();
             // Clear existing file indices
             fileIndices.Clear();
             fileIndicesHashes.Clear();
@@ -160,6 +165,7 @@
             }
 
             Refreshed?.Invoke();
+            initLock.Set();
         }
 
         private static void AddFileSystemWatcher(string path)
@@ -196,6 +202,8 @@
             {
                 return;
             }
+
+            initLock.Reset();
 
             lock (pathToAssets)
             {
@@ -235,6 +243,7 @@
                     {
                         if (!TryGetRelativePath(eventArgs.OldFullPath, out var relativePathOld))
                         {
+                            initLock.Set();
                             return;
                         }
 
@@ -254,6 +263,7 @@
             }
 
             Changed?.Invoke(args);
+            initLock.Set();
         }
 
         /// <summary>
@@ -267,6 +277,7 @@
                 return;
             }
 
+            initLock.Reset();
             sources.Add(source);
 
             // Create file indices for the files in the additional source directory and its subdirectories
@@ -301,6 +312,8 @@
             AddFileSystemWatcher(source);
 
             SourceAdded?.Invoke(source);
+
+            initLock.Set();
         }
 
         /// <summary>
@@ -328,6 +341,7 @@
 
         public static Asset GetAsset(string assetPath)
         {
+            initLock.Wait();
             lock (pathToAssets)
             {
                 if (pathToAssets.TryGetValue(assetPath, out var asset))
@@ -362,6 +376,7 @@
         /// <returns><see langword="true"/> if the file or directory exists, otherwise <see langword="false"/>.</returns>
         public static bool Exists(string? path)
         {
+            initLock.Wait();
             if (string.IsNullOrWhiteSpace(path))
             {
                 return false;
@@ -389,6 +404,7 @@
 
         public static uint GetCrc32Hash(string path)
         {
+            initLock.Wait();
             var stream = OpenRead(path);
             Crc32 crc = new();
             crc.Append(stream);
@@ -406,6 +422,7 @@
         /// <returns>The relative path of the specified path.</returns>
         public static string GetRelativePath(string path)
         {
+            initLock.Wait();
             for (int i = 0; i < sources.Count; i++)
             {
                 var rel = Path.GetRelativePath(sources[i], path);
@@ -421,6 +438,7 @@
 
         public static bool TryGetRelativePath(string path, [NotNullWhen(true)] out string? relativePath)
         {
+            initLock.Wait();
             for (int i = 0; i < sources.Count; i++)
             {
                 var rel = Path.GetRelativePath(sources[i], path);
@@ -442,6 +460,7 @@
         /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
         public static VirtualStream OpenRead(string path)
         {
+            initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
 
@@ -476,6 +495,7 @@
         /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
         public static bool TryOpenRead(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
+            initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
 
@@ -517,6 +537,7 @@
         /// <returns>An bundles of file paths.</returns>
         public static string[] GetFiles(string path)
         {
+            initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
             var files = bundleAssets.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
@@ -638,6 +659,7 @@
         /// <returns>A <see cref="Stream"/> for writing to the file.</returns>
         public static Stream OpenWrite(string path)
         {
+            initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
 
@@ -668,6 +690,7 @@
         /// <returns>A <see cref="Stream"/> for writing the new file.</returns>
         public static Stream Create(string path)
         {
+            initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
 

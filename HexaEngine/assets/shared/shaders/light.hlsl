@@ -23,7 +23,7 @@ struct Light
 	float outerCosine;
 	float innerCosine;
 
-	bool castsShadows;
+	int castsShadows;
 	bool cascadedShadows;
 	int shadowMapIndex;
 
@@ -39,6 +39,13 @@ struct ShadowData
 	float cascadeCount;
 	float4 regions[8];
 };
+
+bool GetBit(int value, int bit)
+{
+	int mask = 1 << bit;
+	value &= mask;
+	return value != 0;
+}
 
 float3 GetShadowUVD(float3 pos, float4x4 view)
 {
@@ -59,6 +66,16 @@ float3 GetShadowAtlasUVD(float3 pos, float size, float4 region, float4x4 view)
 	return shadowSpaceCoord;
 }
 
+float2 GetShadowAtlasUV(float3 pos, float size, float4 region, float4x4 view)
+{
+	float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
+	fragPosLightSpace.y = -fragPosLightSpace.y;
+	float2 shadowSpaceCoord = fragPosLightSpace.xy / fragPosLightSpace.w;
+	shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
+	shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * (region.zw - region.xy);
+	return shadowSpaceCoord;
+}
+
 int GetPointLightFace(float3 r)
 {
 	float rx = abs(r.x);
@@ -67,17 +84,18 @@ int GetPointLightFace(float3 r)
 	float d = max(rx, max(ry, rz));
 	if (d == rx)
 	{
-		return (r.x >= 0.0 ? 0 : 1);
+		return (r.x >= 0.0 ? 0 : 1); // X+: 0, X-: 1
 	}
 	else if (d == ry)
 	{
-		return (r.y >= 0.0 ? 2 : 3);
+		return (r.y >= 0.0 ? 2 : 3); // Y+: 2, Y-:3
 	}
 	else
 	{
-		return (r.z >= 0.0 ? 4 : 5);
+		return (r.z >= 0.0 ? 4 : 5); // Z+: 4, Z-:5
 	}
 }
+
 
 #define PI 3.14159265358979323846
 

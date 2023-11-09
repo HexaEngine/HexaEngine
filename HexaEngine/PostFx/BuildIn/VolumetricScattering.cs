@@ -13,7 +13,7 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    public class GodRays : PostFxBase
+    public class VolumetricScattering : PostFxBase
     {
         private IGraphicsDevice device;
         private Core.Graphics.Primitives.Plane quad1;
@@ -38,10 +38,42 @@
         private bool sunPresent;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private VolumetricScatteringQualityPreset quality;
 
         public override string Name => "GodRays";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
+
+        public enum VolumetricScatteringQualityPreset
+        {
+            Custom = -1,
+            Low = 0,
+            Medium = 1,
+            High = 2,
+            Extreme = 3
+        }
+
+        public struct GodRaysParams
+        {
+            public Vector4 ScreenSpacePosition;
+            public float GodraysDensity;
+            public float GodraysWeight;
+            public float GodraysDecay;
+            public float GodraysExposure;
+            public Vector4 Color;
+        }
+
+        public struct SunParams
+        {
+            public Vector3 Diffuse;
+            public float AlbedoFactor;
+        }
+
+        public VolumetricScatteringQualityPreset Quality
+        {
+            get => quality;
+            set => NotifyPropertyChangedAndSetAndReload(ref quality, value);
+        }
 
         public float Density
         {
@@ -67,29 +99,17 @@
             set => NotifyPropertyChangedAndSet(ref godraysExposure, value);
         }
 
-        public struct GodRaysParams
-        {
-            public Vector4 ScreenSpacePosition;
-            public float GodraysDensity;
-            public float GodraysWeight;
-            public float GodraysDecay;
-            public float GodraysExposure;
-            public Vector4 Color;
-        }
-
-        public struct SunParams
-        {
-            public Vector3 Diffuse;
-            public float AlbedoFactor;
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunBefore("ColorGrading")
                 .RunBefore("Vignette")
                 .RunAfter("Bloom");
+        }
 
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
@@ -115,6 +135,11 @@
             paramsSunBuffer = new(device, CpuAccessFlags.Write);
             paramsWorldBuffer = new(device, CpuAccessFlags.Write);
 
+            List<ShaderMacro> shaderMacros = new(macros)
+            {
+                new("VOLUMETRIC_SCATTERING_QUALITY", ((int)quality).ToString())
+            };
+
             godrays = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
@@ -128,7 +153,7 @@
                 Topology = PrimitiveTopology.TriangleStrip,
                 BlendFactor = default,
                 SampleMask = int.MaxValue
-            }, macros);
+            }, shaderMacros.ToArray());
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
@@ -136,11 +161,11 @@
             sunsprite = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/sun/sunsprite.png"));
             sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
-            noiseTex = new(device, Format.R32Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            noiseTex = new(device, Format.R32Float, 16, 16, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>
             {
                 Noise noise = new(device, NoiseType.Blue2D);
-                noise.Draw2D(device.Context, noiseTex.RTV, new(1024), Vector2.One);
+                noise.Draw2D(device.Context, noiseTex.RTV, new(16), Vector2.One);
                 noise.Dispose();
             });
 
@@ -243,6 +268,7 @@
             context.SetViewport(Viewport);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetShaderResource(0, sunBuffer.SRV);
+            context.PSSetShaderResource(1, noiseTex.SRV);
             context.PSSetSampler(0, sampler);
             context.SetGraphicsPipeline(godrays);
             context.DrawInstanced(4, 1, 0, 0);

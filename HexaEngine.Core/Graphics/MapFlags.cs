@@ -1,19 +1,19 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    /// <summary>
+    /// Flags for mapping resources.
+    /// </summary>
     [Flags]
     public enum MapFlags : int
     {
+        /// <summary>
+        /// Specifies that the mapping should not wait.
+        /// </summary>
         DoNotWait = unchecked(1048576),
-        None = unchecked(0)
-    }
 
-    [Flags]
-    public enum Map : int
-    {
-        Read = 0x1,
-        Write = 0x2,
-        ReadWrite = 0x3,
-        WriteDiscard = 0x4,
-        WriteNoOverwrite = 0x5
+        /// <summary>
+        /// No special mapping flags.
+        /// </summary>
+        None = unchecked(0)
     }
 }

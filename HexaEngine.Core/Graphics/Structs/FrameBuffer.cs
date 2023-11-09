@@ -17,10 +17,6 @@
             View = Matrix4x4.Transpose(view);
             Projection = Matrix4x4.Transpose(projection);
         }
-
-        public ModelViewProj(IView view, Matrix4x4 model) : this(model, view.Transform.View, view.Transform.Projection)
-        {
-        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -33,10 +29,6 @@
         {
             View = Matrix4x4.Transpose(view);
             Projection = Matrix4x4.Transpose(projection);
-        }
-
-        public ViewProj(IView view) : this(view.Transform.View, view.Transform.Projection)
-        {
         }
     }
 }

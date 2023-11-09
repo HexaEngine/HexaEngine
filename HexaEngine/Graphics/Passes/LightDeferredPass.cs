@@ -53,8 +53,9 @@ namespace HexaEngine.Rendering.Passes
         private readonly bool forceForward = true;
         private readonly bool clustered = true;
 
-        public LightDeferredPass() : base("LightDeferred")
+        public LightDeferredPass(Windows.RendererFlags flags) : base("LightDeferred")
         {
+            forceForward = (flags & Windows.RendererFlags.ForceForward) != 0;
             AddWriteDependency(new("LightBuffer"));
             AddReadDependency(new("GBuffer"));
             AddReadDependency(new("#AOBuffer"));
@@ -64,7 +65,7 @@ namespace HexaEngine.Rendering.Passes
 
         public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler profiler)
         {
-            depthStencil = creator.GetDepthStencilBuffer("DepthStencil");
+            depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             gbuffer = creator.GetGBuffer("GBuffer");
             AOBuffer = creator.GetTexture2D("#AOBuffer");
 
@@ -195,6 +196,7 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetShaderResources(0, nIndirectSrvs, indirectSrvs);
 
             context.SetGraphicsPipeline(deferredIndirect);
+            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(deferredIndirect);
 
@@ -231,6 +233,7 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
 
             context.SetGraphicsPipeline(deferred);
+            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 
@@ -252,6 +255,7 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
 
             context.SetGraphicsPipeline(deferredClusterd);
+            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 

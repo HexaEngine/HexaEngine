@@ -30,13 +30,16 @@
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunBefore("ColorGrading")
                 .RunBefore("Vignette")
                 .RunAfter("Bloom");
+        }
 
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
 
             pipeline = device.CreateGraphicsPipeline(new()

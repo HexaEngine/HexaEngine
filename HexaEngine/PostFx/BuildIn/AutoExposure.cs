@@ -11,6 +11,9 @@ namespace HexaEngine.Effects.BuildIn
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// An auto-exposure post-processing effect.
+    /// </summary>
     public class AutoExposure : PostFxBase
     {
         private GraphResourceBuilder creator;
@@ -32,22 +35,33 @@ namespace HexaEngine.Effects.BuildIn
         private float maxLogLuminance = 3;
         private float tau = 1.1f;
 
+        /// <inheritdoc/>
         public override string Name => "AutoExposure";
 
+        /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
 
+        /// <summary>
+        /// Gets or sets the minimum log luminance value.
+        /// </summary>
         public unsafe float MinLogLuminance
         {
             get => minLogLuminance;
             set => NotifyPropertyChangedAndSet(ref minLogLuminance, value);
         }
 
+        /// <summary>
+        /// Gets or sets the maximum log luminance value.
+        /// </summary>
         public unsafe float MaxLogLuminance
         {
             get => maxLogLuminance;
             set => NotifyPropertyChangedAndSet(ref maxLogLuminance, value);
         }
 
+        /// <summary>
+        /// Gets or sets the tau value.
+        /// </summary>
         public unsafe float Tau
         {
             get => tau;
@@ -108,21 +122,25 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunBefore("ColorGrading")
-                .RunAfter("HBAO")
-                .RunAfter("SSGI")
-                .RunAfter("SSR")
-                .RunAfter("MotionBlur")
-                .RunBefore("TAA")
-                .RunBefore("DepthOfField")
-                .RunBefore("ChromaticAberration")
-                .RunBefore("Bloom");
+             .RunBefore("ColorGrading")
+             .RunAfter("HBAO")
+             .RunAfter("SSGI")
+             .RunAfter("SSR")
+             .RunAfter("MotionBlur")
+             .RunBefore("TAA")
+             .RunBefore("DepthOfField")
+             .RunBefore("ChromaticAberration")
+             .RunBefore("Bloom");
+        }
 
+        /// <inheritdoc/>
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             this.creator = creator;
-
             this.width = width;
             this.height = height;
 
@@ -159,6 +177,7 @@ namespace HexaEngine.Effects.BuildIn
             linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        /// <inheritdoc/>
         public override unsafe void Resize(int width, int height)
         {
             this.width = width;
@@ -166,6 +185,7 @@ namespace HexaEngine.Effects.BuildIn
             dirty = true;
         }
 
+        /// <inheritdoc/>
         public override unsafe void Update(IGraphicsContext context)
         {
             LumaAvgParams lumaAvg;
@@ -189,6 +209,7 @@ namespace HexaEngine.Effects.BuildIn
             }
         }
 
+        /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.CSSetShaderResource(0, Input);
@@ -223,6 +244,7 @@ namespace HexaEngine.Effects.BuildIn
             context.SetRenderTarget(null, null);
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
             lumaCompute.Dispose();

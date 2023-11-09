@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    public struct ShaderBinding
+    public struct PShaderBinding
     {
-        public ShaderBinding(ShaderStage stage, uint slot)
+        public PShaderBinding(ShaderStage stage, uint slot)
         {
             Stage = stage;
             Slot = slot;
@@ -15,9 +15,9 @@
     public struct BoundResource
     {
         public IShaderResourceView? Resource;
-        public List<ShaderBinding> Bindings;
+        public List<PShaderBinding> Bindings;
 
-        public BoundResource(IShaderResourceView? resource, params ShaderBinding[] bindings)
+        public BoundResource(IShaderResourceView? resource, params PShaderBinding[] bindings)
         {
             Resource = resource;
             Bindings = new(bindings);
@@ -26,8 +26,8 @@
         public BoundResource(IShaderResourceView? resource, ShaderStage stage, uint slot)
         {
             Resource = resource;
-            Bindings = new List<ShaderBinding>();
-            Bindings.Add(new ShaderBinding(stage, slot));
+            Bindings = new List<PShaderBinding>();
+            Bindings.Add(new PShaderBinding(stage, slot));
         }
 
         public void Bind(IGraphicsContext context)
@@ -68,9 +68,9 @@
     public struct BoundSampler
     {
         public ISamplerState? Sampler;
-        public List<ShaderBinding> Bindings;
+        public List<PShaderBinding> Bindings;
 
-        public BoundSampler(ISamplerState? sampler, params ShaderBinding[] bindings)
+        public BoundSampler(ISamplerState? sampler, params PShaderBinding[] bindings)
         {
             Sampler = sampler;
             Bindings = new(bindings);
@@ -79,8 +79,8 @@
         public BoundSampler(ISamplerState? sampler, ShaderStage stage, uint slot)
         {
             Sampler = sampler;
-            Bindings = new List<ShaderBinding>();
-            Bindings.Add(new ShaderBinding(stage, slot));
+            Bindings = new List<PShaderBinding>();
+            Bindings.Add(new PShaderBinding(stage, slot));
         }
 
         public void Bind(IGraphicsContext context)
@@ -121,9 +121,9 @@
     public struct BoundConstant
     {
         public IBuffer? Constant;
-        public List<ShaderBinding> Bindings;
+        public List<PShaderBinding> Bindings;
 
-        public BoundConstant(IBuffer? constant, params ShaderBinding[] bindings)
+        public BoundConstant(IBuffer? constant, params PShaderBinding[] bindings)
         {
             Constant = constant;
             Bindings = new(bindings);
@@ -132,8 +132,8 @@
         public BoundConstant(IBuffer? constant, ShaderStage stage, uint slot)
         {
             Constant = constant;
-            Bindings = new List<ShaderBinding>();
-            Bindings.Add(new ShaderBinding(stage, slot));
+            Bindings = new List<PShaderBinding>();
+            Bindings.Add(new PShaderBinding(stage, slot));
         }
 
         public void Bind(IGraphicsContext context)

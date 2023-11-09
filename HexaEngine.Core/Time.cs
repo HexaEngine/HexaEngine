@@ -44,6 +44,10 @@
         /// </summary>
         public static float MaxFrameTime { get; set; }
 
+        public static float GameTime { get; set; }
+
+        public static float GameTimeScale { get; set; } = 20;
+
         /// <summary>
         /// Occurs when a fixed update is triggered.
         /// </summary>

@@ -19,7 +19,7 @@ cbuffer LightBuffer
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
-    float2 Tex : TEX;
+    float2 Tex : TEXCOORD;
 };
 
 int CubeFaceFromDirection(float3 direction)
@@ -50,7 +50,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, Samp
     float depthValue = length(light_to_pixelWS) / light.range;
 
     int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
     uvd.z = depthValue;
 
 #if HARD_SHADOWS_POINTLIGHTS

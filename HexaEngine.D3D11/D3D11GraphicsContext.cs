@@ -11,7 +11,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using Format = Core.Graphics.Format;
-    using Map = Core.Graphics.Map;
+    using MapMode = Core.Graphics.MapMode;
     using MappedSubresource = Core.Graphics.MappedSubresource;
     using Viewport = Mathematics.Viewport;
 
@@ -164,7 +164,7 @@
         public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags)
         {
             Silk.NET.Direct3D11.MappedSubresource data;
-            DeviceContext.Map((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex, Helper.Convert(mode), (uint)Helper.Convert(flags), &data);
+            DeviceContext.Map((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex, (Map)Helper.Convert((MapMode)mode), (uint)Helper.Convert(flags), &data);
             return new(data.PData, data.RowPitch, data.DepthPitch);
         }
 
@@ -322,11 +322,11 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(IBuffer buffer, void* value, int size, Map flags)
+        public void Write(IBuffer buffer, void* value, int size, MapMode flags)
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Helper.Convert(flags), 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowHResult();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }
@@ -342,11 +342,11 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged
+        public void Write<T>(IBuffer buffer, T* value, int size, MapMode flags) where T : unmanaged
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Helper.Convert(flags), 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowHResult();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }

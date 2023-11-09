@@ -5,12 +5,16 @@
     using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
+    /// <summary>
+    /// A post-processing effect simulating chromatic aberration.
+    /// </summary>
     public class ChromaticAberration : PostFxBase
     {
+#nullable disable
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<ChromaticAberrationParams> paramsBuffer;
         private ISamplerState samplerState;
-
+#nullable restore
         private float intensity = 1;
 
         private struct ChromaticAberrationParams
@@ -25,17 +29,23 @@
             }
         }
 
+        /// <inheritdoc/>
         public override string Name { get; } = "ChromaticAberration";
 
+        /// <inheritdoc/>
         public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
+        /// <summary>
+        /// Gets or sets the intensity of the chromatic aberration effect.
+        /// </summary>
         public float Intensity
         {
             get => intensity;
             set => NotifyPropertyChangedAndSet(ref intensity, value);
         }
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunBefore("ColorGrading")
@@ -47,7 +57,11 @@
                 .RunAfter("TAA")
                 .RunAfter("DepthOfField")
                 .RunBefore("Bloom");
+        }
 
+        /// <inheritdoc/>
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -58,6 +72,7 @@
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        /// <inheritdoc/>
         public override void Update(IGraphicsContext context)
         {
             if (dirty)
@@ -67,6 +82,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.SetRenderTarget(Output, null);
@@ -84,6 +100,7 @@
             context.SetRenderTarget(null, null);
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
             paramsBuffer.Dispose();

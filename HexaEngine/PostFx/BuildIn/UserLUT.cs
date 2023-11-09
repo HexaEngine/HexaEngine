@@ -49,12 +49,16 @@
             set => NotifyPropertyChangedAndSetAndReload(ref lutTexPath, value ?? string.Empty);
         }
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunAfter("ColorGrading")
                 .RunBefore("Grain");
+        }
 
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",

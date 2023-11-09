@@ -16,6 +16,7 @@ namespace HexaEngine.Rendering.Renderers
     using Hexa.NET.ImGui;
     using System;
     using System.Numerics;
+    using HexaEngine.Core.Graphics.Textures;
 
     public class SceneRenderer : ISceneRenderer
     {
@@ -25,7 +26,7 @@ namespace HexaEngine.Rendering.Renderers
 
         private readonly RendererSettings settings = new();
         private readonly CPUFlameProfiler profiler = new();
-        private readonly HDRPipeline renderGraph = new();
+        private readonly HDRPipeline renderGraph;
         private RenderGraphExecuter graphExecuter;
 
         private HexaEngine.Graph.ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
@@ -61,8 +62,9 @@ namespace HexaEngine.Rendering.Renderers
 
         public Vector2 Size => new(width, height);
 
-        public SceneRenderer()
+        public SceneRenderer(Windows.RendererFlags flags)
         {
+            renderGraph = new(flags);
         }
 
         public static SceneRenderer? Current { get; private set; }
@@ -224,6 +226,27 @@ namespace HexaEngine.Rendering.Renderers
             graphExecuter.ResourceBuilder.OutputTex = swapChain.Backbuffer;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
             graphExecuter.Execute(context, profiler);
+        }
+
+        public void TakeScreenshot(IGraphicsContext context, string path)
+        {
+            if (!initialized)
+            {
+                return;
+            }
+
+            Texture2D tempTexture = new(context.Device, Format.R8G8B8A8UNorm, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+
+            graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
+            graphExecuter.ResourceBuilder.OutputTex = tempTexture;
+            graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;
+            graphExecuter.Execute(context, profiler);
+
+            tempTexture.Dispose();
+
+            var scratchImage = context.Device.TextureLoader.CaptureTexture(context, tempTexture);
+            scratchImage.SaveToFile(path, TexFileFormat.Auto, 0);
+            scratchImage.Dispose();
         }
 
         public void DrawSettings()

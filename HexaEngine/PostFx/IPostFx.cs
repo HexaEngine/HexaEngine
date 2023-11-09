@@ -4,163 +4,100 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Runtime.CompilerServices;
 
-    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    public abstract class PostFxBase : IPostFx
-    {
-        protected bool initialized = false;
-        private bool enabled = true;
-        protected bool dirty = true;
-
-        protected IShaderResourceView Input;
-        protected IResource InputResource;
-        protected IRenderTargetView Output;
-        protected IResource OutputResource;
-        protected Viewport Viewport;
-
-        public abstract string Name { get; }
-
-        public abstract PostFxFlags Flags { get; }
-
-        public bool Initialized => initialized;
-
-        public unsafe bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-                OnEnabledChanged?.Invoke(this, value);
-            }
-        }
-
-        public event Action<IPostFx, bool>? OnEnabledChanged;
-
-        public event Action<IPostFx>? OnReload;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        void IPostFx.Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
-        {
-            Initialize(device, builder, creator, width, height, macros);
-            initialized = true;
-            dirty = true;
-        }
-
-        public abstract void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
-
-        public virtual void Resize(int width, int height)
-        {
-        }
-
-        public virtual void Update(IGraphicsContext context)
-        {
-        }
-
-        public abstract void Draw(IGraphicsContext context, GraphResourceBuilder creator);
-
-        public virtual void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-        }
-
-        public virtual void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            OutputResource = resource;
-            Viewport = viewport;
-        }
-
-        public virtual void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
-            InputResource = resource;
-        }
-
-        protected abstract void DisposeCore();
-
-        protected void NotifyPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new(name));
-            dirty = true;
-        }
-
-        protected void NotifyPropertyChangedAndSet<T>(ref T target, T value, [CallerMemberName] string name = "")
-        {
-            target = value;
-            NotifyPropertyChanged(name);
-        }
-
-        protected void NotifyPropertyChangedAndSetAndReload<T>(ref T target, T value, [CallerMemberName] string name = "")
-        {
-            target = value;
-            NotifyPropertyChanged(name);
-            NotifyReload();
-        }
-
-        protected void NotifyReload()
-        {
-            OnReload?.Invoke(this);
-        }
-
-        private void DisposeInternal()
-        {
-            if (initialized)
-            {
-                DisposeCore();
-                initialized = false;
-            }
-        }
-
-        ~PostFxBase()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            DisposeInternal();
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            DisposeInternal();
-            GC.SuppressFinalize(this);
-        }
-
-        private string GetDebuggerDisplay()
-        {
-            return $"{Name}, {(Initialized ? "I" : "")}{(Enabled ? "E" : "")}{(dirty ? "D" : "")}, {Flags}";
-        }
-    }
-
+    /// <summary>
+    /// Represents a post-processing effect in a graphics pipeline.
+    /// </summary>
     public interface IPostFx : INotifyPropertyChanged, IDisposable
     {
+        /// <summary>
+        /// Gets the name of the post-processing effect.
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Gets the flags associated with the post-processing effect.
+        /// </summary>
         public PostFxFlags Flags { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the post-processing effect has been initialized.
+        /// </summary>
         public bool Initialized { get; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the post-processing effect is enabled.
+        /// </summary>
         public bool Enabled { get; set; }
 
+        /// <summary>
+        /// Occurs when the <see cref="Enabled"/> property changes.
+        /// </summary>
         public event Action<IPostFx, bool>? OnEnabledChanged;
 
+        /// <summary>
+        /// Occurs when the post-processing effect needs to be reloaded.
+        /// </summary>
         public event Action<IPostFx>? OnReload;
 
-        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
+        /// <summary>
+        /// Initializes the post-processing effect.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="creator">The resource builder for creating resources.</param>
+        /// <param name="width">The width of the rendering area.</param>
+        /// <param name="height">The height of the rendering area.</param>
+        /// <param name="macros">The shader macros to use during initialization.</param>
+        void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
+        /// <summary>
+        /// Sets up dependencies for the post-processing effect.
+        /// </summary>
+        /// <param name="builder">The dependency builder.</param>
+        void SetupDependencies(PostFxDependencyBuilder builder);
+
+        /// <summary>
+        /// Resizes the post-processing effect to match the new dimensions.
+        /// </summary>
+        /// <param name="width">The new width of the rendering area.</param>
+        /// <param name="height">The new height of the rendering area.</param>
         void Resize(int width, int height);
 
+        /// <summary>
+        /// Draws the post-processing effect.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="creator">The resource builder for creating resources.</param>
         void Draw(IGraphicsContext context, GraphResourceBuilder creator);
 
+        /// <summary>
+        /// Draws the post-processing effect during the pre-pass stage.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="creator">The resource builder for creating resources.</param>
         void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
         }
 
+        /// <summary>
+        /// Sets the output target for the post-processing effect.
+        /// </summary>
+        /// <param name="view">The render target view.</param>
+        /// <param name="resource">The texture resource.</param>
+        /// <param name="viewport">The viewport dimensions.</param>
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport);
 
+        /// <summary>
+        /// Sets the input for the post-processing effect.
+        /// </summary>
+        /// <param name="view">The shader resource view.</param>
+        /// <param name="resource">The texture resource.</param>
         public void SetInput(IShaderResourceView view, ITexture2D resource);
 
+        /// <summary>
+        /// Updates the post-processing effect.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
         public void Update(IGraphicsContext context);
     }
 }

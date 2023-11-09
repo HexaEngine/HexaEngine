@@ -342,12 +342,12 @@
             throw new NotImplementedException();
         }
 
-        public unsafe void Write(IBuffer buffer, void* value, int size, Map flags)
+        public unsafe void Write(IBuffer buffer, void* value, int size, MapMode flags)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged
+        public unsafe void Write<T>(IBuffer buffer, T* value, int size, MapMode flags) where T : unmanaged
         {
             throw new NotImplementedException();
         }

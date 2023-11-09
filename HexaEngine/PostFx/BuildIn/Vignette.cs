@@ -85,7 +85,8 @@
             set => NotifyPropertyChangedAndSet(ref color, value);
         }
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunBefore("ColorGrading")
@@ -98,7 +99,10 @@
                 .RunAfter("DepthOfField")
                 .RunAfter("ChromaticAberration")
                 .RunAfter("Bloom");
+        }
 
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipeline(new()
             {

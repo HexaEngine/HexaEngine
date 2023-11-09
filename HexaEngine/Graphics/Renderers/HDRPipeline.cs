@@ -9,7 +9,7 @@ namespace HexaEngine.Rendering.Renderers
     {
         public RenderPass[] Passes;
 
-        public HDRPipeline() : base("HDRPipeline")
+        public HDRPipeline(Windows.RendererFlags flags) : base("HDRPipeline")
         {
             BRDFLUTPass brdfLutPass = new();
             DepthPrePass depthPrePass = new();
@@ -19,9 +19,9 @@ namespace HexaEngine.Rendering.Renderers
             ObjectCullPass objectCullPass = new();
             LightCullPass lightCullPass = new();
             ShadowMapPass shadowMapPass = new();
-            GBufferPass gBufferPass = new();
-            //LightDeferredPass lightDeferredPass = new();
-            LightForwardPass lightForwardPass = new();
+            GBufferPass gBufferPass = new(flags);
+            LightDeferredPass lightDeferredPass = new(flags);
+            LightForwardPass lightForwardPass = new(flags);
             PostProcessPass postProcessPass = new();
 
             brdfLutPass.Build(this);
@@ -32,7 +32,7 @@ namespace HexaEngine.Rendering.Renderers
             lightCullPass.Build(this);
             shadowMapPass.Build(this);
             gBufferPass.Build(this);
-            //lightDeferredPass.Build(this);
+            lightDeferredPass.Build(this);
             lightForwardPass.Build(this);
             postProcessPass.Build(this);
 
@@ -46,7 +46,7 @@ namespace HexaEngine.Rendering.Renderers
                 lightCullPass,
                 shadowMapPass,
                 gBufferPass,
-                //lightDeferredPass,
+                lightDeferredPass,
                 lightForwardPass,
                 postProcessPass
             ];

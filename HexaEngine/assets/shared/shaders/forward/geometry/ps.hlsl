@@ -355,7 +355,10 @@ Pixel main(PixelInput input)
 
 			float shadowFactor = 1;
 
-			if (light.castsShadows)
+			bool castsShadows = GetBit(light.castsShadows, 0);
+        	bool contactShadows = GetBit(light.castsShadows, 1);
+
+			if (castsShadows)
 			{
 				ShadowData data = shadowData[light.shadowMapIndex];
 				switch (light.type)

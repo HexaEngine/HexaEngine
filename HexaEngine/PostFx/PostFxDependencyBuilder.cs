@@ -97,7 +97,7 @@
         private static PostFxNode? ResolveDependency(ResourceBinding binding, IReadOnlyList<PostFxNode> others, IReadOnlyList<ResourceBinding> globalResources)
         {
             var name = binding.Name;
-            if (name.StartsWith("#"))
+            if (name.StartsWith('#'))
             {
                 throw new InvalidOperationException($"Couldn't find render graph global resource: {name}");
             }
@@ -188,7 +188,10 @@
                 else
                 {
                     if (!node.Dependencies.Contains(dep))
+                    {
                         node.Dependencies.Add(dep);
+                        dep.Dependents.Add(node);
+                    }
                 }
             }
 

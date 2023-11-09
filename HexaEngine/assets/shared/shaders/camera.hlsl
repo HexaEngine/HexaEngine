@@ -7,9 +7,15 @@ cbuffer CameraBuffer : register(b1)
     float4x4 viewProj;
     float4x4 viewProjInv;
     float4x4 prevViewProj;
+
     float camFar;
     float camNear;
     float2 screenDim;
+
+    uint frame;
+    float cumulativeTime;
+    float deltaTime;
+    float gameTime;
 };
 
 float3 GetCameraPos()

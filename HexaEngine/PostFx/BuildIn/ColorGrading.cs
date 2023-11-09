@@ -4,12 +4,16 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Rendering.Graph;
 
+    /// <summary>
+    /// A post-processing effect for color grading adjustments.
+    /// </summary>
     public class ColorGrading : PostFxBase
     {
+#nullable disable
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
-
         private ISamplerState samplerState;
+#nullable restore
         private float blackIn = 0.02f;
         private float whiteIn = 10;
         private float blackOut = 0;
@@ -39,8 +43,10 @@
             public float Contrast;      // Adjusts the contrast.
         }
 
+        /// <inheritdoc/>
         public override string Name { get; } = "ColorGrading";
 
+        /// <inheritdoc/>
         public override PostFxFlags Flags { get; }
 
         /// <summary>
@@ -151,13 +157,18 @@
             set => NotifyPropertyChangedAndSet(ref contrast, value);
         }
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-              .RunAfter("Vignette")
-              .RunAfter("!AllNotReferenced")
-              .RunBefore("UserLUT");
+                 .RunAfter("Vignette")
+                 .RunAfter("!AllNotReferenced")
+                 .RunBefore("UserLUT");
+        }
 
+        /// <inheritdoc/>
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -168,6 +179,7 @@
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        /// <inheritdoc/>
         public override void Update(IGraphicsContext context)
         {
             if (dirty)
@@ -190,6 +202,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.SetRenderTarget(Output, null);
@@ -207,6 +220,7 @@
             context.SetRenderTarget(null, null);
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
             pipeline.Dispose();

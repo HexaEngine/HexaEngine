@@ -1,18 +1,13 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    /// <summary>
+    /// Represents a 3D texture resource in a graphics device.
+    /// </summary>
     public interface ITexture3D : IResource
     {
-        public Texture3DDescription Description { get; }
-    }
-
-    public interface IClassLinkage : IDeviceChild
-    {
-        IClassInstance CreateClassInstance(string name, uint cbOffset, uint cvOffset, uint texOffset, uint samplerOffset);
-
-        IClassInstance GetClassInstance(string name, uint index);
-    }
-
-    public interface IClassInstance : IDeviceChild
-    {
+        /// <summary>
+        /// Gets the description of the 3D texture.
+        /// </summary>
+        Texture3DDescription Description { get; }
     }
 }

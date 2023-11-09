@@ -104,7 +104,11 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Properties
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
+        {
+        }
+
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             ao = creator.GetTexture2D("#AOBuffer");
             depth = creator.GetDepthStencilBuffer("#DepthStencil");

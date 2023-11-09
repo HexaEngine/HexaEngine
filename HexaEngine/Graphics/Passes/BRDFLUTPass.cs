@@ -8,6 +8,7 @@
     {
         public BRDFLUTPass() : base("BRDFLUT", RenderPassType.OneHit)
         {
+            AddWriteDependency(new("BRDFLUT"));
         }
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)

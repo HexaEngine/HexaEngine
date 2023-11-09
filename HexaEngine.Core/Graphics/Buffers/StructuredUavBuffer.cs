@@ -374,12 +374,12 @@
             {
                 if (canRead)
                 {
-                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), Map.Write);
+                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), MapMode.Write);
                     context.CopyResource(buffer, copyBuffer);
                 }
                 else
                 {
-                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), Map.WriteDiscard);
+                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), MapMode.WriteDiscard);
                     context.CopyResource(buffer, copyBuffer);
                 }
 

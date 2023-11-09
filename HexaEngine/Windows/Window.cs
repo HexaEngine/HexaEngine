@@ -123,7 +123,7 @@
 
             OnRendererInitialize(graphicsDevice);
 
-            sceneRenderer = new();
+            sceneRenderer = new(Flags);
             initTask = sceneRenderer.Initialize(graphicsDevice, swapChain, this);
             initTask.ContinueWith(x =>
             {
@@ -133,7 +133,7 @@
                 }
                 if (x.IsFaulted)
                 {
-                    Logger.Error("Renderer: Failed InitializeAsync");
+                    Logger.Error("Renderer: Failed Initialize");
                     Logger.Log(x.Exception);
                 }
 

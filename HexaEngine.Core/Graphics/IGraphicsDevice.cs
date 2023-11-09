@@ -69,10 +69,10 @@
         IBuffer CreateBuffer(BufferDescription description);
 
         /// <summary>
-        /// Creates a buffer with the given description and initial _value.
+        /// Creates a buffer with the given description and initial value.
         /// </summary>
-        /// <typeparam name="T">The type of the initial _value.</typeparam>
-        /// <param name="value">The initial _value of the buffer.</param>
+        /// <typeparam name="T">The type of the initial value.</typeparam>
+        /// <param name="value">The initial value of the buffer.</param>
         /// <param name="description">The description of the buffer.</param>
         /// <returns>The created buffer.</returns>
         IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged;

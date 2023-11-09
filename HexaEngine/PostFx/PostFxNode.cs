@@ -19,9 +19,11 @@
 
         public bool Enabled => PostFx.Enabled;
 
-        public List<PostFxNode> Dependencies { get; } = new();
+        public List<PostFxNode> Dependencies { get; } = [];
 
-        public List<ResourceBinding> GlobalDependencies { get; } = new();
+        public List<ResourceBinding> GlobalDependencies { get; } = [];
+
+        public List<PostFxNode> Dependents { get; } = [];
 
         public PostFxDependencyBuilder Builder { get; }
 
@@ -31,6 +33,7 @@
         {
             Dependencies.Clear();
             GlobalDependencies.Clear();
+            Dependents.Clear();
             Builder.Clear();
         }
 
@@ -48,7 +51,7 @@
         {
             if (obj is PostFxNode node)
             {
-                return node.Name == this.Name;
+                return node.Name == Name;
             }
 
             return false;

@@ -10,8 +10,12 @@
     using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
+    /// <summary>
+    /// A post-processing effect for simulating bloom.
+    /// </summary>
     public class Bloom : PostFxBase
     {
+#nullable disable
         private GraphResourceBuilder creator;
 
         private IGraphicsPipeline downsample;
@@ -26,11 +30,13 @@
         private ISamplerState linearSampler;
 
         private ResourceRef<Texture2D> bloomTex;
-        private Texture2D? lensDirtTex;
 
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
         private Viewport[] viewports;
+#nullable restore
+
+        private Texture2D? lensDirtTex;
 
         private float filterRadius = 0.003f;
         private float bloomIntensity = 0.04f;
@@ -41,34 +47,51 @@
         private int width;
         private int height;
 
+        /// <inheritdoc/>
         public override string Name => "Bloom";
 
+        /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
 
+        /// <summary>
+        /// Gets or sets the filter radius for bloom.
+        /// </summary>
         public float FilterRadius
         {
             get => filterRadius;
             set => NotifyPropertyChangedAndSet(ref filterRadius, value);
         }
 
+        /// <summary>
+        /// Gets or sets the intensity of the bloom effect.
+        /// </summary>
         public float BloomIntensity
         {
             get => bloomIntensity;
             set => NotifyPropertyChangedAndSet(ref bloomIntensity, value);
         }
 
+        /// <summary>
+        /// Gets or sets the threshold for triggering the bloom effect.
+        /// </summary>
         public float BloomThreshold
         {
             get => bloomThreshold;
             set => NotifyPropertyChangedAndSet(ref bloomThreshold, value);
         }
 
+        /// <summary>
+        /// Gets or sets the intensity of the lens dirt effect.
+        /// </summary>
         public float LensDirtIntensity
         {
             get => lensDirtIntensity;
             set => NotifyPropertyChangedAndSet(ref lensDirtIntensity, value);
         }
 
+        /// <summary>
+        /// Gets or sets the file path for the lens dirt texture.
+        /// </summary>
         public string LensDirtTexPath
         {
             get => lensDirtTexPath;
@@ -119,19 +142,24 @@
 
         #endregion Structs
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunBefore("ColorGrading")
-                .RunAfter("HBAO")
-                .RunAfter("SSGI")
-                .RunAfter("SSR")
-                .RunAfter("MotionBlur")
-                .RunAfter("AutoExposure")
-                .RunAfter("TAA")
-                .RunAfter("DepthOfField")
-                .RunAfter("ChromaticAberration");
+                  .RunBefore("ColorGrading")
+                  .RunAfter("HBAO")
+                  .RunAfter("SSGI")
+                  .RunAfter("SSR")
+                  .RunAfter("MotionBlur")
+                  .RunAfter("AutoExposure")
+                  .RunAfter("TAA")
+                  .RunAfter("DepthOfField")
+                  .RunAfter("ChromaticAberration");
+        }
 
+        /// <inheritdoc/>
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             this.creator = creator;
 
             downsampleCBuffer = new(device, CpuAccessFlags.Write);
@@ -165,11 +193,13 @@
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
             }, GraphicsPipelineState.DefaultFullscreen, macros);
+
             upsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
             }, GraphicsPipelineState.DefaultFullscreen, macros);
+
             compose = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
@@ -187,8 +217,10 @@
             for (int i = 0; i < levels; i++)
             {
                 var tex = creator.CreateTexture2D($"Bloom{(i == 0 ? "" : $".{i}")}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
+#nullable disable
                 mipChainRTVs[i] = tex.Value.RTV;
                 mipChainSRVs[i] = tex.Value.SRV;
+#nullable enable
                 viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -210,6 +242,7 @@
             NotifyReload();
         }
 
+        /// <inheritdoc/>
         public override void Resize(int width, int height)
         {
             int currentWidth = width / 2;
@@ -225,8 +258,10 @@
                 var name = $"Bloom{(i == 0 ? "" : $".{i}")}";
                 creator.ReleaseResource(name);
                 var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+#nullable disable
                 mipChainRTVs[i] = tex.RTV;
                 mipChainSRVs[i] = tex.SRV;
+#nullable restore
                 viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -237,6 +272,7 @@
             dirty = true;
         }
 
+        /// <inheritdoc/>
         public override void Update(IGraphicsContext context)
         {
             if (dirty)
@@ -249,6 +285,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.PSSetConstantBuffer(0, downsampleCBuffer);
@@ -284,7 +321,9 @@
                 context.SetRenderTarget(null, null);
             }
 
+#nullable disable
             nint* composeSRVs = stackalloc nint[] { Input.NativePointer, bloomTex.Value.SRV.NativePointer, lensDirtTex?.SRV?.NativePointer ?? 0 };
+#nullable restore
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.SetGraphicsPipeline(compose);
@@ -299,6 +338,7 @@
             context.SetRenderTarget(null, null);
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
             downsample.Dispose();

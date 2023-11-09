@@ -3,12 +3,32 @@
     using System;
     using System.Linq;
 
+    /// <summary>
+    /// Provides functionality for managing graphics adapters and creating graphics devices.
+    /// </summary>
     public static class GraphicsAdapter
     {
+        /// <summary>
+        /// Gets a list of available graphics adapters.
+        /// </summary>
         public static List<IGraphicsAdapter> Adapters { get; } = new();
 
+#nullable disable
+
+        /// <summary>
+        /// Gets or sets the current graphics adapter in use.
+        /// </summary>
         public static IGraphicsAdapter Current { get; private set; }
 
+#nullable restore
+
+        /// <summary>
+        /// Creates a graphics device using the specified graphics backend.
+        /// </summary>
+        /// <param name="backend">The graphics backend to use.</param>
+        /// <param name="debug">Indicates whether debug mode should be enabled.</param>
+        /// <returns>A new instance of an <see cref="IGraphicsDevice"/>.</returns>
+        /// <exception cref="PlatformNotSupportedException">Thrown when the specified backend is not supported by any available graphics adapter.</exception>
         public static IGraphicsDevice CreateGraphicsDevice(GraphicsBackend backend, bool debug)
         {
             if (backend == GraphicsBackend.Auto)

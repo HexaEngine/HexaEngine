@@ -282,15 +282,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Map Convert(Map map)
+        public static Silk.NET.Direct3D11.Map Convert(MapMode map)
         {
             return map switch
             {
-                Map.Read => Silk.NET.Direct3D11.Map.Read,
-                Map.Write => Silk.NET.Direct3D11.Map.Write,
-                Map.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
-                Map.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
-                Map.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
+                MapMode.Read => Silk.NET.Direct3D11.Map.Read,
+                MapMode.Write => Silk.NET.Direct3D11.Map.Write,
+                MapMode.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
+                MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
+                MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -423,20 +423,6 @@
                 MapFlags.DoNotWait => Silk.NET.Direct3D11.MapFlag.DONotWait,
                 MapFlags.None => 0,
                 _ => throw new ArgumentOutOfRangeException(nameof(flags)),
-            };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Map Convert(MapMode mode)
-        {
-            return mode switch
-            {
-                MapMode.Read => Silk.NET.Direct3D11.Map.Read,
-                MapMode.Write => Silk.NET.Direct3D11.Map.Write,
-                MapMode.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
-                MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
-                MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
-                _ => throw new ArgumentOutOfRangeException(nameof(mode)),
             };
         }
 

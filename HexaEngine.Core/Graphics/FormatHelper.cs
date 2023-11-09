@@ -3,13 +3,26 @@
     using HexaEngine.Core.Graphics.Textures;
     using System.Diagnostics;
 
+    /// <summary>
+    /// A helper class for working with pixel formats.
+    /// </summary>
     public static class FormatHelper
     {
+        /// <summary>
+        /// Checks if a format is valid.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is valid; otherwise, <c>false</c>.</returns>
         public static bool IsValid(Format fmt)
         {
             return (int)fmt >= 1 && (int)fmt <= 190;
         }
 
+        /// <summary>
+        /// Checks if a format is compressed.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is compressed; otherwise, <c>false</c>.</returns>
         public static bool IsCompressed(Format fmt)
         {
             return fmt switch
@@ -19,6 +32,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is palettized.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is palettized; otherwise, <c>false</c>.</returns>
         public static bool IsPalettized(Format fmt)
         {
             return fmt switch
@@ -28,6 +46,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is in SRGB color space.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is in SRGB color space; otherwise, <c>false</c>.</returns>
         public static bool IsSRGB(Format fmt)
         {
             return fmt switch
@@ -37,6 +60,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is in BGR color space.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is in BGR color space; otherwise, <c>false</c>.</returns>
         public static bool IsBGR(Format fmt)
         {
             return fmt switch
@@ -46,6 +74,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is packed.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is packed; otherwise, <c>false</c>.</returns>
         public static bool IsPacked(Format fmt)
         {
             return fmt switch
@@ -55,6 +88,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is a video format.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is a video format; otherwise, <c>false</c>.</returns>
         public static bool IsVideo(Format fmt)
         {
             return fmt switch
@@ -64,6 +102,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is planar.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is planar; otherwise, <c>false</c>.</returns>
         public static bool IsPlanar(Format fmt)
         {
             return fmt switch
@@ -73,6 +116,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is a depth-stencil format.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format is a depth-stencil format; otherwise, <c>false</c>.</returns>
         public static bool IsDepthStencil(Format fmt)
         {
             return fmt switch
@@ -82,6 +130,12 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format is typeless (or partially typeless).
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <param name="partialTypeless">Indicates whether partial typeless formats should be considered.</param>
+        /// <returns><c>true</c> if the format is typeless (or partially typeless); otherwise, <c>false</c>.</returns>
         public static bool IsTypeless(Format fmt, bool partialTypeless)
         {
             return fmt switch
@@ -92,6 +146,11 @@
             };
         }
 
+        /// <summary>
+        /// Checks if a format has an alpha channel.
+        /// </summary>
+        /// <param name="fmt">The format to check.</param>
+        /// <returns><c>true</c> if the format has an alpha channel; otherwise, <c>false</c>.</returns>
         public static bool HasAlpha(Format fmt)
         {
             return fmt switch
@@ -102,10 +161,10 @@
         }
 
         /// <summary>
-        /// Returns bits-per-pixel for a given DXGI format, or 0 on failure
+        /// Gets the number of bits per pixel for a given <see cref="Format"/>.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The <see cref="Format"/> to get the bits per pixel for.</param>
+        /// <returns>The number of bits per pixel for the given format.</returns>
         public static int BitsPerPixel(Format fmt)
         {
             return fmt switch
@@ -125,11 +184,10 @@
         }
 
         /// <summary>
-        /// Returns bits-per-color-channel for a given DXGI format, or 0 on failure
-        /// For mixed formats, it returns the largest color-depth in the format
+        /// Gets the number of bits per color for a given <see cref="Format"/>.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The <see cref="Format"/> to get the bits per color for.</param>
+        /// <returns>The number of bits per color for the given <see cref="Format"/>.</returns>
         public static int BitsPerColor(Format fmt)
         {
             return fmt switch
@@ -151,16 +209,15 @@
         }
 
         /// <summary>
-        /// Computes the image row pitch in bytes, and the slice ptich (size in bytes of the image)
-        /// based on DXGI format, width, and height
+        /// Computes the pitch and slice pitch for a given <see cref="Format"/>, width, height, and optional flags.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="rowPitch"></param>
-        /// <param name="slicePitch"></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The <see cref="Format"/> to compute the pitch for.</param>
+        /// <param name="width">The width of the data.</param>
+        /// <param name="height">The height of the data.</param>
+        /// <param name="rowPitch">Output parameter to store the row pitch.</param>
+        /// <param name="slicePitch">Output parameter to store the slice pitch.</param>
+        /// <param name="flags">Optional flags to control the pitch computation.</param>
+        /// <returns><c>true</c> if the pitch was computed successfully; <c>false</c> if there was an issue.</returns>
         public static bool ComputePitch(Format fmt, ulong width, ulong height, ref ulong rowPitch, ref ulong slicePitch, CPFlags flags)
         {
             ulong pitch;
@@ -343,16 +400,15 @@
         }
 
         /// <summary>
-        /// Computes the image row pitch in bytes, and the slice ptich (size in bytes of the image)
-        /// based on DXGI format, width, and height
+        /// Computes the pitch and slice pitch for a given <see cref="Format"/>, width, height, and optional flags.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="rowPitch"></param>
-        /// <param name="slicePitch"></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The <see cref="Format"/> to compute the pitch for.</param>
+        /// <param name="width">The width of the data.</param>
+        /// <param name="height">The height of the data.</param>
+        /// <param name="rowPitch">Output parameter to store the row pitch.</param>
+        /// <param name="slicePitch">Output parameter to store the slice pitch.</param>
+        /// <param name="flags">Optional flags to control the pitch computation.</param>
+        /// <returns><c>true</c> if the pitch was computed successfully; <c>false</c> if there was an issue.</returns>
         public static bool ComputePitch(Format fmt, int width, int height, ref int rowPitch, ref int slicePitch, CPFlags flags)
         {
             int pitch;
@@ -534,6 +590,12 @@
             return true;
         }
 
+        /// <summary>
+        /// Computes the number of scanlines required for a given <see cref="Format"/> and height.
+        /// </summary>
+        /// <param name="fmt">The <see cref="Format"/> to compute scanlines for.</param>
+        /// <param name="height">The height of the data.</param>
+        /// <returns>The number of scanlines required for the given <see cref="Format"/> and height.</returns>
         public static ulong ComputeScanlines(Format fmt, ulong height)
         {
             switch (fmt)
@@ -582,10 +644,10 @@
         }
 
         /// <summary>
-        /// Converts to an SRGB equivalent type if available
+        /// Converts a <see cref="Format"/> to its sRGB equivalent format.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The <see cref="Format"/> to convert.</param>
+        /// <returns>The corresponding sRGB format if available; otherwise, the original format.</returns>
         public static Format MakeSRGB(Format fmt)
         {
             return fmt switch
@@ -602,10 +664,10 @@
         }
 
         /// <summary>
-        /// Converts to an non-SRBG equivalent type
+        /// Converts an sRGB <see cref="Format"/> to its linear equivalent format.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The sRGB <see cref="Format"/> to convert.</param>
+        /// <returns>The corresponding linear format if available; otherwise, the original format.</returns>
         public static Format MakeLinear(Format fmt)
         {
             return fmt switch
@@ -622,10 +684,10 @@
         }
 
         /// <summary>
-        /// Converts to a format to an equivalent Typeless format if available
+        /// Converts a typed <see cref="Format"/> to its typeless equivalent format.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The typed <see cref="Format"/> to convert.</param>
+        /// <returns>The corresponding typeless format if available; otherwise, the original format.</returns>
         public static Format MakeTypeless(Format fmt)
         {
             return fmt switch
@@ -655,10 +717,10 @@
         }
 
         /// <summary>
-        /// Converts to a Typeless format to an equivalent UNorm format if available
+        /// Converts a typeless normalized <see cref="Format"/> to its typeless UNorm equivalent format.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The typeless normalized <see cref="Format"/> to convert.</param>
+        /// <returns>The corresponding typeless UNorm format if available; otherwise, the original format.</returns>
         public static Format MakeTypelessUNorm(Format fmt)
         {
             return fmt switch
@@ -683,10 +745,10 @@
         }
 
         /// <summary>
-        /// Converts to a Typeless format to an equivalent Float format if available
+        /// Converts a typeless floating-point <see cref="Format"/> to its typeless float equivalent format.
         /// </summary>
-        /// <param name="fmt"></param>
-        /// <returns></returns>
+        /// <param name="fmt">The typeless floating-point <see cref="Format"/> to convert.</param>
+        /// <returns>The corresponding typeless float format if available; otherwise, the original format.</returns>
         public static Format MakeTypelessFloat(Format fmt)
         {
             return fmt switch

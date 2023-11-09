@@ -19,12 +19,12 @@ cbuffer LightBuffer
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
-    float2 Tex : TEX;
+    float2 Tex : TEXCOORD;
 };
 
 float ShadowFactorDirectionalLight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_DIRECTIONAL
     return CalcShadowFactor_Basic(state, shadowAtlas, uvd);

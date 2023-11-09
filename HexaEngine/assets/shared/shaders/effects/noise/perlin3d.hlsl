@@ -41,11 +41,11 @@ float3 fade(float3 t)
 float cnoise(float3 P)
 {
     float3 Pi0 = floor(P); // Integer part for indexing
-    float3 Pi1 = Pi0 + float3(1.0); // Integer part + 1
+    float3 Pi1 = Pi0 + 1.0; // Integer part + 1
     Pi0 = mod289(Pi0);
     Pi1 = mod289(Pi1);
     float3 Pf0 = frac(P); // fracional part for interpolation
-    float3 Pf1 = Pf0 - float3(1.0); // fracional part - 1.0
+    float3 Pf1 = Pf0 - 1.0; // fracional part - 1.0
     float4 ix = float4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
     float4 iy = float4(Pi0.yy, Pi1.yy);
     float4 iz0 = Pi0.zzzz;
@@ -58,16 +58,16 @@ float cnoise(float3 P)
     float4 gx0 = ixy0 * (1.0 / 7.0);
     float4 gy0 = frac(floor(gx0) * (1.0 / 7.0)) - 0.5;
     gx0 = frac(gx0);
-    float4 gz0 = float4(0.5) - abs(gx0) - abs(gy0);
-    float4 sz0 = step(gz0, float4(0.0));
+    float4 gz0 = 0.5 - abs(gx0) - abs(gy0);
+    float4 sz0 = step(gz0, 0.0);
     gx0 -= sz0 * (step(0.0, gx0) - 0.5);
     gy0 -= sz0 * (step(0.0, gy0) - 0.5);
 
     float4 gx1 = ixy1 * (1.0 / 7.0);
     float4 gy1 = frac(floor(gx1) * (1.0 / 7.0)) - 0.5;
     gx1 = frac(gx1);
-    float4 gz1 = float4(0.5) - abs(gx1) - abs(gy1);
-    float4 sz1 = step(gz1, float4(0.0));
+    float4 gz1 = 0.5 - abs(gx1) - abs(gy1);
+    float4 sz1 = step(gz1, 0.0);
     gx1 -= sz1 * (step(0.0, gx1) - 0.5);
     gy1 -= sz1 * (step(0.0, gy1) - 0.5);
 
@@ -111,11 +111,11 @@ float cnoise(float3 P)
 float pnoise(float3 P, float3 rep)
 {
     float3 Pi0 = fmod(floor(P), rep); // Integer part, modulo period
-    float3 Pi1 = fmod(Pi0 + float3(1.0), rep); // Integer part + 1, mod period
+    float3 Pi1 = fmod(Pi0 + 1.0, rep); // Integer part + 1, mod period
     Pi0 = mod289(Pi0);
     Pi1 = mod289(Pi1);
     float3 Pf0 = frac(P); // fracional part for interpolation
-    float3 Pf1 = Pf0 - float3(1.0); // fracional part - 1.0
+    float3 Pf1 = Pf0 - 1.0; // fracional part - 1.0
     float4 ix = float4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
     float4 iy = float4(Pi0.yy, Pi1.yy);
     float4 iz0 = Pi0.zzzz;
@@ -128,16 +128,16 @@ float pnoise(float3 P, float3 rep)
     float4 gx0 = ixy0 * (1.0 / 7.0);
     float4 gy0 = frac(floor(gx0) * (1.0 / 7.0)) - 0.5;
     gx0 = frac(gx0);
-    float4 gz0 = float4(0.5) - abs(gx0) - abs(gy0);
-    float4 sz0 = step(gz0, float4(0.0));
+    float4 gz0 = 0.5 - abs(gx0) - abs(gy0);
+    float4 sz0 = step(gz0, 0.0);
     gx0 -= sz0 * (step(0.0, gx0) - 0.5);
     gy0 -= sz0 * (step(0.0, gy0) - 0.5);
 
     float4 gx1 = ixy1 * (1.0 / 7.0);
     float4 gy1 = frac(floor(gx1) * (1.0 / 7.0)) - 0.5;
     gx1 = frac(gx1);
-    float4 gz1 = float4(0.5) - abs(gx1) - abs(gy1);
-    float4 sz1 = step(gz1, float4(0.0));
+    float4 gz1 = 0.5 - abs(gx1) - abs(gy1);
+    float4 sz1 = step(gz1, 0.0);
     gx1 -= sz1 * (step(0.0, gx1) - 0.5);
     gy1 -= sz1 * (step(0.0, gy1) - 0.5);
 

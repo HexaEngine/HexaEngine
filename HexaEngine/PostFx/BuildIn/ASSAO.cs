@@ -9,7 +9,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.PostFx;
     using System.Numerics;
 
-    public class ASSAO : IEffect, IAmbientOcclusion
+    public class ASSAO : IAmbientOcclusion
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;

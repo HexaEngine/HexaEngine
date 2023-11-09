@@ -12,7 +12,7 @@ namespace HexaEngine.PostFx
 
         public bool Enabled { get; set; }
 
-        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
+        void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 

@@ -114,7 +114,7 @@ float SSCS(float3 position, float2 uv, float3 direction)
 
 float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return CalcShadowFactor_Basic(state, depthAtlas, uvd);
@@ -123,41 +123,46 @@ float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonS
 #endif
 }
 
-int CubeFaceFromDirection(float3 direction)
+// array of offset direction for sampling
+static const float3 gridSamplingDisk[20] =
 {
-    float3 absDirection = abs(direction);
-    int faceIndex = 0;
-
-    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
-    {
-        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
-    }
-    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
-    {
-        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
-    }
-    else
-    {
-        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
-    }
-
-    return faceIndex;
-}
+	float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
+	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
+	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
+	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
+};
 
 #define HARD_SHADOWS_POINTLIGHTS 1
 float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
 {
-    float3 light_to_pixelWS = position - light.position.xyz;
-    float depthValue = length(light_to_pixelWS) / light.range;
+	float3 lightDirection = position - light.position.xyz;
 
-    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
-    uvd.z = depthValue;
+	int face = GetPointLightFace(lightDirection);
+	float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
 
 #if HARD_SHADOWS_POINTLIGHTS
-    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
+	return CalcShadowFactor_Basic(state, depthAtlas, uvd);
 #else
-    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
+	if (uvd.z > 1.0f)
+		return 1.0;
+
+	float depth = uvd.z;
+
+	const float dx = 1.0f / data.size;
+
+	float percentLit = 0.0f;
+
+	[unroll]
+	for (int i = 0; i < 20; i++)
+	{
+        float3 L = lightDirection + gridSamplingDisk[i] * dx * data.softness;
+        int faceD = GetPointLightFace(L);
+        float2 uv = GetShadowAtlasUV(position, data.size, data.regions[faceD], data.views[faceD]);   
+		percentLit += depthAtlas.SampleCmpLevelZero(state, uv, depth).r;
+	}
+
+	return percentLit /= 20;
 #endif
 }
 
@@ -200,6 +205,20 @@ float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4
     return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
 #endif
 }
+
+float ContactShadowsSpotlight(float3 position, float2 uv, Light light)
+{
+    return SSCS(position, uv, light.direction.xyz);
+}
+
+float ContactShadowsPointLight(float3 position, float2 uv, Light light)
+{
+    float3 LN = light.position.xyz - position;
+	float distance = length(LN);
+	float3 L = normalize(LN);
+    return SSCS(position, uv, L);
+}
+
 
 #if CLUSTERED_DEFERRED
 float4 ComputeLightingPBR(VSOut input, float3 position, const uint tileIndex, GeometryAttributes attrs)
@@ -251,13 +270,12 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
 
         float shadowFactor = 1;
 
-        if (light.castsShadows)
+        bool castsShadows = GetBit(light.castsShadows, 0);
+        bool contactShadows = GetBit(light.castsShadows, 1);
+
+        if (castsShadows)
         {
-#if CLUSTERED_DEFERRED
-            ShadowData data = shadowData[lightIndex];
-#else
-            ShadowData data = shadowData[i];
-#endif
+            ShadowData data = shadowData[light.shadowMapIndex];
             switch (light.type)
             {
                 case POINT_LIGHT:
@@ -272,11 +290,26 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
             }
         }
 
+        if (contactShadows)
+        {
+            switch (light.type)
+            {
+                case POINT_LIGHT:
+                    shadowFactor *= ContactShadowsPointLight(position, input.Tex, light);
+                    break;
+                case SPOT_LIGHT:
+                    shadowFactor *= ContactShadowsSpotlight(position, input.Tex, light);
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    shadowFactor *= ContactShadowsSpotlight(position, input.Tex, light);
+                    break;
+            }
+        }
+
         Lo += L * shadowFactor;
     }
 
-    float ao = ssao.Sample(linearWrapSampler, input.Tex).r * attrs.ao;
-    return float4(Lo * ao, 1);
+    return float4(Lo, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET
@@ -287,7 +320,8 @@ float4 main(VSOut pixel) : SV_TARGET
     ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, linearWrapSampler, attrs);
 
 #if CLUSTERED_DEFERRED
-    uint tileIndex = GetClusterIndex(depth, camNear, camFar, screenDim, pixel.Pos);
+    uint tileIndex = GetClusterIndex(GetLinearDepth(depth), camNear, camFar, screenDim, float4(position, 1));
+
     return ComputeLightingPBR(pixel, position, tileIndex, attrs);
 #else
     return ComputeLightingPBR(pixel, position, attrs);

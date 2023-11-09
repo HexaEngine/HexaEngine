@@ -6,22 +6,32 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
+    /// <summary>
+    /// Post-processing effect for Fast Approximate Anti-Aliasing (FXAA).
+    /// </summary>
     public class FXAA : PostFxBase
     {
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
+        /// <inheritdoc/>
         public override string Name => "FXAA";
 
+        /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunAfter("ColorGrading")
-                .RunAfter("Grain")
-                .RunAfter("UserLUT");
+                    .RunAfter("ColorGrading")
+                    .RunAfter("Grain")
+                    .RunAfter("UserLUT");
+        }
 
+        /// <inheritdoc/>
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
@@ -30,6 +40,7 @@ namespace HexaEngine.Effects.BuildIn
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        /// <inheritdoc/>
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
@@ -50,6 +61,7 @@ namespace HexaEngine.Effects.BuildIn
             context.SetRenderTarget(null, null);
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
             pipeline.Dispose();

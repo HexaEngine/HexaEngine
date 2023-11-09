@@ -27,7 +27,7 @@
 
         public override string Name => "VelocityBuffer";
 
-        public override PostFxFlags Flags => PostFxFlags.NoOutput | PostFxFlags.NoInput;
+        public override PostFxFlags Flags => PostFxFlags.NoOutput | PostFxFlags.NoInput | PostFxFlags.Optional;
 
         public float Scale
         {
@@ -37,7 +37,7 @@
 
         #region Structs
 
-        public struct VelocityBufferParams
+        private struct VelocityBufferParams
         {
             public float Scale;
             public Vector3 Padding;
@@ -51,10 +51,15 @@
 
         #endregion Structs
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
+        {
+            builder.AddSource("VelocityBuffer");
+        }
+
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
-            builder.AddSource("VelocityBuffer");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");

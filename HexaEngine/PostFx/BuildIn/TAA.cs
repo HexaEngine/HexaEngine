@@ -58,7 +58,8 @@
             }
         }
 
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        /// <inheritdoc/>
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .AddBinding("VelocityBuffer")
@@ -71,7 +72,10 @@
                 .RunBefore("DepthOfField")
                 .RunBefore("ChromaticAberration")
                 .RunBefore("Bloom");
+        }
 
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
             this.creator = creator;
 
             pipeline = device.CreateGraphicsPipeline(new()

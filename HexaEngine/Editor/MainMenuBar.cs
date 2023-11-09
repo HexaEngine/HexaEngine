@@ -11,6 +11,8 @@
     using Hexa.NET.ImGui;
     using System;
     using System.Diagnostics;
+    using HexaEngine.Core;
+    using HexaEngine.Windows;
 
     public static class MainMenuBar
     {
@@ -244,6 +246,14 @@
                             progress = 1;
                             progressOverlay = "Reload Shaders Done";
                         }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                    }
+                    if (ImGui.MenuItem("Take Screenshot"))
+                    {
+                        var win = Application.MainWindow as Window;
+                        win?.Dispatcher.Invoke(() =>
+                        {
+                            win.Renderer.TakeScreenshot(win.Context, $"screenshot-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.png");
+                        });
                     }
                     if (ImGui.MenuItem("Clear Shader Cache"))
                     {

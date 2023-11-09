@@ -6,6 +6,12 @@
     using System.Text;
     using static Extensions.SdlErrorHandlingExtensions;
 
+    /// <summary>
+    /// Represents a generic delegate for handling joystick events.
+    /// </summary>
+    /// <typeparam name="TEventArgs">The type of event-specific data or argument.</typeparam>
+    /// <param name="sender">The object that raises the event.</param>
+    /// <param name="e">The event-specific data or argument.</param>
     public delegate void JoystickEventHandler<TEventArgs>(Joystick sender, TEventArgs e);
 
     /// <summary>

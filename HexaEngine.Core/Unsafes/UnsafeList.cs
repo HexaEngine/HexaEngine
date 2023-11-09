@@ -214,13 +214,18 @@
             }
         }
 
+        public void ShrinkToFit()
+        {
+            Capacity = size;
+        }
+
         public void Resize(uint newSize)
         {
             if (size == newSize)
             {
                 return;
             }
-            Capacity = newSize;
+            Grow(newSize);
             size = newSize;
         }
 
@@ -268,6 +273,16 @@
                 Memcpy(src, &pointer[size], capacity * sizeof(T), values.Length * sizeof(T));
             }
             size += (uint)values.Length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AppendRange(T* values, uint count)
+        {
+            Reserve(size + count);
+
+            Memcpy(values, &pointer[size], capacity * sizeof(T), count * sizeof(T));
+
+            size += count;
         }
 
         /// <summary>
@@ -447,6 +462,26 @@
         int IList<T>.IndexOf(T item)
         {
             return IndexOf(&item);
+        }
+
+        /// <summary>
+        /// Searches for the first occurrence of an element in the collection that matches the specified condition and returns its index.
+        /// </summary>
+        /// <param name="comparer">A function that defines the condition to search for an element.</param>
+        /// <returns>The index of the first element that matches the condition; otherwise, -1 if no match is found.</returns>
+        public int FirstIndexOf(Func<T, bool> comparer)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                var current = pointer[i];
+
+                if (comparer(current))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         /// <summary>

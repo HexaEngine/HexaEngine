@@ -27,6 +27,8 @@
         protected bool valid;
         protected volatile bool initialized;
 
+        
+
         public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
         {
             this.device = device;

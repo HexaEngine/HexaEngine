@@ -8,6 +8,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
+    using Silk.NET.Maths;
     using Silk.NET.SDL;
     using System;
     using System.Runtime.InteropServices;
@@ -23,6 +24,7 @@
 
         internal ComPtr<IDXGIFactory7> IDXGIFactory;
         internal ComPtr<IDXGIAdapter4> IDXGIAdapter;
+        internal ComPtr<IDXGIOutput6> IDXGIOutput;
         internal ComPtr<IDXGIDebug> IDXGIDebug;
 
         internal ComPtr<IDXGIInfoQueue> IDXGIInfoQueue;
@@ -43,7 +45,7 @@
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);
                 DXGI.GetDebugInterface1(0, out IDXGIInfoQueue);
 
-                InfoQueueFilter filter = new InfoQueueFilter();
+                InfoQueueFilter filter = new();
                 filter.DenyList.NumIDs = 1;
                 filter.DenyList.PIDList = (int*)AllocT(MessageID.SetprivatedataChangingparams);
                 IDXGIInfoQueue.AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
@@ -57,7 +59,8 @@
 
             DXGI.CreateDXGIFactory2(debug ? 0x01u : 0x00u, out IDXGIFactory);
 
-            IDXGIAdapter = GetHardwareAdapter();
+            IDXGIAdapter = GetHardwareAdapter(null);
+            IDXGIOutput = GetOutput(null);
             this.source = source;
             this.debug = debug;
         }
@@ -179,6 +182,7 @@
 
             Logger.Info("Backend: Using Graphics API: D3D11");
             Logger.Info($"Backend: Using Graphics Device: {name}");
+
             return new D3D11GraphicsDevice(this, debug);
         }
 
@@ -190,7 +194,7 @@
             {
                 Width = (uint)window.Width,
                 Height = (uint)window.Height,
-                Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
+                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
                 BufferCount = 3,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
@@ -209,8 +213,7 @@
             };
 
             ComPtr<IDXGISwapChain2> swapChain = default;
-            ComPtr<IDXGIOutput> output = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -224,8 +227,7 @@
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
             ComPtr<IDXGISwapChain2> swapChain = default;
-            ComPtr<IDXGIOutput> output = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -248,7 +250,7 @@
             {
                 Width = (uint)width,
                 Height = (uint)height,
-                Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
+                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
                 BufferCount = 3,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
@@ -266,8 +268,7 @@
             };
 
             ComPtr<IDXGISwapChain2> swapChain = default;
-            ComPtr<IDXGIOutput> output = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -281,17 +282,17 @@
             var Hwnd = info.Info.Win.Hwnd;
 
             SwapChainDesc1 desc = Helper.Convert(swapChainDescription);
+            desc.Format = ChooseSwapChainFormat(device.Device, desc.Format);
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
             ComPtr<IDXGISwapChain2> swapChain = default;
-            ComPtr<IDXGIOutput> output = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
-        private ComPtr<IDXGIAdapter4> GetHardwareAdapter()
+        private ComPtr<IDXGIAdapter4> GetHardwareAdapter(string? name)
         {
             ComPtr<IDXGIAdapter4> selected = null;
             for (uint adapterIndex = 0;
@@ -300,8 +301,16 @@
                 adapterIndex++)
             {
                 AdapterDesc1 desc;
-                adapter.GetDesc1(&desc);
+                adapter.GetDesc1(&desc).ThrowHResult();
                 gpus.Add(new(new(desc.Description), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, new(desc.AdapterLuid.Low, desc.AdapterLuid.High), desc.Flags));
+
+                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(desc.Description);
+
+                // select by adapter name (description)
+                if (name != null && nameSpan == name)
+                {
+                    return adapter;
+                }
 
                 if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                 {
@@ -318,12 +327,85 @@
             return selected;
         }
 
+        private ComPtr<IDXGIOutput6> GetOutput(string? name)
+        {
+            ComPtr<IDXGIOutput6> selected = null;
+            ComPtr<IDXGIOutput6> output = null;
+
+            for (uint outputIndex = 0;
+                (ResultCode)IDXGIAdapter.EnumOutputs(outputIndex, ref output) !=
+                ResultCode.DXGI_ERROR_NOT_FOUND;
+                outputIndex++)
+
+            {
+                OutputDesc1 desc;
+                output.GetDesc1(&desc).ThrowHResult();
+
+                // select the user chosen display by name.
+                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(desc.DeviceName);
+                if (name != null && nameSpan == name)
+                {
+                    return output;
+                }
+
+                // select primary monitor.
+                if (desc.DesktopCoordinates.Min == Vector2D<int>.Zero)
+                {
+                    selected = output;
+                }
+            }
+
+            return selected;
+        }
+
+        private static bool CheckSwapChainFormat(ComPtr<ID3D11Device5> device, Silk.NET.DXGI.Format target)
+        {
+            FormatSupport formatSupport;
+            device.CheckFormatSupport(target, (uint*)&formatSupport).ThrowHResult();
+            return formatSupport.HasFlag(FormatSupport.Display | FormatSupport.RenderTarget);
+        }
+
+        private static Silk.NET.DXGI.Format ChooseSwapChainFormat(ComPtr<ID3D11Device5> device, Silk.NET.DXGI.Format preferredFormat)
+        {
+            // Check if the preferred format is supported
+            if (CheckSwapChainFormat(device, preferredFormat))
+            {
+                // Use the preferred format
+                return preferredFormat;
+            }
+            else
+            {
+                // Fallback to B8G8R8A8_UNorm if the preferred format is not supported
+                return Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm;
+            }
+        }
+
+        private static Silk.NET.DXGI.Format AutoChooseSwapChainFormat(ComPtr<ID3D11Device5> device, ComPtr<IDXGIOutput6> output)
+        {
+            OutputDesc1 desc;
+            output.GetDesc1(&desc).ThrowHResult();
+
+            if (desc.ColorSpace == ColorSpaceType.RgbFullG2084NoneP2020)
+            {
+                return ChooseSwapChainFormat(device, Silk.NET.DXGI.Format.FormatR10G10B10A2Unorm);
+            }
+
+            if (desc.ColorSpace == ColorSpaceType.RgbFullG22NoneP709)
+            {
+                return ChooseSwapChainFormat(device, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm);
+            }
+
+            // If none of the preferred formats is supported, choose a fallback format
+            return Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 IDXGIInfoQueue.Release();
                 IDXGIDebug.Release();
+                IDXGIOutput.Release();
                 IDXGIAdapter.Release();
                 IDXGIFactory.Release();
                 DXGI.Dispose();

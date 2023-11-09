@@ -17,6 +17,8 @@
 
         void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera camera);
 
+        void TakeScreenshot(IGraphicsContext context, string path);
+
         void DrawSettings();
     }
 }

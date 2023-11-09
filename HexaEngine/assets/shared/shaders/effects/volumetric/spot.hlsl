@@ -3,28 +3,35 @@
 #include "../../shadow.hlsl"
 #include "../../light.hlsl"
 
-Texture2D<float> depthTx : register(t2);
-Texture2D shadowAtlas : register(t4);
+Texture2D<float> depthTx : register(t0);
+Texture2D shadowAtlas : register(t1);
 
-SamplerState linear_clamp_sampler;
-SamplerComparisonState shadow_sampler;
+SamplerState linear_clamp_sampler : register(s0);
+SamplerComparisonState shadow_sampler : register(s1);
 
-cbuffer LightBuffer
+struct VolumetricSpot
 {
-    Light currentLight;
+    Light light;
     ShadowData shadowData;
-    float padd;
+    float volumetricStrength;
+};
+
+StructuredBuffer<VolumetricSpot> spotlights : register(t2);
+
+cbuffer LightBuffer : register(b0)
+{
+    int count;
 };
 
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
-    float2 Tex : TEX;
+    float2 Tex : TEXCOORD;
 };
 
 float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return CalcShadowFactor_Basic(state, shadowAtlas, uvd);
@@ -35,6 +42,10 @@ float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonS
 
 float4 main(VertexOut input) : SV_TARGET
 {
+
+    Light currentLight = spotlights[0].light;
+    ShadowData shadowData = spotlights[0].shadowData;
+    float volumetricStrength = spotlights[0].volumetricStrength;
      //float2 ScreenCoord = input.pos2D.xy / input.pos2D.w * float2(0.5f, -0.5f) + 0.5f;
     float depth = max(input.PosH.z, depthTx.SampleLevel(linear_clamp_sampler, input.Tex, 2));
     float3 P = GetPositionVS(input.Tex, depth);
@@ -86,5 +97,5 @@ float4 main(VertexOut input) : SV_TARGET
         P = P + V * stepSize;
     }
     accumulation /= sampleCount;
-    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
+    return max(0, float4(accumulation * currentLight.color.rgb * volumetricStrength, 1));
 }

@@ -7,7 +7,7 @@
     using HexaEngine.Scenes.Managers;
 
     [EditorGameObject<Camera>("Camera")]
-    public class Camera : GameObject, IView
+    public class Camera : GameObject
     {
         public new CameraTransform Transform;
 
@@ -55,8 +55,6 @@
                 return;
             Transform.PositionRotation = current.Transform.PositionRotation;
         }
-
-        CameraTransform IView.Transform => Transform;
 
         public override void Uninitialize()
         {

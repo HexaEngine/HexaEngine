@@ -3,6 +3,9 @@
     using HexaEngine.Core.Debugging;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// A manager class responsible for managing graphics and compute pipelines in the application.
+    /// </summary>
     public static class PipelineManager
     {
         private static readonly List<IGraphicsPipeline> graphicsPipelines = new();
@@ -11,17 +14,33 @@
         private static IGraphicsDevice device;
 #nullable enable
 
+        /// <summary>
+        /// An event triggered when <see cref="Recompile"/> is called.
+        /// </summary>
         public static event Action? OnRecompile;
 
+        /// <summary>
+        /// Gets a list of registered graphics pipelines.
+        /// </summary>
         public static IReadOnlyList<IGraphicsPipeline> GraphicsPipelines => graphicsPipelines;
 
+        /// <summary>
+        /// Gets a list of registered compute pipelines.
+        /// </summary>
         public static IReadOnlyList<IComputePipeline> ComputePipelines => computePipelines;
 
+        /// <summary>
+        /// Initializes the pipeline manager with the provided graphics device.
+        /// </summary>
+        /// <param name="device">The graphics device to associate with the pipeline manager.</param>
         public static void Initialize(IGraphicsDevice device)
         {
             PipelineManager.device = device;
         }
 
+        /// <summary>
+        /// Recompiles all registered graphics and compute pipelines.
+        /// </summary>
         public static void Recompile()
         {
             lock (graphicsPipelines)
@@ -44,6 +63,10 @@
             }
         }
 
+        /// <summary>
+        /// Registers a graphics pipeline.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline to register.</param>
         public static void Register(IGraphicsPipeline pipeline)
         {
             lock (graphicsPipelines)
@@ -52,6 +75,10 @@
             }
         }
 
+        /// <summary>
+        /// Registers a compute pipeline.
+        /// </summary>
+        /// <param name="pipeline">The compute pipeline to register.</param>
         public static void Register(IComputePipeline pipeline)
         {
             lock (graphicsPipelines)
@@ -60,6 +87,10 @@
             }
         }
 
+        /// <summary>
+        /// Unregisters a graphics pipeline.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline to unregister.</param>
         public static void Unregister(IGraphicsPipeline pipeline)
         {
             lock (graphicsPipelines)
@@ -68,6 +99,10 @@
             }
         }
 
+        /// <summary>
+        /// Unregisters a compute pipeline.
+        /// </summary>
+        /// <param name="pipeline">The compute pipeline to unregister.</param>
         public static void Unregister(IComputePipeline pipeline)
         {
             lock (graphicsPipelines)

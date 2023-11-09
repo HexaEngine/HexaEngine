@@ -411,12 +411,12 @@
 
         public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, bool lazyInit = true)
         {
-            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description), depthStencilBuffers, lazyDepthStencilBuffers, lazyInit);
+            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, lazyDepthStencilBuffers, lazyInit);
         }
 
         public void UpdateDepthStencilBuffer(string name, DepthStencilBufferDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new DepthStencil(device, description), depthStencilBuffers);
+            UpdateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers);
         }
 
         public ResourceRef<DepthStencil> GetDepthStencilBuffer(string name)
@@ -426,12 +426,12 @@
 
         public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, bool lazyInit = true)
         {
-            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description), gBuffers, lazyGBuffers, lazyInit);
+            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, lazyGBuffers, lazyInit);
         }
 
         public void UpdateGBuffer(string name, GBufferDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new GBuffer(device, description), gBuffers);
+            UpdateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers);
         }
 
         public ResourceRef<GBuffer> GetGBuffer(string name)
@@ -441,12 +441,12 @@
 
         public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, bool lazyInit = true)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description), textures1d, lazyTextures1d, lazyInit);
+            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, lazyTextures1d, lazyInit);
         }
 
         public void UpdateTexture1D(string name, Texture1DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture1D(device, description), textures1d);
+            UpdateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d);
         }
 
         public ResourceRef<Texture1D> GetTexture1D(string name)
@@ -456,12 +456,12 @@
 
         public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, bool lazyInit = true)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description), textures2d, lazyTextures2d, lazyInit);
+            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, lazyTextures2d, lazyInit);
         }
 
         public void UpdateTexture2D(string name, Texture2DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture2D(device, description), textures2d);
+            UpdateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d);
         }
 
         public ResourceRef<Texture2D> GetTexture2D(string name)
@@ -471,12 +471,12 @@
 
         public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, bool lazyInit = true)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description), textures3d, lazyTextures3d, lazyInit);
+            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, lazyTextures3d, lazyInit);
         }
 
         public void UpdateTexture3D(string name, Texture3DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture3D(device, description), textures3d);
+            UpdateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d);
         }
 
         public ResourceRef<Texture3D> GetTexture3D(string name)
