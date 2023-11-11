@@ -106,6 +106,10 @@
 
         public unsafe ShadowData GetShadowData()
         {
+            if (!ShadowMapEnable)
+            {
+                return default;
+            }
             ShadowData data = default;
             data.Size = ShadowMapSize;
             data.Softness = 1;

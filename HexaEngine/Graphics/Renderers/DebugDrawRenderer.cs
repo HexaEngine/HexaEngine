@@ -77,6 +77,10 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
+#if DEBUG
+            context.BeginEvent("DebugDrawRenderer");
+#endif
+
             if (queue.VertexCount > vertexBufferSize)
             {
                 vertexBuffer.Dispose();
@@ -125,6 +129,19 @@ namespace HexaEngine.Rendering.Renderers
                     ioffset += cmd.IndexCount;
                 }
             }
+
+            context.SetGraphicsPipeline(null);
+            context.SetViewport(default);
+            context.SetVertexBuffer(null, 0, 0);
+            context.SetIndexBuffer(null, default, 0);
+            context.SetPrimitiveTopology(PrimitiveTopology.Undefined);
+            context.VSSetConstantBuffer(0, null);
+            context.PSSetSampler(0, null);
+            context.PSSetShaderResource(0, null);
+
+#if DEBUG
+            context.EndEvent();
+#endif
         }
 
         private void SetupRenderState(DebugDrawData data)
@@ -142,6 +159,9 @@ namespace HexaEngine.Rendering.Renderers
             {
                 return;
             }
+#if DEBUG
+            context.BeginEvent("DebugDrawRenderer");
+#endif
 
             if (data.TotalVertices > vertexBufferSize)
             {
@@ -195,6 +215,19 @@ namespace HexaEngine.Rendering.Renderers
                     ioffset += cmd.IndexCount;
                 }
             }
+
+            context.SetGraphicsPipeline(null);
+            context.SetViewport(default);
+            context.SetVertexBuffer(null, 0, 0);
+            context.SetIndexBuffer(null, default, 0);
+            context.SetPrimitiveTopology(PrimitiveTopology.Undefined);
+            context.VSSetConstantBuffer(0, null);
+            context.PSSetSampler(0, null);
+            context.PSSetShaderResource(0, null);
+
+#if DEBUG
+            context.EndEvent();
+#endif
         }
 
         protected virtual void Dispose(bool disposing)

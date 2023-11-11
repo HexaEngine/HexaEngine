@@ -127,14 +127,14 @@ bool bInsideScreen(in float2 vCoord)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-    float4 NormalMetallic = normalMetallicTx.Sample(linear_border_sampler, pin.Tex);
-    float metallic = NormalMetallic.a;
+    float4 NormalRoughness = normalMetallicTx.Sample(linear_border_sampler, pin.Tex);
+    float roughness = NormalRoughness.a;
     float4 scene_color = sceneTx.SampleLevel(linear_clamp_sampler, pin.Tex, 0);
 
-    if (metallic < 0.01f)
+    if (roughness > 0.8f)
         return scene_color;
 
-    float3 Normal = NormalMetallic.rgb;
+    float3 Normal = NormalRoughness.rgb;
     Normal = 2 * Normal - 1.0;
     Normal = normalize(mul(Normal, (float3x3) view));
 
@@ -156,5 +156,5 @@ float4 main(VertexOut pin) : SV_TARGET
 			);
 
     float3 reflectionColor = reflectionIntensity * sceneTx.SampleLevel(linear_clamp_sampler, vCoords.xy, 0).rgb;
-    return scene_color + metallic * max(0, float4(reflectionColor, 1.0f));
+    return scene_color + roughness * max(0, float4(reflectionColor, 1.0f));
 }

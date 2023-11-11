@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics.Effects;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
@@ -15,72 +13,58 @@
         private readonly SemaphoreSlim semaphore = new(1);
 
         private ShaderMacro[] macros;
+        private readonly PostProcessingContext postContext;
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = new();
-        private readonly List<Texture2D> buffers = new();
-        private readonly List<Texture2D> debugBuffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private readonly GraphResourceBuilder creator;
         private readonly PostFxGraphBuilder graphBuilder = new();
         private readonly bool debug;
+        private readonly bool forceDynamic;
         private int width;
         private int height;
 
-        private ICommandList? list;
+        private List<PostProcessingExecutionGroup> groups = new();
 
-        private bool isDirty = true;
+        private bool isDirty;
         private bool isInitialized = false;
         private volatile bool isReloading;
 
-        private readonly IGraphicsPipeline copy;
-
-        public Texture2D input;
-        public IRenderTargetView output;
-        public ITexture2D outputTex;
-        public Viewport viewport;
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false, bool forceDynamic = false)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
             this.creator = creator;
             this.debug = debug;
-            for (int i = 0; i < bufferCount; i++)
-            {
-                buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, lineNumber: i));
-            }
+            this.forceDynamic = forceDynamic;
+            postContext = new(device, Format.R16G16B16A16Float, width, height, bufferCount);
 
             deferredContext = device.CreateDeferredContext();
             macros = Array.Empty<ShaderMacro>();
-
-            copy = device.CreateGraphicsPipeline(new()
-            {
-                PixelShader = "effects/copy/ps.hlsl",
-                VertexShader = "quad.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
         }
 
-        public Texture2D Input { get => input; set => input = value; }
+        public Texture2D Input { get => postContext.Input; set => postContext.Input = value; }
 
-        public IRenderTargetView Output { get => output; set => output = value; }
+        public IRenderTargetView Output { get => postContext.Output; set => postContext.Output = value; }
 
-        public ITexture2D OutputTex { get => outputTex; set => outputTex = value; }
+        public ITexture2D OutputTex { get => postContext.OutputTex; set => postContext.OutputTex = value; }
 
         public Viewport Viewport
         {
-            get => viewport;
+            get => postContext.OutputViewport;
             set
             {
-                if (viewport == value)
+                if (postContext.OutputViewport == value)
                 {
                     return;
                 }
 
-                viewport = value;
+                postContext.OutputViewport = value;
                 Invalidate();
             }
         }
@@ -93,8 +77,6 @@
 
         public bool Debug => debug;
 
-        public IReadOnlyList<Texture2D> DebugTextures => debugBuffers;
-
         public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
             semaphore.Wait();
@@ -104,11 +86,6 @@
                 effects[i].OnEnabledChanged += OnEnabledChanged;
                 effects[i].OnReload += OnReload;
                 effects[i].PropertyChanged += PropertyChanged;
-
-                if (debug)
-                {
-                    debugBuffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
-                }
             }
 
             this.width = width;
@@ -130,6 +107,8 @@
                     effects[i].Initialize(device, creator, width, height, macros);
                 }
             }
+
+            UpdateGroups();
 
             isInitialized = true;
 
@@ -182,10 +161,6 @@
                 effect.OnEnabledChanged += OnEnabledChanged;
                 effect.OnReload += OnReload;
                 effect.PropertyChanged += PropertyChanged;
-                if (debug)
-                {
-                    debugBuffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
-                }
                 Reload();
             }
         }
@@ -203,21 +178,16 @@
                 effect.OnEnabledChanged -= OnEnabledChanged;
                 effect.OnReload -= OnReload;
                 effect.PropertyChanged -= PropertyChanged;
-                if (debug)
-                {
-                    var idx = debugBuffers.Count - 1;
-                    var buffer = debugBuffers[idx];
-                    debugBuffers.RemoveAt(idx);
-                    buffer.Dispose();
-                }
                 Reload();
             }
         }
 
         public void Invalidate()
         {
-            list?.Dispose();
-            list = null;
+            for (int i = 0; i < groups.Count; i++)
+            {
+                groups[i].Invalidate();
+            }
             isDirty = true;
         }
 
@@ -325,7 +295,7 @@
                 }
             });
 
-            Invalidate();
+            UpdateGroups();
 
             isReloading = false;
 
@@ -368,7 +338,7 @@
                     }
                 });
 
-                Invalidate();
+                UpdateGroups();
 
                 isReloading = false;
 
@@ -397,11 +367,7 @@
                     effectsSorted[i].Resize(width, height);
             }
 
-            for (int i = 0; i < buffers.Count; i++)
-            {
-                buffers[i].Dispose();
-                buffers[i] = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            }
+            postContext.Resize(device, width, height);
 
             Invalidate();
             semaphore.Release();
@@ -444,22 +410,29 @@
         {
             if (!enabled || isReloading)
             {
-                context.SetRenderTarget(output, null);
-                context.PSSetShaderResource(0, input.SRV);
-                context.SetViewport(viewport);
-                context.SetGraphicsPipeline(copy);
-                context.DrawInstanced(4, 1, 0, 0);
-                context.ClearState();
+                postContext.CopyInputToOutput(context);
                 return;
             }
 
-            if (input == null || output == null)
+            if (!postContext.CanDraw)
             {
                 return;
             }
 
             lock (_lock)
             {
+                postContext.Clear(context);
+
+                if (isDirty)
+                {
+                    postContext.Reset();
+                    for (int i = 0; i < groups.Count; i++)
+                    {
+                        groups[i].SetupInputOutputs(postContext);
+                    }
+                    isDirty = false;
+                }
+
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
@@ -472,91 +445,11 @@
                     profiler?.End(effect.Name);
                 }
 
-                if (isDirty)
+                for (int i = 0; i < groups.Count; i++)
                 {
-                    for (int i = 0; i < buffers.Count; i++)
-                    {
-                        var buffer = buffers[i];
-                        context.ClearRenderTargetView(buffer.RTV, default);
-                    }
-                    list?.Dispose();
-                    deferredContext.ClearState();
-                    int swapIndex = 0;
-                    Texture2D previous = input;
-                    for (int i = 0; i < effectsSorted.Count; i++)
-                    {
-                        var effect = effectsSorted[i];
-                        if (!effect.Enabled)
-                        {
-                            continue;
-                        }
-
-                        if ((effect.Flags & PostFxFlags.NoInput) == 0)
-                        {
-                            effect.SetInput(previous.SRV, input);
-                        }
-
-                        if ((effect.Flags & PostFxFlags.NoOutput) == 0)
-                        {
-                            var buffer = buffers[swapIndex];
-
-                            if (i != effectsSorted.Count - 1)
-                            {
-                                effect.SetOutput(buffer.RTV, buffer, buffers[swapIndex].Viewport);
-                            }
-                            else
-                            {
-                                effect.SetOutput(output, outputTex, viewport);
-                            }
-
-                            bool skipSwap = false;
-                            if (i < effectsSorted.Count - 1)
-                            {
-                                skipSwap = effectsSorted[i + 1].Flags == PostFxFlags.Inline;
-                            }
-
-                            if (!skipSwap)
-                            {
-                                previous = buffer;
-                                swapIndex++;
-                                if (swapIndex == buffers.Count)
-                                {
-                                    swapIndex = 0;
-                                }
-                            }
-                        }
-
-                        effect.Draw(deferredContext, creator);
-
-                        if (debug && (effect.Flags & PostFxFlags.NoOutput) == 0)
-                        {
-                            var debugBuffer = debugBuffers[i];
-                            CopyTo(deferredContext, previous.SRV, debugBuffer.RTV, debugBuffer.Viewport);
-                        }
-                    }
-                    list = deferredContext.FinishCommandList(true);
-
-                    context.ExecuteCommandList(list, false);
-                    isDirty = false;
-                }
-                else
-                {
-                    context.ExecuteCommandList(list, false);
+                    groups[i].Execute(context, deferredContext, creator);
                 }
             }
-        }
-
-        private void CopyTo(IGraphicsContext context, IShaderResourceView from, IRenderTargetView to, Viewport viewport)
-        {
-            context.SetRenderTarget(to, null);
-            context.SetViewport(viewport);
-            context.PSSetShaderResource(0, from);
-            context.SetGraphicsPipeline(copy);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
-            context.SetRenderTarget(null, null);
         }
 
         private void Sort()
@@ -565,6 +458,52 @@
             {
                 graphBuilder.Build(effectsSorted);
             }
+        }
+
+        private void UpdateGroups()
+        {
+            lock (_lock)
+            {
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    groups[i].Dispose();
+                }
+                groups.Clear();
+            }
+
+            if (effectsSorted.Count == 0)
+            {
+                return;
+            }
+
+            lock (_lock)
+            {
+                IPostFx first = effectsSorted[0];
+                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || forceDynamic, false);
+                group.Passes.Add(first);
+                groups.Add(group);
+                for (int i = 1; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    var isDynamic = effect.Flags.HasFlag(PostFxFlags.Dynamic) || forceDynamic;
+
+                    if (group.IsDynamic != isDynamic)
+                    {
+                        var tmp = group;
+                        group = new(isDynamic, false);
+                        tmp.Next = group;
+                        groups.Add(group);
+                    }
+
+                    group.Passes.Add(effect);
+                }
+
+                var last = groups[^1];
+                last.IsLast = true;
+                groups[^1] = last;
+            }
+
+            Invalidate();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -586,21 +525,14 @@
                 effects.Clear();
                 effectsSorted.Clear();
 
-                for (int i = 0; i < buffers.Count; i++)
+                for (int i = 0; i < groups.Count; i++)
                 {
-                    buffers[i].Dispose();
+                    groups[i].Dispose();
                 }
-                if (debug)
-                {
-                    for (int i = 0; i < debugBuffers.Count; i++)
-                    {
-                        debugBuffers[i].Dispose();
-                    }
-                }
-                buffers.Clear();
-                list?.Dispose();
+                groups.Clear();
+
+                postContext.Dispose();
                 deferredContext.Dispose();
-                copy.Dispose();
                 disposedValue = true;
             }
         }

@@ -38,7 +38,7 @@
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
-            chain = creator.CreateDepthMipChain("HiZBuffer", new((int)creator.Viewport.Width, (int)creator.Viewport.Height, 1, Format.R32Float));
+            chain = creator.CreateDepthMipChain("HiZBuffer", new((int)creator.Viewport.Width, (int)creator.Viewport.Height, 1, Math.Min(TextureHelper.ComputeMipLevels((int)creator.Viewport.Width, (int)creator.Viewport.Height), 8), Format.R32Float));
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -72,7 +72,7 @@
             {
                 profiler?.Begin($"HizDepthPass.{i}x");
                 profiler?.Begin($"HizDepthPass.{i}x.Update");
-                Vector2 texel = new(viewports[i].Width, viewports[i].Height);
+                Vector2 texel = new(1 / viewports[i].Width, 1 / viewports[i].Height);
                 context.Write(cbDownsample.Value, new Vector4(texel, 0, 0));
                 profiler?.End($"HizDepthPass.{i}x.Update");
                 context.CSSetUnorderedAccessView((void*)uavs[i].NativePointer);

@@ -5,17 +5,20 @@
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
-    using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Scenes;
-    using System;
     using System.Numerics;
 
     public class VolumetricLighting : PostFxBase
     {
-        private IGraphicsPipeline spotlightPipeline;
-        private StructuredBuffer<CBVolumetricSpot> spotlights;
+        private IGraphicsPipeline pipeline;
+
+        private ConstantBuffer<VolumetricLightingConstants> constantBuffer;
+        private StructuredBuffer<VolumetricLightData> volumetricLightBuffer;
+
+        private IGraphicsPipeline blurPipeline;
+        private ConstantBuffer<BlurParams> blurParams;
 
         private ISamplerState linearClampSampler;
         private ISamplerState shadowSampler;
@@ -24,19 +27,75 @@
 
         private ResourceRef<ShadowAtlas> shadowAtlas;
         private ResourceRef<DepthStencil> depth;
+        private ResourceRef<DepthMipChain> depthChain;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private VolumetricLightingQualityPreset qualityPreset = VolumetricLightingQualityPreset.Medium;
+        private int sampleCount;
+        private float density = 0.0015f;
+        private float rayleighCoefficient = 1.0f;
+        private float mieCoefficient = 1.0f;
+        private float mieG = 0.1f;
 
-        private struct CBVolumetricSpot
+        public enum VolumetricLightingQualityPreset
+        {
+            Custom = -1,
+            Low = 0,
+            Medium = 1,
+            High = 2,
+            Extreme = 3,
+        }
+
+        private struct VolumetricLightingConstants
+        {
+            public uint LightCount;
+            public UPoint3 Padd0;
+            public float Density;
+            public float RayleighCoefficient;
+            public float MieCoefficient;
+            public float MieG;
+
+            public VolumetricLightingConstants(uint lightCount)
+            {
+                LightCount = lightCount;
+                Padd0 = default;
+                Density = 0.0015f;
+                RayleighCoefficient = 1f;
+                MieCoefficient = 1f;
+                MieG = 0.1f;
+            }
+
+            public VolumetricLightingConstants(uint lightCount, float density, float rayleighCoefficient, float mieCoefficient, float mieG)
+            {
+                LightCount = lightCount;
+                Padd0 = default;
+                Density = density;
+                RayleighCoefficient = rayleighCoefficient;
+                MieCoefficient = mieCoefficient;
+                MieG = mieG;
+            }
+        }
+
+        private struct VolumetricLightData
         {
             public LightData Light;
-            public ShadowData ShadowData;
             public float VolumetricStrength;
 
-            public CBVolumetricSpot(LightData light, ShadowData shadowData, float volumetricStrength)
+            public VolumetricLightData(LightData light, float volumetricStrength)
             {
                 Light = light;
-                ShadowData = shadowData;
                 VolumetricStrength = volumetricStrength;
+            }
+        }
+
+        private struct BlurParams
+        {
+            public Vector2 ScreenSize;
+            public Vector2 SourceSize;
+
+            public BlurParams(Vector2 screenSize, Vector2 sourceSize)
+            {
+                ScreenSize = screenSize;
+                SourceSize = sourceSize;
             }
         }
 
@@ -45,6 +104,49 @@
 
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
+
+        public VolumetricLightingQualityPreset QualityPreset
+        {
+            get => qualityPreset;
+            set => NotifyPropertyChangedAndSetAndReload(ref qualityPreset, value);
+        }
+
+        public int SampleCount
+        {
+            get => sampleCount;
+            set
+            {
+                NotifyPropertyChangedAndSet(ref sampleCount, value);
+                if (qualityPreset == VolumetricLightingQualityPreset.Custom)
+                {
+                    NotifyReload();
+                }
+            }
+        }
+
+        public float Density
+        {
+            get => density;
+            set => NotifyPropertyChangedAndSet(ref density, value);
+        }
+
+        public float RayleighCoefficient
+        {
+            get => rayleighCoefficient;
+            set => NotifyPropertyChangedAndSet(ref rayleighCoefficient, value);
+        }
+
+        public float MieCoefficient
+        {
+            get => mieCoefficient;
+            set => NotifyPropertyChangedAndSet(ref mieCoefficient, value);
+        }
+
+        public float MieG
+        {
+            get => mieG;
+            set => NotifyPropertyChangedAndSet(ref mieG, value);
+        }
 
         /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)
@@ -67,20 +169,39 @@
         {
             shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            depthChain = creator.GetDepthMipChain("HiZBuffer");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
-            spotlightPipeline = device.CreateGraphicsPipeline(new()
+            List<ShaderMacro> shaderMacros = new(macros)
+            {
+                new("VOLUMETRIC_LIGHT_QUALITY", ((int)qualityPreset).ToString())
+            };
+            if (qualityPreset == VolumetricLightingQualityPreset.Custom)
+            {
+                shaderMacros.Add(new("SAMPLE_COUNT", sampleCount));
+            }
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/volumetric/spot.hlsl"
+                PixelShader = "effects/volumetric/ps.hlsl"
             },
-            GraphicsPipelineState.DefaultAdditiveFullscreen, macros);
+            GraphicsPipelineState.DefaultFullscreen, shaderMacros.ToArray());
+            constantBuffer = new(device, CpuAccessFlags.Write);
 
-            spotlights = new(device, CpuAccessFlags.Write);
+            blurPipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/volumetric/blur.hlsl"
+            },
+            GraphicsPipelineState.DefaultAdditiveFullscreen, shaderMacros.ToArray());
+            blurParams = new(device, CpuAccessFlags.Write);
+
+            volumetricLightBuffer = new(device, CpuAccessFlags.Write);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 
-            buffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            buffer = new(device, Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
         /// <inheritdoc/>
@@ -98,52 +219,47 @@
                 return;
             }
 
-            context.ClearRenderTargetView(buffer, default);
-
+            volumetricLightBuffer.ResetCounter();
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
-                if (!light.VolumetricsEnable || !light.ShadowMapEnable)
+                if (!light.VolumetricsEnable)
                 {
                     continue;
                 }
 
                 var lightData = lights.LightBuffer[i];
 
-                switch (light.LightType)
-                {
-                    case LightType.Point:
-                        break;
-
-                    case LightType.Spot:
-                        DrawSpotlightVolumetric(context, lightData, ((Spotlight)light).GetShadowData(), light.VolumetricsMultiplier);
-                        break;
-
-                    case LightType.Directional:
-                        break;
-                }
+                volumetricLightBuffer.Add(new(lightData, light.VolumetricsMultiplier));
             }
-        }
 
-        private void DrawSpotlightVolumetric(IGraphicsContext context, LightData light, ShadowData shadow, float strength)
-        {
-            context.SetRenderTarget(Output, null);
-            context.SetViewport(Viewport);
+            // early exit nothing to render
+            if (volumetricLightBuffer.Count == 0)
+            {
+                return;
+            }
 
-            spotlights.ResetCounter();
-            spotlights.Add(new(light, shadow, strength));
-            spotlights.Update(context);
+            // update buffers
+            volumetricLightBuffer.Update(context);
+            constantBuffer.Update(context, new(volumetricLightBuffer.Count, density, rayleighCoefficient, mieCoefficient, mieG));
 
+            // Volumetric pass
+
+            context.SetRenderTarget(buffer, null);
+            context.SetViewport(buffer.Viewport);
+
+            context.PSSetConstantBuffer(0, constantBuffer);
             context.PSSetConstantBuffer(1, camera.Value);
 
             context.PSSetShaderResource(0, depth.Value.SRV);
             context.PSSetShaderResource(1, shadowAtlas.Value.SRV);
-            context.PSSetShaderResource(2, spotlights.SRV);
+            context.PSSetShaderResource(3, volumetricLightBuffer.SRV);
+            context.PSSetShaderResource(4, lights.ShadowDataBuffer.SRV);
 
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetSampler(1, shadowSampler);
 
-            context.SetGraphicsPipeline(spotlightPipeline);
+            context.SetGraphicsPipeline(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
@@ -152,11 +268,35 @@
             context.PSSetSampler(0, null);
             context.PSSetSampler(1, null);
 
+            context.PSSetShaderResource(2, null);
+            context.PSSetShaderResource(3, null);
+            context.PSSetShaderResource(4, null);
+
+            context.PSSetConstantBuffer(0, null);
+            context.PSSetConstantBuffer(1, null);
+
+            // Blur Pass
+
+            blurParams.Update(context, new(Viewport.Size, buffer.Viewport.Size));
+
+            context.SetRenderTarget(Output, null);
+            context.SetViewport(Viewport);
+
+            context.PSSetConstantBuffer(0, blurParams);
+
+            context.PSSetShaderResource(0, depthChain.Value.SRV);
+            context.PSSetShaderResource(1, buffer);
+
+            context.SetGraphicsPipeline(blurPipeline);
+
+            context.DrawInstanced(4, 1, 0, 0);
+
+            context.SetGraphicsPipeline(null);
+
             context.PSSetShaderResource(0, null);
             context.PSSetShaderResource(1, null);
-            context.PSSetShaderResource(2, null);
 
-            context.PSSetConstantBuffer(1, null);
+            context.PSSetConstantBuffer(0, null);
 
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -165,8 +305,11 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            spotlightPipeline.Dispose();
-            spotlights.Dispose();
+            pipeline.Dispose();
+            blurPipeline.Dispose();
+            blurParams.Dispose();
+            constantBuffer.Dispose();
+            volumetricLightBuffer.Dispose();
             linearClampSampler.Dispose();
             shadowSampler.Dispose();
             buffer.Dispose();

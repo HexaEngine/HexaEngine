@@ -129,6 +129,9 @@
 		<None Update="assets\shared\shaders\cluster.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\compute\downsample\shader.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\compute\terrain\shader.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -180,6 +183,12 @@
 		<None Update="assets\shared\shaders\effects\volumetric\point.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\effects\volumetric\blur.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\volumetric\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\volumetric\spot.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -205,6 +214,9 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\text\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\dither.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\math.hlsl">
@@ -499,6 +511,9 @@
 		<None Update="assets\shared\shaders\effects\assao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\shadowCommon.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\tools\image\brush\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -749,9 +764,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\filter\prefilter\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\irradiance.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\line\defs.hlsl">

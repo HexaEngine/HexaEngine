@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
+    using System.Diagnostics;
     using System.Numerics;
 
     /// <summary>
@@ -700,5 +701,16 @@
         /// <param name="color">The color value to clear the unordered access view with.</param>
         /// <param name="rect">The rectangular region to clear in the unordered access view.</param>
         void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect);
+
+        /// <summary>
+        /// Marks the beginning of a section of event code.
+        /// </summary>
+        /// <param name="name">A string that contains the name of the event. The name is not relevant to the operating system.</param>
+        void BeginEvent(string name);
+
+        /// <summary>
+        /// Marks the end of a section of event code.
+        /// </summary>
+        void EndEvent();
     }
 }

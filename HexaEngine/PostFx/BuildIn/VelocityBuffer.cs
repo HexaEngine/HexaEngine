@@ -113,7 +113,6 @@
             paramsBuffer.Dispose();
             sampler.Dispose();
             creator.ReleaseResource("VelocityBuffer");
-            GC.SuppressFinalize(this);
         }
     }
 }

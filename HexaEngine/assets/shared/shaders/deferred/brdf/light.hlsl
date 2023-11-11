@@ -126,7 +126,7 @@ float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonS
 // array of offset direction for sampling
 static const float3 gridSamplingDisk[20] =
 {
-	float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
+    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
 	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
 	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
 	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
@@ -136,13 +136,13 @@ static const float3 gridSamplingDisk[20] =
 #define HARD_SHADOWS_POINTLIGHTS 1
 float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
 {
-	float3 lightDirection = position - light.position.xyz;
+    float3 lightDirection = position - light.position.xyz;
 
-	int face = GetPointLightFace(lightDirection);
-	float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
+    int face = GetPointLightFace(lightDirection);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
 
 #if HARD_SHADOWS_POINTLIGHTS
-	return CalcShadowFactor_Basic(state, depthAtlas, uvd);
+    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
 #else
 	if (uvd.z > 1.0f)
 		return 1.0;
@@ -158,7 +158,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, Samp
 	{
         float3 L = lightDirection + gridSamplingDisk[i] * dx * data.softness;
         int faceD = GetPointLightFace(L);
-        float2 uv = GetShadowAtlasUV(position, data.size, data.regions[faceD], data.views[faceD]);   
+        float2 uv = GetShadowAtlasUV(position, data.size, data.regions[faceD], data.views[faceD]);
 		percentLit += depthAtlas.SampleCmpLevelZero(state, uv, depth).r;
 	}
 
@@ -168,7 +168,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, Samp
 
 float ShadowFactorDirectionalLight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowUVD(position, data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_DIRECTIONAL
     return CalcShadowFactor_Basic(state, depthTex, uvd);
@@ -214,11 +214,10 @@ float ContactShadowsSpotlight(float3 position, float2 uv, Light light)
 float ContactShadowsPointLight(float3 position, float2 uv, Light light)
 {
     float3 LN = light.position.xyz - position;
-	float distance = length(LN);
-	float3 L = normalize(LN);
+    float distance = length(LN);
+    float3 L = normalize(LN);
     return SSCS(position, uv, L);
 }
-
 
 #if CLUSTERED_DEFERRED
 float4 ComputeLightingPBR(VSOut input, float3 position, const uint tileIndex, GeometryAttributes attrs)

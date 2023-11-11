@@ -17,6 +17,7 @@
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<TemporalNoiseParams> paramsBuffer;
 
+        private GraphResourceBuilder creator;
         private ResourceRef<Texture2D> Noise;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private new Viewport Viewport;
@@ -64,7 +65,7 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            const int noiseSize = 256;
+            this.creator = creator;
 
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
@@ -106,6 +107,8 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
+            paramsBuffer.Dispose();
+            creator.ReleaseResource("TemporalNoise");
         }
     }
 }

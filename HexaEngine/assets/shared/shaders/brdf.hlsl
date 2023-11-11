@@ -1,3 +1,6 @@
+#ifndef BRDF_H_INCLUDED
+#define BRDF_H_INCLUDED
+
 #include "math.hlsl"
 
 #define SHADING_QUALITY_LOW 0
@@ -282,3 +285,5 @@ float diffuse(float roughness, float NoV, float NoL, float LoH)
     return Fd_Burley(roughness, NoV, NoL, LoH);
 #endif
 }
+
+#endif

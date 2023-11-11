@@ -511,5 +511,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public void BeginEvent(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndEvent()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

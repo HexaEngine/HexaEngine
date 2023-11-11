@@ -78,9 +78,15 @@
                     triggeredPasses.Remove(pass);
                 }
 
+#if DEBUG
+                context.BeginEvent(pass.Name);
+#endif
                 profiler?.Begin(pass.Name);
                 pass.Execute(context, resourceCreator, profiler);
                 profiler?.End(pass.Name);
+#if DEBUG
+                context.EndEvent();
+#endif
             }
             oneHitPassed = true;
         }

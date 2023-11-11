@@ -17,6 +17,57 @@ namespace HexaEngine.D3D11
     using System.Text;
     using static HexaEngine.D3D11.D3D11GraphicsDevice;
 
+    public unsafe class IncludeHandler
+    {
+        private readonly Stack<string> paths = new();
+        private string basePath;
+        private void** LpVtbl;
+
+        public IncludeHandler(string basepath)
+        {
+            basePath = basepath;
+            LpVtbl = (void**)Alloc(sizeof(nint) * 3);
+            LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(Open);
+            LpVtbl[1] = (void*)Marshal.GetFunctionPointerForDelegate(Close);
+        }
+
+        private unsafe int Open(ID3DInclude* pInclude, D3DIncludeType IncludeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
+        {
+            string fileName = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(pFileName));
+            string path = Path.Combine(basePath, fileName);
+            var data = FileSystem.ReadAllBytes(path);
+
+            paths.Push(basePath);
+            var dirName = Path.GetDirectoryName(path);
+            basePath = dirName;
+
+            *ppData = AllocCopyT(data);
+            *pBytes = (uint)data.Length;
+            return 0;
+        }
+
+        private unsafe int Close(ID3DInclude* pInclude, void* pData)
+        {
+            basePath = paths.Pop();
+            Free(pData);
+            return 0;
+        }
+
+        public void Release()
+        {
+            if (LpVtbl != null)
+            {
+                Free(LpVtbl);
+                LpVtbl = null;
+            }
+        }
+
+        public static implicit operator ID3DInclude(IncludeHandler handler)
+        {
+            return new(handler.LpVtbl);
+        }
+    }
+
     public class ShaderCompiler
     {
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
@@ -57,25 +108,14 @@ namespace HexaEngine.D3D11
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
 
-            // For more about that black magic visit https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/function-pointers
-            delegate*<ID3DInclude*, D3DIncludeType, byte*, void*, void**, uint*, int> pOpen = &Open;
-            delegate*<ID3DInclude*, void*, int> pClose = &Close;
-
-            void** callbacks = AllocArray(2);
-
-            callbacks[0] = pOpen;
-            callbacks[1] = pClose;
-
+            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
+            *include = handler;
 
-            include->LpVtbl = callbacks;
-
-            paths.TryAdd(include, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
             D3DCompiler.Compile(pSource, (nuint)Encoding.UTF8.GetByteCount(source) + 1, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
-            paths.Remove(include, out _);
 
-            Free(callbacks);
             Free(include);
+            handler.Release();
 
             Marshal.FreeCoTaskMem((nint)pSource);
             Marshal.FreeCoTaskMem((nint)pEntryPoint);

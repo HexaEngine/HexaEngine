@@ -7,6 +7,7 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.Maths;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -44,6 +45,16 @@
         public string? DebugName { get; set; } = string.Empty;
 
         public event EventHandler? OnDisposed;
+
+        public void BeginEvent(string name)
+        {
+            DeviceContext.BeginEventInt(name, 0);
+        }
+
+        public void EndEvent()
+        {
+            DeviceContext.EndEvent();
+        }
 
         public void SetGraphicsPipeline(IGraphicsPipeline? pipeline)
         {

@@ -1,3 +1,6 @@
+#ifndef CAMERA_H_INCLUDED
+#define CAMERA_H_INCLUDED
+
 cbuffer CameraBuffer : register(b1)
 {
     float4x4 view;
@@ -91,3 +94,5 @@ float2 GetScreenUV(float4 vertex_position)
 {
     return vertex_position.xy / screenDim;
 }
+
+#endif

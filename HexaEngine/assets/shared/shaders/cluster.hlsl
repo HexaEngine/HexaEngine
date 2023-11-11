@@ -1,3 +1,6 @@
+#ifndef CLUSTER_H_INCLUDED
+#define CLUSTER_H_INCLUDED
+
 #define CLUSTERS_X 16
 #define CLUSTERS_Y 9
 #define CLUSTERS_Z 24
@@ -42,3 +45,5 @@ uint GetClusterIndex(float depth, float camNear, float camFar, float2 screenDim,
     uint tileIndex = tiles.x + CLUSTERS_X * tiles.y + (CLUSTERS_X * CLUSTERS_Y) * tiles.z;
     return tileIndex;
 }
+
+#endif

@@ -1,101 +1,101 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadow.hlsl"
-#include "../../light.hlsl"
 
-Texture2D<float> depthTx : register(t2);
-Texture2D shadowAtlas : register(t5);
-
-SamplerState linear_clamp_sampler : register(s3);
-SamplerComparisonState shadow_sampler : register(s4);
-
-cbuffer LightBuffer
+float3 PointLightVolumetric(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    Light currentLight;
-    ShadowData shadowData;
-    float padd;
-};
-
-struct VertexOut
-{
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
-};
-
-int CubeFaceFromDirection(float3 direction)
-{
-    float3 absDirection = abs(direction);
-    int faceIndex = 0;
-
-    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
     {
-        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
+        camToFrag = normalize(camToFrag) * light.range;
     }
-    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    //Why this randomization of an initial step improves things? See
+    //Michal Valient, GDC 2014 which explains it in one picture.
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
-        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
-    }
-    else
-    {
-        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+        result += visibility;
+        x += deltaStep;
     }
 
-    return faceIndex;
+    // This is from Jake Ryan's code:
+    float d = result * length(position - GetCameraPos()) / SAMPLE_COUNT;
+    // float powder = 1.0 - exp(-d * 10.0);
+    float powder = 1.0; // no need for that powder term really
+    float beer = exp(-d * 0.01); // increasing exp const strengthens rays, but overexposes colors
+
+    return (1.0 - beer) * powder * light.color.rgb * volumetricStrength;
 }
 
-#define HARD_SHADOWS_POINTLIGHTS 1
-float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
+float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    float3 light_to_pixelWS = position - light.position.xyz;
-    float depthValue = length(light_to_pixelWS) / light.range;
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
+    {
+        camToFrag = normalize(camToFrag) * light.range;
+    }
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
 
-    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
-    uvd.z = depthValue;
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
 
-#if HARD_SHADOWS_POINTLIGHTS
-    return CalcShadowFactor_Basic(state, shadowAtlas, uvd);
-#else
-    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
-#endif
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float3 LN = light.position.xyz - x;
+        float distance = length(LN);
+        float3 L = normalize(LN);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+        result += visibility * PhaseFunction(-L, fragToCamNorm);
+        x += deltaStep;
+    }
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
 }
 
-float4 main(VertexOut input) : SV_TARGET
+float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    float depth = max(input.PosH.z, depthTx.SampleLevel(linear_clamp_sampler, input.Tex, 2));
-    float3 P = GetPositionVS(input.Tex, depth);
-    float3 V = float3(0.0f, 0.0f, 0.0f) - P;
-    float cameraDistance = length(V);
-    V /= cameraDistance;
-
-    float marchedDistance = 0;
-    float accumulation = 0;
-
-    float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
-    const uint sampleCount = 16;
-    const float stepSize = length(P - rayEnd) / sampleCount;
-    P = P + V * stepSize * dither(input.PosH.xy);
-	[loop]
-    for (uint i = 0; i < sampleCount; ++i)
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
     {
-        float3 L = currentLight.position.xyz - P; //position in view space
-        const float dist2 = dot(L, L);
-        const float dist = sqrt(dist2);
-        L /= dist;
-        float SpotFactor = dot(L, normalize(-currentLight.direction.xyz));
-        float spotCutOff = currentLight.outerCosine;
-        float attenuation = Attenuation(dist, currentLight.range);
-		[branch]
-        if (currentLight.castsShadows)
-        {
-            float shadow_factor = ShadowFactorPointLight(shadowData, currentLight, P, shadow_sampler);
-            attenuation *= shadow_factor;
-        }
-        //attenuation *= ExponentialFog(cameraDistance - marchedDistance);
-        accumulation += attenuation;
-        marchedDistance += stepSize;
-        P = P + V * stepSize;
+        camToFrag = normalize(camToFrag) * light.range;
     }
-    accumulation /= sampleCount;
-    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float3 LN = light.position.xyz - x;
+        float distance = length(LN);
+        float3 L = normalize(LN);
+
+        float distanceAttenuation = exp(-density * distance);
+
+        float rayleighScattering = RayleighScattering(V, L);
+        float mieScattering = MieScattering(V, L);
+        float scatteringContribution = rayleighScattering + mieScattering;
+
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+
+        result += visibility * distanceAttenuation * scatteringContribution;
+        x += deltaStep;
+    }
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
 }

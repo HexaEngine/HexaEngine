@@ -1,81 +1,96 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadow.hlsl"
-#include "../../light.hlsl"
 
-Texture2D<float> depthTx : register(t2);
-Texture2DArray cascadeShadowMaps : register(t6);
-
-SamplerState linear_clamp_sampler;
-SamplerComparisonState shadow_sampler;
-
-cbuffer LightBuffer
+float3 DirectionalLightCascadedVolumetric(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    Light currentLight;
-    ShadowData shadowData;
-    float padd;
-};
-
-struct VertexOut
-{
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
-};
-
-float4 main(VertexOut input) : SV_TARGET
-{
-    float depth = max(input.PosH.z, depthTx.SampleLevel(linear_clamp_sampler, input.Tex, 2));
-    float3 P = GetPositionVS(input.Tex, depth);
-    float3 V = float3(0.0f, 0.0f, 0.0f) - P;
-    float cameraDistance = length(V);
-    V /= cameraDistance;
-
-    float marchedDistance = 0;
-    float3 accumulation = 0;
-
-    const float3 L = currentLight.direction.xyz;
-    float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
-    const uint sampleCount = 16;
-    const float stepSize = length(P - rayEnd) / sampleCount;
-
-    P = P + V * stepSize * dither(input.PosH.xy);
-    float viewDepth = P.z;
-
-    float cascadePlaneDistances[8] = (float[8]) shadowData.cascades;
-
-	[loop]
-    for (uint j = 0; j < sampleCount; ++j)
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
     {
-        bool valid = false;
-
-        for (uint cascade = 0; cascade < shadowData.cascadeCount; ++cascade)
-        {
-            matrix light_space_matrix = shadowData.views[cascade];
-            float4 pos_shadow_map = mul(float4(P, 1.0), light_space_matrix);
-            float3 UVD = pos_shadow_map.xyz / pos_shadow_map.w;
-
-            UVD.xy = 0.5 * UVD.xy + 0.5;
-            UVD.y = 1.0 - UVD.y;
-            [branch]
-            if (viewDepth < cascadePlaneDistances[cascade])
-            {
-                if (IsSaturated(UVD.xy))
-                {
-                    float attenuation = CSMCalcShadowFactor_PCF3x3(shadow_sampler, cascadeShadowMaps, cascade, UVD, shadowData.size, shadowData.softness);
-                    //attenuation *= ExponentialFog(cameraDistance - marchedDistance);
-                    accumulation += attenuation;
-                }
-                marchedDistance += stepSize;
-                P = P + V * stepSize;
-                valid = true;
-                break;
-            }
-        }
-        if (!valid)
-        {
-            break;
-        }
+        camToFrag = normalize(camToFrag) * light.range;
     }
-    accumulation /= sampleCount;
-    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    //Why this randomization of an initial step improves things? See
+    //Michal Valient, GDC 2014 which explains it in one picture.
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+        result += visibility;
+        x += deltaStep;
+    }
+
+    // This is from Jake Ryan's code:
+    float d = result * length(position - GetCameraPos()) / SAMPLE_COUNT;
+    // float powder = 1.0 - exp(-d * 10.0);
+    float powder = 1.0; // no need for that powder term really
+    float beer = exp(-d * 0.01); // increasing exp const strengthens rays, but overexposes colors
+
+    return (1.0 - beer) * powder * light.color.rgb * volumetricStrength;
+}
+
+float3 DirectionalLightCascadedVolumetric2(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
+{
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
+    {
+        camToFrag = normalize(camToFrag) * light.range;
+    }
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+        result += visibility * PhaseFunction(light.direction.xyz, fragToCamNorm);
+        x += deltaStep;
+    }
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
+}
+
+float3 DirectionalLightCascadedVolumetric3(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
+{
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
+    {
+        camToFrag = normalize(camToFrag) * light.range;
+    }
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float3 L = normalize(-light.direction);
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float distanceAttenuation = exp(-density);
+
+        float rayleighScattering = RayleighScattering(V, L);
+        float mieScattering = MieScattering(V, L);
+        float scatteringContribution = rayleighScattering + mieScattering;
+
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+
+        result += visibility * distanceAttenuation * scatteringContribution;
+        x += deltaStep;
+    }
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
 }

@@ -1,3 +1,6 @@
+#ifndef MATH_H_INCLUDED
+#define MATH_H_INCLUDED
+
 //------------------------------------------------------------------------------
 // Common math
 //------------------------------------------------------------------------------
@@ -169,3 +172,5 @@ float interleavedGradientNoise(float2 w)
     const float3 m = float3(0.06711056, 0.00583715, 52.9829189);
     return frac(m.z * frac(dot(w, m.xy)));
 }
+
+#endif

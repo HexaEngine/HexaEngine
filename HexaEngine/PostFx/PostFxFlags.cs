@@ -3,6 +3,9 @@
     [Flags]
     public enum PostFxFlags
     {
+        /// <summary>
+        /// The Effect is a normal effect.
+        /// </summary>
         None = 0,
 
         /// <summary>
@@ -33,6 +36,7 @@
 
         /// <summary>
         /// The Effect has conditional render code.
+        /// Will be rendered in immediate mode.
         /// </summary>
         Dynamic = 32,
     }

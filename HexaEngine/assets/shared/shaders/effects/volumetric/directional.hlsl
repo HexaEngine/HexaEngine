@@ -1,76 +1,95 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadow.hlsl"
-#include "../../light.hlsl"
 
-Texture2D<float> depthTx : register(t2);
-Texture2D shadowAtlas : register(t4);
-
-SamplerState linear_clamp_sampler;
-SamplerComparisonState shadow_sampler;
-
-cbuffer LightBuffer
+float3 DirectionalLightVolumetric(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    Light currentLight;
-    ShadowData shadowData;
-    float padd;
-};
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
+    {
+        camToFrag = normalize(camToFrag) * light.range;
+    }
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
 
-struct VertexOut
-{
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
-};
+    //Why this randomization of an initial step improves things? See
+    //Michal Valient, GDC 2014 which explains it in one picture.
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
 
-float ShadowFactorDirectionalLight(ShadowData data, float3 position, SamplerComparisonState state)
-{
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
+        result += visibility;
+        x += deltaStep;
+    }
 
-#if HARD_SHADOWS_DIRECTIONAL
-    return CalcShadowFactor_Basic(state, shadowAtlas, uvd);
-#else
-    return CalcShadowFactor_PCF3x3(state, shadowAtlas, uvd, data.size, 1);
-#endif
+    // This is from Jake Ryan's code:
+    float d = result * length(position - GetCameraPos()) / SAMPLE_COUNT;
+    // float powder = 1.0 - exp(-d * 10.0);
+    float powder = 1.0; // no need for that powder term really
+    float beer = exp(-d * 0.01); // increasing exp const strengthens rays, but overexposes colors
+
+    return (1.0 - beer) * powder * light.color.rgb * volumetricStrength;
 }
 
-float4 main(VertexOut input) : SV_TARGET
+float3 DirectionalLightVolumetric2(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
-    if (currentLight.castsShadows == 0)
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
     {
-        return 0;
+        camToFrag = normalize(camToFrag) * light.range;
     }
-    float depth = max(input.PosH.z, depthTx.SampleLevel(linear_clamp_sampler, input.Tex, 2));
-    float3 P = GetPositionVS(input.Tex, depth);
-    float3 V = float3(0.0f, 0.0f, 0.0f) - P;
-    float cameraDistance = length(V);
-    V /= cameraDistance;
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
 
-    float marchedDistance = 0;
-    float3 accumulation = 0;
-    const float3 L = currentLight.direction.xyz;
-    float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
-    const uint sampleCount = 16;
-    const float stepSize = length(P - rayEnd) / sampleCount;
-    P = P + V * stepSize * dither(input.PosH.xy);
-	[loop]
-    for (uint i = 0; i < sampleCount; ++i)
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
-        float4 posShadowMap = mul(float4(P, 1.0), shadowData.views[0]);
-        float3 UVD = posShadowMap.xyz / posShadowMap.w;
-
-        UVD.xy = 0.5 * UVD.xy + 0.5;
-        UVD.y = 1.0 - UVD.y;
-
-        [branch]
-        if (IsSaturated(UVD.xy))
-        {
-            float attenuation = ShadowFactorDirectionalLight(shadowData, P, shadow_sampler);
-            //attenuation *= ExponentialFog(cameraDistance - marchedDistance);
-            accumulation += attenuation;
-        }
-        marchedDistance += stepSize;
-        P = P + V * stepSize;
+        float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
+        result += visibility * PhaseFunction(light.direction.xyz, fragToCamNorm);
+        x += deltaStep;
     }
-    accumulation /= sampleCount;
-    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
+}
+
+float3 DirectionalLightVolumetric3(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
+{
+    float3 camToFrag = position - GetCameraPos();
+    if (length(camToFrag) > light.range)
+    {
+        camToFrag = normalize(camToFrag) * light.range;
+    }
+    float3 deltaStep = camToFrag / (SAMPLE_COUNT + 1);
+    float3 fragToCamNorm = normalize(GetCameraPos() - position);
+    float3 x = GetCameraPos();
+
+    float3 L = normalize(-light.direction);
+
+    float ditherValue = dither(screenCoords.xy);
+    x += deltaStep * ditherValue;
+
+    float result = 0.0;
+    [unroll(SAMPLE_COUNT)]
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float distanceAttenuation = exp(-density);
+
+        float rayleighScattering = RayleighScattering(V, L);
+        float mieScattering = MieScattering(V, L);
+        float scatteringContribution = rayleighScattering + mieScattering;
+
+        float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
+        result += visibility * distanceAttenuation * scatteringContribution;
+        x += deltaStep;
+    }
+
+    return result / SAMPLE_COUNT * light.color.rgb * volumetricStrength;
 }

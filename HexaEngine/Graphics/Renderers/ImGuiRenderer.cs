@@ -74,6 +74,10 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
+#if DEBUG
+            context.BeginEvent("ImGuiRenderer");
+#endif
+
             IGraphicsContext ctx = context;
 
             // Create and grow vertex/index buffers if needed
@@ -208,6 +212,10 @@ namespace HexaEngine.Rendering.Renderers
             ctx.VSSetConstantBuffer(0, null);
             ctx.PSSetSampler(0, null);
             ctx.PSSetShaderResource(0, null);
+
+#if DEBUG
+            context.EndEvent();
+#endif
         }
 
         private static unsafe void CreateFontsTexture()

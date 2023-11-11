@@ -1,25 +1,28 @@
+#ifndef SHADOW_H_INCLUDED
+#define SHADOW_H_INCLUDED
+
 float SampleDepth(SamplerComparisonState shadow_sampler, Texture2D shadow_map, float4 scissorNormalized, float2 uv, float depth)
 {
-	uv = clamp(uv, scissorNormalized.xy, scissorNormalized.zw);
+    uv = clamp(uv, scissorNormalized.xy, scissorNormalized.zw);
 
-	return shadow_map.SampleCmpLevelZero(shadow_sampler, uv, saturate(depth));
+    return shadow_map.SampleCmpLevelZero(shadow_sampler, uv, saturate(depth));
 }
 
 float ShadowSample_PCF_Hard(SamplerComparisonState shadow_sampler, Texture2D shadow_map, const float4 scissorNormalized, const float4 shadowPosition)
 {
-	float3 position = shadowPosition.xyz * (1.0 / shadowPosition.w);
+    float3 position = shadowPosition.xyz * (1.0 / shadowPosition.w);
 	// note: shadowPosition.z is in the [1, 0] range (reversed Z)
-	return SampleDepth(shadow_sampler, shadow_map, scissorNormalized, position.xy, position.z);
+    return SampleDepth(shadow_sampler, shadow_map, scissorNormalized, position.xy, position.z);
 }
 
 float CalcShadowFactor_Basic(SamplerComparisonState shadow_sampler,
 	Texture2D shadow_map,
 	float3 uvd)
 {
-	if (uvd.z > 1.0f)
-		return 1.0;
+    if (uvd.z > 1.0f)
+        return 1.0;
 
-	return shadow_map.SampleCmpLevelZero(shadow_sampler,
+    return shadow_map.SampleCmpLevelZero(shadow_sampler,
 		uvd.xy, uvd.z).r;
 }
 
@@ -27,30 +30,30 @@ float CalcShadowFactor_PCF3x3(SamplerComparisonState samShadow,
 	Texture2D shadowMap,
 	float3 uvd, int smSize, float softness)
 {
-	if (uvd.z > 1.0f)
-		return 1.0;
+    if (uvd.z > 1.0f)
+        return 1.0;
 
-	float depth = uvd.z;
+    float depth = uvd.z;
 
-	const float dx = 1.0f / smSize;
+    const float dx = 1.0f / smSize;
 
-	float percentLit = 0.0f;
+    float percentLit = 0.0f;
 
-	float2 offsets[9] =
-	{
-		float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
 		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
 		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
-	};
+    };
 
 	[unroll]
-		for (int i = 0; i < 9; ++i)
-		{
-			offsets[i] = offsets[i] * float2(softness, softness);
-			percentLit += shadowMap.SampleCmpLevelZero(samShadow,
+    for (int i = 0; i < 9; ++i)
+    {
+        offsets[i] = offsets[i] * float2(softness, softness);
+        percentLit += shadowMap.SampleCmpLevelZero(samShadow,
 				uvd.xy + offsets[i], depth).r;
-		}
-	return percentLit /= 9.0f;
+    }
+    return percentLit /= 9.0f;
 }
 
 //CSM
@@ -60,7 +63,7 @@ float CSMCalcShadowFactor_Basic(SamplerComparisonState samShadow,
 	Texture2DArray shadowMap, uint index,
 	float3 uvd, int smSize, float softness)
 {
-	return shadowMap.SampleCmpLevelZero(samShadow,
+    return shadowMap.SampleCmpLevelZero(samShadow,
 		float3(uvd.xy, index), uvd.z).r;
 }
 
@@ -68,24 +71,24 @@ float CSMCalcShadowFactor_PCF3x3(SamplerComparisonState samShadow,
 	Texture2DArray shadowMap, uint index,
 	float3 uvd, int smSize, float softness)
 {
-	const float dx = 1.0f / smSize;
+    const float dx = 1.0f / smSize;
 
-	float percentLit = 0.0f;
+    float percentLit = 0.0f;
 
-	const float2 offsets[9] =
-	{
-		float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+    const float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
 		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
 		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
-	};
+    };
 
 	[unroll]
-		for (int i = 0; i < 9; ++i)
-		{
-			percentLit += shadowMap.SampleCmpLevelZero(samShadow,
+    for (int i = 0; i < 9; ++i)
+    {
+        percentLit += shadowMap.SampleCmpLevelZero(samShadow,
 				float3(uvd.xy + offsets[i], index), uvd.z).r;
-		}
-	return percentLit /= 9.0f;
+    }
+    return percentLit /= 9.0f;
 }
 
 //////////////////////////////////////////////////////////
@@ -94,62 +97,62 @@ float CalcShadowFactor_PCF5x5(SamplerComparisonState samShadow,
 	Texture2D shadowMap,
 	float3 shadowPosH, int smSize, float softness)
 {
-	if (shadowPosH.z > 1.0f)
-		return 1.0;
+    if (shadowPosH.z > 1.0f)
+        return 1.0;
 
-	float depth = shadowPosH.z;
+    float depth = shadowPosH.z;
 
-	const float dx = 1.0f / smSize;
+    const float dx = 1.0f / smSize;
 
-	float percentLit = 0.0f;
-	float2 offsets[25] =
-	{
-		float2(-2 * dx, -2 * dx), float2(-1 * dx, -2 * dx), float2(0 * dx, -2 * dx), float2(1 * dx, -2 * dx), float2(2 * dx, -2 * dx),
+    float percentLit = 0.0f;
+    float2 offsets[25] =
+    {
+        float2(-2 * dx, -2 * dx), float2(-1 * dx, -2 * dx), float2(0 * dx, -2 * dx), float2(1 * dx, -2 * dx), float2(2 * dx, -2 * dx),
 		float2(-2 * dx, -1 * dx), float2(-1 * dx, -1 * dx), float2(0 * dx, -1 * dx), float2(1 * dx, -1 * dx), float2(2 * dx, -1 * dx),
 		float2(-2 * dx, 0 * dx), float2(-1 * dx, 0 * dx), float2(0 * dx, 0 * dx), float2(1 * dx, 0 * dx), float2(2 * dx, 0 * dx),
 		float2(-2 * dx, 1 * dx), float2(-1 * dx, 1 * dx), float2(0 * dx, 1 * dx), float2(1 * dx, 1 * dx), float2(2 * dx, 1 * dx),
 		float2(-2 * dx, 2 * dx), float2(-1 * dx, 2 * dx), float2(0 * dx, 2 * dx), float2(1 * dx, 2 * dx), float2(2 * dx, 2 * dx),
-	};
+    };
 
 	[unroll]
-		for (int i = 0; i < 25; ++i)
-		{
-			offsets[i] = offsets[i] * float2(softness, softness);
-			percentLit += shadowMap.SampleCmpLevelZero(samShadow,
+    for (int i = 0; i < 25; ++i)
+    {
+        offsets[i] = offsets[i] * float2(softness, softness);
+        percentLit += shadowMap.SampleCmpLevelZero(samShadow,
 				shadowPosH.xy + offsets[i], depth).r;
-		}
+    }
 
-	return percentLit /= 25.0f;
+    return percentLit /= 25.0f;
 }
 
 float CalcShadowFactor_PCF7x7(SamplerComparisonState samShadow,
 	Texture2D shadowMap,
 	float3 shadowPosH, int smSize, float softness)
 {
-	if (shadowPosH.z > 1.0f)
-		return 1.0;
+    if (shadowPosH.z > 1.0f)
+        return 1.0;
 
-	float depth = shadowPosH.z;
+    float depth = shadowPosH.z;
 
-	const float dx = 1.0f / smSize;
+    const float dx = 1.0f / smSize;
 
-	float percentLit = 0.0f;
+    float percentLit = 0.0f;
 
 	[unroll]
-		for (int i = -3; i <= 3; ++i)
-		{
-			for (int j = -3; j <= 3; ++j)
-			{
-				percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + float2(i * dx * softness, j * dx * softness), depth).r;
-			}
-		}
+    for (int i = -3; i <= 3; ++i)
+    {
+        for (int j = -3; j <= 3; ++j)
+        {
+            percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + float2(i * dx * softness, j * dx * softness), depth).r;
+        }
+    }
 
-	return percentLit /= 49;
+    return percentLit /= 49;
 }
 
 static const float2 PoissonSamples[64] =
 {
-	float2(-0.5119625f, -0.4827938f),
+    float2(-0.5119625f, -0.4827938f),
 	float2(-0.2171264f, -0.4768726f),
 	float2(-0.7552931f, -0.2426507f),
 	float2(-0.7136765f, -0.4496614f),
@@ -219,22 +222,22 @@ float CalcShadowFactor_Poisson(SamplerComparisonState samShadow,
 	Texture2D shadowMap,
 	float3 shadowPosH, int smSize, float softness)
 {
-	if (shadowPosH.z > 1.0f)
-		return 1.0;
+    if (shadowPosH.z > 1.0f)
+        return 1.0;
 
-	float depth = shadowPosH.z;
+    float depth = shadowPosH.z;
 
-	const float dx = 1.0f / smSize;
+    const float dx = 1.0f / smSize;
 
-	float percentLit = 0.0f;
+    float percentLit = 0.0f;
 
 	[unroll]
-	for (int i = 0; i < 64; ++i)
-	{
-		percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + PoissonSamples[i] * float2(dx * softness, dx * softness), depth).r;
-	}
+    for (int i = 0; i < 64; ++i)
+    {
+        percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + PoissonSamples[i] * float2(dx * softness, dx * softness), depth).r;
+    }
 
-	return percentLit /= 64;
+    return percentLit /= 64;
 }
 
 ///////////////////////////////////		VSM/ESM/EVSM		///////////////////////////////////
@@ -465,3 +468,5 @@ float CalcShadowFactorPCSS(SamplerState pointSampler, SamplerComparisonState sha
 	// ------------------------
 	return PCF_Filter(shadowMap, shadowSampler, shadowCoords.xy, shadowCoords.z, filterRadiusUV);
 }*/
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef GEOMETRY_HLSL_INCLUDED
+#define GEOMETRY_HLSL_INCLUDED
 
 #ifndef VtxColor
 #define VtxColor 0
@@ -58,7 +60,7 @@ struct VertexInput
 #if VtxBitangent
     float3 bitangent : BINORMAL;
 #endif
-    
+
 #if VtxSkinned
     int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -150,3 +152,5 @@ struct PatchTess
     float EdgeTess[3] : SV_TessFactor;
     float InsideTess : SV_InsideTessFactor;
 };
+
+#endif

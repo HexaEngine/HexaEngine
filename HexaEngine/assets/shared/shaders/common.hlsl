@@ -1,3 +1,6 @@
+#ifndef COMMON_H_INCLUDED
+#define COMMON_H_INCLUDED
+
 bool IsSaturated(float value)
 {
     return value == saturate(value);
@@ -27,3 +30,5 @@ float ScreenFade(float2 uv)
     float2 fade = max(12 * abs(uv - 0.5) - 5, 0);
     return saturate(1 - dot(fade, fade));
 }
+
+#endif

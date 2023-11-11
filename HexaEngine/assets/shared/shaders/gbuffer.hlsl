@@ -1,6 +1,9 @@
+#ifndef GBUFFER_H_INCLUDED
+#define GBUFFER_H_INCLUDED
+
 struct GeometryData
 {
-	float4 GBufferA : SV_TARGET0;
+    float4 GBufferA : SV_TARGET0;
     float4 GBufferB : SV_TARGET1;
     float4 GBufferC : SV_TARGET2;
     float4 GBufferD : SV_TARGET3;
@@ -8,15 +11,15 @@ struct GeometryData
 
 struct GeometryAttributes
 {
-	float3 baseColor;
-	float3 normal;
+    float3 baseColor;
+    float3 normal;
     float3 emission;
     float3 emissionStrength;
     int materialID;
-	float roughness;
-	float metallic;
+    float roughness;
+    float metallic;
     float reflectance;
-	float ao;
+    float ao;
     float materialData;
 };
 
@@ -43,7 +46,7 @@ GeometryData PackGeometryData(
 	in float emissionStrength
 )
 {
-	GeometryData data;
+    GeometryData data;
     data.GBufferA.rgb = baseColor;
     data.GBufferA.a = materialID;
     data.GBufferB.xyz = PackNormal(normal);
@@ -54,7 +57,7 @@ GeometryData PackGeometryData(
     data.GBufferC.w = materialData;
     data.GBufferD.rgb = emission;
     data.GBufferD.a = emissionStrength;
-	return data;
+    return data;
 }
 
 void ExtractGeometryData(
@@ -71,8 +74,8 @@ void ExtractGeometryData(
     float4 c = GBufferC.Sample(state, tex);
     float4 d = GBufferD.Sample(state, tex);
 
-	attrs.baseColor = a.rgb;
-	attrs.materialID = a.a;
+    attrs.baseColor = a.rgb;
+    attrs.materialID = a.a;
     attrs.normal = UnpackNormal(b.xyz);
     attrs.roughness = b.w;
     attrs.metallic = c.x;
@@ -83,3 +86,4 @@ void ExtractGeometryData(
     attrs.emissionStrength = d.a;
 }
 
+#endif
