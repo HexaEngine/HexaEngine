@@ -129,9 +129,19 @@
         public static readonly RasterizerDescription Wireframe = new(CullMode.None, FillMode.Wireframe);
 
         /// <summary>
+        /// A built-in description with settings for applying depth bias.
+        /// </summary>
+        public static readonly RasterizerDescription CullNoneDepthBias = new(CullMode.None, FillMode.Solid, false, -1, 0, 1.0f, true, false, false, false);
+
+        /// <summary>
         /// A built-in description with settings for culling primitives with front-facing triangles, and applying depth bias.
         /// </summary>
         public static readonly RasterizerDescription CullFrontDepthBias = new(CullMode.Front, FillMode.Solid, false, -1, 0, 1.0f, true, false, false, false);
+
+        /// <summary>
+        /// A built-in description with settings for culling primitives with back-facing triangles, and applying depth bias.
+        /// </summary>
+        public static readonly RasterizerDescription CullBackDepthBias = new(CullMode.Back, FillMode.Solid, false, -1, 0, 1.0f, true, false, false, false);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RasterizerDescription"/> class.

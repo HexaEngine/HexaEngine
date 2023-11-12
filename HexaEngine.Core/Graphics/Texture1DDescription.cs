@@ -2,29 +2,56 @@
 {
     using System.Xml.Serialization;
 
+    /// <summary>
+    /// Represents the description of a 1D texture.
+    /// </summary>
     public struct Texture1DDescription
     {
+        /// <summary>
+        /// The width of the texture.
+        /// </summary>
         [XmlAttribute]
         public int Width;
 
+        /// <summary>
+        /// The number of mip levels in the texture.
+        /// </summary>
         [XmlAttribute]
         public int MipLevels;
 
+        /// <summary>
+        /// The number of textures in the array.
+        /// </summary>
         [XmlAttribute]
         public int ArraySize;
 
+        /// <summary>
+        /// The format of the texture.
+        /// </summary>
         [XmlAttribute]
         public Format Format;
 
+        /// <summary>
+        /// Specifies how the texture will be used.
+        /// </summary>
         [XmlAttribute]
         public Usage Usage;
 
+        /// <summary>
+        /// Flags that specify how the texture can be bound to the pipeline.
+        /// </summary>
         [XmlAttribute]
         public BindFlags BindFlags;
 
+        /// <summary>
+        /// Flags that specify how the CPU can access the resource.
+        /// </summary>
         [XmlAttribute]
         public CpuAccessFlags CPUAccessFlags;
 
+        /// <summary>
+        /// Miscellaneous flags for the resource.
+        /// </summary>
         [XmlAttribute]
         public ResourceMiscFlag MiscFlags;
 
@@ -35,9 +62,9 @@
         /// <param name="width">Texture width (in texels).</param>
         /// <param name="arraySize">Number of textures in the array.</param>
         /// <param name="mipLevels">The maximum number of mipmap levels in the texture.</param>
-        /// <param name="bindFlags">The <see cref="Direct3D11.BindFlags"/> for binding to pipeline stages.</param>
+        /// <param name="bindFlags">The <see cref="BindFlags"/> for binding to pipeline stages.</param>
         /// <param name="usage">Value that identifies how the texture is to be read from and written to.</param>
-        /// <param name="cpuAccessFlags">The <see cref="Direct3D11.CpuAccessFlags"/> to specify the types of CPU access allowed.</param>
+        /// <param name="cpuAccessFlags">The <see cref="CpuAccessFlags"/> to specify the types of CPU access allowed.</param>
         /// <param name="miscFlags">The <see cref="ResourceMiscFlag"/> that identify other, less common resource options. </param>
         public Texture1DDescription(
             Format format,

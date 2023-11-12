@@ -133,36 +133,44 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-#define HARD_SHADOWS_POINTLIGHTS 1
-float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
+#define HARD_SHADOWS_POINTLIGHTS 0
+float ShadowFactorPointLight(ShadowData data, Light light, float3 position, float viewDistance, SamplerComparisonState state)
 {
     float3 lightDirection = position - light.position.xyz;
 
-    int face = GetPointLightFace(lightDirection);
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
+    float currentDepth = length(lightDirection) / light.range;
+
+    if (currentDepth > 1.0f)
+        return 1.0;
+
+    const float bias = 0.005f;
 
 #if HARD_SHADOWS_POINTLIGHTS
-    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
+
+    int face = GetPointLightFace(lightDirection);
+    float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
+
+    float shadowDepth = depthAtlas.SampleLevel(linearClampSampler, uv.xy, 0);
+
+    float shadowFactor = (currentDepth - bias > shadowDepth) ? 1.0f : 0.0f;
+
+    return (1.0f - shadowFactor);
 #else
-	if (uvd.z > 1.0f)
-		return 1.0;
 
-	float depth = uvd.z;
+    float percentLit = 0.0f;
+    float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
 
-	const float dx = 1.0f / data.size;
+    for (int i = 0; i < 20; ++i)
+    {
+        float3 newPosition = position + gridSamplingDisk[i] * diskRadius;
+        lightDirection = newPosition - light.position.xyz;
+        int face = GetPointLightFace(lightDirection);
+        float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
+        float shadowDepth = depthAtlas.SampleLevel(linearClampSampler, uv.xy, 0);
+        percentLit += (currentDepth - bias > shadowDepth) ? 1.0f : 0.0f;
+    }
 
-	float percentLit = 0.0f;
-
-	[unroll]
-	for (int i = 0; i < 20; i++)
-	{
-        float3 L = lightDirection + gridSamplingDisk[i] * dx * data.softness;
-        int faceD = GetPointLightFace(L);
-        float2 uv = GetShadowAtlasUV(position, data.size, data.regions[faceD], data.views[faceD]);
-		percentLit += depthAtlas.SampleCmpLevelZero(state, uv, depth).r;
-	}
-
-	return percentLit /= 20;
+    return 1 - (percentLit / 20);
 #endif
 }
 
@@ -237,7 +245,8 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
     float metallic = attrs.metallic;
 
     float3 N = normalize(attrs.normal);
-    float3 V = normalize(GetCameraPos() - position);
+    float3 VN = GetCameraPos() - position;
+    float3 V = normalize(VN);
 
     float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
 
@@ -278,7 +287,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
             switch (light.type)
             {
                 case POINT_LIGHT:
-                    shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                    shadowFactor = ShadowFactorPointLight(data, light, position, length(VN), shadowSampler);
                     break;
                 case SPOT_LIGHT:
                     shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);

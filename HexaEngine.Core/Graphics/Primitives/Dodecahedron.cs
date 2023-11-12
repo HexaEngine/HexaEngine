@@ -10,12 +10,26 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Dodecahedron : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a dodecahedron primitive in 3D space.
+    /// </summary>
+    public sealed class Dodecahedron : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Dodecahedron"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
         public Dodecahedron(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the dodecahedron mesh with vertices and indices.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <returns>
+        /// A tuple containing the vertex buffer and optional index buffer of the dodecahedron mesh.
+        /// </returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateDodecahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
@@ -91,6 +105,13 @@
             new uint[] { 2, 3, 4, 0, 1 },
         };
 
+        /// <summary>
+        /// Generates vertices and indices for a dodecahedron mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the dodecahedron mesh.</param>
+        /// <param name="indexBuffer">The optional index buffer of the dodecahedron mesh.</param>
+        /// <param name="size">The size of the dodecahedron.</param>
         public static void CreateDodecahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[5 * 12];

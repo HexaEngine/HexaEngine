@@ -19,9 +19,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Cache"/> class with the specified cache size.
         /// </summary>
+        /// <param name="mode">The cache operation mode.</param>
         /// <param name="size">The maximum size of the cache in bytes.</param>
-        public Cache(long size = 65536)
+        public Cache(CacheMode mode = CacheMode.OnDemand, long size = 65536)
         {
+            this.mode = mode;
             this.size = free = size;
         }
 
@@ -78,21 +80,43 @@
         /// </summary>
         public readonly unsafe struct MemoryHandle
         {
+            /// <summary>
+            /// Gets a pointer to the allocated buffer.
+            /// </summary>
             public readonly byte* Data;
+
+            /// <summary>
+            /// Gets the size of the allocated buffer.
+            /// </summary>
             public readonly long Size;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MemoryHandle"/> struct with the specified data pointer and size.
+            /// </summary>
+            /// <param name="data">The pointer to the allocated buffer.</param>
+            /// <param name="size">The size of the allocated buffer.</param>
             internal MemoryHandle(byte* data, long size)
             {
                 Data = data;
                 Size = size;
             }
 
+            /// <summary>
+            /// Gets a <see cref="Span{T}"/> representation of the allocated buffer.
+            /// </summary>
             public readonly Span<byte> Span => new(Data, (int)Size);
 
+            /// <summary>
+            /// Gets a value indicating whether the memory handle is valid (non-null data pointer).
+            /// </summary>
             public readonly bool IsValid => Data != null;
 
+            /// <summary>
+            /// Gets a value indicating whether the memory handle is null (null data pointer).
+            /// </summary>
             public readonly bool IsNull => Data == null;
         }
+
 
         /// <summary>
         /// Gets a cache handle associated with the specified resource name.

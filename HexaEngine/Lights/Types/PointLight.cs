@@ -126,6 +126,7 @@
             context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);
             context.SetRenderTarget(null, atlasHandle.Atlas.DSV);
             context.SetViewport(viewport);
+
 #nullable enable
         }
 

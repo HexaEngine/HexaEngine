@@ -82,13 +82,4 @@
             Flags = flags;
         }
     }
-
-    public struct Output
-    {
-        public string Name;
-        public int Width;
-        public int Height;
-        public int RefreshRate;
-        public bool Primary;
-    }
 }

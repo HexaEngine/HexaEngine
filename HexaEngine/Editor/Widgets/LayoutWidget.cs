@@ -242,8 +242,8 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
                     if (!payload.IsNull)
                     {
-                        string id = *(UnsafeOldString*)payload.Data;
-                        var child = scene.FindByName(id);
+                        Guid id = *(Guid*)payload.Data;
+                        var child = scene.FindByGuid(id);
                         if (child != null)
                         {
                             scene.AddChild(child);

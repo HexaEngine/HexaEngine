@@ -27,22 +27,49 @@
 
         private static readonly ManualResetEventSlim initLock = new(false);
 
+        /// <summary>
+        /// Event raised when the file system has been initialized.
+        /// </summary>
         public static event Action? Initialized;
 
+        /// <summary>
+        /// Event raised when the file system has been refreshed.
+        /// </summary>
         public static event Action? Refreshed;
 
+        /// <summary>
+        /// Event raised when any file or directory in the monitored paths has changed.
+        /// </summary>
         public static event Action<FileSystemEventArgs>? Changed;
 
+        /// <summary>
+        /// Event raised when a file is created in the monitored paths.
+        /// </summary>
         public static event Action<FileSystemEventArgs>? FileCreated;
 
+        /// <summary>
+        /// Event raised when the content of a file is changed in the monitored paths.
+        /// </summary>
         public static event Action<FileSystemEventArgs>? FileChanged;
 
+        /// <summary>
+        /// Event raised when a file is deleted from the monitored paths.
+        /// </summary>
         public static event Action<FileSystemEventArgs>? FileDeleted;
 
+        /// <summary>
+        /// Event raised when a file is renamed in the monitored paths.
+        /// </summary>
         public static event Action<RenamedEventArgs>? FileRenamed;
 
+        /// <summary>
+        /// Event raised when a new source is added.
+        /// </summary>
         public static event Action<string>? SourceAdded;
 
+        /// <summary>
+        /// Event raised when a source is removed.
+        /// </summary>
         public static event Action<string>? SourceRemoved;
 
         /// <summary>
@@ -339,6 +366,13 @@
             return false;
         }
 
+        /// <summary>
+        /// Gets the asset associated with the specified asset path.
+        /// If the asset is not already loaded, it creates a new asset instance, adds it to the internal asset registry,
+        /// and increments the reference count.
+        /// </summary>
+        /// <param name="assetPath">The path of the asset to retrieve.</param>
+        /// <returns>The asset associated with the specified path.</returns>
         public static Asset GetAsset(string assetPath)
         {
             initLock.Wait();
@@ -402,6 +436,11 @@
             }
         }
 
+        /// <summary>
+        /// Calculates the CRC32 hash of the file located at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file for which to calculate the CRC32 hash.</param>
+        /// <returns>The CRC32 hash of the file.</returns>
         public static uint GetCrc32Hash(string path)
         {
             initLock.Wait();
@@ -436,6 +475,12 @@
             return path;
         }
 
+        /// <summary>
+        /// Tries to get the relative path of the specified path relative to the registered sources.
+        /// </summary>
+        /// <param name="path">The path for which to calculate the relative path.</param>
+        /// <param name="relativePath">When this method returns, contains the relative path, if the operation succeeded; otherwise, <c>null</c>.</param>
+        /// <returns><c>true</c> if the relative path was successfully calculated; otherwise, <c>false</c>.</returns>
         public static bool TryGetRelativePath(string path, [NotNullWhen(true)] out string? relativePath)
         {
             initLock.Wait();

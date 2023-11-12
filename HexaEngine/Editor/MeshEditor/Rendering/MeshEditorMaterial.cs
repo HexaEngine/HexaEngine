@@ -74,7 +74,7 @@
                 StencilRef = 0,
             }, inputElements, macros);
 
-            for (int i = 0; i < material.Textures.Length; i++)
+            for (int i = 0; i < material.Textures.Count; i++)
             {
                 var desc = material.Textures[i];
                 string path = Paths.CurrentTexturePath + desc.File;

@@ -3,6 +3,10 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents a constant buffer in graphics programming, which is a region of memory used to store constant data that can be accessed by shaders.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the constant buffer.</typeparam>
     public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T>, IBuffer where T : unmanaged
     {
         private readonly string dbgName;
@@ -12,12 +16,7 @@
         private T* items;
         private uint count;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
-        /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="length">The length.</param>
-        /// <param name="accessFlags">The access flags.</param>
+#nullable disable
         private ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
         {
             dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -40,13 +39,16 @@
                 _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
             };
         }
+#nullable restore
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with specified parameters.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="length">The length.</param>
-        /// <param name="accessFlags">The access flags.</param>
+        /// <param name="device">The graphics device used to create the constant buffer.</param>
+        /// <param name="length">The length of the constant buffer (number of elements of type <typeparamref name="T"/>).</param>
+        /// <param name="accessFlags">The CPU access flags determining how the buffer can be accessed by the CPU.</param>
+        /// <param name="filename">The name of the file where the constructor is called.</param>
+        /// <param name="lineNumber">The line number in the file where the constructor is called.</param>
         public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, length, filename, lineNumber)
         {
             buffer = device.CreateBuffer(items, length, description);
@@ -55,11 +57,13 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with the specified values.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="values">The values.</param>
-        /// <param name="accessFlags">The access flags.</param>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="values">The array of values to initialize the buffer with.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
+        /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
         public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, (uint)values.Length, filename, lineNumber)
         {
             fixed (T* src = values)
@@ -77,11 +81,13 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with a single value.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="value">The values.</param>
-        /// <param name="accessFlags">The access flags.</param>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="value">The value to initialize the buffer with.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
+        /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
         public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
         {
             count = 1;
@@ -98,11 +104,12 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with default values.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="accessFlags">The access flags.</param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
+        /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
         public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
         {
             buffer = device.CreateBuffer(items, 1, description);
@@ -111,11 +118,13 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with the specified CPU access flags and subresource update option.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="cpuAccessFlags">The access flags.</param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="cpuAccessFlags">The CPU access flags.</param>
+        /// <param name="allowSubresourceUpdate">Specifies whether subresource updates are allowed.</param>
+        /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
+        /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
         public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, bool allowSubresourceUpdate, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, cpuAccessFlags, 1, filename, lineNumber)
         {
             if (allowSubresourceUpdate)
@@ -128,6 +137,9 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Event that is triggered when the constant buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -142,13 +154,10 @@
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="T"/> at the specified index.
+        /// Gets or sets the element at the specified index in the constant buffer.
         /// </summary>
-        /// <_value>
-        /// The <see cref="T"/>.
-        /// </_value>
-        /// <param dbgName="index">The index.</param>
-        /// <returns></returns>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns>The element at the specified index.</returns>
         public T this[int index]
         {
             get { return items[index]; }
@@ -159,40 +168,54 @@
         }
 
         /// <summary>
-        /// Gets the buffer.
+        /// Gets the underlying buffer associated with the constant buffer.
         /// </summary>
-        /// <_value>
-        /// The buffer.
-        /// </_value>
         public IBuffer Buffer => buffer;
 
         /// <summary>
-        /// Gets the local buffer.
+        /// Gets a pointer to the first element in the constant buffer.
         /// </summary>
-        /// <_value>
-        /// The local buffer.
-        /// </_value>
         public T* Local => items;
 
+        /// <summary>
+        /// Gets a reference to the first element in the constant buffer.
+        /// </summary>
         public ref T Data => ref items[0];
 
+        /// <summary>
+        /// Gets the description of the constant buffer.
+        /// </summary>
         public BufferDescription Description => buffer.Description;
 
+        /// <summary>
+        /// Gets the length of the constant buffer (number of elements of type <typeparamref name="T"/>).
+        /// </summary>
         public int Length => buffer.Length;
 
+        /// <summary>
+        /// Gets the resource dimension of the constant buffer.
+        /// </summary>
         public ResourceDimension Dimension => buffer.Dimension;
 
+        /// <summary>
+        /// Gets the native pointer to the underlying data of the constant buffer.
+        /// </summary>
         public nint NativePointer => buffer.NativePointer;
 
+        /// <summary>
+        /// Gets or sets the debug name of the constant buffer.
+        /// </summary>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
+        /// <summary>
+        /// Gets a value indicating whether the constant buffer has been disposed.
+        /// </summary>
         public bool IsDisposed => buffer.IsDisposed;
 
         /// <summary>
-        /// Resizes the buffer.
+        /// Resizes the constant buffer to the specified length.
         /// </summary>
-        /// <param dbgName="device">The device.</param>
-        /// <param dbgName="length">The length.</param>
+        /// <param name="length">The new length of the constant buffer.</param>
         public void Resize(uint length)
         {
             var result = items;
@@ -206,6 +229,10 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Updates the constant buffer with the current data using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used to update the constant buffer.</param>
         public void Update(IGraphicsContext context)
         {
             if (description.Usage != Usage.Dynamic)
@@ -216,6 +243,11 @@
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
+        /// <summary>
+        /// Updates a single element in the constant buffer with the specified value using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used to update the constant buffer.</param>
+        /// <param name="value">The value to update the constant buffer with.</param>
         public void Update(IGraphicsContext context, T value)
         {
             *items = value;
@@ -227,6 +259,9 @@
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
+        /// <summary>
+        /// Disposes of the constant buffer and releases associated resources.
+        /// </summary>
         public void Dispose()
         {
             MemoryManager.Unregister(buffer);

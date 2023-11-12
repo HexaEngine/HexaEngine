@@ -5,56 +5,123 @@
     using System.Numerics;
     using System.Xml.Serialization;
 
+    /// <summary>
+    /// Describes the properties of a sampler state in a graphics API or framework.
+    /// </summary>
     public partial struct SamplerStateDescription : IEquatable<SamplerStateDescription>
     {
+        /// <summary>
+        /// The maximum allowed value for <see cref="MaxAnisotropy"/>.
+        /// </summary>
         public const int MaxMaxAnisotropy = unchecked(16);
 
+        /// <summary>
+        /// Gets or sets the filtering method to use.
+        /// </summary>
         [XmlAttribute]
         public Filter Filter = Filter.MinMagMipPoint;
 
+        /// <summary>
+        /// Gets or sets the texture addressing mode for the U coordinate axis.
+        /// </summary>
         [XmlAttribute]
         public TextureAddressMode AddressU = TextureAddressMode.Wrap;
 
+        /// <summary>
+        /// Gets or sets the texture addressing mode for the V coordinate axis.
+        /// </summary>
         [XmlAttribute]
         public TextureAddressMode AddressV = TextureAddressMode.Wrap;
 
+        /// <summary>
+        /// Gets or sets the texture addressing mode for the W coordinate axis.
+        /// </summary>
         [XmlAttribute]
         public TextureAddressMode AddressW = TextureAddressMode.Wrap;
 
+        /// <summary>
+        /// Gets or sets the bias to apply to mip level calculations.
+        /// </summary>
         [DefaultValue(0.0f)]
         [XmlAttribute]
         public float MipLODBias = 0;
 
+        /// <summary>
+        /// Gets or sets the maximum anisotropy value.
+        /// </summary>
         [DefaultValue(0)]
         [XmlAttribute]
         public int MaxAnisotropy = 0;
 
+        /// <summary>
+        /// Gets or sets the comparison function to use when comparing sampled data.
+        /// </summary>
         [DefaultValue(ComparisonFunction.Never)]
         [XmlAttribute]
         public ComparisonFunction ComparisonFunction = ComparisonFunction.Never;
 
+        /// <summary>
+        /// Gets or sets the border color for texture addressing mode <see cref="TextureAddressMode.Border"/>.
+        /// </summary>
         public Vector4 BorderColor = Vector4.Zero;
 
+        /// <summary>
+        /// Gets or sets the minimum level-of-detail value.
+        /// </summary>
         [DefaultValue(float.MinValue)]
         [XmlAttribute]
         public float MinLOD = float.MinValue;
 
+        /// <summary>
+        /// Gets or sets the maximum level-of-detail value.
+        /// </summary>
         [DefaultValue(float.MaxValue)]
         [XmlAttribute]
         public float MaxLOD = float.MaxValue;
 
+        /// <summary>
+        /// Predefined instance for point sampling with wrapping.
+        /// </summary>
         public static readonly SamplerStateDescription PointWrap = new(Filter.MinMagMipPoint, TextureAddressMode.Wrap);
+
+        /// <summary>
+        /// Predefined instance for point sampling with clamping.
+        /// </summary>
         public static readonly SamplerStateDescription PointClamp = new(Filter.MinMagMipPoint, TextureAddressMode.Clamp);
 
+        /// <summary>
+        /// Predefined instance for linear sampling with wrapping.
+        /// </summary>
         public static readonly SamplerStateDescription LinearWrap = new(Filter.MinMagMipLinear, TextureAddressMode.Wrap);
+
+        /// <summary>
+        /// Predefined instance for linear sampling with clamping.
+        /// </summary>
         public static readonly SamplerStateDescription LinearClamp = new(Filter.MinMagMipLinear, TextureAddressMode.Clamp);
+
+        /// <summary>
+        /// Predefined instance for linear sampling with a border color.
+        /// </summary>
         public static readonly SamplerStateDescription LinearBorder = new(Filter.MinMagMipLinear, TextureAddressMode.Border) { BorderColor = default };
 
+        /// <summary>
+        /// Predefined instance for anisotropic sampling with wrapping.
+        /// </summary>
         public static readonly SamplerStateDescription AnisotropicWrap = new(Filter.Anisotropic, TextureAddressMode.Wrap, 0.0f, MaxMaxAnisotropy);
+
+        /// <summary>
+        /// Predefined instance for anisotropic sampling with clamping.
+        /// </summary>
         public static readonly SamplerStateDescription AnisotropicClamp = new(Filter.Anisotropic, TextureAddressMode.Clamp, 0.0f, MaxMaxAnisotropy);
 
+        /// <summary>
+        /// Predefined instance for linear sampling with a border color and comparison function.
+        /// </summary>
         public static readonly SamplerStateDescription ComparisonLinearBorder = new(Filter.ComparisonMinMagMipLinear, TextureAddressMode.Border, 0, 0, ComparisonFunction.LessEqual, 0, float.MaxValue);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SamplerStateDescription"/> struct.
+        /// </summary>
         public SamplerStateDescription()
         {
         }
@@ -162,11 +229,13 @@
             MaxLOD = maxLOD;
         }
 
+        /// <inheritdoc/>
         public override readonly bool Equals(object? obj)
         {
             return obj is SamplerStateDescription description && Equals(description);
         }
 
+        /// <inheritdoc/>
         public readonly bool Equals(SamplerStateDescription other)
         {
             return Filter == other.Filter &&
@@ -181,6 +250,7 @@
                    MaxLOD == other.MaxLOD;
         }
 
+        /// <inheritdoc/>
         public override readonly int GetHashCode()
         {
             HashCode hash = new();
@@ -197,11 +267,27 @@
             return hash.ToHashCode();
         }
 
+        /// <summary>
+        /// Determines whether two <see cref="SamplerStateDescription"/> instances are equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="SamplerStateDescription"/> to compare.</param>
+        /// <param name="right">The second <see cref="SamplerStateDescription"/> to compare.</param>
+        /// <returns>
+        /// <see langword="true"/> if the specified instances are equal; otherwise, <see langword="false"/>.
+        /// </returns>
         public static bool operator ==(SamplerStateDescription left, SamplerStateDescription right)
         {
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Determines whether two <see cref="SamplerStateDescription"/> instances are not equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="SamplerStateDescription"/> to compare.</param>
+        /// <param name="right">The second <see cref="SamplerStateDescription"/> to compare.</param>
+        /// <returns>
+        /// <see langword="true"/> if the specified instances are not equal; otherwise, <see langword="false"/>.
+        /// </returns>
         public static bool operator !=(SamplerStateDescription left, SamplerStateDescription right)
         {
             return !(left == right);

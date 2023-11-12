@@ -9,9 +9,10 @@
     [Serializable]
     public class ObservableKeyValuePair<TKey, TValue> : INotifyPropertyChanged where TKey : notnull
     {
+#nullable disable
         private TKey key;
         private TValue value;
-
+#nullable restore
         /// <summary>
         /// Gets or sets the key of the key-value pair.
         /// </summary>

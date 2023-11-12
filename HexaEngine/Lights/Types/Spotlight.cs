@@ -102,29 +102,8 @@
             coords[0] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
 
             var mapping = ShadowAtlasAllocation.GetTextureCoordsMapping((int)atlasHandle.Atlas.Size, vp);
-        }
-
-        public unsafe ShadowData GetShadowData()
-        {
-            if (!ShadowMapEnable)
-            {
-                return default;
-            }
-            ShadowData data = default;
-            data.Size = ShadowMapSize;
-            data.Softness = 1;
-            var views = ShadowData.GetViews(&data);
-            var coords = ShadowData.GetAtlasCoords(&data);
 
             views[0] = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
-
-            float texel = 1.0f / atlasHandle.Atlas.Size;
-
-            var vp = atlasHandle.Allocation.GetViewport();
-            coords[0] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
-
-            var mapping = ShadowAtlasAllocation.GetTextureCoordsMapping((int)atlasHandle.Atlas.Size, vp);
-            return data;
         }
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer)

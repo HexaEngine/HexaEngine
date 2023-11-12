@@ -15,12 +15,19 @@
         private uint size;
         private uint capacity;
 
+        /// <summary>
+        /// Represents an enumerator for the elements in the <see cref="UnsafeList{T}"/>.
+        /// </summary>
         public struct Enumerator : IEnumerator<T>
         {
             private readonly T* pointer;
             private readonly uint size;
             private int currentIndex;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Enumerator"/> struct for the specified <see cref="UnsafeList{T}"/>.
+            /// </summary>
+            /// <param name="list">The <see cref="UnsafeList{T}"/> to enumerate.</param>
             internal Enumerator(UnsafeList<T> list)
             {
                 pointer = list.pointer;
@@ -28,15 +35,28 @@
                 currentIndex = -1;
             }
 
+            /// <summary>
+            /// Gets the element at the current position of the enumerator.
+            /// </summary>
             public T Current => pointer[currentIndex];
 
+            /// <summary>
+            /// Gets the element at the current position of the enumerator.
+            /// </summary>
             object IEnumerator.Current => Current;
 
+            /// <summary>
+            /// Disposes of the enumerator. Since the enumerator does not own resources, this method does nothing.
+            /// </summary>
             public readonly void Dispose()
             {
                 // Enumerator does not own resources, so nothing to dispose.
             }
 
+            /// <summary>
+            /// Moves the enumerator to the next element in the <see cref="UnsafeList{T}"/>.
+            /// </summary>
+            /// <returns><see langword="true"/> if the enumerator successfully moved to the next element; <see langword="false"/> if the enumerator has reached the end of the collection.</returns>
             public bool MoveNext()
             {
                 if (currentIndex < size - 1)
@@ -47,11 +67,15 @@
                 return false;
             }
 
+            /// <summary>
+            /// Resets the enumerator to its initial position, which is before the first element in the <see cref="UnsafeList{T}"/>.
+            /// </summary>
             public void Reset()
             {
-                currentIndex = 0;
+                currentIndex = -1;
             }
         }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnsafeList{T}"/> struct.
@@ -61,6 +85,10 @@
             Capacity = DefaultCapacity;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnsafeList{T}"/> class with the specified array of values.
+        /// </summary>
+        /// <param name="values">An array of values to initialize the list.</param>
         public UnsafeList(T[] values)
         {
             Capacity = (uint)values.Length;
@@ -81,6 +109,9 @@
         /// </summary>
         public readonly uint Size => size;
 
+        /// <summary>
+        /// Gets the number of elements in the list.
+        /// </summary>
         public readonly int Count => (int)size;
 
         readonly bool ICollection<T>.IsReadOnly => false;
@@ -90,10 +121,19 @@
         /// </summary>
         public readonly T* Data => pointer;
 
+        /// <summary>
+        /// Gets a value indicating whether the list is empty.
+        /// </summary>
         public readonly bool Empty => size == 0;
 
+        /// <summary>
+        /// Gets a pointer to the first element in the list.
+        /// </summary>
         public readonly T* Front => pointer;
 
+        /// <summary>
+        /// Gets a pointer to the last element in the list.
+        /// </summary>
         public readonly T* Back => &pointer[size - 1];
 
         /// <summary>
@@ -143,6 +183,11 @@
             set => pointer[index] = value;
         }
 
+        /// <summary>
+        /// Gets the element at the specified index, with bounds checking.
+        /// </summary>
+        /// <param name="index">The index of the element to retrieve.</param>
+        /// <returns>The element at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T At(uint index)
         {
@@ -151,6 +196,11 @@
             return this[index];
         }
 
+        /// <summary>
+        /// Gets the element at the specified index, with bounds checking.
+        /// </summary>
+        /// <param name="index">The index of the element to retrieve.</param>
+        /// <returns>The element at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T At(int index)
         {
@@ -159,15 +209,26 @@
             return this[index];
         }
 
+        /// <summary>
+        /// Gets a pointer to the element at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to retrieve.</param>
+        /// <returns>A pointer to the element at the specified index.</returns>
         public T* GetPointer(uint index)
         {
             return &pointer[index];
         }
 
+        /// <summary>
+        /// Gets a pointer to the element at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to retrieve.</param>
+        /// <returns>A pointer to the element at the specified index.</returns>
         public T* GetPointer(int index)
         {
             return &pointer[index];
         }
+
 
         /// <summary>
         /// Initializes the list with the default capacity.
@@ -214,11 +275,18 @@
             }
         }
 
+        /// <summary>
+        /// Reduces the vector's capacity to match its size.
+        /// </summary>
         public void ShrinkToFit()
         {
             Capacity = size;
         }
 
+        /// <summary>
+        /// Resizes the vector to the specified size. If the new size is larger than the current capacity, the capacity will be increased accordingly.
+        /// </summary>
+        /// <param name="newSize">The new size of the vector.</param>
         public void Resize(uint newSize)
         {
             if (size == newSize)
@@ -229,6 +297,9 @@
             size = newSize;
         }
 
+        /// <summary>
+        /// Sets all elements in the vector to their default values and resets the size to 0.
+        /// </summary>
         public readonly void Erase()
         {
             ZeroMemoryT(pointer, capacity);
@@ -246,18 +317,26 @@
             size++;
         }
 
+        /// <summary>
+        /// Adds an element to the end of the vector.
+        /// </summary>
+        /// <param name="item">The element to add to the vector.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
         {
             PushBack(item);
         }
 
+        /// <summary>
+        /// Removes the last element from the vector.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PopBack()
         {
             pointer[size - 1] = default;
             size--;
         }
+
 
         /// <summary>
         /// Adds a range of items to the list.
@@ -275,6 +354,11 @@
             size += (uint)values.Length;
         }
 
+        /// <summary>
+        /// Appends a range of elements to the end of the vector.
+        /// </summary>
+        /// <param name="values">A pointer to the array of elements to append.</param>
+        /// <param name="count">The number of elements to append.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendRange(T* values, uint count)
         {
@@ -284,6 +368,7 @@
 
             size += count;
         }
+
 
         /// <summary>
         /// Removes the specified item from the list.
@@ -492,6 +577,10 @@
             new Span<T>(pointer, (int)size).Reverse();
         }
 
+        /// <summary>
+        /// Moves the content of another <see cref="UnsafeList{T}"/> to this list, taking ownership of the memory.
+        /// </summary>
+        /// <param name="list">The list whose content will be moved to this list.</param>
         public void Move(UnsafeList<T> list)
         {
             Free(pointer);
@@ -500,7 +589,10 @@
             size = list.size;
         }
 
-        // Implement IEnumerable<T>
+        /// <summary>
+        /// Returns an enumerator that iterates through the elements of the <see cref="UnsafeList{T}"/>.
+        /// </summary>
+        /// <returns>An enumerator for the <see cref="UnsafeList{T}"/>.</returns>
         public readonly Enumerator GetEnumerator()
         {
             return new Enumerator(this);

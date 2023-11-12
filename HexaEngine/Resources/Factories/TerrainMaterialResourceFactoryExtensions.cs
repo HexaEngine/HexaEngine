@@ -28,7 +28,7 @@
                 terrainMaterial.TextureList[i]?.Dispose();
             }
             terrainMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 terrainMaterial.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
             }
@@ -50,7 +50,7 @@
                 terrainMaterial.TextureList[i]?.Dispose();
             }
             terrainMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 terrainMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
             }

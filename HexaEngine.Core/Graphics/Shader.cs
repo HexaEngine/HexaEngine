@@ -3,12 +3,26 @@
     using HexaEngine.Core.Unsafes;
     using System.Runtime.InteropServices;
 
+    /// <summary>
+    /// Represents a shader with its bytecode and length.
+    /// </summary>
     public unsafe struct Shader : IFreeable
     {
+        /// <summary>
+        /// Pointer to the bytecode of the shader.
+        /// </summary>
         public byte* Bytecode;
+
+        /// <summary>
+        /// Length of the shader bytecode.
+        /// </summary>
         public nuint Length;
 
-        public void CopyTo(Span<byte> span)
+        /// <summary>
+        /// Copies the shader bytecode to the provided <paramref name="span"/>.
+        /// </summary>
+        /// <param name="span">The span to which the bytecode will be copied.</param>
+        public readonly void CopyTo(Span<byte> span)
         {
             fixed (byte* ptr = span)
             {
@@ -16,7 +30,11 @@
             }
         }
 
-        public Shader* Clone()
+        /// <summary>
+        /// Creates a deep copy of the shader.
+        /// </summary>
+        /// <returns>A pointer to the cloned shader.</returns>
+        public readonly Shader* Clone()
         {
             Shader* result = AllocT<Shader>();
             result->Bytecode = AllocCopyT(Bytecode, (int)Length);
@@ -24,6 +42,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates a shader from the provided <paramref name="bytes"/>.
+        /// </summary>
+        /// <param name="bytes">The bytecode of the shader.</param>
+        /// <returns>A pointer to the created shader.</returns>
         public static Shader* CreateFrom(byte[] bytes)
         {
             Shader* result = AllocT<Shader>();
@@ -36,17 +59,30 @@
             return result;
         }
 
+        /// <summary>
+        /// Releases the allocated memory for the shader bytecode.
+        /// </summary>
         public void Release()
         {
             Marshal.FreeHGlobal((nint)Bytecode);
+            Bytecode = null;
+            Length = 0;
         }
 
-        public Span<byte> AsSpan()
+        /// <summary>
+        /// Gets a span that represents the shader bytecode.
+        /// </summary>
+        /// <returns>A span representing the shader bytecode.</returns>
+        public readonly Span<byte> AsSpan()
         {
             return new Span<byte>(Bytecode, (int)Length);
         }
 
-        public byte[] ToArray()
+        /// <summary>
+        /// Converts the shader bytecode to a byte array.
+        /// </summary>
+        /// <returns>A byte array representing the shader bytecode.</returns>
+        public readonly byte[] ToArray()
         {
             byte[] bytes = new byte[Length];
             fixed (byte* ptr = bytes)

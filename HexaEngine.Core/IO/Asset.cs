@@ -99,7 +99,6 @@
         /// <summary>
         /// Opens a virtual stream for reading the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
         public VirtualStream Open()
         {
@@ -114,7 +113,6 @@
         /// <summary>
         /// Opens a <see cref="StreamReader"/> for reading the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
         public StreamReader OpenRead()
         {
@@ -129,7 +127,6 @@
         /// <summary>
         /// Tries to open a virtual stream for reading the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to open.</param>
         /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
         public bool TryOpen([NotNullWhen(true)] out VirtualStream? stream)
@@ -147,7 +144,6 @@
         /// <summary>
         /// Reads all lines of the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of lines read from the file.</returns>
         public string[] ReadAllLines()
         {
@@ -162,7 +158,6 @@
         /// <summary>
         /// Reads all bytes of the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of bytes read from the file.</returns>
         public byte[] ReadAllBytes()
         {
@@ -176,7 +171,6 @@
         /// <summary>
         /// Reads the file at the specified path into a <see cref="FileBlob"/>.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
         public unsafe FileBlob ReadBlob()
         {
@@ -190,7 +184,6 @@
         /// <summary>
         /// Tries to read all lines of the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <param name="lines">When this method returns, contains an bundles of lines read from the file if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public bool TryReadAllLines([NotNullWhen(true)] out string[]? lines)
@@ -210,7 +203,6 @@
         /// <summary>
         /// Reads all text from the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <returns>The content of the file as a string.</returns>
         public string ReadAllText()
         {
@@ -225,7 +217,6 @@
         /// <summary>
         /// Tries to read all text from the file at the specified path.
         /// </summary>
-        /// <param name="path">The path of the file to read.</param>
         /// <param name="text">When this method returns, contains the content of the file as a string if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public bool TryReadAllText([NotNullWhen(true)] out string? text)
@@ -258,6 +249,10 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="Asset"/> instance and removes references.
+        /// </summary>
+        /// <param name="disposing">A flag indicating whether the method is being called from the explicit method.</param>  
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

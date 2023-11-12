@@ -7,12 +7,15 @@
     using System.Runtime.CompilerServices;
     using System.Text;
 
+    /// <summary>
+    /// Provides extension methods for working with <see cref="Span{T}"/> and <see cref="ReadOnlySpan{T}"/>.
+    /// </summary>
     public static class SpanExtensions
     {
         /// <summary>
-        /// Reads a string from the specified <see cref="ReadOnlySpan{byte}"/> using the given encoding and endianness.
+        /// Reads a string from the specified <see cref="ReadOnlySpan{T}"/> using the given encoding and endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="encoding">The encoding to use for string decoding.</param>
         /// <param name="str">The output string containing the decoded value.</param>
         /// <param name="endianness">The endianness to use for reading the string length.</param>
@@ -34,9 +37,9 @@
         }
 
         /// <summary>
-        /// Reads a string from the specified <see cref="Span{byte}"/> using the given encoding and endianness.
+        /// Reads a string from the specified <see cref="Span{T}"/> using the given encoding and endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="encoding">The encoding to use for string decoding.</param>
         /// <param name="str">The output string containing the decoded value.</param>
         /// <param name="endianness">The endianness to use for reading the string length.</param>
@@ -58,10 +61,10 @@
         }
 
         /// <summary>
-        /// Writes a string to the specified <see cref="Span{byte}"/> using the given encoding and endianness.
+        /// Writes a string to the specified <see cref="Span{T}"/> using the given encoding and endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
-        /// <param name="src">The source <see cref="ReadOnlySpan{char}"/> containing the string to write.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> containing the string to write.</param>
         /// <param name="encoding">The encoding to use for string encoding.</param>
         /// <param name="endianness">The endianness to use for writing the string length.</param>
         /// <returns>The total number of bytes written, including the string length.</returns>
@@ -94,9 +97,9 @@
         }
 
         /// <summary>
-        /// Writes a 16-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 16-bit signed integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 16-bit signed integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 2).</returns>
@@ -115,9 +118,9 @@
         }
 
         /// <summary>
-        /// Writes a 16-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 16-bit unsigned integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 16-bit unsigned integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 2).</returns>
@@ -136,9 +139,9 @@
         }
 
         /// <summary>
-        /// Writes a 32-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 32-bit signed integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 32-bit signed integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 4).</returns>
@@ -157,9 +160,9 @@
         }
 
         /// <summary>
-        /// Writes a 32-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 32-bit unsigned integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 32-bit unsigned integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 4).</returns>
@@ -178,9 +181,9 @@
         }
 
         /// <summary>
-        /// Writes a 64-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 64-bit signed integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 64-bit signed integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 8).</returns>
@@ -199,9 +202,9 @@
         }
 
         /// <summary>
-        /// Writes a 64-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 64-bit unsigned integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 64-bit unsigned integer to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 8).</returns>
@@ -220,9 +223,9 @@
         }
 
         /// <summary>
-        /// Writes a single-precision floating-point value to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a single-precision floating-point value to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The single-precision floating-point value to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 4).</returns>
@@ -241,9 +244,9 @@
         }
 
         /// <summary>
-        /// Writes a double-precision floating-point value to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a double-precision floating-point value to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The double-precision floating-point value to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 8).</returns>
@@ -262,9 +265,9 @@
         }
 
         /// <summary>
-        /// Writes a 2D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 2D vector to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 2D vector to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 8).</returns>
@@ -285,9 +288,9 @@
         }
 
         /// <summary>
-        /// Writes a 3D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 3D vector to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 3D vector to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 12).</returns>
@@ -310,9 +313,9 @@
         }
 
         /// <summary>
-        /// Writes a 4D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 4D vector to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="value">The 4D vector to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 16).</returns>
@@ -337,9 +340,9 @@
         }
 
         /// <summary>
-        /// Writes a 4x4 matrix to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a 4x4 matrix to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="matrix">The 4x4 matrix to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 64).</returns>
@@ -389,9 +392,9 @@
         }
 
         /// <summary>
-        /// Writes a quaternion to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// Writes a quaternion to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
-        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>
         /// <param name="quaternion">The quaternion to write.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
         /// <returns>The size of the data written in bytes (always 16).</returns>
@@ -417,9 +420,9 @@
         }
 
         /// <summary>
-        /// Reads a 16-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 16-bit signed integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 16-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 2).</returns>
@@ -438,9 +441,9 @@
         }
 
         /// <summary>
-        /// Reads a 16-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 16-bit unsigned integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 16-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 2).</returns>
@@ -459,9 +462,9 @@
         }
 
         /// <summary>
-        /// Reads a 32-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 32-bit signed integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 32-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -480,9 +483,9 @@
         }
 
         /// <summary>
-        /// Reads a 32-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 32-bit unsigned integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 32-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -501,9 +504,9 @@
         }
 
         /// <summary>
-        /// Reads a 64-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 64-bit signed integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 64-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -522,9 +525,9 @@
         }
 
         /// <summary>
-        /// Reads a 64-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 64-bit unsigned integer from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 64-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -543,9 +546,9 @@
         }
 
         /// <summary>
-        /// Reads a single-precision floating-point value from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a single-precision floating-point value from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output single-precision floating-point value.</param>
         /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -564,9 +567,9 @@
         }
 
         /// <summary>
-        /// Reads a double-precision floating-point value from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a double-precision floating-point value from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output double-precision floating-point value.</param>
         /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -585,9 +588,9 @@
         }
 
         /// <summary>
-        /// Reads a 2D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 2D vector from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 2D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -607,9 +610,9 @@
         }
 
         /// <summary>
-        /// Reads a 3D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 3D vector from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 3D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 12).</returns>
@@ -632,9 +635,9 @@
         }
 
         /// <summary>
-        /// Reads a 4D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 4D vector from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="value">The output 4D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 16).</returns>
@@ -659,9 +662,9 @@
         }
 
         /// <summary>
-        /// Reads a 4x4 matrix from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a 4x4 matrix from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="matrix">The output 4x4 matrix value.</param>
         /// <param name="endianness">The endianness to use for reading the matrix.</param>
         /// <returns>The total number of bytes read (always 64).</returns>
@@ -711,9 +714,9 @@
         }
 
         /// <summary>
-        /// Reads a quaternion from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// Reads a quaternion from the specified <see cref="ReadOnlySpan{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/> to read from.</param>
         /// <param name="quaternion">The output quaternion value.</param>
         /// <param name="endianness">The endianness to use for reading the quaternion.</param>
         /// <returns>The total number of bytes read (always 16).</returns>
@@ -739,9 +742,9 @@
         }
 
         /// <summary>
-        /// Reads a 16-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 16-bit signed integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 16-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 2).</returns>
@@ -760,9 +763,9 @@
         }
 
         /// <summary>
-        /// Reads a 16-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 16-bit unsigned integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 16-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 2).</returns>
@@ -781,9 +784,9 @@
         }
 
         /// <summary>
-        /// Reads a 32-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 32-bit signed integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 32-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -802,9 +805,9 @@
         }
 
         /// <summary>
-        /// Reads a 32-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 32-bit unsigned integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 32-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -823,9 +826,9 @@
         }
 
         /// <summary>
-        /// Reads a 64-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 64-bit signed integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 64-bit signed integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -844,9 +847,9 @@
         }
 
         /// <summary>
-        /// Reads a 64-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 64-bit unsigned integer from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 64-bit unsigned integer value.</param>
         /// <param name="endianness">The endianness to use for reading the integer.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -865,9 +868,9 @@
         }
 
         /// <summary>
-        /// Reads a single-precision floating-point value from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a single-precision floating-point value from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output single-precision floating-point value.</param>
         /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
         /// <returns>The total number of bytes read (always 4).</returns>
@@ -886,9 +889,9 @@
         }
 
         /// <summary>
-        /// Reads a double-precision floating-point value from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a double-precision floating-point value from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output double-precision floating-point value.</param>
         /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -907,9 +910,9 @@
         }
 
         /// <summary>
-        /// Reads a 2D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 2D vector from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 2D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 8).</returns>
@@ -930,9 +933,9 @@
         }
 
         /// <summary>
-        /// Reads a 3D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 3D vector from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 3D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 12).</returns>
@@ -955,9 +958,9 @@
         }
 
         /// <summary>
-        /// Reads a 4D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 4D vector from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="value">The output 4D vector value.</param>
         /// <param name="endianness">The endianness to use for reading the vector.</param>
         /// <returns>The total number of bytes read (always 16).</returns>
@@ -982,9 +985,9 @@
         }
 
         /// <summary>
-        /// Reads a 4x4 matrix from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a 4x4 matrix from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="matrix">The output 4x4 matrix value.</param>
         /// <param name="endianness">The endianness to use for reading the matrix.</param>
         /// <returns>The total number of bytes read (always 64).</returns>
@@ -1034,9 +1037,9 @@
         }
 
         /// <summary>
-        /// Reads a quaternion from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// Reads a quaternion from the specified <see cref="Span{T}"/> using the given endianness.
         /// </summary>
-        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="src">The source <see cref="Span{T}"/> to read from.</param>
         /// <param name="quaternion">The output quaternion value.</param>
         /// <param name="endianness">The endianness to use for reading the quaternion.</param>
         /// <returns>The total number of bytes read (always 16).</returns>

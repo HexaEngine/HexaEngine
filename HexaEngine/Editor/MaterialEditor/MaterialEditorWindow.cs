@@ -178,7 +178,7 @@
 
         private static void ExtractProperties(MaterialData material, NodeEditor editor)
         {
-            for (int i = 0; i < material.Properties.Length; i++)
+            for (int i = 0; i < material.Properties.Count; i++)
             {
                 var property = material.Properties[i];
 
@@ -216,7 +216,7 @@
 
         private static void InsertProperties(MaterialData material, NodeEditor editor)
         {
-            for (int i = 0; i < material.Properties.Length; i++)
+            for (int i = 0; i < material.Properties.Count; i++)
             {
                 var property = material.Properties[i];
 
@@ -244,7 +244,7 @@
 
         private static void ExtractTextures(MaterialData material, NodeEditor editor)
         {
-            for (int i = 0; i < material.Textures.Length; i++)
+            for (int i = 0; i < material.Textures.Count; i++)
             {
                 var texture = material.Textures[i];
 

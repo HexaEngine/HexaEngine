@@ -2,9 +2,15 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags that control various options during texture compression.
+    /// </summary>
     [Flags]
     public enum TexCompressFlags
     {
+        /// <summary>
+        /// Default compression options.
+        /// </summary>
         Default = 0,
 
         /// <summary>
@@ -37,7 +43,14 @@
         /// </summary>
         BC7Quick = 0x100000,
 
+        /// <summary>
+        /// Input is treated as sRGB.
+        /// </summary>
         SRGBIn = 0x1000000,
+
+        /// <summary>
+        /// Output is treated as sRGB.
+        /// </summary>
         SRGBOut = 0x2000000,
 
         /// <summary>

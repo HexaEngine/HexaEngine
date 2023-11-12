@@ -8,6 +8,8 @@ cbuffer cb
 cbuffer LightView : register(b1)
 {
     matrix view;
+    float3 lightPosition;
+    float lightFar;
 };
 
 StructuredBuffer<float4x4> worldMatrices;
@@ -70,8 +72,9 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
     float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
     output.position = mul(float4(input.pos, 1), mat).xyzw;
+    float3 L = output.position.xyz - lightPosition;
     output.position = mul(output.position, view);
-    output.depth = output.position.z / output.position.w;
+    output.depth = length(L) / lightFar;
 
     return output;
 }

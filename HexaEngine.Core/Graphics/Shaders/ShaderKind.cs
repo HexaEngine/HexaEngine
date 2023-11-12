@@ -1,95 +1,92 @@
 ﻿namespace HexaEngine.Core.Graphics.Shaders
 {
+    /// <summary>
+    /// Represents the kind of shader to be compiled.
+    /// </summary>
     public enum ShaderKind
     {
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a vertex shader.
+        /// </summary>
         VertexShader = 0,
 
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a fragment shader.
+        /// </summary>
         FragmentShader = 1,
 
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a compute shader.
+        /// </summary>
         ComputeShader = 2,
 
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a geometry shader.
+        /// </summary>
         GeometryShader = 3,
 
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a tessellation control shader.
+        /// </summary>
         TessControlShader = 4,
 
-        //
-        // Summary:
-        //     Forced shader kinds. These shader kinds force the compiler to compile the source
-        //     code as the specified kind of shader.
+        /// <summary>
+        /// Forced shader kind. Forces the compiler to compile the source code as a tessellation evaluation shader.
+        /// </summary>
         TessEvaluationShader = 5,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         SpirvAssembly = 13,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         RaygenShader = 14,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         AnyhitShader = 0xF,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         ClosesthitShader = 0x10,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         MissShader = 17,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         IntersectionShader = 18,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         CallableShader = 19,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         TaskShader = 26,
 
-        //
-        // Summary:
-        //     Default shader kinds. Compiler will fall back to compile the source code as the
-        //     specified kind of shader when #pragma annotation is not found in the source code.
+        /// <summary>
+        /// Default shader kind. Compiler will fall back to compile the source code as the specified kind of shader
+        /// when #pragma annotation is not found in the source code.
+        /// </summary>
         MeshShader = 27,
     }
 }

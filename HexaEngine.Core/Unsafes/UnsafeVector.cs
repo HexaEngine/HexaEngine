@@ -6,6 +6,7 @@
     /// Represents an unsafe vector.
     /// </summary>
     /// <typeparam name="T">The type of elements in the vector.</typeparam>
+    [Obsolete("Use UnsafeList<T> instead.")]
     public unsafe struct UnsafeVector<T> : IFreeable where T : unmanaged
     {
         private const int DefaultCapacity = 4;
@@ -99,6 +100,10 @@
             Capacity = newcapacity;
         }
 
+        /// <summary>
+        /// Ensures that the vector has at least the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The minimum capacity to ensure.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(int capacity)
         {
@@ -108,6 +113,10 @@
             }
         }
 
+        /// <summary>
+        /// Adds an element to the end of the vector.
+        /// </summary>
+        /// <param name="item">The element to add.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
         {
@@ -116,6 +125,10 @@
             size++;
         }
 
+        /// <summary>
+        /// Adds a range of elements to the end of the vector.
+        /// </summary>
+        /// <param name="values">The array of elements to add.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddRange(T[] values)
         {
@@ -128,12 +141,20 @@
             size += values.Length;
         }
 
+        /// <summary>
+        /// Removes the first occurrence of a specific element from the vector.
+        /// </summary>
+        /// <param name="item">The element to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(T item)
         {
             RemoveAt(IndexOf(&item));
         }
 
+        /// <summary>
+        /// Removes the element at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveAt(int index)
         {
@@ -149,6 +170,11 @@
             this.size--;
         }
 
+        /// <summary>
+        /// Inserts an element at the specified index.
+        /// </summary>
+        /// <param name="item">The element to insert.</param>
+        /// <param name="index">The index at which to insert the element.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Insert(T item, uint index)
         {
@@ -160,21 +186,47 @@
             this.size++;
         }
 
+        /// <summary>
+        /// Copies the entire vector to a compatible one-dimensional array, starting at the specified array index.
+        /// </summary>
+        /// <param name="array">The destination array.</param>
+        /// <param name="arrayIndex">The index in the destination array at which copying begins.</param>
+        /// <param name="arraySize">The size of the destination array.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(T* array, uint arrayIndex, uint arraySize)
         {
             Buffer.MemoryCopy(data, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), size * sizeof(T));
         }
 
+        /// <summary>
+        /// Copies a specified number of elements from the vector to a compatible one-dimensional array, starting at the specified array index.
+        /// </summary>
+        /// <param name="array">The destination array.</param>
+        /// <param name="arrayIndex">The index in the destination array at which copying begins.</param>
+        /// <param name="arraySize">The size of the destination array.</param>
+        /// <param name="offset">The offset in the vector at which copying begins.</param>
+        /// <param name="count">The number of elements to copy.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(T* array, uint arrayIndex, uint arraySize, uint offset, uint count)
         {
             Buffer.MemoryCopy(&data[offset], &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), (count - offset) * sizeof(T));
         }
 
+        /// <summary>
+        /// Clears all elements from the vector.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
+            size = 0;
+        }
+
+        /// <summary>
+        /// Sets all elements in the vector to their default values and resets the size to zero.
+        /// </summary>
+        public void Erase()
+        {
+            Memset(data, default, size);
             size = 0;
         }
 
@@ -188,6 +240,13 @@
             EnsureCapacity(newSize);
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="UnsafeVector{T}"/> contains a specific element.
+        /// </summary>
+        /// <param name="item">The element to locate in the <see cref="UnsafeVector{T}"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="item"/> is found in the <see cref="UnsafeVector{T}"/>; otherwise, <see langword="false"/>.
+        /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T* item)
         {
@@ -208,8 +267,15 @@
             return false;
         }
 
+        /// <summary>
+        /// Returns the index of the first occurrence of a specific element in the <see cref="UnsafeVector{T}"/>.
+        /// </summary>
+        /// <param name="item">The element to locate in the <see cref="UnsafeVector{T}"/>.</param>
+        /// <returns>
+        /// The index of the first occurrence of <paramref name="item"/> in the <see cref="UnsafeVector{T}"/>, if found; otherwise, -1.
+        /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int IndexOf(T* item)
+        public readonly int IndexOf(T* item)
         {
             for (int i = 0; i < size; i++)
             {
@@ -231,11 +297,14 @@
         /// <summary>
         /// Reverses the order of the elements in the vector.
         /// </summary>
-        public void Reverse()
+        public readonly void Reverse()
         {
             new Span<T>(data, size).Reverse();
         }
 
+        /// <summary>
+        /// Releases all data and resets the state.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Release()
         {

@@ -16,6 +16,7 @@
         /// </summary>
         public static Func<List<T>, T[]> Getter;
 
+#nullable disable
         static ArrayAccessor()
         {
             // Create a DynamicMethod to access the internal array field.
@@ -34,5 +35,6 @@
             // Create a delegate from the DynamicMethod to get the internal array.
             Getter = (Func<List<T>, T[]>)dm.CreateDelegate(typeof(Func<List<T>, T[]>));
         }
+#nullable restore
     }
 }

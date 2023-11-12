@@ -4,6 +4,9 @@
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// Represents a shell terminal.
+    /// </summary>
     public class ShellTerminal : ITerminal
     {
         private readonly List<TerminalMessage> messages = new();
@@ -21,8 +24,15 @@
 
         private ImGuiInputTextCallback textCallback;
 
+        /// <summary>
+        /// Gets a value indicating whether the terminal is shown.
+        /// </summary>
         public bool Shown { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShellTerminal"/> class.
+        /// </summary>
+        /// <param name="exec">The command to execute in the terminal.</param>
         public unsafe ShellTerminal(string exec)
         {
             consoleAppManager = new(exec);
@@ -121,6 +131,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public void Draw()
         {
             DrawMenuBar();
@@ -151,10 +162,6 @@
                 // View settings.
                 if (ImGui.BeginMenu("Appearance"))
                 {
-                    // Logging Colors
-                    ImGuiColorEditFlags flags =
-                            ImGuiColorEditFlags.Float | ImGuiColorEditFlags.AlphaPreview | ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar;
-
                     ImGui.TextUnformatted("Color Palette");
                     ImGui.Indent();
 
@@ -290,16 +297,22 @@
             }
         }
 
+        /// <inheritdoc/>
         public void Close()
         {
+            throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public void Show()
         {
+            throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public void Focus()
         {
+            throw new NotImplementedException();
         }
     }
 }

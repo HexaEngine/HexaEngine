@@ -3,36 +3,86 @@
     using HexaEngine.Mathematics;
     using System;
 
+    /// <summary>
+    /// Describes a texture.
+    /// </summary>
     public struct TextureDescription : IEquatable<TextureDescription>
     {
+        /// <summary>
+        /// The dimension of the texture.
+        /// </summary>
         public TextureDimension Dimension;
+
+        /// <summary>
+        /// The width of the texture.
+        /// </summary>
         public int Width;
+
+        /// <summary>
+        /// The height of the texture.
+        /// </summary>
         public int Height;
+
+        /// <summary>
+        /// The depth of the texture.
+        /// </summary>
         public int Depth;
+
+        /// <summary>
+        /// The size of the array.
+        /// </summary>
         public int ArraySize;
+
+        /// <summary>
+        /// The number of mip levels.
+        /// </summary>
         public int MipLevels;
+
+        /// <summary>
+        /// The format of the texture.
+        /// </summary>
         public Format Format;
+
+        /// <summary>
+        /// The sample description of the texture.
+        /// </summary>
         public SampleDescription SampleDescription;
+
+        /// <summary>
+        /// The usage of the texture.
+        /// </summary>
         public Usage Usage;
+
+        /// <summary>
+        /// The bind flags of the texture.
+        /// </summary>
         public BindFlags BindFlags;
+
+        /// <summary>
+        /// The CPU access flags of the texture.
+        /// </summary>
         public CpuAccessFlags CPUAccessFlags;
+
+        /// <summary>
+        /// The miscellaneous flags of the texture.
+        /// </summary>
         public ResourceMiscFlag MiscFlags;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
-        /// <param dbgName="dimension">The dimension.</param>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="depth">The depth.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mipLevels">The mip levels.</param>
-        /// <param dbgName="sampleDescription">The sample description.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cPUAccessFlags">The c pu access flags.</param>
-        /// <param dbgName="miscFlags">The misc flags.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="depth">The depth.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mipLevels">The mip levels.</param>
+        /// <param name="sampleDescription">The sample description.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cPUAccessFlags">The c pu access flags.</param>
+        /// <param name="miscFlags">The misc flags.</param>
         public TextureDescription(
             TextureDimension dimension,
             int width,
@@ -65,17 +115,17 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
-        /// <param dbgName="dimension">The dimension.</param>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="depth">The depth.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mipLevels">The mip levels.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cPUAccessFlags">The c pu access flags.</param>
-        /// <param dbgName="miscFlags">The misc flags.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="depth">The depth.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mipLevels">The mip levels.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cPUAccessFlags">The c pu access flags.</param>
+        /// <param name="miscFlags">The misc flags.</param>
         public TextureDescription(
             TextureDimension dimension,
             int width,
@@ -107,16 +157,16 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
-        /// <param dbgName="dimension">The dimension.</param>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="depth">The depth.</param>
-        /// <param dbgName="mipLevels">The mip levels.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cPUAccessFlags">The c pu access flags.</param>
-        /// <param dbgName="miscFlags">The misc flags.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="depth">The depth.</param>
+        /// <param name="mipLevels">The mip levels.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cPUAccessFlags">The c pu access flags.</param>
+        /// <param name="miscFlags">The misc flags.</param>
         public TextureDescription(
             TextureDimension dimension,
             int width,
@@ -147,14 +197,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
-        /// <param dbgName="dimension">The dimension.</param>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cPUAccessFlags">The c pu access flags.</param>
-        /// <param dbgName="miscFlags">The misc flags.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cPUAccessFlags">The c pu access flags.</param>
+        /// <param name="miscFlags">The misc flags.</param>
         public TextureDescription(
             TextureDimension dimension,
             int width,
@@ -183,7 +233,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
-        /// <param dbgName="resource">The resource.</param>
+        /// <param name="resource">The resource.</param>
         /// <exception cref="ArgumentException">
         /// Unknown ressource type - resource
         /// or
@@ -255,13 +305,13 @@
         /// <summary>
         /// Creates an Texture1D description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture1D(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -271,13 +321,13 @@
         /// <summary>
         /// Creates an Texture1D description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture1DWithRTV(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -287,14 +337,14 @@
         /// <summary>
         /// Creates an Texture1DArray description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture1DArray(int width, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -304,14 +354,14 @@
         /// <summary>
         /// Creates an Texture1DArray description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture1DArrayWithRTV(int width, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -321,14 +371,14 @@
         /// <summary>
         /// Creates an Texture2D description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture2D(int width, int height, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -338,14 +388,14 @@
         /// <summary>
         /// Creates an Texture2D description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture2DWithRTV(int width, int height, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -355,15 +405,15 @@
         /// <summary>
         /// Creates an Texture2DArray description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture2DArray(int width, int height, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -373,15 +423,15 @@
         /// <summary>
         /// Creates an Texture2DArray description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="arraySize">Size of the array.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="arraySize">Size of the array.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture2DArrayWithRTV(int width, int height, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -391,13 +441,13 @@
         /// <summary>
         /// Creates an TextureCube description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTextureCube(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
@@ -407,13 +457,13 @@
         /// <summary>
         /// Creates an TextureCube description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTextureCubeWithRTV(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
@@ -423,14 +473,14 @@
         /// <summary>
         /// Creates an TextureCubeArray description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="size">The size.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="size">The size.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
@@ -440,15 +490,15 @@
         /// <summary>
         /// Creates an Texture3D description.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="depth">The depth.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="depth">The depth.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -458,15 +508,15 @@
         /// <summary>
         /// Creates an Texture3D description with an RTV.
         /// </summary>
-        /// <param dbgName="width">The width.</param>
-        /// <param dbgName="height">The height.</param>
-        /// <param dbgName="depth">The depth.</param>
-        /// <param dbgName="mips">The mips.</param>
-        /// <param dbgName="format">The format.</param>
-        /// <param dbgName="usage">The usage.</param>
-        /// <param dbgName="bindFlags">The bind flags.</param>
-        /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
-        /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="depth">The depth.</param>
+        /// <param name="mips">The mips.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="usage">The usage.</param>
+        /// <param name="bindFlags">The bind flags.</param>
+        /// <param name="cpuAccessFlags">The cpu access flags.</param>
+        /// <param name="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
         public static TextureDescription CreateTexture3DWithRTV(int width, int height, int depth, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
@@ -501,7 +551,7 @@
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
         /// </summary>
-        /// <param dbgName="obj">The object to compare with the current instance.</param>
+        /// <param name="obj">The object to compare with the current instance.</param>
         /// <returns>
         ///   <see langword="true" /> if <paramref dbgName="obj" /> and this instance are the same type and represent the same _value; otherwise, <see langword="false" />.
         /// </returns>
@@ -513,7 +563,7 @@
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
-        /// <param dbgName="other">An object to compare with this object.</param>
+        /// <param name="other">An object to compare with this object.</param>
         /// <returns>
         ///   <see langword="true" /> if the current object is equal to the <paramref dbgName="other" /> parameter; otherwise, <see langword="false" />.
         /// </returns>
@@ -560,8 +610,8 @@
         /// <summary>
         /// Implements the operator ==.
         /// </summary>
-        /// <param dbgName="left">The left.</param>
-        /// <param dbgName="right">The right.</param>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
         /// <returns>
         /// The result of the operator.
         /// </returns>
@@ -573,128 +623,14 @@
         /// <summary>
         /// Implements the operator !=.
         /// </summary>
-        /// <param dbgName="left">The left.</param>
-        /// <param dbgName="right">The right.</param>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
         /// <returns>
         /// The result of the operator.
         /// </returns>
         public static bool operator !=(TextureDescription left, TextureDescription right)
         {
             return !(left == right);
-        }
-    }
-
-    public struct TextureFileDescription
-    {
-        public string Path;
-        public TextureDimension Dimension;
-        public int MipLevels;
-        public Usage Usage;
-        public BindFlags BindFlags;
-        public CpuAccessFlags CPUAccessFlags;
-        public bool ForceSRGB;
-
-        public TextureFileDescription(
-            string path,
-            TextureDimension dimension = TextureDimension.Texture2D,
-            int mipLevels = 0,
-            Usage usage = Usage.Default,
-            BindFlags bindFlags = BindFlags.ShaderResource,
-            CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
-            bool forceSRGB = false
-            )
-        {
-            Path = path;
-            Dimension = dimension;
-            MipLevels = mipLevels;
-            Usage = usage;
-            BindFlags = bindFlags;
-            CPUAccessFlags = cPUAccessFlags;
-            ForceSRGB = forceSRGB;
-        }
-    }
-
-    public struct DepthStencilDesc
-    {
-        public Format Format;
-        public BindFlags BindFlags;
-        public Usage Usage;
-        public CpuAccessFlags CPUAccessFlags;
-        public DepthStencilViewFlags ViewFlags;
-        public SampleDescription SampleDescription;
-
-        public static DepthStencilDesc Default => new(Format.D32FloatS8X24UInt, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
-
-        public DepthStencilDesc(Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
-        {
-            Format = format;
-            BindFlags = bindFlags;
-            Usage = usage;
-            CPUAccessFlags = cPUAccessFlags;
-            ViewFlags = viewFlags;
-            SampleDescription = sampleDescription;
-        }
-    }
-
-    public struct DepthStencilBufferDescription
-    {
-        public Format Format;
-        public int Width;
-        public int Height;
-        public int ArraySize;
-        public int MipLevels;
-        public BindFlags BindFlags;
-        public Usage Usage;
-        public CpuAccessFlags CPUAccessFlags;
-        public DepthStencilViewFlags ViewFlags;
-        public SampleDescription SampleDescription;
-        public ResourceMiscFlag MiscFlag;
-
-        public static DepthStencilBufferDescription CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
-
-        public static DepthStencilBufferDescription CreateDepthBufferSRV(int width, int height, int arraySize) => new(width, height, arraySize, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
-
-        public DepthStencilBufferDescription(int width, int height, int arraySize, Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
-        {
-            Width = width;
-            Height = height;
-            ArraySize = arraySize;
-            MipLevels = 1;
-            Format = format;
-            BindFlags = bindFlags;
-            Usage = usage;
-            CPUAccessFlags = cPUAccessFlags;
-            ViewFlags = viewFlags;
-            SampleDescription = sampleDescription;
-        }
-
-        public DepthStencilBufferDescription(int width, int height, int arraySize, Format format, BindFlags bindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None, DepthStencilViewFlags viewFlags = DepthStencilViewFlags.None)
-        {
-            Width = width;
-            Height = height;
-            ArraySize = arraySize;
-            MipLevels = 1;
-            Format = format;
-            BindFlags = bindFlags;
-            Usage = usage;
-            CPUAccessFlags = cPUAccessFlags;
-            ViewFlags = viewFlags;
-            SampleDescription = SampleDescription.Default;
-        }
-
-        public DepthStencilBufferDescription(int width, int height, int arraySize, int mipLevels, Format format, BindFlags bindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None, DepthStencilViewFlags viewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
-        {
-            Width = width;
-            Height = height;
-            ArraySize = arraySize;
-            MipLevels = mipLevels;
-            Format = format;
-            BindFlags = bindFlags;
-            Usage = usage;
-            CPUAccessFlags = cPUAccessFlags;
-            ViewFlags = viewFlags;
-            SampleDescription = SampleDescription.Default;
-            MiscFlag = miscFlag;
         }
     }
 }

@@ -2,9 +2,15 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags used to specify filtering options for textures.
+    /// </summary>
     [Flags]
     public enum TexFilterFlags
     {
+        /// <summary>
+        /// Default filtering options.
+        /// </summary>
         Default = 0,
 
         /// <summary>
@@ -27,6 +33,9 @@
         /// </summary>
         Wrap = WrapU | WrapV | WrapW,
 
+        /// <summary>
+        /// Mirror filtering option for U coordinate.
+        /// </summary>
         MirrorU = 0x10,
 
         /// <summary>
@@ -113,7 +122,18 @@
         /// </summary>
         Triangle = 0x500000,
 
+        /// <summary>
+        /// sRGB to/from RGB for use in conversion operations.
+        /// If the input format type is IsSRGB(), then SRGB_IN is on by default.
+        /// If the output format type is IsSRGB(), then SRGB_OUT is on by default.
+        /// </summary>
         SRGBIn = 0x1000000,
+
+        /// <summary>
+        /// sRGB to/from RGB for use in conversion operations.
+        /// If the input format type is IsSRGB(), then SRGB_IN is on by default.
+        /// If the output format type is IsSRGB(), then SRGB_OUT is on by default.
+        /// </summary>
         SRGBOut = 0x2000000,
 
         /// <summary>

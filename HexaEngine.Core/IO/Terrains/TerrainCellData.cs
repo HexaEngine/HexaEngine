@@ -14,33 +14,104 @@
     /// </summary>
     public unsafe class TerrainCellData
     {
+        /// <summary>
+        /// Gets or sets the name of the terrain cell.
+        /// </summary>
         public string Name;
-        public string[] Materials;
+
+        /// <summary>
+        /// Gets or sets an array of material names associated with the terrain cell.
+        /// </summary>
+        public List<string> Materials;
+
+        /// <summary>
+        /// Gets or sets the number of vertices in the terrain cell.
+        /// </summary>
         public uint VerticesCount;
+
+        /// <summary>
+        /// Gets or sets the number of indices in the terrain cell.
+        /// </summary>
         public uint IndicesCount;
+
+        /// <summary>
+        /// Gets or sets the width of the terrain cell.
+        /// </summary>
         private uint width;
+
+        /// <summary>
+        /// Gets or sets the height of the terrain cell.
+        /// </summary>
         private uint height;
+
+        /// <summary>
+        /// Gets or sets the level of detail for the terrain cell.
+        /// </summary>
         private uint lodLevel;
+
+        /// <summary>
+        /// Gets or sets the bounding box of the terrain cell.
+        /// </summary>
         public BoundingBox Box;
+
+        /// <summary>
+        /// Gets or sets the bounding sphere of the terrain cell.
+        /// </summary>
         public BoundingSphere Sphere;
+
+        /// <summary>
+        /// Gets or sets the flags associated with the terrain cell vertices.
+        /// </summary>
         public TerrainVertexFlags Flags;
+
+        /// <summary>
+        /// Gets or sets an array of indices for the terrain cell.
+        /// </summary>
         public uint[] Indices;
+
+        /// <summary>
+        /// Gets or sets an array of positions for the terrain cell vertices.
+        /// </summary>
         public Vector3[] Positions;
+
+        /// <summary>
+        /// Gets or sets an array of UV coordinates for the terrain cell vertices.
+        /// </summary>
         public Vector3[] UVs;
+
+        /// <summary>
+        /// Gets or sets an array of normals for the terrain cell vertices.
+        /// </summary>
         public Vector3[] Normals;
+
+        /// <summary>
+        /// Gets or sets an array of tangents for the terrain cell vertices.
+        /// </summary>
         public Vector3[] Tangents;
+
+        /// <summary>
+        /// Gets or sets an array of bitangents for the terrain cell vertices.
+        /// </summary>
         public Vector3[] Bitangents;
 
+#nullable disable
         private TerrainCellData()
         {
         }
+#nullable restore
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TerrainCellData"/> class from a height heightMap.
+        /// Initializes a new instance of the <see cref="TerrainCellData"/> class based on the provided <see cref="HeightMap"/>.
         /// </summary>
-        /// <param filename="heightMap">The height heightMap.</param>
+        /// <param name="heightMap">The height map used for terrain generation.</param>
+        /// <param name="width">The width of the terrain.</param>
+        /// <param name="height">The height of the terrain.</param>
+        /// <param name="tessellationFactor">The factor by which to tessellate the terrain (default is 1).</param>
+        /// <param name="lodLevel">The level of detail for the terrain (default is 0).</param>
         public TerrainCellData(HeightMap heightMap, uint width, uint height, float tessellationFactor = 1, uint lodLevel = 0)
         {
+            Name = string.Empty;
+            Materials = [];
             this.lodLevel = lodLevel;
             this.width = width;
             this.height = height;
@@ -140,14 +211,22 @@
             Flags |= TerrainVertexFlags.Tangents | TerrainVertexFlags.Bitangents;
         }
 
+        /// <summary>
+        /// Reads terrain cell data from a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="src">The source stream to read from.</param>
+        /// <param name="encoding">The encoding to use for string representation.</param>
+        /// <param name="endianness">The endianness to use for reading binary data.</param>
+        /// <returns>A <see cref="TerrainCellData"/> instance populated with data from the stream.</returns>
         public static TerrainCellData Read(Stream src, Encoding encoding, Endianness endianness)
         {
             TerrainCellData data = new();
-            data.Name = src.ReadString(encoding, endianness);
-            data.Materials = new string[src.ReadInt32(endianness)];
-            for (int i = 0; i < data.Materials.Length; i++)
+            data.Name = src.ReadString(encoding, endianness) ?? string.Empty;
+            var matCount = src.ReadInt32(endianness);
+            data.Materials = new List<string>(matCount);
+            for (int i = 0; i < matCount; i++)
             {
-                data.Materials[i] = src.ReadString(encoding, endianness);
+                data.Materials.Add(src.ReadString(encoding, endianness) ?? string.Empty);
             }
             data.VerticesCount = src.ReadUInt32(endianness);
             data.IndicesCount = src.ReadUInt32(endianness);
@@ -208,11 +287,17 @@
             return data;
         }
 
+        /// <summary>
+        /// Writes the terrain cell data to a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="dst">The destination stream to write to.</param>
+        /// <param name="encoding">The encoding to use for string representation.</param>
+        /// <param name="endianness">The endianness to use for writing binary data.</param>
         public void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteString(Name, encoding, endianness);
-            dst.WriteInt32(Materials.Length, endianness);
-            for (int i = 0; i < Materials.Length; i++)
+            dst.WriteInt32(Materials.Count, endianness);
+            for (int i = 0; i < Materials.Count; i++)
             {
                 dst.WriteString(Materials[i], encoding, endianness);
             }

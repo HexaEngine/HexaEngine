@@ -4,12 +4,20 @@
     using HexaEngine.Core.Meshes;
     using System.Numerics;
 
-    public class Octahedron : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents an octahedron in 3D space.
+    /// </summary>
+    public sealed class Octahedron : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Octahedron"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
         public Octahedron(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <inheritdoc/>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateOctahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
@@ -38,6 +46,13 @@
             5, 0, 3
         };
 
+        /// <summary>
+        /// Creates an octahedron mesh.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="vertexBuffer">The vertex buffer.</param>
+        /// <param name="indexBuffer">The index buffer.</param>
+        /// <param name="size">The size of the octahedron.</param>
         public static void CreateOctahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[8 * 3];

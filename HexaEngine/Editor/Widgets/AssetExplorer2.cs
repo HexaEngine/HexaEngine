@@ -290,7 +290,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(String));
                     if (!payload.IsNull)
                     {
-                        string ft = *(UnsafeOldString*)payload.Data;
+                        string ft = ((StdWString*)payload.Data)->ToString();
                         if (Directory.Exists(ft))
                         {
                             var fname = Path.GetFileName(ft);
@@ -313,8 +313,9 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeOldString(dir.Path);
-                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeOldString));
+                    // TODO: Remove string from here imgui copies the string anyway, else it would produce memory leaks.
+                    var str = new StdWString(dir.Path);
+                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(StdWString));
                 }
                 ImGui.Text(dir.Name);
                 ImGui.EndDragDropSource();

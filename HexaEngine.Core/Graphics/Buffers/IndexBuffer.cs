@@ -3,6 +3,10 @@
     using HexaEngine.Core.Graphics;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents an index buffer in graphics programming with support for different index types (uint or ushort).
+    /// </summary>
+    /// <typeparam name="T">The type of indices in the buffer (must be unmanaged and either uint or ushort).</typeparam>
     public unsafe class IndexBuffer<T> : IIndexBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 8;
@@ -23,6 +27,14 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, CPU access flags, filename, and line number.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the index buffer.</param>
+        /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
+        /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
+        /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
@@ -56,6 +68,15 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, indices, CPU access flags, filename, and line number.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the index buffer.</param>
+        /// <param name="indices">The initial indices to populate the buffer with.</param>
+        /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
+        /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
+        /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, T[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
@@ -95,6 +116,16 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, indices pointer, count, CPU access flags, filename, and line number.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the index buffer.</param>
+        /// <param name="indices">The pointer to the initial indices to populate the buffer with.</param>
+        /// <param name="count">The number of indices pointed to by the indices pointer.</param>
+        /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
+        /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
+        /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, T* indices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
@@ -131,6 +162,15 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, capacity, CPU access flags, filename, and line number.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the index buffer.</param>
+        /// <param name="capacity">The initial capacity of the index buffer.</param>
+        /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
+        /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
+        /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
@@ -164,6 +204,9 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Occurs when the index buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -177,8 +220,15 @@
             }
         }
 
+        /// <summary>
+        /// Gets the number of indices in the buffer.
+        /// </summary>
         public uint Count => count;
 
+        /// <summary>
+        /// Gets or sets the capacity of the index buffer.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if the specified capacity is less than the current count.</exception>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -202,18 +252,41 @@
             }
         }
 
+        /// <summary>
+        /// Gets the description of the buffer.
+        /// </summary>
         public BufferDescription Description => buffer.Description;
 
+        /// <summary>
+        /// Gets the length of the buffer.
+        /// </summary>
         public int Length => buffer.Length;
 
+        /// <summary>
+        /// Gets the resource dimension of the buffer.
+        /// </summary>
         public ResourceDimension Dimension => buffer.Dimension;
 
+        /// <summary>
+        /// Gets the native pointer of the buffer.
+        /// </summary>
         public nint NativePointer => buffer.NativePointer;
 
+        /// <summary>
+        /// Gets or sets the debug name of the buffer.
+        /// </summary>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
+        /// <summary>
+        /// Gets a value indicating whether the underlying buffer is disposed.
+        /// </summary>
         public bool IsDisposed => buffer.IsDisposed;
 
+        /// <summary>
+        /// Gets or sets the value at the specified index in the index buffer.
+        /// </summary>
+        /// <param name="index">The index of the value to get or set.</param>
+        /// <returns>The value at the specified index.</returns>
         public T this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -226,12 +299,19 @@
             }
         }
 
+        /// <summary>
+        /// Resets the counter of indices to zero.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
         {
             count = 0;
         }
 
+        /// <summary>
+        /// Ensures that the index buffer has at least the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The minimum capacity to ensure.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(uint capacity)
         {
@@ -241,6 +321,10 @@
             }
         }
 
+        /// <summary>
+        /// Increases the capacity of the index buffer.
+        /// </summary>
+        /// <param name="capacity">The new capacity of the index buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Grow(uint capacity)
         {
@@ -254,6 +338,10 @@
             Capacity = newcapacity;
         }
 
+        /// <summary>
+        /// Adds a single index to the index buffer.
+        /// </summary>
+        /// <param name="value">The index value to add.</param>
         public void Add(T value)
         {
             uint index = count;
@@ -265,6 +353,10 @@
             isDirty = true;
         }
 
+        /// <summary>
+        /// Adds multiple indices to the index buffer.
+        /// </summary>
+        /// <param name="indices">The indices to add.</param>
         public void Add(params T[] indices)
         {
             uint index = count;
@@ -279,6 +371,10 @@
             isDirty = true;
         }
 
+        /// <summary>
+        /// Removes the index at the specified position in the index buffer.
+        /// </summary>
+        /// <param name="index">The position of the index to remove.</param>
         public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(uint);
@@ -286,6 +382,11 @@
             isDirty = true;
         }
 
+        /// <summary>
+        /// Updates the index buffer in the graphics context if it is marked as dirty.
+        /// </summary>
+        /// <param name="context">The graphics context used for the update.</param>
+        /// <returns>True if the index buffer was updated; otherwise, false.</returns>
         public bool Update(IGraphicsContext context)
         {
             if (isDirty)
@@ -297,37 +398,64 @@
             return false;
         }
 
+        /// <summary>
+        /// Clears the index buffer, resetting the index count to zero.
+        /// </summary>
         public void Clear()
         {
             count = 0;
             isDirty = true;
         }
 
+        /// <summary>
+        /// Flushes the memory associated with the index buffer.
+        /// </summary>
         public void FlushMemory()
         {
             Free(items);
         }
 
+        /// <summary>
+        /// Binds the index buffer to the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to bind the index buffer to.</param>
         public void Bind(IGraphicsContext context)
         {
             context.SetIndexBuffer(buffer, format, 0);
         }
 
+        /// <summary>
+        /// Binds the index buffer to the specified graphics context with the specified offset.
+        /// </summary>
+        /// <param name="context">The graphics context to bind the index buffer to.</param>
+        /// <param name="offset">The offset within the index buffer to bind.</param>
         public void Bind(IGraphicsContext context, int offset)
         {
             context.SetIndexBuffer(buffer, format, offset);
         }
 
+        /// <summary>
+        /// Unbinds the index buffer from the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to unbind the index buffer from.</param>
         public void Unbind(IGraphicsContext context)
         {
             context.SetIndexBuffer(null, Format.Unknown, 0);
         }
 
+        /// <summary>
+        /// Copies the content of the index buffer to another buffer in the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used for the copy operation.</param>
+        /// <param name="buffer">The destination buffer to copy the content to.</param>
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
         }
 
+        /// <summary>
+        /// Disposes of the index buffer and releases associated resources.
+        /// </summary>
         public void Dispose()
         {
             if (!disposedValue)

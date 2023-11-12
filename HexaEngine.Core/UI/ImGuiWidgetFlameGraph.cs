@@ -174,8 +174,9 @@ namespace HexaEngine.Core.UI
                             else
                                 selected = i;
                         }
-                        // note it's not needed to move you out of the loop the if above only allows one item
+#pragma warning disable CA2014 // note it's not needed to move you out of the loop the if above only allows one item
                         var args = stackalloc byte[sizeof(float*) * sizeof(byte*)];
+#pragma warning restore CA2014
                         *(byte**)args = caption;
                         *(float*)((byte**)args + 1) = stageEnd - stageStart;
                         ImGui.SetTooltipV($"%s: {stageEnd - stageStart}ms", (nuint)args);

@@ -5,79 +5,22 @@
     using System.IO;
     using System.IO.Compression;
 
-    public readonly struct AssetDesc
-    {
-        public readonly string Path;
-        public readonly AssetType Type;
-        public readonly Stream Stream;
-
-        public AssetDesc(string path, AssetType type, Stream stream)
-        {
-            Path = path;
-            Type = type;
-            Stream = stream;
-        }
-
-        public static AssetDesc[] CreateFromPaths(string root, string[] paths)
-        {
-            AssetDesc[] descs = new AssetDesc[paths.Length];
-            for (int i = 0; i < paths.Length; i++)
-            {
-                var file = paths[i];
-                var path = System.IO.Path.GetRelativePath(root, file);
-                var type = AssetArchive.GetAssetType(path, out string _);
-                var fs = File.OpenRead(file);
-                descs[i] = new(path, type, fs);
-            }
-            return descs;
-        }
-
-        public static AssetDesc[] CreateFromDir(string root)
-        {
-            var dir = new DirectoryInfo(root);
-            List<string> files = new();
-            foreach (var file in dir.GetFiles("*.*", SearchOption.AllDirectories))
-            {
-                if (file.Extension == ".assets")
-                {
-                    continue;
-                }
-
-                if (file.Extension == ".dll")
-                {
-                    continue;
-                }
-
-                if (file.Extension == ".hexlvl")
-                {
-                    continue;
-                }
-
-                files.Add(file.FullName);
-            }
-
-            AssetDesc[] descs = new AssetDesc[files.Count];
-
-            for (int i = 0; i < files.Count; i++)
-            {
-                var file = files[i];
-                var path = System.IO.Path.GetRelativePath(root, file);
-                var type = AssetArchive.GetAssetType(path, out string _);
-                var fs = File.OpenRead(file);
-                descs[i] = new(path, type, fs);
-            }
-
-            return descs;
-        }
-
-        public static implicit operator AssetDesc(BundleAsset asset)
-        {
-            return new(asset.Path, asset.Type, asset.GetStream());
-        }
-    }
-
+    /// <summary>
+    /// Represents an asset within a bundle archive, providing methods to access and decompress its data.
+    /// </summary>
     public class BundleAsset
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BundleAsset"/> class.
+        /// </summary>
+        /// <param name="archivePath">The path to the archive containing the asset.</param>
+        /// <param name="compression">The compression method used for the asset.</param>
+        /// <param name="partIndex">The index of the part within the archive.</param>
+        /// <param name="type">The type of the asset.</param>
+        /// <param name="pointer">The position of the asset within the archive.</param>
+        /// <param name="length">The compressed length of the asset data.</param>
+        /// <param name="actualLength">The actual length of the decompressed asset data.</param>
+        /// <param name="path">The path of the asset within the archive.</param>
         internal BundleAsset(string archivePath, Compression compression, int partIndex, AssetType type, long pointer, long length, long actualLength, string path)
         {
             PartIndex = partIndex;
@@ -90,15 +33,50 @@
             Path = path;
         }
 
+        /// <summary>
+        /// Gets the index of the part within the archive.
+        /// </summary>
         public readonly int PartIndex;
+
+        /// <summary>
+        /// Gets the path to the archive containing the asset.
+        /// </summary>
         public readonly string ArchivePath;
+
+        /// <summary>
+        /// Gets the compression method used for the asset.
+        /// </summary>
         public readonly Compression Compression;
+
+        /// <summary>
+        /// Gets the type of the asset.
+        /// </summary>
         public readonly AssetType Type;
+
+        /// <summary>
+        /// Gets the position of the asset within the archive.
+        /// </summary>
         public readonly long Pointer;
+
+        /// <summary>
+        /// Gets the compressed length of the asset data.
+        /// </summary>
         public readonly long Length;
+
+        /// <summary>
+        /// Gets the actual length of the decompressed asset data.
+        /// </summary>
         public readonly long ActualLength;
+
+        /// <summary>
+        /// Gets the path of the asset within the archive.
+        /// </summary>
         public readonly string Path;
 
+        /// <summary>
+        /// Gets a <see cref="VirtualStream"/> representing the asset data.
+        /// </summary>
+        /// <returns>A <see cref="VirtualStream"/> representing the asset data.</returns>
         public VirtualStream GetStream()
         {
             return Compression switch
@@ -110,6 +88,10 @@
             };
         }
 
+        /// <summary>
+        /// Gets the decompressed data of the asset.
+        /// </summary>
+        /// <returns>The decompressed data of the asset.</returns>
         public byte[] GetData()
         {
             var fs = GetStream();
@@ -119,6 +101,10 @@
             return data;
         }
 
+        /// <summary>
+        /// Copies the asset data to the specified target stream.
+        /// </summary>
+        /// <param name="target">The target stream to copy the asset data to.</param>
         public void CopyTo(Stream target)
         {
             var fs = GetStream();
@@ -127,11 +113,19 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Opens a <see cref="VirtualStream"/> representing the uncompressed asset data.
+        /// </summary>
+        /// <returns>A <see cref="VirtualStream"/> representing the uncompressed asset data.</returns>
         private VirtualStream OpenStream()
         {
             return new VirtualStream(File.Open(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read), Pointer, Length);
         }
 
+        /// <summary>
+        /// Decompresses the asset data using the Deflate compression algorithm.
+        /// </summary>
+        /// <returns>A <see cref="VirtualStream"/> representing the decompressed asset data.</returns>
         private VirtualStream DeflateDecompress()
         {
             var baseStream = OpenStream();
@@ -140,6 +134,10 @@
             return wrapper;
         }
 
+        /// <summary>
+        /// Decompresses the asset data using the LZ4 compression algorithm.
+        /// </summary>
+        /// <returns>A <see cref="VirtualStream"/> representing the decompressed asset data.</returns>
         private VirtualStream LZ4Decompress()
         {
             var baseStream = OpenStream();

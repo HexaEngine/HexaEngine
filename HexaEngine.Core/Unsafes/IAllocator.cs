@@ -67,7 +67,7 @@
         /// Resizes a previously allocated block of memory with <see cref="Alloc(nint)"/>
         /// </summary>
         /// <param name="pv">The old pointer.</param>
-        /// <param name="width">The number of elements of the new size.</param>
+        /// <param name="count">The number of elements of the new size.</param>
         unsafe T* ReAlloc<T>(T* pv, uint count) where T : unmanaged;
     }
 }

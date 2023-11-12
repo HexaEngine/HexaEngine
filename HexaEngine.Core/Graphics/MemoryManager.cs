@@ -7,7 +7,6 @@
     /// </summary>
     public static class MemoryManager
     {
-        private static IGraphicsDevice device;
         private static readonly List<MemoryEntry> entries = new();
 
         /// <summary>

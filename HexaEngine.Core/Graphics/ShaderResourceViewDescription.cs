@@ -1,26 +1,80 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    /// <summary>
+    /// Represents the description of a shader resource view.
+    /// </summary>
     public struct ShaderResourceViewDescription
     {
+        /// <summary>
+        /// The format of the resource.
+        /// </summary>
         public Format Format;
+
+        /// <summary>
+        /// The dimension of the view.
+        /// </summary>
         public ShaderResourceViewDimension ViewDimension;
+
+        /// <summary>
+        /// Buffer shader resource view.
+        /// </summary>
         public BufferShaderResourceView Buffer;
+
+        /// <summary>
+        /// 1D texture shader resource view.
+        /// </summary>
         public Texture1DShaderResourceView Texture1D;
+
+        /// <summary>
+        /// 1D texture array shader resource view.
+        /// </summary>
         public Texture1DArrayShaderResourceView Texture1DArray;
+
+        /// <summary>
+        /// 2D texture shader resource view.
+        /// </summary>
         public Texture2DShaderResourceView Texture2D;
+
+        /// <summary>
+        /// 2D texture array shader resource view.
+        /// </summary>
         public Texture2DArrayShaderResourceView Texture2DArray;
+
+        /// <summary>
+        /// 2D multisampled texture shader resource view.
+        /// </summary>
         public Texture2DMultisampledShaderResourceView Texture2DMS;
+
+        /// <summary>
+        /// 2D multisampled texture array shader resource view.
+        /// </summary>
         public Texture2DMultisampledArrayShaderResourceView Texture2DMSArray;
+
+        /// <summary>
+        /// 3D texture shader resource view.
+        /// </summary>
         public Texture3DShaderResourceView Texture3D;
+
+        /// <summary>
+        /// Cube texture shader resource view.
+        /// </summary>
         public TextureCubeShaderResourceView TextureCube;
+
+        /// <summary>
+        /// Cube texture array shader resource view.
+        /// </summary>
         public TextureCubeArrayShaderResourceView TextureCubeArray;
+
+        /// <summary>
+        /// Extended buffer shader resource view.
+        /// </summary>
         public BufferExtendedShaderResourceView BufferEx;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShaderResourceViewDescription"/> struct.
         /// </summary>
         /// <param name="viewDimension">The <see cref="ShaderResourceViewDimension"/></param>
-        /// <param name="format">The <see cref="DXGI.Format"/> to use or <see cref="Format.Unknown"/>.</param>
+        /// <param name="format">The <see cref="Format"/> to use or <see cref="Format.Unknown"/>.</param>
         /// <param name="mostDetailedMip">Index of the most detailed mipmap level to use or first element for <see cref="ShaderResourceViewDimension.Buffer"/> or <see cref="ShaderResourceViewDimension.BufferExtended"/>.</param>
         /// <param name="mipLevels">The maximum number of mipmap levels for the view of the texture or num elements for <see cref="ShaderResourceViewDimension.Buffer"/> or <see cref="ShaderResourceViewDimension.BufferExtended"/>.</param>
         /// <param name="firstArraySlice">The index of the first texture to use in an array of textures or First2DArrayFace for <see cref="ShaderResourceViewDimension.TextureCubeArray"/>. </param>
@@ -107,7 +161,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ShaderResourceViewDescription"/> struct.
         /// </summary>
-        /// <param name="buffer">Unused <see cref="ID3D11Buffer"/> </param>
+        /// <param name="buffer">Unused <see cref="IBuffer"/> </param>
         /// <param name="format"></param>
         /// <param name="firstElement"></param>
         /// <param name="numElements"></param>
@@ -122,6 +176,16 @@
             BufferEx.Flags = flags;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderResourceViewDescription"/> struct for a 1D texture or 1D texture array.
+        /// </summary>
+        /// <param name="texture">The 1D texture.</param>
+        /// <param name="isArray">Indicates whether the texture is an array.</param>
+        /// <param name="format">The format of the resource. Defaults to <see cref="Format.Unknown"/>.</param>
+        /// <param name="mostDetailedMip">The most detailed mip level. Defaults to 0.</param>
+        /// <param name="mipLevels">The number of mip levels. Defaults to -1.</param>
+        /// <param name="firstArraySlice">The index of the first array slice. Defaults to 0.</param>
+        /// <param name="arraySize">The number of array slices. Defaults to -1 for 1D textures.</param>
         public ShaderResourceViewDescription(
             ITexture1D texture,
             bool isArray,

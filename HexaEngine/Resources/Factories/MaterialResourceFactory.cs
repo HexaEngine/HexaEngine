@@ -19,7 +19,7 @@
         {
             (MeshData mesh, MaterialData desc, bool debone) = instanceData;
             instance.Shader = manager.LoadMaterialShader(mesh, desc, debone);
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 instance.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
             }
@@ -31,7 +31,7 @@
         {
             (MeshData mesh, MaterialData desc, bool debone) = instanceData;
             instance.Shader = await manager.LoadMaterialShaderAsync(mesh, desc, debone);
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 instance.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
             }

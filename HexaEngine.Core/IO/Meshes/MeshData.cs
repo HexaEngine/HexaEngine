@@ -11,29 +11,118 @@
     using System.Numerics;
     using System.Text;
 
+    /// <summary>
+    /// Represents mesh data including vertex and index information, bounding volumes, and vertex flags.
+    /// </summary>
     public unsafe class MeshData
     {
+        /// <summary>
+        /// The name of the mesh.
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// The name of the material associated with the mesh.
+        /// </summary>
         public string MaterialName;
+
+        /// <summary>
+        /// The number of vertices in the mesh.
+        /// </summary>
         public uint VerticesCount;
+
+        /// <summary>
+        /// The number of indices in the mesh.
+        /// </summary>
         public uint IndicesCount;
+
+        /// <summary>
+        /// The number of bones (weights) in the mesh.
+        /// </summary>
         public uint BoneCount;
+
+        /// <summary>
+        /// The bounding box of the mesh.
+        /// </summary>
         public BoundingBox Box;
+
+        /// <summary>
+        /// The bounding sphere of the mesh.
+        /// </summary>
         public BoundingSphere Sphere;
+
+        /// <summary>
+        /// Flags indicating which vertex components are present in the mesh.
+        /// </summary>
         public VertexFlags Flags;
+
+        /// <summary>
+        /// The array of indices defining the mesh topology.
+        /// </summary>
         public uint[] Indices;
+
+        /// <summary>
+        /// The array of colors associated with each vertex.
+        /// </summary>
         public Vector4[] Colors;
+
+        /// <summary>
+        /// The array of 3D positions of each vertex.
+        /// </summary>
         public Vector3[] Positions;
+
+        /// <summary>
+        /// The array of 3D texture coordinates (UVs) of each vertex.
+        /// </summary>
         public Vector3[] UVs;
+
+        /// <summary>
+        /// The array of 3D normals associated with each vertex.
+        /// </summary>
         public Vector3[] Normals;
+
+        /// <summary>
+        /// The array of 3D tangents associated with each vertex.
+        /// </summary>
         public Vector3[] Tangents;
+
+        /// <summary>
+        /// The array of 3D bitangents associated with each vertex.
+        /// </summary>
         public Vector3[] Bitangents;
+
+        /// <summary>
+        /// The array of bone data representing the skeleton structure of the mesh.
+        /// </summary>
         public BoneData[]? Bones;
 
+#nullable disable
+        /// <summary>
+        /// Private default constructor for internal use.
+        /// </summary>
         private MeshData()
         {
         }
+#nullable restore
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MeshData"/> class with specified parameters.
+        /// </summary>
+        /// <param name="name">The name of the mesh.</param>
+        /// <param name="materialName">The name of the material associated with the mesh.</param>
+        /// <param name="box">The bounding box of the mesh.</param>
+        /// <param name="sphere">The bounding sphere of the mesh.</param>
+        /// <param name="vertexCount">The number of vertices in the mesh.</param>
+        /// <param name="indexCount">The number of indices in the mesh.</param>
+        /// <param name="weightCount">The number of bones (weights) in the mesh.</param>
+        /// <param name="indices">The array of indices defining the mesh topology.</param>
+        /// <param name="colors">The array of colors associated with each vertex.</param>
+        /// <param name="positions">The array of 3D positions of each vertex.</param>
+        /// <param name="uvs">The array of 3D texture coordinates (UVs) of each vertex.</param>
+        /// <param name="normals">The array of 3D normals associated with each vertex.</param>
+        /// <param name="tangents">The array of 3D tangents associated with each vertex.</param>
+        /// <param name="bitangents">The array of 3D bitangents associated with each vertex.</param>
+        /// <param name="bones">The array of bone data representing the skeleton structure of the mesh.</param>
         public MeshData(string name, string materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
         {
             Name = name;
@@ -47,37 +136,37 @@
 
             Indices = indices;
 
-            Colors = colors;
+            Colors = colors ?? [];
             if (colors != null)
             {
                 Flags |= VertexFlags.Colors;
             }
 
-            Positions = positions;
+            Positions = positions ?? [];
             if (positions != null)
             {
                 Flags |= VertexFlags.Positions;
             }
 
-            UVs = uvs;
+            UVs = uvs ?? [];
             if (uvs != null)
             {
                 Flags |= VertexFlags.UVs;
             }
 
-            Normals = normals;
+            Normals = normals ?? [];
             if (normals != null)
             {
                 Flags |= VertexFlags.Normals;
             }
 
-            Tangents = tangents;
+            Tangents = tangents ?? [];
             if (tangents != null)
             {
                 Flags |= VertexFlags.Tangents;
             }
 
-            Bitangents = bitangents;
+            Bitangents = bitangents ?? [];
             if (bitangents != null)
             {
                 Flags |= VertexFlags.Bitangents;
@@ -90,11 +179,17 @@
             }
         }
 
+        /// <summary>
+        /// Reads mesh data from a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="encoding">The encoding used for reading strings.</param>
+        /// <param name="endianness">The endianness used for reading numerical data.</param>
         public static MeshData Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             MeshData data = new();
-            data.Name = stream.ReadString(encoding, endianness);
-            data.MaterialName = stream.ReadString(encoding, endianness);
+            data.Name = stream.ReadString(encoding, endianness) ?? string.Empty;
+            data.MaterialName = stream.ReadString(encoding, endianness) ?? string.Empty;
             data.VerticesCount = stream.ReadUInt32(endianness);
             data.IndicesCount = stream.ReadUInt32(endianness);
             data.BoneCount = stream.ReadUInt32(endianness);
@@ -168,8 +263,15 @@
             return data;
         }
 
+        /// <summary>
+        /// Writes the mesh data to a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write the data to.</param>
+        /// <param name="encoding">The encoding used for writing strings.</param>
+        /// <param name="endianness">The endianness used for writing numerical data.</param>
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
+            // Write basic information
             stream.WriteString(Name, encoding, endianness);
             stream.WriteString(MaterialName, encoding, endianness);
             stream.WriteUInt32(VerticesCount, endianness);
@@ -179,11 +281,13 @@
             Sphere.Write(stream, endianness);
             stream.WriteInt32((int)Flags, endianness);
 
+            // Write indices
             for (ulong i = 0; i < IndicesCount; i++)
             {
                 stream.WriteUInt32(Indices[i], endianness);
             }
 
+            // Write optional vertex components if present
             if ((Flags & VertexFlags.Colors) != 0)
             {
                 for (ulong i = 0; i < VerticesCount; i++)
@@ -226,6 +330,7 @@
                     stream.WriteVector3(Bitangents[i], endianness);
                 }
             }
+#nullable disable
             if ((Flags & VertexFlags.Skinned) != 0)
             {
                 for (ulong i = 0; i < BoneCount; i++)
@@ -233,13 +338,26 @@
                     Bones[i].Write(stream, encoding, endianness);
                 }
             }
+#nullable restore
         }
 
+        /// <summary>
+        /// Creates an index buffer for the mesh data on the specified graphics device.
+        /// </summary>
+        /// <param name="device">The graphics device to create the index buffer on.</param>
+        /// <param name="accessFlags">Optional CPU access flags for the index buffer.</param>
+        /// <returns>The created index buffer.</returns>
         public IndexBuffer<uint> CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             return new(device, Indices, accessFlags);
         }
 
+        /// <summary>
+        /// Writes the mesh data indices to the provided index buffer and updates it on the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to perform the update on.</param>
+        /// <param name="ib">The index buffer to write to and update.</param>
+        /// <returns>True if the buffer has been updated; otherwise, false.</returns>
         public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer<uint> ib)
         {
             for (int i = 0; i < IndicesCount; i++)
@@ -250,6 +368,12 @@
             return ib.Update(context);
         }
 
+        /// <summary>
+        /// Creates a vertex buffer for the mesh data on the specified graphics device.
+        /// </summary>
+        /// <param name="device">The graphics device to create the vertex buffer on.</param>
+        /// <param name="accessFlags">Optional CPU access flags for the vertex buffer.</param>
+        /// <returns>The created vertex buffer.</returns>
         public VertexBuffer<MeshVertex> CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             var stride = sizeof(MeshVertex);
@@ -294,13 +418,18 @@
             return vertexBuffer;
         }
 
+        /// <summary>
+        /// Creates a skinned vertex buffer for the mesh data on the specified graphics device.
+        /// </summary>
+        /// <param name="device">The graphics device to create the vertex buffer on.</param>
+        /// <param name="accessFlags">Optional CPU access flags for the vertex buffer.</param>
+        /// <returns>The created skinned vertex buffer.</returns>
         public VertexBuffer<SkinnedMeshVertex> CreateSkinnedVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             var stride = sizeof(SkinnedMeshVertex);
             var size = stride * (int)VerticesCount;
             var vertices = (SkinnedMeshVertex*)Alloc(size);
             ZeroMemory(vertices, size);
-            int m = 0;
 
             for (int i = 0; i < VerticesCount; i++)
             {
@@ -343,7 +472,12 @@
             Free(vertices);
             return vertexBuffer;
         }
-
+        /// <summary>
+        /// Writes the mesh data vertices to the provided vertex buffer and updates it on the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to perform the update on.</param>
+        /// <param name="vb">The vertex buffer to write to and update.</param>
+        /// <returns>True if the buffer has been updated; otherwise, false.</returns>
         public bool WriteVertexBuffer(IGraphicsContext context, VertexBuffer<MeshVertex> vb)
         {
             for (int i = 0; i < VerticesCount; i++)
@@ -381,6 +515,12 @@
             return vb.Update(context);
         }
 
+        /// <summary>
+        /// Writes the skinned mesh data vertices to the provided skinned vertex buffer and updates it on the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to perform the update on.</param>
+        /// <param name="vb">The skinned vertex buffer to write to and update.</param>
+        /// <returns>True if the buffer has been updated; otherwise, false.</returns>
         public bool WriteSkinnedVertexBuffer(IGraphicsContext context, VertexBuffer<SkinnedMeshVertex> vb)
         {
             for (int i = 0; i < VerticesCount; i++)
@@ -423,6 +563,11 @@
             return vb.Update(context);
         }
 
+        /// <summary>
+        /// Gets an array of faces that include the specified vertex.
+        /// </summary>
+        /// <param name="vertex">The index of the vertex.</param>
+        /// <returns>An array of faces that include the specified vertex.</returns>
         public Face[] GetFacesForVertex(int vertex)
         {
             List<Face> faces = new();
@@ -439,6 +584,11 @@
             return faces.ToArray();
         }
 
+        /// <summary>
+        /// Gets the faces that include the specified vertex and adds them to the provided list.
+        /// </summary>
+        /// <param name="vertex">The index of the vertex.</param>
+        /// <param name="faces">The list to which the faces will be added.</param>
         public void GetFacesForVertex(int vertex, List<Face> faces)
         {
             for (int i = 0; i < IndicesCount;)
@@ -453,6 +603,11 @@
             }
         }
 
+        /// <summary>
+        /// Clears the provided list and adds the faces that include the specified vertex to it.
+        /// </summary>
+        /// <param name="vertex">The index of the vertex.</param>
+        /// <param name="faces">The list to which the faces will be added.</param>
         public void GetFacesForVertex(uint vertex, List<Face> faces)
         {
             faces.Clear();
@@ -468,6 +623,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets the face that includes the specified index.
+        /// </summary>
+        /// <param name="index">The index of the face.</param>
+        /// <returns>The face that includes the specified index.</returns>
         public Face GetFaceForIndex(uint index)
         {
             for (uint i = 0; i < IndicesCount;)
@@ -483,6 +643,11 @@
             return default;
         }
 
+        /// <summary>
+        /// Gets the face at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the face.</param>
+        /// <returns>The face at the specified index.</returns>
         public Face GetFaceAtIndex(uint index)
         {
             var i = index * 3;
@@ -493,6 +658,11 @@
             return new(idx1, idx2, idx3);
         }
 
+        /// <summary>
+        /// Gets an array of faces that are neighbors to the specified face.
+        /// </summary>
+        /// <param name="face">The reference face.</param>
+        /// <returns>An array of faces that are neighbors to the specified face.</returns>
         public Face[] GetNeighborFaces(Face face)
         {
             List<Face> faces = new();
@@ -517,11 +687,17 @@
             return faces.ToArray();
         }
 
+        /// <summary>
+        /// Gathers bone data for the specified vertex ID.
+        /// </summary>
+        /// <param name="vertexId">The ID of the vertex.</param>
+        /// <returns>A tuple containing bone IDs and weights for the specified vertex ID.</returns>
         public (Point4 boneIds, Vector4 weigths) GatherBoneData(int vertexId)
         {
             Point4 boneIds = default;
             Vector4 weigths = default;
 
+#nullable disable
             int m = 0;
             for (int i = 0; i < Bones.Length; i++)
             {
@@ -549,10 +725,14 @@
                     break;
                 }
             }
+#nullable restore
 
             return (boneIds, weigths);
         }
 
+        /// <summary>
+        /// Describes the input elements for a non-skinned mesh.
+        /// </summary>
         public static readonly InputElementDescription[] InputElements =
         {
             new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
@@ -562,6 +742,9 @@
             new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
         };
 
+        /// <summary>
+        /// Describes the input elements for a skinned mesh.
+        /// </summary>
         public static readonly InputElementDescription[] SkinnedInputElements =
         {
             new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
@@ -573,6 +756,11 @@
             new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 76, 0),
         };
 
+        /// <summary>
+        /// Intersects the mesh with a ray and returns the index of the closest intersected vertex.
+        /// </summary>
+        /// <param name="ray">The ray used for intersection.</param>
+        /// <returns>The index of the closest intersected vertex or -1 if no intersection occurs.</returns>
         public long IntersectRay(Ray ray)
         {
             if (!Box.Intersects(ray).HasValue)
@@ -623,18 +811,27 @@
             return id;
         }
 
+        /// <summary>
+        /// Generates normal, tangent, and bitangent vectors for the mesh vertices.
+        /// </summary>
         public void GenerateNTB()
         {
             GenVertexNormalsProcess.GenMeshVertexNormals2(this);
             CalcTangentsProcess.ProcessMesh2(this);
         }
 
+        /// <summary>
+        /// Generates bounding box and bounding sphere for the mesh.
+        /// </summary>
         public void GenerateBounds()
         {
             Box = BoundingBoxHelper.Compute(Positions);
             Sphere = BoundingSphere.CreateFromBoundingBox(Box);
         }
 
+        /// <summary>
+        /// Removes bone-related information from the mesh.
+        /// </summary>
         public void Debone()
         {
             BoneCount = 0;
@@ -642,6 +839,10 @@
             Flags ^= VertexFlags.Skinned;
         }
 
+        /// <summary>
+        /// Gets an array of faces representing the triangles in the mesh.
+        /// </summary>
+        /// <returns>An array of faces.</returns>
         public Face[] GetFaces()
         {
             Face[] faces = new Face[IndicesCount / 3];
@@ -650,6 +851,21 @@
                 faces[i] = new(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]);
             }
             return faces;
+        }
+
+        /// <summary>
+        /// Gets a list of faces representing the triangles in the mesh.
+        /// </summary>
+        /// <param name="faces">The list to populate with faces.</param>
+        public void GetFaces(List<Face> faces)
+        {
+            uint facesCount = IndicesCount / 3;
+            faces.Clear();
+            faces.Capacity = (int)facesCount;
+            for (int i = 0; i < facesCount; i++)
+            {
+                faces.Add(new(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]));
+            }
         }
     }
 }

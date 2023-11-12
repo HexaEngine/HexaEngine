@@ -5,6 +5,11 @@
     /// </summary>
     public class DeviceRemovedEventArgs : EventArgs
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="DeviceRemovedEventArgs"/>.
+        /// </summary>
+        /// <param name="message">The message for the device removal.</param>
+        /// <param name="code">The api native result code for the event.</param>
         public DeviceRemovedEventArgs(string message, int code)
         {
             Message = message;
@@ -21,6 +26,7 @@
         /// </summary>
         public int Code { get; internal set; }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Message;

@@ -4,7 +4,11 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class StructuredUavBuffer<T> : IBuffer, IStructuredUavBuffer<T> where T : unmanaged
+    /// <summary>
+    /// Represents a structured buffer with unordered access view (UAV) capabilities.
+    /// </summary>
+    /// <typeparam name="T">The type of elements stored in the buffer.</typeparam>
+    public unsafe class StructuredUavBuffer<T> : IStructuredUavBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
@@ -27,6 +31,15 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StructuredUavBuffer{T}"/> class with default capacity.
+        /// </summary>
+        /// <param name="device">The graphics device used to create the buffer.</param>
+        /// <param name="accessFlags">The CPU access flags for the buffer.</param>
+        /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
+        /// <param name="srvFlags">The extended shader resource view flags for the buffer.</param>
+        /// <param name="filename">The name of the source file where the constructor is called.</param>
+        /// <param name="lineNumber">The line number in the source file where the constructor is called.</param>
         public StructuredUavBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -62,6 +75,16 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StructuredUavBuffer{T}"/> class with a specified initial capacity.
+        /// </summary>
+        /// <param name="device">The graphics device used to create the buffer.</param>
+        /// <param name="initialCapacity">The initial capacity of the buffer.</param>
+        /// <param name="accessFlags">The CPU access flags for the buffer.</param>
+        /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
+        /// <param name="srvFlags">The extended shader resource view flags for the buffer.</param>
+        /// <param name="filename">The name of the source file where the constructor is called.</param>
+        /// <param name="lineNumber">The line number in the source file where the constructor is called.</param>
         public StructuredUavBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -97,20 +120,60 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Gets or sets the value at the specified <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns>The value at the specified <paramref name="index"/>.</returns>
+        /// <remarks>
+        /// Setting a value at the specified index marks the buffer as dirty, indicating that it needs to be updated.
+        /// </remarks>
         public T this[int index]
         {
-            get { return items[index]; }
-            set { items[index] = value; isDirty = true; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return items[index];
+            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                items[index] = value;
+                isDirty = true;
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the value at the specified <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns>The value at the specified <paramref name="index"/>.</returns>
+        /// <remarks>
+        /// Setting a value at the specified index marks the buffer as dirty, indicating that it needs to be updated.
+        /// </remarks>
         public T this[uint index]
         {
-            get { return items[index]; }
-            set { items[index] = value; isDirty = true; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return items[index];
+            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                items[index] = value;
+                isDirty = true;
+            }
         }
 
+        /// <summary>
+        /// Gets the native pointer to the underlying array of items.
+        /// </summary>
         public T* Local => items;
 
+        /// <summary>
+        /// Occurs when the buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -125,48 +188,33 @@
         }
 
         /// <summary>
-        /// Gets the uav.
+        /// Gets the unordered access view (UAV) associated with the buffer.
         /// </summary>
-        /// <_value>
-        /// The uav.
-        /// </_value>
         public IUnorderedAccessView UAV => uav;
 
         /// <summary>
-        /// Gets the SRV.
+        /// Gets the shader resource view (SRV) associated with the buffer.
         /// </summary>
-        /// <_value>
-        /// The SRV.
-        /// </_value>
         public IShaderResourceView SRV => srv;
 
         /// <summary>
-        /// Not null when CanWrite is true
+        /// Gets the copy buffer associated with the buffer.
         /// </summary>
         public IBuffer? CopyBuffer => copyBuffer;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can write.
+        /// Gets a value indicating whether the buffer allows write access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can write; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanWrite => canWrite;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can read.
+        /// Gets a value indicating whether the buffer allows read access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can read; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanRead => canRead;
 
         /// <summary>
-        /// Gets or sets the capacity.
+        /// Gets or sets the capacity of the buffer. Setting a new capacity may result in resizing the buffer.
         /// </summary>
-        /// <_value>
-        /// The capacity.
-        /// </_value>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -174,21 +222,6 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                if (value == 0)
-                {
-                    return;
-                }
-
-                if (value == capacity)
-                {
-                    return;
-                }
-
-                if (value < capacity)
-                {
-                    return;
-                }
-
                 var tmp = AllocT<T>((int)value);
                 ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
@@ -225,76 +258,74 @@
         }
 
         /// <summary>
-        /// Gets the description.
+        /// Gets the description of the buffer.
         /// </summary>
-        /// <_value>
-        /// The description.
-        /// </_value>
         public BufferDescription Description => buffer.Description;
 
         /// <summary>
-        /// Gets the length.
+        /// Gets the length of the buffer in bytes.
         /// </summary>
-        /// <_value>
-        /// The length.
-        /// </_value>
         public int Length => buffer.Length;
 
         /// <summary>
-        /// Get the item count / counter of the buffer.
+        /// Gets the number of elements currently in the buffer.
         /// </summary>
         public uint Count => count;
 
         /// <summary>
-        /// Gets the dimension.
+        /// Gets the resource dimension of the buffer.
         /// </summary>
-        /// <_value>
-        /// The dimension.
-        /// </_value>
         public ResourceDimension Dimension => buffer.Dimension;
 
         /// <summary>
-        /// Gets the native pointer.
+        /// Gets the native pointer to the underlying buffer.
         /// </summary>
-        /// <_value>
-        /// The native pointer.
-        /// </_value>
         public nint NativePointer => buffer.NativePointer;
 
         /// <summary>
-        /// Gets or sets the dbgName of the debug.
+        /// Gets or sets the debug name of the buffer.
         /// </summary>
-        /// <_value>
-        /// The dbgName of the debug.
-        /// </_value>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
         /// <summary>
-        /// Gets a _value indicating whether this instance is disposed.
+        /// Gets a value indicating whether the buffer is disposed.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-        /// </_value>
         public bool IsDisposed => buffer.IsDisposed;
 
+        /// <summary>
+        /// Resets the counter of items in the buffer to zero.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
         {
             count = 0;
         }
 
+        /// <summary>
+        /// Clears the buffer, setting the counter to zero and marking the buffer as dirty.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Increment()
+        public void Clear()
         {
-            count++;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetDirty()
-        {
+            count = 0;
             isDirty = true;
         }
 
+        /// <summary>
+        /// Erases all items in the buffer, setting the counter to zero and marking the buffer as dirty.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Erase()
+        {
+            ZeroMemoryT(items, capacity);
+            count = 0;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Ensures that the buffer has a capacity of at least the specified value.
+        /// </summary>
+        /// <param name="capacity">The minimum capacity to ensure for the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(uint capacity)
         {
@@ -304,6 +335,10 @@
             }
         }
 
+        /// <summary>
+        /// Grows the buffer capacity to the specified value, ensuring it is at least twice the current count.
+        /// </summary>
+        /// <param name="capacity">The new capacity for the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Grow(uint capacity)
         {
@@ -317,18 +352,78 @@
             Capacity = newcapacity;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Add(T args)
+        /// <summary>
+        /// Adds an item to the buffer and returns a reference to the added item.
+        /// </summary>
+        /// <param name="item">The item to add to the buffer.</param>
+        /// <returns>A reference to the added item.</returns>
+        public ref T Add(T item)
         {
             var index = count;
             count++;
             EnsureCapacity(count);
-            items[index] = args;
+            items[index] = item;
             isDirty = true;
             return ref items[index];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Removes the specified item from the buffer.
+        /// </summary>
+        /// <param name="item">The item to remove from the buffer.</param>
+        /// <returns>True if the item was successfully removed; otherwise, false.</returns>
+        public bool Remove(T item)
+        {
+            int idx = IndexOf(item);
+            if (idx == -1)
+            {
+                return false;
+            }
+            RemoveAt(idx);
+            isDirty = true;
+            return true;
+        }
+
+        /// <summary>
+        /// Determines whether the buffer contains the specified item.
+        /// </summary>
+        /// <param name="item">The item to locate in the buffer.</param>
+        /// <returns>True if the item is found in the buffer; otherwise, false.</returns>
+        public bool Contains(T item)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                T it = items[i];
+                if (item.Equals(it))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the index of the first occurrence of the specified item in the buffer.
+        /// </summary>
+        /// <param name="item">The item to locate in the buffer.</param>
+        /// <returns>The index of the first occurrence of the item in the buffer, or -1 if the item is not found.</returns>
+        public int IndexOf(T item)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                T it = items[i];
+                if (item.Equals(it))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Removes the item at the specified index from the buffer.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
         public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(T);
@@ -336,7 +431,10 @@
             isDirty = true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Removes the item at the specified index from the buffer.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
         public void RemoveAt(uint index)
         {
             var size = (count - index) * sizeof(T);
@@ -344,20 +442,20 @@
             isDirty = true;
         }
 
-        public void Clear()
-        {
-            for (int i = 0; i < count; i++)
-            {
-                items[i] = default;
-            }
-            count = 0;
-        }
-
+        /// <summary>
+        /// Clears the unordered access view of the buffer with the specified values.
+        /// </summary>
+        /// <param name="context">The graphics context used to perform the clear operation.</param>
         public void Clear(IGraphicsContext context)
         {
             context.ClearUnorderedAccessViewUint(uav, 0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Updates the buffer data on the graphics context. If the buffer is dirty, it writes the data to the copy buffer and copies it to the main buffer.
+        /// </summary>
+        /// <param name="context">The graphics context used to perform the update operation.</param>
+        /// <returns>True if the buffer was updated, false otherwise.</returns>
         public bool Update(IGraphicsContext context)
         {
             if (copyBuffer == null)
@@ -389,6 +487,10 @@
             return false;
         }
 
+        /// <summary>
+        /// Reads data from the buffer using the graphics context and copies it to the internal items array.
+        /// </summary>
+        /// <param name="context">The graphics context used to perform the read operation.</param>
         public void Read(IGraphicsContext context)
         {
             if (copyBuffer == null)
@@ -404,12 +506,20 @@
             context.CopyResource(copyBuffer, buffer);
             context.Read(copyBuffer, items, capacity);
         }
-
+        /// <summary>
+        /// Copies the content of the buffer to another buffer using the graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used to perform the copy operation.</param>
+        /// <param name="buffer">The destination buffer to copy the data to.</param>
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
         }
 
+        /// <summary>
+        /// Disposes of the buffer and associated resources.
+        /// </summary>
+        /// <param name="disposing">True if called from the Dispose method, false if called from the finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -426,12 +536,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes the object and releases resources if not already disposed.
+        /// </summary>
         ~StructuredUavBuffer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Disposes of the buffer and associated resources, suppressing finalization.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

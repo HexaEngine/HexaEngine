@@ -6,18 +6,41 @@
     using System;
     using System.Numerics;
 
-    public class Cylinder : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a cylinder primitive in 3D space.
+    /// </summary>
+    public sealed class Cylinder : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Cylinder"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
         public Cylinder(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the cylinder mesh with vertices and indices.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <returns>
+        /// A tuple containing the vertex buffer and optional index buffer of the cylinder mesh.
+        /// </returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateCylinder(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
+        /// <summary>
+        /// Generates vertices and indices for a cylinder mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the cylinder mesh.</param>
+        /// <param name="indexBuffer">The optional index buffer of the cylinder mesh.</param>
+        /// <param name="height">The height of the cylinder.</param>
+        /// <param name="diameter">The diameter of the cylinder.</param>
+        /// <param name="tessellation">The number of subdivisions around the cylinder.</param>
         public static void CreateCylinder(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)

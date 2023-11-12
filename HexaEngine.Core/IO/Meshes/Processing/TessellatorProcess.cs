@@ -4,20 +4,30 @@
     using HexaEngine.Mathematics;
     using System.Numerics;
 
-    public class TessellatorProcess
+    /// <summary>
+    /// Contains static methods for tessellating mesh or terrain data.
+    /// </summary>
+    public static class TessellatorProcess
     {
+        /// <summary>
+        /// Tessellates the given mesh data by subdividing each triangle into six smaller triangles.
+        /// </summary>
+        /// <param name="data">The mesh data to tessellate.</param>
         public static void Tessellate(MeshData data)
         {
+#nullable disable
+            // Calculate the number of faces and new vertex count
             uint faces = data.IndicesCount / 3;
-
             uint newVertexCount = faces * 6;
 
+            // Check which vertex attributes are present in the input mesh data
             bool hasUVs = (data.Flags & VertexFlags.UVs) != 0;
             bool hasNormals = (data.Flags & VertexFlags.Normals) != 0;
             bool hasTangents = (data.Flags & VertexFlags.Tangents) != 0;
             bool hasBitangents = (data.Flags & VertexFlags.Bitangents) != 0;
             bool hasColors = (data.Flags & VertexFlags.Colors) != 0;
 
+            // Initialize arrays for new vertex attributes based on the presence of these attributes
             Vector3[] positions = new Vector3[newVertexCount];
             Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;
             Vector3[] normals = hasNormals ? new Vector3[newVertexCount] : null;
@@ -25,12 +35,14 @@
             Vector3[] bitangents = hasBitangents ? new Vector3[newVertexCount] : null;
             Vector4[] colors = hasColors ? new Vector4[newVertexCount] : null;
 
+            // Initialize an array for new indices
             uint newIndexCount = faces * 12;
-
             uint[] indices = new uint[newIndexCount];
 
             uint v = 0;
             uint k = 0;
+
+            // Tessellate each face
             for (uint i = 0; i < faces; i++)
             {
                 uint i0 = data.Indices[i * 3];
@@ -116,6 +128,8 @@
                 v += 6;
             }
 
+            // Update the MeshData object with the tessellated data
+
             data.Positions = positions;
             data.UVs = uvs;
             data.Normals = normals;
@@ -128,31 +142,41 @@
             data.VerticesCount = newVertexCount;
 
             data.IndicesCount = newIndexCount;
+#nullable restore
         }
 
+        /// <summary>
+        /// Tessellates the given terrain cell data by subdividing each triangle into six smaller triangles.
+        /// </summary>
+        /// <param name="terrain">The terrain cell data to tessellate.</param>
         public static void Tessellate(TerrainCellData terrain)
         {
+#nullable disable
+            // Calculate the number of faces and new vertex count
             uint faces = terrain.IndicesCount / 3;
-
             uint newVertexCount = faces * 6;
 
+            // Check which vertex attributes are present in the input terrain cell data
             bool hasUVs = (terrain.Flags & TerrainVertexFlags.UVs) != 0;
             bool hasNormals = (terrain.Flags & TerrainVertexFlags.Normals) != 0;
             bool hasTangents = (terrain.Flags & TerrainVertexFlags.Tangents) != 0;
             bool hasBitangents = (terrain.Flags & TerrainVertexFlags.Bitangents) != 0;
 
+            // Initialize arrays for new vertex attributes based on the presence of these attributes
             Vector3[] positions = new Vector3[newVertexCount];
             Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;
             Vector3[] normals = hasNormals ? new Vector3[newVertexCount] : null;
             Vector3[] tangents = hasTangents ? new Vector3[newVertexCount] : null;
             Vector3[] bitangents = hasBitangents ? new Vector3[newVertexCount] : null;
 
+            // Initialize an array for new indices
             uint newIndexCount = faces * 12;
-
             uint[] indices = new uint[newIndexCount];
 
             uint v = 0;
             uint k = 0;
+
+            // Tessellate each face
             for (uint i = 0; i < faces; i++)
             {
                 uint i0 = terrain.Indices[i * 3];
@@ -228,6 +252,8 @@
                 v += 6;
             }
 
+            // Update the TerrainCellData object with the tessellated data
+
             terrain.Positions = positions;
             terrain.UVs = uvs;
             terrain.Normals = normals;
@@ -239,6 +265,7 @@
             terrain.VerticesCount = newVertexCount;
 
             terrain.IndicesCount = newIndexCount;
+#nullable restore
         }
     }
 }

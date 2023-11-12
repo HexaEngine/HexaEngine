@@ -15,7 +15,7 @@
 
         protected override void LoadInstance(ResourceManager manager, TerrainMaterial instance, MaterialData instanceData)
         {
-            for (int i = 0; i < instanceData.Textures.Length; i++)
+            for (int i = 0; i < instanceData.Textures.Count; i++)
             {
                 instance.TextureList.Add(manager.LoadTexture(instanceData.Textures[i]));
             }
@@ -25,7 +25,7 @@
 
         protected override async Task LoadInstanceAsync(ResourceManager manager, TerrainMaterial instance, MaterialData instanceData)
         {
-            for (int i = 0; i < instanceData.Textures.Length; i++)
+            for (int i = 0; i < instanceData.Textures.Count; i++)
             {
                 instance.TextureList.Add(await manager.LoadTextureAsync(instanceData.Textures[i]));
             }

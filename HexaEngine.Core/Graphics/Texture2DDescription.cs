@@ -2,37 +2,73 @@
 {
     using System.Xml.Serialization;
 
+    /// <summary>
+    /// Represents the description of a 2D texture.
+    /// </summary>
     public struct Texture2DDescription
     {
+        /// <summary>
+        /// The width of the texture.
+        /// </summary>
         [XmlAttribute]
         public int Width;
 
+        /// <summary>
+        /// The height of the texture.
+        /// </summary>
         [XmlAttribute]
         public int Height;
 
+        /// <summary>
+        /// The number of mip levels in the texture.
+        /// </summary>
         [XmlAttribute]
         public int MipLevels;
 
+        /// <summary>
+        /// The array size (number of textures in the array).
+        /// </summary>
         [XmlAttribute]
         public int ArraySize;
 
+        /// <summary>
+        /// The format of the texture.
+        /// </summary>
         [XmlAttribute]
         public Format Format;
 
+        /// <summary>
+        /// The multisampling parameters for the texture.
+        /// </summary>
         public SampleDescription SampleDescription;
 
+        /// <summary>
+        /// The intended usage of the texture.
+        /// </summary>
         [XmlAttribute]
         public Usage Usage;
 
+        /// <summary>
+        /// The bind flags specifying how the texture will be bound to the pipeline.
+        /// </summary>
         [XmlAttribute]
         public BindFlags BindFlags;
 
+        /// <summary>
+        /// The CPU access flags indicating how the CPU can access the texture.
+        /// </summary>
         [XmlAttribute]
         public CpuAccessFlags CPUAccessFlags;
 
+        /// <summary>
+        /// Miscellaneous flags for the texture.
+        /// </summary>
         [XmlAttribute]
         public ResourceMiscFlag MiscFlags;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture2DDescription"/> struct with default values.
+        /// </summary>
         public Texture2DDescription()
         {
             SampleDescription = SampleDescription.Default;
@@ -46,9 +82,9 @@
         /// <param name="height">Texture height (in texels).</param>
         /// <param name="arraySize">Number of textures in the array.</param>
         /// <param name="mipLevels">The maximum number of mipmap levels in the texture.</param>
-        /// <param name="bindFlags">The <see cref="Vortice.Direct3D11.BindFlags"/> for binding to pipeline stages.</param>
+        /// <param name="bindFlags">The <see cref="BindFlags"/> for binding to pipeline stages.</param>
         /// <param name="usage">Value that identifies how the texture is to be read from and written to.</param>
-        /// <param name="cpuAccessFlags">The <see cref="Direct3D11.CpuAccessFlags"/> to specify the types of CPU access allowed.</param>
+        /// <param name="cpuAccessFlags">The <see cref="BindFlags"/> to specify the types of CPU access allowed.</param>
         /// <param name="sampleCount">Specifies multisampling parameters for the texture.</param>
         /// <param name="sampleQuality">Specifies multisampling parameters for the texture.</param>
         /// <param name="miscFlags">The <see cref="ResourceMiscFlag"/> that identify other, less common resource options. </param>

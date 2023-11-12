@@ -7,111 +7,40 @@
     using System;
     using System.Numerics;
 
-    public class Sphere : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a 3D sphere primitive.
+    /// </summary>
+    public sealed class Sphere : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Sphere"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
         public Sphere(IGraphicsDevice device) : base(device)
         {
         }
 
+
+        /// <summary>
+        /// Initializes the sphere mesh by creating vertex and index buffers.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
-        /* public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, uint LatLines = 32, uint LongLines = 32)
-         {
-             float radius = 1;
-             float x, y, z;                              // vertex position
-             float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
-             float s, t;                                     // vertex texCoord
-
-             float deltaLatitude = MathF.PI / LatLines;
-             float deltaLongitude = 2 * MathF.PI / LongLines;
-             float longitudeAngle, latitudeAngle;
-
-             MeshVertex[] vertices = new MeshVertex[(LatLines + 1) * (LongLines + 1)];
-
-             int vcounter = 0;
-             for (int i = 0; i <= LatLines; ++i)
-             {
-                 latitudeAngle = i * deltaLatitude;        // starting from pi/2 to -pi/2
-                 float latSin = radius * MathF.Sin(latitudeAngle);             // r * sin(u)
-                 float latCos = radius * MathF.Cos(latitudeAngle);              // r * cos(u)
-
-                 // add (sectorCount+1) vertices per stack
-                 // the first and last vertices have same position and normal, but different tex coords
-                 for (int j = 0; j <= LongLines; ++j)
-                 {
-                     MeshVertex v = new();
-                     longitudeAngle = j * deltaLongitude;           // starting from 0 to 2pi
-
-                     // vertex position (x, y, z)
-                     x = latSin * MathF.Cos(longitudeAngle);
-                     y = latCos;
-                     z = -latSin * MathF.Sin(longitudeAngle);
-                     v.Position = new(x, y, z);
-
-                     // normalized vertex normal (nx, ny, nz)
-                     nx = x * lengthInv;
-                     ny = y * lengthInv;
-                     nz = z * lengthInv;
-                     v.Normal = new(nx, ny, nz);
-
-                     if (Vector3.Dot(Vector3.UnitY, v.Normal) == 1.0f)
-                     {
-                         v.Tangent = Vector3.UnitX;
-                     }
-                     else
-                     {
-                         v.Tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, v.Normal));
-                     }
-
-                     v.Bitangent = Vector3.Cross(v.Normal, v.Tangent);
-
-                     // vertex tex coord (s, t) range between [0, 1]
-                     s = (float)j / LongLines;
-                     t = (float)i / LatLines;
-
-                     v.UV = new(MathF.Abs(1 - s), t, 0);
-                     vertices[vcounter++] = v;
-                 }
-             }
-
-             vertexBuffer = new(device, vertices, CpuAccessFlags.Normal);
-
-             uint k1, k2;
-             int ii = 0;
-             uint[] indices = new uint[LatLines * LongLines * 6 - 6];
-             for (uint i = 0; i < LatLines; ++i)
-             {
-                 k1 = i * (LongLines + 1);     // beginning of current stack
-                 k2 = k1 + LongLines + 1;      // beginning of next stack
-
-                 for (int j = 0; j < LongLines; ++j, ++k1, ++k2)
-                 {
-                     // 2 triangles per sector excluding first and last stacks
-                     // k1 => k2 => k1+1
-                     if (i != 0)
-                     {
-                         indices[ii++] = k1;
-                         indices[ii++] = k2;
-                         indices[ii++] = k1 + 1;
-                     }
-
-                     // k1+1 => k2 => k2+1
-                     if (i != LatLines - 1)
-                     {
-                         indices[ii++] = k1 + 1;
-                         indices[ii++] = k2;
-                         indices[ii++] = k2 + 1;
-                     }
-                 }
-             }
-
-             indexBuffer = new(device, indices, CpuAccessFlags.Normal);
-         }*/
-
+        /// <summary>
+        /// Creates a sphere mesh with the specified parameters.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the sphere.</param>
+        /// <param name="indexBuffer">The index buffer of the sphere.</param>
+        /// <param name="diameter">The diameter of the sphere.</param>
+        /// <param name="tessellation">The level of tessellation for the sphere.</param>
+        /// <param name="invertn">A flag indicating whether to invert the normals of the sphere.</param>
         public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false)
         {
             if (tessellation < 3)

@@ -13,6 +13,8 @@
         private static ulong last;
         private static float fixedTime;
         private static float cumulativeFrameTime;
+        private static float gameTime;
+        private static float gameTimeScale = 20;
 
         /// <summary>
         /// Gets how many frames have passed since the start.
@@ -44,9 +46,15 @@
         /// </summary>
         public static float MaxFrameTime { get; set; }
 
-        public static float GameTime { get; set; }
+        /// <summary>
+        /// Gets or sets the game time, is normalized in the 24h format.
+        /// </summary>
+        public static float GameTime { get => gameTime; set => gameTime = value % 24; }
 
-        public static float GameTimeScale { get; set; } = 20;
+        /// <summary>
+        /// Gets or sets the game time scale, 1s realtime multiplied by scale.
+        /// </summary>
+        public static float GameTimeScale { get => gameTimeScale; set => gameTimeScale = value; }
 
         /// <summary>
         /// Occurs when a fixed update is triggered.
@@ -82,6 +90,9 @@
             {
                 throw new InvalidOperationException("Delta time cannot be 0 or less than 0");
             }
+
+            gameTime += (float)(deltaTime * gameTimeScale) / 60 / 60;
+            gameTime %= 24;
 
             while (fixedTime > FixedDelta)
             {

@@ -1,21 +1,55 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    /// <summary>
+    /// Describes an unordered access view.
+    /// </summary>
     public struct UnorderedAccessViewDescription
     {
+        /// <summary>
+        /// The resource format.
+        /// </summary>
         public Format Format;
+
+        /// <summary>
+        /// The dimension of the view.
+        /// </summary>
         public UnorderedAccessViewDimension ViewDimension;
+
+        /// <summary>
+        /// Unordered access view for a buffer.
+        /// </summary>
         public BufferUnorderedAccessView Buffer;
+
+        /// <summary>
+        /// Unordered access view for a 1D texture.
+        /// </summary>
         public Texture1DUnorderedAccessView Texture1D;
+
+        /// <summary>
+        /// Unordered access view for a 1D array texture.
+        /// </summary>
         public Texture1DArrayUnorderedAccessView Texture1DArray;
+
+        /// <summary>
+        /// Unordered access view for a 2D texture.
+        /// </summary>
         public Texture2DUnorderedAccessView Texture2D;
+
+        /// <summary>
+        /// Unordered access view for a 2D array texture.
+        /// </summary>
         public Texture2DArrayUnorderedAccessView Texture2DArray;
+
+        /// <summary>
+        /// Unordered access view for a 3D texture.
+        /// </summary>
         public Texture3DUnorderedAccessView Texture3D;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnorderedAccessViewDescription"/> struct.
         /// </summary>
         /// <param name="viewDimension">The <see cref="UnorderedAccessViewDimension"/></param>
-        /// <param name="format">The <see cref="DXGI.Format"/> to use or <see cref="Format.Unknown"/>.</param>
+        /// <param name="format">The <see cref="Format"/> to use or <see cref="Format.Unknown"/>.</param>
         /// <param name="mipSlice">The index of the mipmap level to use mip slice or FirstElement for BUFFER.</param>
         /// <param name="firstArraySlice">The index of the first texture to use in an array of textures or NumElements for BUFFER or FirstWSlice for TEXTURE3D.</param>
         /// <param name="arraySize">Number of textures in the array or WSize for TEXTURE3D.</param>

@@ -12,12 +12,26 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class GeodesicSphere : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a geodesic sphere primitive in 3D space.
+    /// </summary>
+    public sealed class GeodesicSphere : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GeodesicSphere"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
         public GeodesicSphere(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the geodesic sphere mesh with vertices and indices.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <returns>
+        /// A tuple containing the vertex buffer and optional index buffer of the geodesic sphere mesh.
+        /// </returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateGeodesicSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
@@ -47,6 +61,14 @@
             5, 2, 1, // bottom front-right face
         };
 
+        /// <summary>
+        /// Generates vertices and indices for a geodesic sphere mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the geodesic sphere mesh.</param>
+        /// <param name="indexBuffer">The optional index buffer of the geodesic sphere mesh.</param>
+        /// <param name="diameter">The diameter of the geodesic sphere.</param>
+        /// <param name="tessellation">The level of tessellation for the geodesic sphere.</param>
         public static unsafe void CreateGeodesicSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 3)
         {
             float radius = diameter / 2.0f;

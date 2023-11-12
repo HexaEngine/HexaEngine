@@ -196,6 +196,11 @@ namespace HexaEngine.Editor
             return immediateList;
         }
 
+        /// <summary>
+        /// Executes a deferred debug draw command list.
+        /// </summary>
+        /// <param name="commandList">The debug draw command list to execute.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the provided command list is not of type Deferred.</exception>
         public static void ExecuteCommandList(DebugDrawCommandList commandList)
         {
             if (commandList.Type != DebugDrawCommandListType.Deferred)
@@ -1269,6 +1274,17 @@ new Vector3(+1, +1, +1),
             vertices[2] = new(Vector3.Transform(c, orientation) + origin, default, color);
         }
 
+        /// <summary>
+        /// Draws a textured quad.
+        /// </summary>
+        /// <param name="id">The identifier for the quad.</param>
+        /// <param name="origin">The origin of the quad.</param>
+        /// <param name="orientation">The orientation of the quad.</param>
+        /// <param name="scale">The scale of the quad.</param>
+        /// <param name="uv0">The UV coordinates of the bottom-left corner of the quad.</param>
+        /// <param name="uv1">The UV coordinates of the top-right corner of the quad.</param>
+        /// <param name="col">The color of the quad.</param>
+        /// <param name="texId">The texture ID of the quad.</param>
         public static void DrawQuad(string id, Vector3 origin, Quaternion orientation, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
         {
             uint color = ColorConvertFloat4ToU32(col);

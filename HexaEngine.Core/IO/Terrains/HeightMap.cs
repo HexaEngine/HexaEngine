@@ -26,9 +26,11 @@
         /// </summary>
         private float[] data;
 
+#nullable disable
         private HeightMap()
         {
         }
+#nullable restore
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width, height, and data.
@@ -77,14 +79,26 @@
             set => data[index] = value;
         }
 
+        /// <summary>
+        /// Gets or sets the height map data at the specified coordinates.
+        /// </summary>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
+        /// <returns>The height map data at the specified coordinates.</returns>
         public float this[uint x, uint y]
         {
             get => data[GetIndexFor(x, y)];
             set => data[GetIndexFor(x, y)] = value;
         }
 
+        /// <summary>
+        /// Gets the width of the height map.
+        /// </summary>
         public uint Width => width;
 
+        /// <summary>
+        /// Gets the height of the height map.
+        /// </summary>
         public uint Height => height;
 
         /// <summary>
@@ -160,6 +174,9 @@
             return row >= 0 && row < height && col >= 0 && col < width;
         }
 
+        /// <summary>
+        /// Smoothes the height map.
+        /// </summary>
         public void Smooth()
         {
             float[] dest = new float[width * height];
@@ -194,14 +211,21 @@
         /// <summary>
         /// Gets the index for the specified coordinates in the terrain.
         /// </summary>
-        /// <param filename="x">The x-coordinate.</param>
-        /// <param filename="y">The y-coordinate.</param>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
         /// <returns>The index.</returns>
         public uint GetIndexFor(uint x, uint y)
         {
             return y * width + x;
         }
 
+        /// <summary>
+        /// Reads a <see cref="HeightMap"/> from a stream.
+        /// </summary>
+        /// <param name="src">The source stream.</param>
+        /// <param name="encoding">The encoding used for reading.</param>
+        /// <param name="endianness">The endianness used for reading.</param>
+        /// <returns>The read height map.</returns>
         public static HeightMap ReadFrom(Stream src, Encoding encoding, Endianness endianness)
         {
             HeightMap heightMap = new();
@@ -209,6 +233,12 @@
             return heightMap;
         }
 
+        /// <summary>
+        /// Reads the height map data from a stream.
+        /// </summary>
+        /// <param name="src">The source stream.</param>
+        /// <param name="encoding">The encoding used for reading.</param>
+        /// <param name="endianness">The endianness used for reading.</param>
         public void Read(Stream src, Encoding encoding, Endianness endianness)
         {
             width = src.ReadUInt32(endianness);
@@ -226,6 +256,12 @@
             }
         }
 
+        /// <summary>
+        /// Writes the height map data to a stream.
+        /// </summary>
+        /// <param name="dst">The destination stream.</param>
+        /// <param name="encoding">The encoding used for writing.</param>
+        /// <param name="endianness">The endianness used for writing.</param>
         public void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteUInt32(width, endianness);
@@ -241,6 +277,14 @@
             }
         }
 
+        /// <summary>
+        /// Creates a <see cref="Texture2D"/> from the height map.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param name="uav">Indicates whether to create an unordered access view.</param>
+        /// <param name="immutable">Indicates whether the texture is immutable.</param>
+        /// <returns>The created height map texture.</returns>
         public unsafe Texture2D CreateHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None, bool uav = false, bool immutable = true)
         {
             Half* pixel = AllocT<Half>(data.Length);
@@ -274,6 +318,12 @@
             return heightMap;
         }
 
+        /// <summary>
+        /// Creates a staging <see cref="Texture2D"/> from the height map.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <returns>The created staging height map texture.</returns>
         public unsafe Texture2D CreateStagingHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             Half* pixel = AllocT<Half>(data.Length);
@@ -290,6 +340,11 @@
             return heightMap;
         }
 
+        /// <summary>
+        /// Writes the height map data to a texture.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="texture">The destination texture.</param>
         public unsafe void WriteHeightMap(IGraphicsContext context, Texture2D texture)
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Write) != 0)
@@ -309,6 +364,11 @@
             }
         }
 
+        /// <summary>
+        /// Reads the height map data from a texture.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="texture">The source texture.</param>
         public unsafe void ReadHeightMap(IGraphicsContext context, Texture2D texture)
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)

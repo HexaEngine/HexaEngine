@@ -6,6 +6,9 @@
     using System.Numerics;
     using System.Text;
 
+    /// <summary>
+    /// Represents an output terminal for displaying messages.
+    /// </summary>
     public class OutputTerminal : ITerminal
     {
         private readonly List<TerminalMessage> messages = new();
@@ -19,16 +22,20 @@
         private readonly TerminalTraceListener traceListener;
         private readonly TerminalConsoleRedirect consoleRedirect;
 
+        /// <summary>
+        /// Gets a value indicating whether the terminal is shown.
+        /// </summary>
         public bool Shown { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutputTerminal"/> class.
+        /// </summary>
         public OutputTerminal()
         {
             traceListener = new(this);
             Trace.Listeners.Add(traceListener);
             consoleRedirect = new(this);
             Console.SetOut(consoleRedirect);
-
-            Console.WriteLine("Hello World");
         }
 
         private class TerminalTraceListener : TraceListener
@@ -115,11 +122,19 @@
             }
         }
 
+        /// <summary>
+        /// Writes the specified text to the output terminal.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
         public void Write(string text)
         {
             AddMessage(text);
         }
 
+        /// <summary>
+        /// Writes the specified text followed by a new line to the output terminal.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
         public void WriteLine(string text)
         {
             Write(text + Environment.NewLine);
@@ -134,6 +149,7 @@
             scrollToBottom = true;
         }
 
+        /// <inheritdoc/>
         public void Draw()
         {
             DrawMenuBar();
@@ -163,10 +179,6 @@
                 // View settings.
                 if (ImGui.BeginMenu("Appearance"))
                 {
-                    // Logging Colors
-                    ImGuiColorEditFlags flags =
-                            ImGuiColorEditFlags.Float | ImGuiColorEditFlags.AlphaPreview | ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar;
-
                     ImGui.TextUnformatted("Color Palette");
                     ImGui.Indent();
 
@@ -222,16 +234,19 @@
             }
         }
 
+        /// <inheritdoc/>
         public void Focus()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public void Close()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public void Show()
         {
             throw new NotImplementedException();

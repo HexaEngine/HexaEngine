@@ -10,12 +10,24 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Tetrahedron : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a 3D tetrahedron primitive.
+    /// </summary>
+    public sealed class Tetrahedron : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tetrahedron"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
         public Tetrahedron(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the tetrahedron mesh by creating vertex and index buffers.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateTetrahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
@@ -38,7 +50,14 @@
             1, 3, 2,
         };
 
-        private void CreateTetrahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        /// <summary>
+        /// Creates a tetrahedron mesh with the specified parameters.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the tetrahedron.</param>
+        /// <param name="indexBuffer">The index buffer of the tetrahedron.</param>
+        /// <param name="size">The size of the tetrahedron.</param>
+        public static void CreateTetrahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[4 * 3];
             uint[] indices = new uint[4 * 3];

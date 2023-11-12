@@ -4,6 +4,10 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents a generic vertex buffer for graphics rendering.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the buffer, must be unmanaged.</typeparam>
     public unsafe class VertexBuffer<T> : IBuffer, IVertexBuffer<T> where T : unmanaged
     {
         private const int DefaultCapacity = 8;
@@ -22,6 +26,13 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with default capacity.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="flags">The CPU access flags for the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -50,6 +61,14 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with an array of vertices.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="vertices">An array of vertices to initialize the buffer.</param>
+        /// <param name="flags">The CPU access flags for the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public VertexBuffer(IGraphicsDevice device, T[] vertices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -84,6 +103,15 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with a pointer to vertices.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="vertices">A pointer to the vertices to initialize the buffer.</param>
+        /// <param name="count">The number of vertices in the buffer.</param>
+        /// <param name="flags">The CPU access flags for the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public VertexBuffer(IGraphicsDevice device, T* vertices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -115,6 +143,14 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with a specified capacity.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="capacity">The initial capacity of the buffer.</param>
+        /// <param name="flags">The CPU access flags for the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public VertexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -143,6 +179,9 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Occurs when the buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -156,10 +195,19 @@
             }
         }
 
+        /// <summary>
+        /// Gets the number of items in the buffer.
+        /// </summary>
         public uint Count => count;
 
+        /// <summary>
+        /// Gets the stride of the buffer, which is the size of one element in bytes.
+        /// </summary>
         public uint Stride { get; } = (uint)sizeof(T);
 
+        /// <summary>
+        /// Gets or sets the capacity of the buffer. Setting the capacity reallocates the buffer if needed.
+        /// </summary>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -183,18 +231,41 @@
             }
         }
 
+        /// <summary>
+        /// Gets the description of the buffer.
+        /// </summary>
         public BufferDescription Description => buffer.Description;
 
+        /// <summary>
+        /// Gets the length of the buffer.
+        /// </summary>
         public int Length => buffer.Length;
 
+        /// <summary>
+        /// Gets the dimension of the buffer resource.
+        /// </summary>
         public ResourceDimension Dimension => buffer.Dimension;
 
+        /// <summary>
+        /// Gets the native pointer to the underlying buffer resource.
+        /// </summary>
         public nint NativePointer => buffer.NativePointer;
 
+        /// <summary>
+        /// Gets or sets the debug name of the buffer.
+        /// </summary>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
+        /// <summary>
+        /// Gets a value indicating whether the buffer has been disposed.
+        /// </summary>
         public bool IsDisposed => buffer.IsDisposed;
 
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns>The element at the specified index.</returns>
         public T this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -207,12 +278,40 @@
             }
         }
 
+        /// <summary>
+        /// Resets the item count to zero.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
         {
             count = 0;
         }
 
+        /// <summary>
+        /// Clears the buffer, setting the item count to zero and marking it as dirty.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear()
+        {
+            count = 0;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Erases the buffer by zeroing out its memory, setting the item count to zero, and marking it as dirty.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Erase()
+        {
+            ZeroMemoryT(items, capacity);
+            count = 0;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Ensures that the buffer has at least the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The desired capacity of the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(uint capacity)
         {
@@ -222,6 +321,10 @@
             }
         }
 
+        /// <summary>
+        /// Grows the buffer to the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The desired capacity of the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Grow(uint capacity)
         {
@@ -235,6 +338,23 @@
             Capacity = newcapacity;
         }
 
+        /// <summary>
+        /// Adds a single vertex to the buffer.
+        /// </summary>
+        /// <param name="vertex">The vertex to add.</param>
+        public void Add(T vertex)
+        {
+            uint index = count;
+            count++;
+            EnsureCapacity(count);
+            items[index] = vertex;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Adds an array of vertices to the buffer.
+        /// </summary>
+        /// <param name="vertices">The array of vertices to add.</param>
         public void Add(params T[] vertices)
         {
             uint index = count;
@@ -249,13 +369,22 @@
             isDirty = true;
         }
 
-        public void Remove(int index)
+        /// <summary>
+        /// Removes the item at the specified index from the buffer.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
+        public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
         }
 
+        /// <summary>
+        /// Updates the buffer in the specified graphics context if it is marked as dirty.
+        /// </summary>
+        /// <param name="context">The graphics context for updating the buffer.</param>
+        /// <returns>True if the buffer was updated, false otherwise.</returns>
         public bool Update(IGraphicsContext context)
         {
             if (isDirty)
@@ -267,32 +396,46 @@
             return false;
         }
 
-        public void Clear()
-        {
-            count = 0;
-            isDirty = true;
-        }
-
+        /// <summary>
+        /// Flushes the memory associated with the buffer.
+        /// </summary>
         public void FlushMemory()
         {
             Free(items);
+            items = null;
         }
 
+        /// <summary>
+        /// Copies the contents of this buffer to another buffer in the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context for the copy operation.</param>
+        /// <param name="buffer">The destination buffer for the copy operation.</param>
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
         }
 
+        /// <summary>
+        /// Binds the buffer to the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context for binding the buffer.</param>
         public void Bind(IGraphicsContext context)
         {
             context.SetVertexBuffer(buffer, (uint)sizeof(T));
         }
 
+        /// <summary>
+        /// Unbinds the buffer from the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context for unbinding the buffer.</param>
         public void Unbind(IGraphicsContext context)
         {
             context.SetVertexBuffer(null, 0);
         }
 
+        /// <summary>
+        /// Disposes of the buffer and releases associated resources.
+        /// </summary>
         public void Dispose()
         {
             if (!disposedValue)
@@ -301,7 +444,10 @@
                 buffer?.Dispose();
                 capacity = 0;
                 count = 0;
-                Free(items);
+                if (items != null)
+                {
+                    Free(items);
+                }
 
                 disposedValue = true;
             }

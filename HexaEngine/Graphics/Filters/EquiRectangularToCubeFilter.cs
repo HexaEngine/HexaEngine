@@ -9,6 +9,20 @@ namespace HexaEngine.Graphics.Filters
     using System;
     using System.Numerics;
 
+    public struct ModelViewProj
+    {
+        public Matrix4x4 Model;
+        public Matrix4x4 View;
+        public Matrix4x4 Projection;
+
+        public ModelViewProj(Matrix4x4 model, Matrix4x4 view, Matrix4x4 projection)
+        {
+            Model = Matrix4x4.Transpose(model);
+            View = Matrix4x4.Transpose(view);
+            Projection = Matrix4x4.Transpose(projection);
+        }
+    }
+
     public class EquiRectangularToCubeFilter : IFilter
     {
         private Cube cube;

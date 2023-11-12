@@ -25,6 +25,10 @@ namespace HexaEngine.Editor
         private const int vertexBufferSize = 5000;
         private const int indexBufferSize = 10000;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DebugDrawCommandList"/> class.
+        /// </summary>
+        /// <param name="type">The type of the debug draw command list.</param>
         public DebugDrawCommandList(DebugDrawCommandListType type)
         {
             Type = type;
@@ -40,14 +44,31 @@ namespace HexaEngine.Editor
         /// </summary>
         public uint IndexCount => nIndicesTotal;
 
+        /// <summary>
+        /// Gets the vertices of the debug draw command list.
+        /// </summary>
         public DebugDrawVert* Vertices => vertices.Data;
 
+        /// <summary>
+        /// Gets the indices of the debug draw command list.
+        /// </summary>
         public uint* Indices => indices.Data;
 
+        /// <summary>
+        /// Gets the list of debug draw commands.
+        /// </summary>
         public UnsafeList<DebugDrawCommand> Commands => queue;
 
+        /// <summary>
+        /// Gets the type of the debug draw command list.
+        /// </summary>
         public DebugDrawCommandListType Type { get; }
 
+        /// <summary>
+        /// Reserves space for geometry in the debug draw command list.
+        /// </summary>
+        /// <param name="nVertices">The number of vertices to reserve.</param>
+        /// <param name="nIndices">The number of indices to reserve.</param>
         public void ReserveGeometry(uint nVertices, uint nIndices)
         {
             vertices.Resize(vertices.Size + nVertices);
@@ -56,42 +77,72 @@ namespace HexaEngine.Editor
             nIndicesCmd += nIndices;
         }
 
+        /// <summary>
+        /// Reserves space for vertices in the debug draw command list.
+        /// </summary>
+        /// <param name="nVertices">The number of vertices to reserve.</param>
         public void ReserveVerts(uint nVertices)
         {
             vertices.Resize(vertices.Size + nVertices);
             nVerticesCmd += nVertices;
         }
 
+        /// <summary>
+        /// Reserves space for indices in the debug draw command list.
+        /// </summary>
+        /// <param name="nIndices">The number of indices to reserve.</param>
         public void ReserveIndices(uint nIndices)
         {
             indices.Resize(indices.Size + nIndices);
             nIndicesCmd += nIndices;
         }
 
-        public void AddVertex(DebugDrawVert v)
+        /// <summary>
+        /// Adds a vertex to the debug draw command list.
+        /// </summary>
+        /// <param name="vertex">The vertex to add.</param>
+        public void AddVertex(DebugDrawVert vertex)
         {
-            vertices.PushBack(v);
+            vertices.PushBack(vertex);
             nVerticesCmd++;
         }
 
-        public void AddVertexRange(DebugDrawVert[] v)
+        /// <summary>
+        /// Adds a range of vertices to the debug draw command list.
+        /// </summary>
+        /// <param name="vertices">The array of vertices to add.</param>
+        public void AddVertexRange(DebugDrawVert[] vertices)
         {
-            vertices.AppendRange(v);
-            nVerticesCmd += (uint)v.Length;
+            this.vertices.AppendRange(vertices);
+            nVerticesCmd += (uint)vertices.Length;
         }
 
-        public void AddIndexRange(uint[] i)
+        /// <summary>
+        /// Adds a range of indices to the debug draw command list.
+        /// </summary>
+        /// <param name="indices">The array of indices to add.</param>
+        public void AddIndexRange(uint[] indices)
         {
-            indices.AppendRange(i);
-            nIndicesCmd += (uint)i.Length;
+            this.indices.AppendRange(indices);
+            nIndicesCmd += (uint)indices.Length;
         }
 
-        public void AddIndex(uint i)
+        /// <summary>
+        /// Adds an index to the debug draw command list.
+        /// </summary>
+        /// <param name="index">The index to add.</param>
+        public void AddIndex(uint index)
         {
-            indices.PushBack(i);
+            indices.PushBack(index);
             nIndicesCmd++;
         }
 
+        /// <summary>
+        /// Adds a face (triangle) defined by three indices to the debug draw command list.
+        /// </summary>
+        /// <param name="i0">The first index of the face.</param>
+        /// <param name="i1">The second index of the face.</param>
+        /// <param name="i2">The third index of the face.</param>
         public void AddFace(uint i0, uint i1, uint i2)
         {
             indices.PushBack(i0);
@@ -100,16 +151,31 @@ namespace HexaEngine.Editor
             nIndicesCmd += 3;
         }
 
+        /// <summary>
+        /// Records a command in the debug draw command list with the specified primitive topology.
+        /// </summary>
+        /// <param name="topology">The primitive topology of the command.</param>
         public void RecordCmd(PrimitiveTopology topology)
         {
             RecordCmd(topology, 0, false);
         }
 
+        /// <summary>
+        /// Records a command in the debug draw command list with the specified primitive topology and texture ID.
+        /// </summary>
+        /// <param name="topology">The primitive topology of the command.</param>
+        /// <param name="texId">The texture ID of the command.</param>
         public void RecordCmd(PrimitiveTopology topology, nint texId)
         {
             RecordCmd(topology, texId, false);
         }
 
+        /// <summary>
+        /// Records a command in the debug draw command list with the specified primitive topology, texture ID, and depth enabling.
+        /// </summary>
+        /// <param name="topology">The primitive topology of the command.</param>
+        /// <param name="texId">The texture ID of the command.</param>
+        /// <param name="enableDepth">Whether depth should be enabled for the command.</param>
         public void RecordCmd(PrimitiveTopology topology, nint texId, bool enableDepth)
         {
             DebugDrawCommand cmd = new(topology, nVerticesCmd, nIndicesCmd, nVerticesTotal, nIndicesTotal, texId, enableDepth);
@@ -120,6 +186,9 @@ namespace HexaEngine.Editor
             nVerticesCmd = 0;
         }
 
+        /// <summary>
+        /// Compacts the debug draw command list by merging compatible commands.
+        /// </summary>
         public void Compact()
         {
             if (nVerticesTotal == 0)
@@ -168,6 +237,9 @@ namespace HexaEngine.Editor
             }
         }
 
+        /// <summary>
+        /// Clears the debug draw command list.
+        /// </summary>
         public void Clear()
         {
             queue.Clear();

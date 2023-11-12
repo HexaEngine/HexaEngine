@@ -8,11 +8,19 @@
     using System.IO.Compression;
     using System.Text;
 
+    /// <summary>
+    /// Represents an archive containing assets, providing methods to load, save, and extract assets.
+    /// </summary>
     public class AssetArchive
     {
         private readonly Stream stream;
         private readonly AssetArchiveHeader header;
+        private readonly List<BundleAsset> assets;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssetArchive"/> class from the specified file path.
+        /// </summary>
+        /// <param name="path">The path to the asset archive file.</param>
         public AssetArchive(string path)
         {
             var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -22,10 +30,23 @@
 
             var basePath = Path.GetDirectoryName(path);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            BundleAsset[] assets = new BundleAsset[header.Entries.Length];
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            for (int i = 0; i < assets.Length; i++)
+            if (basePath == null)
+            {
+                throw new InvalidDataException("Bad archive, couldn't get the base path of the archive");
+            }
+
+            if (header.Entries == null)
+            {
+                throw new InvalidDataException("Bad archive, Header.Entires was null");
+            }
+
+            if (header.Parts == null)
+            {
+                throw new InvalidDataException("Bad archive, Header.Parts was null");
+            }
+
+            assets = new(header.Entries.Length);
+            for (int i = 0; i < assets.Count; i++)
             {
                 var entry = header.Entries[i];
                 var archivePath = path;
@@ -37,13 +58,25 @@
 
                 assets[i] = new BundleAsset(archivePath, header.Compression, entry.PartIndex, entry.Type, entry.Start + header.ContentStart, entry.Length, entry.ActualLength, entry.Path);
             }
-            Assets = assets;
         }
 
-        public BundleAsset[] Assets { get; }
+        /// <summary>
+        /// Gets an list of <see cref="BundleAsset"/> representing the assets in the archive.
+        /// </summary>
+        public List<BundleAsset> Assets => assets;
 
+        /// <summary>
+        /// Gets the stream associated with the archive.
+        /// </summary>
+        /// <returns>The stream associated with the archive.</returns>
         public Stream GetStream() => stream;
 
+        /// <summary>
+        /// Saves the asset archive to the specified path with optional compression.
+        /// </summary>
+        /// <param name="path">The path where the asset archive will be saved.</param>
+        /// <param name="compression">The compression algorithm to use.</param>
+        /// <param name="level">The compression level to apply.</param>
         public void Save(string path, Compression compression = Compression.None, CompressionLevel level = CompressionLevel.Optimal)
         {
             var fs = File.OpenWrite(path);
@@ -51,9 +84,9 @@
             fs.Position = headerLength;
 
             long position = 0;
-            for (int i = 0; i < Assets.Length; i++)
+            for (int i = 0; i < assets.Count; i++)
             {
-                var asset = Assets[i];
+                var asset = assets[i];
                 var entry = header.Entries[i];
                 entry.Start = position;
 
@@ -94,10 +127,14 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Extracts the assets from the archive to the specified directory.
+        /// </summary>
+        /// <param name="path">The directory where the assets will be extracted.</param>
         public void Extract(string path)
         {
             var root = new DirectoryInfo(path);
-            foreach (BundleAsset asset in Assets)
+            foreach (BundleAsset asset in assets)
             {
 #pragma warning disable CS8604 // Possible null reference argument for parameter 'path' in 'DirectoryInfo Directory.CreateDirectory(string path)'.
                 Directory.CreateDirectory(Path.GetDirectoryName(root.FullName + asset.Path));
@@ -110,6 +147,13 @@
             }
         }
 
+        /// <summary>
+        /// Creates an asset archive from the specified list of <see cref="AssetDesc"/> objects.
+        /// </summary>
+        /// <param name="assets">The list of asset descriptions.</param>
+        /// <param name="output">The path where the asset archive will be saved.</param>
+        /// <param name="compression">The compression algorithm to use.</param>
+        /// <param name="level">The compression level to apply.</param>
         public static void CreateFrom(AssetDesc[] assets, string output, Compression compression = Compression.None, CompressionLevel level = CompressionLevel.Optimal)
         {
             var fs = File.Create(output);
@@ -182,6 +226,13 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Creates an asset archive from the assets in the specified directory.
+        /// </summary>
+        /// <param name="path">The path to the directory containing the assets.</param>
+        /// <param name="output">The path where the asset archive will be saved.</param>
+        /// <param name="compression">The compression algorithm to use.</param>
+        /// <param name="level">The compression level to apply.</param>
         public static void CreateFrom(string path, string output, Compression compression = Compression.None, CompressionLevel level = CompressionLevel.Optimal)
         {
             var dir = new DirectoryInfo(path);
@@ -277,6 +328,12 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Generates an asset archive for each subdirectory in the specified root directory.
+        /// </summary>
+        /// <param name="path">The path to the root directory containing subdirectories with assets.</param>
+        /// <param name="compression">The compression algorithm to use.</param>
+        /// <param name="level">The compression level to apply.</param>
         public static void GenerateFrom(string path, Compression compression = Compression.None, CompressionLevel level = CompressionLevel.Optimal)
         {
             var root = new DirectoryInfo(path);
@@ -366,6 +423,12 @@
             }
         }
 
+        /// <summary>
+        /// Determines the <see cref="AssetType"/> based on the specified path and returns the trimmed path.
+        /// </summary>
+        /// <param name="path">The path of the asset.</param>
+        /// <param name="trimmed">The trimmed path.</param>
+        /// <returns>The <see cref="AssetType"/> of the asset.</returns>
         public static AssetType GetAssetType(string path, out string trimmed)
         {
             if (path.Contains("textures"))

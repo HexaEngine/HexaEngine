@@ -8,15 +8,50 @@
     using System.Numerics;
     using System.Text;
 
+    /// <summary>
+    /// Structure representing a material property.
+    /// </summary>
     public unsafe struct MaterialProperty
     {
+        /// <summary>
+        /// The name of the material property.
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// The type of the material property.
+        /// </summary>
         public MaterialPropertyType Type;
+
+        /// <summary>
+        /// The value type of the material property.
+        /// </summary>
         public MaterialValueType ValueType;
+
+        /// <summary>
+        /// The endianness of the material property data.
+        /// </summary>
         public Endianness Endianness;
+
+        /// <summary>
+        /// The length of the material property data.
+        /// </summary>
         public int Length;
+
+        /// <summary>
+        /// The raw data of the material property.
+        /// </summary>
         public byte[] Data;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MaterialProperty"/> struct.
+        /// </summary>
+        /// <param name="name">The name of the material property.</param>
+        /// <param name="type">The type of the material property.</param>
+        /// <param name="valueType">The value type of the material property.</param>
+        /// <param name="endianness">The endianness of the material property data.</param>
+        /// <param name="length">The length of the material property data.</param>
+        /// <param name="data">The raw data of the material property.</param>
         public MaterialProperty(string name, MaterialPropertyType type, MaterialValueType valueType, Endianness endianness, int length, byte[] data)
         {
             Name = name;
@@ -27,6 +62,13 @@
             Endianness = endianness;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MaterialProperty"/> struct with a Vector4 value.
+        /// </summary>
+        /// <param name="name">The name of the material property.</param>
+        /// <param name="type">The type of the material property.</param>
+        /// <param name="endianness">The endianness of the material property data.</param>
+        /// <param name="value">The Vector4 value to set for the material property.</param>
         public MaterialProperty(string name, MaterialPropertyType type, Endianness endianness, Vector4 value)
         {
             Name = name;
@@ -38,6 +80,11 @@
             SetFloat4(value);
         }
 
+        /// <summary>
+        /// Gets the byte count based on the specified <see cref="MaterialValueType"/>.
+        /// </summary>
+        /// <param name="type">The <see cref="MaterialValueType"/> to get the byte count for.</param>
+        /// <returns>The byte count for the specified value type.</returns>
         public static int GetByteCount(MaterialValueType type)
         {
             return type switch
@@ -59,7 +106,13 @@
             };
         }
 
-        public void Read(Stream src, Encoding encoding, Endianness endianness)
+        /// <summary>
+        /// Reads the material property from the specified stream using the provided encoding and endianness.
+        /// </summary>
+        /// <param name="src">The stream to read from.</param>
+        /// <param name="encoding">The encoding used for reading strings.</param>
+        /// <param name="endianness">The endianness of the data in the stream.</param>
+        public void ReadFrom(Stream src, Encoding encoding, Endianness endianness)
         {
             Name = src.ReadString(encoding, endianness) ?? string.Empty;
             Type = (MaterialPropertyType)src.ReadInt32(endianness);
@@ -69,6 +122,26 @@
             Endianness = endianness;
         }
 
+        /// <summary>
+        /// Reads a <see cref="MaterialProperty"/> instance from the specified stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="src">The stream to read the material property from.</param>
+        /// <param name="encoding">The encoding used for reading string data.</param>
+        /// <param name="endianness">The endianness of the binary data in the stream.</param>
+        /// <returns>A new instance of <see cref="MaterialProperty"/> read from the stream.</returns>
+        public static MaterialProperty Read(Stream src, Encoding encoding, Endianness endianness)
+        {
+            MaterialProperty materialProperty = default;
+            materialProperty.ReadFrom(src, encoding, endianness);
+            return materialProperty;
+        }
+
+        /// <summary>
+        /// Writes the material property to the specified stream using the provided encoding and endianness.
+        /// </summary>
+        /// <param name="dst">The stream to write to.</param>
+        /// <param name="encoding">The encoding used for writing strings.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
         public void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteString(Name, encoding, endianness);
@@ -78,6 +151,10 @@
             dst.Write(Data);
         }
 
+        /// <summary>
+        /// Gets the float value of the material property.
+        /// </summary>
+        /// <returns>The float value of the material property.</returns>
         public float AsFloat()
         {
             if (Endianness == Endianness.LittleEndian)
@@ -90,6 +167,10 @@
             }
         }
 
+        /// <summary>
+        /// Sets the float value of the material property.
+        /// </summary>
+        /// <param name="value">The float value to set for the material property.</param>
         public void SetFloat(float value)
         {
             if (Endianness == Endianness.LittleEndian)
@@ -102,6 +183,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets the Vector2 value of the material property.
+        /// </summary>
+        /// <returns>The Vector2 value of the material property.</returns>
         public Vector2 AsFloat2()
         {
             if (Endianness == Endianness.LittleEndian)
@@ -118,6 +203,10 @@
             }
         }
 
+        /// <summary>
+        /// Sets the Vector2 value of the material property.
+        /// </summary>
+        /// <param name="value">The Vector2 value to set for the material property.</param>
         public void SetFloat2(Vector2 value)
         {
             if (Endianness == Endianness.LittleEndian)
@@ -132,6 +221,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets the Vector3 value of the material property.
+        /// </summary>
+        /// <returns>The Vector3 value of the material property.</returns>
         public Vector3 AsFloat3()
         {
             if (Endianness == Endianness.LittleEndian)
@@ -150,6 +243,10 @@
             }
         }
 
+        /// <summary>
+        /// Sets the Vector3 value of the material property.
+        /// </summary>
+        /// <param name="value">The Vector3 value to set for the material property.</param>
         public void SetFloat3(Vector3 value)
         {
             if (Endianness == Endianness.LittleEndian)
@@ -166,6 +263,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets the Vector4 value of the material property.
+        /// </summary>
+        /// <returns>The Vector4 value of the material property.</returns>
         public Vector4 AsFloat4()
         {
             if (Endianness == Endianness.LittleEndian)
@@ -186,6 +287,10 @@
             }
         }
 
+        /// <summary>
+        /// Sets the Vector4 value of the material property.
+        /// </summary>
+        /// <param name="value">The Vector4 value to set for the material property.</param>
         public void SetFloat4(Vector4 value)
         {
             if (Endianness == Endianness.LittleEndian)
@@ -204,16 +309,28 @@
             }
         }
 
+        /// <summary>
+        /// Gets the boolean value of the material property.
+        /// </summary>
+        /// <returns>The boolean value of the material property.</returns>
         public bool AsBool()
         {
             return Data[0] == 1;
         }
 
+        /// <summary>
+        /// Sets the boolean value of the material property.
+        /// </summary>
+        /// <param name="value">The boolean value to set for the material property.</param>
         public void SetBool(bool value)
         {
             Data[0] = (byte)(value ? 1 : 0);
         }
 
+        /// <summary>
+        /// Converts the material property to a <see cref="ShaderMacro"/>.
+        /// </summary>
+        /// <returns>The <see cref="ShaderMacro"/> representation of the material property.</returns>
         public ShaderMacro AsShaderMacro()
         {
             string definition = string.Empty;

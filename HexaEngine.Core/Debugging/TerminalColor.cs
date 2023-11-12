@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    /// <summary>
+    /// Represents the colors available for terminal messages.
+    /// </summary>
     public enum TerminalColor
     {
         /// <summary>

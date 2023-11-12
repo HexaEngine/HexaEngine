@@ -115,6 +115,11 @@
         /// </summary>
         internal void PlatformConstruct(WindowFlags flags)
         {
+            if (created)
+            {
+                return;
+            }
+
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 

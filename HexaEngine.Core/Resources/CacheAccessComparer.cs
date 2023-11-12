@@ -24,6 +24,11 @@
         /// </returns>
         public int Compare(CacheHandle? x, CacheHandle? y)
         {
+            if (x == null || y == null)
+            {
+                return 0;
+            }
+
             if (x.LastAccess < y.LastAccess)
             {
                 return -1;

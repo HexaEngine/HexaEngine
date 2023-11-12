@@ -113,6 +113,24 @@
             return new(device, FileSystem.GetAsset(Paths.CurrentTexturePath + path), generateMips);
         }
 
+#nullable disable
+        /// <summary>
+        /// Asynchronously loads a <see cref="Texture2D"/> from assets and returns it.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the texture.</param>
+        /// <param name="path">The path to the texture asset.</param>
+        /// <param name="generateMips">Indicates whether to generate mipmaps.</param>
+        /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
+        public static Task<Texture2D> LoadFromAssetsAsync(IGraphicsDevice device, string path, bool generateMips = true)
+        {
+            return Task.Factory.StartNew((object state) =>
+            {
+                var data = ((IGraphicsDevice device, string path, bool generateMips))state;
+                return new Texture2D(data.device, FileSystem.GetAsset(Paths.CurrentTexturePath + data.path), data.generateMips);
+            }, (device, path, generateMips));
+        }
+#nullable restore
+
         private void OnContentChanged(Asset asset)
         {
             Reload();
@@ -269,6 +287,7 @@
 
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
@@ -287,7 +306,6 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
-            MemoryManager.Register(texture);
         }
 
 #nullable restore
@@ -339,6 +357,7 @@
 
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
@@ -357,7 +376,6 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
-            MemoryManager.Register(texture);
         }
 
 #nullable restore
@@ -410,6 +428,7 @@
 
             texture = device.CreateTexture2D(description, initialData);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
@@ -428,7 +447,7 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
-            MemoryManager.Register(texture);
+
         }
 
 #nullable restore
@@ -644,7 +663,7 @@
         /// <summary>
         /// Gets a value indicating whether the texture has been disposed.
         /// </summary>
-        public bool IsDisposed => texture.IsDisposed;
+        public bool IsDisposed => disposedValue;
 
         /// <summary>
         /// Occurs when the texture is disposed.
@@ -655,6 +674,11 @@
         /// Gets a value indicating whether the associated asset exists.
         /// </summary>
         public bool Exists => asset?.Exists ?? false;
+
+        /// <summary>
+        /// Occurs when the texture is reloaded.
+        /// </summary>
+        public event Action<Texture2D>? TextureReloaded;
 
 #nullable disable
 
@@ -677,11 +701,6 @@
         string IUnorderedAccessView.DebugName { get => uav.DebugName; set => uav.DebugName = value; }
 
 #nullable restore
-
-        /// <summary>
-        /// Occurs when the texture is reloaded.
-        /// </summary>
-        public event Action<Texture2D>? TextureReloaded;
 
         /// <summary>
         /// Gets or sets a byte at the specified index.
@@ -724,9 +743,9 @@
         /// <returns>The computed memory index.</returns>
         public int ComputeIndex(Vector2 uv)
         {
-            int x = (int)(uv.X * Width);
-            int y = (int)(uv.Y * Height);
-            return x + y * RowPitch;
+            int x = (int)(uv.X * width);
+            int y = (int)(uv.Y * height);
+            return x + y * rowPitch;
         }
 
         /// <summary>
@@ -1023,9 +1042,9 @@
                 uav?.Dispose();
                 if (cpuAccessFlags != CpuAccessFlags.None)
                     Free(local);
-                disposedValue = true;
 
                 disposedValue = true;
+                OnDisposed?.Invoke(this, EventArgs.Empty);
             }
         }
 

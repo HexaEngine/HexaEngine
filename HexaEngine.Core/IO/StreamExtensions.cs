@@ -9,6 +9,9 @@
     using System.Runtime.CompilerServices;
     using System.Text;
 
+    /// <summary>
+    /// Provides extension methods for the <see cref="Stream"/> class.
+    /// </summary>
     public static class StreamExtensions
     {
         /// <summary>

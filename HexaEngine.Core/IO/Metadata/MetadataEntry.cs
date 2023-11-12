@@ -4,10 +4,23 @@
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// Represents the base class for entries in metadata.
+    /// </summary>
     public abstract unsafe class MetadataEntry
     {
+        /// <summary>
+        /// Gets the type of the metadata entry.
+        /// </summary>
         public abstract MetadataType Type { get; }
 
+        /// <summary>
+        /// Reads a metadata entry from the specified stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="src">The stream to read from.</param>
+        /// <param name="encoding">The encoding used to read strings.</param>
+        /// <param name="endianness">The endianness of the data in the stream.</param>
+        /// <returns>The read metadata entry.</returns>
         public static MetadataEntry ReadFrom(Stream src, Encoding encoding, Endianness endianness)
         {
             MetadataEntry? entry = null;
@@ -66,10 +79,22 @@
             return entry;
         }
 
+        /// <summary>
+        /// Reads the metadata entry from the specified stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="encoding">The encoding used to read strings.</param>
+        /// <param name="endianness">The endianness of the data in the stream.</param>
         public virtual void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
         }
 
+        /// <summary>
+        /// Writes the metadata entry to the specified stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="encoding">The encoding used to write strings.</param>
+        /// <param name="endianness">The endianness of the data in the stream.</param>
         public virtual void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteInt32((int)Type, endianness);

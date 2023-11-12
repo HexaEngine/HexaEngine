@@ -2,9 +2,15 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags for controlling WIC (Windows Imaging Component) file loading and saving options.
+    /// </summary>
     [Flags]
     public enum WICFlags
     {
+        /// <summary>
+        /// No special flags.
+        /// </summary>
         None = 0x0,
 
         /// <summary>

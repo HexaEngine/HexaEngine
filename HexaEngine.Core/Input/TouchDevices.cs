@@ -68,7 +68,7 @@
             return idToTouch[touchDeviceId];
         }
 
-        private static TouchDevice AddTouchDevice(int index)
+        internal static TouchDevice AddTouchDevice(int index)
         {
             TouchDevice dev = new(index);
             touchDevices.Add(dev);
@@ -78,7 +78,7 @@
             return dev;
         }
 
-        private static TouchDevice AddTouchDevice(long touchId)
+        internal static TouchDevice AddTouchDevice(long touchId)
         {
             TouchDevice dev = new(touchId);
             touchDevices.Add(dev);
@@ -86,6 +86,19 @@
             touchDeviceEventArgs.TouchDeviceId = dev.Id;
             TouchDeviceAdded?.Invoke(dev, touchDeviceEventArgs);
             return dev;
+        }
+
+        internal static bool RemoveTouchDevice(long touchId)
+        {
+            if (idToTouch.TryGetValue(touchId, out var dev))
+            {
+                idToTouch.Remove(touchId);
+                touchDevices.Remove(dev);
+                touchDeviceEventArgs.TouchDeviceId = dev.Id;
+                TouchDeviceRemoved?.Invoke(dev, touchDeviceEventArgs);
+                return true;
+            }
+            return false;
         }
 
         internal static TouchDevice AddOrGetTouch(long id)

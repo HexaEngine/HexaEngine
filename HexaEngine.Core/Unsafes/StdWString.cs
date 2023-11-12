@@ -704,18 +704,18 @@
         }
 
         /// <summary>
-        /// Returns a <see cref="Span{char}"/> that represents the data in the current <see cref="StdWString"/>.
+        /// Returns a <see cref="Span{T}"/> that represents the data in the current <see cref="StdWString"/>.
         /// </summary>
-        /// <returns>A <see cref="Span{char}"/> that represents the data.</returns>
+        /// <returns>A <see cref="Span{T}"/> that represents the data.</returns>
         public readonly Span<char> AsSpan()
         {
             return new Span<char>(data, size);
         }
 
         /// <summary>
-        /// Returns a <see cref="ReadOnlySpan{char}"/> that represents the data in the current <see cref="StdWString"/>.
+        /// Returns a <see cref="ReadOnlySpan{T}"/> that represents the data in the current <see cref="StdWString"/>.
         /// </summary>
-        /// <returns>A <see cref="ReadOnlySpan{char}"/> that represents the data.</returns>
+        /// <returns>A <see cref="ReadOnlySpan{T}"/> that represents the data.</returns>
         public readonly ReadOnlySpan<char> AsReadOnlySpan()
         {
             return new ReadOnlySpan<char>(data, size);
@@ -787,7 +787,7 @@
         }
 
         /// <summary>
-        /// Implicitly converts a <see cref="StdWString"/> to a <see cref="Span{char}"/>.
+        /// Implicitly converts a <see cref="StdWString"/> to a <see cref="Span{T}"/>.
         /// </summary>
         /// <param name="str">The <see cref="StdWString"/> to convert.</param>
         public static implicit operator Span<char>(StdWString str)
@@ -796,7 +796,7 @@
         }
 
         /// <summary>
-        /// Implicitly converts a <see cref="StdWString"/> to a <see cref="ReadOnlySpan{char}"/>.
+        /// Implicitly converts a <see cref="StdWString"/> to a <see cref="ReadOnlySpan{T}"/>.
         /// </summary>
         /// <param name="str">The <see cref="StdWString"/> to convert.</param>
         public static implicit operator ReadOnlySpan<char>(StdWString str)
@@ -906,15 +906,18 @@
                 this.reverse = reverse;
             }
 
+            /// <inheritdoc/>
             public char Current => pointer[currentIndex];
 
             object IEnumerator.Current => Current;
 
+            /// <inheritdoc/>
             public readonly void Dispose()
             {
                 // Enumerator does not own resources, so nothing to dispose.
             }
 
+            /// <inheritdoc/>
             public bool MoveNext()
             {
                 if (reverse)
@@ -937,6 +940,7 @@
                 return false;
             }
 
+            /// <inheritdoc/>
             public void Reset()
             {
                 currentIndex = 0;

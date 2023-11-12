@@ -180,11 +180,11 @@
             for (int i = 0; i < materials.Length; i++)
             {
                 var mat = materials[i];
-                for (int j = 0; j < mat.Textures.Length; j++)
+                for (int j = 0; j < mat.Textures.Count; j++)
                 {
                     if (mat.Textures[j].File == oldName)
                     {
-                        mat.Textures[j].File = newName;
+                        mat.Textures.MutateItem(j, x => { x.File = newName; return x; });
                     }
                 }
             }
@@ -485,12 +485,12 @@
                         material.Name = i.ToString();
                     }
 
-                    material.Properties = properties.ToArray();
-                    material.Textures = textures.ToArray();
+                    material.Properties = properties;
+                    material.Textures = textures;
 
                     bool rm = false;
                     bool orm = false;
-                    for (int j = 0; j < material.Textures.Length; j++)
+                    for (int j = 0; j < material.Textures.Count; j++)
                     {
                         if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
                         {
@@ -502,43 +502,43 @@
                         }
                         if (material.Textures[j].File == null)
                         {
-                            material.Textures[j].File = string.Empty;
+                            material.Textures.MutateItem(j, x => { x.File = string.Empty; return x; });
                         }
                     }
 
                     if (rm)
                     {
-                        for (int k = 0; k < material.Textures.Length; k++)
+                        for (int k = 0; k < material.Textures.Count; k++)
                         {
                             if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                             {
-                                material.Textures[k].File = string.Empty;
+                                material.Textures.MutateItem(k, x => { x.File = string.Empty; return x; });
                             }
 
                             if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
                             {
-                                material.Textures[k].File = string.Empty;
+                                material.Textures.MutateItem(k, x => { x.File = string.Empty; return x; });
                             }
                         }
                     }
 
                     if (orm)
                     {
-                        for (int k = 0; k < material.Textures.Length; k++)
+                        for (int k = 0; k < material.Textures.Count; k++)
                         {
                             if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                             {
-                                material.Textures[k].File = string.Empty;
+                                material.Textures.MutateItem(k, x => { x.File = string.Empty; return x; });
                             }
 
                             if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
                             {
-                                material.Textures[k].File = string.Empty;
+                                material.Textures.MutateItem(k, x => { x.File = string.Empty; return x; });
                             }
 
                             if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
                             {
-                                material.Textures[k].File = string.Empty;
+                                material.Textures.MutateItem(k, x => { x.File = string.Empty; return x; });
                             }
                         }
                     }

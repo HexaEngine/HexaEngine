@@ -117,7 +117,9 @@
         /// <returns><c>true</c> if the dictionary contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(TKey key, out TValue value)
         {
+#nullable disable
             value = default;
+#nullable restore
             var r = GetKvpByTheKey(key);
             if (r == null)
             {
@@ -134,7 +136,9 @@
         /// <returns>The key-value pair associated with the specified key, or <c>null</c> if the key is not found.</returns>
         private ObservableKeyValuePair<TKey, TValue> GetKvpByTheKey(TKey key)
         {
+#nullable disable
             return ThisAsCollection().FirstOrDefault((i) => i.Key.Equals(key));
+#nullable restore
         }
 
         /// <summary>

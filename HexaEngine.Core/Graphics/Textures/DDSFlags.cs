@@ -2,9 +2,15 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags that control various aspects of DDS file loading and writing.
+    /// </summary>
     [Flags]
     public enum DDSFlags
     {
+        /// <summary>
+        /// No flags specified.
+        /// </summary>
         None = 0x0,
 
         /// <summary>

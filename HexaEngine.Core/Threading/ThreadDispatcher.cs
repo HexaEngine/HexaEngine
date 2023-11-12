@@ -9,8 +9,19 @@
     /// </summary>
     public class ThreadDispatcher : IThreadDispatcher
     {
-        protected ConcurrentQueue<ValueTuple<Action, EventWaitHandle?>> waitingQueue = new();
-        protected ConcurrentQueue<ValueTuple<Action<object>, object, EventWaitHandle?>> waitingStateQueue = new();
+        /// <summary>
+        /// Represents a concurrent queue of actions with associated wait handles.
+        /// </summary>
+        protected ConcurrentQueue<(Action, EventWaitHandle?)> waitingQueue = new();
+
+        /// <summary>
+        /// Represents a concurrent queue of actions with associated state objects and wait handles.
+        /// </summary>
+        protected ConcurrentQueue<(Action<object>, object, EventWaitHandle?)> waitingStateQueue = new();
+
+        /// <summary>
+        /// Gets the thread associated with the dispatcher.
+        /// </summary>
         public readonly Thread DispatcherThread;
 
         private bool disposedValue;

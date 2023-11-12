@@ -4,15 +4,16 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents an unordered access view buffer for graphics rendering.
+    /// </summary>
     public unsafe class UavBuffer : IBuffer, IUavBuffer
     {
         private readonly IGraphicsDevice device;
         private readonly Format format;
         private readonly bool canWrite;
         private readonly bool canRead;
-#pragma warning disable CS0649 // Field 'UavBuffer.stride' is never assigned to, and will always have its default _value 0
         private readonly int stride;
-#pragma warning restore CS0649 // Field 'UavBuffer.stride' is never assigned to, and will always have its default _value 0
         private readonly BufferUnorderedAccessViewFlags uavflags;
         private readonly BufferExtendedShaderResourceViewFlags srvFlags;
         private readonly string dbgName;
@@ -26,6 +27,19 @@
         private uint length;
         private bool disposedValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UavBuffer"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="stride">The size, in bytes, of each element in the buffer.</param>
+        /// <param name="length">The length of the buffer.</param>
+        /// <param name="format">The format of the buffer elements.</param>
+        /// <param name="canWrite">Indicates whether the buffer allows write access.</param>
+        /// <param name="canRead">Indicates whether the buffer allows read access.</param>
+        /// <param name="uavflags">Flags for unordered access views of the buffer.</param>
+        /// <param name="srvFlags">Flags for extended shader resource views of the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public UavBuffer(IGraphicsDevice device, int stride, uint length, Format format, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavflags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -34,6 +48,7 @@
             this.canRead = canRead;
             this.uavflags = uavflags;
             this.srvFlags = srvFlags;
+            this.stride = stride;
             dbgName = $"UavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.length = length;
             bufferDescription = new(stride * (int)length, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
@@ -61,6 +76,9 @@
             MemoryManager.Register(buffer);
         }
 
+        /// <summary>
+        /// Occurs when the buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -75,50 +93,38 @@
         }
 
         /// <summary>
-        /// Gets the uav.
+        /// Gets the unordered access view associated with the buffer.
         /// </summary>
-        /// <_value>
-        /// The uav.
-        /// </_value>
         public IUnorderedAccessView UAV => uav;
 
         /// <summary>
-        /// Gets the SRV.
+        /// Gets the shader resource view associated with the buffer.
         /// </summary>
-        /// <_value>
-        /// The SRV.
-        /// </_value>
         public IShaderResourceView SRV => srv;
 
+        /// <summary>
+        /// Gets the main buffer.
+        /// </summary>
         public IBuffer Buffer => buffer;
 
         /// <summary>
-        /// Not null when CanWrite is true
+        /// Gets the optional copy buffer for write operations.
         /// </summary>
         public IBuffer? CopyBuffer => copyBuffer;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can write.
+        /// Gets a value indicating whether the buffer allows write access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can write; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanWrite => canWrite;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can read.
+        /// Gets a value indicating whether the buffer allows read access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can read; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanRead => canRead;
 
         /// <summary>
-        /// Gets or sets the capacity.
+        /// Gets or sets the length of the buffer. Setting the length may reallocate the buffer.
         /// </summary>
-        /// <_value>
-        /// The capacity.
-        /// </_value>
         public uint Length
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -168,52 +174,60 @@
         }
 
         /// <summary>
-        /// Gets the description.
+        /// Gets the description of the buffer.
         /// </summary>
-        /// <_value>
-        /// The description.
-        /// </_value>
         public BufferDescription Description => buffer.Description;
 
         /// <summary>
-        /// Gets the dimension.
+        /// Gets the dimension of the buffer resource.
         /// </summary>
-        /// <_value>
-        /// The dimension.
-        /// </_value>
         public ResourceDimension Dimension => buffer.Dimension;
 
         /// <summary>
-        /// Gets the native pointer.
+        /// Gets the native pointer to the underlying buffer resource.
         /// </summary>
-        /// <_value>
-        /// The native pointer.
-        /// </_value>
         public nint NativePointer => buffer.NativePointer;
 
         /// <summary>
-        /// Gets or sets the dbgName of the debug.
+        /// Gets or sets the debug name of the buffer.
         /// </summary>
-        /// <_value>
-        /// The dbgName of the debug.
-        /// </_value>
-        public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
+        public string? DebugName
+        {
+            get => buffer.DebugName;
+            set => buffer.DebugName = value;
+        }
 
         /// <summary>
-        /// Gets a _value indicating whether this instance is disposed.
+        /// Gets a value indicating whether the buffer has been disposed.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-        /// </_value>
         public bool IsDisposed => buffer.IsDisposed;
 
+        /// <summary>
+        /// Gets the length of the buffer.
+        /// </summary>
         int IBuffer.Length => buffer.Length;
 
+        /// <summary>
+        /// Gets the size, in bytes, of each element in the buffer.
+        /// </summary>
+        public int Stride => stride;
+
+        /// <summary>
+        /// Clears the unordered access view associated with the buffer.
+        /// </summary>
+        /// <param name="context">The graphics context for the clear operation.</param>
         public void Clear(IGraphicsContext context)
         {
             context.ClearUnorderedAccessViewUint(uav, 0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Writes data to the buffer from the specified source pointer.
+        /// </summary>
+        /// <param name="context">The graphics context for the write operation.</param>
+        /// <param name="src">The source pointer to the data to be written.</param>
+        /// <param name="length">The length of the data to be written, in bytes.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the buffer does not allow write access.</exception>
         public void Write(IGraphicsContext context, void* src, int length)
         {
             if (copyBuffer == null)
@@ -238,6 +252,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads data from the buffer to the specified destination pointer.
+        /// </summary>
+        /// <param name="context">The graphics context for the read operation.</param>
+        /// <param name="dst">The destination pointer to store the read data.</param>
+        /// <param name="length">The length of the data to be read, in bytes.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the buffer does not allow read access.</exception>
         public void Read(IGraphicsContext context, void* dst, int length)
         {
             if (copyBuffer == null)
@@ -254,11 +275,20 @@
             context.Read(copyBuffer, dst, length);
         }
 
+        /// <summary>
+        /// Copies the contents of this buffer to another buffer in the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context for the copy operation.</param>
+        /// <param name="buffer">The destination buffer for the copy operation.</param>
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
         }
 
+        /// <summary>
+        /// Releases the resources held by the buffer.
+        /// </summary>
+        /// <param name="disposing">True if called from the Dispose method; false if called from the finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -274,12 +304,19 @@
             }
         }
 
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="UavBuffer"/> class.
+        /// </summary>
         ~UavBuffer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Releases the resources held by the buffer.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
@@ -288,6 +325,10 @@
         }
     }
 
+    /// <summary>
+    /// Represents a shader unordered access view buffer for graphics rendering with generic type elements.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the buffer. Must be an unmanaged type.</typeparam>
     public unsafe class UavBuffer<T> : IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
@@ -312,11 +353,31 @@
 
         private bool disposedValue;
 
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
+        /// <param name="format">The format of the buffer elements.</param>
+        /// <param name="uavFlags">Flags for unordered access views of the buffer.</param>
+        /// <param name="hasSRV">Indicates whether the buffer has a shader resource view.</param>
+        /// <param name="srvFlags">Flags for extended shader resource views of the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public UavBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, Format format, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, bool hasSRV = false, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
             : this(device, DefaultCapacity, cpuAccessFlags, format, uavFlags, hasSRV, srvFlags, filename, lineNumber)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UavBuffer{T}"/> class with a specified initial capacity.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the buffer.</param>
+        /// <param name="initialCapacity">The initial capacity of the buffer.</param>
+        /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
+        /// <param name="format">The format of the buffer elements.</param>
+        /// <param name="uavFlags">Flags for unordered access views of the buffer.</param>
+        /// <param name="hasSRV">Indicates whether the buffer has a shader resource view.</param>
+        /// <param name="srvFlags">Flags for extended shader resource views of the buffer.</param>
+        /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
+        /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
         public UavBuffer(IGraphicsDevice device, int initialCapacity, CpuAccessFlags cpuAccessFlags, Format format, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, bool hasSRV = false, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
@@ -388,6 +449,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the element at the specified index in the <see cref="UavBuffer{T}"/>.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the Uav buffer is not capable of writing or reading. Specify the write or read flag.</exception>
         public T this[int index]
         {
             get
@@ -406,6 +472,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the element at the specified index in the <see cref="UavBuffer{T}"/>.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the Uav buffer is not capable of writing or reading. Specify the write or read flag.</exception>
         public T this[uint index]
         {
             get
@@ -424,8 +495,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets a pointer to the elements of the <see cref="UavBuffer{T}"/>.
+        /// </summary>
         public T* Local => items;
 
+        /// <summary>
+        /// Occurs when the buffer is disposed.
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -440,48 +517,38 @@
         }
 
         /// <summary>
-        /// Gets the uav.
+        /// Gets the unordered access view associated with the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The uav.
-        /// </_value>
         public IUnorderedAccessView UAV => uav;
 
         /// <summary>
-        /// Gets the SRV.
+        /// Gets the shader resource view associated with the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The SRV.
-        /// </_value>
         public IShaderResourceView? SRV => srv;
 
         /// <summary>
-        /// Not null when CanWrite is true
+        /// Gets the copy buffer associated with the <see cref="UavBuffer{T}"/>.
         /// </summary>
         public IBuffer? CopyBuffer => copyBuffer;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can write.
+        /// Gets a value indicating whether the <see cref="UavBuffer{T}"/> allows write access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can write; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanWrite => canWrite;
 
         /// <summary>
-        /// Gets a _value indicating whether this instance can read.
+        /// Gets a value indicating whether the <see cref="UavBuffer{T}"/> allows read access.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance can read; otherwise, <c>false</c>.
-        /// </_value>
         public bool CanRead => canRead;
 
         /// <summary>
-        /// Gets or sets the capacity.
+        /// Gets or sets the capacity of the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The capacity.
-        /// </_value>
+        /// <remarks>
+        /// If no read or write access is specified, the buffer is not created, and this property has no effect.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Thrown if the specified capacity is less than the current capacity.</exception>
+        /// <param name="value">The new capacity for the buffer.</param>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -554,58 +621,55 @@
         }
 
         /// <summary>
-        /// Gets the description.
+        /// Gets the description of the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The description.
-        /// </_value>
         public BufferDescription Description => buffer.Description;
 
         /// <summary>
-        /// Gets the length.
+        /// Gets the length of the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The length.
-        /// </_value>
         public int Length => buffer.Length;
 
         /// <summary>
-        /// Get the item count / counter of the buffer.
+        /// Gets the count of elements in the <see cref="UavBuffer{T}"/>.
         /// </summary>
         public uint Count => count;
 
         /// <summary>
-        /// Gets the dimension.
+        /// Gets the stride of elements in the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The dimension.
-        /// </_value>
+        public int Stride => sizeof(T);
+
+        /// <summary>
+        /// Gets the resource dimension of the <see cref="UavBuffer{T}"/>.
+        /// </summary>
         public ResourceDimension Dimension => buffer.Dimension;
 
         /// <summary>
-        /// Gets the native pointer.
+        /// Gets the native pointer of the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The native pointer.
-        /// </_value>
         public nint NativePointer => buffer.NativePointer;
 
         /// <summary>
-        /// Gets or sets the dbgName of the debug.
+        /// Gets or sets the debug name of the <see cref="UavBuffer{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The dbgName of the debug.
-        /// </_value>
-        public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
+        public string? DebugName
+        {
+            get => buffer.DebugName;
+            set => buffer.DebugName = value;
+        }
 
         /// <summary>
-        /// Gets a _value indicating whether this instance is disposed.
+        /// Gets a value indicating whether the <see cref="UavBuffer{T}"/> is disposed.
         /// </summary>
-        /// <_value>
-        ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-        /// </_value>
         public bool IsDisposed => buffer.IsDisposed;
 
+        /// <summary>
+        /// Resets the counter of elements in the <see cref="UavBuffer{T}"/>.
+        /// </summary>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
         {
@@ -615,6 +679,40 @@
             count = 0;
         }
 
+        /// <summary>
+        /// Clears the <see cref="UavBuffer{T}"/> by resetting the counter and marking the buffer as dirty.
+        /// </summary>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear()
+        {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
+            count = 0;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Erases the contents of the <see cref="UavBuffer{T}"/> by zeroing the memory, resetting the counter, and marking the buffer as dirty.
+        /// </summary>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Erase()
+        {
+            ZeroMemoryT(items, capacity);
+            count = 0;
+            isDirty = true;
+        }
+
+        /// <summary>
+        /// Ensures that the <see cref="UavBuffer{T}"/> has the specified capacity. Grows the capacity if needed.
+        /// </summary>
+        /// <param name="capacity">The desired capacity.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(uint capacity)
         {
@@ -624,6 +722,10 @@
             }
         }
 
+        /// <summary>
+        /// Grows the capacity of the <see cref="UavBuffer{T}"/>.
+        /// </summary>
+        /// <param name="capacity">The new capacity.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Grow(uint capacity)
         {
@@ -637,6 +739,14 @@
             Capacity = newcapacity;
         }
 
+        /// <summary>
+        /// Adds an element to the <see cref="UavBuffer{T}"/> and returns a reference to the added element.
+        /// </summary>
+        /// <param name="args">The element to add.</param>
+        /// <returns>A reference to the added element.</returns>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add(T args)
         {
@@ -651,8 +761,15 @@
             return ref items[index];
         }
 
+        /// <summary>
+        /// Removes an element from the <see cref="UavBuffer{T}"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(int index)
+        public void RemoveAt(int index)
         {
             if (!canWrite)
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
@@ -662,8 +779,15 @@
             isDirty = true;
         }
 
+        /// <summary>
+        /// Removes an element from the <see cref="UavBuffer{T}"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(uint index)
+        public void RemoveAt(uint index)
         {
             if (!canWrite)
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
@@ -673,23 +797,29 @@
             isDirty = true;
         }
 
-        public void Clear()
-        {
-            if (!canWrite)
-                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
-
-            for (int i = 0; i < count; i++)
-            {
-                items[i] = default;
-            }
-            count = 0;
-        }
-
+        /// <summary>
+        /// Clears the unordered access view of the <see cref="UavBuffer{T}"/> with uint values using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to use for clearing.</param>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         public void Clear(IGraphicsContext context)
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             context.ClearUnorderedAccessViewUint(uav, 0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Updates the <see cref="UavBuffer{T}"/> with the contents of the internal buffer using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to use for updating.</param>
+        /// <returns>True if the buffer was updated, false otherwise.</returns>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of writing. Please specify the write flag.
+        /// </remarks>
         public bool Update(IGraphicsContext context)
         {
             if (copyBuffer == null)
@@ -721,6 +851,13 @@
             return false;
         }
 
+        /// <summary>
+        /// Reads the contents of the <see cref="UavBuffer{T}"/> from the GPU into the internal buffer using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to use for reading.</param>
+        /// <remarks>
+        /// Throws an <see cref="InvalidOperationException"/> if the Uav buffer is not capable of reading. Please specify the read flag.
+        /// </remarks>
         public void Read(IGraphicsContext context)
         {
             if (copyBuffer == null)
@@ -737,11 +874,19 @@
             context.Read(copyBuffer, items, capacity);
         }
 
+        /// <summary>
+        /// Copies the contents of the <see cref="UavBuffer{T}"/> to another buffer using the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context to use for copying.</param>
+        /// <param name="buffer">The destination buffer to copy to.</param>
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="UavBuffer{T}"/>.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -762,12 +907,18 @@
             }
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="UavBuffer{T}"/>.
+        /// </summary>
         ~UavBuffer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="UavBuffer{T}"/>.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

@@ -4,6 +4,10 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// [Obsolete] Use Texture2D instead with UA flag
+    /// </summary>
+    [Obsolete("Use Texture2D instead with UA flag")]
     public unsafe class UavTexture2D : ITexture2D
     {
         private readonly string dbgName;
@@ -20,6 +24,20 @@
         private IUnorderedAccessView? uav;
         private bool disposedValue;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="format"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="arraySize"></param>
+        /// <param name="mipLevels"></param>
+        /// <param name="isSRV"></param>
+        /// <param name="isRTV"></param>
+        /// <param name="miscFlag"></param>
+        /// <param name="filename"></param>
+        /// <param name="lineNumber"></param>
         public UavTexture2D(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, bool isSRV, bool isRTV, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"RWTexture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -60,36 +78,84 @@
             MemoryManager.Register(texture);
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public ResourceDimension Dimension => ResourceDimension.Texture2D;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public Texture2DDescription Description => description;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public Format Format => format;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public int Width => width;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public int Height => height;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public int MipLevels => mipLevels;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public int ArraySize => arraySize;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public ResourceMiscFlag MiscFlag => miscFlag;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public IShaderResourceView? SRV => srv;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public IRenderTargetView? RTV => rtv;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public IUnorderedAccessView? UAV => uav;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public Viewport Viewport => new(width, height);
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public nint NativePointer => texture.NativePointer;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public string? DebugName { get => texture.DebugName; set => texture.DebugName = value; }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public bool IsDisposed => texture.IsDisposed;
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public event EventHandler? OnDisposed
         {
             add
@@ -103,6 +169,18 @@
             }
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="format"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="arraySize"></param>
+        /// <param name="mipLevels"></param>
+        /// <param name="isSRV"></param>
+        /// <param name="isRTV"></param>
+        /// <param name="miscFlag"></param>
         public void Resize(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, bool isSRV, bool isRTV, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
         {
             this.format = format;
@@ -146,11 +224,20 @@
             }
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="texture"></param>
         public void CopyTo(IGraphicsContext context, ITexture2D texture)
         {
             context.CopyResource(texture, this.texture);
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -166,12 +253,18 @@
             }
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         ~UavTexture2D()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// [Obsolete] Use Texture2D instead with UA flag
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

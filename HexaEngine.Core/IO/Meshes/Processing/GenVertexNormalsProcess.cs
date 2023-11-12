@@ -5,10 +5,21 @@
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// Provides methods for generating vertex normals for a mesh.
+    /// </summary>
     public static class GenVertexNormalsProcess
     {
-        private static float configMaxAngle = 90f.ToRad();
+        /// <summary>
+        /// Configuration parameter for the maximum angle in radians.
+        /// </summary>
+        public static float ConfigMaxAngle = 90f.ToRad();
 
+        /// <summary>
+        /// Generates vertex normals for the given mesh data.
+        /// </summary>
+        /// <param name="pMesh">The mesh data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool GenMeshVertexNormals(MeshData pMesh)
         {
             // Allocate the array to hold the output normals
@@ -39,7 +50,7 @@
             List<uint> verticesFound = new();
             Vector3[] pcNew = new Vector3[pMesh.VerticesCount];
 
-            if (configMaxAngle >= 175f.ToRad())
+            if (ConfigMaxAngle >= 175f.ToRad())
             {
                 // There is no angle limit. Thus all vertices with positions close
                 // to each other will receive the same vertex normal. This allows us
@@ -76,7 +87,7 @@
             // the effect, this one is the most straightforward one.
             else
             {
-                float fLimit = MathF.Cos(configMaxAngle);
+                float fLimit = MathF.Cos(ConfigMaxAngle);
                 for (uint i = 0; i < pMesh.VerticesCount; ++i)
                 {
                     // Get all vertices that share this one ...
@@ -106,6 +117,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Generates vertex normals for the given mesh data using an alternative approach.
+        /// </summary>
+        /// <param name="pMesh">The mesh data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool GenMeshVertexNormals2(MeshData pMesh)
         {
             Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
@@ -165,6 +181,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Generates vertex normals for the given terrain cell data using an alternative approach.
+        /// </summary>
+        /// <param name="pMesh">The terrain cell data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool GenMeshVertexNormals2(TerrainCellData pMesh)
         {
             Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);

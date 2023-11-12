@@ -1,27 +1,38 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
-    using System.Collections.Generic;
-    using System.Drawing;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using YamlDotNet.Core.Tokens;
 
+    /// <summary>
+    /// Represents an array of render target views.
+    /// </summary>
     public class RenderTargetViewArray : IDisposable
     {
+        /// <summary>
+        /// Gets or sets the clear color for the render target views.
+        /// </summary>
         public Vector4 ClearColor;
+
         private bool disposedValue;
         private IRenderTargetView[] views;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTargetViewArray"/> class with existing render target views.
+        /// </summary>
+        /// <param name="views">An array of existing render target views.</param>
         public RenderTargetViewArray(IRenderTargetView[] views)
         {
             this.views = views;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTargetViewArray"/> class with resources and a viewport.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="resources">An array of resources to create render target views for.</param>
+        /// <param name="viewport">The viewport associated with the render target views.</param>
         public RenderTargetViewArray(IGraphicsDevice device, IResource[] resources, Viewport viewport)
         {
             views = new IRenderTargetView[resources.Length];
@@ -32,7 +43,13 @@
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTargetViewArray"/> class with a single resource, array size, and viewport.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="resource">The resource to create render target views for.</param>
+        /// <param name="arraySize">The array size.</param>
+        /// <param name="viewport">The viewport associated with the render target views.</param>
         public RenderTargetViewArray(IGraphicsDevice device, IResource resource, int arraySize, Viewport viewport)
         {
             Viewport = viewport;
@@ -46,26 +63,51 @@
             }
         }
 
+        /// <summary>
+        /// Gets the viewport associated with the render target views.
+        /// </summary>
         public Viewport Viewport { get; }
 
+        /// <summary>
+        /// Gets or sets the depth stencil view associated with the render target views.
+        /// </summary>
         public IDepthStencilView? DepthStencil { get; set; }
 
+        /// <summary>
+        /// Clears and sets the specified render target view as the target in the graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="i">The index of the render target view.</param>
         public void ClearAndSetTarget(IGraphicsContext context, int i)
         {
             context.ClearRenderTargetView(views[i], new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));
             context.SetRenderTarget(views[i], DepthStencil);
         }
 
+        /// <summary>
+        /// Clears the specified render target view in the graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="i">The index of the render target view.</param>
         public void ClearTarget(IGraphicsContext context, int i)
         {
             context.ClearRenderTargetView(views[i], new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));
         }
 
+        /// <summary>
+        /// Sets the specified render target view as the target in the graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="i">The index of the render target view.</param>
         public void SetTarget(IGraphicsContext context, int i)
         {
             context.SetRenderTarget(views[i], DepthStencil);
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="RenderTargetViewArray"/>.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method is called from the Dispose method.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -79,12 +121,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes this instance of <see cref="RenderTargetViewArray"/>.
+        /// </summary>
         ~RenderTargetViewArray()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="RenderTargetViewArray"/>.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
@@ -93,18 +141,32 @@
         }
     }
 
+    /// <summary>
+    /// Represents an array of shader resource views.
+    /// </summary>
     public class ShaderResourceViewArray : IDisposable
     {
         private bool disposedValue;
+
+        /// <summary>
+        /// Gets the array of shader resource views.
+        /// </summary>
         public readonly IShaderResourceView[] Views;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderResourceViewArray"/> class with existing shader resource views.
+        /// </summary>
+        /// <param name="views">An array of existing shader resource views.</param>
         public ShaderResourceViewArray(IShaderResourceView[] views)
         {
             Views = views;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderResourceViewArray"/> class with resources.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="resources">An array of resources to create shader resource views for.</param>
         public ShaderResourceViewArray(IGraphicsDevice device, IResource[] resources)
         {
             Views = new IShaderResourceView[resources.Length];
@@ -115,7 +177,12 @@
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderResourceViewArray"/> class with a single resource and array size.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="resource">The resource to create shader resource views for.</param>
+        /// <param name="arraySize">The array size.</param>
         public ShaderResourceViewArray(IGraphicsDevice device, IResource resource, int arraySize)
         {
             Views = new IShaderResourceView[arraySize];
@@ -128,6 +195,10 @@
             }
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="ShaderResourceViewArray"/>.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method is called from the Dispose method.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -141,539 +212,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes this instance of <see cref="ShaderResourceViewArray"/>.
+        /// </summary>
         ~ShaderResourceViewArray()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-    }
-
-    /// <summary>
-    /// Specifies the type of shader binding.
-    /// </summary>
-    public enum ShaderBindingType
-    {
         /// <summary>
-        /// Constant buffer binding (e.g., cX).
+        /// Releases the resources used by the <see cref="ShaderResourceViewArray"/>.
         /// </summary>
-        ConstantBuffer,
-
-        /// <summary>
-        /// Shader resource binding (e.g., tX).
-        /// </summary>
-        ShaderResource,
-
-        /// <summary>
-        /// Sampler state binding (e.g., sX).
-        /// </summary>
-        SamplerState,
-
-        /// <summary>
-        /// Unordered access binding (e.g., uX).
-        /// </summary>
-        UnorderedAccess
-    }
-
-    /// <summary>
-    /// Represents a shader binding with a name, type, shader stage, and slot.
-    /// </summary>
-    public struct ShaderBinding
-    {
-        /// <summary>
-        /// Gets or sets the name of the binding.
-        /// </summary>
-        public string Name;
-
-        /// <summary>
-        /// Gets or sets the shader stage in which the binding is used.
-        /// </summary>
-        public ShaderStage Stage;
-
-        /// <summary>
-        /// Gets or sets the slot or index associated with the binding.
-        /// </summary>
-        public uint Slot;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderBinding"/> struct.
-        /// </summary>
-        /// <param name="name">The name of the binding.</param>
-        /// <param name="type">The type of the binding (e.g., ConstantBuffer, Texture, Buffer, UnorderedAccess).</param>
-        /// <param name="stage">The shader stage in which the binding is used.</param>
-        /// <param name="slot">The slot or index associated with the binding.</param>
-        public ShaderBinding(string name, ShaderStage stage, uint slot)
-        {
-            Name = name;
-            Stage = stage;
-            Slot = slot;
-        }
-    }
-
-    public unsafe class ShaderResourceViewList : IDisposable
-    {
-        private readonly List<ShaderBinding> bindings = new();
-        private readonly List<ShaderBindingList> stages = new();
-        private bool disposedValue;
-
-        public ShaderResourceViewList()
-        {
-            stages.Add(new(ShaderStage.Vertex, ShaderBindingType.ShaderResource));
-            stages.Add(new(ShaderStage.Hull, ShaderBindingType.ShaderResource));
-            stages.Add(new(ShaderStage.Domain, ShaderBindingType.ShaderResource));
-            stages.Add(new(ShaderStage.Geometry, ShaderBindingType.ShaderResource));
-            stages.Add(new(ShaderStage.Pixel, ShaderBindingType.ShaderResource));
-            stages.Add(new(ShaderStage.Compute, ShaderBindingType.ShaderResource));
-        }
-
-        public bool TryGetBinding(string name, out ShaderBinding binding)
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                var bind = bindings[i];
-                if (bind.Name == name)
-                {
-                    binding = bind;
-                    return true;
-                }
-            }
-
-            binding = default;
-            return false;
-        }
-
-        public void AddBinding(ShaderBinding binding)
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                var bind = bindings[i];
-                if (bind.Name == binding.Name)
-                {
-                    throw new InvalidOperationException("A binding with the same name already exists");
-                }
-            }
-
-            bindings.Add(binding);
-        }
-
-        public bool RemoveBinding(string binding)
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                var binding2 = bindings[i];
-                if (binding2.Name == binding)
-                {
-                    bindings.RemoveAt(i);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void ClearBindings()
-        {
-            bindings.Clear();
-        }
-
-        public ShaderBindingList GetSubList(ShaderStage stage)
-        {
-            return stages[(int)stage];
-        }
-
-        public bool Set(string binding, nint value)
-        {
-            if (TryGetBinding(binding, out var bind))
-            {
-                var subList = GetSubList(bind.Stage);
-                subList.Set(bind.Slot, value);
-                return true;
-            }
-            return false;
-        }
-
-        public bool Unset(string binding)
-        {
-            if (TryGetBinding(binding, out var bind))
-            {
-                var subList = GetSubList(bind.Stage);
-                subList.Unset(bind.Slot);
-                return true;
-            }
-            return false;
-        }
-
-        public void Clear()
-        {
-            for (int i = 0; i < stages.Count; i++)
-            {
-                stages[i].Clear();
-            }
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            for (int i = 0; i < stages.Count; i++)
-            {
-                stages[i].Bind(context);
-            }
-        }
-
-        public void Unbind(IGraphicsContext context)
-        {
-            for (int i = 0; i < stages.Count; i++)
-            {
-                stages[i].Unbind(context);
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                for (int i = 0; i < stages.Count; i++)
-                {
-                    stages[i].Dispose();
-                }
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-    }
-
-    public unsafe class ShaderBindingList : IDisposable
-    {
-        private UnsafeList<nint> list = [];
-        private uint baseSlot = uint.MaxValue;
-        private bool disposedValue;
-        private readonly ShaderStage stage;
-        private readonly ShaderBindingType type;
-
-        public ShaderBindingList(ShaderStage stage, ShaderBindingType type)
-        {
-            this.stage = stage;
-            this.type = type;
-        }
-
-        public ShaderStage Stage => stage;
-
-        public ShaderBindingType Type => type;
-
-        public void Set(uint slot, nint resource)
-        {
-            var size = Math.Max(slot + 1, list.Size);
-            list.Resize(size);
-            list[slot] = resource;
-            baseSlot = Math.Min(baseSlot, slot);
-        }
-
-        public void Unset(uint slot)
-        {
-            var newSize = list.Size;
-            if (slot == newSize - 1)
-            {
-                newSize--;
-                list.Resize(newSize);
-                return;
-            }
-
-            list[slot] = 0;
-
-            if (baseSlot == slot)
-            {
-                // underflow is okay in this case, because that indicates that the list is empty.
-                baseSlot = unchecked((uint)list.FirstIndexOf(x => x != 0));
-                if (baseSlot == uint.MaxValue)
-                {
-                    list.Clear();
-                }
-            }
-        }
-
-        public void Clear()
-        {
-            list.Clear();
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            switch (type)
-            {
-                case ShaderBindingType.ConstantBuffer:
-                    BindConstantBuffers(context);
-                    break;
-
-                case ShaderBindingType.ShaderResource:
-                    BindShaderResources(context);
-                    break;
-
-                case ShaderBindingType.SamplerState:
-                    BindSamplers(context);
-                    break;
-            }
-        }
-
-        public void Unbind(IGraphicsContext context)
-        {
-            switch (type)
-            {
-                case ShaderBindingType.ConstantBuffer:
-                    UnbindConstantBuffers(context);
-                    break;
-
-                case ShaderBindingType.ShaderResource:
-                    UnbindShaderResources(context);
-                    break;
-
-                case ShaderBindingType.SamplerState:
-                    UnbindSamplers(context);
-                    break;
-            }
-        }
-
-        public void BindShaderResources(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetShaderResources(baseSlot, size, (void**)list.Data);
-                    break;
-            }
-        }
-
-        public void UnbindShaderResources(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            nint* temp = stackalloc nint[(int)size];
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetShaderResources(baseSlot, size, (void**)temp);
-                    break;
-            }
-        }
-
-        public void BindConstantBuffers(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetConstantBuffers(baseSlot, size, (void**)list.Data);
-                    break;
-            }
-        }
-
-        public void UnbindConstantBuffers(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            nint* temp = stackalloc nint[(int)size];
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetConstantBuffers(baseSlot, size, (void**)temp);
-                    break;
-            }
-        }
-
-        public void BindSamplers(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetSamplers(baseSlot, size, (void**)list.Data);
-                    break;
-            }
-        }
-
-        public void UnbindSamplers(IGraphicsContext context)
-        {
-            uint size = list.Size - baseSlot;
-            if (size == 0 || baseSlot == uint.MaxValue)
-            {
-                return;
-            }
-
-            nint* temp = stackalloc nint[(int)size];
-
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    context.VSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Hull:
-                    context.HSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Domain:
-                    context.DSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Geometry:
-                    context.GSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Pixel:
-                    context.PSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-
-                case ShaderStage.Compute:
-                    context.CSSetSamplers(baseSlot, size, (void**)temp);
-                    break;
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                list.Release();
-                disposedValue = true;
-            }
-        }
-
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

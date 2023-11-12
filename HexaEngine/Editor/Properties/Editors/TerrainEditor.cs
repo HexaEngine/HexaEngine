@@ -19,6 +19,7 @@
     using System;
     using System.Numerics;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
+    using HexaEngine.Core.Extensions;
 
     public struct CBColorMask
     {
@@ -497,18 +498,16 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("ObjectAdded"))
+                if (ImGui.Button("Add"))
                 {
-                    var props = material.Properties;
-                    ArrayUtils.Add(ref props, new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
-                    material.Properties = props;
+                    material.Properties.Add(new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
                     ImGui.CloseCurrentPopup();
                     hasChanged = true;
                 }
                 ImGui.EndPopup();
             }
 
-            for (int i = 0; i < material.Properties.Length; i++)
+            for (int i = 0; i < material.Properties.Count; i++)
             {
                 var prop = material.Properties[i];
                 EditProperty(material, i, prop);
@@ -539,25 +538,23 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("ObjectAdded"))
+                if (ImGui.Button("Add"))
                 {
-                    var textures = material.Textures;
-                    ArrayUtils.Add(ref textures, new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
-                    material.Textures = textures;
+                    material.Textures.Add(new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
                     ImGui.CloseCurrentPopup();
                     hasChanged = true;
                 }
                 ImGui.EndPopup();
             }
 
-            for (int i = 0; i < material.Textures.Length; i++)
+            for (int i = 0; i < material.Textures.Count; i++)
             {
                 var tex = material.Textures[i];
 
                 var iType = Array.IndexOf(MaterialTexture.TextureTypes, tex.Type);
                 if (ImGui.Combo($"Type##{i}", ref iType, MaterialTexture.TextureTypeNames, MaterialTexture.TextureTypeNames.Length))
                 {
-                    material.Textures[i].Type = MaterialTexture.TextureTypes[iType];
+                    material.Textures.MutateItem(i, x => { x.Type = MaterialTexture.TextureTypes[iType]; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -565,7 +562,7 @@
                 var file = tex.File;
                 if (ImGui.InputText($"File##{i}", ref file, 1024))
                 {
-                    material.Textures[i].File = file;
+                    material.Textures.MutateItem(i, x => { x.File = file; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -573,7 +570,7 @@
                 var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
                 if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
                 {
-                    material.Textures[i].Blend = MaterialTexture.BlendModes[iBlend];
+                    material.Textures.MutateItem(i, x => { x.Blend = MaterialTexture.BlendModes[iBlend]; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -581,7 +578,7 @@
                 var iOp = Array.IndexOf(MaterialTexture.TextureOps, tex.Op);
                 if (ImGui.Combo($"TextureOp##{i}", ref iOp, MaterialTexture.TextureOpNames, MaterialTexture.TextureOpNames.Length))
                 {
-                    material.Textures[i].Op = MaterialTexture.TextureOps[iOp];
+                    material.Textures.MutateItem(i, x => { x.Op = MaterialTexture.TextureOps[iOp]; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -589,7 +586,7 @@
                 var mapping = tex.Mapping;
                 if (ImGui.InputInt($"Mapping##{i}", ref mapping))
                 {
-                    material.Textures[i].Mapping = mapping;
+                    material.Textures.MutateItem(i, x => { x.Mapping = mapping; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -597,7 +594,7 @@
                 var uvwSrc = tex.UVWSrc;
                 if (ImGui.InputInt($"UVWSrc##{i}", ref uvwSrc))
                 {
-                    material.Textures[i].UVWSrc = uvwSrc;
+                    material.Textures.MutateItem(i, x => { x.UVWSrc = uvwSrc; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -605,7 +602,7 @@
                 var iU = Array.IndexOf(MaterialTexture.TextureMapModes, tex.U);
                 if (ImGui.Combo($"U##{i}", ref iU, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
                 {
-                    material.Textures[i].U = MaterialTexture.TextureMapModes[iU];
+                    material.Textures.MutateItem(i, x => { x.U = MaterialTexture.TextureMapModes[iU]; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -613,7 +610,7 @@
                 var iV = Array.IndexOf(MaterialTexture.TextureMapModes, tex.V);
                 if (ImGui.Combo($"V##{i}", ref iV, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
                 {
-                    material.Textures[i].V = MaterialTexture.TextureMapModes[iV];
+                    material.Textures.MutateItem(i, x => { x.V = MaterialTexture.TextureMapModes[iV]; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
@@ -621,23 +618,23 @@
                 var texFlags = (int)tex.Flags;
                 if (ImGui.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
                 {
-                    material.Textures[i].Flags ^= TextureFlags.Invert;
+                    material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.Invert; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
                 if (ImGui.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
                 {
-                    material.Textures[i].Flags ^= TextureFlags.UseAlpha;
+                    material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.UseAlpha; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
                 if (ImGui.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
                 {
-                    material.Textures[i].Flags ^= TextureFlags.IgnoreAlpha;
+                    material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.IgnoreAlpha; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
-                if (i < material.Textures.Length - 1)
+                if (i < material.Textures.Count - 1)
                 {
                     ImGui.Separator();
                 }

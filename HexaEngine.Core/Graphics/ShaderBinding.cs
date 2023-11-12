@@ -1,173 +1,36 @@
-﻿namespace HexaEngine.Core.Graphics
+namespace HexaEngine.Core.Graphics
 {
-    public struct PShaderBinding
+    /// <summary>
+    /// Represents a shader binding with a name, type, shader stage, and slot.
+    /// </summary>
+    public struct ShaderBinding
     {
-        public PShaderBinding(ShaderStage stage, uint slot)
+        /// <summary>
+        /// Gets or sets the name of the binding.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
+        /// Gets or sets the shader stage in which the binding is used.
+        /// </summary>
+        public ShaderStage Stage;
+
+        /// <summary>
+        /// Gets or sets the slot or index associated with the binding.
+        /// </summary>
+        public uint Slot;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderBinding"/> struct.
+        /// </summary>
+        /// <param name="name">The name of the binding.</param>
+        /// <param name="stage">The shader stage in which the binding is used.</param>
+        /// <param name="slot">The slot or index associated with the binding.</param>
+        public ShaderBinding(string name, ShaderStage stage, uint slot)
         {
+            Name = name;
             Stage = stage;
             Slot = slot;
-        }
-
-        public ShaderStage Stage;
-        public uint Slot;
-    }
-
-    public struct BoundResource
-    {
-        public IShaderResourceView? Resource;
-        public List<PShaderBinding> Bindings;
-
-        public BoundResource(IShaderResourceView? resource, params PShaderBinding[] bindings)
-        {
-            Resource = resource;
-            Bindings = new(bindings);
-        }
-
-        public BoundResource(IShaderResourceView? resource, ShaderStage stage, uint slot)
-        {
-            Resource = resource;
-            Bindings = new List<PShaderBinding>();
-            Bindings.Add(new PShaderBinding(stage, slot));
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            for (int i = 0; i < Bindings.Count; i++)
-            {
-                var binding = Bindings[i];
-                switch (binding.Stage)
-                {
-                    case ShaderStage.Vertex:
-                        context.VSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-
-                    case ShaderStage.Hull:
-                        context.HSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-
-                    case ShaderStage.Domain:
-                        context.DSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        context.GSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        context.PSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-
-                    case ShaderStage.Compute:
-                        context.CSSetShaderResource(Bindings[i].Slot, Resource);
-                        break;
-                }
-            }
-        }
-    }
-
-    public struct BoundSampler
-    {
-        public ISamplerState? Sampler;
-        public List<PShaderBinding> Bindings;
-
-        public BoundSampler(ISamplerState? sampler, params PShaderBinding[] bindings)
-        {
-            Sampler = sampler;
-            Bindings = new(bindings);
-        }
-
-        public BoundSampler(ISamplerState? sampler, ShaderStage stage, uint slot)
-        {
-            Sampler = sampler;
-            Bindings = new List<PShaderBinding>();
-            Bindings.Add(new PShaderBinding(stage, slot));
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            for (int i = 0; i < Bindings.Count; i++)
-            {
-                var binding = Bindings[i];
-                switch (binding.Stage)
-                {
-                    case ShaderStage.Vertex:
-                        context.VSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-
-                    case ShaderStage.Hull:
-                        context.HSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-
-                    case ShaderStage.Domain:
-                        context.DSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        context.GSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        context.PSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-
-                    case ShaderStage.Compute:
-                        context.CSSetSampler(Bindings[i].Slot, Sampler);
-                        break;
-                }
-            }
-        }
-    }
-
-    public struct BoundConstant
-    {
-        public IBuffer? Constant;
-        public List<PShaderBinding> Bindings;
-
-        public BoundConstant(IBuffer? constant, params PShaderBinding[] bindings)
-        {
-            Constant = constant;
-            Bindings = new(bindings);
-        }
-
-        public BoundConstant(IBuffer? constant, ShaderStage stage, uint slot)
-        {
-            Constant = constant;
-            Bindings = new List<PShaderBinding>();
-            Bindings.Add(new PShaderBinding(stage, slot));
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            for (int i = 0; i < Bindings.Count; i++)
-            {
-                var binding = Bindings[i];
-                switch (binding.Stage)
-                {
-                    case ShaderStage.Vertex:
-                        context.VSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-
-                    case ShaderStage.Hull:
-                        context.HSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-
-                    case ShaderStage.Domain:
-                        context.DSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        context.GSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        context.PSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-
-                    case ShaderStage.Compute:
-                        context.CSSetConstantBuffer(Bindings[i].Slot, Constant);
-                        break;
-                }
-            }
         }
     }
 }

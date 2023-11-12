@@ -11,7 +11,7 @@
     public unsafe class CPUFlameProfiler : ICPUFlameProfiler
     {
         private readonly ImGuiWidgetFlameGraph.ValuesGetter getter;
-        private readonly UnsafeArray<Entry> entries = new(bufferSize);
+        private readonly UnsafeList<Entry> entries = new(bufferSize);
 
         private readonly Dictionary<string, uint> nameToId = new();
         private readonly Dictionary<uint, string> idToName = new();

@@ -102,7 +102,7 @@
                 var mapping = sdl.GameControllerMappingForIndexS(i);
                 if (mapping == null)
                     SdlCheckError();
-                mappings.Add(mapping);
+                mappings.Add(mapping ?? string.Empty);
             }
 
             if (sdl.JoystickIsHaptic(joystick) == 1)

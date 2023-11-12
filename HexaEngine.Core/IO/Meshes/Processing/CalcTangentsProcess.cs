@@ -6,10 +6,21 @@
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// Provides methods for calculating tangents and bitangents for a mesh.
+    /// </summary>
     public static class CalcTangentsProcess
     {
+        /// <summary>
+        /// Maximum allowed angle for smoothing tangents and bitangents.
+        /// </summary>
         public static float ConfigMaxAngle = 45f.ToRad();
 
+        /// <summary>
+        /// Process the mesh to calculate tangents and bitangents.
+        /// </summary>
+        /// <param name="pMesh">The mesh data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool ProcessMesh(MeshData pMesh)
         {
             const float angleEpsilon = 0.9999f;
@@ -168,6 +179,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Process the mesh to calculate tangents and bitangents.
+        /// </summary>
+        /// <param name="pMesh">The mesh data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool ProcessMesh2(MeshData pMesh)
         {
             var nFace = pMesh.IndicesCount / 3;
@@ -230,6 +246,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Process the mesh to calculate tangents and bitangents.
+        /// </summary>
+        /// <param name="pMesh">The terrain cell data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool ProcessMesh2(TerrainCellData pMesh)
         {
             var nFace = pMesh.IndicesCount / 3;
@@ -293,6 +314,12 @@
             return true;
         }
 
+        /// <summary>
+        /// Check if the given float value is a special floating-point value (NaN or Infinity). 
+        /// My mom says I'm special!
+        /// </summary>
+        /// <param name="x">The float value to check.</param>
+        /// <returns>True if the value is NaN or Infinity, otherwise false.</returns>
         private static bool IsSpecialFloat(float x)
         {
             return float.IsNaN(x) || float.IsInfinity(x);

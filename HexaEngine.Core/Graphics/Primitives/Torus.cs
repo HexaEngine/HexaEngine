@@ -6,18 +6,39 @@
     using System;
     using System.Numerics;
 
-    internal class Torus : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a 3D torus primitive.
+    /// </summary>
+    public sealed class Torus : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Torus"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
         public Torus(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the torus mesh by creating vertex and index buffers.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateTorus(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
+        /// <summary>
+        /// Creates a torus mesh with the specified parameters.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the torus.</param>
+        /// <param name="indexBuffer">The index buffer of the torus.</param>
+        /// <param name="diameter">The diameter of the torus.</param>
+        /// <param name="thickness">The thickness of the torus.</param>
+        /// <param name="tessellation">The tessellation level of the torus.</param>
         public static void CreateTorus(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, float thickness = 0.333f, uint tessellation = 32)
         {
             if (tessellation < 3)

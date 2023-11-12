@@ -17,13 +17,14 @@
         private Task errorTask;
         private Task inputTask;
         private AutoResetEvent inputSignal = new(false);
-
+#nullable disable
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsoleAppManager"/> class with the specified application name.
         /// </summary>
         /// <param name="appName">The path or name of the external console application to manage.</param>
         public ConsoleAppManager(string appName)
         {
+
             this.appName = appName;
 
             process.StartInfo = new(this.appName);
@@ -35,6 +36,7 @@
             process.EnableRaisingEvents = true;
             process.Exited += ProcessOnExited;
         }
+#nullable restore
 
         /// <summary>
         /// Occurs when an error message is received from the managed console application.

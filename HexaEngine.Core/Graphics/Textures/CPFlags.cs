@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags that control various aspects of texture loading and creation.
+    /// </summary>
     [Flags]
     public enum CPFlags
     {

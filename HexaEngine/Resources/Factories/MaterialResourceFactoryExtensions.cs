@@ -36,7 +36,7 @@
                 modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 modelMaterial.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
             }
@@ -56,7 +56,7 @@
                 modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 modelMaterial.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
             }
@@ -81,7 +81,7 @@
                 modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 modelMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
             }
@@ -102,7 +102,7 @@
                 modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Length; i++)
+            for (int i = 0; i < desc.Textures.Count; i++)
             {
                 modelMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
             }

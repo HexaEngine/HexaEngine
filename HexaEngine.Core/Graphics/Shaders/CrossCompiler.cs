@@ -12,8 +12,16 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
+    /// <summary>
+    /// Provides functionality for compiling shaders to SPIR-V bytecode and translating SPIR-V bytecode to source code.
+    /// </summary>
     public static unsafe class CrossCompiler
     {
+        /// <summary>
+        /// Gets the source language based on the file extension.
+        /// </summary>
+        /// <param name="filename">The filename of the shader.</param>
+        /// <returns>The source language of the shader.</returns>
         public static SourceLanguage GetSourceLanguage(string filename)
         {
             var ex = Path.GetExtension(filename);
@@ -25,11 +33,23 @@
             };
         }
 
+        /// <summary>
+        /// Callback function used during shader compilation to handle inclusion of additional source files.
+        /// </summary>
+        /// <param name="userdata">Pointer to user-specific data.</param>
+        /// <param name="requestedSource">Pointer to the requested source file name.</param>
+        /// <param name="type">Type of the inclusion (e.g., local or system).</param>
+        /// <param name="requestingSource">Pointer to the source file making the inclusion request.</param>
+        /// <param name="includeDepth">The depth of inclusion (how many times inclusion has occurred).</param>
+        /// <returns>A pointer to a structure containing the included source content and its length.</returns>
+        /// <remarks>
+        /// This function is used to handle the inclusion of additional source files during shader compilation.
+        /// </remarks>
         public static ShadercIncludeResult* Include(void* userdata, byte* requestedSource, int type, byte* requestingSource, nuint includeDepth)
         {
-            string requested = ToStringFromUTF8(requestedSource);
-            string requesting = ToStringFromUTF8(requestingSource);
-            string baseDir = ToStringFromUTF8((byte*)userdata);
+            string requested = ToStringFromUTF8(requestedSource) ?? string.Empty;
+            string requesting = ToStringFromUTF8(requestingSource) ?? string.Empty;
+            string baseDir = ToStringFromUTF8((byte*)userdata) ?? string.Empty;
             string path = Path.Combine(baseDir, requested);
 
             ShadercIncludeResult* result = AllocT<ShadercIncludeResult>();
@@ -42,6 +62,14 @@
             return result;
         }
 
+        /// <summary>
+        /// Callback function used to release resources associated with included source files.
+        /// </summary>
+        /// <param name="userdata">Pointer to user-specific data.</param>
+        /// <param name="result">Pointer to the structure containing the included source content.</param>
+        /// <remarks>
+        /// This function is used to release resources associated with included source files after compilation.
+        /// </remarks>
         public static void IncludeRelease(void* userdata, ShadercIncludeResult* result)
         {
             Free(result->Content);
@@ -55,6 +83,18 @@
             Logger.Error(message);
         }
 
+        /// <summary>
+        /// Compiles SPIR-V bytecode from shader source code.
+        /// </summary>
+        /// <param name="source">The source code of the shader.</param>
+        /// <param name="filename">The filename of the shader.</param>
+        /// <param name="entrypoint">The entry point of the shader.</param>
+        /// <param name="macros">An array of shader macros.</param>
+        /// <param name="kind">The kind of shader (vertex, fragment, etc.).</param>
+        /// <param name="language">The source language of the shader.</param>
+        /// <param name="il">The resulting SPIR-V bytecode and its length.</param>
+        /// <param name="error">An optional error message if compilation fails.</param>
+        /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVFromSource(string source, string filename, string entrypoint, ShaderMacro[] macros, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)
         {
             il = default;
@@ -156,30 +196,75 @@
             return false;
         }
 
+        /// <summary>
+        /// Compiles SPIR-V bytecode from a shader file.
+        /// </summary>
+        /// <param name="filename">The filename of the shader file.</param>
+        /// <param name="entrypoint">The entry point of the shader.</param>
+        /// <param name="kind">The kind of shader (vertex, fragment, etc.).</param>
+        /// <param name="language">The source language of the shader.</param>
+        /// <param name="il">The resulting SPIR-V bytecode and its length.</param>
+        /// <param name="error">An optional error message if compilation fails.</param>
+        /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVFromFile(string filename, string entrypoint, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)
         {
             var source = FileSystem.ReadAllText(Paths.CurrentShaderPath + filename);
             return CompileSPIRVFromSource(source, filename, entrypoint, Array.Empty<ShaderMacro>(), kind, language, out il, out error);
         }
 
+        /// <summary>
+        /// Compiles SPIRV code from a file with specified parameters.
+        /// </summary>
+        /// <param name="filename">The name of the file containing the shader source code.</param>
+        /// <param name="entrypoint">The entry point function for the shader.</param>
+        /// <param name="macros">An array of shader macros to be defined during compilation.</param>
+        /// <param name="kind">The kind of shader (e.g., VertexShader, FragmentShader).</param>
+        /// <param name="language">The source language of the shader code (e.g., HLSL, GLSL).</param>
+        /// <param name="il">The output structure containing the compiled SPIRV bytecode.</param>
+        /// <param name="error">If compilation fails, contains an error message; otherwise, null.</param>
+        /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVFromFile(string filename, string entrypoint, ShaderMacro[] macros, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)
         {
             var source = FileSystem.ReadAllText(Paths.CurrentShaderPath + filename);
             return CompileSPIRVFromSource(source, filename, entrypoint, macros, kind, language, out il, out error);
         }
 
+        /// <summary>
+        /// Checks if the SPIRV result indicates success or failure.
+        /// </summary>
+        /// <param name="result">The SPIRV result to check.</param>
+        /// <param name="file">The file path where the check is performed.</param>
+        /// <param name="line">The line number where the check is performed.</param>
+        /// <param name="member">The member name where the check is performed.</param>
+        /// <returns>True if the result indicates success; otherwise, false.</returns>
         public static bool CheckResult(this SpvcResult result, [CallerFilePath] string file = "", [CallerLineNumber] int line = 0, [CallerMemberName] string member = "")
         {
             return result == SpvcResult.Success;
             //throw new SPIRVException($"{file}:{line}, {member}: {result}");
         }
 
+        /// <summary>
+        /// Checks if the SPIRV result indicates success or failure.
+        /// </summary>
+        /// <param name="result">The SPIRV result to check.</param>
+        /// <param name="context">The SPIRV context associated with the result.</param>
+        /// <param name="file">The file path where the check is performed.</param>
+        /// <param name="line">The line number where the check is performed.</param>
+        /// <param name="member">The member name where the check is performed.</param>
+        /// <returns>True if the result indicates success; otherwise, false.</returns>
         public static bool CheckResult(this SpvcResult result, SpvcContext context, [CallerFilePath] string file = "", [CallerLineNumber] int line = 0, [CallerMemberName] string member = "")
         {
             return result == SpvcResult.Success;
             //throw new SPIRVException($"{file}:{line}, {member}: {SPIRV.SpvcContextGetLastErrorStringS(context)}");
         }
 
+        /// <summary>
+        /// Compiles SPIR-V bytecode to source code.
+        /// </summary>
+        /// <param name="il">The SPIR-V bytecode and its length.</param>
+        /// <param name="language">The target source language.</param>
+        /// <param name="source">The resulting source code.</param>
+        /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVTo(ShaderSpirvIL il, SourceLanguage language, [NotNullWhen(true)] out string? source)
         {
             source = null;

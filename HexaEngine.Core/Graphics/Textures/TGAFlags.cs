@@ -2,9 +2,15 @@
 {
     using System;
 
+    /// <summary>
+    /// Flags for controlling TGA file loading and saving options.
+    /// </summary>
     [Flags]
     public enum TGAFlags : ulong
     {
+        /// <summary>
+        /// No special flags.
+        /// </summary>
         None = 0x0,
 
         /// <summary>

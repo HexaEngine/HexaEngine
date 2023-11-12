@@ -6,18 +6,41 @@
     using System;
     using System.Numerics;
 
-    public class Cone : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents a cone primitive in 3D space.
+    /// </summary>
+    public sealed class Cone : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Cone"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
         public Cone(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the cone mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <returns>
+        /// A tuple containing the vertex buffer and optional index buffer of the cone mesh.
+        /// </returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateCone(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
+        /// <summary>
+        /// Generates vertices and indices for a cone mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the cone mesh.</param>
+        /// <param name="indexBuffer">The optional index buffer of the cone mesh.</param>
+        /// <param name="height">The height of the cone.</param>
+        /// <param name="diameter">The diameter of the cone.</param>
+        /// <param name="tessellation">The level of tessellation for the cone.</param>
         public static void CreateCone(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)

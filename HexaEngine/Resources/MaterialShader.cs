@@ -183,7 +183,7 @@ namespace HexaEngine.Resources
                 var osmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                    Rasterizer = RasterizerDescription.CullBack,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -363,7 +363,7 @@ namespace HexaEngine.Resources
                 var osmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                    Rasterizer = rasterizer,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };

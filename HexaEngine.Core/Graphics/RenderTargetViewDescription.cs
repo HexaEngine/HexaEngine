@@ -1,23 +1,65 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    /// <summary>
+    /// Describes a render target view.
+    /// </summary>
     public struct RenderTargetViewDescription
     {
+        /// <summary>
+        /// The data format of the resource.
+        /// </summary>
         public Format Format;
+
+        /// <summary>
+        /// The dimension of the render target view.
+        /// </summary>
         public RenderTargetViewDimension ViewDimension;
+
+        /// <summary>
+        /// Render target view for a buffer.
+        /// </summary>
         public BufferRenderTargetView Buffer;
+
+        /// <summary>
+        /// Render target view for a 1D texture.
+        /// </summary>
         public Texture1DRenderTargetView Texture1D;
+
+        /// <summary>
+        /// Render target view for a 1D texture array.
+        /// </summary>
         public Texture1DArrayRenderTargetView Texture1DArray;
+
+        /// <summary>
+        /// Render target view for a 2D texture.
+        /// </summary>
         public Texture2DRenderTargetView Texture2D;
+
+        /// <summary>
+        /// Render target view for a 2D texture array.
+        /// </summary>
         public Texture2DArrayRenderTargetView Texture2DArray;
+
+        /// <summary>
+        /// Render target view for a 2D multisampled texture.
+        /// </summary>
         public Texture2DMultisampledRenderTargetView Texture2DMS;
+
+        /// <summary>
+        /// Render target view for a 2D multisampled texture array.
+        /// </summary>
         public Texture2DMultisampledArrayRenderTargetView Texture2DMSArray;
+
+        /// <summary>
+        /// Render target view for a 3D texture.
+        /// </summary>
         public Texture3DRenderTargetView Texture3D;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderTargetViewDescription"/> struct.
         /// </summary>
         /// <param name="viewDimension">The <see cref="RenderTargetViewDimension"/></param>
-        /// <param name="format">The <see cref="DXGI.Format"/> to use or <see cref="Format.Unknown"/>.</param>
+        /// <param name="format">The <see cref="Format"/> to use or <see cref="Format.Unknown"/>.</param>
         /// <param name="mipSlice">The index of the mipmap level to use mip slice. or first element for <see cref="RenderTargetViewDimension.Buffer"/>.</param>
         /// <param name="firstArraySlice">The index of the first texture to use in an array of textures or NumElements for <see cref="RenderTargetViewDimension.Buffer"/>, FirstWSlice for <see cref="RenderTargetViewDimension.Texture3D"/>.</param>
         /// <param name="arraySize">Number of textures in the array or WSize for <see cref="RenderTargetViewDimension.Texture3D"/>. </param>
@@ -79,7 +121,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderTargetViewDescription"/> struct.
         /// </summary>
-        /// <param name="buffer">Unused <see cref="ID3D11Buffer"/> </param>
+        /// <param name="buffer">Unused <see cref="IBuffer"/> </param>
         /// <param name="format"></param>
         /// <param name="firstElement"></param>
         /// <param name="numElements"></param>
@@ -92,6 +134,15 @@
             Buffer.NumElements = numElements;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTargetViewDescription"/> struct.
+        /// </summary>
+        /// <param name="texture">The texture resource.</param>
+        /// <param name="isArray">Indicates whether the view is an array.</param>
+        /// <param name="format">The data format of the resource. Use <see cref="Format.Unknown"/> to infer from the texture.</param>
+        /// <param name="mipSlice">The index of the mip level to use. Default is 0.</param>
+        /// <param name="firstArraySlice">The index of the first texture to use in an array. Default is 0.</param>
+        /// <param name="arraySize">Number of textures in the array. Default is -1, which infers from the texture.</param>
         public RenderTargetViewDescription(
             ITexture1D texture,
             bool isArray,

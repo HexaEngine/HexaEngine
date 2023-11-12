@@ -5,29 +5,72 @@
     using System.Numerics;
     using HexaEngine.Core.Unsafes;
 
+    /// <summary>
+    /// Provides spatial sorting functionality for efficiently finding vertices close to a given position.
+    /// </summary>
     public class SpatialSort
     {
+        /// <summary>
+        /// Represents the normal vector of the plane used for spatial sorting.
+        /// </summary>
         protected Vector3 mPlaneNormal;
+
+        /// <summary>
+        /// Represents the centroid used for spatial sorting.
+        /// </summary>
         protected Vector3 mCentroid;
+
+        /// <summary>
+        /// Represents the list of positions used for spatial sorting.
+        /// </summary>
         protected List<Entry> mPositions;
+
+        /// <summary>
+        /// Indicates whether the spatial sorting has been finalized.
+        /// </summary>
         protected bool mFinalized;
 
-        public SpatialSort(Vector3[] positions, int pElementOffset)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpatialSort"/> class.
+        /// </summary>
+        /// <param name="positions">The array of positions to be spatially sorted.</param>
+        /// <param name="elementOffset">The offset between elements in the positions array.</param>
+        public SpatialSort(Vector3[] positions, int elementOffset)
         {
             mPositions = new();
             mPlaneNormal = PlaneInit;
             mPlaneNormal = Vector3.Normalize(mPlaneNormal);
-            Fill(positions, pElementOffset);
+            Fill(positions, elementOffset);
         }
 
+        /// <summary>
+        /// Represents the initial plane normal for spatial sorting.
+        /// </summary>
         public static readonly Vector3 PlaneInit = new(0.8523f, 0.34321f, 0.5736f);
 
+        /// <summary>
+        /// Represents an entry in the spatial sort, containing information about the index, position, and distance.
+        /// </summary>
         protected struct Entry : IComparable<Entry>
         {
+            /// <summary>
+            /// The index associated with the entry.
+            /// </summary>
             public uint Index;
+
+            /// <summary>
+            /// The position associated with the entry.
+            /// </summary>
             public Vector3 Position;
+
+            /// <summary>
+            /// The distance associated with the entry.
+            /// </summary>
             public float Distance;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Entry"/> struct with default values.
+            /// </summary>
             public Entry()
             {
                 Index = uint.MaxValue;
@@ -35,6 +78,11 @@
                 Distance = float.MaxValue;
             }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Entry"/> struct with specified index and position.
+            /// </summary>
+            /// <param name="index">The index to associate with the entry.</param>
+            /// <param name="position">The position to associate with the entry.</param>
             public Entry(uint index, Vector3 position)
             {
                 Index = index;
@@ -42,6 +90,13 @@
                 Distance = float.MaxValue;
             }
 
+            /// <summary>
+            /// Compares this instance to another <see cref="Entry"/> and returns an indication of their relative values.
+            /// </summary>
+            /// <param name="other">An <see cref="Entry"/> to compare with this instance.</param>
+            /// <returns>
+            /// A value that indicates the relative order of the objects being compared.
+            /// </returns>
             public int CompareTo(Entry other)
             {
                 if (this > other)
@@ -51,25 +106,46 @@
                 return 0;
             }
 
+            /// <summary>
+            /// Determines whether one <see cref="Entry"/> is less than another <see cref="Entry"/>.
+            /// </summary>
             public static bool operator <(Entry a, Entry b) => a.Distance < b.Distance;
 
+            /// <summary>
+            /// Determines whether one <see cref="Entry"/> is greater than another <see cref="Entry"/>.
+            /// </summary>
             public static bool operator >(Entry a, Entry b) => a.Distance > b.Distance;
         }
 
-        public void Fill(Vector3[] positions, int pElementOffset, bool finalize = true)
+
+        /// <summary>
+        /// Fills the spatial sort data with the given positions.
+        /// </summary>
+        /// <param name="positions">The array of positions to be added.</param>
+        /// <param name="elementOffset">The offset between elements in the positions array.</param>
+        /// <param name="finish">Specifies whether to finish the spatial sort after adding positions.</param>
+        public void Fill(Vector3[] positions, int elementOffset, bool finish = true)
         {
             mPositions.Clear();
             mFinalized = false;
-            Append(positions, pElementOffset, finalize);
-            mFinalized = finalize;
+            Append(positions, elementOffset, finish);
+            mFinalized = finish;
         }
 
+        /// <summary>
+        /// Calculates the signed distance of a given position to the reference plane.
+        /// </summary>
+        /// <param name="pPosition">The position for which to calculate the distance.</param>
+        /// <returns>The signed distance of the position to the reference plane.</returns>
         protected float CalculateDistance(Vector3 pPosition)
         {
             return Vector3.Dot(pPosition - mCentroid, mPlaneNormal);
         }
 
-        public void Finalize()
+        /// <summary>
+        /// Finishes the spatial sort by calculating centroids and sorting positions by distance.
+        /// </summary>
+        public void Finish()
         {
             float scale = 1.0f / mPositions.Count;
             for (uint i = 0; i < mPositions.Count; i++)
@@ -87,7 +163,13 @@
             mFinalized = true;
         }
 
-        public unsafe void Append(Vector3[] positions, int pElementOffset, bool finalize = true)
+        /// <summary>
+        /// Appends positions to the spatial sort.
+        /// </summary>
+        /// <param name="positions">The array of positions to be appended.</param>
+        /// <param name="elementOffset">The offset between elements in the positions array.</param>
+        /// <param name="finish">Specifies whether to finish the spatial sort after appending positions.</param>
+        public unsafe void Append(Vector3[] positions, int elementOffset, bool finish = true)
         {
             int pNumPositions = positions.Length;
             Trace.Assert(!mFinalized, "You cannot add positions to the SpatialSort object after it has been finalized.");
@@ -99,26 +181,32 @@
                 for (uint a = 0; a < pNumPositions; a++)
                 {
                     byte* tempPointer = (byte*)pPositions;
-                    Vector3* vec = (Vector3*)(tempPointer + a * pElementOffset);
+                    Vector3* vec = (Vector3*)(tempPointer + a * elementOffset);
                     mPositions.Add(new((uint)(a + initial), *vec));
                 }
             }
 
-            if (finalize)
+            if (finish)
             {
                 // now sort the array ascending by distance.
-                Finalize();
+                Finish();
             }
         }
 
-        public void FindPositions(Vector3 pPosition, float pRadius, List<uint> poResults)
+        /// <summary>
+        /// Finds positions close to a given position within a specified radius.
+        /// </summary>
+        /// <param name="position">The reference position.</param>
+        /// <param name="radius">The radius to search for positions within.</param>
+        /// <param name="results">The list to store the indices of found positions.</param>
+        public void FindPositions(Vector3 position, float radius, List<uint> results)
         {
             Trace.Assert(mFinalized, "The SpatialSort object must be finalized before FindPositions can be called.");
-            float dist = CalculateDistance(pPosition);
-            float minDist = dist - pRadius, maxDist = dist + pRadius;
+            float dist = CalculateDistance(position);
+            float minDist = dist - radius, maxDist = dist + radius;
 
             // clear the array
-            poResults.Clear();
+            results.Clear();
 
             // quick check for positions outside the range
             if (mPositions.Count == 0)
@@ -152,12 +240,12 @@
             // Add all positions inside the distance range within the given radius to the result array
 
             Iterator<Entry> it = new Iterator<Entry>(mPositions) + index;
-            float pSquared = pRadius * pRadius;
+            float pSquared = radius * radius;
 
             while (it.Current.Distance < maxDist)
             {
-                if ((it.Current.Position - pPosition).LengthSquared() < pSquared)
-                    poResults.Add(it.Current.Index);
+                if ((it.Current.Position - position).LengthSquared() < pSquared)
+                    results.Add(it.Current.Index);
                 ++it;
                 if (it.End)
                     break;
@@ -202,7 +290,12 @@
             return binValue;
         }
 
-        public void FindIdenticalPositions(Vector3 pPosition, List<uint> poResults)
+        /// <summary>
+        /// Finds positions with identical coordinates to a given position within a specified tolerance.
+        /// </summary>
+        /// <param name="position">The reference position.</param>
+        /// <param name="results">The list to store the indices of positions with identical coordinates.</param>
+        public void FindIdenticalPositions(Vector3 position, List<uint> results)
         {
             Trace.Assert(mFinalized, "The SpatialSort object must be finalized before FindIdenticalPositions can be called.");
             // Epsilons have a huge disadvantage: they are of constant precision, while floating-point
@@ -230,12 +323,12 @@
 
             // Convert the plane distance to its signed integer representation so the ULPs tolerance can be
             //  applied. For some reason, VC won't optimize two calls of the bit pattern conversion.
-            int minDistBinary = ToBinary(CalculateDistance(pPosition)) - distanceToleranceInULPs;
+            int minDistBinary = ToBinary(CalculateDistance(position)) - distanceToleranceInULPs;
             int maxDistBinary = minDistBinary + 2 * distanceToleranceInULPs;
 
             // clear the array in this strange fashion because a simple clear() would also deallocate
             // the array which we want to avoid
-            poResults.Capacity = 0;
+            results.Capacity = 0;
 
             // do a binary search for the minimal distance to start the iteration there
             uint index = (uint)mPositions.Count / 2;
@@ -263,8 +356,8 @@
             Iterator<Entry> it = new Iterator<Entry>(mPositions) + index;
             while (ToBinary(it.Current.Distance) < maxDistBinary)
             {
-                if (distance3DToleranceInULPs >= ToBinary((it.Current.Position - pPosition).LengthSquared()))
-                    poResults.Add(it.Current.Index);
+                if (distance3DToleranceInULPs >= ToBinary((it.Current.Position - position).LengthSquared()))
+                    results.Add(it.Current.Index);
                 ++it;
                 if (it.End)
                     break;
@@ -273,7 +366,13 @@
             // that's it
         }
 
-        public uint GenerateMappingTable(List<uint> fill, float pRadius)
+        /// <summary>
+        /// Generates a mapping table based on the spatial sort, assigning unique indices to positions within a radius.
+        /// </summary>
+        /// <param name="fill">The list to store the generated mapping table.</param>
+        /// <param name="radius">The radius for generating the mapping table.</param>
+        /// <returns>The number of unique indices generated.</returns>
+        public uint GenerateMappingTable(List<uint> fill, float radius)
         {
             Trace.Assert(mFinalized, "The SpatialSort object must be finalized before GenerateMappingTable can be called.");
             fill.Clear();
@@ -285,11 +384,11 @@
             float dist, maxDist;
 
             uint t = 0;
-            float pSquared = pRadius * pRadius;
+            float pSquared = radius * radius;
             for (int i = 0; i < mPositions.Count;)
             {
                 dist = Vector3.Dot(mPositions[i].Position - mCentroid, mPlaneNormal);
-                maxDist = dist + pRadius;
+                maxDist = dist + radius;
 
                 fill[(int)mPositions[i].Index] = t;
                 Vector3 oldpos = mPositions[i].Position;

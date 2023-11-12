@@ -191,22 +191,39 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Locks the stream.
+        /// </summary>
+        /// <param name="millisecondsTimeout">The maximum time to wait for the lock. Use -1 to wait indefinitely.</param>
+        /// <returns><c>true</c> if the lock is acquired; otherwise, <c>false</c>.</returns>
         public bool Lock(int millisecondsTimeout = -1)
         {
             return semaphore.Wait(millisecondsTimeout);
         }
 
+        /// <summary>
+        /// Unlocks the stream.
+        /// </summary>
         public void Unlock()
         {
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Begins a lock on the stream.
+        /// </summary>
+        /// <returns>A <see cref="LockBlock"/> representing the locked state.</returns>
         public LockBlock BeginLock()
         {
             semaphore.Wait();
             return new LockBlock(semaphore);
         }
-
+        /// <summary>
+        /// Tries to begin a lock on the stream.
+        /// </summary>
+        /// <param name="block">When this method returns, contains a <see cref="LockBlock"/> if the lock was acquired; otherwise, the default value.</param>
+        /// <param name="millisecondsTimeout">The maximum time to wait for the lock. Use -1 to wait indefinitely.</param>
+        /// <returns><c>true</c> if the lock is acquired; otherwise, <c>false</c>.</returns>
         public bool TryBeginLock(out LockBlock block, int millisecondsTimeout = -1)
         {
             if (Lock(millisecondsTimeout))
@@ -218,15 +235,25 @@
             return false;
         }
 
+        /// <summary>
+        /// Represents a block of locked state for a <see cref="VirtualStream"/>.
+        /// </summary>
         public readonly struct LockBlock : IDisposable
         {
             private readonly SemaphoreSlim semaphore;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="LockBlock"/> struct with the specified semaphore.
+            /// </summary>
+            /// <param name="semaphore">The semaphore representing the locked state.</param>
             public LockBlock(SemaphoreSlim semaphore)
             {
                 this.semaphore = semaphore;
             }
 
+            /// <summary>
+            /// Releases the lock.
+            /// </summary>
             public void Dispose()
             {
                 semaphore.Release();

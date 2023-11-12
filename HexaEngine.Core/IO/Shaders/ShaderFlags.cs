@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Shaders
 {
+    /// <summary>
+    /// Specifies flags that control the compilation and optimization behavior of a shader.
+    /// </summary>
     [Flags]
     public enum ShaderFlags
     {

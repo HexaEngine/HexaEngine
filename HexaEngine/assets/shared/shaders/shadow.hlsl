@@ -22,8 +22,7 @@ float CalcShadowFactor_Basic(SamplerComparisonState shadow_sampler,
     if (uvd.z > 1.0f)
         return 1.0;
 
-    return shadow_map.SampleCmpLevelZero(shadow_sampler,
-		uvd.xy, uvd.z).r;
+    return shadow_map.SampleCmpLevelZero(shadow_sampler, uvd.xy, uvd.z).r;
 }
 
 float CalcShadowFactor_PCF3x3(SamplerComparisonState samShadow,

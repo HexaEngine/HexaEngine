@@ -1,4 +1,5 @@
-﻿namespace HexaEngine.Editor.Widgets
+﻿#if ENABLE_OBSOLETE_CODE
+namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -385,3 +386,4 @@
         }
     }
 }
+#endif

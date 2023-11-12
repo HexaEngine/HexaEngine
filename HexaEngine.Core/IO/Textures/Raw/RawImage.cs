@@ -60,7 +60,7 @@
         public byte* Data => data;
 
         /// <summary>
-        /// Gets a <see cref="Span{byte}"/> representing the raw image data.
+        /// Gets a <see cref="Span{T}"/> representing the raw image data.
         /// </summary>
         public Span<byte> Span => new(data, byteCount);
 
@@ -268,6 +268,10 @@
             Memcpy(src.Pixels, data, byteCount);
         }
 
+        /// <summary>
+        /// Frees the allocated resources, including pixel data.
+        /// </summary>
+        /// <param name="disposing">A flag indicating whether the method is being called from the explicit method.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -282,12 +286,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="RawImage"/> class.
+        /// </summary>
         ~RawImage()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="RawImage"/> instance.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

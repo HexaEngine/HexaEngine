@@ -45,7 +45,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(HexaItem));
                     if (!payload.IsNull)
                     {
-                        string path = *(UnsafeOldString*)payload.Data;
+                        string path = ((StdWString*)payload.Data)->ToString();
                         // TODO: ObjectAdded global drag drop handler
                     }
                 }
@@ -56,7 +56,8 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeOldString(item.GetAbsolutePath());
+                    // TODO: Remove string cuz memory leaks and imgui copies the payload anyway.
+                    var str = new StdWString(item.GetAbsolutePath());
                     ImGui.SetDragDropPayload(nameof(HexaItem), &str, (uint)sizeof(nint));
                 }
                 ImGui.Text(item.Name);

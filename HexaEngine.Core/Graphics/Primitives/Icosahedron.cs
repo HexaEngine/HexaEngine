@@ -6,12 +6,26 @@
     using System;
     using System.Numerics;
 
-    public class Icosahedron : Primitive<MeshVertex, uint>
+    /// <summary>
+    /// Represents an icosahedron primitive in 3D space.
+    /// </summary>
+    public sealed class Icosahedron : Primitive<MeshVertex, uint>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Icosahedron"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
         public Icosahedron(IGraphicsDevice device) : base(device)
         {
         }
 
+        /// <summary>
+        /// Initializes the icosahedron mesh with vertices and indices.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <returns>
+        /// A tuple containing the vertex buffer and optional index buffer of the icosahedron mesh.
+        /// </returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             CreateIcosahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
@@ -61,6 +75,13 @@
                 11, 7, 5
         };
 
+        /// <summary>
+        /// Generates vertices and indices for an icosahedron mesh.
+        /// </summary>
+        /// <param name="device">The graphics device used for mesh creation.</param>
+        /// <param name="vertexBuffer">The vertex buffer of the icosahedron mesh.</param>
+        /// <param name="indexBuffer">The optional index buffer of the icosahedron mesh.</param>
+        /// <param name="size">The size of the icosahedron.</param>
         public static void CreateIcosahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[20 * 3];
