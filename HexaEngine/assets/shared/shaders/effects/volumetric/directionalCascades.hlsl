@@ -17,7 +17,6 @@ float3 DirectionalLightCascadedVolumetric(float4 screenCoords, float2 texCoords,
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
@@ -49,7 +48,6 @@ float3 DirectionalLightCascadedVolumetric2(float4 screenCoords, float2 texCoords
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
@@ -77,7 +75,6 @@ float3 DirectionalLightCascadedVolumetric3(float4 screenCoords, float2 texCoords
     float3 L = normalize(-light.direction);
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float distanceAttenuation = exp(-density);

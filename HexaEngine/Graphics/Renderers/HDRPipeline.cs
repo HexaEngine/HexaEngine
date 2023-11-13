@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Rendering.Renderers
 {
+    using HexaEngine.Graphics.Passes;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Rendering.Passes;
 
@@ -23,6 +24,7 @@ namespace HexaEngine.Rendering.Renderers
             LightDeferredPass lightDeferredPass = new(flags);
             LightForwardPass lightForwardPass = new(flags);
             PostProcessPass postProcessPass = new();
+            OverlayPass overlayPass = new();
 
             brdfLutPass.Build(this);
             depthPrePass.Build(this);
@@ -35,6 +37,7 @@ namespace HexaEngine.Rendering.Renderers
             lightDeferredPass.Build(this);
             lightForwardPass.Build(this);
             postProcessPass.Build(this);
+            overlayPass.Build(this);
 
             Passes =
             [
@@ -48,7 +51,8 @@ namespace HexaEngine.Rendering.Renderers
                 gBufferPass,
                 lightDeferredPass,
                 lightForwardPass,
-                postProcessPass
+                postProcessPass,
+                overlayPass
             ];
         }
     }

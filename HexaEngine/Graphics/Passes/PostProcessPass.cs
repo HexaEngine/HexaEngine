@@ -12,12 +12,14 @@
     {
         private PostProcessingManager postProcessingManager;
         private ResourceRef<Texture2D> lightBuffer;
+        private ResourceRef<Texture2D> postFxBuffer;
 
         public PostProcessPass() : base("PostProcess")
         {
             AddReadDependency(new("GBuffer"));
             AddReadDependency(new("LightBuffer"));
             AddReadDependency(new("#DepthStencil"));
+            AddWriteDependency(new("PostFxBuffer"));
         }
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
@@ -47,14 +49,16 @@
             postProcessingManager.Add<Vignette>();
             postProcessingManager.Initialize((int)viewport.Width, (int)viewport.Height, profiler);
             postProcessingManager.Enabled = true;
+
+            postFxBuffer = creator.CreateTexture2D("PostFxBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.RenderTarget | BindFlags.ShaderResource));
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             postProcessingManager.Input = lightBuffer.Value;
-            postProcessingManager.Output = creator.Output;
-            postProcessingManager.OutputTex = creator.OutputTex;
-            postProcessingManager.Viewport = creator.OutputViewport;
+            postProcessingManager.Output = postFxBuffer.Value;
+            postProcessingManager.OutputTex = postFxBuffer.Value;
+            postProcessingManager.Viewport = creator.Viewport;
             postProcessingManager.Draw(context, creator, profiler);
         }
 

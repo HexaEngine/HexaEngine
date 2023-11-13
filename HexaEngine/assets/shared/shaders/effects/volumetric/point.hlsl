@@ -3,7 +3,8 @@
 float3 PointLightVolumetric(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
     float3 camToFrag = position - GetCameraPos();
-    if (length(camToFrag) > light.range)
+    float viewDistance = length(camToFrag);
+    if (viewDistance > light.range)
     {
         camToFrag = normalize(camToFrag) * light.range;
     }
@@ -17,10 +18,9 @@ float3 PointLightVolumetric(float4 screenCoords, float2 texCoords, float3 positi
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x, viewDistance, camFar);
         result += visibility;
         x += deltaStep;
     }
@@ -37,7 +37,8 @@ float3 PointLightVolumetric(float4 screenCoords, float2 texCoords, float3 positi
 float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
     float3 camToFrag = position - GetCameraPos();
-    if (length(camToFrag) > light.range)
+    float viewDistance = length(camToFrag);
+    if (viewDistance > light.range)
     {
         camToFrag = normalize(camToFrag) * light.range;
     }
@@ -49,13 +50,12 @@ float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 posit
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float3 LN = light.position.xyz - x;
         float distance = length(LN);
         float3 L = normalize(LN);
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x, viewDistance, camFar);
         result += visibility * PhaseFunction(-L, fragToCamNorm);
         x += deltaStep;
     }
@@ -66,7 +66,8 @@ float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 posit
 float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 position, float3 V, Light light, ShadowData shadowData, float volumetricStrength)
 {
     float3 camToFrag = position - GetCameraPos();
-    if (length(camToFrag) > light.range)
+    float viewDistance = length(camToFrag);
+    if (viewDistance > light.range)
     {
         camToFrag = normalize(camToFrag) * light.range;
     }
@@ -78,7 +79,6 @@ float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 posit
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float3 LN = light.position.xyz - x;
@@ -91,7 +91,7 @@ float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 posit
         float mieScattering = MieScattering(V, L);
         float scatteringContribution = rayleighScattering + mieScattering;
 
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x, viewDistance, camFar);
 
         result += visibility * distanceAttenuation * scatteringContribution;
         x += deltaStep;

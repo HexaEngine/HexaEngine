@@ -149,6 +149,7 @@ namespace HexaEngine.Rendering.Passes
                 return;
             }
 
+            var renderers = current.RenderManager;
             var lights = current.LightManager;
             var globalProbes = lights.GlobalProbes;
 
@@ -182,6 +183,30 @@ namespace HexaEngine.Rendering.Passes
 
             deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)shadowAtlas.Value.SRV.NativePointer;
 
+            context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
+            context.SetViewport(creator.Viewport);
+
+            context.VSSetConstantBuffer(1, camera.Value);
+            context.DSSetConstantBuffer(1, camera.Value);
+            context.GSSetConstantBuffer(1, camera.Value);
+            context.CSSetConstantBuffer(1, camera.Value);
+
+            profiler?.Begin("LightForward.Background");
+            var background = renderers.BackgroundQueue;
+            for (int i = 0; i < background.Count; i++)
+            {
+                var renderer = background[i];
+                profiler?.Begin($"LightForward.{renderer.DebugName}");
+                renderer.Draw(context, RenderPath.Forward);
+                profiler?.End($"LightForward.{renderer.DebugName}");
+            }
+            profiler?.End("LightForward.Background");
+
+            context.VSSetConstantBuffer(1, null);
+            context.DSSetConstantBuffer(1, null);
+            context.GSSetConstantBuffer(1, null);
+            context.CSSetConstantBuffer(1, null);
+
             context.SetRenderTarget(lightBuffer.Value.RTV, null);
 
             // Indirect light pass
@@ -196,7 +221,6 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetShaderResources(0, nIndirectSrvs, indirectSrvs);
 
             context.SetGraphicsPipeline(deferredIndirect);
-            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(deferredIndirect);
 
@@ -233,7 +257,6 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
 
             context.SetGraphicsPipeline(deferred);
-            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 
@@ -249,13 +272,12 @@ namespace HexaEngine.Rendering.Passes
 
         private unsafe void DeferredClustered(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            // Direct clusterd light pass
+            // Direct clustered light pass
             context.PSSetSamplers(0, nSamplers, smps);
             context.PSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
 
             context.SetGraphicsPipeline(deferredClusterd);
-            context.SetViewport(creator.Viewport);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 

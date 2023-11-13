@@ -156,7 +156,6 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, floa
 
     return (1.0f - shadowFactor);
 #else
-
     float percentLit = 0.0f;
     float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
 
@@ -166,11 +165,10 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, floa
         lightDirection = newPosition - light.position.xyz;
         int face = GetPointLightFace(lightDirection);
         float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
-        float shadowDepth = depthAtlas.SampleLevel(linearClampSampler, uv.xy, 0);
-        percentLit += (currentDepth - bias > shadowDepth) ? 1.0f : 0.0f;
+        percentLit += depthAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
     }
 
-    return 1 - (percentLit / 20);
+    return percentLit /= 20;
 #endif
 }
 

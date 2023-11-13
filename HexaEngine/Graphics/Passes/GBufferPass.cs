@@ -69,17 +69,6 @@
             context.GSSetConstantBuffer(1, camera.Value);
             context.CSSetConstantBuffer(1, camera.Value);
 
-            profiler?.Begin("LightDeferred.Background");
-            var background = renderers.BackgroundQueue;
-            for (int i = 0; i < background.Count; i++)
-            {
-                var renderer = background[i];
-                profiler?.Begin($"LightDeferred.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Deferred);
-                profiler?.End($"LightDeferred.{renderer.DebugName}");
-            }
-            profiler?.End("LightDeferred.Background");
-
             profiler?.Begin("LightDeferred.Geometry");
             var geometry = renderers.GeometryQueue;
             for (int i = 0; i < geometry.Count; i++)

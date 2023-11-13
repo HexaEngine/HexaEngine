@@ -185,6 +185,12 @@
                         Frameviewer.InspectorEnabled = enabled;
                     }
 
+                    var drawGimbal = Frameviewer.DrawGimbal;
+                    if (ImGui.Checkbox("Draw Gimbal", ref drawGimbal))
+                    {
+                        Frameviewer.DrawGimbal = drawGimbal;
+                    }
+
                     var drawGrid = Frameviewer.DrawGrid;
                     if (ImGui.Checkbox("Draw Grid", ref drawGrid))
                     {
@@ -195,6 +201,12 @@
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                     {
                         Frameviewer.DrawLights = drawLights;
+                    }
+
+                    var drawCameras = Frameviewer.DrawCameras;
+                    if (ImGui.Checkbox("Draw Cameras", ref drawCameras))
+                    {
+                        Frameviewer.DrawCameras = drawCameras;
                     }
 
                     var drawLightBounds = Frameviewer.DrawLightBounds;

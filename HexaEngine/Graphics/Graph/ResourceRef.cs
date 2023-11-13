@@ -102,6 +102,8 @@
         }
 
         public event EventHandler<T?>? ValueChanged;
+
+        public static implicit operator T?(ResourceRef<T> resourceRef) => resourceRef.Value;
     }
 
     public class ResourceRefNotNull<T> where T : class, IDisposable

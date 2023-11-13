@@ -17,7 +17,6 @@ float3 SpotlightVolumetric(float4 screenCoords, float2 texCoords, float3 positio
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float3 LN = light.position.xyz - x;
@@ -64,7 +63,6 @@ float3 SpotlightVolumetric2(float4 screenCoords, float2 texCoords, float3 positi
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float3 LN = light.position.xyz - x;
@@ -103,7 +101,6 @@ float3 SpotlightVolumetric3(float4 screenCoords, float2 texCoords, float3 positi
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float3 LN = light.position.xyz - x;

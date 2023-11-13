@@ -5,7 +5,7 @@
 
     public class GraphNodeBuilder
     {
-        private GraphReferenceBuilder referenceBuilder;
+        private GraphDependencyBuilder referenceBuilder;
         private GraphResourceBuilder resourceBuilder;
         private GraphPipelineBuilder pipelineBuilder;
         private readonly RenderGraphNode node;

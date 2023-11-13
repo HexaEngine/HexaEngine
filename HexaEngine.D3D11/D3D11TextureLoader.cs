@@ -443,7 +443,7 @@
 
         public ITexture2D LoadTexture2D(TextureFileDescription desc)
         {
-            var image = LoadFormAssets(desc.Path, TextureDimension.Texture2D);
+            var image = LoadFormAssets(desc.Path, desc.Dimension);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);

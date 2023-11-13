@@ -21,18 +21,13 @@
         private readonly IGraphicsDevice device;
         private bool isShown;
         private bool isVisible;
-        private Vector2 position;
-        private Vector2 size;
 
         public bool IsShown { get => isShown; set => isShown = value; }
 
         public bool IsVisible => isVisible;
 
-        public Vector2 Position => position;
-
-        public Vector2 Size => size;
-
-        public Viewport Viewport;
+        public Viewport RenderViewport;
+        public Viewport ImGuiViewport;
         public Viewport SourceViewport;
 
         public static bool Fullframe;
@@ -44,9 +39,9 @@
 
         internal void Update()
         {
-            ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
+            ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
             ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
-            DebugDraw.SetViewport(Viewport);
+            DebugDraw.SetViewport(RenderViewport);
         }
 
         internal unsafe void Draw()
@@ -62,7 +57,7 @@
             var scene = SceneManager.Current;
             if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
-                GameObject? gameObject = ObjectPickerManager.SelectObject(device.Context, Mouse.Position, Viewport);
+                GameObject? gameObject = ObjectPickerManager.SelectObject(device.Context, Mouse.Position, RenderViewport);
                 if (gameObject != null)
                 {
                     if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
@@ -182,8 +177,12 @@
 
                 ImGui.Separator();
 
-                if (ImGui.BeginMenu("options"))
+                if (ImGui.BeginMenu("\xE713"))
                 {
+                    ImGui.Checkbox("Fullscreen", ref Fullframe);
+
+                    ImGui.Separator();
+
                     ImGui.Text("Shading Mode");
 
                     SceneRenderer? renderer = SceneRenderer.Current;
@@ -210,29 +209,32 @@
                 ImGui.EndMenuBar();
             }
 
-            position = ImGui.GetWindowPos();
-            size = ImGui.GetWindowSize();
+            Vector2 vMin = ImGui.GetWindowContentRegionMin();
+            Vector2 vMax = ImGui.GetWindowContentRegionMax();
+            Vector2 wPos = ImGui.GetWindowPos();
 
-            var windowViewport = ImGui.GetWindowViewport();
+            var viewport = ImGui.GetWindowViewport();
 
-            var workPos = windowViewport.WorkPos;
+            Vector2 rVMin = vMin + (wPos - viewport.Pos);
+            Vector2 rVMax = vMax + (wPos - viewport.Pos);
 
-            position -= workPos;
+            Vector2 iVMin = vMin + wPos;
+            Vector2 iVMax = vMax + wPos;
+
+            Vector2 rPosition = rVMin;
+            Vector2 rSize = rVMax - rVMin;
+
+            Vector2 iPosition = iVMin;
+            Vector2 iSize = iVMax - iVMin;
 
             if (Fullframe)
             {
-                Viewport = SourceViewport;
+                ImGuiViewport = RenderViewport = SourceViewport;
             }
             else
             {
-                float ratioX = size.X / SourceViewport.Width;
-                float ratioY = size.Y / SourceViewport.Height;
-                var s = Math.Min(ratioX, ratioY);
-                var w = SourceViewport.Width * s;
-                var h = SourceViewport.Height * s;
-                var x = (size.X - w) / 2;
-                var y = (size.Y - h) / 2;
-                Viewport = new(position.X + x, position.Y + y, w, h);
+                RenderViewport = Viewport.ScaleAndCenterToFit(SourceViewport, rPosition, rSize);
+                ImGuiViewport = Viewport.ScaleAndCenterToFit(SourceViewport, iPosition, iSize);
             }
 
             ImGui.PushItemWidth(100);

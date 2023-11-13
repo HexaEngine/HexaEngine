@@ -134,7 +134,7 @@
                         continue;
                     }
 
-                    DebugDraw.DrawFrustum(cam.Name, cam.Transform.Frustum, Vector4.One);
+                    DebugDraw.DrawFrustum(cam.Name, cam.Transform.NormalizedFrustum, Vector4.One);
                 }
             }
 

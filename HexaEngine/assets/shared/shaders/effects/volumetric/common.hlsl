@@ -1,6 +1,8 @@
 #ifndef VOLUMETRICS_COMMON_H_INCLUDED
 #define VOLUMETRICS_COMMON_H_INCLUDED
 
+#define HARD_SHADOWS_POINTLIGHTS 1
+
 #include "../../common.hlsl"
 #include "../../camera.hlsl"
 #include "../../shadowCommon.hlsl"

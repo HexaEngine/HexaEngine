@@ -244,6 +244,25 @@
         }
 
         /// <summary>
+        /// Scales and centers the source viewport to fit within the specified target dimensions while maintaining the aspect ratio.
+        /// The scaled viewport is positioned to maximize its coverage within the target rectangle.
+        /// </summary>
+        /// <param name="sourceViewport">Source viewport to be scaled and centered.</param>
+        /// <param name="pos">Position of the target rectangle.</param>
+        /// <param name="size">Size of the target rectangle.</param>
+        /// <returns>A new viewport that is scaled and centered to fit within the specified target dimensions while maintaining the aspect ratio and maximizing coverage.</returns>
+        public static Viewport ScaleAndCenterToFit(Viewport sourceViewport, Vector2 pos, Vector2 size)
+        {
+            Vector2 ratio = size / sourceViewport.Size;
+            var scale = Math.Min(ratio.X, ratio.Y);
+            var newSize = sourceViewport.Size * scale;
+            var offset = (size - newSize) / 2;
+            var newPos = pos + offset;
+
+            return new Viewport(newPos, newSize);
+        }
+
+        /// <summary>
         /// Gets a <see cref="Vector4"/> representing the offset and size of the viewport.
         /// </summary>
         public Vector4 GetOffsetVector()

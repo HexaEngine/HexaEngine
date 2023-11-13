@@ -17,7 +17,6 @@ float3 DirectionalLightVolumetric(float4 screenCoords, float2 texCoords, float3 
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
@@ -49,7 +48,6 @@ float3 DirectionalLightVolumetric2(float4 screenCoords, float2 texCoords, float3
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
@@ -77,7 +75,6 @@ float3 DirectionalLightVolumetric3(float4 screenCoords, float2 texCoords, float3
     x += deltaStep * ditherValue;
 
     float result = 0.0;
-    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float distanceAttenuation = exp(-density);

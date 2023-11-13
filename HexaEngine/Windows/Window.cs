@@ -39,7 +39,6 @@
         private readonly Barrier syncBarrier = new(2);
 
         private ImGuiManager? imGuiRenderer;
-        private DebugDrawRenderer? debugDrawRenderer;
 
         public RendererFlags Flags;
 
@@ -112,11 +111,6 @@
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
             {
                 WindowManager.Init(graphicsDevice);
-            }
-
-            if ((Flags & RendererFlags.DebugDraw) != 0)
-            {
-                debugDrawRenderer = new(graphicsDevice, swapChain);
             }
 
             SceneManager.SceneChanged += SceneChanged;
@@ -199,7 +193,6 @@
             renderDispatcher.ExecuteQueue();
 
             imGuiRenderer?.NewFrame();
-            debugDrawRenderer?.BeginDraw();
 
             OnRenderBegin(context);
 
@@ -210,7 +203,7 @@
                 frameviewer.Update();
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
-                windowViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
+                windowViewport = Application.InEditorMode ? frameviewer.RenderViewport : Viewport;
 
                 DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
             }
@@ -233,19 +226,6 @@
             OnRender(context);
 
             context.SetRenderTarget(swapChain.BackbufferRTV, null);
-
-            if (Application.InEditorMode)
-            {
-#if PROFILE
-                Device.Profiler.Begin(Context, "DebugDraw");
-                sceneRenderer.Profiler.Begin("DebugDraw");
-#endif
-                debugDrawRenderer?.EndDraw();
-#if PROFILE
-                sceneRenderer.Profiler.End("DebugDraw");
-                Device.Profiler.End(Context, "DebugDraw");
-#endif
-            }
 
 #if PROFILE
             Device.Profiler.Begin(Context, "ImGui");
@@ -289,11 +269,6 @@
             if (imGuiRenderer is not null)
             {
                 imGuiRenderer?.Dispose();
-            }
-
-            if ((Flags & RendererFlags.DebugDraw) != 0)
-            {
-                debugDrawRenderer?.Dispose();
             }
 
             SceneManager.Unload();

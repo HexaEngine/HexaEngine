@@ -73,6 +73,11 @@
         protected BoundingFrustum frustum = new();
 
         /// <summary>
+        /// The frustum of the camera (normalized).
+        /// </summary>
+        protected BoundingFrustum normalizedFrustum = new();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CameraTransform"/> class.
         /// </summary>
         public CameraTransform()
@@ -228,6 +233,11 @@
         /// </summary>
         public BoundingFrustum Frustum => frustum;
 
+        /// <summary>
+        /// Gets the normalized frustum of the camera's view.
+        /// </summary>
+        public BoundingFrustum NormalizedFrustum => normalizedFrustum;
+
         /// <inheritdoc/>
         public override bool Recalculate()
         {
@@ -257,6 +267,15 @@
             viewProjection = view * projection;
             frustum.Initialize(viewProjection);
             Matrix4x4.Invert(viewProjection, out viewProjectionInv);
+
+            const float zNear = 0.001f;
+            const float zFar = 5;
+            float q = zFar / (zFar - zNear);
+            Matrix4x4 nProjection = projection;
+            nProjection.M33 = q;
+            nProjection.M43 = -q * zNear;
+            normalizedFrustum.Initialize(view * nProjection);
+
             base.OnUpdated();
         }
 

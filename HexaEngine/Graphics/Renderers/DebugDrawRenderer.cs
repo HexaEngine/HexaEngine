@@ -10,7 +10,6 @@ namespace HexaEngine.Rendering.Renderers
     public unsafe class DebugDrawRenderer : IDisposable
     {
         private readonly IGraphicsDevice device;
-        private readonly ISwapChain swapChain;
         private readonly IGraphicsContext context;
         private readonly IGraphicsPipeline pipeline;
         private readonly IBuffer constantBuffer;
@@ -22,10 +21,9 @@ namespace HexaEngine.Rendering.Renderers
         private int indexBufferSize = 10000;
         private bool disposedValue;
 
-        public DebugDrawRenderer(IGraphicsDevice device, ISwapChain swapChain)
+        public DebugDrawRenderer(IGraphicsDevice device)
         {
             this.device = device;
-            this.swapChain = swapChain;
 
             context = device.Context;
             var desc = RasterizerDescription.CullNone;
@@ -65,7 +63,6 @@ namespace HexaEngine.Rendering.Renderers
         public void EndDraw()
         {
             DebugDraw.Render();
-            context.SetRenderTarget(swapChain.BackbufferRTV, null);
             context.SetViewport(DebugDraw.GetViewport());
             Render(DebugDraw.GetImmediateCommandList(), DebugDraw.GetCamera());
         }

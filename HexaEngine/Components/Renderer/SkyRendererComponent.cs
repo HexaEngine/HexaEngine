@@ -84,7 +84,10 @@
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            renderer.Draw(context, skyType);
+            if (path == RenderPath.Forward)
+            {
+                renderer.Draw(context, skyType);
+            }
         }
 
         public override void Bake(IGraphicsContext context)
@@ -116,7 +119,7 @@
                 if (FileSystem.Exists(path))
                 {
                     component.skybox = new(device);
-                    await component.skybox.LoadAsync(environmentPath);
+                    await component.skybox.LoadAsync(path);
                     component.renderer.Initialize(component.skybox);
                     component.loaded = true;
                 }

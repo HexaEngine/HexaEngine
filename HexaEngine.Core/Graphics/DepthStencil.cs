@@ -6,7 +6,7 @@
     /// <summary>
     /// Represents a depth stencil texture for use in graphics rendering.
     /// </summary>
-    public class DepthStencil : ITexture2D
+    public class DepthStencil : ITexture2D, IDepthStencilView
     {
         private readonly string dbgName;
 
@@ -387,6 +387,14 @@
         /// Occurs when the depth stencil is disposed.
         /// </summary>
         public event EventHandler? OnDisposed;
+
+        DepthStencilViewDescription IDepthStencilView.Description => dsv.Description;
+
+        string? IDepthStencilView.DebugName { get => dsv.DebugName; set => dsv.DebugName = value; }
+
+        bool IDepthStencilView.IsDisposed => dsv.IsDisposed;
+
+        nint IDepthStencilView.NativePointer => dsv.NativePointer;
 
         private static Format GetDepthResourceFormat(Format depthFormat)
         {

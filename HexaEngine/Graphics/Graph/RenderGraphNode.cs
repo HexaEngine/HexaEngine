@@ -14,11 +14,13 @@
 
         public List<RenderGraphNode> Dependencies { get; } = new();
 
+        public List<RenderGraphNode> Dependents { get; } = new();
+
         public List<ResourceBinding> Bindings { get; } = new();
 
         public List<ResourceBinding> Writes { get; } = new();
 
-        public GraphReferenceBuilder Builder { get; }
+        public GraphDependencyBuilder Builder { get; }
 
         public int QueueIndex { get; internal set; }
 
