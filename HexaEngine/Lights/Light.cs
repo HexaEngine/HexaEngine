@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights
 {
+    using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
@@ -52,15 +53,25 @@
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowResolution>("Resolution")]
-        public ShadowResolution ShadowMapResolution { get => shadowMapResolution; set => SetAndNotify(ref shadowMapResolution, value); }
+        public ShadowResolution ShadowMapResolution
+        {
+            get => shadowMapResolution; set
+            {
+                SetAndNotify(ref shadowMapResolution, value);
+                DestroyShadowMap();
+            }
+        }
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Slope-Scale depth Bias")]
         public float ShadowMapSlopeScaleDepthBias { get; set; }
 
         [EditorCategory("Shadow Map", "Shadows")]
-        [EditorProperty("normal Bias")]
+        [EditorProperty("Normal Bias")]
         public float ShadowMapNormalBias { get; set; }
+
+        [JsonIgnore]
+        public abstract int ShadowMapSize { get; }
 
         #endregion Shadow Map
 

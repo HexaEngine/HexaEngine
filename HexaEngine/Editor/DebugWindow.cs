@@ -1,31 +1,26 @@
 ﻿namespace HexaEngine.Editor
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Core.Unsafes;
+    using System.Numerics;
 
     public class DebugWindow : EditorWindow
     {
+        private BezierCurve curve = new(Vector2.Zero, Vector2.One);
+
         protected override string Name => "Debug";
+
+        public DebugWindow()
+        {
+        }
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
-            var scene = SceneManager.Current;
-            if (scene == null)
-            {
-                return;
-            }
+#if DEBUG
+            ImGuiBezierWidget.Bezier("Test Bezier", ref curve);
 
-            var lightManager = scene.LightManager;
-
-            ImGui.BeginListBox("Lights");
-            for (int i = 0; i < lightManager.Count; i++)
-            {
-                var light = lightManager.Lights[i];
-
-                ImGui.Text($"{light.Name}:{light.GetQueueIndex()}");
-            }
-            ImGui.EndListBox();
+#endif
         }
     }
 }

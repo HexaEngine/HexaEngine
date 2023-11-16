@@ -5,6 +5,8 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using System.Numerics;
+    using System.Threading.Channels;
+    using Hexa.NET.ImGuizmo;
 
     public class Sequencer : EditorWindow
     {
@@ -67,19 +69,23 @@
             for (int i = 0; i < Animation.NodeChannels.Count; i++)
             {
                 var channel = Animation.NodeChannels[i];
-                DrawChannel(ref channel, sizeChannels);
+                DrawChannel(channel.NodeName, ref channel, sizeChannels);
                 Animation.NodeChannels[i] = channel;
                 if (i < Animation.NodeChannels.Count - 1)
                     ImGui.Spacing();
             }
         }
 
-        public void DrawChannel(ref NodeChannel channel, Vector2 maxSize)
+        public unsafe void DrawChannel(string label, ref NodeChannel channel, Vector2 maxSize)
         {
             int frameCount = (int)(Animation.Duration * Animation.TicksPerSecond);
             ImGui.InputText("Node:", ref channel.NodeName, 256);
             var cursor = ImGui.GetCursorPos();
-            ImGui.BeginChild($"CH{channel.NodeName}", maxSize);
+            ImGui.PushID($"CH{channel.NodeName}");
+
+            ImGuiWindow* Window = ImGui.GetCurrentWindow();
+            ImDrawListPtr DrawList = ImGui.GetWindowDrawList();
+
             bool isPopupOpen = false;
             if (ImGui.BeginPopupContextWindow())
             {
@@ -109,54 +115,74 @@
                 ImGui.EndPopup();
             }
 
-            var style = ImGui.GetStyle();
-            var frameCol = ImGui.ColorConvertFloat4ToU32(style.Colors[(int)ImGuiCol.FrameBg]);
-            var textCol = ImGui.ColorConvertFloat4ToU32(style.Colors[(int)ImGuiCol.Text]);
-            var itemCol = ImGui.ColorConvertFloat4ToU32(style.Colors[(int)ImGuiCol.TextDisabled]);
+            ImGuiStylePtr Style = ImGui.GetStyle();
+            var frameCol = ImGui.ColorConvertFloat4ToU32(Style.Colors[(int)ImGuiCol.FrameBg]);
+            var textCol = ImGui.ColorConvertFloat4ToU32(Style.Colors[(int)ImGuiCol.Text]);
+            var itemCol = ImGui.ColorConvertFloat4ToU32(Style.Colors[(int)ImGuiCol.TextDisabled]);
 
-            var winPos = ImGui.GetWindowPos();
-            var pos = winPos + ImGui.GetCursorPos();
+            var pos = Window->DC.CursorPos;
             var size = ImGui.GetContentRegionAvail();
+            size = Vector2.Min(maxSize, size);
 
-            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+            var cursorPos = ImGui.GetCursorPos();
 
-            drawList.AddRectFilled(pos, pos + new Vector2(60, 70), frameCol);
-            ImGui.Text("Position");
-            ImGui.Spacing();
-            ImGui.Text("Rotation");
-            ImGui.Spacing();
-            ImGui.Text("Scale");
+            ImRect bb = new()
+            {
+                Min = Window->DC.CursorPos + cursorPos,
+                Max = Window->DC.CursorPos + cursorPos + size
+            };
+
+            int id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
+            bool hovered = ImGui.ItemHoverable(bb, id, ImGuiItemFlags.None);
+
+            ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);
+
+            pos = bb.Min;
+            size = bb.Max - bb.Min;
+
+            ImGui.ItemSizeRect(bb, -1);
+            if (!ImGui.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
+                return;
+
+            DrawList.AddRectFilled(bb.Min, bb.Min + new Vector2(60, 70), frameCol);
+            DrawList.AddText(bb.Min + new Vector2(0, 0), ImGui.GetColorU32(ImGuiCol.Text), "Position");
+            DrawList.AddText(bb.Min + new Vector2(0, ImGui.GetFontSize() + ImGui.GetStyle().ItemSpacing.Y), ImGui.GetColorU32(ImGuiCol.Text), "Rotation");
+            DrawList.AddText(bb.Min + new Vector2(0, ImGui.GetFontSize() * 2 + ImGui.GetStyle().ItemSpacing.Y * 2), ImGui.GetColorU32(ImGuiCol.Text), "Scale");
+
             pos += new Vector2(60, 0);
             size -= new Vector2(60, 0);
 
             size.Y = 90;
 
-            drawList.AddRectFilled(pos, pos + size, frameCol);
+            DrawList.AddRectFilled(bb.Min, bb.Max, frameCol);
 
             int itemSpacing = 30;
             int itemHeight = 70;
-
-            var padd = style.FramePadding;
+            var padd = Style.FramePadding;
             float maxWidth = (float)frameCount / zoom * itemSpacing + itemSpacing * 2;
+
+            /*
             var min = pos.X;
             min -= padd.X;
             min += scroll;
             min -= itemSpacing;
             min /= itemSpacing;
             min--;
+            */
 
-            for (int i = (int)min; i < frameCount / zoom; i++)
+            for (int i = 0; i < frameCount; i++)
             {
-                var p1 = pos;
-                p1.X += i * itemSpacing - scroll + itemSpacing;
-                p1 += padd;
+                var time = i / zoom;
+                var p1 = bb.Min + padd;
+                p1.X += time * itemSpacing - scroll + itemSpacing;
+
                 if (pos.X > p1.X)
                     continue;
-                if ((pos + size).X < p1.X)
+                if (bb.Max.X < p1.X)
                     break;
                 var p2 = p1;
                 p2.Y += itemHeight - padd.Y * 2;
-                drawList.AddLine(p1, p2, itemCol);
+                DrawList.AddLine(p1, p2, itemCol);
             }
 
             var posCol = ImGui.ColorConvertFloat4ToU32(new Vector4(1, 0, 0, 1));
@@ -177,13 +203,13 @@
                     var p2 = pos + padd;
                     p2.X += time1 * itemSpacing - scroll + itemSpacing;
                     p2.Y += 5;
-                    drawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), posCol);
+                    DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), posCol);
                 }
                 if (pos.X > p1.X)
                     continue;
                 if ((pos + size).X < p1.X)
                     break;
-                drawList.AddCircleFilled(p1, 5, posCol);
+                DrawList.AddCircleFilled(p1, 5, posCol);
             }
 
             for (int i = 0; i < channel.RotationKeyframes.Count; i++)
@@ -200,13 +226,13 @@
                     var p2 = pos + padd;
                     p2.X += time1 * itemSpacing - scroll + itemSpacing;
                     p2.Y += 5 + keyframeHeight;
-                    drawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), rotCol);
+                    DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), rotCol);
                 }
                 if (pos.X > p1.X)
                     continue;
                 if ((pos + size).X < p1.X)
                     break;
-                drawList.AddCircleFilled(p1, 5, rotCol);
+                DrawList.AddCircleFilled(p1, 5, rotCol);
             }
 
             for (int i = 0; i < channel.ScaleKeyframes.Count; i++)
@@ -223,13 +249,13 @@
                     var p2 = pos + padd;
                     p2.X += time1 * itemSpacing - scroll + itemSpacing;
                     p2.Y += 5 + keyframeHeight * 2;
-                    drawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), sclCol);
+                    DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), sclCol);
                 }
                 if (pos.X > p1.X)
                     continue;
                 if ((pos + size).X < p1.X)
                     break;
-                drawList.AddCircleFilled(p1, 5, sclCol);
+                DrawList.AddCircleFilled(p1, 5, sclCol);
             }
 
             if (ImGui.IsMouseHoveringRect(pos, pos + new Vector2(size.X, 70)) && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !isPopupOpen)
@@ -248,21 +274,21 @@
                 {
                     var p2 = p1;
                     p2.Y += itemHeight - padd.Y * 2;
-                    drawList.AddLine(p1, p2, textCol);
+                    DrawList.AddLine(p1, p2, textCol);
                 }
             }
 
             Vector2 scrollPos = pos;
-            scrollPos.Y += size.Y - style.ScrollbarSize;
-            Vector2 scrollSize = new(size.X, style.ScrollbarSize);
+            scrollPos.Y += size.Y - Style.ScrollbarSize;
+            Vector2 scrollSize = new(size.X, Style.ScrollbarSize);
             var scrollRect = new ImRect() { Min = scrollPos, Max = scrollPos + scrollSize };
             ImGui.ScrollbarEx(scrollRect, 10, ImGuiAxis.X, ref scroll, (long)size.X, (long)maxWidth, ImDrawFlags.None);
 
-            ImGui.EndChild();
+            ImGui.PopID();
 
             ImGui.SetCursorPos(cursor + new Vector2(maxSize.X, 0));
 
-            ImGui.BeginChild($"CH1{channel.NodeName}", new Vector2(0, maxSize.Y));
+            ImGui.PushID($"CH1{channel.NodeName}");
 
             for (int i = 0; i < channel.PositionKeyframes.Count; i++)
             {
@@ -302,7 +328,7 @@
                     }
                 }
             }
-            ImGui.EndChild();
+            ImGui.PopID();
         }
     }
 }

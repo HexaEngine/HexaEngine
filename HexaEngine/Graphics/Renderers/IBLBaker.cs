@@ -40,7 +40,7 @@
             for (int i = 0; i < matrices.Length; i++)
             {
                 var mat = matrices[i];
-                frusta[i].Initialize(mat);
+                frusta[i].Update(mat);
                 matrices[i] = Matrix4x4.Transpose(mat);
             }
         }

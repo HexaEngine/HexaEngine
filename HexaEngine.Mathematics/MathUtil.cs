@@ -52,9 +52,19 @@
         public const float SQRT6 = 2.44948974278317809820f;
 
         /// <summary>
-        /// A vector4 containing a small epsilon value.
+        /// A Vector4 containing a small epsilon value.
         /// </summary>
         public static readonly Vector4 SplatEpsilon = new(BitConverter.UInt32BitsToSingle(0x34000000));
+
+        /// <summary>
+        /// Represents a constant Vector4 with all components set to positive infinity.
+        /// </summary>
+        public static readonly Vector4 Infinity = new(BitConverter.UInt32BitsToSingle(0x7F800000));
+
+        /// <summary>
+        /// Represents a quiet NaN (Not a Number) in single-precision floating-point format.
+        /// </summary>
+        public static readonly Vector4 QNaN = new(BitConverter.UInt32BitsToSingle(0x7FC00000));
 
         /// <summary>
         /// Rounds the given float to the nearest integer.
@@ -421,6 +431,420 @@
         }
 
         /// <summary>
+        /// Computes the dot product of two 2D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="a">The first 2D vector.</param>
+        /// <param name="b">The second 2D vector.</param>
+        /// <returns>The dot product of the two 2D vectors.</returns>
+        public static float Dot(Vector2 a, Vector2 b)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vecA = a.AsVector128();
+                Vector128<float> vecB = b.AsVector128();
+                Vector128<float> result = Sse41.DotProduct(vecA, vecB, 0x3f);
+                return result.ToScalar();
+            }
+
+            return Vector2.Dot(a, b);
+        }
+
+        /// <summary>
+        /// Computes the dot product of two 3D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="a">The first 3D vector.</param>
+        /// <param name="b">The second 3D vector.</param>
+        /// <returns>The dot product of the two 3D vectors.</returns>
+        public static float Dot(Vector3 a, Vector3 b)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vecA = a.AsVector128();
+                Vector128<float> vecB = b.AsVector128();
+                Vector128<float> result = Sse41.DotProduct(vecA, vecB, 0x7f);
+                return result.ToScalar();
+            }
+
+            return Vector3.Dot(a, b);
+        }
+
+        /// <summary>
+        /// Computes the dot product of two 4D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="a">The first 4D vector.</param>
+        /// <param name="b">The second 4D vector.</param>
+        /// <returns>The dot product of the two 4D vectors.</returns>
+        public static float Dot(Vector4 a, Vector4 b)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vecA = a.AsVector128();
+                Vector128<float> vecB = b.AsVector128();
+                Vector128<float> result = Sse41.DotProduct(vecA, vecB, 0xff);
+                return result.ToScalar();
+            }
+
+            return Vector4.Dot(a, b);
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 2D vector. This method provides a fast
+        /// approximation using SIMD instructions if supported; otherwise, it falls back
+        /// to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 2D vector to normalize.</param>
+        /// <returns>The estimated normalized 2D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 NormalizeEst(Vector2 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vTemp = Sse41.DotProduct(vec, vec, 0x3f);
+                Vector128<float> vResult = Sse.ReciprocalSqrt(vTemp);
+                Vector128<float> result = Sse.Multiply(vResult, vec);
+                return result.AsVector2();
+            }
+
+            return Vector2.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 3D vector. This method provides a fast
+        /// approximation using SIMD instructions if supported; otherwise, it falls back
+        /// to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 3D vector to normalize.</param>
+        /// <returns>The estimated normalized 3D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 NormalizeEst(Vector3 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vTemp = Sse41.DotProduct(vec, vec, 0x7f);
+                Vector128<float> vResult = Sse.ReciprocalSqrt(vTemp);
+                Vector128<float> result = Sse.Multiply(vResult, vec);
+                return result.AsVector3();
+            }
+
+            return Vector3.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 4D vector. This method provides a fast
+        /// approximation using SIMD instructions if supported; otherwise, it falls back
+        /// to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 4D vector to normalize.</param>
+        /// <returns>The estimated normalized 4D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 NormalizeEst(Vector4 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vTemp = Sse41.DotProduct(vec, vec, 0xFF);
+                Vector128<float> vResult = Sse.ReciprocalSqrt(vTemp);
+                Vector128<float> result = Sse.Multiply(vResult, vec);
+                return result.AsVector4();
+            }
+
+            return Vector4.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Normalizes a 2D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 2D vector to normalize.</param>
+        /// <returns>The normalized 2D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Normalize(Vector2 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vLengthSq = Sse41.DotProduct(vec, vec, 0x3f);
+                // Prepare for the division
+                Vector128<float> vResult = Sse.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector128<float> vZeroMask = Vector128<float>.Zero;
+                // Test for a divide by zero (Must be FP to detect -0.0)
+                vZeroMask = Sse.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Sse.CompareNotEqual(vLengthSq, Infinity.AsVector128());
+                // Divide to perform the normalization
+                vResult = Sse.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Sse.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector128<float> vTemp1 = Sse.AndNot(vLengthSq, QNaN.AsVector128());
+                Vector128<float> vTemp2 = Sse.And(vResult, vLengthSq);
+                vResult = Sse.Or(vTemp1, vTemp2);
+                return vResult.AsVector2();
+            }
+
+            return Vector2.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Normalizes a 3D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 3D vector to normalize.</param>
+        /// <returns>The normalized 3D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Normalize(Vector3 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vLengthSq = Sse41.DotProduct(vec, vec, 0x7f);
+                // Prepare for the division
+                Vector128<float> vResult = Sse.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector128<float> vZeroMask = Vector128<float>.Zero;
+                // Test for a divide by zero (Must be FP to detect -0.0)
+                vZeroMask = Sse.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Sse.CompareNotEqual(vLengthSq, Infinity.AsVector128());
+                // Divide to perform the normalization
+                vResult = Sse.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Sse.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector128<float> vTemp1 = Sse.AndNot(vLengthSq, QNaN.AsVector128());
+                Vector128<float> vTemp2 = Sse.And(vResult, vLengthSq);
+                vResult = Sse.Or(vTemp1, vTemp2);
+                return vResult.AsVector3();
+            }
+
+            return Vector3.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Normalizes a 4D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 4D vector to normalize.</param>
+        /// <returns>The normalized 4D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Normalize(Vector4 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                Vector128<float> vLengthSq = Sse41.DotProduct(vec, vec, 0xFF);
+                // Prepare for the division
+                Vector128<float> vResult = Sse.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector128<float> vZeroMask = Vector128<float>.Zero;
+                // Test for a divide by zero (Must be FP to detect -0.0)
+                vZeroMask = Sse.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Sse.CompareNotEqual(vLengthSq, Infinity.AsVector128());
+                // Divide to perform the normalization
+                vResult = Sse.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Sse.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector128<float> vTemp1 = Sse.AndNot(vLengthSq, QNaN.AsVector128());
+                Vector128<float> vTemp2 = Sse.And(vResult, vLengthSq);
+                vResult = Sse.Or(vTemp1, vTemp2);
+                return vResult.AsVector4();
+            }
+
+            return Vector4.Normalize(vector);
+        }
+
+        /// <summary>
+        /// Calculates the squared length of a 2D vector. This method uses SIMD instructions
+        /// if supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 2D vector.</param>
+        /// <returns>The squared length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthSquared(Vector2 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x3f);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Calculates the squared length of a 3D vector. This method uses SIMD instructions
+        /// if supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 3D vector.</param>
+        /// <returns>The squared length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthSquared(Vector3 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x7f);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Calculates the squared length of a 4D vector. This method uses SIMD instructions
+        /// if supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 4D vector.</param>
+        /// <returns>The squared length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthSquared(Vector4 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0xff);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Calculates the length of a 2D vector. This method uses SIMD instructions if
+        /// supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 2D vector.</param>
+        /// <returns>The length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Length(Vector2 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x3f);
+                vResult = Sse.Sqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.Length();
+        }
+
+        /// <summary>
+        /// Calculates the length of a 3D vector. This method uses SIMD instructions if
+        /// supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 3D vector.</param>
+        /// <returns>The length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Length(Vector3 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x7f);
+                vResult = Sse.Sqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Calculates the length of a 4D vector. This method uses SIMD instructions if
+        /// supported; otherwise, it falls back to the standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 4D vector.</param>
+        /// <returns>The length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Length(Vector4 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0xff);
+                vResult = Sse.Sqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Estimates the length of a 2D vector using a fast reciprocal square root approximation.
+        /// This method utilizes SIMD instructions if supported; otherwise, it falls back to the
+        /// standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 2D vector.</param>
+        /// <returns>The estimated length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthEst(Vector2 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x3f);
+                vResult = Sse.ReciprocalSqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.Length();
+        }
+
+        /// <summary>
+        /// Estimates the length of a 3D vector using a fast reciprocal square root approximation.
+        /// This method utilizes SIMD instructions if supported; otherwise, it falls back to the
+        /// standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 3D vector.</param>
+        /// <returns>The estimated length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthEst(Vector3 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0x7f);
+                vResult = Sse.ReciprocalSqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
+        /// Estimates the length of a 4D vector using a fast reciprocal square root approximation.
+        /// This method utilizes SIMD instructions if supported; otherwise, it falls back to the
+        /// standard non-SIMD method.
+        /// </summary>
+        /// <param name="vector">The 4D vector.</param>
+        /// <returns>The estimated length of the vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LengthEst(Vector4 vector)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                var vResult = Sse41.DotProduct(vec, vec, 0xff);
+                vResult = Sse.ReciprocalSqrt(vResult);
+                return vResult.ToScalar();
+            }
+
+            return vector.LengthSquared();
+        }
+
+        /// <summary>
         /// Performs linear interpolation between two values.
         /// </summary>
         /// <param name="x">The first value.</param>
@@ -431,6 +855,71 @@
         public static float Lerp(float x, float y, float s)
         {
             return x * (1 - s) + y * s;
+        }
+
+        /// <summary>
+        /// Linearly interpolates between two 2D vectors.
+        /// </summary>
+        /// <param name="x">The starting vector.</param>
+        /// <param name="y">The ending vector.</param>
+        /// <param name="s">The interpolation factor. Should be in the range [0, 1].</param>
+        /// <returns>The interpolated 2D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Lerp(Vector2 x, Vector2 y, float s)
+        {
+            return Vector2.Lerp(x, y, s);
+        }
+
+        /// <summary>
+        /// Linearly interpolates between two 3D vectors.
+        /// </summary>
+        /// <param name="x">The starting vector.</param>
+        /// <param name="y">The ending vector.</param>
+        /// <param name="s">The interpolation factor. Should be in the range [0, 1].</param>
+        /// <returns>The interpolated 3D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Lerp(Vector3 x, Vector3 y, float s)
+        {
+            return Vector3.Lerp(x, y, s);
+        }
+
+        /// <summary>
+        /// Linearly interpolates between two 4D vectors.
+        /// </summary>
+        /// <param name="x">The starting vector.</param>
+        /// <param name="y">The ending vector.</param>
+        /// <param name="s">The interpolation factor. Should be in the range [0, 1].</param>
+        /// <returns>The interpolated 4D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Lerp(Vector4 x, Vector4 y, float s)
+        {
+            return Vector4.Lerp(x, y, s);
+        }
+
+        /// <summary>
+        /// Linearly interpolates between two quaternions.
+        /// </summary>
+        /// <param name="x">The starting quaternion.</param>
+        /// <param name="y">The ending quaternion.</param>
+        /// <param name="s">The interpolation factor. Should be in the range [0, 1].</param>
+        /// <returns>The interpolated quaternion.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Quaternion Lerp(Quaternion x, Quaternion y, float s)
+        {
+            return Quaternion.Lerp(x, y, s);
+        }
+
+        /// <summary>
+        /// Spherically interpolates between two quaternions.
+        /// </summary>
+        /// <param name="x">The starting quaternion.</param>
+        /// <param name="y">The ending quaternion.</param>
+        /// <param name="s">The interpolation factor. Should be in the range [0, 1].</param>
+        /// <returns>The spherical interpolated quaternion.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Quaternion Slerp(Quaternion x, Quaternion y, float s)
+        {
+            return Quaternion.Slerp(x, y, s);
         }
 
         /// <summary>
@@ -471,6 +960,112 @@
             yaw = MathF.Atan2(normal.X, normal.Z);
             pitch = MathF.Asin(-normal.Y);
             roll = 0;
+        }
+
+        /// <summary>
+        /// Decomposes a given double-precision floating-point value into a normalized fraction (mantissa) and modifies an integral power of two (exponent).
+        /// </summary>
+        /// <param name="value">The input double-precision floating-point number.</param>
+        /// <param name="exponent">An integer representing the integral power of two, modified by the function.</param>
+        /// <returns>
+        /// The normalized fraction (mantissa) of the input value.
+        /// </returns>
+        public static double Frexp(double value, ref int exponent)
+        {
+            if (value == 0)
+            {
+                exponent = 0;
+                return 0;
+            }
+
+            long bits = BitConverter.DoubleToInt64Bits(value);
+            exponent = (int)((bits >> 52) & 0x7FF) - 1022;
+            long mantissa = (bits & 0xFFFFFFFFFFFFF) | 0x10000000000000; // Set the hidden bit
+
+            double resultMantissa = BitConverter.Int64BitsToDouble(mantissa);
+            return resultMantissa;
+        }
+
+        /// <summary>
+        /// Decomposes a given floating-point value into a normalized fraction (mantissa) and modifies an integral power of two (exponent).
+        /// </summary>
+        /// <param name="value">The input floating-point number.</param>
+        /// <param name="exponent">An integer representing the integral power of two, modified by the function.</param>
+        /// <returns>
+        /// The normalized fraction (mantissa) of the input value.
+        /// </returns>
+        public static float Frexp(float value, ref int exponent)
+        {
+            if (value == 0)
+            {
+                exponent = 0;
+                return 0;
+            }
+
+            int bits = BitConverter.SingleToInt32Bits(value);
+            exponent = ((bits >> 23) & 0xFF) - 126;
+            int mantissa = (bits & 0x7FFFFF) | 0x800000; // Set the hidden bit
+
+            float resultMantissa = BitConverter.Int32BitsToSingle(mantissa);
+            return resultMantissa;
+        }
+
+        /// <summary>
+        /// Builds a floating-point number from a normalized fraction (mantissa) and an integral power of two (exponent).
+        /// </summary>
+        /// <param name="x">The normalized fraction (mantissa).</param>
+        /// <param name="exp">The integral power of two (exponent).</param>
+        /// <returns>
+        /// The floating-point number built from the given mantissa and exponent.
+        /// </returns>
+        public static double Ldexp(double x, int exp)
+        {
+            // Special case for zero input
+            if (x == 0)
+            {
+                return 0;
+            }
+
+            // Extract sign and exponent from the IEEE 754 representation
+            long bits = BitConverter.DoubleToInt64Bits(x);
+            int sign = (int)((bits >> 63) & 1);
+            int oldExp = (int)((bits >> 52) & 0x7FF) - 1022;
+
+            // Calculate new exponent and set it in the IEEE 754 representation
+            int newExp = oldExp + exp;
+            long resultBits = ((long)sign << 63) | ((long)(newExp + 1022) << 52) | (bits & 0xFFFFFFFFFFFFF);
+
+            // Reconstruct the double with the modified exponent
+            return BitConverter.Int64BitsToDouble(resultBits);
+        }
+
+        /// <summary>
+        /// Builds a floating-point number from a normalized fraction (mantissa) and an integral power of two (exponent).
+        /// </summary>
+        /// <param name="x">The normalized fraction (mantissa).</param>
+        /// <param name="exp">The integral power of two (exponent).</param>
+        /// <returns>
+        /// The floating-point number built from the given mantissa and exponent.
+        /// </returns>
+        public static float Ldexp(float x, int exp)
+        {
+            // Special case for zero input
+            if (x == 0)
+            {
+                return 0;
+            }
+
+            // Extract sign and exponent from the IEEE 754 representation
+            int bits = BitConverter.SingleToInt32Bits(x);
+            int sign = (bits >> 31) & 1;
+            int oldExp = ((bits >> 23) & 0xFF) - 127;
+
+            // Calculate new exponent and set it in the IEEE 754 representation
+            int newExp = oldExp + exp;
+            int resultBits = ((sign & 1) << 31) | ((newExp + 127) << 23) | (bits & 0x7FFFFF);
+
+            // Reconstruct the float with the modified exponent
+            return BitConverter.Int32BitsToSingle(resultBits);
         }
 
         /// <summary>
@@ -521,6 +1116,45 @@
         }
 
         /// <summary>
+        /// Clamps each component of a <see cref="Vector2"/> to a specified range.
+        /// </summary>
+        /// <param name="v">The input <see cref="Vector2"/> to be clamped.</param>
+        /// <param name="min">The minimum <see cref="Vector2"/> of the range.</param>
+        /// <param name="max">The maximum <see cref="Vector2"/> of the range.</param>
+        /// <returns>The <see cref="Vector2"/> with components clamped within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Clamp(Vector2 v, Vector2 min, Vector2 max)
+        {
+            return Vector2.Clamp(v, min, max);
+        }
+
+        /// <summary>
+        /// Clamps each component of a <see cref="Vector3"/> to a specified range.
+        /// </summary>
+        /// <param name="v">The input <see cref="Vector3"/> to be clamped.</param>
+        /// <param name="min">The minimum <see cref="Vector3"/> of the range.</param>
+        /// <param name="max">The maximum <see cref="Vector3"/> of the range.</param>
+        /// <returns>The <see cref="Vector3"/> with components clamped within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Clamp(Vector3 v, Vector3 min, Vector3 max)
+        {
+            return Vector3.Clamp(v, min, max);
+        }
+
+        /// <summary>
+        /// Clamps each component of a <see cref="Vector4"/> to a specified range.
+        /// </summary>
+        /// <param name="v">The input <see cref="Vector4"/> to be clamped.</param>
+        /// <param name="min">The minimum <see cref="Vector4"/> of the range.</param>
+        /// <param name="max">The maximum <see cref="Vector4"/> of the range.</param>
+        /// <returns>The <see cref="Vector4"/> with components clamped within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Clamp(Vector4 v, Vector4 min, Vector4 max)
+        {
+            return Vector4.Clamp(v, min, max);
+        }
+
+        /// <summary>
         /// Clamps each component of a <see cref="Vector2"/> to the range [0, 1].
         /// </summary>
         /// <param name="v">The input <see cref="Vector2"/> to be clamped.</param>
@@ -561,6 +1195,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Floor(this Vector2 vector)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                vec = Sse41.Floor(vec);
+                return vec.AsVector2();
+            }
+
             return new(MathF.Floor(vector.X), MathF.Floor(vector.Y));
         }
 
@@ -572,6 +1213,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Floor(this Vector3 vector)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                vec = Sse41.Floor(vec);
+                return vec.AsVector3();
+            }
+
             return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z));
         }
 
@@ -583,6 +1231,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Floor(this Vector4 vector)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = vector.AsVector128();
+                vec = Sse41.Floor(vec);
+                return vec.AsVector4();
+            }
+
             return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z), MathF.Floor(vector.W));
         }
 
@@ -594,6 +1249,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Ceiling(this Vector2 value)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = value.AsVector128();
+                vec = Sse41.Ceiling(vec);
+                return vec.AsVector2();
+            }
+
             return new Vector2(MathF.Ceiling(value.X), MathF.Ceiling(value.Y));
         }
 
@@ -605,6 +1267,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Ceiling(this Vector3 value)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = value.AsVector128();
+                vec = Sse41.Ceiling(vec);
+                return vec.AsVector3();
+            }
+
             return new Vector3(MathF.Ceiling(value.X), MathF.Ceiling(value.Y), MathF.Ceiling(value.Z));
         }
 
@@ -616,6 +1285,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Ceiling(this Vector4 value)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = value.AsVector128();
+                vec = Sse41.Ceiling(vec);
+                return vec.AsVector4();
+            }
+
             return new Vector4(MathF.Ceiling(value.X), MathF.Ceiling(value.Y), MathF.Ceiling(value.Z), MathF.Ceiling(value.W));
         }
 
@@ -883,6 +1559,39 @@
             float dz = MathF.Abs(v1.Z - v2.Z);
             float dw = MathF.Abs(v1.W - v2.W);
             return (dx <= epsilon.X) && (dy <= epsilon.Y) && (dz <= epsilon.Z) && (dw <= epsilon.W);
+        }
+
+        /// <summary>
+        /// Rounds the components of a <see cref="Vector2"/> to the nearest integer values.
+        /// </summary>
+        /// <param name="v">The vector to round.</param>
+        /// <returns>A new <see cref="Vector2"/> with rounded components.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Round(Vector2 v)
+        {
+            return new Vector2(MathF.Round(v.X), MathF.Round(v.Y));
+        }
+
+        /// <summary>
+        /// Rounds the components of a <see cref="Vector3"/> to the nearest integer values.
+        /// </summary>
+        /// <param name="v">The vector to round.</param>
+        /// <returns>A new <see cref="Vector3"/> with rounded components.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Round(Vector3 v)
+        {
+            return new Vector3(MathF.Round(v.X), MathF.Round(v.Y), MathF.Round(v.Z));
+        }
+
+        /// <summary>
+        /// Rounds the components of a <see cref="Vector4"/> to the nearest integer values.
+        /// </summary>
+        /// <param name="v">The vector to round.</param>
+        /// <returns>A new <see cref="Vector4"/> with rounded components.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Round(Vector4 v)
+        {
+            return new Vector4(MathF.Round(v.X), MathF.Round(v.Y), MathF.Round(v.Z), MathF.Round(v.W));
         }
     }
 }

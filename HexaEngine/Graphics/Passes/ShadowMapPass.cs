@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graph;
@@ -20,7 +21,7 @@
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
-            shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, 8192, 8));
+            shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, GraphicsSettings.ShadowAtlasSize, 8));
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)

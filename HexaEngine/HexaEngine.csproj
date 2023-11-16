@@ -859,7 +859,6 @@
 		<None Update="assets\shared\textures\sun\sunsprite.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
 
 

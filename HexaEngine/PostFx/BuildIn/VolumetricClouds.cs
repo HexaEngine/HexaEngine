@@ -33,7 +33,7 @@
 
         public override string Name { get; } = "VolumetricClouds";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
 
         /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)

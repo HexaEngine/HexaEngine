@@ -6,6 +6,7 @@
     using HexaEngine.Editor.Properties;
     using Hexa.NET.ImGui;
     using System.Reflection;
+    using System.Collections;
 
     public class FloatPropertyEditor : IPropertyEditor
     {
@@ -25,6 +26,7 @@
         }
 
         public string Name { get; }
+
         public PropertyInfo Property { get; }
 
         public bool Draw(IGraphicsContext context, object instance, ref object? value)

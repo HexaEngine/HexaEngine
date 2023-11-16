@@ -14,6 +14,134 @@
     public static unsafe class Utils
     {
         /// <summary>
+        /// Swaps the memory content between two pointers of the specified size.
+        /// </summary>
+        /// <param name="a">Pointer to the first memory location.</param>
+        /// <param name="b">Pointer to the second memory location.</param>
+        /// <param name="size">Size of each element in bytes.</param>
+        public static unsafe void Swap(void* a, void* b, int size)
+        {
+            byte* byteA = (byte*)a;
+            byte* byteB = (byte*)b;
+
+            for (int i = 0; i < size; i++)
+            {
+                (byteB[i], byteA[i]) = (byteA[i], byteB[i]);
+            }
+        }
+
+        /// <summary>
+        /// Performs a quicksort on the given array.
+        /// </summary>
+        /// <param name="array">Pointer to the array to be sorted.</param>
+        /// <param name="elements">Number of elements in the array.</param>
+        /// <param name="size">Size of each element in bytes.</param>
+        /// <param name="compare">Comparison function for elements.</param>
+        public static unsafe void QSort(void* array, int elements, int size, Func<Pointer, Pointer, int> compare)
+        {
+            if (elements <= 1)
+                return;
+
+            int pivotIndex = Partition(array, elements, size, compare);
+            QSort(array, pivotIndex, size, compare);
+            QSort((byte*)array + (pivotIndex + 1) * size, elements - (pivotIndex + 1), size, compare);
+        }
+
+        /// <summary>
+        /// Partitions the array for quicksort.
+        /// </summary>
+        /// <param name="array">Pointer to the array to be partitioned.</param>
+        /// <param name="elements">Number of elements in the array.</param>
+        /// <param name="size">Size of each element in bytes.</param>
+        /// <param name="compare">Comparison function for elements.</param>
+        /// <returns>Index of the partitioning element.</returns>
+        public static unsafe int Partition(void* array, int elements, int size, Func<Pointer, Pointer, int> compare)
+        {
+            void* pivot = (byte*)array + elements / 2 * size;
+            int left = 0;
+            int right = elements - 1;
+
+            while (left <= right)
+            {
+                while (compare((byte*)array + left * size, pivot) < 0)
+                    left++;
+
+                while (compare((byte*)array + right * size, pivot) > 0)
+                    right--;
+
+                if (left <= right)
+                {
+                    Swap((byte*)array + left * size, (byte*)array + right * size, size);
+                    left++;
+                    right--;
+                }
+            }
+
+            return right;
+        }
+
+        /// <summary>
+        /// Swaps the values of two elements using pointers.
+        /// </summary>
+        /// <typeparam name="T">Type of the elements.</typeparam>
+        /// <param name="a">Pointer to the first element.</param>
+        /// <param name="b">Pointer to the second element.</param>
+        public static unsafe void Swap<T>(T* a, T* b) where T : unmanaged
+        {
+            (*b, *a) = (*a, *b);
+        }
+
+        /// <summary>
+        /// Performs a quicksort on the given array.
+        /// </summary>
+        /// <typeparam name="T">Type of the elements.</typeparam>
+        /// <param name="array">Pointer to the array to be sorted.</param>
+        /// <param name="elements">Number of elements in the array.</param>
+        /// <param name="compare">Comparison function for elements.</param>
+        public static unsafe void QSort<T>(T* array, int elements, Func<Pointer<T>, Pointer<T>, int> compare) where T : unmanaged
+        {
+            if (elements <= 1)
+                return;
+
+            int pivotIndex = Partition(array, elements, compare);
+            QSort(array, pivotIndex, compare);
+            QSort(array + (pivotIndex + 1), elements - (pivotIndex + 1), compare);
+        }
+
+        /// <summary>
+        /// Partitions the array for quicksort.
+        /// </summary>
+        /// <typeparam name="T">Type of the elements.</typeparam>
+        /// <param name="array">Pointer to the array to be partitioned.</param>
+        /// <param name="elements">Number of elements in the array.</param>
+        /// <param name="compare">Comparison function for elements.</param>
+        /// <returns>Index of the partitioning element.</returns>
+        public static unsafe int Partition<T>(T* array, int elements, Func<Pointer<T>, Pointer<T>, int> compare) where T : unmanaged
+        {
+            T* pivot = array + elements / 2;
+            int left = 0;
+            int right = elements - 1;
+
+            while (left <= right)
+            {
+                while (compare(array + left, pivot) < 0)
+                    left++;
+
+                while (compare(array + right, pivot) > 0)
+                    right--;
+
+                if (left <= right)
+                {
+                    Swap(array + left, array + right);
+                    left++;
+                    right--;
+                }
+            }
+
+            return right;
+        }
+
+        /// <summary>
         /// Converts a UTF-8 encoded null-terminated byte pointer to a managed string.
         /// </summary>
         /// <param name="ptr">The pointer to the UTF-8 encoded string.</param>
@@ -37,18 +165,6 @@
             v = (v & 0x33333333) + ((v >> 2) & 0x33333333); // temp
             uint c = ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
             return c;
-        }
-
-        /// <summary>
-        /// Swaps the values of two pointers to unmanaged types.
-        /// </summary>
-        /// <typeparam name="T">The type of the pointers.</typeparam>
-        /// <param name="a">The first pointer.</param>
-        /// <param name="b">The second pointer.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Swap<T>(T* a, T* b) where T : unmanaged
-        {
-            (*b, *a) = (*a, *b);
         }
 
         /// <summary>

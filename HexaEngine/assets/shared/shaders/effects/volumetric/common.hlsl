@@ -1,7 +1,10 @@
 #ifndef VOLUMETRICS_COMMON_H_INCLUDED
 #define VOLUMETRICS_COMMON_H_INCLUDED
 
+#define HARD_SHADOWS_DIRECTIONAL 1
+#define HARD_SHADOWS_DIRECTIONAL_CASCADED 1
 #define HARD_SHADOWS_POINTLIGHTS 1
+#define HARD_SHADOWS_SPOTLIGHTS 1
 
 #include "../../common.hlsl"
 #include "../../camera.hlsl"
@@ -58,15 +61,6 @@ struct VertexOut
     float4 pos : SV_POSITION;
     float2 tex : TEXCOORD;
 };
-
-float PhaseFunction(float3 inDir, float3 outDir)
-{
-    float anisotropy = 0.0;
-    float cosAngle = dot(inDir, outDir) / (length(inDir) * length(outDir));
-    float nom = 1 - anisotropy * anisotropy;
-    float denom = 4 * PI * pow(1 + anisotropy * anisotropy - 2 * anisotropy * cosAngle, 1.5);
-    return nom / denom;
-}
 
 // Function to calculate Rayleigh scattering
 float RayleighScattering(float3 V, float3 L)

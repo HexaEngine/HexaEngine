@@ -59,7 +59,7 @@
             View0 = light.Transform.View;
             Size = size;
             Softness = 1;
-            CascadeCount = 0;
+            CascadeCount = light.CascadeCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

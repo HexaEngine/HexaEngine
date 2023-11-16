@@ -240,26 +240,28 @@
                             {
                                 continue;
                             }
-
-                            light.QueueIndex = ShadowDataBuffer.Count;
-                            LightBuffer.Add(new((DirectionalLight)light));
-                            ShadowDataBuffer.Add(new((DirectionalLight)light, DirectionalLight.ShadowMapSize));
-                            ((DirectionalLight)light).UpdateShadowBuffer(ShadowDataBuffer, camera);
+                            var dir = (DirectionalLight)light;
+                            dir.QueueIndex = ShadowDataBuffer.Count;
+                            LightBuffer.Add(new(dir));
+                            ShadowDataBuffer.Add(new(dir, dir.ShadowMapSize));
+                            dir.UpdateShadowBuffer(ShadowDataBuffer, camera);
                             csmCount++;
                             break;
 
                         case LightType.Point:
-                            light.QueueIndex = ShadowDataBuffer.Count;
-                            LightBuffer.Add(new((PointLight)light));
-                            ShadowDataBuffer.Add(new((PointLight)light, PointLight.ShadowMapSize));
-                            ((PointLight)light).UpdateShadowBuffer(ShadowDataBuffer);
+                            var point = (PointLight)light;
+                            point.QueueIndex = ShadowDataBuffer.Count;
+                            LightBuffer.Add(new(point));
+                            ShadowDataBuffer.Add(new(point, point.ShadowMapSize));
+                            point.UpdateShadowBuffer(ShadowDataBuffer);
                             break;
 
                         case LightType.Spot:
-                            light.QueueIndex = ShadowDataBuffer.Count;
-                            LightBuffer.Add(new((Spotlight)light));
-                            ShadowDataBuffer.Add(new((Spotlight)light, Spotlight.ShadowMapSize));
-                            ((Spotlight)light).UpdateShadowBuffer(ShadowDataBuffer);
+                            var spot = (Spotlight)light;
+                            spot.QueueIndex = ShadowDataBuffer.Count;
+                            LightBuffer.Add(new(spot));
+                            ShadowDataBuffer.Add(new(spot, spot.ShadowMapSize));
+                            spot.UpdateShadowBuffer(ShadowDataBuffer);
                             break;
                     }
                 }

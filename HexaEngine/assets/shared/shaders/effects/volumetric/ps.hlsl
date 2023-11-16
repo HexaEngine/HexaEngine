@@ -36,7 +36,8 @@ float4 main(VertexOut input) : SV_TARGET
                 color += SpotlightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
                 break;
             case DIRECTIONAL_LIGHT:
-                [branch]
+                color += DirectionalLightCascadedVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
+               /* [branch]
                 if (currentLight.cascadedShadows)
                 {
                     color += DirectionalLightCascadedVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
@@ -44,7 +45,7 @@ float4 main(VertexOut input) : SV_TARGET
                 else
                 {
                     color += DirectionalLightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
-                }
+                }*/
                 break;
 
         }

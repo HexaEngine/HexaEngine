@@ -14,10 +14,19 @@
     using HexaEngine.Scripts;
     using HexaEngine.Windows;
 
+    /// <summary>
+    /// Represents the platform-specific initialization and shutdown procedures.
+    /// </summary>
     public static class Platform
     {
         private static bool editor;
 
+        /// <summary>
+        /// Initializes the platform-specific components based on the provided window, graphics backend, and optional editor mode.
+        /// </summary>
+        /// <param name="window">The window interface.</param>
+        /// <param name="backend">The graphics backend to use.</param>
+        /// <param name="editor">Optional parameter to specify whether the application is running in editor mode.</param>
         public static void Init(IWindow window, GraphicsBackend backend, bool editor = false)
         {
             Application.GraphicsBackend = backend;
@@ -70,10 +79,19 @@
             FileSystem.Initialize();
         }
 
-        public static AppConfig AppConfig { get; private set; }
+        /// <summary>
+        /// Gets the application configuration settings.
+        /// </summary>
+        public static AppConfig? AppConfig { get; private set; }
 
-        public static string StartupScene => AppConfig.StartupScene;
+        /// <summary>
+        /// Gets the startup scene specified in the application configuration.
+        /// </summary>
+        public static string? StartupScene => AppConfig?.StartupScene;
 
+        /// <summary>
+        /// Shuts down the platform-specific components, especially for editor mode.
+        /// </summary>
         public static void Shutdown()
         {
             if (!editor)

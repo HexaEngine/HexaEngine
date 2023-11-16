@@ -5,6 +5,7 @@
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
+    using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
@@ -231,6 +232,9 @@
                 var lightData = lights.LightBuffer[i];
 
                 volumetricLightBuffer.Add(new(lightData, light.VolumetricsMultiplier));
+
+                if (light is DirectionalLight dir)
+                    context.PSSetShaderResource(2, dir.GetShadowMap());
             }
 
             // early exit nothing to render

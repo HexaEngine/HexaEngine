@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
@@ -15,8 +16,6 @@
         private static ulong instances;
         private static ConstantBuffer<OmniShadowData>? osmBuffer;
 
-        public const int ShadowMapSize = 512;
-
         private struct OmniShadowData
         {
             public Matrix4x4 View;
@@ -25,6 +24,9 @@
         }
 
         private ShadowAtlasRangeHandle atlasHandle;
+
+        [JsonIgnore]
+        public override int ShadowMapSize => GraphicsSettings.GetSMSizePointLight(ShadowMapResolution);
 
         [JsonIgnore]
         public BoundingBox ShadowBox = new();

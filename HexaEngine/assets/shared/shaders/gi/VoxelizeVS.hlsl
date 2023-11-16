@@ -26,7 +26,7 @@ VS_OUTPUT main(VS_INPUT input)
     float4 pos = mul(float4(input.Position, 1.0), model);
     Output.PositionWS = pos / pos.w;
     Output.Uvs = input.Uvs.xy;
-    float3 normal_ws = mul(input.Normal, (float3x3) model); //transposed_inverse_model
+    float3 normal_ws = mul(input.Normal, (float3x3) model);
     Output.NormalWS = normalize(normal_ws);
     return Output;
 }

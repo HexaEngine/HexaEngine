@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGuizmo;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -11,9 +13,6 @@
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using Hexa.NET.ImGui;
-    using Hexa.NET.ImGuizmo;
-    using System;
     using System.Numerics;
 
     public partial class Frameviewer
@@ -209,30 +208,34 @@
                 ImGui.EndMenuBar();
             }
 
-            Vector2 vMin = ImGui.GetWindowContentRegionMin();
-            Vector2 vMax = ImGui.GetWindowContentRegionMax();
-            Vector2 wPos = ImGui.GetWindowPos();
-
-            var viewport = ImGui.GetWindowViewport();
-
-            Vector2 rVMin = vMin + (wPos - viewport.Pos);
-            Vector2 rVMax = vMax + (wPos - viewport.Pos);
-
-            Vector2 iVMin = vMin + wPos;
-            Vector2 iVMax = vMax + wPos;
-
-            Vector2 rPosition = rVMin;
-            Vector2 rSize = rVMax - rVMin;
-
-            Vector2 iPosition = iVMin;
-            Vector2 iSize = iVMax - iVMin;
-
             if (Fullframe)
             {
                 ImGuiViewport = RenderViewport = SourceViewport;
             }
             else
             {
+                // Get content region.
+                Vector2 vMin = ImGui.GetWindowContentRegionMin();
+                Vector2 vMax = ImGui.GetWindowContentRegionMax();
+                Vector2 wPos = ImGui.GetWindowPos();
+
+                // Viewport window.
+                var viewport = ImGui.GetWindowViewport();
+
+                // Computes the bounds on the Swap-chain aka render viewport.
+                Vector2 rVMin = vMin + (wPos - viewport.Pos);
+                Vector2 rVMax = vMax + (wPos - viewport.Pos);
+
+                Vector2 rPosition = rVMin;
+                Vector2 rSize = rVMax - rVMin;
+
+                // Computes the bounds of the rect for ImGui it's different because ImGui does something internally and subtraction is done automatically with viewport.Pos.
+                Vector2 iVMin = vMin + wPos;
+                Vector2 iVMax = vMax + wPos;
+
+                Vector2 iPosition = iVMin;
+                Vector2 iSize = iVMax - iVMin;
+
                 RenderViewport = Viewport.ScaleAndCenterToFit(SourceViewport, rPosition, rSize);
                 ImGuiViewport = Viewport.ScaleAndCenterToFit(SourceViewport, iPosition, iSize);
             }

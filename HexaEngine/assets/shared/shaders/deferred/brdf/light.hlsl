@@ -133,7 +133,7 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-#define HARD_SHADOWS_POINTLIGHTS 0
+#define HARD_SHADOWS_POINTLIGHTS 1
 float ShadowFactorPointLight(ShadowData data, Light light, float3 position, float viewDistance, SamplerComparisonState state)
 {
     float3 lightDirection = position - light.position.xyz;
@@ -149,12 +149,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, floa
 
     int face = GetPointLightFace(lightDirection);
     float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
-
-    float shadowDepth = depthAtlas.SampleLevel(linearClampSampler, uv.xy, 0);
-
-    float shadowFactor = (currentDepth - bias > shadowDepth) ? 1.0f : 0.0f;
-
-    return (1.0f - shadowFactor);
+    return depthAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
 #else
     float percentLit = 0.0f;
     float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
@@ -183,7 +178,7 @@ float ShadowFactorDirectionalLight(ShadowData data, float3 position, Texture2D d
 #endif
 }
 
-float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4x4 camView, float3 position, Texture2DArray depthTex, SamplerComparisonState state)
+float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture2DArray depthTex, Light light, ShadowData data, float camFar, float4x4 camView, float3 position, float3 N)
 {
     float cascadePlaneDistances[8] = (float[8]) data.cascades;
     float farPlane = camFar;
@@ -193,22 +188,130 @@ float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4
     float depthValue = abs(fragPosViewSpace.z);
     float cascadePlaneDistance;
     uint layer = data.cascadeCount;
-    for (uint i = 0; i < data.cascadeCount; ++i)
+    for (uint iLayer = 0; iLayer < data.cascadeCount; ++iLayer)
     {
-        if (depthValue < cascadePlaneDistances[i])
+        if (depthValue < cascadePlaneDistances[iLayer])
         {
-            cascadePlaneDistance = cascadePlaneDistances[i];
-            layer = i;
+            cascadePlaneDistance = cascadePlaneDistances[iLayer];
+            layer = iLayer;
             break;
         }
     }
 
     float3 uvd = GetShadowUVD(position, data.views[layer]);
 
-#if HARD_SHADOWS_DIRECTIONAL_CASCADED
-    return CSMCalcShadowFactor_Basic(state, depthTex, layer, uvd, data.size, data.softness);
+    float currentDepth = uvd.z;
+
+    if (currentDepth > 1.0)
+    {
+        return 0.0;
+    }
+
+    float3 L = normalize(position - light.position.xyz);
+
+    // calculate bias (based on depth map resolution and slope)
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    if (layer == data.cascadeCount)
+    {
+        bias *= 1 / (farPlane * 0.5f);
+    }
+    else
+    {
+        bias *= 1 / (cascadePlaneDistances[layer] * 0.5f);
+    }
+
+#ifdef HARD_SHADOWS_DIRECTIONAL_CASCADED
+    return depthTex.SampleCmpLevelZero(state, float3(uvd.xy, layer), currentDepth - bias);
 #else
-    return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
+
+    const float dx = 1.0f / data.size;
+
+    float percentLit = 0.0f;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+	[unroll]
+    for (uint i = 0; i < 9; ++i)
+    {
+        offsets[i] = offsets[i] * float2(data.softness, data.softness);
+        percentLit += depthTex.SampleCmpLevelZero(state, float3(uvd.xy + offsets[i], layer), currentDepth - bias);
+    }
+    return (percentLit /= 9.0f);
+#endif
+}
+
+float ShadowFactorDirectionalLightCascaded(SamplerState state, Texture2DArray depthTex, Light light, ShadowData data, float camFar, float4x4 camView, float3 position, float3 N)
+{
+    float cascadePlaneDistances[8] = (float[8]) data.cascades;
+    float farPlane = camFar;
+
+	// select cascade layer
+    float4 fragPosViewSpace = mul(float4(position, 1.0), camView);
+    float depthValue = abs(fragPosViewSpace.z);
+    float cascadePlaneDistance;
+    uint layer = data.cascadeCount;
+    for (uint iLayer = 0; iLayer < data.cascadeCount; ++iLayer)
+    {
+        if (depthValue < cascadePlaneDistances[iLayer])
+        {
+            cascadePlaneDistance = cascadePlaneDistances[iLayer];
+            layer = iLayer;
+            break;
+        }
+    }
+
+    float3 uvd = GetShadowUVD(position, data.views[layer]);
+
+    float depth = uvd.z;
+
+    if (depth > 1.0)
+    {
+        return 0.0;
+    }
+
+    float3 L = normalize(position - light.position.xyz);
+
+    // calculate bias (based on depth map resolution and slope)
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    if (layer == data.cascadeCount)
+    {
+        bias *= 1 / (farPlane * 0.5f);
+    }
+    else
+    {
+        bias *= 1 / (cascadePlaneDistances[layer] * 0.5f);
+    }
+
+#ifdef HARD_SHADOWS_DIRECTIONAL_CASCADED
+    float shadowDepth = depthTex.SampleLevel(state, float3(uvd.xy, layer), 0);
+    float shadowFactor = (depth - bias > shadowDepth) ? 1.0f : 0.0f;
+    return 1 - shadowFactor;
+#else
+
+    const float dx = 1.0f / data.size;
+
+    float percentLit = 0.0f;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+	[unroll]
+    for (uint i = 0; i < 9; ++i)
+    {
+        offsets[i] = offsets[i] * float2(data.softness, data.softness);
+        float shadowDepth = depthTex.SampleLevel(state, float3(uvd.xy + offsets[i], layer), 0);
+        percentLit += (depth - bias > shadowDepth) ? 1.0f : 0.0f;
+    }
+    return 1 - (percentLit /= 9.0f);
 #endif
 }
 
@@ -291,7 +394,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
                     shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);
                     break;
                 case DIRECTIONAL_LIGHT:
-                    shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
+                    shadowFactor = ShadowFactorDirectionalLightCascaded(shadowSampler, depthCSM, light, data, camFar, view, position, N);
                     break;
             }
         }

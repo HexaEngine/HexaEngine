@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
@@ -23,8 +24,6 @@
         private Matrix4x4 view;
         private ShadowAtlasHandle atlasHandle;
 
-        public const int ShadowMapSize = 2048;
-
         [JsonIgnore]
         public readonly BoundingFrustum ShadowFrustum = new();
 
@@ -39,6 +38,9 @@
             base.Transform = Transform = new();
             OverwriteTransform(Transform);
         }
+
+        [JsonIgnore]
+        public override int ShadowMapSize => GraphicsSettings.GetSMSizeSpotlight(ShadowMapResolution);
 
         [EditorProperty("Cone Angle", 1f, 180f, EditorPropertyMode.Slider)]
         public float ConeAngle { get => coneAngle; set => SetAndNotifyWithEqualsTest(ref coneAngle, value); }

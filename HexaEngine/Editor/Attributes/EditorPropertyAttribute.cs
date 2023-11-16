@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Attributes
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorPropertyAttribute : Attribute
@@ -93,6 +94,67 @@
                 Enum.GetNames<T>(),
                 EditorPropertyMode.Enum)
         {
+        }
+    }
+
+    public enum EditorPropertyConditionMode
+    {
+        Visible,
+        Enable,
+        ReadOnly,
+    }
+
+    public delegate bool EditorPropertyCondition(object instance);
+
+    public delegate bool EditorPropertyCondition<T>(T instance);
+
+    /// <summary>
+    /// Specifies a condition for the visibility, enabling, or read-only state of an editor property.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
+    public class EditorPropertyConditionAttribute : Attribute
+    {
+        public EditorPropertyConditionAttribute(string methodName, EditorPropertyConditionMode mode = EditorPropertyConditionMode.Visible)
+        {
+            MethodName = methodName;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Gets the condition function.
+        /// </summary>
+        public EditorPropertyCondition Condition { get; set; }
+
+        public string MethodName { get; }
+
+        /// <summary>
+        /// Gets the mode specifying how the condition affects the property.
+        /// </summary>
+        public EditorPropertyConditionMode Mode { get; }
+    }
+
+    /// <summary>
+    /// Specifies a condition for the visibility, enabling, or read-only state of an editor property.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
+    public class EditorPropertyConditionAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T> : EditorPropertyConditionAttribute
+    {
+        public EditorPropertyConditionAttribute(string methodName, EditorPropertyConditionMode mode = EditorPropertyConditionMode.Visible) : base(methodName, mode)
+        {
+            var method = typeof(T).GetMethod(methodName);
+            if (method == null)
+            {
+                throw new InvalidOperationException($"Method ({methodName}) was not found.");
+            }
+            GenericCondition = method.CreateDelegate<EditorPropertyCondition<T>>();
+            Condition = ConditionMethod;
+        }
+
+        public EditorPropertyCondition<T> GenericCondition { get; set; }
+
+        private bool ConditionMethod(object instance)
+        {
+            return GenericCondition((T)instance);
         }
     }
 }

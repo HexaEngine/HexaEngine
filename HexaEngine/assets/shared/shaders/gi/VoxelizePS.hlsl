@@ -1,8 +1,4 @@
 #include "common.hlsl"
-#include "../light.hlsl"
-#include "../camera.hlsl"
-#include "../shadow.hlsl"
-#include "../weather.hlsl"
 
 SamplerComparisonState shadow_sampler : register(s2);
 

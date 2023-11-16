@@ -17,10 +17,10 @@
                 return;
 
             var skyColor = manager.SkyColor;
-            if (ImGui.InputFloat3("SkyColor", ref skyColor))
+            if (ImGui.ColorEdit3("SkyColor", ref skyColor))
                 manager.SkyColor = skyColor;
             var ambientColor = manager.AmbientColor;
-            if (ImGui.InputFloat3("AmbientColor", ref ambientColor))
+            if (ImGui.ColorEdit3("AmbientColor", ref ambientColor))
                 manager.AmbientColor = ambientColor;
             var windDirection = manager.WindDirection;
             if (ImGui.InputFloat2("WindDirection", ref windDirection))

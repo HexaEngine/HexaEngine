@@ -76,8 +76,11 @@ float3 SpotlightVolumetric2(float4 screenCoords, float2 texCoords, float3 positi
             float distance = length(LN);
             float epsilon = light.innerCosine - light.outerCosine;
             float falloff = (epsilon != 0) ? smoothstep(0.0, 1.0, (theta - light.innerCosine) / epsilon) : 1.0;
+
+            float distanceAttenuation = exp(-density * distance);
+
             float visibility = ShadowFactorSpotlight(shadow_sampler, shadowAtlas, shadowData, x);
-            result += visibility * PhaseFunction(normalize(light.direction.xyz), fragToCamNorm) * falloff;
+            result += visibility * MieScattering(V, -L) * falloff * distanceAttenuation;
         }
         x += deltaStep;
     }
@@ -117,8 +120,8 @@ float3 SpotlightVolumetric3(float4 screenCoords, float2 texCoords, float3 positi
 
             float distanceAttenuation = exp(-density * distance);
 
-            float rayleighScattering = RayleighScattering(V, L);
-            float mieScattering = MieScattering(V, L);
+            float rayleighScattering = RayleighScattering(V, -L);
+            float mieScattering = MieScattering(V, -L);
             float scatteringContribution = rayleighScattering + mieScattering;
 
             float visibility = ShadowFactorSpotlight(shadow_sampler, shadowAtlas, shadowData, x);

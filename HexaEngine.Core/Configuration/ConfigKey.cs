@@ -87,6 +87,25 @@
         }
 
         /// <summary>
+        /// Tries to add a new configuration key with the specified name.
+        /// </summary>
+        /// <param name="path">The path of the key to add.</param>
+        /// <param name="key">When this method returns, contains the added <see cref="ConfigKey"/> if successful; otherwise, <c>null</c>.</param>
+        /// <returns><c>true</c> if the key was added successfully; otherwise, <c>false</c>.</returns>
+        public bool TryAddKey(string path, [NotNullWhen(true)] out ConfigKey? key)
+        {
+            lock (_lock)
+            {
+                key = Find(Keys, path);
+                if (key != null)
+                    return false;
+                key = new(path);
+                Keys.Add(key);
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Removes a subkey from this configuration key with the specified name.
         /// </summary>
         /// <param name="path">The name of the subkey to remove.</param>

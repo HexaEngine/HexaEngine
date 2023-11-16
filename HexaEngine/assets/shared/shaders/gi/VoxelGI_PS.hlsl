@@ -1,5 +1,4 @@
 #include "common.hlsl"
-#include "../camera.hlsl"
 
 cbuffer VoxelCbuf : register(b0)
 {

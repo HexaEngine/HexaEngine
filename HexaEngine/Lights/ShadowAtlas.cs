@@ -431,6 +431,11 @@ namespace HexaEngine.Lights
             mutex.ReleaseMutex();
         }
 
+        public ShadowAtlasHandle Alloc(int desiredSize)
+        {
+            return desiredSize <= 0 ? throw new ArgumentOutOfRangeException(nameof(desiredSize)) : Alloc((uint)desiredSize);
+        }
+
         public ShadowAtlasHandle Alloc(uint desiredSize)
         {
             mutex.WaitOne();
@@ -443,6 +448,11 @@ namespace HexaEngine.Lights
             allocation.LayerHandle = (nint)layer;
             allocation.LayerIndex = layerIndex;
             return new(this, allocation);
+        }
+
+        public ShadowAtlasRangeHandle AllocRange(int desiredSize, int count)
+        {
+            return desiredSize <= 0 ? throw new ArgumentOutOfRangeException(nameof(desiredSize)) : AllocRange((uint)desiredSize, count);
         }
 
         public ShadowAtlasRangeHandle AllocRange(uint desiredSize, int count)

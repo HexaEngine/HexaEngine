@@ -31,7 +31,7 @@
             Vector3 pos = light.GlobalPosition;
             Matrix4x4 proj = GetProjectionMatrix(fov, far);
             Matrix4x4 viewproj = MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj;
-            frustum.Initialize(viewproj);
+            frustum.Update(viewproj);
             return Matrix4x4.Transpose(viewproj);
         }
     }

@@ -7,6 +7,7 @@ namespace HexaEngine.Rendering.Passes
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
@@ -182,6 +183,11 @@ namespace HexaEngine.Rendering.Passes
             deferredClusterdSrvs[9] = (void*)lightGridBuffer.Value.SRV.NativePointer;
 
             deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            var dir = lights.Active.FirstOrDefault(x => x is DirectionalLight && x.ShadowMapEnable);
+            if (dir != null)
+            {
+                deferredClusterdSrvs[11] = deferredSrvs[9] = (void*)((DirectionalLight)dir).GetShadowMap().NativePointer;
+            }
 
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);

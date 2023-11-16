@@ -55,8 +55,11 @@ float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 posit
         float3 LN = light.position.xyz - x;
         float distance = length(LN);
         float3 L = normalize(LN);
+
+        float distanceAttenuation = exp(-density * distance);
+
         float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x, viewDistance, camFar);
-        result += visibility * PhaseFunction(-L, fragToCamNorm);
+        result += visibility * MieScattering(V, -L) * distanceAttenuation;
         x += deltaStep;
     }
 
@@ -87,8 +90,8 @@ float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 posit
 
         float distanceAttenuation = exp(-density * distance);
 
-        float rayleighScattering = RayleighScattering(V, L);
-        float mieScattering = MieScattering(V, L);
+        float rayleighScattering = RayleighScattering(V, -L);
+        float mieScattering = MieScattering(V, -L);
         float scatteringContribution = rayleighScattering + mieScattering;
 
         float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, shadowData, light, x, viewDistance, camFar);

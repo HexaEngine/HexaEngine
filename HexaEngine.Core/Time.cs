@@ -69,6 +69,7 @@
             last = sdl.GetPerformanceCounter();
             fixedTime = 0;
             cumulativeFrameTime = 0;
+            gameTime = 0;
         }
 
         /// <summary>

@@ -3,22 +3,40 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.UI;
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Sky;
     using HexaEngine.Mathematics.Sky.HosekWilkie;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
+    /// <summary>
+    /// Manages weather-related graphics rendering and effects.
+    /// TODO: Weather system is broadly incomplete and needs refactoring.
+    /// TODO: Volumetric Fog.
+    /// TODO: Volumetric lightning inclusion.
+    /// TODO: Volumetric Particles: rain, snow, dust, etc.
+    /// TODO: Weather Id system with transitions or something like that.
+    /// TODO: Volumes in general should be added.
+    /// </summary>
     public class WeatherManager : ISystem
     {
-        private bool isDirty = true;
+#nullable disable
         private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
+#nullable restore
+        private bool isDirty = true;
         private bool hasSun = false;
 
+        /// <summary>
+        /// Gets the current instance of the WeatherManager if available in the current scene.
+        /// </summary>
         public static WeatherManager? Current => SceneManager.Current?.WeatherManager;
 
         private Vector3 skyColor = new(0.53f, 0.81f, 0.92f);
@@ -36,8 +54,17 @@
         private float turbidity = 3;
         private float groundAlbedo = 0.1f;
 
+        /// <summary>
+        /// Gets a value indicating whether the weather has a sun.
+        /// </summary>
         public bool HasSun => hasSun;
 
+        /// <summary>
+        /// Gets or sets the color of the sky.
+        /// </summary>
+        /// <remarks>
+        /// TODO: Add detailed description for the SkyColor property.
+        /// </remarks>
         public Vector3 SkyColor
         {
             get => skyColor;
@@ -47,6 +74,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the ambient color of the weather.
+        /// </summary>
         public Vector3 AmbientColor
         {
             get => ambientColor;
@@ -56,6 +86,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the wind direction of the weather.
+        /// </summary>
         public Vector2 WindDirection
         {
             get => windDirection;
@@ -65,6 +98,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the wind speed of the weather.
+        /// </summary>
         public float WindSpeed
         {
             get => windSpeed;
@@ -74,6 +110,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the crispiness of the weather.
+        /// </summary>
         public float Crispiness
         {
             get => crispiness;
@@ -83,6 +122,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the curliness of the weather.
+        /// </summary>
         public float Curliness
         {
             get => curliness;
@@ -92,6 +134,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the coverage of the weather.
+        /// </summary>
         public float Coverage
         {
             get => coverage;
@@ -101,6 +146,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the light absorption of the weather.
+        /// </summary>
         public float LightAbsorption
         {
             get => lightAbsorption;
@@ -110,6 +158,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the bottom height of the clouds in the weather.
+        /// </summary>
         public float CloudsBottomHeight
         {
             get => cloudsBottomHeight;
@@ -119,6 +170,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the top height of the clouds in the weather.
+        /// </summary>
         public float CloudsTopHeight
         {
             get => cloudsTopHeight;
@@ -128,6 +182,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the density factor of the weather.
+        /// </summary>
         public float DensityFactor
         {
             get => densityFactor;
@@ -137,6 +194,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the type of clouds in the weather.
+        /// </summary>
         public float CloudType
         {
             get => cloudType;
@@ -146,6 +206,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the turbidity of the weather.
+        /// </summary>
         public float Turbidity
         {
             get => turbidity;
@@ -155,6 +218,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the ground albedo of the weather.
+        /// </summary>
         public float GroundAlbedo
         {
             get => groundAlbedo;
@@ -164,17 +230,32 @@
             }
         }
 
+        /// <summary>
+        /// Gets the constant buffer containing weather information for graphics rendering.
+        /// </summary>
         public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value;
 
+        /// <inheritdoc/>
         public string Name { get; } = "Weather System";
 
+        /// <inheritdoc/>
         public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.GraphicsUpdate;
 
+        /// <summary>
+        /// Called when the system is awakened in a scene.
+        /// </summary>
+        /// <param name="scene">The scene where the system is awakened.</param>
         public void Awake(Scene scene)
         {
+#nullable disable // cant be null here unless something terrible happend in the init process.
             weatherBuffer = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBWeather>("CBWeather");
+#nullable restore
         }
 
+        /// <summary>
+        /// Updates the WeatherManager and contributes weather-related information to graphics rendering.
+        /// </summary>
+        /// <param name="context">The graphics context for rendering updates.</param>
         public void Update(IGraphicsContext context)
         {
             var manager = LightManager.Current;
@@ -228,6 +309,209 @@
 
             weatherBuffer.Value?.Update(context, weather);
             isDirty = false;
+        }
+    }
+
+    public class WeatherRegisty
+    {
+        private Dictionary<string, long> nameToId = new();
+        private Dictionary<long, Weather> idToWeather = new();
+        private List<Weather> weathers = new();
+        private Dictionary<string, WeatherParameterDefinition> nameToParam = new();
+        private List<WeatherParameterDefinition> weatherParameters = new();
+
+        private List<WeatherParameterData> state = new();
+
+        public void Update()
+        {
+            for (int i = 0; i < weathers.Count; i++)
+            {
+            }
+        }
+    }
+
+    public enum WeatherParameterType
+    {
+        Int,
+        UInt,
+        Float,
+        Float2,
+        Float3,
+        Float4,
+    }
+
+    public unsafe class WeatherParameterDefinition
+    {
+        public string Name { get; }
+
+        public WeatherParameterType Type { get; }
+
+        public BezierCurve TransitionCurve { get; } = new(Vector2.Zero, Vector2.One);
+
+        public WeatherParameterData Transition(WeatherParameterData a, WeatherParameterData b, float v)
+        {
+            WeatherParameterData data = default;
+            switch (Type)
+            {
+                case WeatherParameterType.Int:
+                    data.IntValue = (int)MathUtil.Lerp(a.IntValue, b.IntValue, TransitionCurve.ComputePoint(v).Y);
+                    break;
+
+                case WeatherParameterType.UInt:
+                    data.UIntValue = (uint)MathUtil.Lerp(a.UIntValue, b.UIntValue, TransitionCurve.ComputePoint(v).Y);
+                    break;
+
+                case WeatherParameterType.Float:
+                    data.FloatValue = MathUtil.Lerp(a.FloatValue, b.FloatValue, TransitionCurve.ComputePoint(v).Y);
+                    break;
+
+                case WeatherParameterType.Float2:
+                    data.Vector2Value = Vector2.Lerp(a.Vector2Value, b.Vector2Value, TransitionCurve.ComputePoint(v).Y);
+                    break;
+
+                case WeatherParameterType.Float3:
+                    data.Vector3Value = Vector3.Lerp(a.Vector3Value, b.Vector3Value, TransitionCurve.ComputePoint(v).Y);
+                    break;
+
+                case WeatherParameterType.Float4:
+                    data.Vector4Value = Vector4.Lerp(a.Vector4Value, b.Vector4Value, TransitionCurve.ComputePoint(v).Y);
+                    break;
+            }
+            return data;
+        }
+    }
+
+    public struct WeatherParameter
+    {
+        public string Name;
+        public WeatherParameterType Type;
+        public WeatherParameterData Data;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct WeatherParameterData
+    {
+        [FieldOffset(0)]
+        public int IntValue;
+
+        [FieldOffset(0)]
+        public uint UIntValue;
+
+        [FieldOffset(0)]
+        public float FloatValue;
+
+        [FieldOffset(0)]
+        public Vector2 Vector2Value;
+
+        [FieldOffset(0)]
+        public Vector3 Vector3Value;
+
+        [FieldOffset(0)]
+        public Vector4 Vector4Value;
+    }
+
+    public enum WeatherState
+    {
+        Inactive,
+        TransitionToInactive,
+        TransitionToActive,
+        Active,
+    }
+
+    public class Weather
+    {
+        private float elapsedTime;
+
+        public long Id { get; }
+
+        public string Name { get; set; }
+
+        public List<WeatherParameter> Parameters { get; } = new();
+
+        public WeatherState State;
+
+        public float TransitionValue;
+
+        public BezierCurve TransitionCurve = new(Vector2.Zero, Vector2.One);
+
+        public float TransitionTime;
+
+        public void Tick(float dt)
+        {
+            if (State == WeatherState.Inactive || State == WeatherState.Active)
+            {
+                return;
+            }
+
+            elapsedTime += dt;
+            TransitionValue = (elapsedTime / TransitionTime);
+
+            if (TransitionValue >= 1)
+            {
+                // clamp to 1.
+                TransitionValue = 1;
+                switch (State)
+                {
+                    case WeatherState.TransitionToInactive:
+                        State = WeatherState.Inactive;
+                        break;
+
+                    case WeatherState.TransitionToActive:
+                        State = WeatherState.Active;
+                        break;
+                }
+            }
+        }
+
+        public float GetTransitionFactor()
+        {
+            return ((State == WeatherState.TransitionToInactive || State == WeatherState.Inactive) ? 1 : 0) - TransitionCurve.ComputePoint(TransitionValue).Y;
+        }
+
+        public void Activate()
+        {
+            State = WeatherState.TransitionToActive;
+            TransitionValue = 0;
+            elapsedTime = 0;
+        }
+
+        public void Deactivate()
+        {
+            State = WeatherState.TransitionToInactive;
+            TransitionValue = 0;
+            elapsedTime = 0;
+        }
+
+        public void Toggle()
+        {
+            switch (State)
+            {
+                case WeatherState.Inactive:
+                    State = WeatherState.TransitionToActive;
+                    TransitionValue = 0;
+                    elapsedTime = 0;
+                    break;
+
+                case WeatherState.TransitionToInactive:
+                    State = WeatherState.TransitionToActive;
+                    // Do not clear TransitionValue here to ensure smooth reverse transition.
+                    // Reverse elapsed time
+                    elapsedTime = TransitionTime - elapsedTime;
+                    break;
+
+                case WeatherState.TransitionToActive:
+                    State = WeatherState.TransitionToInactive;
+                    // Do not clear TransitionValue here to ensure smooth reverse transition.
+                    // Reverse elapsed time
+                    elapsedTime = TransitionTime - elapsedTime;
+                    break;
+
+                case WeatherState.Active:
+                    State = WeatherState.TransitionToInactive;
+                    TransitionValue = 0;
+                    elapsedTime = 0;
+                    break;
+            }
         }
     }
 }

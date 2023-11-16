@@ -94,7 +94,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a _value indicating whether the application is in design mode.
+        /// Gets or sets a value indicating whether the application is in design mode.
         /// </summary>
         public static bool InDesignMode
         {
@@ -106,7 +106,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a _value indicating whether the application is in editor mode.
+        /// Gets or sets a value indicating whether the application is in editor mode.
         /// </summary>
         public static bool InEditorMode
         {
@@ -118,7 +118,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a _value indicating whether graphics debugging is enabled.
+        /// Gets or sets a value indicating whether graphics debugging is enabled.
         /// </summary>
         public static bool GraphicsDebugging { get; set; }
 

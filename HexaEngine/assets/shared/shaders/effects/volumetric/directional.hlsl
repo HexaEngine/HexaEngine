@@ -50,8 +50,9 @@ float3 DirectionalLightVolumetric2(float4 screenCoords, float2 texCoords, float3
     float result = 0.0;
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
+        float distanceAttenuation = exp(-density);
         float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);
-        result += visibility * PhaseFunction(light.direction.xyz, fragToCamNorm);
+        result += visibility * MieScattering(V, -light.direction.xyz) * distanceAttenuation;
         x += deltaStep;
     }
 
@@ -79,8 +80,8 @@ float3 DirectionalLightVolumetric3(float4 screenCoords, float2 texCoords, float3
     {
         float distanceAttenuation = exp(-density);
 
-        float rayleighScattering = RayleighScattering(V, L);
-        float mieScattering = MieScattering(V, L);
+        float rayleighScattering = RayleighScattering(V, -L);
+        float mieScattering = MieScattering(V, -L);
         float scatteringContribution = rayleighScattering + mieScattering;
 
         float visibility = ShadowFactorDirectionalLight(shadow_sampler, shadowAtlas, shadowData, x);

@@ -1,6 +1,15 @@
+#ifndef COMMON_VOXEL_GI_H_INCLUDE
+
+#define COMMON_VOXEL_GI_H_INCLUDE
+
+#include "../light.hlsl"
+#include "../camera.hlsl"
+#include "../shadow.hlsl"
+#include "../weather.hlsl"
+#include "../gbuffer.hlsl"
+
 SamplerState linear_wrap_sampler : register(s0);
 SamplerState linear_clamp_sampler : register(s1);
-
 
 #define PI 3.1415926535897932384626433832795
 
@@ -116,3 +125,5 @@ inline uint3 Unflatten3D(uint idx, uint3 dim)
     const uint x = idx % dim.x;
     return uint3(x, y, z);
 }
+
+#endif

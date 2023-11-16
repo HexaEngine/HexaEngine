@@ -265,7 +265,7 @@
         {
             prevViewProjection = viewProjection;
             viewProjection = view * projection;
-            frustum.Initialize(viewProjection);
+            frustum.Update(viewProjection);
             Matrix4x4.Invert(viewProjection, out viewProjectionInv);
 
             const float zNear = 0.001f;
@@ -274,7 +274,7 @@
             Matrix4x4 nProjection = projection;
             nProjection.M33 = q;
             nProjection.M43 = -q * zNear;
-            normalizedFrustum.Initialize(view * nProjection);
+            normalizedFrustum.Update(view * nProjection);
 
             base.OnUpdated();
         }

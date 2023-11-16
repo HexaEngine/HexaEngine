@@ -8,7 +8,7 @@
     /// Represents a bounding frustum in 3D space defined by planes and corners.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public readonly struct BoundingFrustum : IEquatable<BoundingFrustum>
+    public struct BoundingFrustum : IEquatable<BoundingFrustum>
     {
         /// <summary>
         /// The number of corners in the bounding frustum.
@@ -17,6 +17,7 @@
 
         private readonly Plane[] _planes;
         private readonly Vector3[] _corners;
+        private Vector3 _center;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingFrustum"/> struct.
@@ -54,6 +55,13 @@
                 IntersectionPoint(_planes[1], _planes[3], _planes[5]),
                 IntersectionPoint(_planes[1], _planes[2], _planes[5]),
             ];
+
+            Vector3 center = new(0, 0, 0);
+            for (int i = 0; i < _corners.Length; i++)
+            {
+                center += new Vector3(_corners[i].X, _corners[i].Y, _corners[i].Z);
+            }
+            _center /= _corners.Length;
         }
 
         /// <summary>
@@ -67,10 +75,15 @@
         public IReadOnlyList<Plane> Planes => _planes;
 
         /// <summary>
+        /// Gets the center of the bounding frustum.
+        /// </summary>
+        public readonly Vector3 Center => _center;
+
+        /// <summary>
         /// Initializes the bounding frustum from a view-projection matrix.
         /// </summary>
         /// <param name="viewProjection">The view-projection matrix to create the frustum from.</param>
-        public void Initialize(Matrix4x4 viewProjection)
+        public void Update(Matrix4x4 viewProjection)
         {
             _planes[0] = Plane.Normalize(new Plane(-viewProjection.M13, -viewProjection.M23, -viewProjection.M33, -viewProjection.M43));
             _planes[1] = Plane.Normalize(new Plane(viewProjection.M13 - viewProjection.M14, viewProjection.M23 - viewProjection.M24, viewProjection.M33 - viewProjection.M34, viewProjection.M43 - viewProjection.M44));
@@ -87,6 +100,13 @@
             _corners[5] = IntersectionPoint(_planes[1], _planes[3], _planes[4]);
             _corners[6] = IntersectionPoint(_planes[1], _planes[3], _planes[5]);
             _corners[7] = IntersectionPoint(_planes[1], _planes[2], _planes[5]);
+
+            Vector3 center = new(0, 0, 0);
+            for (int i = 0; i < _corners.Length; i++)
+            {
+                center += new Vector3(_corners[i].X, _corners[i].Y, _corners[i].Z);
+            }
+            _center /= _corners.Length;
         }
 
         /// <summary>
