@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.19.0" />
+    <Folder Include="MeshEditor\Exporters\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
   </ItemGroup>
 
 </Project>

@@ -126,6 +126,7 @@
             Register<ImagePainterWindow>();
             Register<WeatherWidget>();
             Register<RenderGraphWidget>();
+            Register<RendererWidget>();
             Register<MemoryWidget>();
         }
 

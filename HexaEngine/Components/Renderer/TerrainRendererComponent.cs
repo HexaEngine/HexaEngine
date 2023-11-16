@@ -22,11 +22,6 @@
 
         private BoundingBox boundingBox;
 
-        static TerrainRendererComponent()
-        {
-            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());
-        }
-
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(StaticTerrainRenderer);
 

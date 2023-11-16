@@ -21,7 +21,7 @@
 
         public static IReadOnlyList<HistoryEntry> Entries => entries;
 
-        internal static void AddEntry(string name, string path)
+        public static void AddEntry(string name, string path)
         {
             for (int i = 0; i < entries.Count; i++)
             {
@@ -39,19 +39,19 @@
             Save();
         }
 
-        internal static void RemoveEntryByName(string name)
+        public static void RemoveEntryByName(string name)
         {
             entries.RemoveAll(x => x.Name == name);
             Save();
         }
 
-        internal static void RemoveEntryByPath(string path)
+        public static void RemoveEntryByPath(string path)
         {
             entries.RemoveAll(x => x.Path == path);
             Save();
         }
 
-        internal static void Clear()
+        public static void Clear()
         {
             entries.Clear();
             Save();

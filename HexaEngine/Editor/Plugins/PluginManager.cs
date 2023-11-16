@@ -57,7 +57,7 @@
                 {
                     Plugin plugin = new(instance);
                     plugins.Add(plugin);
-                    config.GenerateSubKeyAuto(plugin, plugin.GetName());
+                    config.GenerateSubKeyAuto(plugin, plugin.Name);
                 }
                 catch (Exception ex)
                 {

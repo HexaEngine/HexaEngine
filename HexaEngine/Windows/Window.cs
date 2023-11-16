@@ -23,25 +23,27 @@
     /// </summary>
     public class Window : SdlWindow, IRenderWindow
     {
-        private ThreadDispatcher renderDispatcher;
-        private bool running;
-        private bool resetTime;
-        private IAudioDevice audioDevice;
-        private IGraphicsDevice graphicsDevice;
-        private IGraphicsContext graphicsContext;
-        private ISwapChain swapChain;
-        private Frameviewer frameviewer;
-        private bool imGuiWidgets;
-        private SceneRenderer sceneRenderer;
-        private Task initTask;
-        private bool rendererInitialized;
-        private bool resize = false;
+        protected ThreadDispatcher renderDispatcher;
+        protected bool running;
+        protected bool resetTime;
+        protected IAudioDevice audioDevice;
+        protected IGraphicsDevice graphicsDevice;
+        protected IGraphicsContext graphicsContext;
+        protected ISwapChain swapChain;
+        protected bool imGuiWidgets;
+        protected SceneRenderer sceneRenderer;
+        protected Task initTask;
+        protected bool rendererInitialized;
+        protected bool resize = false;
 
-        private Thread updateThread;
+        protected Thread updateThread;
 
-        private readonly Barrier syncBarrier = new(2);
+        protected readonly Barrier syncBarrier = new(2);
 
-        private ImGuiManager? imGuiRenderer;
+        protected ImGuiManager? imGuiRenderer;
+
+        protected Viewport windowViewport;
+        protected Viewport renderViewport;
 
         /// <summary>
         /// Gets or sets the rendering flags for the window.
@@ -77,9 +79,6 @@
         /// Gets or sets the startup scene to be loaded.
         /// </summary>
         public string? StartupScene;
-
-        private Viewport windowViewport;
-        private Viewport renderViewport;
 
         /// <summary>
         /// Gets the viewport of the window.
@@ -141,26 +140,12 @@
                 PipelineManager.Initialize(graphicsDevice);
             }
 
-            // Initialize Designer if in editor mode
-            if (Application.InEditorMode)
-            {
-                Designer.Init(graphicsDevice);
-            }
-
-            frameviewer = new(graphicsDevice);
-
             imGuiWidgets = (Flags & RendererFlags.ImGuiWidgets) != 0;
 
             // Initialize ImGui renderer if ImGui flag is set
             if ((Flags & RendererFlags.ImGui) != 0)
             {
                 imGuiRenderer = new(this, graphicsDevice, graphicsContext);
-            }
-
-            // Initialize WindowManager if ImGuiWidgets flag is set
-            if ((Flags & RendererFlags.ImGuiWidgets) != 0)
-            {
-                WindowManager.Init(graphicsDevice);
             }
 
             // Subscribe to the SceneChanged event
@@ -238,7 +223,7 @@
         /// Renders the content of the window using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context.</param>
-        public void Render(IGraphicsContext context)
+        public virtual void Render(IGraphicsContext context)
         {
 #if PROFILE
             // Begin profiling frame and total time if profiling is enabled.
@@ -285,11 +270,7 @@
             if (imGuiWidgets && Application.InEditorMode)
             {
                 // Update and draw the frame viewer.
-                frameviewer.SourceViewport = Viewport;
-                frameviewer.Update();
-                frameviewer.Draw();
-                drawing &= frameviewer.IsVisible;
-                windowViewport = Application.InEditorMode ? frameviewer.RenderViewport : Viewport;
+                windowViewport = Viewport;
 
                 // Set the camera for DebugDraw based on the current camera's view projection matrix.
 
@@ -314,8 +295,6 @@
             }
 
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
-            Designer.Draw();
-            WindowManager.Draw(context);
             ImGuiConsole.Draw();
             MessageBoxes.Draw();
 
@@ -374,12 +353,6 @@
 
             // Dispose the profiler associated with the graphics device.
             Device.Profiler.Dispose();
-
-            // Dispose of resources related to ImGui widgets if enabled.
-            if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
-            {
-                WindowManager.Dispose();
-            }
 
             // Dispose of the ImGui renderer if it exists.
             if (imGuiRenderer is not null)

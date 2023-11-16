@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
@@ -55,7 +56,7 @@
             }
         }
 
-        public ObservableWrapper<Key> Keys { get; private set; }
+        public ObservableList<Key> Keys { get; private set; }
 
         public List<Key> Defaults => defaults;
 

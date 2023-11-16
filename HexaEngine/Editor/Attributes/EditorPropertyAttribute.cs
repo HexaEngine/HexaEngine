@@ -3,21 +3,41 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
 
+    /// <summary>
+    /// Represents an attribute that provides additional information about a property for the editor.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorPropertyAttribute : Attribute
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified mode.
+        /// </summary>
+        /// <param name="mode">The editor property mode.</param>
         public EditorPropertyAttribute(EditorPropertyMode mode = EditorPropertyMode.Default)
         {
             Name = string.Empty;
             Mode = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name and mode.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="mode">The editor property mode.</param>
         public EditorPropertyAttribute(string name, EditorPropertyMode mode = EditorPropertyMode.Default)
         {
             Name = name;
             Mode = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, starting path, filter, relativeTo, and mode for file picker.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="startingPath">The starting path for the file picker.</param>
+        /// <param name="filter">The filename filter for the file picker.</param>
+        /// <param name="relativeTo">The path relative to this value.</param>
+        /// <param name="mode">The editor property mode for file picker.</param>
         public EditorPropertyAttribute(string name, string? startingPath, string? filter = null, string? relativeTo = null, EditorPropertyMode mode = EditorPropertyMode.Filepicker)
         {
             Name = name;
@@ -27,6 +47,13 @@
             Mode = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, enum values, enum names, and mode for enum property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="enumValues">The values of the enum property.</param>
+        /// <param name="enumNames">The names of the enum values.</param>
+        /// <param name="mode">The editor property mode for enum property.</param>
         public EditorPropertyAttribute(string name, object[] enumValues, string[] enumNames, EditorPropertyMode mode = EditorPropertyMode.Enum)
         {
             Name = name;
@@ -35,6 +62,13 @@
             Mode = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, min, max, and mode for slider property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="min">The minimum value for the slider property.</param>
+        /// <param name="max">The maximum value for the slider property.</param>
+        /// <param name="mode">The editor property mode for slider property.</param>
         public EditorPropertyAttribute(string name, object min, object max, EditorPropertyMode mode = EditorPropertyMode.Slider)
         {
             Name = name;
@@ -43,6 +77,14 @@
             Max = max;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, target type, types, type names, and mode for type selector property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="target">The target type for the type selector property.</param>
+        /// <param name="types">The types available in the type selector property.</param>
+        /// <param name="typeNames">The names of the available types.</param>
+        /// <param name="mode">The editor property mode for type selector property.</param>
         public EditorPropertyAttribute(string name, Type target, Type[] types, string[] typeNames, EditorPropertyMode mode = EditorPropertyMode.TypeSelector)
         {
             Name = name;
@@ -52,22 +94,49 @@
             Mode = mode;
         }
 
+        /// <summary>
+        /// Gets or sets the name of the property.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets the editor property mode.
+        /// </summary>
         public EditorPropertyMode Mode { get; }
 
+        /// <summary>
+        /// Gets the minimum value for the slider property.
+        /// </summary>
         public object? Min { get; }
 
+        /// <summary>
+        /// Gets the maximum value for the slider property.
+        /// </summary>
         public object? Max { get; }
 
+        /// <summary>
+        /// Gets the target type for the type selector property.
+        /// </summary>
         public Type? TargetType { get; }
 
+        /// <summary>
+        /// Gets the types available in the type selector property.
+        /// </summary>
         public Type[]? Types { get; }
 
+        /// <summary>
+        /// Gets the names of the available types.
+        /// </summary>
         public string[]? TypeNames { get; }
 
+        /// <summary>
+        /// Gets the values of the enum property.
+        /// </summary>
         public object[]? EnumValues { get; }
 
+        /// <summary>
+        /// Gets the names of the enum values.
+        /// </summary>
         public string[]? EnumNames { get; }
 
         /// <summary>
@@ -86,75 +155,22 @@
         public string? RelativeTo { get; }
     }
 
+    /// <summary>
+    /// Specifies additional attributes for an editor property with a strongly typed enum value.
+    /// </summary>
+    /// <typeparam name="T">The type of the strongly typed enum.</typeparam>
     public class EditorPropertyAttribute<T> : EditorPropertyAttribute where T : struct, Enum
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute{T}"/> class with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
         public EditorPropertyAttribute(string name) :
             base(name,
                 Enum.GetValues<T>().Cast<object>().ToArray(),
                 Enum.GetNames<T>(),
                 EditorPropertyMode.Enum)
         {
-        }
-    }
-
-    public enum EditorPropertyConditionMode
-    {
-        Visible,
-        Enable,
-        ReadOnly,
-    }
-
-    public delegate bool EditorPropertyCondition(object instance);
-
-    public delegate bool EditorPropertyCondition<T>(T instance);
-
-    /// <summary>
-    /// Specifies a condition for the visibility, enabling, or read-only state of an editor property.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
-    public class EditorPropertyConditionAttribute : Attribute
-    {
-        public EditorPropertyConditionAttribute(string methodName, EditorPropertyConditionMode mode = EditorPropertyConditionMode.Visible)
-        {
-            MethodName = methodName;
-            Mode = mode;
-        }
-
-        /// <summary>
-        /// Gets the condition function.
-        /// </summary>
-        public EditorPropertyCondition Condition { get; set; }
-
-        public string MethodName { get; }
-
-        /// <summary>
-        /// Gets the mode specifying how the condition affects the property.
-        /// </summary>
-        public EditorPropertyConditionMode Mode { get; }
-    }
-
-    /// <summary>
-    /// Specifies a condition for the visibility, enabling, or read-only state of an editor property.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
-    public class EditorPropertyConditionAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T> : EditorPropertyConditionAttribute
-    {
-        public EditorPropertyConditionAttribute(string methodName, EditorPropertyConditionMode mode = EditorPropertyConditionMode.Visible) : base(methodName, mode)
-        {
-            var method = typeof(T).GetMethod(methodName);
-            if (method == null)
-            {
-                throw new InvalidOperationException($"Method ({methodName}) was not found.");
-            }
-            GenericCondition = method.CreateDelegate<EditorPropertyCondition<T>>();
-            Condition = ConditionMethod;
-        }
-
-        public EditorPropertyCondition<T> GenericCondition { get; set; }
-
-        private bool ConditionMethod(object instance)
-        {
-            return GenericCondition((T)instance);
         }
     }
 }

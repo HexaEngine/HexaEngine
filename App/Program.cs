@@ -12,6 +12,7 @@
         /// </summary>
         public static void Main()
         {
+            Application.Boot();
             Window window = new();
             Platform.Init(window, GraphicsBackend.D3D11);
             Application.Run(window);

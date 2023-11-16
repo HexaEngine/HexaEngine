@@ -5,8 +5,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
-    using HexaEngine.Editor.Properties.Editors;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
     using System.Reflection;
@@ -19,11 +17,6 @@
         private PropertyInfo[] properties;
         private string? scriptType;
         private Dictionary<string, object?> propertyValues = new();
-
-        static ScriptBehaviour()
-        {
-            ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
-        }
 
         public string? ScriptType
         {

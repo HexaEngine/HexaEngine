@@ -1,11 +1,16 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Components;
+    using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.MeshEditor;
+    using HexaEngine.Editor.Properties;
+    using HexaEngine.Editor.Properties.Editors;
+    using HexaEngine.Editor.Properties.Factories;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Scenes;
     using System.Diagnostics;
@@ -16,13 +21,26 @@
         private static Task? task;
         private static OpenProjectWindow projectWindow = new();
 
-        internal static void Init(IGraphicsDevice device)
+        public static void Init(IGraphicsDevice device)
         {
             MainMenuBar.Init(device);
             projectWindow.Show();
+
+            ObjectEditorFactory.AddFactory(new BoolPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new FloatPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new StringPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new TypePropertyFactory());
+            ObjectEditorFactory.AddFactory(new Vector2PropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new Vector3PropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new Vector4PropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
+
+            ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
+            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());
         }
 
-        internal static void Draw()
+        public static void Draw()
         {
             if (!Application.InEditorMode)
             {

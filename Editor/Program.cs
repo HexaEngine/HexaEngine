@@ -1,17 +1,18 @@
-﻿using Editor;
-using HexaEngine;
-using HexaEngine.Core;
-using HexaEngine.Core.Graphics;
-using HexaEngine.Windows;
-
-public class Program
+﻿namespace Editor
 {
-    public static void Main(string[] args)
+    using HexaEngine;
+    using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
+
+    public class Program
     {
-        Application.Boot();
-        EditorWindow window = new() { Flags = RendererFlags.All, Title = "Editor" };
-        Platform.Init(window, GraphicsBackend.D3D11, true);
-        Application.Run(window);
-        Platform.Shutdown();
+        public static void Main(string[] args)
+        {
+            Application.Boot();
+            EditorWindow window = new();
+            Platform.Init(window, GraphicsBackend.D3D11, true);
+            Application.Run(window);
+            Platform.Shutdown();
+        }
     }
 }

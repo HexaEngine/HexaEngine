@@ -36,14 +36,14 @@
             this.device = device;
         }
 
-        internal void Update()
+        public void Update()
         {
             ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
             ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
             DebugDraw.SetViewport(RenderViewport);
         }
 
-        internal unsafe void Draw()
+        public unsafe void Draw()
         {
             if (!ImGui.Begin("Scene", ref isShown, ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
             {

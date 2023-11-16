@@ -10,10 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Silk.NET.OpenAL" Version="2.18.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.Enumeration" Version="2.18.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.EXT" Version="2.18.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.Soft" Version="2.18.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.OpenAL" Version="2.19.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.OpenAL.Extensions.Enumeration" Version="2.19.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.OpenAL.Extensions.EXT" Version="2.19.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.OpenAL.Extensions.Soft" Version="2.19.0" PrivateAssets="contentfiles;build" />
 		<PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.2" PrivateAssets="contentfiles;build" />
 	</ItemGroup>
 

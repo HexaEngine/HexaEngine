@@ -8,33 +8,11 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.Editor\HexaEngine.Editor.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>

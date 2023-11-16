@@ -1,47 +1,85 @@
 ﻿namespace HexaEngine.Editor.Properties
 {
-    using HexaEngine.Editor.Properties.Factories;
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Factory class responsible for creating and managing object editors.
+    /// </summary>
     public class ObjectEditorFactory
     {
         private static readonly Dictionary<Type, IObjectEditor> editors = new();
         private static readonly List<IPropertyEditorFactory> factories = new();
 
+        /// <summary>
+        /// Static constructor for initializing the ObjectEditorFactory.
+        /// </summary>
         static ObjectEditorFactory()
         {
-            factories.Add(new BoolPropertyEditorFactory());
-            factories.Add(new EnumPropertyEditorFactory());
-            factories.Add(new FloatPropertyEditorFactory());
-            factories.Add(new StringPropertyEditorFactory());
-            factories.Add(new TypePropertyFactory());
-            factories.Add(new Vector2PropertyEditorFactory());
-            factories.Add(new Vector3PropertyEditorFactory());
-            factories.Add(new Vector4PropertyEditorFactory());
-            factories.Add(new SubTypePropertyFactory());
         }
 
+        /// <summary>
+        /// Adds a custom property editor factory to the list of factories.
+        /// </summary>
+        /// <param name="factory">The property editor factory to be added.</param>
         public static void AddFactory(IPropertyEditorFactory factory)
         {
             factories.Add(factory);
         }
 
+        /// <summary>
+        /// Adds a new instance of a specified property editor factory to the list of factories.
+        /// </summary>
+        /// <typeparam name="T">The type of the property editor factory to be added.</typeparam>
+        public static void AddFactory<T>() where T : IPropertyEditorFactory, new()
+        {
+            factories.Add(new T());
+        }
+
+        /// <summary>
+        /// Removes a property editor factory from the list of factories.
+        /// </summary>
+        /// <param name="factory">The property editor factory to be removed.</param>
         public static void RemoveFactory(IPropertyEditorFactory factory)
         {
             factories.Remove(factory);
         }
 
+        /// <summary>
+        /// Registers a custom object editor for a specific type.
+        /// </summary>
+        /// <param name="target">The type for which the object editor is registered.</param>
+        /// <param name="editor">The object editor to be registered.</param>
         public static void RegisterEditor(Type target, IObjectEditor editor)
         {
             editors.Add(target, editor);
         }
 
+        /// <summary>
+        /// Registers a custom object editor for a specific generic type.
+        /// </summary>
+        /// <typeparam name="T">The generic type for which the object editor is registered.</typeparam>
+        /// <param name="editor">The object editor to be registered.</param>
         public static void RegisterEditor<T>(IObjectEditor editor)
         {
             RegisterEditor(typeof(T), editor);
         }
 
+        /// <summary>
+        /// Registers a custom object editor for a specific generic type.
+        /// </summary>
+        /// <typeparam name="T">The generic type for which the object editor is registered.</typeparam>
+        /// <typeparam name="TEditor">The type of the object editor to be registered.</typeparam>
+        public static void RegisterEditor<T, TEditor>() where TEditor : IObjectEditor, new()
+        {
+            RegisterEditor(typeof(T), new TEditor());
+        }
+
+        /// <summary>
+        /// Creates an object editor for a specified type.
+        /// </summary>
+        /// <param name="type">The type for which an object editor is created.</param>
+        /// <returns>An instance of the object editor for the specified type.</returns>
         public static IObjectEditor CreateEditor(Type type)
         {
             if (!editors.TryGetValue(type, out IObjectEditor? editor))
@@ -52,6 +90,11 @@
             return editor;
         }
 
+        /// <summary>
+        /// Creates an object editor for a specified generic type.
+        /// </summary>
+        /// <typeparam name="T">The generic type for which an object editor is created.</typeparam>
+        /// <returns>An instance of the object editor for the specified generic type.</returns>
         public static IObjectEditor CreateEditor<T>()
         {
             return CreateEditor(typeof(T));

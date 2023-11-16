@@ -9,7 +9,10 @@
     using System.Collections.Generic;
     using System.Reflection;
 
-    public class ObjectEditor : IObjectEditor
+    /// <summary>
+    /// Implementation of the <see cref="IObjectEditor"/> interface for managing object editing in a graphical context.
+    /// </summary>
+    public sealed class ObjectEditor : IObjectEditor
     {
         private readonly List<(PropertyInfo, IPropertyEditor)> editors = new();
         private readonly List<ObjectEditorButton> buttons = new();
@@ -20,6 +23,11 @@
         private readonly Type type;
         private object? instance;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectEditor"/> class.
+        /// </summary>
+        /// <param name="type">The type of the object being edited.</param>
+        /// <param name="factories">A list of property editor factories used to create property editors.</param>
         public ObjectEditor(Type type, List<IPropertyEditorFactory> factories)
         {
             this.type = type;
@@ -135,16 +143,35 @@
             return editor;
         }
 
+        /// <summary>
+        /// Gets the name associated with the object editor.
+        /// </summary>
         public string Name => guiName.Name;
 
+        /// <summary>
+        /// Gets the type of the object being edited.
+        /// </summary>
         public Type Type => type;
 
+        /// <summary>
+        /// Gets or sets the instance of the object being edited.
+        /// </summary>
         public object? Instance { get => instance; set => instance = value; }
 
+        /// <summary>
+        /// Gets a value indicating whether the object editor is empty.
+        /// </summary>
         public bool IsEmpty => editors.Count == 0 && buttons.Count == 0 && categories.Count == 0;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to skip the table setup when drawing the object editor.
+        /// </summary>
         public bool NoTable { get; set; }
 
+        /// <summary>
+        /// Draws the object editor within the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used for drawing.</param>
         public void Draw(IGraphicsContext context)
         {
             if (instance == null)
@@ -184,7 +211,9 @@
             for (int i = 0; i < categories.Count; i++)
             {
                 var category = categories[i];
+#nullable disable // analyser being stupid again....
                 category.Draw(context, instance, ref instance);
+#nullable restore
             }
 
             if (!NoTable)
@@ -193,18 +222,29 @@
             }
         }
 
+        /// <summary>
+        /// Action to perform when applying changes during a history action.
+        /// </summary>
+        /// <param name="context">The context containing information about the history action.</param>
         private static void DoAction(object context)
         {
             var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
             ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.NewValue);
         }
 
+        /// <summary>
+        /// Action to perform when undoing changes during a history action.
+        /// </summary>
+        /// <param name="context">The context containing information about the history action.</param>
         private static void UndoAction(object context)
         {
             var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
             ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
         }
 
+        /// <summary>
+        /// Disposes of the resources used by the object editor.
+        /// </summary>
         public void Dispose()
         {
         }

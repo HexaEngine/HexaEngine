@@ -2,21 +2,19 @@
 
 namespace HexaEngine.Rendering.Renderers
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using Hexa.NET.ImGui;
     using System;
     using System.Numerics;
-    using HexaEngine.Core.Graphics.Textures;
 
     public class SceneRenderer : ISceneRenderer
     {
@@ -112,7 +110,6 @@ namespace HexaEngine.Rendering.Renderers
 
             initialized = true;
             Current = this;
-            window.Dispatcher.Invoke(() => WindowManager.Register(new RendererWidget(this)));
         }
 
         private void InitializeSettings()

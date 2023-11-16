@@ -48,12 +48,12 @@
 		<PackageReference Include="Hexa.NET.ImPlot" Version="1.0.0" />
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
-		<PackageReference Include="Silk.NET.GLFW" Version="2.18.0" />
-		<PackageReference Include="Silk.NET.SDL" Version="2.18.0" />
+		<PackageReference Include="Silk.NET.GLFW" Version="2.19.0" />
+		<PackageReference Include="Silk.NET.SDL" Version="2.19.0" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.6" />
-		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
+		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
 		<PackageReference Include="YamlDotNet" Version="13.7.1" />
 	</ItemGroup>
 	<ItemGroup>
