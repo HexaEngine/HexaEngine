@@ -9,7 +9,7 @@ namespace HexaEngine.Editor.MeshEditor.Dialogs
     using Silk.NET.Assimp;
     using System.Numerics;
 
-    public class ModelImportDialog : Modal, IDialog
+    public class ModelImportDialog : Modal
     {
         private static readonly TexFileFormat[] fileFormats = Enum.GetValues<TexFileFormat>();
         private static readonly string[] fileFormatNames = Enum.GetNames<TexFileFormat>();
@@ -27,8 +27,6 @@ namespace HexaEngine.Editor.MeshEditor.Dialogs
         }
 
         public override string Name => "Import Model";
-
-        public bool Shown { get; }
 
         protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.None;
 

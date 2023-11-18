@@ -2,29 +2,28 @@
 {
     using HexaEngine.Components;
     using HexaEngine.Components.Renderer;
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Editor.MaterialEditor;
-    using HexaEngine.Editor.MeshEditor;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.Properties.Editors;
     using HexaEngine.Editor.Properties.Factories;
+    using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.Scenes;
     using System.Diagnostics;
     using System.Threading.Tasks;
 
     public static class Designer
     {
         private static Task? task;
-        private static OpenProjectWindow projectWindow = new();
 
         public static void Init(IGraphicsDevice device)
         {
             MainMenuBar.Init(device);
-            projectWindow.Show();
+            IconManager.Init(device);
+            WindowManager.Init(device);
+            PopupManager.Show<OpenProjectWindow>();
 
             ObjectEditorFactory.AddFactory(new BoolPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());
@@ -40,54 +39,27 @@
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());
         }
 
-        public static void Draw()
+        public static void Dispose()
         {
-            if (!Application.InEditorMode)
-            {
-                return;
-            }
-            projectWindow.Draw();
+            WindowManager.Dispose();
+            IconManager.Dispose();
+            PopupManager.Dispose();
+        }
+
+        public static void Draw(IGraphicsContext context)
+        {
             MainMenuBar.Draw();
+            WindowManager.Draw(context);
+            ImGuiConsole.Draw();
+            MessageBoxes.Draw();
+            PopupManager.Draw();
         }
 
         public static void OpenFile(string? path)
         {
             if ((task == null || task.IsCompleted) && path != null)
             {
-                var extension = Path.GetExtension(path);
-
-                if (extension == ".hexlvl")
-                {
-                    task = SceneManager.AsyncLoad(path).ContinueWith(Logger.HandleError);
-                }
-
-                if ((extension == ".dds" ||
-                     extension == ".png" ||
-                     extension == ".jpg" ||
-                     extension == ".ico" ||
-                     extension == ".bmp" ||
-                     extension == ".tga" ||
-                     extension == ".hdr"
-                     )
-                    && WindowManager.TryGetWindow<ImagePainterWindow>(out var imagePainterWindow))
-                {
-                    imagePainterWindow.Open(path);
-                    imagePainterWindow.Focus();
-                }
-
-                if (extension == ".model"
-                    && WindowManager.TryGetWindow<MeshEditorWindow>(out var meshEditorWindow))
-                {
-                    meshEditorWindow.Open(path);
-                    meshEditorWindow.Focus();
-                }
-
-                if (extension == ".matlib"
-                   && WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditorWindow))
-                {
-                    materialEditorWindow.Open(path);
-                    materialEditorWindow.Focus();
-                }
+                task = ToolManager.Open(path);
             }
         }
 

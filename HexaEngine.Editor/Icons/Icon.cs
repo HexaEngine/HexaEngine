@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Icons
 {
     using HexaEngine.Core.Graphics;
     using Hexa.NET.ImGui;

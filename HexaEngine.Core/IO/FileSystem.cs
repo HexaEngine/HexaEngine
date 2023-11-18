@@ -200,6 +200,7 @@
             FileSystemWatcher watcher = new(path);
             watcher.EnableRaisingEvents = true;
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
+            watcher.IncludeSubdirectories = true;
             watcher.Changed += FileSystemWatcherChanged;
             watchers.Add(watcher);
         }

@@ -1,35 +1,12 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Icons
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor;
     using System.Diagnostics.CodeAnalysis;
     using System.Xml.Serialization;
-
-    public class IconPriorityComparer : IComparer<Icon>
-    {
-        public static readonly IconPriorityComparer Default = new();
-
-        public int Compare(Icon? x, Icon? y)
-        {
-            if (x == null || y == null)
-            {
-                return 0;
-            }
-
-            if (x.Priority < y.Priority)
-            {
-                return 1;
-            }
-            else if (x.Priority > y.Priority)
-            {
-                return -1;
-            }
-
-            return 0;
-        }
-    }
 
     /// <summary>
     /// A class for managing and interacting with icons.
@@ -172,7 +149,7 @@
         /// <summary>
         /// Releases resources held by the IconManager, including default and custom icons.
         /// </summary>
-        internal static void Release()
+        internal static void Dispose()
         {
             Default.Dispose();
             for (int i = 0; i < icons.Count; i++)
@@ -180,31 +157,5 @@
                 icons[i].Dispose();
             }
         }
-    }
-
-    [XmlRoot(ElementName = "Icon")]
-    public class IconDescription
-    {
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-
-        [XmlAttribute(AttributeName = "theme")]
-        public string Theme { get; set; }
-
-        [XmlAttribute(AttributeName = "path")]
-        public string Path { get; set; }
-
-        [XmlAttribute(AttributeName = "target")]
-        public string Target { get; set; }
-
-        [XmlAttribute(AttributeName = "priority")]
-        public int Priority { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Icons")]
-    public class IconsDescription
-    {
-        [XmlElement(ElementName = "Icon")]
-        public List<IconDescription> Icons { get; set; }
     }
 }

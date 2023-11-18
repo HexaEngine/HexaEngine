@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Core.Unsafes;
     using System.Numerics;
 
     public class DebugWindow : EditorWindow

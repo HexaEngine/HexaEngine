@@ -1,8 +1,9 @@
-﻿using Hexa.NET.ImGui;
-using System.Numerics;
-
-namespace HexaEngine.Editor.Dialogs
+﻿namespace HexaEngine.Editor.Dialogs
 {
+    using Hexa.NET.ImGui;
+    using HexaEngine.Core;
+    using System.Numerics;
+
     public class SaveFileDialog
     {
         private bool shown;
@@ -20,18 +21,11 @@ namespace HexaEngine.Editor.Dialogs
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
 
-        private struct Item
+        private struct Item(string name, string filename, string path)
         {
-            public string Path;
-            public string Filename;
-            public string Name;
-
-            public Item(string name, string filename, string path)
-            {
-                Name = name;
-                Filename = filename;
-                Path = path;
-            }
+            public string Path = path;
+            public string Filename = filename;
+            public string Name = name;
         }
 
         public SaveFileDialog()
@@ -358,14 +352,15 @@ namespace HexaEngine.Editor.Dialogs
 
         private static string[] GetSpecialDirs()
         {
-            return new string[]
-            {
+            return
+            [
+                Application.GetFolder(Application.SpecialFolder.Assets),
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
-            };
+            ];
         }
 
         public void Refresh()

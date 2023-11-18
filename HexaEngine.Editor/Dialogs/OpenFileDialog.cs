@@ -1,18 +1,19 @@
-﻿using Hexa.NET.ImGui;
-using System.Numerics;
-
-namespace HexaEngine.Editor.Dialogs
+﻿namespace HexaEngine.Editor.Dialogs
 {
+    using Hexa.NET.ImGui;
+    using HexaEngine.Core;
+    using System.Numerics;
+
     public class OpenFileDialog
     {
         private bool shown;
         private DirectoryInfo currentDir;
-        private readonly List<Item> files = new();
-        private readonly List<Item> dirs = new();
+        private readonly List<Item> files = [];
+        private readonly List<Item> dirs = [];
         public string RootFolder;
         private string currentFolder;
         private string selectedFile = string.Empty;
-        public List<string> AllowedExtensions = new();
+        public List<string> AllowedExtensions = [];
         public bool OnlyAllowFolders;
         public bool OnlyAllowFilteredExtensions;
         public OpenFileResult Result;
@@ -20,24 +21,14 @@ namespace HexaEngine.Editor.Dialogs
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
 
-        private struct Item
+        private struct Item(string name, string filename, string path)
         {
-            public string Path;
-            public string Filename;
-            public string Name;
-
-            public Item(string name, string filename, string path)
-            {
-                Name = name;
-                Filename = filename;
-                Path = path;
-            }
+            public string Path = path;
+            public string Filename = filename;
+            public string Name = name;
         }
 
-#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
         public OpenFileDialog()
-#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (File.Exists(startingPath))
@@ -59,10 +50,7 @@ namespace HexaEngine.Editor.Dialogs
             OnlyAllowFolders = false;
         }
 
-#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
         public OpenFileDialog(string startingPath)
-#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             if (File.Exists(startingPath))
             {
@@ -83,10 +71,7 @@ namespace HexaEngine.Editor.Dialogs
             OnlyAllowFolders = false;
         }
 
-#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
         public OpenFileDialog(string? startingPath = null, string? searchFilter = null)
-#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             if (File.Exists(startingPath))
             {
@@ -105,7 +90,7 @@ namespace HexaEngine.Editor.Dialogs
                 }
                 else
                 {
-                    AllowedExtensions = new List<string>();
+                    AllowedExtensions = [];
                 }
 
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
@@ -358,14 +343,15 @@ namespace HexaEngine.Editor.Dialogs
 
         private static string[] GetSpecialDirs()
         {
-            return new string[]
-            {
+            return
+            [
+                Application.GetFolder(Application.SpecialFolder.Assets),
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
-            };
+            ];
         }
 
         public void Refresh()

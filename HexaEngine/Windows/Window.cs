@@ -4,10 +4,8 @@
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Resources;
@@ -30,7 +28,6 @@
         protected IGraphicsDevice graphicsDevice;
         protected IGraphicsContext graphicsContext;
         protected ISwapChain swapChain;
-        protected bool imGuiWidgets;
         protected SceneRenderer sceneRenderer;
         protected Task initTask;
         protected bool rendererInitialized;
@@ -39,8 +36,6 @@
         protected Thread updateThread;
 
         protected readonly Barrier syncBarrier = new(2);
-
-        protected ImGuiManager? imGuiRenderer;
 
         protected Viewport windowViewport;
         protected Viewport renderViewport;
@@ -140,14 +135,6 @@
                 PipelineManager.Initialize(graphicsDevice);
             }
 
-            imGuiWidgets = (Flags & RendererFlags.ImGuiWidgets) != 0;
-
-            // Initialize ImGui renderer if ImGui flag is set
-            if ((Flags & RendererFlags.ImGui) != 0)
-            {
-                imGuiRenderer = new(this, graphicsDevice, graphicsContext);
-            }
-
             // Subscribe to the SceneChanged event
             SceneManager.SceneChanged += SceneChanged;
 
@@ -188,6 +175,8 @@
             updateThread = new(UpdateScene);
             updateThread.Name = "Scene Update Worker";
             updateThread.Start();
+
+            Show();
         }
 
         /// <summary>
@@ -257,27 +246,11 @@
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
 
-            // Start ImGui frame rendering.
-            imGuiRenderer?.NewFrame();
-
             // Invoke virtual method for pre-render operations.
             OnRenderBegin(context);
 
             // Determine if rendering should occur based on initialization status.
             var drawing = rendererInitialized;
-
-            // Check if ImGui widgets should be rendered and the application is in editor mode.
-            if (imGuiWidgets && Application.InEditorMode)
-            {
-                // Update and draw the frame viewer.
-                windowViewport = Viewport;
-
-                // Set the camera for DebugDraw based on the current camera's view projection matrix.
-
-#nullable disable // cant be null because CameraManager.Current would be the editor camera because of Application.InEditorMode.
-                DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
-#nullable restore
-            }
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
@@ -294,28 +267,9 @@
                 sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
-            // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
-            ImGuiConsole.Draw();
-            MessageBoxes.Draw();
-
             // Invoke virtual method for post-render operations.
             OnRender(context);
 
-            // Set the render target to swap chain backbuffer.
-            context.SetRenderTarget(swapChain.BackbufferRTV, null);
-
-#if PROFILE
-            // Begin profiling ImGui if profiling is enabled.
-            Device.Profiler.Begin(Context, "ImGui");
-            sceneRenderer.Profiler.Begin("ImGui");
-#endif
-            // End the ImGui frame rendering.
-            imGuiRenderer?.EndFrame();
-#if PROFILE
-            // End profiling ImGui if profiling is enabled.
-            sceneRenderer.Profiler.End("ImGui");
-            Device.Profiler.End(Context, "ImGui");
-#endif
             // Invoke virtual method for post-render operations.
             OnRenderEnd(context);
 
@@ -344,21 +298,15 @@
             // Set the running flag to false.
             running = false;
 
-            // Invoke virtual method for disposing renderer-specific resources.
-            OnRendererDispose();
-
             // Remove the participant from the synchronization barrier and join the update thread.
             syncBarrier.RemoveParticipant();
             updateThread.Join();
 
+            // Invoke virtual method for disposing renderer-specific resources.
+            OnRendererDispose();
+
             // Dispose the profiler associated with the graphics device.
             Device.Profiler.Dispose();
-
-            // Dispose of the ImGui renderer if it exists.
-            if (imGuiRenderer is not null)
-            {
-                imGuiRenderer?.Dispose();
-            }
 
             // Unload the scene manager and wait for initialization task completion if not already completed.
             SceneManager.Unload();

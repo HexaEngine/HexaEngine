@@ -12,28 +12,18 @@
         None = 0,
 
         /// <summary>
-        /// Flag indicating the use of ImGui rendering.
+        /// High Dynamic Range (HDR) with 10 bits per channel.
         /// </summary>
-        ImGui = 1,
+        HDR10 = 1,
 
         /// <summary>
-        /// Flag indicating the use of rendering for an editor.
+        /// High Dynamic Range (HDR) with 16 bits per channel.
         /// </summary>
-        ImGuiWidgets = 2,
-
-        /// <summary>
-        /// Flag indicating the use of debug drawing in rendering.
-        /// </summary>
-        DebugDraw = 4,
-
-        /// <summary>
-        /// Combination of ImGui, Editor, and DebugDraw flags.
-        /// </summary>
-        All = ImGui | ImGuiWidgets | DebugDraw,
+        HDR16 = 2,
 
         /// <summary>
         /// Flag indicating the forceful use of forward rendering.
         /// </summary>
-        ForceForward = 8,
+        ForceForward = 4,
     }
 }

@@ -456,12 +456,15 @@
 
             iblDFG = new(device, Format.R16G16B16A16Float, 128, 128, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             var context = device.Context;
-            context.SetRenderTarget(iblDFG.RTV, null);
-            context.SetViewport(new(128, 128));
-            context.SetGraphicsPipeline(dfg);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
-            context.SetRenderTarget(null, null);
+            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+            {
+                context.SetRenderTarget(iblDFG.RTV, null);
+                context.SetViewport(new(128, 128));
+                context.SetGraphicsPipeline(dfg);
+                context.DrawInstanced(4, 1, 0, 0);
+                context.SetGraphicsPipeline(null);
+                context.SetRenderTarget(null, null);
+            });
         }
 
         private void LinkRemoved(object? sender, Link e)

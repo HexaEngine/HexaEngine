@@ -340,7 +340,6 @@
 
         public static void Init(IGraphicsDevice device)
         {
-            IconManager.Init(device);
             WindowManager.device = device;
             for (int i = 0; i < windows.Count; i++)
             {
@@ -384,7 +383,6 @@
             }
 
             windows.Clear();
-            IconManager.Release();
         }
     }
 }

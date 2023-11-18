@@ -184,9 +184,9 @@
         /// <param name="mainWindow">The main window of the application.</param>
         public static void Run(IRenderWindow mainWindow)
         {
+            RegisterWindow(mainWindow);
             Application.mainWindow = mainWindow;
             Process.GetCurrentProcess().PriorityBoostEnabled = true;
-            mainWindow.Show();
             Init();
             mainWindow.Closing += MainWindowClosing;
 
@@ -231,6 +231,10 @@
         /// <param name="window">The window to register.</param>
         internal static void RegisterWindow(IRenderWindow window)
         {
+            if (windows.Contains(window))
+            {
+                return;
+            }
             windows.Add(window);
             windowIdToWindow.Add(window.WindowID, window);
             if (initialized)

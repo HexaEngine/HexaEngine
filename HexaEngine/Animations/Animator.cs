@@ -10,7 +10,7 @@
     [EditorComponent(typeof(Animator), "Animator")]
     public class Animator : IComponent, IAnimator
     {
-        private readonly Dictionary<string, NodeId> _cache = new();
+        private readonly Dictionary<string, NodeId> _cache = [];
         private Animation? currentAnimation;
         private float currentTime;
         private bool playing;
@@ -19,13 +19,6 @@
 
         [JsonIgnore]
         public GameObject GameObject { get; set; }
-
-        private struct NodeId
-        {
-            public uint Id;
-            public string Name;
-            public bool IsBone;
-        }
 
         public void Awake()
         {

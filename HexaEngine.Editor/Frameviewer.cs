@@ -3,9 +3,6 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Core;
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -17,7 +14,6 @@
 
     public partial class Frameviewer
     {
-        private readonly IGraphicsDevice device;
         private bool isShown;
         private bool isVisible;
 
@@ -31,9 +27,8 @@
 
         public static bool Fullframe;
 
-        public Frameviewer(IGraphicsDevice device)
+        public Frameviewer()
         {
-            this.device = device;
         }
 
         public void Update()
@@ -56,6 +51,8 @@
             var scene = SceneManager.Current;
             if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
+                // TODO: Fix object picking.
+                /*
                 GameObject? gameObject = ObjectPickerManager.SelectObject(device.Context, Mouse.Position, RenderViewport);
                 if (gameObject != null)
                 {
@@ -68,6 +65,7 @@
                         GameObject.Selected.AddOverwriteSelection(gameObject);
                     }
                 }
+                */
             }
 
             if (scene != null && ImGui.BeginMenuBar())

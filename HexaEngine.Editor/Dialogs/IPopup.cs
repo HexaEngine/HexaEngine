@@ -1,12 +1,17 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
-    public interface IDialog
+    public interface IPopup
     {
+        string Name { get; }
+
         bool Shown { get; }
 
-        void Draw();
         void Close();
+
+        void Draw();
+
         void Reset();
+
         void Show();
     }
 }

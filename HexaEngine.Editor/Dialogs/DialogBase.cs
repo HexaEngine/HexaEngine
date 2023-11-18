@@ -3,7 +3,7 @@
     using Hexa.NET.ImGui;
     using System.Runtime.CompilerServices;
 
-    public abstract class DialogBase
+    public abstract class DialogBase : IPopup
     {
         private bool windowEnded;
         private bool shown;
@@ -56,6 +56,11 @@
         public virtual void Show()
         {
             shown = true;
+        }
+
+        public virtual void Close()
+        {
+            shown = false;
         }
     }
 }

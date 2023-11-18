@@ -3,10 +3,10 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
+    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
@@ -18,6 +18,9 @@
     public class EditorWindow : Window, IRenderWindow
     {
         protected Frameviewer frameviewer;
+        protected ImGuiManager imGuiRenderer;
+        protected Task initEditorTask;
+        protected bool editorInitialized;
 #nullable disable
 
         /// <summary>
@@ -25,7 +28,7 @@
         /// </summary>
         public EditorWindow()
         {
-            Flags = RendererFlags.All;
+            Flags = RendererFlags.None;
             Title = "Editor";
         }
 
@@ -61,14 +64,26 @@
 
         protected override void OnRendererInitialize(IGraphicsDevice device)
         {
-            Designer.Init(graphicsDevice);
-            frameviewer = new(graphicsDevice);
-
-            // Initialize WindowManager if ImGuiWidgets flag is set
-            if ((Flags & RendererFlags.ImGuiWidgets) != 0)
+            imGuiRenderer = new(this, graphicsDevice, graphicsContext);
+            frameviewer = new();
+            initEditorTask = Task.Factory.StartNew(() =>
             {
-                WindowManager.Init(graphicsDevice);
-            }
+                Designer.Init(graphicsDevice);
+            });
+            initEditorTask.ContinueWith(x =>
+            {
+                if (x.IsCompletedSuccessfully)
+                {
+                    Logger.Info("Editor: Initialized");
+                }
+                if (x.IsFaulted)
+                {
+                    Logger.Error("Editor: Failed Initialize");
+                    Logger.Log(x.Exception);
+                }
+
+                editorInitialized = true;
+            });
         }
 
         /// <summary>
@@ -104,7 +119,7 @@
 
             // Clear depth-stencil and render target views.
             context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-            context.ClearRenderTargetView(swapChain.BackbufferRTV, Vector4.Zero);
+            context.ClearRenderTargetView(swapChain.BackbufferRTV, new Vector4(0.10f, 0.10f, 0.10f, 1.00f));
 
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
@@ -118,22 +133,18 @@
             // Determine if rendering should occur based on initialization status.
             var drawing = rendererInitialized;
 
-            // Check if ImGui widgets should be rendered and the application is in editor mode.
-            if (imGuiWidgets && Application.InEditorMode)
-            {
-                // Update and draw the frame viewer.
-                frameviewer.SourceViewport = Viewport;
-                frameviewer.Update();
-                frameviewer.Draw();
-                drawing &= frameviewer.IsVisible;
-                windowViewport = Application.InEditorMode ? frameviewer.RenderViewport : Viewport;
+            // Update and draw the frame viewer.
+            frameviewer.SourceViewport = Viewport;
+            frameviewer.Update();
+            frameviewer.Draw();
+            drawing &= frameviewer.IsVisible;
+            windowViewport = Application.InEditorMode ? frameviewer.RenderViewport : Viewport;
 
-                // Set the camera for DebugDraw based on the current camera's view projection matrix.
+            // Set the camera for DebugDraw based on the current camera's view projection matrix.
 
 #nullable disable // cant be null because CameraManager.Current would be the editor camera because of Application.InEditorMode.
-                DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
+            DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
 #nullable restore
-            }
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
@@ -151,10 +162,10 @@
             }
 
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
-            Designer.Draw();
-            WindowManager.Draw(context);
-            ImGuiConsole.Draw();
-            MessageBoxes.Draw();
+            if (editorInitialized)
+            {
+                Designer.Draw(context);
+            }
 
             // Invoke virtual method for post-render operations.
             OnRender(context);
@@ -194,17 +205,14 @@
 #endif
         }
 
-        /// <summary>
-        /// Uninitializes the window, releasing resources and stopping rendering.
-        /// </summary>
-        public override void Uninitialize()
+        protected override void OnRendererDispose()
         {
-            base.Uninitialize();
-            // Dispose of resources related to ImGui widgets if enabled.
-            if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
+            if (!initEditorTask.IsCompleted)
             {
-                WindowManager.Dispose();
+                initEditorTask.Wait();
             }
+            imGuiRenderer.Dispose();
+            Designer.Dispose();
         }
 
         /// <summary>

@@ -1,18 +1,20 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using Hexa.NET.ImGui;
-    using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public abstract class Modal
+    public abstract class Modal : IPopup
     {
         private bool windowEnded;
         private bool signalShow;
         private bool signalClose;
+        private bool shown;
 
         public abstract string Name { get; }
 
         protected abstract ImGuiWindowFlags Flags { get; }
+
+        public bool Shown => shown;
 
         public virtual void Draw()
         {
@@ -21,8 +23,8 @@
                 ImGui.OpenPopup(Name);
                 signalShow = false;
             }
-            bool so = true;
-            if (!ImGui.BeginPopupModal(Name, ref so, Flags))
+            shown = true;
+            if (!ImGui.BeginPopupModal(Name, ref shown, Flags))
             {
                 return;
             }

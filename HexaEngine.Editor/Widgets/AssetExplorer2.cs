@@ -11,6 +11,7 @@
     using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Numerics;
+    using HexaEngine.Editor.Icons;
 
     public enum PasteMode
     {
@@ -79,6 +80,7 @@
         public AssetExplorer2()
         {
             IsShown = true;
+            FileSystem.Changed += FileSystemChanged;
             Refresh();
             currentDir = null;
             parentDir = currentDir?.Parent;
@@ -86,6 +88,11 @@
             DisplayMode = config.GetOrAddValue("Display Mode", AssetExplorerDisplayMode.Pretty);
             IconSize = config.GetOrAddValue("Icon Size", AssetExplorerIconSize.Medium);
             ShowExtensions = config.GetOrAddValue("Show Extensions", false);
+        }
+
+        private void FileSystemChanged(FileSystemEventArgs obj)
+        {
+            Refresh();
         }
 
         private void ProjectLoaded(HexaProject? obj)
@@ -148,7 +155,6 @@
 
         public void Refresh()
         {
-            FileSystem.Refresh();
             files.Clear();
             dirs.Clear();
             if (CurrentFolder == null)
