@@ -322,6 +322,32 @@
             OnComponentAdded?.Invoke(this, component);
         }
 
+        public virtual void AddComponent<T>() where T : IComponent, new()
+        {
+            T component = new();
+            components.Add(component);
+            if (initialized)
+            {
+                component.GameObject = this;
+                component.Awake();
+            }
+            OnComponentAdded?.Invoke(this, component);
+        }
+
+        public virtual void AddComponentSingleton<T>() where T : IComponent, new()
+        {
+            if (GetComponent<T>() != null)
+                return;
+            T component = new();
+            components.Add(component);
+            if (initialized)
+            {
+                component.GameObject = this;
+                component.Awake();
+            }
+            OnComponentAdded?.Invoke(this, component);
+        }
+
         public virtual void RemoveComponent(IComponent component)
         {
             if (initialized)

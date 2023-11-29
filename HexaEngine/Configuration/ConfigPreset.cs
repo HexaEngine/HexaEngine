@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Configuration
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
 

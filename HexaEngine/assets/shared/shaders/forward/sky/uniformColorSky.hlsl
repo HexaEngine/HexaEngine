@@ -2,8 +2,9 @@
 
 struct VertexOut
 {
-    float4 PosH : SV_POSITION;
-    float3 PosL : POSITION;
+    float4 position : SV_POSITION;
+    float3 pos : POSITION;
+    float3 tex : TEXCOORD;
 };
 
 float4 main(VertexOut pin) : SV_Target

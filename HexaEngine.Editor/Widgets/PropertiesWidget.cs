@@ -21,6 +21,7 @@ namespace HexaEngine.Editor.Widgets
     {
         private readonly List<EditorComponentAttribute> componentCache = new();
         private readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
+        private bool showHidden = false;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public PropertiesWidget()
@@ -32,7 +33,7 @@ namespace HexaEngine.Editor.Widgets
                 .AsParallel()
                 .Where(x => x.IsAssignableTo(typeof(IComponent)))
                 .Select(x => x.GetCustomAttribute<EditorComponentAttribute>())
-                .Where(x => x != null)));
+                .Where(x => x != null && !x.IsHidden && !x.IsInternal)));
             Flags = ImGuiWindowFlags.MenuBar;
         }
 
@@ -74,6 +75,15 @@ namespace HexaEngine.Editor.Widgets
             ctx.Target.Scale = ctx.OldValue;
         }
 
+        private void DrawContextMenu()
+        {
+            if (ImGui.BeginPopupContextWindow())
+            {
+                ImGui.Checkbox("Show Hidden", ref showHidden);
+                ImGui.EndPopup();
+            }
+        }
+
         public override void DrawContent(IGraphicsContext context)
         {
             if (GameObject.Selected.Count == 0)
@@ -85,6 +95,8 @@ namespace HexaEngine.Editor.Widgets
             GameObject element = GameObject.Selected.First();
             Scene scene = element.GetScene();
             Camera camera = CameraManager.Current;
+
+            DrawContextMenu();
 
             bool isEnabled = element.IsEnabled;
             if (ImGui.Checkbox("##Enabled", ref isEnabled))
@@ -224,10 +236,25 @@ namespace HexaEngine.Editor.Widgets
             {
                 var component = element.Components[i];
                 var editor = ObjectEditorFactory.CreateEditor(component.GetType());
+
+                if (editor.IsHidden && !showHidden)
+                {
+                    continue;
+                }
+
+                ImGui.BeginDisabled(editor.IsHidden);
+
                 editor.Instance = component;
+
+                ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.None;
+                if (editor.IsHidden)
+                {
+                    flags |= ImGuiTreeNodeFlags.DefaultOpen;
+                }
+
                 ImGui.BeginGroup();
 
-                if (ImGui.CollapsingHeader($"{editor.Name}##{i}"))
+                if (ImGui.CollapsingHeader($"{editor.Name}##{i}", flags))
                 {
                     if (ImGui.BeginPopupContextItem(editor.Name))
                     {
@@ -242,6 +269,8 @@ namespace HexaEngine.Editor.Widgets
                 }
 
                 ImGui.EndGroup();
+
+                ImGui.EndDisabled();
             }
 
             EndWindow();

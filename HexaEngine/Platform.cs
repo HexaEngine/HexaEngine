@@ -75,8 +75,6 @@
                 AssemblyManager.Load(AppConfig.ScriptAssembly);
                 window1.StartupScene = StartupScene;
             }
-
-            FileSystem.Initialize();
         }
 
         /// <summary>

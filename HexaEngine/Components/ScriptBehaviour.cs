@@ -12,6 +12,7 @@
     [EditorComponent<ScriptBehaviour>("Script Behaviour")]
     public class ScriptBehaviour : IScriptComponent
     {
+        private GameObject gameObject;
         private ScriptFlags flags;
         private IScriptBehaviour? instance;
         private PropertyInfo[] properties;
@@ -100,9 +101,10 @@
         [JsonIgnore]
         public GameObject GameObject
         {
-            get => instance?.GameObject;
+            get => gameObject;
             set
             {
+                gameObject = value;
                 if (instance != null)
                 {
                     instance.GameObject = value;
@@ -169,6 +171,7 @@
         {
             if (Application.InDesignMode || instance == null)
             {
+                instance = null;
                 return;
             }
 

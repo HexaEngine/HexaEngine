@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
-    using HexaEngine.Editor;
+    using HexaEngine.Editor.Themes;
     using System.Diagnostics.CodeAnalysis;
     using System.Xml.Serialization;
 

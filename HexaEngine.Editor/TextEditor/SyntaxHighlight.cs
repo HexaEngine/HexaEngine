@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Themes;
     using System.Text.RegularExpressions;
 
     public class SyntaxHighlightCollection

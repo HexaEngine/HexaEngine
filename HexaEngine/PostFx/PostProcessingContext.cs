@@ -36,7 +36,8 @@
             {
                 PixelShader = "effects/copy/ps.hlsl",
                 VertexShader = "quad.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
         }
 
         public Format Format => format;

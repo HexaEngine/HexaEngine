@@ -4,7 +4,7 @@ namespace HexaEngine.Scenes
 {
     public interface IAnimator : IComponent
     {
-        void Play(Animation animation);
+        void Play(AnimationClip animation);
 
         void Stop();
 

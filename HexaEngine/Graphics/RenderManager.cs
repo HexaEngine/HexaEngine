@@ -1,9 +1,10 @@
-﻿namespace HexaEngine.Rendering
+﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Collections;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
@@ -11,6 +12,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
     public class RenderManager : ISystem
     {
@@ -339,6 +341,38 @@
             overlayQueue.Add(renderer);
             overlayQueue.Sort(comparer);
             return;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ExecuteGroup(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path)
+        {
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                profiler?.Begin($"{groupDebugName}.{renderer.DebugName}");
+                renderer.Draw(context, path);
+                profiler?.End($"{groupDebugName}.{renderer.DebugName}");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ExecuteGroup(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path, void** rtvs, uint rtvCount, IDepthStencilView dsv)
+        {
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
+                {
+                    context.SetRenderTargets(rtvCount, rtvs, null);
+                }
+                else
+                {
+                    context.SetRenderTargets(rtvCount, rtvs, dsv);
+                }
+                profiler?.Begin($"{groupDebugName}.{renderer.DebugName}");
+                renderer.Draw(context, path);
+                profiler?.End($"{groupDebugName}.{renderer.DebugName}");
+            }
         }
     }
 }

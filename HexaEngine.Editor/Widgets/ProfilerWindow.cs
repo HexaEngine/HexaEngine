@@ -6,12 +6,12 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using Hexa.NET.ImGui;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Systems;
     using Hexa.NET.ImPlot;
     using System.Diagnostics;
     using System.Numerics;
+    using HexaEngine.Graphics.Renderers;
 
     [EditorWindowCategory("Debug")]
     public class ProfilerWindow : EditorWindow

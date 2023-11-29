@@ -66,6 +66,8 @@
             lock (_lock)
             {
                 var instance = CreateInstance(resourceManager, name, instanceData);
+                if (instance == null)
+                    return instance;
                 instances.TryAdd(name, instance);
                 return instance;
             }
@@ -103,6 +105,8 @@
                 else
                 {
                     instance = CreateInstance(resourceManager, name, instanceData);
+                    if (instance == null)
+                        return instance;
                     instances.TryAdd(name, instance);
                 }
             }
@@ -127,6 +131,9 @@
         Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(string name, TData instanceData)
         {
             var instance = CreateInstance(resourceManager, name, instanceData);
+            if (instance == null)
+                return Task.FromResult(instance ?? throw new InvalidDataException());
+
             var result = instances.TryAdd(name, instance);
             if (result)
             {
@@ -170,6 +177,8 @@
                 else
                 {
                     instance = CreateInstance(resourceManager, name, instanceData);
+                    if (instance == null)
+                        return instance;
                     var result = instances.TryAdd(name, instance);
                 }
             }

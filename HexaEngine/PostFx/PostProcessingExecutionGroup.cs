@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
 
     public class PostProcessingExecutionGroup(bool isDynamicGroup, bool isLastGroup) : IDisposable
     {

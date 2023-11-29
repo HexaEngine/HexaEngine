@@ -229,6 +229,15 @@
         }
 
         /// <summary>
+        /// Gets the range of the plane in the view frustum.
+        /// </summary>
+        /// <remarks>
+        /// The plane range is calculated as the difference between the far and near clipping planes.
+        /// </remarks>
+        /// <value>The range of the plane in the view frustum.</value>
+        public float ClipRange => Far - Near;
+
+        /// <summary>
         /// Gets the frustum of the camera's view.
         /// </summary>
         public BoundingFrustum Frustum => frustum;
@@ -269,7 +278,7 @@
             Matrix4x4.Invert(viewProjection, out viewProjectionInv);
 
             const float zNear = 0.001f;
-            const float zFar = 5;
+            const float zFar = 0.5f;
             float q = zFar / (zFar - zNear);
             Matrix4x4 nProjection = projection;
             nProjection.M33 = q;

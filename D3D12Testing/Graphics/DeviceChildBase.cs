@@ -1,11 +1,11 @@
-﻿namespace HexaEngine.D3D12
+﻿namespace D3D12Testing.Graphics
 {
     using Silk.NET.Direct3D12;
     using System;
 
     public abstract unsafe class DeviceChildBase : DisposableBase
     {
-        protected IntPtr nativePointer;
+        protected nint nativePointer;
 
         public static readonly Guid D3DDebugObjectName = new(0x429b8c22, 0x9188, 0x4b0c, 0x87, 0x42, 0xac, 0xb0, 0xbf, 0x85, 0xc2, 0x00);
 
@@ -50,6 +50,6 @@
             }
         }
 
-        public IntPtr NativePointer => nativePointer;
+        public nint NativePointer => nativePointer;
     }
 }

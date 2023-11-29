@@ -485,6 +485,12 @@
             if (size < target.Length)
                 return;
 
+            if (target.Length == 1 && replacement.Length == 1)
+            {
+                Replace(target[0], replacement[0]);
+                return;
+            }
+
             int cmp = 0;
 
             for (int i = 0; i < size; i++)

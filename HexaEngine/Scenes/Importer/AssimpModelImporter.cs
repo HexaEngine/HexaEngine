@@ -15,7 +15,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
-    using AnimationData = Core.IO.Animations.Animation;
+    using AnimationData = Core.IO.Animations.AnimationClip;
     using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
@@ -677,7 +677,7 @@
                             var bn = msh->MBones[j];
                             nodesN[bn->MName].Flags |= NodeFlags.Bone;
 
-                            Core.Meshes.VertexWeight[] weights = new Core.Meshes.VertexWeight[bn->MNumWeights];
+                            Core.IO.Meshes.VertexWeight[] weights = new Core.IO.Meshes.VertexWeight[bn->MNumWeights];
                             for (int x = 0; x < weights.Length; x++)
                             {
                                 weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);

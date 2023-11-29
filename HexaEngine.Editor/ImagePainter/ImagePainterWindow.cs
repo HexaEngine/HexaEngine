@@ -113,7 +113,8 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
 
             colorCB = new(device, CpuAccessFlags.Write);
 
@@ -130,22 +131,22 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("New"))
+                    if (ImGui.MenuItem("\xE710 New"))
                     {
                         modals.GetOrCreate<CreateNewDialog>(() => new(this, device)).Show();
                     }
-                    if (ImGui.MenuItem("Open"))
+                    if (ImGui.MenuItem("\xE845 Open"))
                     {
                         openDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("Save"))
+                    if (ImGui.MenuItem("\xE74E Save"))
                     {
                         Save();
                     }
-                    if (ImGui.MenuItem("Export"))
+                    if (ImGui.MenuItem("\xEDE1 Export"))
                     {
                         if (source != null)
                         {
@@ -156,7 +157,7 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("Close"))
+                    if (ImGui.MenuItem("\xE8BB Close"))
                     {
                         UnloadImage();
                     }
@@ -165,11 +166,11 @@
                 }
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo"))
+                    if (ImGui.MenuItem("\xE7A7 Undo"))
                     {
                         history?.Undo(device.Context);
                     }
-                    if (ImGui.MenuItem("Redo"))
+                    if (ImGui.MenuItem("\xE7A6 Redo"))
                     {
                         history?.Redo(device.Context);
                     }

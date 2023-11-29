@@ -30,49 +30,55 @@
             {
                 VertexShader = "tools/mesh/basic/vs.hlsl",
                 PixelShader = "tools/mesh/basic/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.DefaultLess,
-                Rasterizer = RasterizerDescription.CullNone,
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements, macros);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.DefaultLess,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements,
+                Macros = macros
+            });
 
             Textured = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "tools/mesh/textured/vs.hlsl",
                 PixelShader = "tools/mesh/textured/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.DefaultLess,
-                Rasterizer = RasterizerDescription.CullNone,
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements, macros);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.DefaultLess,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements,
+                Macros = macros
+            });
 
             Shaded = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "tools/mesh/shaded/vs.hlsl",
                 PixelShader = "tools/mesh/shaded/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.DefaultLess,
-                Rasterizer = RasterizerDescription.CullNone,
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements, macros);
+                State = new()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.DefaultLess,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements,
+                Macros = macros
+            });
 
             for (int i = 0; i < material.Textures.Count; i++)
             {

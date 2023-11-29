@@ -7,11 +7,12 @@
     using HexaEngine.Core.Windows.Events;
     using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Core.Threading;
 
     public class CrashWindow : SdlWindow, IRenderWindow
     {

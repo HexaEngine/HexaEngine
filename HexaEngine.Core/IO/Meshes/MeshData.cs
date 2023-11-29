@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Meshes.Processing;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
@@ -97,12 +97,14 @@
         public BoneData[]? Bones;
 
 #nullable disable
+
         /// <summary>
         /// Private default constructor for internal use.
         /// </summary>
         private MeshData()
         {
         }
+
 #nullable restore
 
         /// <summary>
@@ -472,6 +474,7 @@
             Free(vertices);
             return vertexBuffer;
         }
+
         /// <summary>
         /// Writes the mesh data vertices to the provided vertex buffer and updates it on the specified graphics context.
         /// </summary>
@@ -809,6 +812,56 @@
             }
 
             return id;
+        }
+
+        /// <summary>
+        /// Calculates the intersection between the ray and the triangle mesh, returning the distance to the intersection point.
+        /// </summary>
+        /// <param name="ray">The ray to perform the intersection test with.</param>
+        /// <returns>
+        /// The distance along the ray to the intersection point. Returns <c>null</c> if there is no intersection with the mesh.
+        /// </returns>
+        public float? Intersect(Ray ray)
+        {
+            // Check if the ray intersects the bounding box of the triangle mesh.
+            if (!Box.Intersects(ray).HasValue)
+            {
+                // No intersection with the bounding box, so no intersection with the mesh.
+                return null;
+            }
+
+            // Initialize a vector representing the minimum intersection point.
+            Vector3 minPos = new(float.MaxValue);
+
+            // Iterate through each triangle in the mesh.
+            for (uint i = 0; i < IndicesCount / 3; i++)
+            {
+                // Get the vertices of the current triangle.
+                var pos0 = Positions[Indices[i * 3]];
+                var pos1 = Positions[Indices[i * 3 + 1]];
+                var pos2 = Positions[Indices[i * 3 + 2]];
+
+                // Check if the ray intersects the current triangle.
+                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle))
+                {
+                    // No intersection with this triangle, continue to the next one.
+                    continue;
+                }
+
+                // Check if the intersection point is closer than the current minimum.
+                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z)
+                {
+                    // The intersection point is not closer, continue to the next triangle.
+                    continue;
+                }
+
+                minPos = pointInTriangle;
+
+                // Return the distance from the ray origin to the intersection point.
+                return (float)(ray.Position - minPos).Length();
+            }
+
+            return null;
         }
 
         /// <summary>

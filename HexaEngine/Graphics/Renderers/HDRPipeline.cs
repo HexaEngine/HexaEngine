@@ -1,10 +1,11 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Rendering.Renderers
+using HexaEngine;
+
+namespace HexaEngine.Graphics.Renderers
 {
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Passes;
-    using HexaEngine.Rendering.Graph;
-    using HexaEngine.Rendering.Passes;
 
     public class HDRPipeline : RenderGraph
     {

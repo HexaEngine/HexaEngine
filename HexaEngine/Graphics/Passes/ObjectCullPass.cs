@@ -1,9 +1,9 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graph;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Scenes;
 
     public class ObjectCullPass : ComputePass
@@ -18,7 +18,7 @@
 
         public bool IsEnabled { get => isEnabled; set => isEnabled = value; }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             chain = creator.GetDepthMipChain("HiZBuffer");
         }

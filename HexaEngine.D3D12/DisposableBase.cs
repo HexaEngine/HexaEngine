@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.D3D12
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using System;
 
     public abstract class DisposableBase : IDisposable

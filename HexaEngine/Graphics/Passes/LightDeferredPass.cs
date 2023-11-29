@@ -1,17 +1,18 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Rendering.Passes
+using HexaEngine;
+
+namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System.Numerics;
 
     public class LightDeferredPass : DrawPass
     {
@@ -38,16 +39,16 @@ namespace HexaEngine.Rendering.Passes
         private unsafe void** smps;
         private const uint nSamplers = 4;
 
-        private IGraphicsPipeline deferredIndirect;
+        private ResourceRef<IGraphicsPipeline> deferredIndirect;
         private unsafe void** indirectSrvs;
         private const uint nIndirectSrvsBase = 11;
         private const uint nIndirectSrvs = 13;
 
-        private IGraphicsPipeline deferred;
+        private ResourceRef<IGraphicsPipeline> deferred;
         private unsafe void** deferredSrvs;
         private const uint nDeferredSrvs = 10;
 
-        private IGraphicsPipeline deferredClusterd;
+        private ResourceRef<IGraphicsPipeline> deferredClusterd;
         private unsafe void** deferredClusterdSrvs;
         private const uint nDeferredClusterdSrvs = 12;
 
@@ -64,7 +65,7 @@ namespace HexaEngine.Rendering.Passes
             AddReadDependency(new("BRDFLUT"));
         }
 
-        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler profiler)
+        public override unsafe void Init(GraphResourceBuilder creator, ICPUProfiler profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             gbuffer = creator.GetGBuffer("GBuffer");
@@ -96,47 +97,27 @@ namespace HexaEngine.Rendering.Passes
             deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
             deferredClusterdSrvs = AllocArrayAndZero(nDeferredClusterdSrvs);
 
-            deferredIndirect = pipelineCreator.CreateGraphicsPipeline(new()
+            deferredIndirect = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "deferred/brdf/indirect.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleStrip
+                State = GraphicsPipelineState.DefaultAdditiveFullscreen
             });
 
-            deferred = pipelineCreator.CreateGraphicsPipeline(new()
+            deferred = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "deferred/brdf/light.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleStrip
+                State = GraphicsPipelineState.DefaultAdditiveFullscreen
             });
 
-            deferredClusterd = pipelineCreator.CreateGraphicsPipeline(new()
+            deferredClusterd = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "deferred/brdf/light.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleStrip
-            }, new ShaderMacro[] { new("CLUSTERED_DEFERRED", 1) });
+                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
+                Macros = [new("CLUSTERED_DEFERRED", 1)]
+            });
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
@@ -196,16 +177,11 @@ namespace HexaEngine.Rendering.Passes
             context.DSSetConstantBuffer(1, camera.Value);
             context.GSSetConstantBuffer(1, camera.Value);
             context.CSSetConstantBuffer(1, camera.Value);
+            cbs[0] = null;
+            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
 
             profiler?.Begin("LightForward.Background");
-            var background = renderers.BackgroundQueue;
-            for (int i = 0; i < background.Count; i++)
-            {
-                var renderer = background[i];
-                profiler?.Begin($"LightForward.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Forward);
-                profiler?.End($"LightForward.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.Background");
 
             context.VSSetConstantBuffer(1, null);
@@ -226,9 +202,9 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(0, nIndirectSrvs, indirectSrvs);
 
-            context.SetGraphicsPipeline(deferredIndirect);
+            context.SetGraphicsPipeline(deferredIndirect.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(deferredIndirect);
+            context.SetGraphicsPipeline(deferredIndirect.Value);
 
             nint* null_samplers = stackalloc nint[4];
             context.PSSetSamplers(0, 4, (void**)null_samplers);
@@ -262,7 +238,7 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
 
-            context.SetGraphicsPipeline(deferred);
+            context.SetGraphicsPipeline(deferred.Value);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 
@@ -283,7 +259,7 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
 
-            context.SetGraphicsPipeline(deferredClusterd);
+            context.SetGraphicsPipeline(deferredClusterd.Value);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
 

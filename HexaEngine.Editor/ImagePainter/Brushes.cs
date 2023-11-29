@@ -48,7 +48,7 @@
                 mask.DrawPreview(new(32));
 
                 ImGui.SetCursorPos(cur);
-                if (ImGui.InvisibleButton($"Mask{i}", new(32)))
+                if (ImGui.InvisibleButton(mask.Id, new(32)))
                 {
                     current = mask;
                 }

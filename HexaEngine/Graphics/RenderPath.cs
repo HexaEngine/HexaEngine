@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering
+﻿namespace HexaEngine.Graphics
 {
     public enum RenderPath
     {

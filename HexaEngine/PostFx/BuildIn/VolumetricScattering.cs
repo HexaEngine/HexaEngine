@@ -1,39 +1,41 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Effects.Noise;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public class VolumetricScattering : PostFxBase
     {
-        private IGraphicsDevice device;
-        private Core.Graphics.Primitives.Plane quad1;
-        private IGraphicsPipeline sun;
-        private ISamplerState sunSampler;
-        private ConstantBuffer<SunParams> paramsSunBuffer;
-        private ConstantBuffer<CBWorld> paramsWorldBuffer;
+        private GraphResourceBuilder creator;
 
         private IGraphicsPipeline godrays;
-        private ISamplerState sampler;
+        private ISamplerState linearClampSampler;
+        private Quad quad;
+        private IGraphicsPipeline sun;
         private ConstantBuffer<GodRaysParams> paramsBuffer;
+        private ConstantBuffer<CBWorld> paramsWorldBuffer;
 
-        private Texture2D sunsprite;
-        private Texture2D sunBuffer;
+        private ResourceRef<Texture2D> sunMask;
         private Texture2D noiseTex;
+        private Texture2D sunSpriteTex;
+        private float sunSize = 15;
+        private string sunSpriteTexPath = "sun/sunsprite.png";
 
-        private float godraysDensity = 0.975f;
-        private float godraysWeight = 0.25f;
-        private float godraysDecay = 0.825f;
-        private float godraysExposure = 2.0f;
+        private float density = 0.975f;
+        private float weight = 0.25f;
+        private float decay = 0.974f;
+        private float exposure = 1.0f;
 
         private bool sunPresent;
         private ResourceRef<DepthStencil> depth;
@@ -42,7 +44,19 @@
 
         public override string Name => "GodRays";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass | PostFxFlags.Dynamic;
+
+        public float SunSize
+        {
+            get => sunSize;
+            set => NotifyPropertyChangedAndSetAndReload(ref sunSize, value);
+        }
+
+        public string SunSpriteTexPath
+        {
+            get => sunSpriteTexPath;
+            set => NotifyPropertyChangedAndSetAndReload(ref sunSpriteTexPath, value);
+        }
 
         public enum VolumetricScatteringQualityPreset
         {
@@ -55,18 +69,22 @@
 
         public struct GodRaysParams
         {
-            public Vector4 ScreenSpacePosition;
-            public float GodraysDensity;
-            public float GodraysWeight;
-            public float GodraysDecay;
-            public float GodraysExposure;
+            public Vector4 SunPos;
             public Vector4 Color;
-        }
+            public float Density;
+            public float Weight;
+            public float Decay;
+            public float Exposure;
 
-        public struct SunParams
-        {
-            public Vector3 Diffuse;
-            public float AlbedoFactor;
+            public GodRaysParams(Vector4 sunPos, Vector4 color, float density, float weight, float decay, float exposure)
+            {
+                SunPos = sunPos;
+                Color = color;
+                Density = density;
+                Weight = weight;
+                Decay = decay;
+                Exposure = exposure;
+            }
         }
 
         public VolumetricScatteringQualityPreset Quality
@@ -77,26 +95,26 @@
 
         public float Density
         {
-            get => godraysDensity;
-            set => NotifyPropertyChangedAndSet(ref godraysDensity, value);
+            get => density;
+            set => NotifyPropertyChangedAndSet(ref density, value);
         }
 
         public float Weight
         {
-            get => godraysWeight;
-            set => NotifyPropertyChangedAndSet(ref godraysWeight, value);
+            get => weight;
+            set => NotifyPropertyChangedAndSet(ref weight, value);
         }
 
         public float Decay
         {
-            get => godraysDecay;
-            set => NotifyPropertyChangedAndSet(ref godraysDecay, value);
+            get => decay;
+            set => NotifyPropertyChangedAndSet(ref decay, value);
         }
 
         public float Exposure
         {
-            get => godraysExposure;
-            set => NotifyPropertyChangedAndSet(ref godraysExposure, value);
+            get => exposure;
+            set => NotifyPropertyChangedAndSet(ref exposure, value);
         }
 
         /// <inheritdoc/>
@@ -105,35 +123,29 @@
             builder
                 .RunBefore("ColorGrading")
                 .RunBefore("Vignette")
-                .RunAfter("Bloom");
+                .RunAfter("VolumetricClouds")
+                .RunBefore("TAA");
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
+            this.creator = creator;
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            sunMask = creator.CreateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
-            this.device = device;
-            quad1 = new(device, 5);
-
-            sun = device.CreateGraphicsPipeline(new()
+            if (!string.IsNullOrEmpty(sunSpriteTexPath))
             {
-                VertexShader = "forward/sun/vs.hlsl",
-                PixelShader = "forward/sun/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.AlphaBlend,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.DepthRead,
-                Rasterizer = RasterizerDescription.CullBack,
-                SampleMask = int.MaxValue,
-                StencilRef = 0,
-                Topology = PrimitiveTopology.TriangleList
-            }, macros);
-            sunSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            paramsSunBuffer = new(device, CpuAccessFlags.Write);
-            paramsWorldBuffer = new(device, CpuAccessFlags.Write);
+                try
+                {
+                    sunSpriteTex = Texture2D.LoadFromAssets(device, sunSpriteTexPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load lens dirt tex", ex.Message);
+                    Logger.Log(ex);
+                }
+            }
 
             List<ShaderMacro> shaderMacros = new(macros)
             {
@@ -143,29 +155,49 @@
             godrays = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/godrays/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Additive,
-                Topology = PrimitiveTopology.TriangleStrip,
-                BlendFactor = default,
-                SampleMask = int.MaxValue
-            }, shaderMacros.ToArray());
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+                PixelShader = "effects/godrays/ps.hlsl",
+                State = new()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Additive,
+                    Topology = PrimitiveTopology.TriangleStrip,
+                    BlendFactor = default,
+                    SampleMask = int.MaxValue
+                },
+                Macros = [.. shaderMacros],
+            });
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
-            sunsprite = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/sun/sunsprite.png"));
-            sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            quad = new(device, sunSize);
 
-            noiseTex = new(device, Format.R32Float, 16, 16, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            sun = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/sun/vs.hlsl",
+                PixelShader = "effects/sun/ps.hlsl",
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.One,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    SampleMask = int.MaxValue,
+                    StencilRef = 0,
+                    Topology = PrimitiveTopology.TriangleList
+                },
+                Macros = macros
+            });
+
+            paramsWorldBuffer = new(device, CpuAccessFlags.Write);
+
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
+            noiseTex = new(device, Format.R32Float, 256, 256, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>
             {
                 Noise noise = new(device, NoiseType.Blue2D);
-                noise.Draw2D(device.Context, noiseTex.RTV, new(16), Vector2.One);
+                noise.Draw2D(device.Context, noiseTex.RTV, new(256), Vector2.One);
                 noise.Dispose();
             });
 
@@ -174,12 +206,18 @@
 
         public override void Resize(int width, int height)
         {
-            sunBuffer.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
+            creator.UpdateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
         }
 
-        private const float MaxLightDist = 1.3f;
+        /// <inheritdoc/>
+        public override unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
+        {
+            if (!sunPresent)
+                return;
+        }
 
-        public override void Update(IGraphicsContext context)
+        /// <inheritdoc/>
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var camera = CameraManager.Current;
             var lights = LightManager.Current;
@@ -194,102 +232,73 @@
                 var light = lights.Active[i];
                 if (light is DirectionalLight)
                 {
-                    sunPresent = true;
+                    var lightPosition = Vector3.Transform(light.Transform.Backward * camera.Transform.ClipRange + camera.Transform.GlobalPosition, camera.Transform.View);
+
+                    // skip render, the light is behind the camera.
+                    if (lightPosition.Z < 0.0f || exposure <= 0)
+                    {
+                        return;
+                    }
+
+                    var transform = Matrix4x4.CreateTranslation(light.Transform.Backward * camera.Transform.ClipRange);
+                    paramsWorldBuffer.Update(context, new CBWorld(transform));
+
                     GodRaysParams raysParams = default;
-
-                    raysParams.GodraysDecay = godraysDecay;
-                    raysParams.GodraysWeight = godraysWeight;
-                    raysParams.GodraysDensity = godraysDensity;
-                    raysParams.GodraysExposure = godraysExposure;
+                    raysParams.SunPos = camera.ProjectPosition(lightPosition);
                     raysParams.Color = light.Color;
-
-                    var camera_position = camera.Transform.GlobalPosition;
-
-                    var translation = Matrix4x4.CreateTranslation(camera_position);
-
-                    var far = camera.Transform.Far;
-                    var light_position = Vector3.Transform(light.Transform.Backward * (far / 2f), translation);
-
-                    var transform = Matrix4x4.CreateTranslation(light.Transform.Backward * (far / 15));
-
-                    var light_posH = Vector4.Transform(light_position, camera.Transform.ViewProjection);
-                    var ss_sun_pos = new Vector4(0.5f * light_posH.X / light_posH.W + 0.5f, -0.5f * light_posH.Y / light_posH.W + 0.5f, light_posH.Z / light_posH.W, 1.0f);
-
-                    raysParams.ScreenSpacePosition = ss_sun_pos;
-
+                    raysParams.Density = density;
+                    raysParams.Weight = weight;
+                    raysParams.Decay = decay;
+                    raysParams.Exposure = exposure;
                     paramsBuffer.Update(context, raysParams);
 
-                    CBWorld world = default;
-
-                    world.World = Matrix4x4.Transpose(transform);
-                    world.WorldInv = Matrix4x4.Transpose(light.Transform.GlobalInverse);
-
-                    paramsWorldBuffer.Update(context, world);
-
-                    SunParams sunParams = default;
-
-                    sunParams.Diffuse = Vector3.One;
-                    sunParams.AlbedoFactor = 1f;
-
-                    paramsSunBuffer.Update(context, sunParams);
+                    sunPresent = true;
 
                     break;
                 }
             }
-        }
 
-        public override unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (!sunPresent)
-                return;
-
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
-            context.ClearRenderTargetView(sunBuffer.RTV, default);
-            context.SetRenderTarget(sunBuffer.RTV, depth.Value.DSV);
-            context.SetViewport(Viewport);
-            context.VSSetConstantBuffer(0, paramsWorldBuffer);
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.PSSetConstantBuffer(0, paramsSunBuffer);
-            context.PSSetShaderResource(0, sunsprite.SRV);
-            context.PSSetSampler(0, sunSampler);
-            quad1.DrawAuto(context, sun);
-        }
-
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (Output == null || !sunPresent)
+            if (!sunPresent || Output == null || !sunMask.HasValue)
             {
                 return;
             }
 
+            context.ClearRenderTargetView(sunMask.Value, default);
+
+            context.SetRenderTarget(sunMask.Value, depth.Value);
+            context.SetViewport(Viewport);
+            context.VSSetConstantBuffer(0, paramsWorldBuffer);
+            context.VSSetConstantBuffer(1, this.camera.Value);
+            context.PSSetShaderResource(0, sunSpriteTex);
+            context.PSSetSampler(0, linearClampSampler);
+            quad.DrawAuto(context, sun);
+            context.ClearState();
+
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetShaderResource(0, sunBuffer.SRV);
-            context.PSSetShaderResource(1, noiseTex.SRV);
-            context.PSSetSampler(0, sampler);
+            context.PSSetShaderResource(0, sunMask.Value);
+            context.PSSetShaderResource(1, noiseTex);
+            context.PSSetSampler(0, linearClampSampler);
             context.SetGraphicsPipeline(godrays);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }
 
+        /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            quad1.Dispose();
-            sun.Dispose();
-            sunSampler.Dispose();
-            paramsSunBuffer.Dispose();
-            paramsWorldBuffer.Dispose();
-
             godrays.Dispose();
-            sampler.Dispose();
+            linearClampSampler.Dispose();
             paramsBuffer.Dispose();
-
-            sunsprite.Dispose();
-            sunBuffer.Dispose();
             noiseTex.Dispose();
+
+            quad.Dispose();
+            sun.Dispose();
+            linearClampSampler.Dispose();
+            paramsWorldBuffer.Dispose();
+            sunSpriteTex.Dispose();
+            creator.DisposeResource("SunMask");
         }
     }
 }

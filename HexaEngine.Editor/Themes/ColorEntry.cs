@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Themes
 {
     using System.Xml.Serialization;
 

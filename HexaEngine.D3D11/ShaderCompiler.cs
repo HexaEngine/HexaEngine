@@ -21,17 +21,13 @@ namespace HexaEngine.D3D11
     {
         private readonly Stack<string> paths = new();
         private string basePath;
-        private void** LpVtbl;
 
         public IncludeHandler(string basepath)
         {
             basePath = basepath;
-            LpVtbl = (void**)Alloc(sizeof(nint) * 3);
-            LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(Open);
-            LpVtbl[1] = (void*)Marshal.GetFunctionPointerForDelegate(Close);
         }
 
-        private unsafe int Open(ID3DInclude* pInclude, D3DIncludeType IncludeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
+        public unsafe int Open(ID3DInclude* pInclude, D3DIncludeType IncludeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
         {
             string fileName = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(pFileName));
             string path = Path.Combine(basePath, fileName);
@@ -46,34 +42,19 @@ namespace HexaEngine.D3D11
             return 0;
         }
 
-        private unsafe int Close(ID3DInclude* pInclude, void* pData)
+        public unsafe int Close(ID3DInclude* pInclude, void* pData)
         {
             basePath = paths.Pop();
             Free(pData);
             return 0;
-        }
-
-        public void Release()
-        {
-            if (LpVtbl != null)
-            {
-                Free(LpVtbl);
-                LpVtbl = null;
-            }
-        }
-
-        public static implicit operator ID3DInclude(IncludeHandler handler)
-        {
-            return new(handler.LpVtbl);
         }
     }
 
     public class ShaderCompiler
     {
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
-        private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
-        public unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
+        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
@@ -85,6 +66,7 @@ namespace HexaEngine.D3D11
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
             byte* pSource = source.ToUTF8();
+            int sourceLen = Encoding.UTF8.GetByteCount(source) + 1;
 
             var pMacros = macros.Length > 0 ? AllocT<D3DShaderMacro>(macros.Length + 1) : null;
 
@@ -110,23 +92,25 @@ namespace HexaEngine.D3D11
 
             IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
-            *include = handler;
+            include->LpVtbl = (void**)Alloc(sizeof(nint) * 3);
+            include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
+            include->LpVtbl[1] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Close);
 
-            D3DCompiler.Compile(pSource, (nuint)Encoding.UTF8.GetByteCount(source) + 1, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
+            // ExecutionEngineException error occurs here.
+            D3DCompiler.Compile(pSource, (nuint)sourceLen, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
 
             Free(include);
-            handler.Release();
 
-            Marshal.FreeCoTaskMem((nint)pSource);
-            Marshal.FreeCoTaskMem((nint)pEntryPoint);
-            Marshal.FreeCoTaskMem((nint)pSourceName);
-            Marshal.FreeCoTaskMem((nint)pProfile);
+            Free(pSource);
+            Free(pEntryPoint);
+            Free(pSourceName);
+            Free(pProfile);
 
             for (int i = 0; i < macros.Length; i++)
             {
                 var macro = pMacros[i];
-                Marshal.FreeCoTaskMem((nint)macro.Name);
-                Marshal.FreeCoTaskMem((nint)macro.Definition);
+                Free(macro.Name);
+                Free(macro.Definition);
             }
 
             Free(pMacros);
@@ -149,24 +133,6 @@ namespace HexaEngine.D3D11
             Logger.Info($"Done: {sourceName}");
 
             return true;
-        }
-
-        private static unsafe int Open(ID3DInclude* pInclude, D3DIncludeType IncludeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
-        {
-            string basePath = paths[pInclude];
-            string fileName = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(pFileName));
-            string path = Path.Combine(basePath, fileName);
-            var data = FileSystem.ReadAllBytes(path);
-
-            *ppData = AllocCopyT(data);
-            *pBytes = (uint)data.Length;
-            return 0;
-        }
-
-        private static unsafe int Close(ID3DInclude* pInclude, void* pData)
-        {
-            Free(pData);
-            return 0;
         }
 
         public unsafe Blob GetInputSignature(Blob shader)
@@ -193,12 +159,9 @@ namespace HexaEngine.D3D11
             }
         }
 
-        public unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
+        public static unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
         {
-            lock (D3DCompiler)
-            {
-                D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
-            }
+            D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -222,7 +185,7 @@ namespace HexaEngine.D3D11
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out string? error)
         {
-            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out error);
+            Compile(code, [], entry, sourceName, profile, shader, out error);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -326,7 +289,7 @@ namespace HexaEngine.D3D11
         internal unsafe InputElementDescription[] GetInputElementsFromSignature(Shader* shader, Blob signature)
         {
             ComPtr<ID3D11ShaderReflection> reflection;
-            Compiler.Reflect(shader, out reflection);
+            Reflect(shader, out reflection);
             ShaderDesc desc;
             reflection.GetDesc(&desc);
 

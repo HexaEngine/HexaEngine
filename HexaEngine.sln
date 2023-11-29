@@ -51,7 +51,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A79AFE0B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Audio.Common", "HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj", "{ED695908-8EEB-42BF-8CEB-DBEE9A6E4607}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Editor", "HexaEngine.Editor\HexaEngine.Editor.csproj", "{D7BA2928-6CB0-4D45-B7DF-1CA6057B7300}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Editor", "HexaEngine.Editor\HexaEngine.Editor.csproj", "{D7BA2928-6CB0-4D45-B7DF-1CA6057B7300}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A3671032-3394-47CC-A992-BD9E44C17D3F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

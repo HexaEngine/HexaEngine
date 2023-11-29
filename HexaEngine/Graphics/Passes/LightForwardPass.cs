@@ -1,13 +1,12 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
@@ -60,7 +59,7 @@
         private readonly bool forceForward = true;
         private readonly bool clustered = true;
 
-        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override unsafe void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             gbuffer = creator.GetGBuffer("GBuffer");
@@ -151,59 +150,24 @@
             if (forceForward)
             {
                 profiler?.Begin("LightForward.Background");
-                var background = renderers.BackgroundQueue;
-                for (int i = 0; i < background.Count; i++)
-                {
-                    var renderer = background[i];
-                    profiler?.Begin($"LightForward.{renderer.DebugName}");
-                    renderer.Draw(context, RenderPath.Forward);
-                    profiler?.End($"LightForward.{renderer.DebugName}");
-                }
+                RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.Background");
 
                 profiler?.Begin("LightForward.Geometry");
-                var geometry = renderers.GeometryQueue;
-                for (int i = 0; i < geometry.Count; i++)
-                {
-                    var renderer = geometry[i];
-                    profiler?.Begin($"LightForward.{renderer.DebugName}");
-                    renderer.Draw(context, RenderPath.Forward);
-                    profiler?.End($"LightForward.{renderer.DebugName}");
-                }
+                RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.Geometry");
             }
 
             profiler?.Begin("LightForward.AlphaTest");
-            var alphaTest = renderers.AlphaTestQueue;
-            for (int i = 0; i < alphaTest.Count; i++)
-            {
-                var renderer = alphaTest[i];
-                profiler?.Begin($"LightForward.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Forward);
-                profiler?.End($"LightForward.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.AlphaTest");
 
             profiler?.Begin("LightForward.GeometryLast");
-            var geometryLast = renderers.TransparencyQueue;
-            for (int i = 0; i < geometryLast.Count; i++)
-            {
-                var renderer = geometryLast[i];
-                profiler?.Begin($"LightForward.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Forward);
-                profiler?.End($"LightForward.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroup(renderers.GeometryLastQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.GeometryLast");
 
             profiler?.Begin("LightForward.Transparency");
-            var transparency = renderers.TransparencyQueue;
-            for (int i = 0; i < transparency.Count; i++)
-            {
-                var renderer = transparency[i];
-                profiler?.Begin($"LightForward.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Forward);
-                profiler?.End($"LightForward.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroup(renderers.TransparencyQueue, context, profiler, "LightForward", RenderPath.Forward, forwardRTVs, nForwardRTVs, depthStencil.Value.DSV);
             profiler?.End("LightForward.Transparency");
 
             profiler?.Begin("LightForward.End");

@@ -1,6 +1,8 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Editor
+using HexaEngine;
+
+namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Mathematics;
     using System.Numerics;

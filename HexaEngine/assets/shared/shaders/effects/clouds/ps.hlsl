@@ -15,7 +15,7 @@ Texture3D cloudTex : register(t1);
 Texture3D worleyTex : register(t2);
 Texture2D depthTex : register(t3);
 
-#define RAYMARCH_STEPS 16
+#define RAYMARCH_STEPS 8
 #define RAYMARCH_MIN_TRANSMITTANCE 0.1f
 
 // Cloud types height density gradients
@@ -139,7 +139,7 @@ float SampleCloudDensity(float3 p, bool useHighFreq, float lod)
 
 float LightEnergy(float d, float cos_angle)
 {
-    return 5.0 * BeerLaw(d) * SugarPowder(d) * HenyeyGreenstein(cos_angle, 0.2f);
+    return BeerLaw(d) * HenyeyGreenstein(cos_angle, phaseFunctionG) * SugarPowder(d);
 }
 
 float RaymarchToLight(float3 origin, float stepSize, float3 lightDir, float originalDensity, float lightDotEye)
@@ -161,8 +161,8 @@ float RaymarchToLight(float3 origin, float stepSize, float3 lightDir, float orig
 
     float finalTransmittance = 1.0;
 
-	[unroll(6)]
-    for (int i = 0; i < 6; i++)
+	[unroll(4)]
+    for (int i = 0; i < 4; i++)
     {
         pos = startPos + coneRadius * NOISE_KERNEL_CONE_SAMPLING[i] * float(i);
 
@@ -344,11 +344,15 @@ Output main(VertexOut pin)
     {
         float4 cloudsColor = 0.0f;
 
-        float4 cloudDistance;
-        cloudsColor = RaymarchToCloud(pin.Tex, startPos, endPos, float3(0, 0, 0), cloudDistance);
+        float4 cloudPos;
+        cloudsColor = RaymarchToCloud(pin.Tex, startPos, endPos, float3(0, 0, 0), cloudPos);
+
+        cloudPos.w = 1;
+        cloudPos = mul(cloudPos, viewProj);
 
         output.color = cloudsColor;
-        output.depth = 0.9999f;
+        if (cloudsColor.a > 0)
+            output.depth = 0.99999f;
     }
 
     return output;

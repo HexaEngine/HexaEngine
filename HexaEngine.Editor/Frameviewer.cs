@@ -3,11 +3,14 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Input;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
@@ -49,163 +52,168 @@
             ImGuizmo.SetDrawlist();
             isVisible = true;
             var scene = SceneManager.Current;
-            if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            if (scene != null)
             {
-                // TODO: Fix object picking.
-                /*
-                GameObject? gameObject = ObjectPickerManager.SelectObject(device.Context, Mouse.Position, RenderViewport);
-                if (gameObject != null)
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
                 {
-                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
-                    {
-                        GameObject.Selected.AddSelection(gameObject);
-                    }
-                    else
-                    {
-                        GameObject.Selected.AddOverwriteSelection(gameObject);
-                    }
-                }
-                */
-            }
+                    var ca = CameraManager.Current;
+                    Vector3 rayDir = Mouse.ScreenToWorld(ca.Transform.Projection, ca.Transform.ViewInv, RenderViewport);
+                    Vector3 rayPos = ca.Transform.GlobalPosition;
 
-            if (scene != null && ImGui.BeginMenuBar())
-            {
-                if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
-                {
-                    if (ImGui.Button("3D"))
-                    {
-                        CameraManager.Dimension = CameraEditorDimension.Dim2D;
-                    }
-                }
-                else
-                {
-                    if (ImGui.Button("2D"))
-                    {
-                        CameraManager.Dimension = CameraEditorDimension.Dim3D;
-                    }
-                }
+                    Ray ray = new(rayPos, rayDir);
 
-                // Play "\xE769"
-                // Pause "\xE768"
-                // Stop "xE71A"
-                {
-                    bool modeSwitched = false;
-                    if (!Application.InDesignMode && scene.IsSimulating)
+                    GameObject? gameObject = scene.SelectObject(ray);
+                    if (gameObject != null)
                     {
-                        ImGui.BeginDisabled(true);
-                    }
-
-                    if (ImGui.Button("\xE768"))
-                    {
-                        if (Application.InDesignMode)
+                        if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
                         {
-                            if (ProjectManager.ScriptProjectChanged)
-                            {
-                                ProjectManager.BuildScripts().Wait();
-                            }
-                            SceneManager.Save();
-                            scene.IsSimulating = false;
-                            SceneManager.BeginReload();
-                            scene.SaveState();
-                            Application.InDesignMode = false;
-                            scene.IsSimulating = true;
-                            SceneManager.EndReload();
+                            GameObject.Selected.AddSelection(gameObject);
                         }
                         else
                         {
-                            scene.IsSimulating = true;
+                            GameObject.Selected.AddOverwriteSelection(gameObject);
                         }
-                        modeSwitched = true;
-                    }
-
-                    if (!Application.InDesignMode && scene.IsSimulating && !modeSwitched)
-                    {
-                        ImGui.EndDisabled();
                     }
                 }
 
+                if (ImGui.BeginMenuBar())
                 {
-                    bool modeSwitched = false;
-                    if (Application.InDesignMode || !scene.IsSimulating)
+                    if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
                     {
-                        ImGui.BeginDisabled(true);
+                        if (ImGui.Button("3D"))
+                        {
+                            CameraManager.Dimension = CameraEditorDimension.Dim2D;
+                        }
+                    }
+                    else
+                    {
+                        if (ImGui.Button("2D"))
+                        {
+                            CameraManager.Dimension = CameraEditorDimension.Dim3D;
+                        }
                     }
 
-                    if (ImGui.Button("\xE769"))
+                    // Play "\xE769"
+                    // Pause "\xE768"
+                    // Stop "xE71A"
                     {
-                        scene.IsSimulating = false;
-                        modeSwitched = true;
+                        bool modeSwitched = false;
+                        if (!Application.InDesignMode && scene.IsSimulating)
+                        {
+                            ImGui.BeginDisabled(true);
+                        }
+
+                        if (ImGui.Button("\xE768"))
+                        {
+                            if (Application.InDesignMode)
+                            {
+                                if (ProjectManager.ScriptProjectChanged)
+                                {
+                                    ProjectManager.BuildScripts().Wait();
+                                }
+                                SceneManager.Save();
+                                scene.IsSimulating = false;
+                                SceneManager.BeginReload();
+                                scene.SaveState();
+                                Application.InDesignMode = false;
+                                scene.IsSimulating = true;
+                                SceneManager.EndReload();
+                            }
+                            else
+                            {
+                                scene.IsSimulating = true;
+                            }
+                            modeSwitched = true;
+                        }
+
+                        if (!Application.InDesignMode && scene.IsSimulating && !modeSwitched)
+                        {
+                            ImGui.EndDisabled();
+                        }
                     }
 
-                    if ((Application.InDesignMode || !scene.IsSimulating) && !modeSwitched)
                     {
-                        ImGui.EndDisabled();
-                    }
-                }
+                        bool modeSwitched = false;
+                        if (Application.InDesignMode || !scene.IsSimulating)
+                        {
+                            ImGui.BeginDisabled(true);
+                        }
 
-                {
-                    bool modeSwitched = false;
-                    if (Application.InDesignMode)
-                    {
-                        ImGui.BeginDisabled(true);
-                    }
+                        if (ImGui.Button("\xE769"))
+                        {
+                            scene.IsSimulating = false;
+                            modeSwitched = true;
+                        }
 
-                    if (ImGui.Button("\xE71A") || ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InDesignMode)
-                    {
-                        scene.IsSimulating = false;
-                        SceneManager.BeginReload();
-                        scene.RestoreState();
-                        Application.InDesignMode = true;
-                        SceneManager.EndReload();
-                        modeSwitched = true;
+                        if ((Application.InDesignMode || !scene.IsSimulating) && !modeSwitched)
+                        {
+                            ImGui.EndDisabled();
+                        }
                     }
 
-                    if (Application.InDesignMode && !modeSwitched)
                     {
-                        ImGui.EndDisabled();
+                        bool modeSwitched = false;
+                        if (Application.InDesignMode)
+                        {
+                            ImGui.BeginDisabled(true);
+                        }
+
+                        if (ImGui.Button("\xE71A") || ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InDesignMode)
+                        {
+                            scene.IsSimulating = false;
+                            SceneManager.BeginReload();
+                            scene.RestoreState();
+                            Application.InDesignMode = true;
+                            SceneManager.EndReload();
+                            modeSwitched = true;
+                        }
+
+                        if (Application.InDesignMode && !modeSwitched)
+                        {
+                            ImGui.EndDisabled();
+                        }
                     }
-                }
 
-                int cameraIndex = scene.ActiveCamera;
-                if (ImGui.Combo("##ActiveCamCmbo", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
-                {
-                    scene.ActiveCamera = cameraIndex;
-                }
-
-                ImGui.Separator();
-
-                if (ImGui.BeginMenu("\xE713"))
-                {
-                    ImGui.Checkbox("Fullscreen", ref Fullframe);
+                    int cameraIndex = scene.ActiveCamera;
+                    if (ImGui.Combo("##ActiveCamCmbo", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
+                    {
+                        scene.ActiveCamera = cameraIndex;
+                    }
 
                     ImGui.Separator();
 
-                    ImGui.Text("Shading Mode");
-
-                    SceneRenderer? renderer = SceneRenderer.Current;
-
-                    if (renderer != null)
+                    if (ImGui.BeginMenu("\xE713"))
                     {
-                        if (ImGui.RadioButton("Wireframe", renderer.Shading == ViewportShading.Wireframe))
+                        ImGui.Checkbox("Fullscreen", ref Fullframe);
+
+                        ImGui.Separator();
+
+                        ImGui.Text("Shading Mode");
+
+                        SceneRenderer? renderer = SceneRenderer.Current;
+
+                        if (renderer != null)
                         {
-                            renderer.Shading = ViewportShading.Wireframe;
+                            if (ImGui.RadioButton("Wireframe", renderer.Shading == ViewportShading.Wireframe))
+                            {
+                                renderer.Shading = ViewportShading.Wireframe;
+                            }
+                            if (ImGui.RadioButton("Solid", renderer.Shading == ViewportShading.Solid))
+                            {
+                                renderer.Shading = ViewportShading.Solid;
+                            }
+                            if (ImGui.RadioButton("Rendered", renderer.Shading == ViewportShading.Rendered))
+                            {
+                                renderer.Shading = ViewportShading.Rendered;
+                            }
                         }
-                        if (ImGui.RadioButton("Solid", renderer.Shading == ViewportShading.Solid))
-                        {
-                            renderer.Shading = ViewportShading.Solid;
-                        }
-                        if (ImGui.RadioButton("Rendered", renderer.Shading == ViewportShading.Rendered))
-                        {
-                            renderer.Shading = ViewportShading.Rendered;
-                        }
+
+                        ImGui.EndMenu();
                     }
 
-                    ImGui.EndMenu();
+                    ImGui.EndMenuBar();
                 }
-
-                ImGui.EndMenuBar();
             }
-
             if (Fullframe)
             {
                 ImGuiViewport = RenderViewport = SourceViewport;

@@ -1,11 +1,10 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
 
     /// <summary>
     /// Screen Space Reflections (SSR) post-processing effect.
@@ -230,7 +229,9 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssr/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, shaderMacros.ToArray());
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [.. shaderMacros]
+            });
         }
 
         /// <inheritdoc/>

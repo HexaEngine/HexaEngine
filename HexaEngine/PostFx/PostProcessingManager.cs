@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostProcessingManager : IDisposable
@@ -35,7 +36,7 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false, bool forceDynamic = false)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false, bool forceDynamic = true)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;

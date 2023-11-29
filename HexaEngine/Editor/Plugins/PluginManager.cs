@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Plugins
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
     using System;

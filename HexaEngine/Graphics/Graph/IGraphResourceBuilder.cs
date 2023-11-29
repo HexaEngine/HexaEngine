@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using System;
@@ -51,7 +50,7 @@
 
         bool RemoveResource(string name);
 
-        bool ReleaseResource(string name);
+        bool DisposeResource(string name);
     }
 
     public interface IGraphResources

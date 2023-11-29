@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
 
     /// <summary>
     /// A post-processing effect for color grading adjustments.
@@ -27,7 +27,7 @@
         private float saturation = 1;
         private float contrast = 1;
 
-        private struct ColorGradingParams
+        public struct ColorGradingParams
         {
             public float BlackIn;      // Inner control point for the black point.
             public float WhiteIn;      // Inner control point for the white point.
@@ -41,6 +41,38 @@
             public float HueShift;      // Shift the hue of all colors.
             public float Saturation;    // Adjusts saturation (color intensity).
             public float Contrast;      // Adjusts the contrast.
+
+            public ColorGradingParams()
+            {
+                BlackIn = 0.02f;
+                WhiteIn = 10;
+                BlackOut = 0;
+                WhiteOut = 10;
+                WhiteLevel = 5.3f;
+                WhiteClip = 10;
+                PostExposure = 0.93f;
+                Temperature = 0;
+                Tint = 0;
+                HueShift = 0;
+                Saturation = 1;
+                Contrast = 1;
+            }
+
+            public ColorGradingParams(float blackIn, float whiteIn, float blackOut, float whiteOut, float whiteLevel, float whiteClip, float postExposure, float temperature, float tint, float hueShift, float saturation, float contrast)
+            {
+                BlackIn = blackIn;
+                WhiteIn = whiteIn;
+                BlackOut = blackOut;
+                WhiteOut = whiteOut;
+                WhiteLevel = whiteLevel;
+                WhiteClip = whiteClip;
+                PostExposure = postExposure;
+                Temperature = temperature;
+                Tint = tint;
+                HueShift = hueShift;
+                Saturation = saturation;
+                Contrast = contrast;
+            }
         }
 
         /// <inheritdoc/>
@@ -174,7 +206,8 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/colorgrading/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

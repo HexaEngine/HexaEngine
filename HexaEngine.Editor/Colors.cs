@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Editor.Themes;
+
     public static class Colors
     {
         /// <summary>Gets a color representing <c>AliceBlue</c></summary>

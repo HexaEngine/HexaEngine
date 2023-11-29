@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -37,7 +37,7 @@
                 var idx = renderGraph.SortedNodeIndices[i];
                 var pass = renderPasses[idx];
                 renderPassesSorted[idx] = pass;
-                pass.Init(resourceCreator, pipelineCreator, device, profiler);
+                pass.Init(resourceCreator, profiler);
             }
             resourceCreator.CreateResources();
         }

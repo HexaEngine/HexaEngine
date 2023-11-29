@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Editor
+namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;

@@ -1,7 +1,8 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public class DebugWindow : EditorWindow

@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
     using System.Numerics;
 
     public unsafe class MeshSource : IDisposable
@@ -37,67 +37,71 @@
             {
                 VertexShader = "forward/solid/vs.hlsl",
                 PixelShader = "forward/solid/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.DefaultLess,
-                Rasterizer = RasterizerDescription.CullNone,
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.DefaultLess,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements
+            });
 
             Overlay = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/wireframe/vs.hlsl",
                 PixelShader = "forward/wireframe/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Wireframe, false, 0, 0, 0, true, false, false, false),
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Wireframe, false, 0, 0, 0, true, false, false, false),
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements
+            });
 
             Normals = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "debugging/normals/vs.hlsl",
                 GeometryShader = "debugging/normals/gs.hlsl",
                 PixelShader = "debugging/normals/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Topology = PrimitiveTopology.TriangleList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements
+            });
 
             Points = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/point/vs.hlsl",
                 GeometryShader = "forward/point/gs.hlsl",
                 PixelShader = "forward/point/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.PointList,
-                SampleMask = uint.MaxValue,
-                StencilRef = 0,
-            }, inputElements);
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Topology = PrimitiveTopology.PointList,
+                    SampleMask = uint.MaxValue,
+                    StencilRef = 0,
+                },
+                InputElements = inputElements
+            });
         }
 
         public void Update(IGraphicsContext context, bool ib, bool vb)

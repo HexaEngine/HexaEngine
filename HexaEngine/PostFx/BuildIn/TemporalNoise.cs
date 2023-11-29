@@ -2,10 +2,9 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     /// <summary>
@@ -73,7 +72,9 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/noise/temporal.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             Noise = creator.CreateTexture2D("TemporalNoise", new(Format.R32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
@@ -108,7 +109,7 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            creator.ReleaseResource("TemporalNoise");
+            creator.DisposeResource("TemporalNoise");
         }
     }
 }

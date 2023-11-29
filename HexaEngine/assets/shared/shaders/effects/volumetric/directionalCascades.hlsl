@@ -19,7 +19,7 @@ float3 DirectionalLightCascadedVolumetric(float4 screenCoords, float2 texCoords,
     float result = 0.0;
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
-        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, x);
         result += visibility;
         x += deltaStep;
     }
@@ -50,7 +50,7 @@ float3 DirectionalLightCascadedVolumetric2(float4 screenCoords, float2 texCoords
     float result = 0.0;
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
-        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, x);
         result += visibility * MieScattering(V, -light.direction.xyz);
         x += deltaStep;
     }
@@ -83,7 +83,7 @@ float3 DirectionalLightCascadedVolumetric3(float4 screenCoords, float2 texCoords
         float mieScattering = MieScattering(V, -L);
         float scatteringContribution = rayleighScattering + mieScattering;
 
-        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, camFar, view, x);
+        float visibility = ShadowFactorDirectionalLightCascaded(shadow_sampler, cascadeShadowMaps, shadowData, x);
 
         result += visibility * distanceAttenuation * scatteringContribution;
         x += deltaStep;

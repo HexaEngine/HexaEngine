@@ -6,7 +6,7 @@
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
-    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;

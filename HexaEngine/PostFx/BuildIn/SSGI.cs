@@ -1,12 +1,11 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
     using HexaEngine.Graphics.Effects.Blur;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
 
     public class SSGI : PostFxBase
     {
@@ -96,13 +95,13 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssgi/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleStrip
-            },
-            macros);
+                State = new()
+                {
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleStrip
+                },
+                Macros = macros
+            });
 
             copy = device.CreateGraphicsPipeline(new()
             {

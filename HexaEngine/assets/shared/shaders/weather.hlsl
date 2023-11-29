@@ -22,18 +22,29 @@ cbuffer WeatherCBuf : register(b2)
     float density_factor;
     float cloud_type;
 
-    //padd float2
+    float phaseFunctionG;
+    float _padd;
 
     float3 A;
+    float _paddA;
     float3 B;
+    float _paddB;
     float3 C;
+    float _paddC;
     float3 D;
+    float _paddD;
     float3 E;
+    float _paddE;
     float3 F;
+    float _paddF;
     float3 G;
+    float _paddG;
     float3 H;
+    float _paddH;
     float3 I;
+    float _paddI;
     float3 Z;
+    float _paddZ;
 }
 
 #endif

@@ -1,8 +1,8 @@
-﻿namespace HexaEngine.Rendering
+﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Culling;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;

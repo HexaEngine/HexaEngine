@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace HexaEngine.Core.Configuration
 {
     using HexaEngine.Core.Input;
     using System.Globalization;

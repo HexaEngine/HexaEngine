@@ -1,17 +1,18 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Effects.BuildIn
+using HexaEngine;
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Graph;
     using HexaEngine.Graphics.Effects.Blur;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     /// <summary>
@@ -228,26 +229,31 @@ namespace HexaEngine.Effects.BuildIn
             bokehGenerate = device.CreateComputePipeline(new()
             {
                 Path = "compute/bokeh/shader.hlsl",
-            }, macros);
+                Macros = macros,
+            });
+
             gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
             DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
 
             dof = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/dof/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                PixelShader = "effects/dof/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             bokehDraw = device.CreateGraphicsPipeline(new()
             {
                 PixelShader = "effects/bokeh/mask.hlsl",
                 GeometryShader = "effects/bokeh/gs.hlsl",
                 VertexShader = "effects/bokeh/vs.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Topology = PrimitiveTopology.PointList,
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One
+                State = new GraphicsPipelineState()
+                {
+                    Topology = PrimitiveTopology.PointList,
+                    Blend = BlendDescription.Additive,
+                    BlendFactor = Vector4.One
+                },
             });
 
             bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);

@@ -1,15 +1,15 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using Silk.NET.Assimp;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public class GBufferPass : RenderPass
     {
@@ -27,7 +27,7 @@
 
         private readonly bool forceForward = true;
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var viewport = creator.Viewport;
             gbuffer = creator.CreateGBuffer("GBuffer", new((int)viewport.Width, (int)viewport.Height, 4,
@@ -70,14 +70,7 @@
             context.CSSetConstantBuffer(1, camera.Value);
 
             profiler?.Begin("LightDeferred.Geometry");
-            var geometry = renderers.GeometryQueue;
-            for (int i = 0; i < geometry.Count; i++)
-            {
-                var renderer = geometry[i];
-                profiler?.Begin($"LightDeferred.{renderer.DebugName}");
-                renderer.Draw(context, RenderPath.Deferred);
-                profiler?.End($"LightDeferred.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
             profiler?.End("LightDeferred.Geometry");
 
             context.ClearState();

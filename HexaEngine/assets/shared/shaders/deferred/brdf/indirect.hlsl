@@ -48,7 +48,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
     float3 N = normalize(attrs.normal);
     float3 V = normalize(GetCameraPos() - position);
     float ao = ssao.Sample(linearWrapSampler, input.Tex).r * attrs.ao;
-    float3 ambient = 0;
+    float3 ambient = ambient_color.rgb * baseColor;
 
     float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
 

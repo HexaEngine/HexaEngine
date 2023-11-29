@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Properties.Editors
+﻿namespace HexaEngine.Editor.Editors
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
@@ -9,17 +9,17 @@
     using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Graph;
     using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
     using HexaEngine.Core.Extensions;
+    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Graphics.Graph;
 
     public struct CBColorMask
     {
@@ -73,6 +73,8 @@
 
         public bool IsEmpty => false;
 
+        public bool IsHidden => false;
+
         public bool NoTable { get; set; }
 
         private bool editTerrain = false;
@@ -112,25 +114,29 @@
                 {
                     VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
                     PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
-                }, new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                }, inputElements);
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.None,
+                        Rasterizer = RasterizerDescription.CullBack,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = inputElements
+                });
 
                 maskOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
                 {
                     VertexShader = "tools/terrain/overlay/mask/vs.hlsl",
                     PixelShader = "tools/terrain/overlay/mask/ps.hlsl",
-                }, new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                }, inputElements);
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.None,
+                        Rasterizer = RasterizerDescription.CullBack,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = inputElements
+                });
                 DepthStencilDescription depthStencilD = new()
                 {
                     DepthEnable = true,
@@ -147,13 +153,15 @@
                 {
                     VertexShader = "quad.hlsl",
                     PixelShader = "tools/terrain/edit/mask/ps.hlsl",
-                }, new GraphicsPipelineState()
-                {
-                    DepthStencil = depthStencilD,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.AlphaBlend,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                }, inputElements);
+                    State = new GraphicsPipelineState()
+                    {
+                        DepthStencil = depthStencilD,
+                        Rasterizer = RasterizerDescription.CullBack,
+                        Blend = BlendDescription.AlphaBlend,
+                        Topology = PrimitiveTopology.TriangleStrip,
+                    },
+                    InputElements = inputElements
+                });
                 maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
 
                 brushBuffer = new(device, CpuAccessFlags.Write);

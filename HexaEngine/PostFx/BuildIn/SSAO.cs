@@ -1,15 +1,16 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Effects.BuildIn
+using HexaEngine;
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
     using HexaEngine.Graphics.Effects.Blur;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     public class SSAO
@@ -103,7 +104,8 @@ namespace HexaEngine.Effects.BuildIn
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssao/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen,
+            });
             paramsBuffer = new(device, CpuAccessFlags.Write);
             intermediateBuffer = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(device, Format.R32Float, width, height);

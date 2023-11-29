@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Graphics;
     using System.Runtime.CompilerServices;
@@ -12,6 +12,10 @@
         public GraphPipelineBuilder(IGraphicsDevice device)
         {
             this.device = device;
+        }
+
+        internal void CreateResources()
+        {
         }
 
         internal void ReleaseResources()
@@ -29,51 +33,16 @@
             computePipelines.Clear();
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, bool lazyInit = true, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             var pipeline = device.CreateGraphicsPipeline(desc, filename, line);
             graphicsPipelines.Add(pipeline);
             return pipeline;
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            var pipeline = device.CreateGraphicsPipeline(desc, state, filename, line);
-            graphicsPipelines.Add(pipeline);
-            return pipeline;
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            var pipeline = device.CreateGraphicsPipeline(desc, state, macros, filename, line);
-            graphicsPipelines.Add(pipeline);
-            return pipeline;
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            var pipeline = device.CreateGraphicsPipeline(desc, state, elementDescriptions, filename, line);
-            graphicsPipelines.Add(pipeline);
-            return pipeline;
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            var pipeline = device.CreateGraphicsPipeline(desc, state, inputElements, macros, filename, line);
-            graphicsPipelines.Add(pipeline);
-            return pipeline;
-        }
-
-        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, bool lazyInit = true, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             var pipeline = device.CreateComputePipeline(desc, filename, line);
-            computePipelines.Add(pipeline);
-            return pipeline;
-        }
-
-        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            var pipeline = device.CreateComputePipeline(desc, macros, filename, line);
             computePipelines.Add(pipeline);
             return pipeline;
         }

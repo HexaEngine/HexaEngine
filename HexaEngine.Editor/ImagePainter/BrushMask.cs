@@ -3,12 +3,14 @@
     using HexaEngine.Core.Graphics;
     using Hexa.NET.ImGui;
     using System.Numerics;
+    using HexaEngine.Core.UI;
 
     public class BrushMask : IDisposable
     {
         private readonly Texture2D _resource;
         private readonly IShaderResourceView _shaderResourceView;
         private readonly ISamplerState _samplerState;
+        private readonly ImGuiName name = new(string.Empty);
         private bool disposedValue;
 
         public BrushMask(IGraphicsDevice device, string path)
@@ -30,6 +32,8 @@
 
             Free(pData);
         }
+
+        public string Id => name.Id;
 
         public void Apply(IGraphicsContext context)
         {

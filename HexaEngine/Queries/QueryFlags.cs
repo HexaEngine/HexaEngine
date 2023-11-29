@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Queries
 {
+    [Flags]
     public enum QueryFlags
     {
         None = 0,

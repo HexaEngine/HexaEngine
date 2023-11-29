@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System.Numerics;
 
     /// <summary>
@@ -67,7 +67,8 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/chromaticaberration/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

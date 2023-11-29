@@ -151,7 +151,7 @@
             FlacHeader header = default;
             header.Read(fs);
 
-            BitReader reader = new(fs);
+            using BitReader reader = new(fs);
 
             while (!reader.EndOfStream)
             {

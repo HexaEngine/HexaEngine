@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public class GraphicsPipelineResourceFactory : ResourceFactory<ResourceInstance<IGraphicsPipeline>, (GraphicsPipelineDesc, GraphicsPipelineState, ShaderMacro[])>
+    public class GraphicsPipelineResourceFactory : ResourceFactory<ResourceInstance<IGraphicsPipeline>, GraphicsPipelineDesc>
     {
         private readonly IGraphicsDevice device;
 
@@ -11,22 +11,20 @@
             this.device = device;
         }
 
-        protected override ResourceInstance<IGraphicsPipeline> CreateInstance(ResourceManager manager, string name, (GraphicsPipelineDesc, GraphicsPipelineState, ShaderMacro[]) instanceData)
+        protected override ResourceInstance<IGraphicsPipeline> CreateInstance(ResourceManager manager, string name, GraphicsPipelineDesc insdesctanceData)
         {
             return new ResourceInstance<IGraphicsPipeline>(this, name);
         }
 
-        protected override void LoadInstance(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, (GraphicsPipelineDesc, GraphicsPipelineState, ShaderMacro[]) instanceData)
+        protected override void LoadInstance(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, GraphicsPipelineDesc desc)
         {
-            (GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros) = instanceData;
-            var pipeline = device.CreateGraphicsPipeline(desc, state, macros);
+            var pipeline = device.CreateGraphicsPipeline(desc);
             instance.EndLoad(pipeline);
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, (GraphicsPipelineDesc, GraphicsPipelineState, ShaderMacro[]) instanceData)
+        protected override async Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, GraphicsPipelineDesc desc)
         {
-            (GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros) = instanceData;
-            var pipeline = await device.CreateGraphicsPipelineAsync(desc, state, macros);
+            var pipeline = await device.CreateGraphicsPipelineAsync(desc);
             instance.EndLoad(pipeline);
         }
 

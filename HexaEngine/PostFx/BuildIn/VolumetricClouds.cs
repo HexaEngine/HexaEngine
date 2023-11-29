@@ -1,14 +1,13 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
     using HexaEngine.Graphics.Effects.Blur;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Weather;
     using System.Numerics;
 
@@ -27,6 +26,7 @@
         private GaussianBlur gaussianBlur;
 
         private ResourceRef<DepthStencil> depth;
+        private ResourceRef<DepthMipChain> depthMip;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private ResourceRef<GBuffer> gbuffer;
@@ -41,12 +41,14 @@
             builder
                  .RunBefore("ColorGrading")
                  .RunBefore("Vignette")
-                 .RunAfter("SSR");
+                 .RunAfter("SSR")
+                 .RunBefore("TAA");
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            depthMip = creator.GetDepthMipChain("HiZBuffer");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
             gbuffer = creator.GetGBuffer("GBuffer");
@@ -56,11 +58,12 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/clouds/ps.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.AlphaBlend,
-                BlendFactor = Vector4.One,
-                Topology = PrimitiveTopology.TriangleStrip
+                State = new()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = Vector4.One,
+                    Topology = PrimitiveTopology.TriangleStrip
+                }
             });
 
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
@@ -86,9 +89,9 @@
             }
 
             context.ClearRenderTargetView(intermediateTex.RTV, default);
-            context.SetRenderTarget(intermediateTex.RTV, default);
+            context.SetRenderTarget(intermediateTex.RTV, depth.Value);
             context.SetViewport(Viewport);
-            nint* srvs = stackalloc nint[] { weatherTex.SRV.NativePointer, cloudTex.SRV.NativePointer, worleyTex.SRV.NativePointer, depth.Value.SRV.NativePointer };
+            nint* srvs = stackalloc nint[] { weatherTex.SRV.NativePointer, cloudTex.SRV.NativePointer, worleyTex.SRV.NativePointer, depthMip.Value.SRV.NativePointer };
             context.PSSetShaderResources(0, 4, (void**)srvs);
             nint* smps = stackalloc nint[] { linearWrapSampler.NativePointer, pointWrapSampler.NativePointer };
             context.PSSetSamplers(0, 2, (void**)smps);

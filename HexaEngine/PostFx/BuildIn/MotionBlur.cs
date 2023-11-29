@@ -1,10 +1,9 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     public class MotionBlur : PostFxBase
@@ -100,8 +99,10 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/motionblur/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, shaderMacros.ToArray());
+                PixelShader = "effects/motionblur/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [.. shaderMacros]
+            });
             paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 

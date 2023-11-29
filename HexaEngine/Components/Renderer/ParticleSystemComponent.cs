@@ -4,21 +4,22 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Particles;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
 
-    [EditorComponent<ParticleSystemComponent>("Particle System", false, false)]
-    public class ParticleSystemComponent : BaseRendererComponent
+    [EditorComponent<ParticleSystemComponent>("GPU Particle System", false, false)]
+    public class ParticleSystemComponent : BaseRendererComponent, ISelectableRayTest
     {
-        private ParticleRenderer renderer;
+        private GPUParticleSystem renderer;
         private readonly ParticleEmitter emitter = new();
 
         private string particleTexturePath = string.Empty;
@@ -27,7 +28,7 @@
         private ResourceRef<DepthStencil> dsv;
 
         [JsonIgnore]
-        public override string DebugName { get; protected set; } = nameof(ParticleRenderer);
+        public override string DebugName { get; protected set; } = nameof(GPUParticleSystem);
 
         [JsonIgnore]
         public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Transparency;
@@ -36,7 +37,7 @@
         public override BoundingBox BoundingBox { get; }
 
         [JsonIgnore]
-        public override RendererFlags Flags { get; } = RendererFlags.Draw | RendererFlags.Update;
+        public override RendererFlags Flags { get; } = RendererFlags.Draw | RendererFlags.Update | RendererFlags.NoDepthTest;
 
         [EditorProperty("Texture", EditorPropertyMode.Filepicker)]
         public string ParticleTexturePath
@@ -96,7 +97,7 @@
 
         public override void Load(IGraphicsDevice device)
         {
-            renderer = new(device);
+            renderer = new(device, emitter);
 
             dsv = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
 
@@ -111,9 +112,10 @@
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            if (particleTexture == null)
+            if (particleTexture == null || Application.InDesignMode)
                 return;
-            renderer.Draw(context, emitter, dsv.Value.SRV, emitter.ParticleTexture.SRV);
+
+            renderer.Draw(context, dsv.Value.SRV);
         }
 
         public override void Bake(IGraphicsContext context)
@@ -135,7 +137,7 @@
             if (particleTexture == null)
                 return;
             emitter.Position = new(GameObject.Transform.GlobalPosition, 0);
-            renderer.Update(emitter);
+            renderer.Update();
         }
 
         public override void VisibilityTest(CullingContext context)
@@ -145,7 +147,7 @@
 
         private Task UpdateTextureAsync()
         {
-            loaded = false;
+            Loaded = false;
             emitter.ParticleTexture = null;
             var tmpTexture = particleTexture;
             particleTexture = null;
@@ -159,14 +161,31 @@
                 var component = p.Item2;
                 var path = Paths.CurrentAssetsPath + component.particleTexturePath;
 
+                if (component.GameObject == null)
+                {
+                    return;
+                }
+
                 if (FileSystem.Exists(path))
                 {
                     component.particleTexture = new(device, new TextureFileDescription(path));
                     component.emitter.ParticleTexture = component.particleTexture;
                     component.emitter.ResetEmitter = true;
-                    component.loaded = true;
+                    component.Loaded = true;
                 }
             }, state);
+        }
+
+        public bool SelectRayTest(Ray ray, ref float depth)
+        {
+            BoundingSphere sphere = new(GameObject.Transform.GlobalPosition, 0.5f);
+            var result = sphere.Intersects(ray);
+            if (result == null)
+            {
+                return false;
+            }
+            depth = result.Value;
+            return true;
         }
     }
 }

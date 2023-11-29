@@ -1,13 +1,12 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.UI;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     /// <summary>
@@ -192,19 +191,25 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             upsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             compose = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, shaderMacros.ToArray());
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [.. shaderMacros]
+            });
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -256,7 +261,7 @@
             for (int i = 0; i < levels; i++)
             {
                 var name = $"Bloom{(i == 0 ? "" : $".{i}")}";
-                creator.ReleaseResource(name);
+                creator.DisposeResource(name);
                 var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
 #nullable disable
                 mipChainRTVs[i] = tex.RTV;
@@ -354,7 +359,7 @@
 
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
-                creator.ReleaseResource($"Bloom{(i == 0 ? "" : $".{i}")}");
+                creator.DisposeResource($"Bloom{(i == 0 ? "" : $".{i}")}");
             }
         }
     }

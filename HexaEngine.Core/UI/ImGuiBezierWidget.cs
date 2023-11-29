@@ -8,6 +8,7 @@ using System.Numerics;
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

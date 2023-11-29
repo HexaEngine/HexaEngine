@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Windows
+﻿namespace HexaEngine.Core.Threading
 {
     using System;
     using System.Collections.Concurrent;

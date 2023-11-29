@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Properties.Editors
+﻿namespace HexaEngine.Editor.Editors
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;

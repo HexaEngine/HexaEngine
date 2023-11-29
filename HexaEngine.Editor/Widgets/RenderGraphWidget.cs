@@ -1,15 +1,14 @@
-﻿using HexaEngine.Rendering.Graph;
-
-namespace HexaEngine.Editor.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using Hexa.NET.ImGui;
     using Hexa.NET.ImNodes;
-    using HexaEngine.Rendering.Renderers;
     using System.Collections.Generic;
     using System.Numerics;
+    using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Renderers;
 
     [EditorWindowCategory("Debug")]
     public class RenderGraphWidget : EditorWindow

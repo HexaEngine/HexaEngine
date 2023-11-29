@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Editor
+namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
@@ -38,7 +38,7 @@ namespace HexaEngine.Editor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float Saturate(float f)
         {
-            return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f;
+            return f < 0.0f ? 0.0f : f > 1.0f ? 1.0f : f;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace HexaEngine.Editor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int F32ToInt8Sat(float val)
         {
-            return ((int)(Saturate(val) * 255.0f + 0.5f));
+            return (int)(Saturate(val) * 255.0f + 0.5f);
         }
 
         /// <summary>
@@ -61,10 +61,10 @@ namespace HexaEngine.Editor
         public static uint ColorConvertFloat4ToU32(Vector4 i)
         {
             uint o;
-            o = ((uint)F32ToInt8Sat(i.X)) << COL32_R_SHIFT;
-            o |= ((uint)F32ToInt8Sat(i.Y)) << COL32_G_SHIFT;
-            o |= ((uint)F32ToInt8Sat(i.Z)) << COL32_B_SHIFT;
-            o |= ((uint)F32ToInt8Sat(i.W)) << COL32_A_SHIFT;
+            o = (uint)F32ToInt8Sat(i.X) << COL32_R_SHIFT;
+            o |= (uint)F32ToInt8Sat(i.Y) << COL32_G_SHIFT;
+            o |= (uint)F32ToInt8Sat(i.Z) << COL32_B_SHIFT;
+            o |= (uint)F32ToInt8Sat(i.W) << COL32_A_SHIFT;
             return o;
         }
 
@@ -765,6 +765,64 @@ namespace HexaEngine.Editor
             immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
+        /// <summary>
+        /// Draws a ring-shaped billboard in 3D space.
+        /// </summary>
+        /// <param name="id">Identifier for the billboard.</param>
+        /// <param name="origin">The center of the ring.</param>
+        /// <param name="camPos">Camera position in world space.</param>
+        /// <param name="camUp">Camera up vector.</param>
+        /// <param name="camForward">Camera forward vector.</param>
+        /// <param name="ellipse">Tuple containing major and minor axes of the ellipse defining the ring.</param>
+        /// <param name="col">Color of the ring.</param>
+        public static void DrawRingBillboard(string id, Vector3 origin, Vector3 camPos, Vector3 camUp, Vector3 camForward, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
+        {
+            uint color = ColorConvertFloat4ToU32(col);
+            const int c_ringSegments = 32;
+
+            immediateList.ReserveGeometry(c_ringSegments, c_ringSegments * 2);
+
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            for (uint i = 0; i < c_ringSegments; i++)
+            {
+                indices[i * 2] = i;
+                indices[i * 2 + 1] = i + 1;
+            }
+
+            indices[(c_ringSegments - 1) * 2 + 1] = 0;
+
+            Vector3 majorAxis = ellipse.majorAxis;
+            Vector3 minorAxis = ellipse.minorAxis;
+            float fAngleDelta = MathUtil.PI2 / c_ringSegments;
+
+            var mat = MathUtil.BillboardLH(origin, camPos, camUp, camForward);
+
+            // Instead of calling cos/sin for each segment we calculate
+            // the sign of the angle delta and then incrementally calculate sin
+            // and cosine from then on.
+            Vector3 cosDelta = new(MathF.Cos(fAngleDelta));
+            Vector3 sinDelta = new(MathF.Sin(fAngleDelta));
+            Vector3 incrementalSin = Vector3.Zero;
+            Vector3 incrementalCos = new(1.0f, 1.0f, 1.0f);
+            for (int i = 0; i < c_ringSegments; i++)
+            {
+                Vector3 pos = majorAxis * incrementalCos;
+                pos = minorAxis * incrementalSin + pos;
+                vertices[i].Position = Vector3.Transform(pos, mat);
+                vertices[i].UV = default;
+                vertices[i].Color = color;
+                // Standard formula to rotate a vector.
+                Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
+                Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
+                incrementalCos = newCos;
+                incrementalSin = newSin;
+            }
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
+        }
+
         private static readonly Vector3[] boxPositions =
 {
 new Vector3(-1, +1, -1),
@@ -1305,6 +1363,45 @@ new Vector3(+1, +1, +1),
             vertices[1] = new(Vector3.Transform(p1, orientation) + origin, uv0, color);
             vertices[2] = new(Vector3.Transform(p2, orientation) + origin, new(uv1.X, uv0.Y), color);
             vertices[3] = new(Vector3.Transform(p3, orientation) + origin, uv1, color);
+
+            immediateList.RecordCmd(PrimitiveTopology.TriangleList, texId);
+        }
+
+        /// <summary>
+        /// Draws a textured quad billboard in 3D space.
+        /// </summary>
+        /// <param name="id">Identifier for the billboard.</param>
+        /// <param name="origin">The center point of the billboard in world space.</param>
+        /// <param name="camOrigin">The origin of the camera in world space.</param>
+        /// <param name="camUp">The up vector of the camera in world space.</param>
+        /// <param name="camForward">The forward vector of the camera in world space.</param>
+        /// <param name="scale">The scale of the billboard along the X and Y axes.</param>
+        /// <param name="uv0">The UV coordinate for the bottom-left corner of the texture.</param>
+        /// <param name="uv1">The UV coordinate for the top-right corner of the texture.</param>
+        /// <param name="col">The color of the billboard.</param>
+        /// <param name="texId">The identifier of the texture to be applied to the billboard.</param>
+        public static void DrawQuadBillboard(string id, Vector3 origin, Vector3 camOrigin, Vector3 camUp, Vector3 camForward, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
+        {
+            uint color = ColorConvertFloat4ToU32(col);
+
+            immediateList.ReserveGeometry(4, 6);
+            var indices = immediateList.Indices + immediateList.IndexCount;
+            var vertices = immediateList.Vertices + immediateList.VertexCount;
+
+            indices[0] = 0; indices[1] = 1; indices[2] = 2;
+            indices[3] = 0; indices[4] = 2; indices[5] = 3;
+
+            Matrix4x4 mat = MathUtil.BillboardLH(origin, camOrigin, camUp, camForward);
+
+            Vector3 p0 = new(-scale.X, -scale.Y, 0); // bottom left corner
+            Vector3 p1 = new(-scale.X, scale.Y, 0); // top left corner
+            Vector3 p2 = new(scale.X, scale.Y, 0); // top right corner
+            Vector3 p3 = new(scale.X, -scale.Y, 0); // bottom right corner
+
+            vertices[0] = new(Vector3.Transform(p0, mat), new(uv0.X, uv1.Y), color);
+            vertices[1] = new(Vector3.Transform(p1, mat), uv0, color);
+            vertices[2] = new(Vector3.Transform(p2, mat), new(uv1.X, uv0.Y), color);
+            vertices[3] = new(Vector3.Transform(p3, mat), uv1, color);
 
             immediateList.RecordCmd(PrimitiveTopology.TriangleList, texId);
         }

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Graphics.Renderers;
 
     [EditorWindowCategory("Debug")]
     public class PostProcessWindow : EditorWindow

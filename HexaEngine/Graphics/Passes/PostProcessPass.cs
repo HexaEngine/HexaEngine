@@ -1,12 +1,10 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Effects.BuildIn;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
     using HexaEngine.PostFx.BuildIn;
-    using HexaEngine.Rendering.Graph;
 
     public class PostProcessPass : DrawPass
     {
@@ -22,11 +20,11 @@
             AddWriteDependency(new("PostFxBuffer"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
             var viewport = creator.Viewport;
-            postProcessingManager = new(device, creator, (int)viewport.Width, (int)viewport.Height, 4, false);
+            postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, false);
             postProcessingManager.Add<VelocityBuffer>();
             postProcessingManager.Add<TemporalNoise>();
             postProcessingManager.Add<HBAO>();

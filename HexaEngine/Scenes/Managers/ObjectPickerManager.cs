@@ -3,8 +3,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Graphics.Graph;
+    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Queries.Generic;
     using System.Numerics;
 
     public struct SelectionResult
@@ -20,7 +22,8 @@
         }
     }
 
-    public static class ObjectPickerManager
+    [Obsolete("Use new object picker directly in scene")]
+    public static class ObjectPickerManagerOld
     {
         private static IGraphicsDevice device;
         private static IGraphicsPipeline pipeline;
@@ -30,22 +33,22 @@
 
         private static ConstantBuffer<Vector4> mouseBuffer;
         private static StructuredUavBuffer<SelectionResult> outputBuffer;
-        private static Graph.ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private static ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public static void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height)
         {
-            ObjectPickerManager.device = device;
+            ObjectPickerManagerOld.device = device;
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/selection/vs.hlsl",
                 PixelShader = "forward/selection/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList,
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Topology = PrimitiveTopology.TriangleList,
+                }
             });
             texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             depthStencil = new(device, Format.D32Float, width, height);
@@ -139,6 +142,46 @@
             computePipeline.Dispose();
             mouseBuffer.Dispose();
             outputBuffer.Dispose();
+        }
+    }
+
+    public interface ISelectableRayTest : IComponent
+    {
+        public bool SelectRayTest(Ray ray, ref float depth);
+    }
+
+    public class ObjectPickerManager : ISystem
+    {
+        private readonly ComponentTypeQuery<ISelectableRayTest> pickables = new();
+
+        public string Name { get; } = "Object Picker";
+
+        public SystemFlags Flags { get; } = SystemFlags.Awake;
+
+        public void Awake(Scene scene)
+        {
+            scene.QueryManager.AddQuery(pickables);
+        }
+
+        public unsafe GameObject? SelectObject(Ray ray)
+        {
+            float min = float.MaxValue;
+            GameObject? selectedObject = null;
+            for (int i = 0; i < pickables.Count; i++)
+            {
+                var pickable = pickables[i];
+                float depth = 0;
+                if (pickable.SelectRayTest(ray, ref depth))
+                {
+                    if (min > depth)
+                    {
+                        min = depth;
+                        selectedObject = pickable.GameObject;
+                    }
+                }
+            }
+
+            return selectedObject;
         }
     }
 }

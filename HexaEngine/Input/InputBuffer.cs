@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Input
 {
+    using HexaEngine.Input.Events;
     using System.Diagnostics;
 
     /// <summary>

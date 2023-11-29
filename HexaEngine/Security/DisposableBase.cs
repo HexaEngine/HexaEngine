@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Security
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
 
     public abstract class DisposableBase : IDisposable
     {

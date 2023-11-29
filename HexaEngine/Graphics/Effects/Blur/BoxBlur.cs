@@ -25,8 +25,9 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/box.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                PixelShader = "effects/blur/box.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
             paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

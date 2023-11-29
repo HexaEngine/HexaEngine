@@ -409,7 +409,7 @@
         {
             this.device = device;
             libraryWindow.Init(device);
-            generator.OnPreBuildTable += Generator_OnPreBuildTable;
+            generator.OnPreBuildTable += GeneratorOnPreBuildTable;
 
             if (material != null)
             {
@@ -432,13 +432,15 @@
             tonemap = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/colorgrading/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                PixelShader = "effects/colorgrading/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
             fxaa = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/fxaa/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                PixelShader = "effects/fxaa/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+            });
 
             camera.Fov = 90;
             camera.Width = 1;
@@ -451,8 +453,10 @@
             dfg = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/dfg/ps.hlsl"
-            }, GraphicsPipelineState.Default, new ShaderMacro[2] { new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0") });
+                PixelShader = "effects/dfg/ps.hlsl",
+                State = GraphicsPipelineState.Default,
+                Macros = [new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0")]
+            });
 
             iblDFG = new(device, Format.R16G16B16A16Float, 128, 128, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             var context = device.Context;
@@ -485,7 +489,7 @@
                 Generate();
         }
 
-        private void Generator_OnPreBuildTable(VariableTable table)
+        private void GeneratorOnPreBuildTable(VariableTable table)
         {
             table.SetBaseSrv(2);
             table.SetBaseSampler(2);
@@ -542,9 +546,14 @@
 
             libraryWindow.DrawWindow(context);
 
+            DrawMenuBar();
             DrawNodesWindow(context);
             DrawPreviewWindow(context);
+            editor?.Draw();
+        }
 
+        private void DrawMenuBar()
+        {
             if (ImGui.BeginMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
@@ -593,8 +602,6 @@
 
                 ImGui.EndMenuBar();
             }
-
-            editor?.Draw();
         }
 
         private void DrawNodesWindow(IGraphicsContext context)
@@ -604,7 +611,7 @@
                 ImGui.Text("No material open");
                 return;
             }
-            if (!ImGui.Begin("ObjectAdded splitNode"))
+            if (!ImGui.Begin("Add SplitNode"))
             {
                 ImGui.End();
                 return;
@@ -622,7 +629,7 @@
 
             if (ImGui.CollapsingHeader("Methods"))
             {
-                if (ImGui.MenuItem("normal Map"))
+                if (ImGui.MenuItem("Normal Map"))
                 {
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
@@ -851,16 +858,16 @@
             {
                 PixelShader = "generated/main.hlsl",
                 VertexShader = "generated/vs.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = default,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                SampleMask = 0,
-                StencilRef = 0,
-                Topology = PrimitiveTopology.TriangleList
+                State = new GraphicsPipelineState()
+                {
+                    Blend = BlendDescription.Opaque,
+                    BlendFactor = default,
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    SampleMask = 0,
+                    StencilRef = 0,
+                    Topology = PrimitiveTopology.TriangleList
+                }
             });
 
             pipeline.Recompile();

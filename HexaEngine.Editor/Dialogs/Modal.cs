@@ -62,7 +62,7 @@
 
         public virtual void Show()
         {
-            signalShow = true;
+            signalShow = shown = true;
         }
     }
 }

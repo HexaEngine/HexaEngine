@@ -287,81 +287,6 @@
         IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
-        /// Creates a graphics pipeline with the specified description and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description and input element descriptions.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="elementDescriptions">The input element descriptions.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description, input element descriptions, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="inputElements">The input element descriptions.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description and graphics pipeline state.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description, graphics pipeline state, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description, graphics pipeline state, and input element descriptions.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="elementDescriptions">The input element descriptions.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a graphics pipeline with the specified description, graphics pipeline state, input element descriptions, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="inputElements">The input element descriptions.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
         /// Creates a compute pipeline with the specified description.
         /// </summary>
         /// <param name="desc">The description of the compute pipeline.</param>
@@ -369,16 +294,6 @@
         /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
         /// <returns>The created compute pipeline.</returns>
         IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
-
-        /// <summary>
-        /// Creates a compute pipeline with the specified description and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the compute pipeline.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>The created compute pipeline.</returns>
-        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Asynchronously creates a graphics pipeline with the specified description.
@@ -393,102 +308,6 @@
         }
 
         /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, macros, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description and input element descriptions.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="elementDescriptions">The input element descriptions.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, elementDescriptions, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description, input element descriptions, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="inputElements">The input element descriptions.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, inputElements, macros, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description and graphics pipeline state.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, state, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description, graphics pipeline state, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, state, macros, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description, graphics pipeline state, and input element descriptions.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="elementDescriptions">The input element descriptions.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, state, elementDescriptions, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description, graphics pipeline state, input element descriptions, and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="state">The graphics pipeline state.</param>
-        /// <param name="inputElements">The input element descriptions.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, state, inputElements, macros, filename, line));
-        }
-
-        /// <summary>
         /// Asynchronously creates a compute pipeline with the specified description.
         /// </summary>
         /// <param name="desc">The description of the compute pipeline.</param>
@@ -499,20 +318,6 @@
         Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return Task.Factory.StartNew(() => CreateComputePipeline(desc, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a compute pipeline with the specified description and shader macros.
-        /// </summary>
-        /// <param name="desc">The description of the compute pipeline.</param>
-        /// <param name="macros">The shader macros to be used during compilation.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the compute pipeline.</returns>
-
-        Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateComputePipeline(desc, macros, filename, line));
         }
     }
 }

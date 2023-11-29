@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Collections;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Extensions;
     using System;

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Collections;
     using System;

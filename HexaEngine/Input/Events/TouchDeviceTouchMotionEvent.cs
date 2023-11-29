@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Input
+﻿namespace HexaEngine.Input.Events
 {
     using HexaEngine.Core.Input.Events;
 

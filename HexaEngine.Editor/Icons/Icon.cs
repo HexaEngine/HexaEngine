@@ -64,6 +64,11 @@
             return icon.icon.SRV.NativePointer;
         }
 
+        public static implicit operator nint(Icon icon)
+        {
+            return icon.icon.SRV.NativePointer;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

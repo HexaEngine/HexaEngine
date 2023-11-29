@@ -1,9 +1,9 @@
-﻿namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using System.Numerics;
 
@@ -37,20 +37,22 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
-                PixelShader = "deferred/decal/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone
+                PixelShader = "deferred/decal/ps.hlsl",
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone
+                }
             });
             pipelineModifyNormals = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
-                PixelShader = "deferred/decal/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone
-            },
-            new ShaderMacro[] { new("DECAL_MODIFY_NORMALS", 1) });
+                PixelShader = "deferred/decal/ps.hlsl",
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone
+                },
+                Macros = [new("DECAL_MODIFY_NORMALS", 1)]
+            });
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
             pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
             worldBuffer = new(device, CpuAccessFlags.Write);

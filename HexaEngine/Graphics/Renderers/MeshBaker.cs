@@ -1,12 +1,12 @@
-﻿namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using System;
@@ -215,9 +215,24 @@
             defines[2].Name = "NumBounceSumThreads_";
             defines[2].Definition = numThreadsString;
 
-            integrateCS = device.CreateComputePipeline(new() { Entry = "IntegrateCS", Path = "compute/bake/integrate.hlsl" }, defines);
-            reductionCS = device.CreateComputePipeline(new() { Entry = "ReductionCS", Path = "compute/bakintegrate.hlsl" }, defines);
-            sumBouncesCS = device.CreateComputePipeline(new() { Entry = "SumBouncesCS", Path = "compute/bakintegrate.hlsl" }, defines);
+            integrateCS = device.CreateComputePipeline(new()
+            {
+                Entry = "IntegrateCS",
+                Path = "compute/bake/integrate.hlsl",
+                Macros = defines
+            });
+            reductionCS = device.CreateComputePipeline(new()
+            {
+                Entry = "ReductionCS",
+                Path = "compute/bakintegrate.hlsl",
+                Macros = defines
+            });
+            sumBouncesCS = device.CreateComputePipeline(new()
+            {
+                Entry = "SumBouncesCS",
+                Path = "compute/bakintegrate.hlsl",
+                Macros = defines
+            });
 
             // Compute the final weight for integration
             float weightSum = 0.0f;

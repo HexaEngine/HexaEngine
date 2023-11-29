@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Culling
+﻿namespace HexaEngine.Graphics.Culling
 {
     public struct TypeData
     {

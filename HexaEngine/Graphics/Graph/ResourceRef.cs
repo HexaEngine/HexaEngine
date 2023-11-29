@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -96,6 +96,8 @@
 
         public ResourceRef Resource => resource;
 
+        public bool HasValue => Value != null;
+
         private void OnValueChanged(object? sender, IDisposable? disposable)
         {
             ValueChanged?.Invoke(this, disposable as T);
@@ -103,7 +105,10 @@
 
         public event EventHandler<T?>? ValueChanged;
 
-        public static implicit operator T?(ResourceRef<T> resourceRef) => resourceRef.Value;
+        public static implicit operator T(ResourceRef<T> resourceRef)
+        {
+            return resourceRef.Value;
+        }
     }
 
     public class ResourceRefNotNull<T> where T : class, IDisposable

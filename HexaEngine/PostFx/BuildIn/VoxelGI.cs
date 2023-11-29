@@ -1,13 +1,13 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
@@ -51,9 +51,10 @@
                 PixelShader = "gi/VoxelizePS.hlsl",
                 GeometryShader = "gi/VoxelizeGS.hlsl",
                 VertexShader = "gi/VoxelizeVS.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone
+                State = new GraphicsPipelineState()
+                {
+                    Rasterizer = RasterizerDescription.CullNone
+                }
             });
             voxelConstantBuffer = new(device, CpuAccessFlags.Write);
             lights = new(device, (int)VoxelizeMaxLights, CpuAccessFlags.Write);

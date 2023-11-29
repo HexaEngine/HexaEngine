@@ -1,6 +1,5 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Graph;
     using System;
     using System.Collections;
     using System.Collections.Specialized;

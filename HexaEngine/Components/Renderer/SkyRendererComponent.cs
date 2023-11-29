@@ -3,13 +3,14 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Weather;
     using System;
     using System.Threading.Tasks;
 
@@ -102,7 +103,7 @@
 
         private Task UpdateEnvAsync(IGraphicsDevice device)
         {
-            loaded = false;
+            Loaded = false;
             renderer?.Uninitialize();
             var tmpSkybox = skybox;
             skybox = null;
@@ -121,7 +122,7 @@
                     component.skybox = new(device);
                     await component.skybox.LoadAsync(path);
                     component.renderer.Initialize(component.skybox);
-                    component.loaded = true;
+                    component.Loaded = true;
                 }
             }, state);
         }

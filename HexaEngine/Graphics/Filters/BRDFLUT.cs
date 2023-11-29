@@ -16,8 +16,10 @@ namespace HexaEngine.Graphics.Filters
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/dfg/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, new ShaderMacro[2] { new("MULTISCATTER", multiscatter ? "1" : "0"), new("CLOTH", cloth ? "1" : "0") });
+                PixelShader = "effects/dfg/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [new("MULTISCATTER", multiscatter ? "1" : "0"), new("CLOTH", cloth ? "1" : "0")]
+            });
         }
 
         public void Draw(IGraphicsContext context, uint width, uint height)

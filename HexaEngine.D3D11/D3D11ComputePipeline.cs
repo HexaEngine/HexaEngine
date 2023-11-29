@@ -21,6 +21,7 @@
             this.device = device;
             this.dbgName = dbgName;
             this.desc = desc;
+            macros = desc.Macros;
             Compile();
             initialized = true;
         }

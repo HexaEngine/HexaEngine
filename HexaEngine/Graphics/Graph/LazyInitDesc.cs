@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graph;
 
     public struct LazyInitDesc<T> : IEquatable<LazyInitDesc<T>>
     {
@@ -20,7 +19,10 @@
         {
             var resource = (TType)Constructor(device, Desc);
             Ref.Value = resource;
-            group.Add(resource);
+            lock (group)
+            {
+                group.Add(resource);
+            }
         }
 
         public override readonly bool Equals(object? obj)

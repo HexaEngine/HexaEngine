@@ -1,31 +1,39 @@
-﻿using HexaEngine.Editor;
-
-namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Numerics;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public unsafe class DebugDrawRenderer : IDisposable
     {
-        private readonly IGraphicsDevice device;
-        private readonly IGraphicsContext context;
-        private readonly IGraphicsPipeline pipeline;
-        private readonly IBuffer constantBuffer;
+        private static IGraphicsDevice device;
+        private static IGraphicsContext context;
+        private static IGraphicsPipeline pipeline;
+        private static IBuffer vertexBuffer;
+        private static IBuffer indexBuffer;
+        private static IBuffer constantBuffer;
+        private static ISamplerState fontSampler;
+        private static IShaderResourceView fontTextureView;
 
-        private IBuffer vertexBuffer;
-        private IBuffer indexBuffer;
-
-        private int vertexBufferSize = 5000;
-        private int indexBufferSize = 10000;
+        private static int vertexBufferSize = 5000;
+        private static int indexBufferSize = 10000;
         private bool disposedValue;
 
         public DebugDrawRenderer(IGraphicsDevice device)
         {
-            this.device = device;
+            DebugDrawRenderer.device = device;
 
             context = device.Context;
+
+            CreateDeviceObjects();
+        }
+
+        private static void CreateDeviceObjects()
+        {
             var desc = RasterizerDescription.CullNone;
             desc.AntialiasedLineEnable = true;
             desc.MultisampleEnable = false;
@@ -34,25 +42,78 @@ namespace HexaEngine.Rendering.Renderers
             {
                 VertexShader = "internal/debugdraw/vs.hlsl",
                 PixelShader = "internal/debugdraw/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Blend = BlendDescription.NonPremultiplied,
-                Rasterizer = desc,
-                BlendFactor = Vector4.One,
-                SampleMask = int.MaxValue,
-            },
-            new InputElementDescription[]
-            {
-                new("POSITION", 0, Format.R32G32B32Float, 0),
-                new("TEXCOORD",0, Format.R32G32Float, 0),
-                new("COLOR", 0, Format.R8G8B8A8UNorm, 0),
+                State = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Blend = BlendDescription.NonPremultiplied,
+                    Rasterizer = desc,
+                    BlendFactor = Vector4.One,
+                    SampleMask = int.MaxValue,
+                },
+                InputElements =
+                [
+                    new("POSITION", 0, Format.R32G32B32Float, 0),
+                    new("TEXCOORD", 0, Format.R32G32Float, 0),
+                    new("COLOR", 0, Format.R8G8B8A8UNorm, 0),
+                ]
             });
 
             vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(uint), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(Matrix4x4), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+
+            CreateFontsTexture();
+        }
+
+        private static unsafe void CreateFontsTexture()
+        {
+            uint* pixels = stackalloc uint[] { 0xffffffff };
+            int width = 1;
+            int height = 1;
+
+            var texDesc = new Texture2DDescription
+            {
+                Width = width,
+                Height = height,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = Format.R8G8B8A8UNorm,
+                SampleDescription = new SampleDescription { Count = 1 },
+                Usage = Usage.Default,
+                BindFlags = BindFlags.ShaderResource,
+                CPUAccessFlags = CpuAccessFlags.None
+            };
+
+            var subResource = new SubresourceData
+            {
+                DataPointer = (nint)pixels,
+                RowPitch = texDesc.Width * 4,
+                SlicePitch = 0
+            };
+
+            var texture = device.CreateTexture2D(texDesc, new[] { subResource });
+
+            var resViewDesc = new ShaderResourceViewDescription
+            {
+                Format = Format.R8G8B8A8UNorm,
+                ViewDimension = ShaderResourceViewDimension.Texture2D,
+                Texture2D = new Texture2DShaderResourceView { MipLevels = texDesc.MipLevels, MostDetailedMip = 0 }
+            };
+            fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
+            texture.Dispose();
+
+            var samplerDesc = new SamplerStateDescription
+            {
+                Filter = Filter.MinMagMipLinear,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap,
+                MipLODBias = 0f,
+                ComparisonFunction = ComparisonFunction.Always,
+                MinLOD = 0f,
+                MaxLOD = 0f
+            };
+            fontSampler = device.CreateSamplerState(samplerDesc);
         }
 
         public void BeginDraw()
@@ -103,13 +164,15 @@ namespace HexaEngine.Rendering.Renderers
             context.Unmap(vertexBuffer, 0);
             context.Unmap(indexBuffer, 0);
 
-            {
-                context.Write(constantBuffer, Matrix4x4.Transpose(camera));
+            context.Write(constantBuffer, Matrix4x4.Transpose(camera));
 
+            {
                 context.VSSetConstantBuffer(0, constantBuffer);
                 context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-                pipeline.BeginDraw(context);
+                context.SetGraphicsPipeline(pipeline);
+                context.VSSetConstantBuffer(0, constantBuffer);
+                context.PSSetSampler(0, fontSampler);
 
                 int voffset = 0;
                 uint ioffset = 0;
@@ -119,6 +182,10 @@ namespace HexaEngine.Rendering.Renderers
                     var cmd = queue.Commands[i];
 
                     var texId = cmd.TextureId;
+                    if (texId == 0)
+                    {
+                        texId = fontTextureView.NativePointer;
+                    }
                     context.PSSetShaderResources(0, 1, (void**)&texId);
                     context.SetPrimitiveTopology(cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
@@ -148,6 +215,8 @@ namespace HexaEngine.Rendering.Renderers
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
             context.SetGraphicsPipeline(pipeline);
+            context.VSSetConstantBuffer(0, constantBuffer);
+            context.PSSetSampler(0, fontSampler);
         }
 
         private void Render(DebugDrawData data)

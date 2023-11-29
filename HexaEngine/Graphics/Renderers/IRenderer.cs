@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Lights;

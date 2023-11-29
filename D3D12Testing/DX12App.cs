@@ -1,7 +1,7 @@
 ﻿namespace D3D12Testing
 {
+    using D3D12Testing.Graphics;
     using D3D12Testing.Windows;
-    using HexaEngine.D3D12;
 
     public class DX12App
     {

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights
 {
+    using HexaEngine.Components;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
@@ -20,6 +21,12 @@
         private float intensity = 1;
         private bool shadowMapEnable;
         private ShadowResolution shadowMapResolution;
+
+        public override void Initialize()
+        {
+            AddComponentSingleton<SphereSelectionComponent>();
+            base.Initialize();
+        }
 
         public abstract LightType LightType { get; }
 

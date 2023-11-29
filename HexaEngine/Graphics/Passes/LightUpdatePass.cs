@@ -1,12 +1,12 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
@@ -43,7 +43,7 @@
             for (int i = 0; i < probes.Count; i++)
             {
                 var probe = probes[i];
-                if (!(probe.IsEnabled))
+                if (!probe.IsEnabled)
                 {
                     continue;
                 }

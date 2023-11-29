@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.D3D12
+﻿namespace D3D12Testing.Graphics
 {
     using D3D12Testing.Windows;
     using Silk.NET.Core.Contexts;
@@ -178,16 +178,16 @@
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
-                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
+                SwapEffect = SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
                 Windowed = true,
                 BufferDesc = new(1, 0)
                 {
-                    Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
+                    Format = Format.FormatB8G8R8A8Unorm,
                     Height = (uint)window.Height,
                     Width = (uint)window.Width,
-                    Scaling = Silk.NET.DXGI.ModeScaling.Stretched,
-                    ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified
+                    Scaling = ModeScaling.Stretched,
+                    ScanlineOrdering = ModeScanlineOrder.Unspecified
                 },
                 OutputWindow = Hwnd
             };

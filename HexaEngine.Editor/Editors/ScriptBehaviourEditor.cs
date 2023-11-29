@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Properties.Editors
+﻿namespace HexaEngine.Editor.Editors
 {
     using HexaEngine.Components;
     using HexaEngine.Core.Graphics;
@@ -12,13 +12,15 @@
         private ImGuiName guiName = new("Script Behaviour");
         private IObjectEditor? editor;
 
-        public string Name => "Script Behaviour";
+        public string Name => guiName.UniqueName;
 
         public Type Type => typeof(ScriptBehaviour);
 
         public object? Instance { get; set; }
 
         public bool IsEmpty => false;
+
+        public bool IsHidden => false;
 
         public bool NoTable { get; set; }
 
@@ -36,14 +38,15 @@
             var types = AssemblyManager.GetAssignableTypes(typeof(IScriptBehaviour));
             var names = AssemblyManager.GetAssignableTypeNames(typeof(IScriptBehaviour));
 
+            if (types.Count == 0)
+            {
+                return;
+            }
+
             var type = component.ScriptType != null ? AssemblyManager.GetType(component.ScriptType) : null;
 
             int index = type != null ? types.IndexOf(type) : -1;
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            ImGui.Text(guiName.Name);
-            ImGui.TableSetColumnIndex(1);
             if (ImGui.Combo(guiName.Id, ref index, names, names.Length))
             {
                 if (editor != null)
@@ -64,8 +67,6 @@
                 editor.Instance = component.Instance;
             }
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
             if (editor != null && editor.Instance != null && !editor.IsEmpty)
             {
                 ImGui.Separator();

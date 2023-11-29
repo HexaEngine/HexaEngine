@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     public enum RenderPassType
     {

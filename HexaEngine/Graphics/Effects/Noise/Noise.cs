@@ -63,13 +63,15 @@
 
         public Noise(IGraphicsDevice device, NoiseType type)
         {
-            ShaderMacro[] macros = { new ShaderMacro(type.ToString(), 1) };
+            ShaderMacro[] macros = [new ShaderMacro(type.ToString(), 1)];
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = $"effects/noise/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             scaleBuffer = new(device, new NoiseParams(), CpuAccessFlags.Write);
         }

@@ -28,7 +28,9 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            }, GraphicsPipelineState.Default, macros);
+                State = GraphicsPipelineState.Default,
+                Macros = macros
+            });
 
             SamplerStateDescription description = SamplerStateDescription.PointClamp;
 

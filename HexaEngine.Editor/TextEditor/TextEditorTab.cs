@@ -5,9 +5,13 @@
     using Hexa.NET.ImGui;
     using System.IO;
     using System.Numerics;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Core.Graphics.Reflection;
+    using YamlDotNet.Core;
 
     public unsafe class TextEditorTab
     {
+        private readonly ImGuiName name;
         private readonly ImGuiInputTextCallback callback;
         private bool open = true;
         private bool isFocused = false;
@@ -18,7 +22,7 @@
 
         public TextEditorTab(string tabName, TextSource source)
         {
-            TabName = tabName;
+            name = new(tabName);
             this.source = source;
             history = new(source, 1024);
             callback = TextCallback;
@@ -26,16 +30,14 @@
 
         public TextEditorTab(TextSource source, string currentFile)
         {
-            TabName = Path.GetFileName(currentFile);
+            name = new(Path.GetFileName(currentFile));
             CurrentFile = currentFile;
             this.source = source;
             history = new(source, 1024);
             callback = TextCallback;
         }
 
-        public Guid TabId { get; } = Guid.NewGuid();
-
-        public string TabName { get; }
+        public string TabName => name.Name;
 
         public string? CurrentFile { get; set; }
 
@@ -53,7 +55,7 @@
         {
             isFocused = false;
             ImGuiTabItemFlags flags = source.Changed ? ImGuiTabItemFlags.UnsavedDocument : ImGuiTabItemFlags.None;
-            if (ImGui.BeginTabItem($"{TabName}##{TabId}", ref open, flags))
+            if (ImGui.BeginTabItem(name.UniqueName, ref open, flags))
             {
                 isFocused = true;
                 StdString* text = source.Text;
@@ -66,7 +68,7 @@
 
                 for (int line = 1; line <= source.LineCount; line++)
                 {
-                    ImGui.Text($"{line}");
+                    ImGui.TextV("%d", (nuint)(&line));
                 }
 
                 ImGui.EndChild();

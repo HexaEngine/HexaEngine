@@ -1,4 +1,4 @@
-namespace HexaEngine.Core.IO.Assets
+namespace HexaEngine.Core.IO.Archives
 {
     using System.IO;
 

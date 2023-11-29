@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using Hexa.NET.ImGui;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -69,6 +68,11 @@
                     ImGui.EndMenu();
                 }
 
+                if (ImGui.MenuItem("Show Hidden"))
+                {
+                    ShowHidden = !ShowHidden;
+                }
+
                 ImGui.EndPopup();
             }
         }
@@ -93,10 +97,6 @@
                 if (ImGui.MenuItem("Delete"))
                 {
                     GameObject.Selected.PurgeSelection();
-                }
-                if (ImGui.MenuItem("Show Hidden"))
-                {
-                    ShowHidden = !ShowHidden;
                 }
                 ImGui.EndPopup();
             }

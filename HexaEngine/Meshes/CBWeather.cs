@@ -22,7 +22,8 @@
 
         public float DensityFactor;
         public float CloudType;
-        public Vector2 _padd;
+        public float PhaseFunctionG;
+        public float _padd;
 
         //sky parameters
         public Vector3 A;

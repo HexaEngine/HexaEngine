@@ -1,10 +1,9 @@
-﻿namespace HexaEngine.Editor.Properties.Editors
+﻿namespace HexaEngine.Editor.Properties
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
     using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Numerics;

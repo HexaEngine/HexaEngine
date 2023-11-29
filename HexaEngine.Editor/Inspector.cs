@@ -10,6 +10,9 @@
     using HexaEngine.Scenes.Managers;
     using Hexa.NET.ImGuizmo;
     using System.Numerics;
+    using HexaEngine.Editor.Icons;
+    using Hardware.Info;
+    using HexaEngine.Core.Debugging;
 
     public partial class Frameviewer
     {
@@ -66,6 +69,14 @@
                 return;
             }
 
+            if (CameraManager.Current == null)
+            {
+                return;
+            }
+            var mainCamera = CameraManager.Current;
+            var pos = mainCamera.Transform.GlobalPosition;
+            var forward = mainCamera.Transform.Forward;
+
             if (drawGrid)
             {
                 if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
@@ -86,7 +97,7 @@
                     if (light is DirectionalLight directional)
                     {
                         DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
-                        DebugDraw.DrawSphere(light.Name + "1", light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
 
                         if (drawLightBounds)
                         {
@@ -101,6 +112,7 @@
                     }
                     if (light is Spotlight spotlight)
                     {
+                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
                         DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
 
                         DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
@@ -114,7 +126,8 @@
                     }
                     if (light is PointLight pointLight)
                     {
-                        DebugDraw.DrawSphere(light.Name, light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawRingBillboard(light.Name + "0", light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, (new(0, 0.5f, 0), new(0.5f, 0, 0)), Vector4.One);
 
                         if (drawLightBounds)
                         {
@@ -133,7 +146,7 @@
                     {
                         continue;
                     }
-
+                    DebugDraw.DrawQuadBillboard(cam.Name, cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Camera"));
                     DebugDraw.DrawFrustum(cam.Name, cam.Transform.NormalizedFrustum, Vector4.One);
                 }
             }

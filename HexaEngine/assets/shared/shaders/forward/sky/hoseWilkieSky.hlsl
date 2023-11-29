@@ -2,8 +2,9 @@
 
 struct VertexOut
 {
-    float4 PosH : SV_POSITION;
-    float3 Dir : POSITION;
+    float4 position : SV_POSITION;
+    float3 pos : POSITION;
+    float3 tex : TEXCOORD;
 };
 
 float3 HosekWilkie(float cos_theta, float gamma, float cos_gamma)
@@ -24,7 +25,7 @@ float3 HosekWilkieSky(float3 v, float3 sun_dir)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-    float3 dir = normalize(pin.Dir);
+    float3 dir = normalize(pin.position);
 
     if (dir.y < 0)
         return float4(0, 0, 0, 1);

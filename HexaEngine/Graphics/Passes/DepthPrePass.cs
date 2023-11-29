@@ -1,11 +1,10 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using Silk.NET.Assimp;
 
@@ -19,7 +18,7 @@
             AddWriteDependency(new("#DepthStencil"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");

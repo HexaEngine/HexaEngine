@@ -13,6 +13,7 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
+    using HexaEngine.Editor.LensEditor;
 
     public class EditorWindowCategory(string name) : IEquatable<EditorWindowCategory>
     {
@@ -119,6 +120,7 @@
             Register<ProfilerWindow>();
             Register<MeshEditorWindow>();
             Register<PoseEditorWindow>();
+            Register<LensEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();

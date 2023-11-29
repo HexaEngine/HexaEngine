@@ -1,6 +1,8 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Effects.BuildIn
+using HexaEngine;
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -95,7 +97,8 @@ namespace HexaEngine.Effects.BuildIn
             {
                 VertexShader = "effects/gato/vs.hlsl",
                 PixelShader = "effects/gato/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
+                State = GraphicsPipelineState.DefaultFullscreen,
+            });
             paramsBuffer = new(device, CpuAccessFlags.Write);
             intermediateBuffer = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(device, Format.R32Float, width, height);

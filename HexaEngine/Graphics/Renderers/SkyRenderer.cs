@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -9,19 +9,13 @@
     using System;
     using System.Numerics;
 
-    public enum SkyType
-    {
-        Skybox,
-        UniformColor,
-        HosekWilkie
-    }
-
     public class SkyRenderer : IDisposable
     {
-        private readonly Cube cube;
+        private readonly Sphere cube;
         private readonly IGraphicsPipeline skybox;
         private readonly IGraphicsPipeline uniformColorSky;
         private readonly IGraphicsPipeline hoseWilkieSky;
+        private readonly IGraphicsPipeline preethamSky;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
 
         private ISamplerState samplerState;
@@ -39,34 +33,45 @@
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/skybox.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
-                Blend = BlendDescription.Opaque
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Blend = BlendDescription.Opaque
+                }
             });
             uniformColorSky = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/uniformColorSky.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
-                Blend = BlendDescription.Opaque
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Blend = BlendDescription.Opaque
+                }
             });
             hoseWilkieSky = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/hoseWilkieSky.hlsl",
-            },
-            new GraphicsPipelineState()
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Blend = BlendDescription.Opaque
+                }
+            });
+            preethamSky = device.CreateGraphicsPipeline(new()
             {
-                Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
-                Blend = BlendDescription.Opaque
+                VertexShader = "forward/sky/vs.hlsl",
+                PixelShader = "forward/sky/preethamSky.hlsl",
+                State = new()
+                {
+                    Rasterizer = RasterizerDescription.CullNone,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Blend = BlendDescription.Opaque
+                }
             });
         }
 
@@ -98,11 +103,12 @@
                 return;
             }
 
-            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far / 2) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
+            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far - 1) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
         }
 
         public void Draw(IGraphicsContext context, SkyType type)
         {
+            WeatherManager.Current.SkyModel = type;
             switch (type)
             {
                 case SkyType.Skybox:
@@ -116,16 +122,25 @@
 
                 case SkyType.UniformColor:
                     context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetConstantBuffer(2, WeatherManager.Current.WeatherBuffer);
+
                     context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, uniformColorSky);
                     break;
 
                 case SkyType.HosekWilkie:
                     context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetConstantBuffer(2, WeatherManager.Current.WeatherBuffer);
+
                     context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, hoseWilkieSky);
+                    break;
+
+                case SkyType.Preetham:
+                    if (!initialized)
+                        return;
+                    context.VSSetConstantBuffer(0, worldBuffer);
+                    context.PSSetShaderResource(0, environment.SRV);
+                    context.PSSetSampler(0, samplerState);
+                    cube.DrawAuto(context, preethamSky);
                     break;
             }
         }
@@ -137,6 +152,9 @@
                 Uninitialize();
                 cube.Dispose();
                 skybox.Dispose();
+                uniformColorSky.Dispose();
+                hoseWilkieSky.Dispose();
+                preethamSky.Dispose();
                 worldBuffer.Dispose();
                 disposedValue = true;
             }

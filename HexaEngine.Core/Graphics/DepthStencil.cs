@@ -6,7 +6,7 @@
     /// <summary>
     /// Represents a depth stencil texture for use in graphics rendering.
     /// </summary>
-    public class DepthStencil : ITexture2D, IDepthStencilView
+    public class DepthStencil : ITexture2D, IDepthStencilView, IUnorderedAccessView, IShaderResourceView
     {
         private readonly string dbgName;
 
@@ -392,9 +392,19 @@
 
         string? IDepthStencilView.DebugName { get => dsv.DebugName; set => dsv.DebugName = value; }
 
-        bool IDepthStencilView.IsDisposed => dsv.IsDisposed;
-
         nint IDepthStencilView.NativePointer => dsv.NativePointer;
+
+        UnorderedAccessViewDescription IUnorderedAccessView.Description => uav.Description;
+
+        string? IUnorderedAccessView.DebugName { get => uav.DebugName; set => uav.DebugName = value; }
+
+        nint IUnorderedAccessView.NativePointer => uav.NativePointer;
+
+        ShaderResourceViewDescription IShaderResourceView.Description => srv.Description;
+
+        string? IShaderResourceView.DebugName { get => srv.DebugName; set => srv.DebugName = value; }
+
+        nint IShaderResourceView.NativePointer => srv.NativePointer;
 
         private static Format GetDepthResourceFormat(Format depthFormat)
         {

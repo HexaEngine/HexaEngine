@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Mathematics.Sky.Preetham
 {
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Helper class for the Preetham sky model calculations.
@@ -54,21 +55,51 @@
             return new Vector3(Yz, xz, yz);
         }
 
+        private static float PerezUpper(float* lambdas, float cosTheta, float gamma, float cosGamma)
+        {
+            return (1.0f + lambdas[0] * MathF.Exp(lambdas[1] / (cosTheta + 1e-6f)))
+                  * (1.0f + lambdas[2] * MathF.Exp(lambdas[3] * gamma) + lambdas[4] * MathUtil.Sqr(cosGamma));
+        }
+
+        private static float PerezLower(float* lambdas, float cosThetaS, float thetaS)
+        {
+            return (1.0f + lambdas[0] * MathF.Exp(lambdas[1]))
+                  * (1.0f + lambdas[2] * MathF.Exp(lambdas[3] * thetaS) + lambdas[4] * MathUtil.Sqr(cosThetaS));
+        }
+
+        private static Vector3 PerezLowerLuminanceYxy(in float cosThetaS, float thetaS, in Vector3 A, in Vector3 B, in Vector3 C, in Vector3 D, in Vector3 E)
+        {
+            return (Vector3.One + A * MathUtil.Exp(B)) * (Vector3.One + C * MathUtil.Exp(D * thetaS) + E * MathUtil.Sqr(cosThetaS));
+        }
+
+        private static void Extract(SkyParameters parameters, float* Ys, float* xs, float* ys)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                var param = parameters[i];
+                Ys[i] = param.X;
+                xs[i] = param.Y;
+                ys[i] = param.Z;
+            }
+        }
+
         /// <summary>
         /// Calculates sky parameters based on turbidity and sun direction.
         /// </summary>
         /// <param name="turbidity">Turbidity of the atmosphere.</param>
         /// <param name="sunDirection">Direction of the sun (assumes normalized).</param>
+        /// <param name="overcast">The overcast term of the atmosphere.</param>
+        /// <param name="horizCrush">The horizon crush term for "muddy" horizon.</param>
         /// <returns>Sky parameters for the given environmental conditions.</returns>
-        public static SkyParameters CalculateSkyParameters(float turbidity, Vector3 sunDirection)
+        public static SkyParameters CalculateSkyParameters(float turbidity, Vector3 sunDirection, float overcast, float horizCrush)
         {
-            float sun_theta = MathF.Acos(Math.Clamp(sunDirection.Y, 0.0f, 1.0f)); //assumes normalized sun direction
+            float theta = MathF.Acos(Math.Clamp(sunDirection.Y, 0.0f, 1.0f)); //assumes normalized sun direction
 
             SkyParameters parameters = default;
 
             CalculatePerezDistribution(turbidity, out parameters.A, out parameters.B, out parameters.C, out parameters.D, out parameters.E);
 
-            parameters.F = CalculateZenithLuminanceYxy(turbidity, sun_theta);
+            parameters.F = CalculateZenithLuminanceYxy(turbidity, theta);
 
             if (sunDirection.Y < 0.0f)    // Handle sun going below the horizon
             {
@@ -77,6 +108,34 @@
                 // Take C/E which control sun term to zero
                 parameters.C *= s;
                 parameters.E *= s;
+            }
+
+            if (overcast != 0.0f)      // Handle overcast term
+            {
+                float invOvercast = 1.0f - overcast;
+
+                // lerp back towards unity
+                parameters.A.Y *= invOvercast;  // main sky chroma -> base
+                parameters.A.Z *= invOvercast;
+
+                // sun flare -> 0 strength/base chroma
+                parameters.C *= invOvercast;
+                parameters.E *= invOvercast;
+
+                // lerp towards a fit of the CIE cloudy sky model: 4, -0.7
+                parameters.A.X = MathUtil.Lerp(parameters.A.X, 4.0f, overcast);
+                parameters.B.X = MathUtil.Lerp(parameters.B.X, -0.7f, overcast);
+
+                // lerp base colour towards white point
+                parameters.F.Y = parameters.F.Y * invOvercast + 0.333f * overcast;
+                parameters.F.Z = parameters.F.Z * invOvercast + 0.333f * overcast;
+            }
+
+            if (horizCrush != 0.0f)
+            {
+                // The Preetham sky model has a "muddy" horizon, which can be objectionable in
+                // typical game views. We allow artistic control over it.
+                parameters.B *= horizCrush;
             }
 
             return parameters;

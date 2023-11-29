@@ -1,13 +1,14 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Effects.BuildIn
+using HexaEngine;
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System;
     using System.Numerics;
 
@@ -167,8 +168,9 @@ namespace HexaEngine.Effects.BuildIn
             compose = device.CreateGraphicsPipeline(new()
             {
                 PixelShader = "effects/autoexposure/ps.hlsl",
-                VertexShader = "quad.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                VertexShader = "quad.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
@@ -255,7 +257,7 @@ namespace HexaEngine.Effects.BuildIn
             lumaAvgParams.Dispose();
             compose.Dispose();
             linearSampler.Dispose();
-            creator.ReleaseResource("Luma");
+            creator.DisposeResource("Luma");
         }
     }
 }

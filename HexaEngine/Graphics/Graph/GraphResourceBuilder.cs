@@ -1,9 +1,8 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using System;
@@ -64,6 +63,14 @@
         private readonly List<ISamplerState> samplerStates = new();
         private readonly List<LazyInitDesc<SamplerStateDescription>> lazySamplerStates = new();
 
+        private readonly List<IGraphicsPipeline> graphicsPipelines = new();
+        private readonly List<LazyInitDesc<GraphicsPipelineDesc>> lazyGraphicsPipelines = new();
+
+        private readonly List<IComputePipeline> computePipelines = new();
+        private readonly List<LazyInitDesc<ComputePipelineDesc>> lazyComputePipelines = new();
+
+        public IGraphicsDevice Device => device;
+
         public IReadOnlyList<Texture2D> Textures => textures2d;
 
         public IReadOnlyList<ShadowAtlas> ShadowAtlas => shadowAtlas;
@@ -72,7 +79,6 @@
 
         internal void CreateResources()
         {
-            int gid = 0;
             for (int i = 0; i < lazyShadowAtlas.Count; i++)
             {
                 lazyShadowAtlas[i].Construct(device, shadowAtlas);
@@ -111,6 +117,16 @@
             for (int i = 0; i < lazySamplerStates.Count; i++)
             {
                 lazySamplerStates[i].Construct(device, samplerStates);
+            }
+
+            for (int i = 0; i < lazyGraphicsPipelines.Count; i++)
+            {
+                lazyGraphicsPipelines[i].Construct(device, graphicsPipelines);
+            }
+
+            for (int i = 0; i < lazyComputePipelines.Count; i++)
+            {
+                lazyComputePipelines[i].Construct(device, computePipelines);
             }
         }
 
@@ -153,6 +169,12 @@
 
             samplerStates.Clear();
             lazySamplerStates.Clear();
+
+            graphicsPipelines.Clear();
+            lazyGraphicsPipelines.Clear();
+
+            computePipelines.Clear();
+            lazyComputePipelines.Clear();
         }
 
         public ResourceRef AddResource(string name)
@@ -251,6 +273,13 @@
             return false;
         }
 
+        /// <summary>
+        /// Removes a resource with the specified name from the manager.
+        /// </summary>
+        /// <param name="name">The name of the resource to remove.</param>
+        /// <returns>
+        ///   <c>true</c> if the resource was successfully removed; otherwise, <c>false</c> if the resource was not found.
+        /// </returns>
         public bool RemoveResource(string name)
         {
             if (TryGetResource(name, out ResourceRef? resource))
@@ -263,7 +292,14 @@
             return false;
         }
 
-        public bool ReleaseResource(string name)
+        /// <summary>
+        /// Releases the resource with the specified name from the manager.
+        /// </summary>
+        /// <param name="name">The name of the resource to release.</param>
+        /// <returns>
+        ///   <c>true</c> if the resource was successfully released; otherwise, <c>false</c> if the resource was not found.
+        /// </returns>
+        public bool DisposeResource(string name)
         {
             if (TryGetResource(name, out ResourceRef? resource))
             {
@@ -497,6 +533,47 @@
         public ResourceRef<ISamplerState> GetSamplerState(string name)
         {
             return GetOrAddResource<ISamplerState>(name);
+        }
+
+        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, bool lazyInit = true)
+        {
+            string name = description.GetHashCode().ToString();
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, lazyInit);
+        }
+
+        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, bool lazyInit = true)
+        {
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, lazyInit);
+        }
+
+        public void UpdateGraphicsPipeline(string name, GraphicsPipelineDesc desc)
+        {
+            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines);
+        }
+
+        public ResourceRef<IGraphicsPipeline> GetGraphicsPipeline(string name)
+        {
+            return GetOrAddResource<IGraphicsPipeline>(name);
+        }
+
+        public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, bool lazyInit = true)
+        {
+            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, lazyInit);
+        }
+
+        public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, bool lazyInit = true)
+        {
+            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, lazyInit);
+        }
+
+        public void UpdateComputePipeline(string name, ComputePipelineDesc desc)
+        {
+            UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines);
+        }
+
+        public ResourceRef<IComputePipeline> GetComputePipeline(string name)
+        {
+            return GetOrAddResource<IComputePipeline>(name);
         }
 
         public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, bool lazyInit) where TType : class, IDisposable

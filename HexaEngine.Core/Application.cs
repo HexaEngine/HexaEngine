@@ -4,6 +4,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
@@ -157,6 +158,7 @@
         public static void Boot()
         {
             CrashLogger.Initialize();
+            FileSystem.Initialize();
             ImGuiConsole.Initialize();
 
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");

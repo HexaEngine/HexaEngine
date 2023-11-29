@@ -6,6 +6,140 @@
     using System;
     using Viewport = Mathematics.Viewport;
 
+    public unsafe class UniformCollection
+    {
+        private readonly List<ConstantBufferVariable> constantBufferVariables = new();
+        private readonly Dictionary<string, ConstantBufferVariable> nameToConstantBufferVariables = new();
+
+        public enum ConstantBufferVariableType
+        {
+            Bool,
+            Bool2,
+            Bool3,
+            Bool4,
+            UInt,
+            UInt2,
+            UInt3,
+            UInt4,
+            Int,
+            Int2,
+            Int3,
+            Int4,
+            Float,
+            Float2,
+            Float3,
+            Float4,
+            Float2x2,
+            Float3x3,
+            Float4x3,
+            Float4x4,
+            Struct,
+        }
+
+        public struct ConstantBufferVariable
+        {
+            public uint BufferIndex;
+            public uint VariableIndex;
+            public string Name;
+            public ConstantBufferVariableType Type;
+            public uint Size;
+            public uint Offset;
+        }
+
+        public UniformCollection()
+        {
+        }
+
+        public void Append(Shader* pShader, ShaderStage stage)
+        {
+            ShaderCompiler.Reflect(pShader, out ComPtr<ID3D11ShaderReflection> reflection);
+
+            ShaderDesc desc;
+            reflection.GetDesc(&desc);
+            for (uint i = 0; i < desc.ConstantBuffers; i++)
+            {
+                var cb = reflection.GetConstantBufferByIndex(i);
+                ShaderBufferDesc bufferDesc;
+                cb->GetDesc(&bufferDesc);
+                for (uint j = 0; j < bufferDesc.Variables; j++)
+                {
+                    var v = cb->GetVariableByIndex(j);
+                    ShaderVariableDesc varDesc;
+                    v->GetDesc(&varDesc);
+
+                    ConstantBufferVariable variable;
+                    variable.BufferIndex = i;
+                    variable.VariableIndex = j;
+                    variable.Name = Utils.ToStr(varDesc.Name);
+                    variable.Size = varDesc.Size;
+                    variable.Offset = varDesc.StartOffset;
+                    var type = v->GetType();
+                    ShaderTypeDesc typeDesc;
+                    type->GetDesc(&typeDesc);
+
+                    switch (typeDesc.Type)
+                    {
+                        case D3DShaderVariableType.D3DSvtBool:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtInt:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtFloat:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtString:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtUint:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtUint8:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtDouble:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin8float:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin10float:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin16float:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin12int:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin16int:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtMin16Uint:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtInt16:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtUint16:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtFloat16:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtInt64:
+                            break;
+
+                        case D3DShaderVariableType.D3DSvtUint64:
+                            break;
+                    }
+                }
+            }
+
+            reflection.Release();
+        }
+    }
+
     public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline
     {
         private readonly string dbgName;
@@ -23,16 +157,18 @@
         protected ComPtr<ID3D11RasterizerState2> rasterizerState;
         protected ComPtr<ID3D11DepthStencilState> depthStencilState;
         protected ComPtr<ID3D11BlendState1> blendState;
+        protected UniformCollection uniformCollection = new();
         protected GraphicsPipelineState state = GraphicsPipelineState.Default;
         protected bool valid;
         protected volatile bool initialized;
-
-        
 
         public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
+            State = desc.State;
+            macros = desc.Macros;
+            inputElements = desc.InputElements;
             this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
@@ -258,6 +394,7 @@
                 ComPtr<ID3D11VertexShader> vertexShader;
                 device.Device.CreateVertexShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &vertexShader.Handle);
                 vs = vertexShader;
+                uniformCollection.Append(shader, ShaderStage.Vertex);
                 Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
 
                 inputElements ??= elements;
@@ -295,6 +432,7 @@
                 ComPtr<ID3D11HullShader> hullShader;
                 device.Device.CreateHullShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &hullShader.Handle);
                 hs = hullShader;
+                uniformCollection.Append(shader, ShaderStage.Hull);
                 Utils.SetDebugName(hs, $"{dbgName}.{nameof(hs)}");
 
                 Free(shader);
@@ -313,6 +451,7 @@
                 ComPtr<ID3D11DomainShader> domainShader;
                 device.Device.CreateDomainShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &domainShader.Handle);
                 ds = domainShader;
+                uniformCollection.Append(shader, ShaderStage.Domain);
                 Utils.SetDebugName(ds, $"{dbgName}.{nameof(hs)}");
 
                 Free(shader);
@@ -331,6 +470,7 @@
                 ComPtr<ID3D11GeometryShader> geometryShader;
                 device.Device.CreateGeometryShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &geometryShader.Handle);
                 gs = geometryShader;
+                uniformCollection.Append(shader, ShaderStage.Geometry);
                 Utils.SetDebugName(gs, $"{dbgName}.{nameof(gs)}");
 
                 Free(shader);
@@ -349,6 +489,7 @@
                 ComPtr<ID3D11PixelShader> pixelShader;
                 device.Device.CreatePixelShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &pixelShader.Handle);
                 ps = pixelShader;
+                uniformCollection.Append(shader, ShaderStage.Pixel);
                 Utils.SetDebugName(ps, $"{dbgName}.{nameof(ps)}");
 
                 Free(shader);

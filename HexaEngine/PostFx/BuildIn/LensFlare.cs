@@ -1,73 +1,72 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
-    using HexaEngine.Core;
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics.Noise;
+    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes.Managers;
+    using HexaEngine.Weather;
     using System.Numerics;
 
     public class LensFlare : PostFxBase
     {
         private ResourceRef<DepthStencil> depth;
+        private ResourceRef<Texture2D> sunMask;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
-        private ConstantBuffer<Vector4> lightBuffer;
+        private ConstantBuffer<LensFlareParams> paramsBuffer;
 
-        private Texture2D lens0;
-        private Texture2D lens1;
-        private Texture2D lens2;
-        private Texture2D lens3;
-        private Texture2D lens4;
-        private Texture2D lens5;
-        private Texture2D lens6;
+        public struct LensFlareParams
+        {
+            public Vector4 SunPosition;
+            public Vector4 Tint;
+
+            public LensFlareParams(Vector4 sunPosition, Vector4 tint)
+            {
+                SunPosition = sunPosition;
+                Tint = tint;
+            }
+        }
 
         public override string Name => "LensFlare";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
 
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
                 .RunBefore("ColorGrading")
                 .RunBefore("Vignette")
+                .RunAfter("VolumetricClouds")
+                .RunAfter("GodRays")
                 .RunAfter("Bloom");
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override unsafe void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            sunMask = creator.GetTexture2D("SunMask");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/lensflare/vs.hlsl",
-                GeometryShader = "effects/lensflare/gs.hlsl",
-                PixelShader = "effects/lensflare/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Additive,
-                Topology = PrimitiveTopology.PointList,
-                BlendFactor = default,
-                SampleMask = int.MaxValue
-            }, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/lensflare/ps.hlsl",
+                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
+                Macros = macros
+            });
 
-            lightBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(device, CpuAccessFlags.Write);
 
-            lens0 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex1.png"));
-            lens1 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex2.png"));
-            lens2 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex3.png"));
-            lens3 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex4.png"));
-            lens4 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex5.png"));
-            lens5 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex6.png"));
-            lens6 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex7.png"));
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             Viewport = new(width, height);
         }
@@ -97,39 +96,37 @@
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
-                if (light is DirectionalLight directional)
+                if (light is DirectionalLight)
                 {
-                    var camera_position = camera.Transform.GlobalPosition;
+                    Vector3 sunPosition = Vector3.Transform(light.Transform.Backward * camera.Transform.ClipRange + camera.Transform.GlobalPosition, camera.Transform.View);
 
-                    var translation = Matrix4x4.CreateTranslation(camera_position);
+                    // skip render, the light is behind the camera.
+                    if (sunPosition.Z < 0.0f)
+                    {
+                        return;
+                    }
 
-                    var far = camera.Transform.Far;
-                    var light_position = Vector3.Transform(light.Transform.Backward * (far / 2f), translation);
+                    var screenPos = camera.ProjectPosition(sunPosition);
 
-                    var light_posH = Vector4.Transform(light_position, camera.Transform.ViewProjection);
-                    var ss_sun_pos = new Vector4(0.5f * light_posH.X / light_posH.W + 0.5f, -0.5f * light_posH.Y / light_posH.W + 0.5f, light_posH.Z / light_posH.W, 1.0f);
-                    lightBuffer.Update(context, ss_sun_pos);
+                    LensFlareParams lensFlare;
+                    lensFlare.SunPosition = new(screenPos.X, screenPos.Y, screenPos.Z, 1);
+                    lensFlare.Tint = new Vector4(1.4f, 1.2f, 1.0f, 1);
 
-                    nint* srvs = stackalloc nint[8];
-                    srvs[0] = lens0.SRV.NativePointer;
-                    srvs[1] = lens1.SRV.NativePointer;
-                    srvs[2] = lens2.SRV.NativePointer;
-                    srvs[3] = lens3.SRV.NativePointer;
-                    srvs[4] = lens4.SRV.NativePointer;
-                    srvs[5] = lens5.SRV.NativePointer;
-                    srvs[6] = lens6.SRV.NativePointer;
-                    srvs[7] = depth.Value.SRV.NativePointer;
+                    paramsBuffer.Update(context, lensFlare);
 
                     context.SetRenderTarget(Output, default);
                     context.SetViewport(Viewport);
-                    context.GSSetConstantBuffer(0, lightBuffer);
-                    context.GSSetShaderResources(0, 8, (void**)srvs);
-                    context.PSSetShaderResources(0, 8, (void**)srvs);
-                    context.GSSetSampler(0, sampler);
+                    context.PSSetConstantBuffer(0, paramsBuffer);
+                    context.PSSetConstantBuffer(1, this.camera.Value);
+                    context.PSSetConstantBuffer(2, weather.Value);
+                    context.PSSetShaderResource(0, depth.Value);
+                    context.PSSetShaderResource(2, sunMask.Value);
                     context.PSSetSampler(0, sampler);
                     context.SetGraphicsPipeline(pipeline);
-                    context.DrawInstanced(7, 1, 0, 0);
+                    context.DrawInstanced(4, 1, 0, 0);
                     context.ClearState();
+
+                    break;
                 }
             }
         }
@@ -138,14 +135,7 @@
         {
             pipeline.Dispose();
             sampler.Dispose();
-            lightBuffer.Dispose();
-            lens0.Dispose();
-            lens1.Dispose();
-            lens2.Dispose();
-            lens3.Dispose();
-            lens4.Dispose();
-            lens5.Dispose();
-            lens6.Dispose();
+            paramsBuffer.Dispose();
         }
     }
 }

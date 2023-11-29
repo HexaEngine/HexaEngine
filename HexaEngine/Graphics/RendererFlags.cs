@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering
+﻿namespace HexaEngine.Graphics
 {
     [Flags]
     public enum RendererFlags

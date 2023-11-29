@@ -1,8 +1,8 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
 
     public class PostProcessPrePass : DrawPass
     {

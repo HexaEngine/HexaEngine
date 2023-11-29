@@ -4,7 +4,7 @@ namespace HexaEngine.Scenes
 {
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
 
     public interface ISystem : IHasFlags<SystemFlags>
     {

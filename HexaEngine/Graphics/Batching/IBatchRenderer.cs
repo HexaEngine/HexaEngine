@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Batching
+﻿namespace HexaEngine.Graphics.Batching
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Lights;

@@ -2,14 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering;
 
     public abstract class BaseRendererComponent : IRendererComponent
     {
-        protected volatile bool loaded;
+        private volatile bool loaded = false;
 
         [JsonIgnore]
         public abstract uint QueueIndex { get; }
@@ -27,7 +27,11 @@
         public abstract RendererFlags Flags { get; }
 
         [JsonIgnore]
-        public bool Loaded => loaded;
+        public bool Loaded
+        {
+            get => loaded;
+            protected set => loaded = value;
+        }
 
         public abstract void Load(IGraphicsDevice device);
 

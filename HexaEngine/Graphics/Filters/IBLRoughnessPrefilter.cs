@@ -43,14 +43,14 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "filter/prefilter/vs.hlsl",
-                PixelShader = "filter/prefilter/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.None,
-                Rasterizer = RasterizerDescription.CullNone,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
+                PixelShader = "filter/prefilter/ps.hlsl",
+                State = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                }
             });
 
             SetViewPoint(Vector3.Zero);

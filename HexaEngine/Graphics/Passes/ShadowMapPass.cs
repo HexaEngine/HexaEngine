@@ -1,12 +1,12 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
@@ -19,7 +19,7 @@
             AddWriteDependency(new("ShadowAtlas"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, GraphicsSettings.ShadowAtlasSize, 8));
         }

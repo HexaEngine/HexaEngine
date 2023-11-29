@@ -48,14 +48,14 @@ namespace HexaEngine.Graphics.Filters
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "filter/equirectangularToCube/vs.hlsl",
-                PixelShader = "filter/equirectangularToCube/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullNone,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
+                PixelShader = "filter/equirectangularToCube/ps.hlsl",
+                State = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                }
             });
 
             SetViewPoint(Vector3.Zero);

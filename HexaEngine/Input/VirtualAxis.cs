@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Input
 {
+    using HexaEngine.Input.Events;
+
     public struct VirtualAxis : IEquatable<VirtualAxis>
     {
         /// <summary>

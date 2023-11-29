@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.IO.Assets
+﻿namespace HexaEngine.Core.IO.Archives
 {
     /// <summary>
     /// Flags indicating the type of asset archive.

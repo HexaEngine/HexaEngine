@@ -38,6 +38,7 @@
         {
             HotkeyManager.Register("Undo-Action", () => History.Default.TryUndo(), Key.LCtrl, Key.Z);
             HotkeyManager.Register("Redo-Action", () => History.Default.TryRedo(), Key.LCtrl, Key.Y);
+            HotkeyManager.Register("Save Scene", SceneManager.Save, Key.LCtrl, Key.S);
         }
 
         internal static void Init(IGraphicsDevice device)
@@ -65,7 +66,7 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("Save Scene"))
+                    if (ImGui.MenuItem("Save Scene (CTRL+S)"))
                     {
                         SceneManager.Save();
                     }
@@ -264,7 +265,9 @@
                         var win = Application.MainWindow as Window;
                         win?.Dispatcher.Invoke(() =>
                         {
-                            win.Renderer.TakeScreenshot(win.Context, $"screenshot-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.png");
+                            string fileName = $"screenshot-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.png";
+                            win.Renderer.TakeScreenshot(win.Context, fileName);
+                            Logger.Info($"Saved screenshot: {Path.GetFullPath(fileName)}");
                         });
                     }
                     if (ImGui.MenuItem("Clear Shader Cache"))

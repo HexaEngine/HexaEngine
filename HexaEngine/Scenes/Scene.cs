@@ -5,9 +5,10 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Graphics;
     using HexaEngine.Lights;
+    using HexaEngine.Mathematics;
     using HexaEngine.Queries;
-    using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;
     using HexaEngine.Weather;
@@ -31,6 +32,7 @@
         private AnimationManager animationManager = new();
         private readonly MaterialManager materialManager = new();
         private readonly WeatherManager weatherManager = new();
+        private readonly ObjectPickerManager objectPickerManager = new();
         private QueryManager queryManager;
 
         private readonly SemaphoreSlim semaphore = new(1);
@@ -123,6 +125,7 @@
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, lightManager));
             systems.Add(weatherManager);
+            systems.Add(objectPickerManager);
 
             semaphore.Wait();
 
@@ -154,6 +157,7 @@
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, lightManager));
             systems.Add(weatherManager);
+            systems.Add(objectPickerManager);
 
             await semaphore.WaitAsync();
 
@@ -599,6 +603,12 @@
             if (sys == null)
                 throw new NullReferenceException(nameof(sys));
             return sys;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public GameObject? SelectObject(Ray ray)
+        {
+            return objectPickerManager.SelectObject(ray);
         }
     }
 }

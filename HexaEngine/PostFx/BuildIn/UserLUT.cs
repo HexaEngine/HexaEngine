@@ -1,9 +1,9 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     public class UserLUT : PostFxBase
@@ -63,7 +63,9 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lut/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
             paramsBuffer = new(device, new LUTParams(), CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             lutSamplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);

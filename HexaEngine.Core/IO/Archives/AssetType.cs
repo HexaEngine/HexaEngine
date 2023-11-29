@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.IO.Assets
+﻿namespace HexaEngine.Core.IO.Archives
 {
     /// <summary>
     /// Represents the type of an asset in the asset archive.

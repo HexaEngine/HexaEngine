@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace HexaEngine.Core.Debugging
 {
     using System.Runtime.CompilerServices;
 

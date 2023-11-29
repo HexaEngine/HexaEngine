@@ -2,13 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     public class VolumetricLighting : PostFxBase
@@ -185,17 +184,19 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/volumetric/ps.hlsl"
-            },
-            GraphicsPipelineState.DefaultFullscreen, shaderMacros.ToArray());
+                PixelShader = "effects/volumetric/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [.. shaderMacros]
+            });
             constantBuffer = new(device, CpuAccessFlags.Write);
 
             blurPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/volumetric/blur.hlsl"
-            },
-            GraphicsPipelineState.DefaultAdditiveFullscreen, shaderMacros.ToArray());
+                PixelShader = "effects/volumetric/blur.hlsl",
+                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
+                Macros = [.. shaderMacros]
+            });
             blurParams = new(device, CpuAccessFlags.Write);
 
             volumetricLightBuffer = new(device, CpuAccessFlags.Write);

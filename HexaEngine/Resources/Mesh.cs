@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
 
     public class Mesh : ResourceInstance

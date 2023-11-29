@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System.Numerics;
 
     public class Vignette : PostFxBase
@@ -107,16 +107,18 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/vignette/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.None,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.One, Blend.DestinationAlpha, BlendOperation.Add, BlendOperation.Add),
-                Topology = PrimitiveTopology.TriangleStrip,
-                BlendFactor = default,
-                SampleMask = int.MaxValue
-            }, macros);
+                PixelShader = "effects/vignette/ps.hlsl",
+                State = new()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.One, Blend.DestinationAlpha, BlendOperation.Add, BlendOperation.Add),
+                    Topology = PrimitiveTopology.TriangleStrip,
+                    BlendFactor = default,
+                    SampleMask = int.MaxValue
+                },
+                Macros = macros
+            });
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

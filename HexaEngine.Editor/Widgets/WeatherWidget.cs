@@ -4,13 +4,14 @@
     using HexaEngine.Editor.Attributes;
     using Hexa.NET.ImGui;
     using HexaEngine.Weather;
+    using System.Numerics;
 
     [EditorWindowCategory("Debug")]
     public class WeatherWidget : EditorWindow
     {
         protected override string Name => "Weather";
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             var manager = WeatherManager.Current;
             if (manager == null)
@@ -19,6 +20,8 @@
             var skyColor = manager.SkyColor;
             if (ImGui.ColorEdit3("SkyColor", ref skyColor))
                 manager.SkyColor = skyColor;
+            var sunDir = manager.SunDir;
+            ImGui.InputFloat3("Sun Direction", (float*)&sunDir, ImGuiInputTextFlags.ReadOnly);
             var ambientColor = manager.AmbientColor;
             if (ImGui.ColorEdit3("AmbientColor", ref ambientColor))
                 manager.AmbientColor = ambientColor;
@@ -34,6 +37,12 @@
             var curliness = manager.Curliness;
             if (ImGui.InputFloat("Curliness", ref curliness))
                 manager.Curliness = curliness;
+            var coverage = manager.Coverage;
+            if (ImGui.InputFloat("Coverage", ref coverage))
+                manager.Coverage = coverage;
+            var overcast = manager.Overcast;
+            if (ImGui.InputFloat("Overcast", ref overcast))
+                manager.Overcast = overcast;
             var lightAbsorption = manager.LightAbsorption;
             if (ImGui.InputFloat("LightAbsorption", ref lightAbsorption))
                 manager.LightAbsorption = lightAbsorption;
@@ -55,6 +64,9 @@
             var groundAlbedo = manager.GroundAlbedo;
             if (ImGui.InputFloat("GroundAlbedo", ref groundAlbedo))
                 manager.GroundAlbedo = groundAlbedo;
+            var phaseFunctionG = manager.PhaseFunctionG;
+            if (ImGui.InputFloat("PhaseFunctionG", ref phaseFunctionG))
+                manager.PhaseFunctionG = phaseFunctionG;
         }
     }
 }

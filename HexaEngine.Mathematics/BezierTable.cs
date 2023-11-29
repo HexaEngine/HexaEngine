@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.UI
+﻿namespace HexaEngine.Mathematics
 {
     using System.Numerics;
     using System.Runtime.InteropServices;

@@ -35,13 +35,14 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "tools/image/eraser/ps.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Blend = blendDescription,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = depthStencil,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleStrip,
+                State = new GraphicsPipelineState()
+                {
+                    Blend = blendDescription,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = depthStencil,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Topology = PrimitiveTopology.TriangleStrip,
+                }
             });
             opacityBuffer = new(device, CpuAccessFlags.Write);
         }

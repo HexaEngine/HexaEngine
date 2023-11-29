@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -50,7 +50,7 @@
             }
         }
 
-        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public virtual void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
         }
 

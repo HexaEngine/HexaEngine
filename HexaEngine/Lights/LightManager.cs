@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Graphics;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Rendering;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

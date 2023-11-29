@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Collections;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System;
     using System.Collections.Generic;
     using System.Linq;

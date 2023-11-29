@@ -101,7 +101,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 CreateTransform(Vector3 pos, Vector3 rotation, Vector3 scale)
         {
-            return Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateScale(scale);
+            return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(pos);
         }
 
         /// <summary>
@@ -114,7 +114,33 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 CreateTransform(Vector3 pos, Vector3 rotation, float scale)
         {
-            return Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateScale(scale);
+            return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(pos);
+        }
+
+        /// <summary>
+        /// Creates a 4x4 transformation matrix from a position, rotation, and uniform scale.
+        /// </summary>
+        /// <param name="position">The translation vector representing the position.</param>
+        /// <param name="rotation">The quaternion representing the rotation.</param>
+        /// <param name="scale">The uniform scale factor.</param>
+        /// <returns>The 4x4 transformation matrix.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Matrix4x4 CreateTransform(Vector3 position, Quaternion rotation, float scale)
+        {
+            return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(position);
+        }
+
+        /// <summary>
+        /// Creates a 4x4 transformation matrix from a position, rotation, and non-uniform scale.
+        /// </summary>
+        /// <param name="position">The translation vector representing the position.</param>
+        /// <param name="rotation">The quaternion representing the rotation.</param>
+        /// <param name="scale">The vector representing non-uniform scaling factors along the x, y, and z axes.</param>
+        /// <returns>The 4x4 transformation matrix.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Matrix4x4 CreateTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(position);
         }
 
         /// <summary>
@@ -1368,6 +1394,17 @@
         }
 
         /// <summary>
+        /// Calculates the exponential function (e^x) for a <see cref="float"/>.
+        /// </summary>
+        /// <param name="value">The input <see cref="float"/>.</param>
+        /// <returns>The result of the exponential function for 'value'.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Exp(float value)
+        {
+            return MathF.Exp(value);
+        }
+
+        /// <summary>
         /// Calculates the element-wise exponential function (e^x) for a <see cref="Vector2"/>.
         /// </summary>
         /// <param name="a">The input <see cref="Vector2"/>.</param>
@@ -1592,6 +1629,83 @@
         public static Vector4 Round(Vector4 v)
         {
             return new Vector4(MathF.Round(v.X), MathF.Round(v.Y), MathF.Round(v.Z), MathF.Round(v.W));
+        }
+
+        /// <summary>
+        /// Calculates x^2 or x * x for the <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value</param>
+        /// <returns>x * x</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Sqr(float value)
+        {
+            return value * value;
+        }
+
+        /// <summary>
+        /// Calculates x^2 or x * x for each components of a <see cref="Vector2"/>.
+        /// </summary>
+        /// <param name="value">The value</param>
+        /// <returns>x * x</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Sqr(Vector2 value)
+        {
+            return value * value;
+        }
+
+        /// <summary>
+        /// Calculates x^2 or x * x for each components of a <see cref="Vector3"/>.
+        /// </summary>
+        /// <param name="value">The value</param>
+        /// <returns>x * x</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Sqr(Vector3 value)
+        {
+            return value * value;
+        }
+
+        /// <summary>
+        /// Calculates x^2 or x * x for each components of a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="value">The value</param>
+        /// <returns>x * x</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Sqr(Vector4 value)
+        {
+            return value * value;
+        }
+
+        /// <summary>
+        /// Converts a Vector4 to a Vector2.
+        /// </summary>
+        /// <param name="vector">The Vector4 to convert.</param>
+        /// <returns>A new Vector2 with X and Y components from the input Vector4.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 ToVec2(this Vector4 vector)
+        {
+            return new Vector2(vector.X, vector.Y);
+        }
+
+        /// <summary>
+        /// Converts a Vector4 to a Vector3.
+        /// </summary>
+        /// <param name="vector">The Vector4 to convert.</param>
+        /// <returns>A new Vector3 with X, Y, and Z components from the input Vector4.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ToVec3(this Vector4 vector)
+        {
+            return new Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        /// <summary>
+        /// Converts a Vector3 to a Vector2.
+        /// </summary>
+        /// <param name="vector">The Vector3 to convert.</param>
+        /// <returns>A new Vector2 with X and Y components from the input Vector3.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 ToVec2(this Vector3 vector)
+        {
+            return new Vector2(vector.X, vector.Y);
         }
     }
 }

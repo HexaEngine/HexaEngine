@@ -3908,14 +3908,36 @@
             return temp;
         }
 
+        private static float EvalHosekCoeffs(float* coeffs, float cosTheta, float gamma, float cosGamma)
+        {
+            // Current coeffs ordering is AB I CDEF HG
+            //                            01 2 3456 78
+            float expM = MathF.Exp(coeffs[4] * gamma);   // D g
+            float rayM = cosGamma * cosGamma;       // Rayleigh scattering
+            float mieM = (1.0f + rayM) / MathF.Pow((1.0f + coeffs[8] * coeffs[8] - 2.0f * coeffs[8] * cosGamma), 1.5f);  // G
+            float zenith = MathF.Sqrt(cosTheta);           // vertical zenith gradient
+
+            return (1.0f
+                         + coeffs[0] * MathF.Exp(coeffs[1] / (cosTheta + 0.01f))     // A, B
+                   )
+                 * (1.0f
+                         + coeffs[3] * expM     // C
+                         + coeffs[5] * rayM     // E
+                         + coeffs[6] * mieM     // F
+                         + coeffs[7] * zenith   // H
+                         + (coeffs[2] - 1.0f)   // I
+                   );
+        }
+
         /// <summary>
         /// Calculates sky parameters based on turbidity, albedo, and sun direction.
         /// </summary>
         /// <param name="turbidity">Turbidity of the atmosphere.</param>
         /// <param name="albedo">Surface albedo.</param>
         /// <param name="sunDirection">Direction of the sun (assumes normalized).</param>
+        /// <param name="overcast">The overcast term of the atmosphere.</param>
         /// <returns>Sky parameters for the given environmental conditions.</returns>
-        public static SkyParameters CalculateSkyParameters(float turbidity, float albedo, Vector3 sunDirection)
+        public static SkyParameters CalculateSkyParameters(float turbidity, float albedo, Vector3 sunDirection, float overcast)
         {
             float sun_theta = MathF.Acos(Math.Clamp(sunDirection.Y, 0.0f, 1.0f)); //assumes normalized sun direction
 
@@ -3969,9 +3991,94 @@
             S *= Z;
 
             Z = Vector3.Divide(Z, Vector3.Dot(S, new Vector3(0.2126f, 0.7152f, 0.0722f)));
+
+            if (sunDirection.Y < 0.0f)   // sun below horizon?
+            {
+                float s = MathUtil.Clamp01(1.0f + sunDirection.Y * 50.0f);   // goes from 1 to 0 as the sun sets
+                float invS = 1.0f - s;
+
+                // Emulate Preetham's zenith darkening
+                float darken = ZenithLuminance(MathF.Acos(sunDirection.Y), turbidity) / ZenithLuminance(MathUtil.PIDIV2, turbidity);
+
+                // Take C/E/F which control sun term to zero
+                parameters.D *= s;
+                parameters.F *= s;
+                parameters.G *= s;
+
+                // Take horizon term H to zero, as it's an orange glow at this point
+                parameters.I *= s;
+
+                // Take I term back to 1
+                parameters.C *= s;
+                parameters.C += new Vector3(invS);
+
+                Z *= darken;
+            }
+
+            if (overcast != 0.0f)      // Handle overcast term
+            {
+                /*
+                float invS = overcast;
+                float s = 1.0f - overcast;     // goes to 0 as we go to overcast
+
+                // Hosek isn't self-normalising, unlike Preetham/CIE, which divides by PreethamLower().
+                // Thus when we lerp to the CIE overcast model, we get some non-linearities.
+                // We deal with this by using ratios of normalisation terms to balance.
+                // Another difference is that Hosek is relative to the average radiance,
+                // whereas CIE is the zenith radiance, so rather than taking the zenith
+                // as normalising as in CIE, we average over the zenith and two horizon
+                // points.
+                float cosGammaZ = sunDirection.Y;
+                float gammaZ = MathF.Acos(cosGammaZ);
+                float cosGammaH = mToSun.y;
+                float gammaHP = MathF.Acos(+mToSun.y);
+                float gammaHN = float.Pi - gammaHP;
+
+                float sc0 = EvalHosekCoeffs(mCoeffsXYZ[1], 1.0f, gammaZ, cosGammaZ) * 2.0f
+                          + EvalHosekCoeffs(mCoeffsXYZ[1], 0.0f, gammaHP, +cosGammaH)
+                          + EvalHosekCoeffs(mCoeffsXYZ[1], 0.0f, gammaHN, -cosGammaH);
+
+                // sun flare -> 0 strength/base chroma
+                // Take C/E/F which control sun term to zero
+                parameters.D *= s;
+                parameters.F *= s;
+                parameters.G *= s;
+
+                // Take H back to 0
+                parameters.I *= s;
+
+                // Take I term back to 1
+                parameters.C *= s;
+                parameters.C += new Vector3(invS);
+
+                // Take A/B to  CIE cloudy sky model: 4, -0.7
+                parameters.A = MathUtil.Lerp(parameters.A, new(4.0f), invS);
+                parameters.B = MathUtil.Lerp(parameters.B, new(-0.7f), invS);
+
+                float sc1 = EvalHosekCoeffs(mCoeffsXYZ[1], 1.0f, gammaZ, cosGammaZ) * 2.0f
+                          + EvalHosekCoeffs(mCoeffsXYZ[1], 0.0f, gammaHP, +cosGammaH)
+                          + EvalHosekCoeffs(mCoeffsXYZ[1], 0.0f, gammaHN, -cosGammaH);
+
+                float rescale = sc0 / sc1;
+                Z *= rescale;
+
+                // move back to white point
+                Z.X = MathUtil.Lerp(Z.X, Z.Y, invS);
+                Z.Z = MathUtil.Lerp(Z.Z, Z.Y, invS);
+                */
+            }
+
             parameters[(int)EnumSkyParams.Z] = Z;
 
             return parameters;
+        }
+
+        private static float ZenithLuminance(float thetaS, float T)
+        {
+            float chi = (4.0f / 9.0f - T / 120.0f) * (float.Pi - 2.0f * thetaS);
+            float Lz = (4.0453f * T - 4.9710f) * MathF.Tan(chi) - 0.2155f * T + 2.4192f;
+            Lz *= 1000.0f;   // conversion from kcd/m^2 to cd/m^2
+            return Lz;
         }
     }
 }

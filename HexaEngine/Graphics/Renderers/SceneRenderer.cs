@@ -1,17 +1,18 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Rendering.Renderers
+namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
@@ -27,8 +28,8 @@ namespace HexaEngine.Rendering.Renderers
         private readonly HDRPipeline renderGraph;
         private RenderGraphExecuter graphExecuter;
 
-        private HexaEngine.Graph.ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
-        private HexaEngine.Graph.ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
+        private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
 
         private bool initialized;
         private bool disposedValue;
@@ -65,7 +66,7 @@ namespace HexaEngine.Rendering.Renderers
             renderGraph = new(flags);
         }
 
-        public static SceneRenderer? Current { get; private set; }
+        public static SceneRenderer Current { get; private set; }
 
         /// <summary>
         /// Initializes the renderer.
@@ -197,7 +198,7 @@ namespace HexaEngine.Rendering.Renderers
         }
 
         private int selected = -1;
-        private HexaEngine.Graph.ResourceRef<Texture2D> aoBuffer;
+        private ResourceRef<Texture2D> aoBuffer;
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera camera)
         {

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
 

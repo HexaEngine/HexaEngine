@@ -1,18 +1,17 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System.Numerics;
 
     public class HizDepthPass : ComputePass
     {
         private ResourceRef<DepthStencil> depthStencil;
-        private IComputePipeline downsample;
+        private ResourceRef<IComputePipeline> downsample;
         private ResourceRef<ConstantBuffer<Vector4>> cbDownsample;
-        private IGraphicsPipeline copy;
+        private ResourceRef<IGraphicsPipeline> copy;
         private ResourceRef<ISamplerState> samplerState;
         private ResourceRef<DepthMipChain> chain;
 
@@ -22,19 +21,20 @@
             AddWriteDependency(new("HiZBuffer"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            downsample = pipelineCreator.CreateComputePipeline(new()
+            downsample = creator.CreateComputePipeline(new()
             {
                 Path = "compute/hiz/shader.hlsl",
             });
 
-            copy = pipelineCreator.CreateGraphicsPipeline(new()
+            copy = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/copy/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                PixelShader = "effects/copy/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
@@ -54,7 +54,7 @@
             context.SetRenderTarget(chain.RTV, null);
             context.PSSetShaderResource(0, input);
             context.SetViewport(viewports[0]);
-            context.SetGraphicsPipeline(copy);
+            context.SetGraphicsPipeline(copy.Value);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
             context.SetRenderTarget(null, null);
@@ -62,7 +62,7 @@
             context.SetRenderTarget(null, null);
             context.PSSetShaderResource(0, null);
 
-            context.SetComputePipeline(downsample);
+            context.SetComputePipeline(downsample.Value);
             context.CSSetConstantBuffer(0, cbDownsample.Value);
             context.CSSetSampler(0, samplerState.Value);
 

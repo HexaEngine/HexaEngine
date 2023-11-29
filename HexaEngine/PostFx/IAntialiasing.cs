@@ -3,8 +3,8 @@
 namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering.Graph;
 
     public interface IAntialiasing
     {

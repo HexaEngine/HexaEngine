@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -23,10 +23,11 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/sprite/vs.hlsl",
-                PixelShader = "deferred/sprite/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Topology = PrimitiveTopology.TriangleStrip
+                PixelShader = "deferred/sprite/ps.hlsl",
+                State = new()
+                {
+                    Topology = PrimitiveTopology.TriangleStrip
+                }
             });
             constantBuffer = new(device, CpuAccessFlags.Write);
         }

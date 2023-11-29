@@ -76,7 +76,6 @@
             }
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UnsafeList{T}"/> struct.
         /// </summary>
@@ -229,7 +228,6 @@
             return &pointer[index];
         }
 
-
         /// <summary>
         /// Initializes the list with the default capacity.
         /// </summary>
@@ -337,7 +335,6 @@
             size--;
         }
 
-
         /// <summary>
         /// Adds a range of items to the list.
         /// </summary>
@@ -368,7 +365,6 @@
 
             size += count;
         }
-
 
         /// <summary>
         /// Removes the specified item from the list.
@@ -587,6 +583,62 @@
             pointer = list.pointer;
             capacity = list.capacity;
             size = list.size;
+        }
+
+        /// <summary>
+        /// Atomically increments the counter value and returns the result.
+        /// </summary>
+        /// <returns>The incremented counter value.</returns>
+        /// <remarks>Note: The capacity remains unchanged due to race conditions.</remarks>
+        public uint InterlockedIncrementCounter()
+        {
+            return Interlocked.Increment(ref size);
+        }
+
+        /// <summary>
+        /// Atomically decrements the counter value and returns the result.
+        /// </summary>
+        /// <returns>The decremented counter value.</returns>
+        /// <remarks>Note: The capacity remains unchanged due to race conditions.</remarks>
+        public uint InterlockedDecrementCounter()
+        {
+            return Interlocked.Decrement(ref size);
+        }
+
+        /// <summary>
+        /// Atomically pushes an element to the end of the list and returns the index of the added element.
+        /// </summary>
+        /// <param name="value">The value to be added to the list.</param>
+        /// <returns>The index of the added element.</returns>
+        /// <remarks>Note: The capacity remains unchanged due to race conditions.</remarks>
+        public uint InterlockedPushBack(T value)
+        {
+            uint index = Interlocked.Increment(ref size);
+            pointer[index] = value;
+            return index;
+        }
+
+        /// <summary>
+        /// Atomically removes and returns the index of the last element in the list.
+        /// </summary>
+        /// <returns>The index of the removed element.</returns>
+        /// <remarks>Note: The capacity remains unchanged due to race conditions.</remarks>
+        public uint InterlockedPopBack()
+        {
+            uint index = InterlockedDecrementCounter();
+            pointer[index + 1] = default;
+            return index;
+        }
+
+        /// <summary>
+        /// Atomically resizes the list to the specified new size and returns the previous size.
+        /// </summary>
+        /// <param name="newSize">The new size to set for the list.</param>
+        /// <returns>The previous size of the list.</returns>
+        /// <remarks>Note: The capacity remains unchanged due to race conditions.</remarks>
+        public uint InterlockedResize(uint newSize)
+        {
+            return Interlocked.Exchange(ref size, newSize);
         }
 
         /// <summary>

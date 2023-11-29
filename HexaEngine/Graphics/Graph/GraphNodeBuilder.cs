@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering.Graph
+﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -20,7 +20,7 @@
 
         public void Build(RenderPass pass, RenderGraph graph, IGraphicsDevice device, ICPUProfiler? profiler)
         {
-            pass.Init(resourceBuilder, pipelineBuilder, device, profiler);
+            pass.Init(resourceBuilder, profiler);
             referenceBuilder.Build(graph);
         }
     }

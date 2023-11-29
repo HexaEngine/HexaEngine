@@ -1,12 +1,11 @@
-﻿namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
 
     public class LightCullPass : ComputePass
@@ -30,8 +29,8 @@
         private ResourceRef<StructuredUavBuffer<uint>> LightIndexList;
         private ResourceRef<StructuredUavBuffer<LightGrid>> LightGridBuffer;
 
-        private IComputePipeline clusterBuilding;
-        private IComputePipeline clusterCulling;
+        private ResourceRef<IComputePipeline> clusterBuilding;
+        private ResourceRef<IComputePipeline> clusterCulling;
 
         private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer;
         private ResourceRef<ConstantBuffer<ClusterSizes>> clusterSizesBuffer;
@@ -44,18 +43,18 @@
             AddWriteDependency(new("LightGridBuffer"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             float screenWidth = creator.Viewport.Width;
             float screenHeight = creator.Viewport.Height;
 
-            clusterBuilding = pipelineCreator.CreateComputePipeline(new()
+            clusterBuilding = creator.CreateComputePipeline(new()
             {
                 Path = "compute/clustered/building.hlsl"
             });
-            clusterCulling = pipelineCreator.CreateComputePipeline(new()
+            clusterCulling = creator.CreateComputePipeline(new()
             {
                 Path = "compute/clustered/culling.hlsl"
             });
@@ -94,7 +93,7 @@
                 context.CSSetConstantBuffer(0, clusterSizesBuffer.Value);
                 context.CSSetUnorderedAccessView(0, (void*)ClusterBuffer.Value.UAV.NativePointer);
 
-                context.SetComputePipeline(clusterBuilding);
+                context.SetComputePipeline(clusterBuilding.Value);
                 context.Dispatch(CLUSTERS_X, CLUSTERS_Y, CLUSTERS_Z);
                 context.SetComputePipeline(null);
 
@@ -116,7 +115,7 @@
             nint* uavs = stackalloc nint[] { LightIndexCounter.Value.UAV.NativePointer, LightIndexList.Value.UAV.NativePointer, LightGridBuffer.Value.UAV.NativePointer };
             context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, null);
 
-            context.SetComputePipeline(clusterCulling);
+            context.SetComputePipeline(clusterCulling.Value);
             context.Dispatch(CLUSTERS_X / CLUSTERS_X_THREADS, CLUSTERS_Y / CLUSTERS_Y_THREADS, CLUSTERS_Z / CLUSTERS_Z_THREADS);
             context.SetComputePipeline(null);
 

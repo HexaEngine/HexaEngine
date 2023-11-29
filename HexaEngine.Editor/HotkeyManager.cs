@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;

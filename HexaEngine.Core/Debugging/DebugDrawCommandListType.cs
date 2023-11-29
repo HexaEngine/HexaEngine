@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Core.Debugging
 {
     /// <summary>
     /// Represents the type of a debug draw command list.

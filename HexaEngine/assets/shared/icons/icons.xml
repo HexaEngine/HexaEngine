@@ -33,4 +33,9 @@
 	<Icon theme="Dark" name="ImgHDR" path="assets/icons/dark/image.png" target="*.hdr" />
 	<Icon theme="Dark" name="ImgIco" path="assets/icons/dark/image.png" target="*.ico" />
 	<Icon theme="Dark" name="ImgBmp" path="assets/icons/dark/image.png" target="*.bmp" />
+
+	<Icon theme="Dark" name="Camera" path="assets/icons/dark/camera.png" target="Camera" />
+	<Icon theme="Light" name="Camera" path="assets/icons/light/camera.png" target="Camera" />
+	<Icon theme="Dark" name="Light" path="assets/icons/dark/light.png" target="Light" />
+	<Icon theme="Light" name="Light" path="assets/icons/light/light.png" target="Light" />
 </Icons>

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using HexaEngine.Core.IO.Assets;
+    using HexaEngine.Core.IO.Archives;
     using System;
     using System.Buffers.Binary;
     using System.Collections.Concurrent;
@@ -332,6 +332,8 @@
                 }
             }
 
+            initLock.Set();
+
             for (int i = 0; i < assets.Count; i++)
             {
                 assets[i].Refresh();
@@ -340,8 +342,6 @@
             AddFileSystemWatcher(source);
 
             SourceAdded?.Invoke(source);
-
-            initLock.Set();
         }
 
         /// <summary>

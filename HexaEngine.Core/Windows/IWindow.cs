@@ -3,6 +3,7 @@
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input.Events;
+    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;

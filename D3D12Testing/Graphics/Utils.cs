@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.D3D12
+﻿namespace D3D12Testing.Graphics
 {
     using Silk.NET.Direct3D12;
     using System;

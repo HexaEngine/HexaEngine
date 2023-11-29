@@ -34,22 +34,6 @@ float3 NoneTonemap(float3 x)
 
 float3 HableHejlTonemap(float3 color)
 {
-	// Calculate linear scale and offset for black and white points
-    float scale = (WhiteOut - BlackOut) / (WhiteIn - BlackIn);
-    float offset = BlackOut - (BlackIn * scale);
-
-	// Apply linear scale and offset
-    color = color * scale + offset;
-
-	// Apply gamma correction (2.2)
-    color = pow(color, 1.0 / 2.2);
-
-	// Pre-curve white point adjustment
-    color = color * (WhiteLevel / max(color.r, max(color.g, color.b)));
-
-	// Post-curve white point adjustment
-    color = (color * (1.0 + color / (WhiteClip * WhiteClip))) / (1.0 + color);
-
     return color;
 }
 

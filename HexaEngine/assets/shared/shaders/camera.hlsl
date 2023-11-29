@@ -21,7 +21,9 @@ cbuffer CameraBuffer : register(b1)
     float gameTime;
 };
 
-float3 GetCameraPos()
+#define camPos float3(viewInv._41, viewInv._42, viewInv._43)
+
+inline float3 GetCameraPos()
 {
     return float3(viewInv._41, viewInv._42, viewInv._43);
 }

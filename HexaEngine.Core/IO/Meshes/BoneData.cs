@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Meshes;
-
-namespace HexaEngine.Core.IO.Meshes
+﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;

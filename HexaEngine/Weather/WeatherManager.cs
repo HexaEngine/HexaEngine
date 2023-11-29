@@ -3,19 +3,24 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.UI;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Sky;
-    using HexaEngine.Mathematics.Sky.HosekWilkie;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+
+    public enum SkyType
+    {
+        Skybox,
+        UniformColor,
+        HosekWilkie,
+        Preetham,
+    }
 
     /// <summary>
     /// Manages weather-related graphics rendering and effects.
@@ -53,6 +58,9 @@
         private float cloudType = 1;
         private float turbidity = 3;
         private float groundAlbedo = 0.1f;
+        private float phaseFunctionG = 0.2f;
+        private SkyType skyModel;
+        private float overcast;
 
         /// <summary>
         /// Gets a value indicating whether the weather has a sun.
@@ -147,6 +155,18 @@
         }
 
         /// <summary>
+        /// Gets or sets the overcast of the weather.
+        /// </summary>
+        public float Overcast
+        {
+            get => overcast;
+            set
+            {
+                overcast = value; isDirty = true;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the light absorption of the weather.
         /// </summary>
         public float LightAbsorption
@@ -230,6 +250,15 @@
             }
         }
 
+        public float PhaseFunctionG
+        {
+            get => phaseFunctionG;
+            set
+            {
+                phaseFunctionG = value; isDirty = true;
+            }
+        }
+
         /// <summary>
         /// Gets the constant buffer containing weather information for graphics rendering.
         /// </summary>
@@ -240,6 +269,10 @@
 
         /// <inheritdoc/>
         public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.GraphicsUpdate;
+
+        public SkyType SkyModel { get => skyModel; set => skyModel = value; }
+
+        public Vector4 SunDir => weatherBuffer.Value[0].LightDir;
 
         /// <summary>
         /// Called when the system is awakened in a scene.
@@ -292,20 +325,36 @@
             weather.CloudsTopHeight = cloudsTopHeight;
             weather.DensityFactor = densityFactor;
             weather.CloudType = cloudType;
+            weather.PhaseFunctionG = phaseFunctionG;
 
-            Vector3 sunDir = Vector3.Normalize(new(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
-            SkyParameters skyParams = SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir);
+            Vector3 sunDir = Vector3.Normalize(new Vector3(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
+            if (skyModel == SkyType.HosekWilkie)
+            {
+                SkyParameters skyParams = Mathematics.Sky.HosekWilkie.SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir, overcast);
 
-            weather.A = skyParams[(int)EnumSkyParams.A];
-            weather.B = skyParams[(int)EnumSkyParams.B];
-            weather.C = skyParams[(int)EnumSkyParams.C];
-            weather.D = skyParams[(int)EnumSkyParams.D];
-            weather.E = skyParams[(int)EnumSkyParams.E];
-            weather.F = skyParams[(int)EnumSkyParams.F];
-            weather.G = skyParams[(int)EnumSkyParams.G];
-            weather.H = skyParams[(int)EnumSkyParams.H];
-            weather.I = skyParams[(int)EnumSkyParams.I];
-            weather.Z = skyParams[(int)EnumSkyParams.Z];
+                weather.A = skyParams[(int)EnumSkyParams.A];
+                weather.B = skyParams[(int)EnumSkyParams.B];
+                weather.C = skyParams[(int)EnumSkyParams.C];
+                weather.D = skyParams[(int)EnumSkyParams.D];
+                weather.E = skyParams[(int)EnumSkyParams.E];
+                weather.F = skyParams[(int)EnumSkyParams.F];
+                weather.G = skyParams[(int)EnumSkyParams.G];
+                weather.H = skyParams[(int)EnumSkyParams.H];
+                weather.I = skyParams[(int)EnumSkyParams.I];
+                weather.Z = skyParams[(int)EnumSkyParams.Z];
+            }
+
+            if (skyModel == SkyType.Preetham)
+            {
+                SkyParameters skyParams = Mathematics.Sky.Preetham.SkyModel.CalculateSkyParameters(turbidity, sunDir, overcast, 1);
+
+                weather.A = skyParams[(int)EnumSkyParams.A];
+                weather.B = skyParams[(int)EnumSkyParams.B];
+                weather.C = skyParams[(int)EnumSkyParams.C];
+                weather.D = skyParams[(int)EnumSkyParams.D];
+                weather.E = skyParams[(int)EnumSkyParams.E];
+                weather.F = skyParams[(int)EnumSkyParams.F];
+            }
 
             weatherBuffer.Value?.Update(context, weather);
             isDirty = false;

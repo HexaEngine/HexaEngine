@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using HexaEngine.Components;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;

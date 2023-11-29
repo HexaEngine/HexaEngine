@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.D3D12
+﻿namespace D3D12Testing.Graphics
 {
     using D3D12Testing.Events;
     using Silk.NET.Direct3D12;
@@ -63,7 +63,7 @@
 
         public int Height { get; private set; }
 
-        public Mathematics.Viewport Viewport { get; private set; }
+        public HexaEngine.Mathematics.Viewport Viewport { get; private set; }
 
         public event EventHandler? Resizing;
 
@@ -142,7 +142,7 @@
             var oldHeight = Height;
             Resizing?.Invoke(this, EventArgs.Empty);
 
-            swapChain->ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+            swapChain->ResizeBuffers(2, (uint)width, (uint)height, Format.FormatB8G8R8A8Unorm, (uint)flags);
             Width = width;
             Height = height;
             Viewport = new(0, 0, Width, Height);

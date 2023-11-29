@@ -1,10 +1,9 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
 
     public class TAA : PostFxBase, IAntialiasing
     {
@@ -81,8 +80,10 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/taa/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                PixelShader = "effects/taa/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
@@ -144,7 +145,7 @@
             pipeline.Dispose();
             sampler.Dispose();
             paramsBuffer.Dispose();
-            creator.ReleaseResource("Previous");
+            creator.DisposeResource("Previous");
         }
 
         public void Draw(IGraphicsContext context)

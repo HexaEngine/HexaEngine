@@ -2,10 +2,10 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering;
 
     public abstract class UIComponent : IRendererComponent
     {

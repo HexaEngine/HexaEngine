@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Input
+﻿namespace HexaEngine.Input.Events
 {
     [Flags]
     public enum InputEventType

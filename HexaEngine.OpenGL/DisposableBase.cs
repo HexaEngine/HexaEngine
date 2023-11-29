@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.OpenGL
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using System;
 
     public abstract class DisposableBase : IDisposable

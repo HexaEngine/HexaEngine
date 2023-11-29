@@ -35,31 +35,31 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("New"))
+                    if (ImGui.MenuItem("\xE710 New"))
                     {
                         New();
                     }
 
-                    if (ImGui.MenuItem("Open"))
+                    if (ImGui.MenuItem("\xE845 Open"))
                     {
                         openDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("Save"))
+                    if (ImGui.MenuItem("\xE74E Save"))
                     {
                         Save();
                     }
 
-                    if (ImGui.MenuItem("Save As"))
+                    if (ImGui.MenuItem("\xE74E Save As"))
                     {
                         saveDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("Close"))
+                    if (ImGui.MenuItem("\xE8BB Close"))
                     {
                         if (currentTab != null)
                         {
@@ -72,12 +72,12 @@
                 }
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo"))
+                    if (ImGui.MenuItem("\xE7A7 Undo"))
                     {
                         currentTab?.History.Undo();
                     }
 
-                    if (ImGui.MenuItem("Redo"))
+                    if (ImGui.MenuItem("\xE7A6 Redo"))
                     {
                         currentTab?.History.Redo();
                     }

@@ -14,7 +14,7 @@
 
         public int Frame { get; set; } = 0;
 
-        public Animation? Animation { get; set; }
+        public AnimationClip? Animation { get; set; }
 
         private long scroll = 0;
         private int zoom = 1;

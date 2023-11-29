@@ -5,10 +5,10 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Editors;
+    using HexaEngine.Editor.Factories;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Editor.Properties.Editors;
-    using HexaEngine.Editor.Properties.Factories;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
     using System.Diagnostics;

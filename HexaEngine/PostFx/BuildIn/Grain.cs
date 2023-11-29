@@ -3,8 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System.Numerics;
 
     /// <summary>
@@ -80,8 +79,10 @@
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/grain/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                PixelShader = "effects/grain/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             noise = creator.GetTexture2D("TemporalNoise");
 

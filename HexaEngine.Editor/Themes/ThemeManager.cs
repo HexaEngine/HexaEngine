@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Themes
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
 
     public static class ThemeManager
     {

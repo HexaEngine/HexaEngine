@@ -99,27 +99,27 @@ namespace HexaEngine.Resources
                     DomainShader = material.GetShader(MaterialShaderType.DomainShaderFile).Source,
                     GeometryShader = material.GetShader(MaterialShaderType.GeometryShaderFile).Source,
                     PixelShader = material.GetShader(MaterialShaderType.PixelShaderFile).Source,
-                };
-
-                GraphicsPipelineState pipelineState = new()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = blend,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = blend,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = [.. macros, new("CLUSTERED_FORWARD", 1)]
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
-                    Array.Resize(ref macros, macros.Length + 1);
-                    macros[^1] = new("Tessellation", "1");
-                    pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDesc.Macros = [.. macros, new("Tessellation", 1)];
                 }
 
-                deferred = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                deferred = device.CreateGraphicsPipeline(pipelineDesc);
 
                 pipelineDesc.PixelShader = null;
-                depthOnly = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                depthOnly = device.CreateGraphicsPipeline(pipelineDesc);
                 flags |= MaterialShaderFlags.Custom | MaterialShaderFlags.Depth;
             }
             else
@@ -127,21 +127,31 @@ namespace HexaEngine.Resources
                 GraphicsPipelineDesc pipelineDescForward = new()
                 {
                     VertexShader = $"forward/geometry/vs.hlsl",
-                    PixelShader = $"forward/geometry/ps.hlsl"
+                    PixelShader = $"forward/geometry/ps.hlsl",
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = blend,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = [.. macros, new("CLUSTERED_FORWARD", 1)]
                 };
 
                 GraphicsPipelineDesc pipelineDescDeferred = new()
                 {
                     VertexShader = $"deferred/geometry/vs.hlsl",
-                    PixelShader = $"deferred/geometry/ps.hlsl"
-                };
-
-                GraphicsPipelineState pipelineState = new()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = blend,
-                    Topology = PrimitiveTopology.TriangleList,
+                    PixelShader = $"deferred/geometry/ps.hlsl",
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
@@ -152,71 +162,78 @@ namespace HexaEngine.Resources
                     pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
                     pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
                     pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
-                    pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescForward.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescDeferred.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                forward = device.CreateGraphicsPipeline(pipelineDescForward, pipelineState, elements, macros.Append(new("CLUSTERED_FORWARD", 1)).ToArray());
+                forward = device.CreateGraphicsPipeline(pipelineDescForward);
 
-                deferred = device.CreateGraphicsPipeline(pipelineDescDeferred, pipelineState, elements, macros);
+                deferred = device.CreateGraphicsPipeline(pipelineDescDeferred);
 
                 pipelineDescDeferred.PixelShader = null;
-                depthOnly = device.CreateGraphicsPipeline(pipelineDescDeferred, pipelineState, elements, macros);
+                depthOnly = device.CreateGraphicsPipeline(pipelineDescDeferred);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/csm/vs.hlsl",
                     GeometryShader = "forward/geometry/csm/gs.hlsl",
-                };
-                var csmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/osm/vs.hlsl",
                     PixelShader = "forward/geometry/osm/ps.hlsl",
-                };
-                var osmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/psm/vs.hlsl",
                     PixelShader = "forward/geometry/psm/ps.hlsl",
-                };
-                var psmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
                     csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
-                    csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    csmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
                     osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
-                    osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    osmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
                     psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
-                    psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    psmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                csm = device.CreateGraphicsPipeline(csmPipelineDesc, csmPipelineState, elements, macros);
-                osm = device.CreateGraphicsPipeline(osmPipelineDesc, osmPipelineState, elements, macros);
-                psm = device.CreateGraphicsPipeline(psmPipelineDesc, psmPipelineState, elements, macros);
+                csm = device.CreateGraphicsPipeline(csmPipelineDesc);
+                osm = device.CreateGraphicsPipeline(osmPipelineDesc);
+                psm = device.CreateGraphicsPipeline(psmPipelineDesc);
                 flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
             }
 
@@ -278,27 +295,27 @@ namespace HexaEngine.Resources
                     DomainShader = material.GetShader(MaterialShaderType.DomainShaderFile).Source,
                     GeometryShader = material.GetShader(MaterialShaderType.GeometryShaderFile).Source,
                     PixelShader = material.GetShader(MaterialShaderType.PixelShaderFile).Source,
-                };
-
-                GraphicsPipelineState pipelineState = new()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = blend,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = blend,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = [.. macros, new("CLUSTERED_FORWARD", 1)]
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
-                    Array.Resize(ref macros, macros.Length + 1);
-                    macros[^1] = new("Tessellation", "1");
-                    pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDesc.Macros = [.. macros, new("Tessellation", 1)];
+                    pipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                deferred = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                deferred = await device.CreateGraphicsPipelineAsync(pipelineDesc);
 
                 pipelineDesc.PixelShader = null;
-                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc);
                 flags |= MaterialShaderFlags.Custom | MaterialShaderFlags.Depth;
             }
             else
@@ -306,21 +323,31 @@ namespace HexaEngine.Resources
                 GraphicsPipelineDesc pipelineDescForward = new()
                 {
                     VertexShader = $"forward/geometry/vs.hlsl",
-                    PixelShader = $"forward/geometry/ps.hlsl"
+                    PixelShader = $"forward/geometry/ps.hlsl",
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = blend,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = [.. macros, new("CLUSTERED_FORWARD", 1)]
                 };
 
                 GraphicsPipelineDesc pipelineDescDeferred = new()
                 {
                     VertexShader = $"deferred/geometry/vs.hlsl",
-                    PixelShader = $"deferred/geometry/ps.hlsl"
-                };
-
-                GraphicsPipelineState pipelineState = new()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = blend,
-                    Topology = PrimitiveTopology.TriangleList,
+                    PixelShader = $"deferred/geometry/ps.hlsl",
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
@@ -332,71 +359,78 @@ namespace HexaEngine.Resources
                     pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
                     pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
 
-                    pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescForward.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescDeferred.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                forward = await device.CreateGraphicsPipelineAsync(pipelineDescForward, pipelineState, elements, macros.Append(new("CLUSTERED_FORWARD", 1)).ToArray());
+                forward = await device.CreateGraphicsPipelineAsync(pipelineDescForward);
 
-                deferred = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred, pipelineState, elements, macros);
+                deferred = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred);
 
                 pipelineDescDeferred.PixelShader = null;
-                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred, pipelineState, elements, macros);
+                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/csm/vs.hlsl",
                     GeometryShader = "forward/geometry/csm/gs.hlsl",
-                };
-                var csmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/osm/vs.hlsl",
                     PixelShader = "forward/geometry/osm/ps.hlsl",
-                };
-                var osmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/psm/vs.hlsl",
                     PixelShader = "forward/geometry/psm/ps.hlsl",
-                };
-                var psmPipelineState = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
+                    State = new()
+                    {
+                        DepthStencil = DepthStencilDescription.Default,
+                        Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
                 };
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
                     csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
-                    csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    csmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
                     osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
-                    osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    osmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
                     psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
-                    psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    psmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                csm = await device.CreateGraphicsPipelineAsync(csmPipelineDesc, csmPipelineState, elements, macros);
-                osm = await device.CreateGraphicsPipelineAsync(osmPipelineDesc, osmPipelineState, elements, macros);
-                psm = await device.CreateGraphicsPipelineAsync(psmPipelineDesc, psmPipelineState, elements, macros);
+                csm = await device.CreateGraphicsPipelineAsync(csmPipelineDesc);
+                osm = await device.CreateGraphicsPipelineAsync(osmPipelineDesc);
+                psm = await device.CreateGraphicsPipelineAsync(psmPipelineDesc);
                 flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
             }
 

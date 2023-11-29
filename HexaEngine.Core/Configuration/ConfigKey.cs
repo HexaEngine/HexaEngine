@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.Core
+﻿namespace HexaEngine.Core.Configuration
 {
+    using HexaEngine.Core;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;

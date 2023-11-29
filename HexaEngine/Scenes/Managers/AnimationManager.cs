@@ -10,18 +10,18 @@
         private readonly List<AnimationLibrary> libraries = new();
         private readonly Dictionary<string, AnimationLibrary> pathToLib = new();
 
-        private readonly List<Animation> animations = new();
-        private readonly Dictionary<Animation, AnimationLibrary> animationToLib = new();
+        private readonly List<AnimationClip> animations = new();
+        private readonly Dictionary<AnimationClip, AnimationLibrary> animationToLib = new();
 
         private readonly object _lock = new();
 
         public IReadOnlyList<AnimationLibrary> Libraries => libraries;
 
-        public IReadOnlyList<Animation> Animations => animations;
+        public IReadOnlyList<AnimationClip> Animations => animations;
 
         public int Count => animations.Count;
 
-        public AnimationLibrary GetMaterialLibraryForm(Animation animation)
+        public AnimationLibrary GetMaterialLibraryForm(AnimationClip animation)
         {
             lock (_lock)
             {

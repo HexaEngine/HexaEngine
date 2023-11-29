@@ -1,10 +1,12 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Effects.BuildIn
+using HexaEngine;
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
 
     /// <summary>
     /// Post-processing effect for Fast Approximate Anti-Aliasing (FXAA).
@@ -35,8 +37,10 @@ namespace HexaEngine.Effects.BuildIn
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/fxaa/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                PixelShader = "effects/fxaa/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 

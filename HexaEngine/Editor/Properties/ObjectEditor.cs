@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties.Editors;
     using Hexa.NET.ImGui;
     using System;
     using System.Collections.Generic;
@@ -164,6 +163,11 @@
         public bool IsEmpty => editors.Count == 0 && buttons.Count == 0 && categories.Count == 0;
 
         /// <summary>
+        /// Gets a value indicating whether the object editor is hidden.
+        /// </summary>
+        public bool IsHidden => isHidden;
+
+        /// <summary>
         /// Gets or sets a value indicating whether to skip the table setup when drawing the object editor.
         /// </summary>
         public bool NoTable { get; set; }
@@ -175,11 +179,6 @@
         public void Draw(IGraphicsContext context)
         {
             if (instance == null)
-            {
-                return;
-            }
-
-            if (isHidden)
             {
                 return;
             }

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace HexaEngine.Core.Configuration
 {
     /// <summary>
     /// Represents a data type for <see cref="ConfigValue"/>

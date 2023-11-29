@@ -12,6 +12,7 @@
     using System.Collections.Generic;
     using System.Numerics;
     using HexaEngine.Editor.Icons;
+    using HexaEngine.Core.Configuration;
 
     public enum PasteMode
     {
@@ -359,11 +360,11 @@
 
                 if (ImGui.MenuItem("\xE74D Delete"))
                 {
-                    MessageBox.Show("Delete directory", $"Are you sure you want to delete the directory and all containing files?\n{dir.Path}", null, (x, c) =>
+                    MessageBox.Show("Delete directory", $"Are you sure you want to delete the directory and all containing files?\n{dir.Path}", dir.Path, (x, c) =>
                     {
                         if (x.Result != MessageBoxResult.Yes)
                             return;
-                        Directory.Delete(dir.Path, true);
+                        Directory.Delete((string)c, true);
                         Refresh();
                     }, MessageBoxType.YesCancel);
                 }
@@ -507,11 +508,11 @@
 
                 if (ImGui.MenuItem("\xE74D Delete"))
                 {
-                    MessageBox.Show("Delete file", $"Are you sure you want to delete the file?\n{file.Path}", null, (x, c) =>
+                    MessageBox.Show("Delete file", $"Are you sure you want to delete the file?\n{file.Path}", file.Path, (x, c) =>
                     {
                         if (x.Result != MessageBoxResult.Yes)
                             return;
-                        File.Delete(file.Path);
+                        File.Delete((string)c);
                         Refresh();
                     }, MessageBoxType.YesCancel);
                 }

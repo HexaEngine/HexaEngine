@@ -28,17 +28,19 @@
             horizontal = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/horizontal.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen);
+                PixelShader = "effects/blur/horizontal.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen
+            });
             vertical = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/vertical.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
-                BlendFactor = Vector4.One,
-                Topology = PrimitiveTopology.TriangleStrip
+                PixelShader = "effects/blur/vertical.hlsl",
+                State = new GraphicsPipelineState()
+                {
+                    Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
+                    BlendFactor = Vector4.One,
+                    Topology = PrimitiveTopology.TriangleStrip
+                }
             });
 
             paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-GaussianBlur", lineNumber);

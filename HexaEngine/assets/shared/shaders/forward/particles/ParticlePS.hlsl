@@ -15,7 +15,6 @@ Texture2D ParticleTexture : register(t0);
 
 Texture2D<float> DepthTexture : register(t1);
 
-
 float4 main(PS_INPUT In) : SV_TARGET
 {
     float3 particleViewSpacePos = In.ViewSpaceCentreAndRadius.xyz;
@@ -26,7 +25,6 @@ float4 main(PS_INPUT In) : SV_TARGET
     float uv_x = In.Position.x / screenDim.x;
     float uv_y = 1 - (In.Position.y / screenDim.y);
 
-
     float3 viewSpacePos = GetPositionVS(float2(uv_x, uv_y), depth);
 
     float depthFade = saturate((viewSpacePos.z - particleViewSpacePos.z) / particleRadius);
@@ -34,7 +32,7 @@ float4 main(PS_INPUT In) : SV_TARGET
     float4 albedo = 1.0f;
     albedo.a = depthFade;
     albedo *= ParticleTexture.SampleLevel(linear_clamp_sampler, In.TexCoord, 0);
-    float4 color = albedo * In.Color;
+    float4 color = albedo * In.Color * depthFade;
 
     return color;
 }

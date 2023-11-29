@@ -13,19 +13,14 @@
         DepthStencilViewDescription Description { get; }
 
         /// <summary>
+        /// Gets the native pointer associated with the object.
+        /// </summary>
+        new nint NativePointer { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+
+        /// <summary>
         /// Gets or sets the debug name for the device child.
         /// </summary>
         new string? DebugName
         { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; [MethodImpl(MethodImplOptions.AggressiveInlining)] set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the device child has been disposed.
-        /// </summary>
-        new bool IsDisposed { get; }
-
-        /// <summary>
-        /// Gets the native pointer associated with the object.
-        /// </summary>
-        new IntPtr NativePointer { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
     }
 }

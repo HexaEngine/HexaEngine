@@ -31,13 +31,14 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "tools/image/brush/ps.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.AlphaBlend,
-                BlendFactor = Vector4.Zero,
-                DepthStencil = depthStencil,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleStrip,
+                State = new()
+                {
+                    Blend = BlendDescription.AlphaBlend,
+                    BlendFactor = Vector4.Zero,
+                    DepthStencil = depthStencil,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Topology = PrimitiveTopology.TriangleStrip,
+                }
             });
         }
 

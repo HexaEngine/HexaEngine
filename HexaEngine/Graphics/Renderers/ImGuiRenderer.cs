@@ -1,7 +1,7 @@
 ﻿//based on https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_dx11.cpp
 #nullable disable
 
-namespace HexaEngine.Rendering.Renderers
+namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
@@ -322,13 +322,14 @@ namespace HexaEngine.Rendering.Renderers
             {
                 VertexShader = "internal/imgui/vs.hlsl",
                 PixelShader = "internal/imgui/ps.hlsl",
-            },
-           new GraphicsPipelineState()
-           {
-               Blend = blendDesc,
-               DepthStencil = depthDesc,
-               Rasterizer = rasterDesc,
-           }, inputElements);
+                State = new()
+                {
+                    Blend = blendDesc,
+                    DepthStencil = depthDesc,
+                    Rasterizer = rasterDesc,
+                },
+                InputElements = inputElements
+            });
 
             var constBufferDesc = new BufferDescription
             {

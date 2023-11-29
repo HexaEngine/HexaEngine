@@ -29,6 +29,11 @@
         bool IsEmpty { get; }
 
         /// <summary>
+        /// Gets a value indicating whether the object editor is hidden.
+        /// </summary>
+        bool IsHidden { get; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to skip the table setup when drawing the object editor.
         /// </summary>
         bool NoTable { get; set; }

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Collections;
-    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Graphics.Graph;
     using System.Collections.Generic;
 
     public class PostFxNode : INode

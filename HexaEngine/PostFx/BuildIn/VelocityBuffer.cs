@@ -1,12 +1,11 @@
-﻿namespace HexaEngine.Effects.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graph;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering.Graph;
     using System;
     using System.Numerics;
 
@@ -68,7 +67,9 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/velocity/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
@@ -112,7 +113,7 @@
             pipeline.Dispose();
             paramsBuffer.Dispose();
             sampler.Dispose();
-            creator.ReleaseResource("VelocityBuffer");
+            creator.DisposeResource("VelocityBuffer");
         }
     }
 }

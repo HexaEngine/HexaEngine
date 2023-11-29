@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Scripts
 {
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Runtime.Loader;
@@ -93,8 +95,18 @@
         {
             if (!_typeCache.TryGetValue(typeof(T), out var result))
             {
-                result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(typeof(T)))).ToList();
-                _typeCache.Add(typeof(T), result);
+                try
+                {
+                    result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(typeof(T)))).ToList();
+                    _typeCache.Add(typeof(T), result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get assignable types");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get assignable types", ex.Message);
+                    return Array.Empty<Type>();
+                }
             }
             return result;
         }
@@ -107,30 +119,69 @@
 
         public static IList<Type> GetAssignableTypes(Type type)
         {
+            if (Assemblies.Count == 0)
+                return Array.Empty<Type>();
+
             if (!_typeCache.TryGetValue(type, out var result))
             {
-                result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type))).ToList();
-                _typeCache.Add(type, result);
+                try
+                {
+                    result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type))).ToList();
+                    _typeCache.Add(type, result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get assignable types");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get assignable types", ex.Message);
+                    return Array.Empty<Type>();
+                }
             }
             return result;
         }
 
         public static string[] GetAssignableTypeNames(Type type)
         {
+            if (Assemblies.Count == 0)
+                return [];
+
             if (!_typeNameCache.TryGetValue(type, out var result))
             {
-                result = GetAssignableTypes(type).Select(x => x.Name).ToArray();
-                _typeNameCache.Add(type, result);
+                try
+                {
+                    result = GetAssignableTypes(type).Select(x => x.Name).ToArray();
+                    _typeNameCache.Add(type, result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get assignable type names");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get assignable type names", ex.Message);
+                    return [];
+                }
             }
             return result;
         }
 
         public static Array GetEnumValues(Type type)
         {
+            if (Assemblies.Count == 0)
+                return Array.Empty<Type>();
+
             if (!_enumCache.TryGetValue(type, out var result))
             {
-                result = Enum.GetValues(type);
-                _enumCache.Add(type, result);
+                try
+                {
+                    result = Enum.GetValues(type);
+                    _enumCache.Add(type, result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get enum values");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get enum values", ex.Message);
+                    return Array.Empty<Type>();
+                }
             }
             return result;
         }
@@ -142,10 +193,23 @@
 
         public static string[] GetEnumNames(Type type)
         {
+            if (Assemblies.Count == 0)
+                return [];
+
             if (!_enumNameCache.TryGetValue(type, out var result))
             {
-                result = Enum.GetNames(type);
-                _enumNameCache.Add(type, result);
+                try
+                {
+                    result = Enum.GetNames(type);
+                    _enumNameCache.Add(type, result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get enum value names");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get enum value names", ex.Message);
+                    return [];
+                }
             }
             return result;
         }
@@ -157,22 +221,61 @@
 
         public static IEnumerable<Type> GetAssignableTypes<T>(Assembly assembly)
         {
-            return assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(typeof(T)));
+            if (Assemblies.Count == 0)
+                return [];
+
+            try
+            {
+                return assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(typeof(T)));
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to get assignable types");
+                Logger.Log(ex);
+                MessageBox.Show("Failed to get assignable types", ex.Message);
+                return [];
+            }
         }
 
         public static IEnumerable<Type> GetAssignableTypes(Assembly assembly, Type type)
         {
-            return assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type));
+            if (Assemblies.Count == 0)
+                return [];
+
+            try
+            {
+                return assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type));
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to get assignable types");
+                Logger.Log(ex);
+                MessageBox.Show("Failed to get assignable types", ex.Message);
+                return [];
+            }
         }
 
         public static Type? GetType(string name)
         {
+            if (Assemblies.Count == 0)
+                return null;
+
             foreach (Assembly assembly in Assemblies)
             {
-                Type? type = assembly.GetType(name, false, false);
-                if (type != null)
+                try
                 {
-                    return type;
+                    Type? type = assembly.GetType(name, false, false);
+                    if (type != null)
+                    {
+                        return type;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to get type");
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to get type", ex.Message);
+                    return null;
                 }
             }
             return null;
@@ -182,6 +285,8 @@
         {
             _typeCache.Clear();
             _typeNameCache.Clear();
+            _enumCache.Clear();
+            _enumNameCache.Clear();
             assemblies.Clear();
             assemblyLoadContext.Unload();
             assemblyLoadContext = new(nameof(AssemblyManager), true);

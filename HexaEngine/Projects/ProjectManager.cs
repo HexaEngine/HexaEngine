@@ -2,9 +2,8 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Assets;
+    using HexaEngine.Core.IO.Archives;
     using HexaEngine.Dotnet;
     using HexaEngine.Scripts;
     using System;
@@ -29,6 +28,13 @@
             ReferencedAssemblyNames.Add("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.D3D11, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.D3D12, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.Vulkan, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.OpenGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.OpenAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.XAudio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("Silk.NET.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             foreach (string name in ReferencedAssemblyNames)
             {
                 var assembly = Assembly.Load(name);
@@ -48,10 +54,7 @@
 
         public static event Action<HexaProject?>? ProjectChanged;
 
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-
         public static async void Load(string path)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             CurrentProjectFilePath = path;
 
@@ -169,8 +172,12 @@
                 return Task.CompletedTask;
             }
 
+            if (!Build())
+            {
+                return Task.CompletedTask;
+            }
+
             string solutionName = Path.GetFileName(CurrentProjectFolder);
-            Build();
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
             return Task.CompletedTask;
@@ -184,8 +191,12 @@
                 return Task.CompletedTask;
             }
 
+            if (!Rebuild())
+            {
+                return Task.CompletedTask;
+            }
+
             string solutionName = Path.GetFileName(CurrentProjectFolder);
-            Rebuild();
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
             return Task.CompletedTask;
@@ -204,20 +215,27 @@
             return Task.CompletedTask;
         }
 
-        private static void Build()
+        private static bool Build()
         {
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
-            Logger.Log(Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin")));
+
+            string output = Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
+            bool failed = output.Contains("FAILED");
+            Logger.Log(output);
             scriptProjectChanged = false;
+            return !failed;
         }
 
-        private static void Rebuild()
+        private static bool Rebuild()
         {
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
-            Logger.Log(Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin")));
+            string output = Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
+            bool failed = output.Contains("FAILED");
+            Logger.Log(output);
             scriptProjectChanged = false;
+            return !failed;
         }
 
         private static void Clean()
@@ -226,15 +244,6 @@
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
             Logger.Log(Dotnet.Clean(projectFilePath));
             scriptProjectChanged = true;
-        }
-
-        private static void BuildShaders(string output)
-        {
-            var entries = ShaderCache.Entries;
-            foreach (var entry in entries)
-            {
-                string path = Path.Combine(output, entry.Name);
-            }
         }
 
         public static Task Publish(PublishSettings settings)
@@ -444,46 +453,6 @@
             // Get the files in the source directory and copy to the destination directory
             foreach (FileInfo file in dir.GetFiles())
             {
-                string targetFilePath = Path.Combine(destinationDir, file.Name);
-                file.CopyTo(targetFilePath);
-            }
-
-            // If recursive and copying subdirectories, recursively call this method
-            if (recursive)
-            {
-                foreach (DirectoryInfo subDir in dirs)
-                {
-                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-                    CopyDirectory(subDir.FullName, newDestinationDir, true);
-                }
-            }
-        }
-
-        private static void CopyDirectory(string sourceDir, string destinationDir, string filter, bool recursive)
-        {
-            // Get information about the source directory
-            var dir = new DirectoryInfo(sourceDir);
-
-            // Check if the source directory exists
-            if (!dir.Exists)
-            {
-                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-            }
-
-            // Cache directories before we start copying
-            DirectoryInfo[] dirs = dir.GetDirectories();
-
-            // Create the destination directory
-            Directory.CreateDirectory(destinationDir);
-
-            // Get the files in the source directory and copy to the destination directory
-            foreach (FileInfo file in dir.GetFiles())
-            {
-                if (file.Extension != filter)
-                {
-                    continue;
-                }
-
                 string targetFilePath = Path.Combine(destinationDir, file.Name);
                 file.CopyTo(targetFilePath);
             }

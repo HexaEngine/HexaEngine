@@ -3,14 +3,12 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
-    using HexaEngine.Graph;
-    using HexaEngine.Rendering.Graph;
-    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Renderers;
 
     public class OverlayPass : RenderPass
     {
-        private IGraphicsPipeline copyPipeline;
+        private ResourceRef<IGraphicsPipeline> copyPipeline;
         private ResourceRef<ISamplerState> samplerState;
 
         private ResourceRef<DepthStencil> depthStencil;
@@ -24,20 +22,21 @@
             AddReadDependency(new("PostFxBuffer"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            copyPipeline = pipelineCreator.CreateGraphicsPipeline(new()
+            copyPipeline = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/copy/ps.hlsl"
-            },
-            GraphicsPipelineState.DefaultFullscreen, [new ShaderMacro("SAMPLED", 1)]);
+                PixelShader = "effects/copy/ps.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = [new ShaderMacro("SAMPLED", 1)]
+            });
             samplerState = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
 
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             postFxBuffer = creator.GetTexture2D("PostFxBuffer");
 
-            debugDrawRenderer = new(device);
+            debugDrawRenderer = new(creator.Device);
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -54,7 +53,7 @@
 
             context.SetRenderTarget(creator.Output, null);
             context.SetViewport(creator.OutputViewport);
-            context.SetGraphicsPipeline(copyPipeline);
+            context.SetGraphicsPipeline(copyPipeline.Value);
             context.PSSetShaderResource(0, postFxBuffer.Value);
             context.PSSetSampler(0, samplerState.Value);
             context.DrawInstanced(4, 1, 0, 0);
@@ -67,8 +66,6 @@
 
         public override void Release()
         {
-            copyPipeline.Dispose();
-
             debugDrawRenderer.Dispose();
         }
     }

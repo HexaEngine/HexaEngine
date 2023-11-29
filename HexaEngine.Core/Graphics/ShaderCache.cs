@@ -147,6 +147,8 @@
             }
         }
 
+        private const int HeaderSize = 8;
+
         private static void Load()
         {
             if (!File.Exists(file))
@@ -157,6 +159,10 @@
             lock (entries)
             {
                 var span = (Span<byte>)File.ReadAllBytes(file);
+                if (span.Length < HeaderSize)
+                {
+                    return;
+                }
                 var decoder = Encoding.UTF8.GetDecoder();
                 var version = BinaryPrimitives.ReadInt32LittleEndian(span);
                 if (version != Version)
@@ -180,7 +186,7 @@
             lock (entries)
             {
                 var encoder = Encoding.UTF8.GetEncoder();
-                var size = 8 + entries.Sum(x => x.SizeOf(encoder));
+                var size = HeaderSize + entries.Sum(x => x.SizeOf(encoder));
                 var span = size < 2048 ? stackalloc byte[size] : new byte[size];
 
                 BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);

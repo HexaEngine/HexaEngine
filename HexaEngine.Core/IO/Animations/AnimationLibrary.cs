@@ -20,7 +20,7 @@
         public static AnimationLibrary Empty => new();
 
         private AnimationLibraryHeader header;
-        private readonly List<Animation> animations;
+        private readonly List<AnimationClip> animations;
 
         /// <summary>
         /// Initializes an empty animation library.
@@ -35,7 +35,7 @@
         /// Initializes an animation library with a collection of animations.
         /// </summary>
         /// <param name="animations">A list of animations to include in the library.</param>
-        public AnimationLibrary(IList<Animation> animations)
+        public AnimationLibrary(IList<AnimationClip> animations)
         {
             header.AnimationCount = animations.Count;
             this.animations = new(animations);
@@ -49,7 +49,7 @@
         /// <summary>
         /// Gets a list of animations in the library.
         /// </summary>
-        public List<Animation> Animations => animations;
+        public List<AnimationClip> Animations => animations;
 
         /// <summary>
         /// Saves the animation library to a file with the specified encoding, endianness, and compression.
@@ -134,7 +134,7 @@
             library.animations.Capacity = header.AnimationCount;
             for (int i = 0; i < header.AnimationCount; i++)
             {
-                library.animations.Add(Animation.ReadFrom(stream, header.Encoding, header.Endianness));
+                library.animations.Add(AnimationClip.ReadFrom(stream, header.Encoding, header.Endianness));
             }
 
             stream.Close();

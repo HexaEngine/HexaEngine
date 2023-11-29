@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Culling
+﻿namespace HexaEngine.Graphics.Culling
 {
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;

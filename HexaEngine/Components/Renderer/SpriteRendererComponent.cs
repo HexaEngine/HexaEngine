@@ -4,13 +4,13 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Renderers;
     using System;
     using System.Numerics;
 
@@ -118,7 +118,7 @@
 
         private Task UpdateAtlasAsync()
         {
-            loaded = false;
+            Loaded = false;
             var tmpAtlas = spriteAtlas;
             spriteAtlas = null;
             tmpAtlas?.Dispose();
@@ -134,7 +134,7 @@
                 if (FileSystem.Exists(path))
                 {
                     component.spriteAtlas = new(device, SamplerStateDescription.PointClamp, path);
-                    component.loaded = true;
+                    component.Loaded = true;
                 }
             }, state);
         }

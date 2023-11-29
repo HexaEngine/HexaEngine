@@ -6,13 +6,13 @@
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering;
-    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -95,6 +95,21 @@
             return model.GetBoneIdByName(name);
         }
 
+        public Node[]? GetNodes()
+        {
+            return model?.Nodes;
+        }
+
+        public PlainNode[]? GetPlainNodes()
+        {
+            return model?.PlainNodes;
+        }
+
+        public PlainNode[]? GetPlainBones()
+        {
+            return model?.Bones;
+        }
+
         public override void Load(IGraphicsDevice device)
         {
             modelManager = GameObject.GetScene().ModelManager;
@@ -149,7 +164,7 @@
 
         private Task UpdateModel()
         {
-            loaded = false;
+            Loaded = false;
             renderer?.Uninitialize();
             var tmpModel = model;
             model = null;
@@ -181,7 +196,7 @@
                     component.model = new(source, library);
                     await component.model.LoadAsync();
                     component.renderer.Initialize(component.model);
-                    component.loaded = true;
+                    component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }
             }, this);
