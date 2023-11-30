@@ -177,7 +177,9 @@ float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas
     if (currentDepth > 1.0f)
         return 1.0;
 
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    // calculate bias (based on slope)
+    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    const float bias = 0.005;
 
 #if HARD_SHADOWS_POINTLIGHTS
 
@@ -213,7 +215,8 @@ float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light li
         return 1.0;
 
     // calculate bias (based on slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    // float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    const float bias = 0.005;
 
 #if HARD_SHADOWS_POINTLIGHTS
 
@@ -253,7 +256,8 @@ float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas,
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    const float bias = 0.00001;
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return shadowAtlas.SampleCmpLevelZero(state, uvd.xy, depth - bias);
@@ -292,7 +296,8 @@ float ShadowFactorSpotlight(SamplerState state, Texture2D shadowAtlas, Light lig
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    const float bias = 0.00001;
 
 #if HARD_SHADOWS_SPOTLIGHTS
     float shadowDepth = shadowAtlas.SampleLevel(state, uvd.xy, 0);
@@ -538,7 +543,7 @@ float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas,
 
     float depth = uvd.z;
 
-    const float bias = 0.005;
+    const float bias = 0.00001;
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return shadowAtlas.SampleCmpLevelZero(state, uvd.xy, depth - bias);
@@ -573,7 +578,7 @@ float ShadowFactorSpotlight(SamplerState state, Texture2D shadowAtlas, ShadowDat
 
     float depth = uvd.z;
 
-    const float bias = 0.005;
+    const float bias = 0.00001;
 
 #if HARD_SHADOWS_SPOTLIGHTS
     float shadowDepth = shadowAtlas.SampleLevel(state, uvd.xy, 0);

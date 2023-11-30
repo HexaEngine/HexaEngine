@@ -1,14 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
-    using HexaEngine.Mathematics;
-    using System.Numerics;
+    using HexaEngine.Scenes;
 
     public class DebugWindow : EditorWindow
     {
-        private BezierCurve curve = new(Vector2.Zero, Vector2.One);
-
         protected override string Name => "Debug";
 
         public DebugWindow()
@@ -17,10 +14,18 @@
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
-#if DEBUG
-            ImGuiBezierWidget.Bezier("Test Bezier", ref curve);
+            var scene = SceneManager.Current;
+            if (scene == null)
+            {
+                return;
+            }
 
-#endif
+            var renderers = scene.RenderManager;
+            for (var i = 0; i < renderers.Renderers.Count; i++)
+            {
+                var r = renderers.Renderers[i];
+                ImGui.Text(r.BoundingBox.ToString());
+            }
         }
     }
 }

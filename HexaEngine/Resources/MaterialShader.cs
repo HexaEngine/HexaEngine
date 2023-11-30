@@ -206,11 +206,10 @@ namespace HexaEngine.Resources
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/psm/vs.hlsl",
-                    PixelShader = "forward/geometry/psm/ps.hlsl",
                     State = new()
                     {
                         DepthStencil = DepthStencilDescription.Default,
-                        Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                        Rasterizer = rasterizer,
                         Blend = BlendDescription.Opaque,
                         Topology = PrimitiveTopology.TriangleList,
                     },
@@ -403,11 +402,10 @@ namespace HexaEngine.Resources
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/psm/vs.hlsl",
-                    PixelShader = "forward/geometry/psm/ps.hlsl",
                     State = new()
                     {
                         DepthStencil = DepthStencilDescription.Default,
-                        Rasterizer = RasterizerDescription.CullFrontDepthBias,
+                        Rasterizer = rasterizer,
                         Blend = BlendDescription.Opaque,
                         Topology = PrimitiveTopology.TriangleList,
                     },

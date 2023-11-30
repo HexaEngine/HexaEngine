@@ -32,12 +32,6 @@ struct VertexInput
 #endif
 };
 
-struct PixelInput
-{
-    float4 position : SV_POSITION;
-    float depth : DEPTH;
-};
-
 struct PatchTess
 {
     float EdgeTess[3] : SV_TessFactor;

@@ -106,7 +106,7 @@
                             profiler?.Begin($"ShadowMap.UpdateSpot.{renderer.DebugName}");
                             if ((renderer.Flags & RendererFlags.CastShadows) != 0)
                             {
-                                if (spotlight.ShadowFrustum.Intersects(renderer.BoundingBox))
+                                if (spotlight.IntersectFrustum(renderer.BoundingBox))
                                 {
                                     renderer.DrawShadowMap(context, Spotlight.PSMBuffer, ShadowType.Perspective);
                                 }
