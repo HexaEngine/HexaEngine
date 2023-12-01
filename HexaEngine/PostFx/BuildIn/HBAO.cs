@@ -39,7 +39,6 @@ namespace HexaEngine.PostFx.BuildIn
         private float power = 1;
 
         private const int NoiseSize = 4;
-        private const int NoiseStride = 4;
 
         #region Structs
 
@@ -132,20 +131,16 @@ namespace HexaEngine.PostFx.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
+                Vector4* pixelData = stackalloc Vector4[NoiseSize * NoiseSize];
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;
-                initialData.RowPitch = NoiseSize * NoiseStride;
+                initialData.RowPitch = NoiseSize * sizeof(Vector4);
 
-                int idx = 0;
                 for (int i = 0; i < NoiseSize * NoiseSize; i++)
                 {
                     float rand = Random.Shared.NextSingle() * float.Pi * 2.0f;
-                    pixelData[idx++] = MathF.Sin(rand);
-                    pixelData[idx++] = MathF.Cos(rand);
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = 1.0f;
+                    pixelData[i] = new Vector4(MathF.Sin(rand), MathF.Cos(rand), Random.Shared.NextSingle(), 1.0f);
                 }
 
                 noiseTex = new(device, description, initialData);

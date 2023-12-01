@@ -1102,6 +1102,222 @@
         /// <param name="max">The maximum value of the range.</param>
         /// <returns>The clamped value within the specified range.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static sbyte Clamp(sbyte value, sbyte min, sbyte max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte Clamp(byte value, byte min, byte max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort Clamp(ushort value, ushort min, ushort max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static short Clamp(short value, short min, short max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Clamp(uint value, uint min, uint max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Clamp(int value, int min, int max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Clamp(ulong value, ulong min, ulong max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Clamp(long value, long min, long max)
+        {
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to a specified range.
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <param name="min">The minimum value of the range.</param>
+        /// <param name="max">The maximum value of the range.</param>
+        /// <returns>The clamped value within the specified range.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
         {
             if (min > max)
@@ -1116,6 +1332,150 @@
             else if (value > max)
             {
                 return max;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static sbyte Clamp01(sbyte value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte Clamp01(byte value)
+        {
+            if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static short Clamp01(short value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort Clamp01(ushort value)
+        {
+            if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Clamp01(int value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Clamp01(uint value)
+        {
+            if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Clamp01(long value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Clamp01(ulong value)
+        {
+            if (value > 1)
+            {
+                return 1;
             }
 
             return value;
@@ -1188,7 +1548,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Clamp01(Vector2 v)
         {
-            return new Vector2(Clamp01(v.X), Clamp01(v.Y));
+            return Vector2.Clamp(v, Vector2.Zero, Vector2.One);
         }
 
         /// <summary>
@@ -1199,7 +1559,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Clamp01(Vector3 v)
         {
-            return new Vector3(Clamp01(v.X), Clamp01(v.Y), Clamp01(v.Z));
+            return Vector3.Clamp(v, Vector3.Zero, Vector3.One);
         }
 
         /// <summary>
@@ -1210,7 +1570,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Clamp01(Vector4 v)
         {
-            return new Vector4(Clamp01(v.X), Clamp01(v.Y), Clamp01(v.Z), Clamp01(v.W));
+            return Vector4.Clamp(v, Vector4.Zero, Vector4.One);
         }
 
         /// <summary>
