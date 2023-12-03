@@ -164,82 +164,22 @@
             lights.RendererUpdateQueue.EnqueueComponentIfIs(obj);
         }
 
+        private void QueueIndexChanged(IRendererComponent sender, uint oldIndex, uint newIndex)
+        {
+            if (!RemoveFromQueue(sender))
+            {
+                return;
+            }
+
+            AddToQueue(sender);
+        }
+
         public void Update(IGraphicsContext context)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
                 renderers[i].Update(context);
             }
-        }
-
-        public void UpdateShadowMaps(IGraphicsContext context, Camera camera)
-        {
-            if (lights.UpdateShadowLightQueue.Count == 0)
-                return;
-            while (lights.UpdateShadowLightQueue.TryDequeue(out var light))
-            {
-                switch (light.LightType)
-                {
-                    case LightType.Directional:
-                        var directionalLight = (DirectionalLight)light;
-                        directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, camera);
-                        for (int i = 0; i < renderers.Count; i++)
-                        {
-                            var renderer = renderers[i];
-                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                            {
-                                for (int j = 0; j < directionalLight.ShadowFrustra.Length; j++)
-                                {
-                                    if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
-                                    {
-                                        renderer.DrawShadowMap(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case LightType.Point:
-                        var pointLight = (PointLight)light;
-                        for (int i = 0; i < 6; i++)
-                        {
-                            pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, i);
-                            for (int j = 0; j < renderers.Count; j++)
-                            {
-                                var renderer = renderers[j];
-                                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                                {
-                                    if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
-                                    {
-                                        renderer.DrawShadowMap(context, PointLight.OSMBuffer, ShadowType.Omni);
-                                    }
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case LightType.Spot:
-                        var spotlight = (Spotlight)light;
-                        spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer);
-                        for (int i = 0; i < renderers.Count; i++)
-                        {
-                            var renderer = renderers[i];
-                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                            {
-                                if (spotlight.ShadowFrustum.Intersects(renderer.BoundingBox))
-                                {
-                                    renderer.DrawShadowMap(context, Spotlight.PSMBuffer, ShadowType.Perspective);
-                                }
-                            }
-                        }
-                        break;
-                }
-                light.InUpdateQueue = false;
-            }
-
-            lights.ShadowDataBuffer.Update(context);
         }
 
         public void Destroy()
@@ -267,33 +207,8 @@
             }
 
             gameObject.OnTransformed -= GameObjectTransformed;
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
-            {
-                backgroundQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.AlphaTest)
-            {
-                geometryQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
-            {
-                alphaTestQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
-            {
-                geometryLastQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
-            {
-                transparencyQueue.Remove(renderer);
-                return;
-            }
-
-            overlayQueue.Remove(renderer);
+            renderer.QueueIndexChanged -= QueueIndexChanged;
+            RemoveFromQueue(renderer);
         }
 
         private void RendererOnAdded(GameObject gameObject, IRendererComponent renderer)
@@ -307,6 +222,12 @@
             }
 
             gameObject.OnTransformed += GameObjectTransformed;
+            renderer.QueueIndexChanged += QueueIndexChanged;
+            AddToQueue(renderer);
+        }
+
+        public void AddToQueue(IRendererComponent renderer)
+        {
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
             {
                 backgroundQueue.Add(renderer);
@@ -340,7 +261,32 @@
 
             overlayQueue.Add(renderer);
             overlayQueue.Sort(comparer);
-            return;
+        }
+
+        public bool RemoveFromQueue(IRendererComponent renderer)
+        {
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
+            {
+                return backgroundQueue.Remove(renderer);
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.AlphaTest)
+            {
+                return geometryQueue.Remove(renderer);
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
+            {
+                return alphaTestQueue.Remove(renderer);
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
+            {
+                return geometryLastQueue.Remove(renderer);
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
+            {
+                return transparencyQueue.Remove(renderer);
+            }
+
+            return overlayQueue.Remove(renderer);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

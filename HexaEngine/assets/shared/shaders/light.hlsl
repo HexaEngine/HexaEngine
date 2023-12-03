@@ -45,7 +45,7 @@ struct ShadowData
     float4 regions[8];
 };
 
-bool GetBit(int value, int bit)
+inline bool GetBit(int value, int bit)
 {
     int mask = 1 << bit;
     value &= mask;

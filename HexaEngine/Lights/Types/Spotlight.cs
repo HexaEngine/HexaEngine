@@ -101,10 +101,8 @@
 
             float texel = 1.0f / atlasHandle.Atlas.Size;
 
-            var vp = atlasHandle.Allocation.GetViewport();
+            var vp = atlasHandle.Handle.Viewport;
             coords[0] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
-
-            var mapping = ShadowAtlasAllocation.GetTextureCoordsMapping((int)atlasHandle.Atlas.Size, vp);
 
             views[0] = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
         }
@@ -117,7 +115,7 @@
             }
 #nullable disable
 
-            var viewport = atlasHandle.Allocation.GetViewport();
+            var viewport = atlasHandle.Handle.Viewport;
             view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
             context.Write(psmBuffer, view);
             context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);

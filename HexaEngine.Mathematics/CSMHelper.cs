@@ -276,7 +276,7 @@
             float far = camera.Far;
             float near = camera.Near;
 
-            Matrix4x4 view = camera.View; //GetCameraView(camera);
+            Matrix4x4 view = camera.View;
             GetCascadesLog(camera, cascades, cascadesCount);
             for (int i = 0; i < cascadesCount; i++)
             {

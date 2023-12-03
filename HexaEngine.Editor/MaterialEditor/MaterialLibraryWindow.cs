@@ -55,7 +55,7 @@
             }
 
             var sel = materialEditor.Material;
-            //EditMaterial(sel);
+            EditMaterial(sel);
         }
 
         private string newPropName = string.Empty;
@@ -113,6 +113,11 @@
 
             var flags = (int)material.Flags;
             if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+            {
+                material.Flags = (MaterialFlags)flags;
+                hasChanged = true;
+            }
+            if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
             {
                 material.Flags = (MaterialFlags)flags;
                 hasChanged = true;

@@ -10,9 +10,21 @@
     public abstract class BaseRendererComponent : IRendererComponent
     {
         private volatile bool loaded = false;
+        private uint queueIndex = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public abstract uint QueueIndex { get; }
+        public uint QueueIndex
+        {
+            get => queueIndex;
+            set
+            {
+                if (queueIndex == value)
+                    return;
+                uint old = queueIndex;
+                queueIndex = value;
+                QueueIndexChanged?.Invoke(this, old, value);
+            }
+        }
 
         [JsonIgnore]
         public abstract BoundingBox BoundingBox { get; }
@@ -32,6 +44,8 @@
             get => loaded;
             protected set => loaded = value;
         }
+
+        public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
         public abstract void Load(IGraphicsDevice device);
 

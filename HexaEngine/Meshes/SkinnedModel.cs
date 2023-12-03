@@ -24,6 +24,8 @@
         private PlainNode[] plainNodes;
         private PlainNode[] bones;
 
+        private MaterialShaderFlags shaderFlags;
+
         private BoundingBox boundingBox;
 
         private bool loaded;
@@ -107,6 +109,8 @@
 
         public PlainNode[] Bones => bones;
 
+        public MaterialShaderFlags ShaderFlags => shaderFlags;
+
         public BoundingBox BoundingBox => boundingBox;
 
         public void Load()
@@ -121,6 +125,13 @@
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
             }
+
+            shaderFlags = MaterialShaderFlags.None;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                shaderFlags |= materials[i].Shader.Value.Flags;
+            }
+
             loaded = true;
         }
 
@@ -136,11 +147,19 @@
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
             }
+
+            shaderFlags = MaterialShaderFlags.None;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                shaderFlags |= materials[i].Shader.Value.Flags;
+            }
+
             loaded = true;
         }
 
         public void Unload()
         {
+            shaderFlags = MaterialShaderFlags.None;
             for (int i = 0; i < meshes.Length; i++)
             {
                 meshes[i].Dispose();

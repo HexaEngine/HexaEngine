@@ -161,7 +161,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
 #else
         Light light = lights[i];
 #endif
-
+        [branch]
         switch (light.type)
         {
             case POINT_LIGHT:
@@ -180,6 +180,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
         bool castsShadows = GetBit(light.castsShadows, 0);
         bool contactShadows = GetBit(light.castsShadows, 1);
 
+        [branch]
         if (castsShadows)
         {
             ShadowData data = shadowData[light.shadowMapIndex];
@@ -197,6 +198,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
             }
         }
 
+        [branch]
         if (contactShadows)
         {
             switch (light.type)

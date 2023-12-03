@@ -27,9 +27,6 @@
         public override string DebugName { get; protected set; } = nameof(SpriteRenderer);
 
         [JsonIgnore]
-        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
-
-        [JsonIgnore]
         public override BoundingBox BoundingBox { get; }
 
         [JsonIgnore]

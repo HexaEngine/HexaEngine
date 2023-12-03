@@ -13,6 +13,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -45,9 +46,6 @@
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(MeshRenderer);
-
-        [JsonIgnore]
-        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
@@ -175,6 +173,19 @@
 
                     component.model = new(source, library);
                     await component.model.LoadAsync();
+                    var flags = component.model.ShaderFlags;
+                    component.QueueIndex = (uint)RenderQueueIndex.Geometry;
+
+                    if (flags.HasFlag(MaterialShaderFlags.AlphaTest))
+                    {
+                        component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
+                    }
+
+                    if (flags.HasFlag(MaterialShaderFlags.Transparent))
+                    {
+                        component.QueueIndex = (uint)RenderQueueIndex.Transparency;
+                    }
+
                     component.renderer.Initialize(component.model);
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();

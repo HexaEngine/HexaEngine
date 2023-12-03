@@ -3,6 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
+    using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// A post-processing effect for color grading adjustments.
@@ -14,10 +16,10 @@
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
         private ISamplerState samplerState;
 #nullable restore
-        private float blackIn = 0.02f;
-        private float whiteIn = 10;
-        private float blackOut = 0;
-        private float whiteOut = 10;
+        private float shoulderStrength = 0.2f;
+        private float linearStrength = 0.29f;
+        private float linearAngle = 0.24f;
+        private float toeStrength = 0.272f;
         private float whiteLevel = 5.3f;
         private float whiteClip = 10;
         private float postExposure = 0.93f;
@@ -26,52 +28,47 @@
         private float hueShift = 0;
         private float saturation = 1;
         private float contrast = 1;
+        private Vector3 channelMaskRed = new(1, 0, 0);
+        private Vector3 channelMaskGreen = new(0, 1, 0);
+        private Vector3 channelMaskBlue = new(0, 0, 1);
 
         public struct ColorGradingParams
         {
-            public float BlackIn;      // Inner control point for the black point.
-            public float WhiteIn;      // Inner control point for the white point.
-            public float BlackOut;     // Outer control point for the black point.
-            public float WhiteOut;     // Outer control point for the white point.
+            public float ShoulderStrength;
+            public float LinearStrength;
+            public float LinearAngle;
+            public float ToeStrength;
+
             public float WhiteLevel;   // Pre - curve white point adjustment.
             public float WhiteClip;	    // Post - curve white point adjustment.
             public float PostExposure;  // Adjusts overall exposure in EV units.
-            public float Temperature;   // Sets the white balance to a custom color temperature.
-            public float Tint;          // Sets the white balance to compensate for tint (green or magenta).
             public float HueShift;      // Shift the hue of all colors.
+
             public float Saturation;    // Adjusts saturation (color intensity).
             public float Contrast;      // Adjusts the contrast.
+            public Vector2 _padd0;
+
+            public Vector3 WhiteBalance;
+            public float _padd1;
+
+            public Vector3 ChannelMaskRed;
+            public float _padd2;
+            public Vector3 ChannelMaskGreen;
+            public float _padd3;
+            public Vector3 ChannelMaskBlue;
+            public float _padd4;
 
             public ColorGradingParams()
             {
-                BlackIn = 0.02f;
-                WhiteIn = 10;
-                BlackOut = 0;
-                WhiteOut = 10;
                 WhiteLevel = 5.3f;
                 WhiteClip = 10;
                 PostExposure = 0.93f;
-                Temperature = 0;
-                Tint = 0;
                 HueShift = 0;
                 Saturation = 1;
                 Contrast = 1;
-            }
-
-            public ColorGradingParams(float blackIn, float whiteIn, float blackOut, float whiteOut, float whiteLevel, float whiteClip, float postExposure, float temperature, float tint, float hueShift, float saturation, float contrast)
-            {
-                BlackIn = blackIn;
-                WhiteIn = whiteIn;
-                BlackOut = blackOut;
-                WhiteOut = whiteOut;
-                WhiteLevel = whiteLevel;
-                WhiteClip = whiteClip;
-                PostExposure = postExposure;
-                Temperature = temperature;
-                Tint = tint;
-                HueShift = hueShift;
-                Saturation = saturation;
-                Contrast = contrast;
+                ChannelMaskRed = new(1, 0, 0);
+                ChannelMaskGreen = new(0, 1, 0);
+                ChannelMaskBlue = new(0, 0, 1);
             }
         }
 
@@ -81,40 +78,28 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; }
 
-        /// <summary>
-        /// Inner control point for the black point.
-        /// </summary>
-        public float BlackIn
+        public float ShoulderStrength
         {
-            get => blackIn;
-            set => NotifyPropertyChangedAndSet(ref blackIn, value);
+            get => shoulderStrength;
+            set => NotifyPropertyChangedAndSet(ref shoulderStrength, value);
         }
 
-        /// <summary>
-        /// Inner control point for the white point.
-        /// </summary>
-        public float WhiteIn
+        public float LinearStrength
         {
-            get => whiteIn;
-            set => NotifyPropertyChangedAndSet(ref whiteIn, value);
+            get => linearStrength;
+            set => NotifyPropertyChangedAndSet(ref linearStrength, value);
         }
 
-        /// <summary>
-        /// Outer control point for the black point.
-        /// </summary>
-        public float BlackOut
+        public float LinearAngle
         {
-            get => blackOut;
-            set => NotifyPropertyChangedAndSet(ref blackOut, value);
+            get => linearAngle;
+            set => NotifyPropertyChangedAndSet(ref linearAngle, value);
         }
 
-        /// <summary>
-        /// Outer control point for the white point.
-        /// </summary>
-        public float WhiteOut
+        public float ToeStrength
         {
-            get => whiteOut;
-            set => NotifyPropertyChangedAndSet(ref whiteOut, value);
+            get => toeStrength;
+            set => NotifyPropertyChangedAndSet(ref toeStrength, value);
         }
 
         /// <summary>
@@ -189,6 +174,24 @@
             set => NotifyPropertyChangedAndSet(ref contrast, value);
         }
 
+        public Vector3 ChannelMaskRed
+        {
+            get => channelMaskRed;
+            set => NotifyPropertyChangedAndSet(ref channelMaskRed, value);
+        }
+
+        public Vector3 ChannelMaskGreen
+        {
+            get => channelMaskGreen;
+            set => NotifyPropertyChangedAndSet(ref channelMaskGreen, value);
+        }
+
+        public Vector3 ChannelMaskBlue
+        {
+            get => channelMaskBlue;
+            set => NotifyPropertyChangedAndSet(ref channelMaskBlue, value);
+        }
+
         /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
@@ -217,19 +220,45 @@
         {
             if (dirty)
             {
-                ColorGradingParams colorGradingParams;
-                colorGradingParams.BlackIn = blackIn;
-                colorGradingParams.WhiteIn = whiteIn;
-                colorGradingParams.BlackOut = blackOut;
-                colorGradingParams.WhiteOut = whiteOut;
+                ColorGradingParams colorGradingParams = default;
+                colorGradingParams.ShoulderStrength = shoulderStrength;
+                colorGradingParams.LinearStrength = linearStrength;
+                colorGradingParams.LinearAngle = linearAngle;
+                colorGradingParams.ToeStrength = toeStrength;
                 colorGradingParams.WhiteLevel = whiteLevel;
                 colorGradingParams.WhiteClip = whiteClip;
                 colorGradingParams.PostExposure = postExposure;
-                colorGradingParams.Temperature = temperature;
-                colorGradingParams.Tint = tint;
+
+                float t1 = Temperature * 10 / 6;
+                float t2 = Tint * 10 / 6;
+
+                // Get the CIE xy chromaticity of the reference white point.
+                // Note: 0.31271 = x value on the D65 white point
+                float x = 0.31271f - t1 * (t1 < 0 ? 0.1f : 0.05f);
+                float standardIlluminantY = 2.87f * x - 3 * x * x - 0.27509507f;
+                float y = standardIlluminantY + t2 * 0.05f;
+
+                // Calculate the coefficients in the LMS space.
+                Vector3 w1 = new(0.949237f, 1.03542f, 1.08728f); // D65 white point
+
+                // CIExyToLMS
+                float Y = 1;
+                float X = Y * x / y;
+                float Z = Y * (1 - x - y) / y;
+                float L = 0.7328f * X + 0.4296f * Y - 0.1624f * Z;
+                float M = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
+                float S = 0.0030f * X + 0.0136f * Y + 0.9834f * Z;
+                Vector3 w2 = new(L, M, S);
+
+                Vector3 balance = new(w1.X / w2.X, w1.Y / w2.Y, w1.Z / w2.Z);
+
+                colorGradingParams.WhiteBalance = balance;
                 colorGradingParams.HueShift = hueShift;
                 colorGradingParams.Saturation = saturation;
                 colorGradingParams.Contrast = contrast;
+                colorGradingParams.ChannelMaskRed = channelMaskRed;
+                colorGradingParams.ChannelMaskGreen = channelMaskGreen;
+                colorGradingParams.ChannelMaskBlue = channelMaskBlue;
                 paramsBuffer.Update(context, colorGradingParams);
                 dirty = false;
             }

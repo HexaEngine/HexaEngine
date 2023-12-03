@@ -19,6 +19,8 @@
 
         public RendererFlags Flags { get; } = RendererFlags.Forward | RendererFlags.Draw | RendererFlags.Update | RendererFlags.NoDepthTest;
 
+        public event QueueIndexChangedEventHandler? QueueIndexChanged;
+
         public abstract void Awake();
 
         public abstract void Destroy();

@@ -3,6 +3,20 @@ Texture2D hdrTexture : register(t0);
 Texture2D lutTexture : register(t1);
 SamplerState linearClampSampler : register(s0);
 
+#ifndef TONEMAP
+/*
+ * 0: None
+ * 1: Neutral
+ * 2: AECS Film
+ * fallback: None
+*/
+#define TONEMAP 1
+#endif
+
+#ifndef GAMMA
+#define GAMMA 2.2
+#endif
+
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -11,30 +25,56 @@ struct VSOut
 
 cbuffer TonemapParams
 {
-    float BlackIn; // Inner control point for the black point.
-    float WhiteIn; // Inner control point for the white point.
-    float BlackOut; // Outer control point for the black point.
-    float WhiteOut; // Outer control point for the white point.
+    float ShoulderStrength;
+    float LinearStrength;
+    float LinearAngle;
+    float ToeStrength;
+
     float WhiteLevel; // Pre - curve white point adjustment.
     float WhiteClip; // Post - curve white point adjustment.
     float PostExposure; // Adjusts overall exposure in EV units.
-    float Temperature; // Sets the white balance to a custom color temperature.
-    float Tint; // Sets the white balance to compensate for tint (green or magenta).
     float HueShift; // Shift the hue of all colors.
+
     float Saturation; // Adjusts saturation (color intensity).
     float Contrast; // Adjusts the contrast.
+    float2 _padd0;
+
+    float3 WhiteBalance;
+    float _padd1;
+
+    float3 ChannelMaskRed;
+    float _padd2;
+    float3 ChannelMaskGreen;
+    float _padd3;
+    float3 ChannelMaskBlue;
+    float _padd4;
 };
 
-#define GAMMA 2.2
-
-float3 NoneTonemap(float3 x)
+float3 NeutralCurve(float3 x)
 {
-    return x;
+    const float A = ShoulderStrength;
+    const float B = LinearStrength;
+    const float C = LinearAngle;
+    const float D = ToeStrength;
+
+    // Not exposed as settings
+    const float E = 0.02f;
+    const float F = 0.3f;
+
+    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;
 }
 
-float3 HableHejlTonemap(float3 color)
+float3 NeutralTonemap(float3 x)
 {
-    return color;
+    float3 whiteScale = 1 / NeutralCurve(WhiteLevel);
+    x = NeutralCurve(whiteScale * x);
+    x *= whiteScale;
+
+    // Post-curve white point adjustment
+    x /= WhiteClip.xxx;
+
+    return x;
+
 }
 
 float3 ACESFilmTonemap(float3 x)
@@ -42,10 +82,17 @@ float3 ACESFilmTonemap(float3 x)
     return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
 }
 
-float3 InverseToneMapACES(float3 sdr)
+float3 Tonemap(float3 x)
 {
-    const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
-    return 0.5 * (D * sdr - sqrt(((D * D - 4 * C * E) * sdr + 4 * A * E - 2 * B * D) * sdr + B * B) - B) / (A - C * sdr);
+#if TONEMAP == 0
+    return x;
+#elif TONEMAP == 1
+    return NeutralTonemap(x);
+#elif TONEMAP == 2
+    return ACESFilmTonemap(x);
+#else
+    return x;
+#endif
 }
 
 float3 OECF_sRGBFast(float3 color)
@@ -55,31 +102,8 @@ float3 OECF_sRGBFast(float3 color)
 
 float3 AdjustWhiteBalance(float3 color)
 {
-    float t1 = Temperature * 10 / 6;
-    float t2 = Tint * 10 / 6;
-
-    // Get the CIE xy chromaticity of the reference white point.
-    // Note: 0.31271 = x value on the D65 white point
-    float x = 0.31271 - t1 * (t1 < 0 ? 0.1 : 0.05);
-    float standardIlluminantY = 2.87 * x - 3 * x * x - 0.27509507;
-    float y = standardIlluminantY + t2 * 0.05;
-
-    // Calculate the coefficients in the LMS space.
-    float3 w1 = float3(0.949237, 1.03542, 1.08728); // D65 white point
-
-    // CIExyToLMS
-    float Y = 1;
-    float X = Y * x / y;
-    float Z = Y * (1 - x - y) / y;
-    float L = 0.7328 * X + 0.4296 * Y - 0.1624 * Z;
-    float M = -0.7036 * X + 1.6975 * Y + 0.0061 * Z;
-    float S = 0.0030 * X + 0.0136 * Y + 0.9834 * Z;
-    float3 w2 = float3(L, M, S);
-
-    float3 balance = float3(w1.x / w2.x, w1.y / w2.y, w1.z / w2.z);
-
     float3 lms = LinearToLMS(color);
-    lms *= balance;
+    lms *= WhiteBalance;
     return LMSToLinear(lms);
 }
 
@@ -101,16 +125,29 @@ float3 AdjustContrast(float3 color)
     return ((color - 0.5f) * Contrast) + 0.5f;
 }
 
+float3 ChannelMix(float3 color)
+{
+    float4 output;
+    output.r = dot(color, ChannelMaskRed);
+    output.g = dot(color, ChannelMaskGreen);
+    output.b = dot(color, ChannelMaskBlue);
+    return output;
+}
+
 float4 main(VSOut vs) : SV_Target
 {
     float4 color = hdrTexture.Sample(linearClampSampler, vs.Tex);
 
-    color.rgb = ACESFilmTonemap(color.rgb);
+    if (color.a == 0)
+        discard;
+
+    color.rgb = Tonemap(color.rgb);
 
     color.rgb = color.rgb * PostExposure;
     color.rgb = AdjustWhiteBalance(color.rgb);
     color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
     color.rgb = AdjustContrast(color.rgb);
+    color.rgb = ChannelMix(color.rgb);
 
     color.rgb = OECF_sRGBFast(color.rgb);
 
@@ -140,6 +177,7 @@ float4 bake(VSOut vs)
     color.rgb = AdjustWhiteBalance(color.rgb);
     color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
     color.rgb = AdjustContrast(color.rgb);
+    color.rgb = ChannelMix(color.rgb);
 
     return float4(color, 1);
 }

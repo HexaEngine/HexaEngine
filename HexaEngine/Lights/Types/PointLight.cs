@@ -89,7 +89,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                var vp = atlasHandle.Allocations[i].GetViewport();
+                var vp = atlasHandle.Handles[i].Viewport;
                 coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
             }
 
@@ -114,13 +114,13 @@
 
             for (int i = 0; i < 6; i++)
             {
-                var vp = atlasHandle.Allocations[i].GetViewport();
+                var vp = atlasHandle.Handles[i].Viewport;
                 coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
             }
 
             OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
 
-            var viewport = atlasHandle.Allocations[pass].GetViewport();
+            var viewport = atlasHandle.Handles[pass].Viewport;
             osmBuffer.Local->View = views[pass];
             osmBuffer.Local->Position = Transform.GlobalPosition;
             osmBuffer.Local->Far = Range;

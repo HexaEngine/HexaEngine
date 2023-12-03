@@ -59,12 +59,12 @@
         /// <summary>
         /// Gets the offset of the top-left corner of the rectangle as a 2D vector.
         /// </summary>
-        public readonly Vector2 Offset => new(Left, Top);
+        public readonly Point2 Offset => new(Left, Top);
 
         /// <summary>
         /// Gets the size of the rectangle as a 2D vector.
         /// </summary>
-        public readonly Vector2 Size => new Vector2(Right, Bottom) - Offset;
+        public readonly Point2 Size => new Point2(Right, Bottom) - Offset;
 
         /// <summary>
         /// Determines whether the current Rect instance is equal to another object.

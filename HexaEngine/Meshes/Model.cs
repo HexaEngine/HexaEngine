@@ -23,6 +23,8 @@
 
         private BoundingBox boundingBox;
 
+        private MaterialShaderFlags shaderFlags;
+
         private bool loaded;
 
         private bool disposedValue;
@@ -88,6 +90,8 @@
 
         public BoundingBox BoundingBox => boundingBox;
 
+        public MaterialShaderFlags ShaderFlags => shaderFlags;
+
         public bool Loaded => loaded;
 
         public void Load()
@@ -101,6 +105,12 @@
                 materials[i] = material;
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
+            }
+
+            shaderFlags = MaterialShaderFlags.None;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                shaderFlags |= materials[i].Shader.Value.Flags;
             }
 
             loaded = true;
@@ -119,11 +129,18 @@
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
             }
 
+            shaderFlags = MaterialShaderFlags.None;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                shaderFlags |= materials[i].Shader.Value.Flags;
+            }
+
             loaded = true;
         }
 
         public void Unload()
         {
+            shaderFlags = MaterialShaderFlags.None;
             for (int i = 0; i < meshes.Length; i++)
             {
                 meshes[i].Dispose();

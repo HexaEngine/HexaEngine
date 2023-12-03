@@ -7,9 +7,13 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
 
+    public delegate void QueueIndexChangedEventHandler(IRendererComponent sender, uint oldIndex, uint newIndex);
+
     public interface IRendererComponent : IComponent, IHasFlags<RendererFlags>
     {
         public uint QueueIndex { get; }
+
+        public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
         public BoundingBox BoundingBox { get; }
 

@@ -11,5 +11,8 @@ namespace HexaEngine.Resources
         Custom = 2,
         Depth = 4,
         Shadow = 8,
+        AlphaTest = 16,
+        TwoSided = 32,
+        Tessellation = 64,
     }
 }

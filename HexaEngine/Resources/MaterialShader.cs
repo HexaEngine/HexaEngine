@@ -55,7 +55,7 @@ namespace HexaEngine.Resources
             var macros = material.GetShaderMacros();
             if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
             {
-                macros = macros.Append(new ShaderMacro("VtxSkinned", "1")).ToArray();
+                macros = [.. macros, new ShaderMacro("VtxSkinned", "1")];
             }
             var matflags = material.Flags;
             var custom = material.HasShader(MaterialShaderType.VertexShaderFile) && material.HasShader(MaterialShaderType.PixelShaderFile);
@@ -64,18 +64,37 @@ namespace HexaEngine.Resources
             if (material.TryGetProperty(MaterialPropertyType.TwoSided, out var twosidedProp))
             {
                 twoSided = twosidedProp.AsBool();
+                if (twoSided)
+                {
+                    flags |= MaterialShaderFlags.TwoSided;
+                }
+            }
+
+            bool alphaTest = false;
+            if ((material.Flags & MaterialFlags.AlphaTest) != 0)
+            {
+                flags |= MaterialShaderFlags.AlphaTest;
+                alphaTest = true;
             }
 
             bool blendFunc = false;
             if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out var blendFuncProp))
             {
                 blendFunc = blendFuncProp.AsBool();
+                if (blendFunc)
+                {
+                    flags |= MaterialShaderFlags.AlphaTest;
+                    flags |= MaterialShaderFlags.Transparent;
+                    alphaTest = true;
+                }
             }
 
             if ((material.Flags & MaterialFlags.Transparent) != 0)
             {
+                flags |= MaterialShaderFlags.AlphaTest;
                 flags |= MaterialShaderFlags.Transparent;
                 blendFunc = true;
+                alphaTest = true;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -130,7 +149,7 @@ namespace HexaEngine.Resources
                     PixelShader = $"forward/geometry/ps.hlsl",
                     State = new()
                     {
-                        DepthStencil = DepthStencilDescription.Default,
+                        DepthStencil = DepthStencilDescription.DepthReadEquals,
                         Rasterizer = rasterizer,
                         Blend = blend,
                         Topology = PrimitiveTopology.TriangleList,
@@ -145,6 +164,20 @@ namespace HexaEngine.Resources
                     PixelShader = $"deferred/geometry/ps.hlsl",
                     State = new()
                     {
+                        DepthStencil = DepthStencilDescription.DepthReadEquals,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
+                };
+
+                GraphicsPipelineDesc pipelineDescDepthOnly = new()
+                {
+                    VertexShader = $"deferred/geometry/vs.hlsl",
+                    State = new()
+                    {
                         DepthStencil = DepthStencilDescription.Default,
                         Rasterizer = rasterizer,
                         Blend = BlendDescription.Opaque,
@@ -156,22 +189,31 @@ namespace HexaEngine.Resources
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
+                    flags |= MaterialShaderFlags.Tessellation;
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
                     pipelineDescForward.HullShader = $"forward/geometry/hs.hlsl";
                     pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
                     pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
                     pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
+                    pipelineDescDepthOnly.HullShader = $"deferred/geometry/hs.hlsl";
+                    pipelineDescDepthOnly.DomainShader = $"deferred/geometry/ds.hlsl";
                     pipelineDescForward.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     pipelineDescDeferred.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescDepthOnly.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                }
+
+                if (alphaTest)
+                {
+                    pipelineDescDepthOnly.PixelShader = $"deferred/geometry/ps.hlsl";
+                    pipelineDescDepthOnly.Macros = [.. macros, new("DEPTH_TEST_ONLY")];
                 }
 
                 forward = device.CreateGraphicsPipeline(pipelineDescForward);
 
                 deferred = device.CreateGraphicsPipeline(pipelineDescDeferred);
 
-                pipelineDescDeferred.PixelShader = null;
-                depthOnly = device.CreateGraphicsPipeline(pipelineDescDeferred);
+                depthOnly = device.CreateGraphicsPipeline(pipelineDescDepthOnly);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
@@ -259,18 +301,37 @@ namespace HexaEngine.Resources
             if (material.TryGetProperty(MaterialPropertyType.TwoSided, out var twosidedProp))
             {
                 twoSided = twosidedProp.AsBool();
+                if (twoSided)
+                {
+                    flags |= MaterialShaderFlags.TwoSided;
+                }
+            }
+
+            bool alphaTest = false;
+            if ((material.Flags & MaterialFlags.AlphaTest) != 0)
+            {
+                flags |= MaterialShaderFlags.AlphaTest;
+                alphaTest = true;
             }
 
             bool blendFunc = false;
             if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out var blendFuncProp))
             {
                 blendFunc = blendFuncProp.AsBool();
+                if (blendFunc)
+                {
+                    flags |= MaterialShaderFlags.AlphaTest;
+                    flags |= MaterialShaderFlags.Transparent;
+                    alphaTest = true;
+                }
             }
 
             if ((material.Flags & MaterialFlags.Transparent) != 0)
             {
+                flags |= MaterialShaderFlags.AlphaTest;
                 flags |= MaterialShaderFlags.Transparent;
                 blendFunc = true;
+                alphaTest = true;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -325,7 +386,7 @@ namespace HexaEngine.Resources
                     PixelShader = $"forward/geometry/ps.hlsl",
                     State = new()
                     {
-                        DepthStencil = DepthStencilDescription.Default,
+                        DepthStencil = DepthStencilDescription.DepthReadEquals,
                         Rasterizer = rasterizer,
                         Blend = blend,
                         Topology = PrimitiveTopology.TriangleList,
@@ -340,6 +401,20 @@ namespace HexaEngine.Resources
                     PixelShader = $"deferred/geometry/ps.hlsl",
                     State = new()
                     {
+                        DepthStencil = DepthStencilDescription.DepthReadEquals,
+                        Rasterizer = rasterizer,
+                        Blend = BlendDescription.Opaque,
+                        Topology = PrimitiveTopology.TriangleList,
+                    },
+                    InputElements = elements,
+                    Macros = macros
+                };
+
+                GraphicsPipelineDesc pipelineDescDepthOnly = new()
+                {
+                    VertexShader = $"deferred/geometry/vs.hlsl",
+                    State = new()
+                    {
                         DepthStencil = DepthStencilDescription.Default,
                         Rasterizer = rasterizer,
                         Blend = BlendDescription.Opaque,
@@ -351,23 +426,32 @@ namespace HexaEngine.Resources
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
+                    flags |= MaterialShaderFlags.Tessellation;
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
                     pipelineDescForward.HullShader = $"forward/geometry/hs.hlsl";
                     pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
                     pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
                     pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
+                    pipelineDescDepthOnly.HullShader = $"deferred/geometry/hs.hlsl";
+                    pipelineDescDepthOnly.DomainShader = $"deferred/geometry/ds.hlsl";
 
                     pipelineDescForward.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     pipelineDescDeferred.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    pipelineDescDepthOnly.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                }
+
+                if (alphaTest)
+                {
+                    pipelineDescDepthOnly.PixelShader = $"deferred/geometry/ps.hlsl";
+                    pipelineDescDepthOnly.Macros = [.. macros, new("DEPTH_TEST_ONLY")];
                 }
 
                 forward = await device.CreateGraphicsPipelineAsync(pipelineDescForward);
 
                 deferred = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred);
 
-                pipelineDescDeferred.PixelShader = null;
-                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred);
+                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDescDepthOnly);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {

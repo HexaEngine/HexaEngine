@@ -98,6 +98,11 @@
         public static readonly DepthStencilDescription DepthRead = new(true, DepthWriteMask.Zero);
 
         /// <summary>
+        /// A built-in description with settings for enabling a read-only depth stencil buffer. ComparisonFunction.Equal
+        /// </summary>
+        public static readonly DepthStencilDescription DepthReadEquals = new(true, DepthWriteMask.Zero, ComparisonFunction.Equal);
+
+        /// <summary>
         /// A built-in description with settings for using a reverse depth stencil buffer.
         /// </summary>
         public static readonly DepthStencilDescription DepthReverseZ = new(true, DepthWriteMask.All, ComparisonFunction.GreaterEqual);

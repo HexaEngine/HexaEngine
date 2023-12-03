@@ -24,9 +24,6 @@
         public override string DebugName { get; protected set; } = nameof(StaticTerrainRenderer);
 
         [JsonIgnore]
-        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
-
-        [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
 
         [JsonIgnore]

@@ -2067,5 +2067,217 @@
         {
             return new Vector2(vector.X, vector.Y);
         }
+
+        /// <summary>
+        /// Determines whether the specified signed byte is a prime number.
+        /// </summary>
+        /// <param name="number">The signed byte to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(sbyte number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified byte is a prime number.
+        /// </summary>
+        /// <param name="number">The byte to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(byte number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified short integer is a prime number.
+        /// </summary>
+        /// <param name="number">The short integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(short number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified unsigned short integer is a prime number.
+        /// </summary>
+        /// <param name="number">The unsigned short integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(ushort number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified integer is a prime number.
+        /// </summary>
+        /// <param name="number">The integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(int number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified unsigned integer is a prime number.
+        /// </summary>
+        /// <param name="number">The unsigned integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(uint number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified long integer is a prime number.
+        /// </summary>
+        /// <param name="number">The long integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(long number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Determines whether the specified unsigned long integer is a prime number.
+        /// </summary>
+        /// <param name="number">The unsigned long integer to check for primality.</param>
+        /// <returns><c>true</c> if the specified number is prime; otherwise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPrime(ulong number)
+        {
+            return PrimeNumberCache.IsPrime(number);
+        }
+
+        /// <summary>
+        /// Calculates the greatest common divisor (GCD) of two signed integers.
+        /// </summary>
+        /// <param name="a">The first integer.</param>
+        /// <param name="b">The second integer.</param>
+        /// <returns>The GCD of the two integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GCD(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        /// <summary>
+        /// Calculates the greatest common divisor (GCD) of two unsigned integers.
+        /// </summary>
+        /// <param name="a">The first unsigned integer.</param>
+        /// <param name="b">The second unsigned integer.</param>
+        /// <returns>The GCD of the two unsigned integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint GCD(uint a, uint b)
+        {
+            while (b != 0)
+            {
+                uint temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        /// <summary>
+        /// Calculates the greatest common divisor (GCD) of two long integers.
+        /// </summary>
+        /// <param name="a">The first long integer.</param>
+        /// <param name="b">The second long integer.</param>
+        /// <returns>The GCD of the two long integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long GCD(long a, long b)
+        {
+            while (b != 0)
+            {
+                long temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        /// <summary>
+        /// Calculates the greatest common divisor (GCD) of two unsigned long integers.
+        /// </summary>
+        /// <param name="a">The first unsigned long integer.</param>
+        /// <param name="b">The second unsigned long integer.</param>
+        /// <returns>The GCD of the two unsigned long integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong GCD(ulong a, ulong b)
+        {
+            while (b != 0)
+            {
+                ulong temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        /// <summary>
+        /// Calculates the lowest common divisor (LDC) of two signed integers.
+        /// </summary>
+        /// <param name="a">The first integer.</param>
+        /// <param name="b">The second integer.</param>
+        /// <returns>The LDC of the two integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int LDC(int a, int b)
+        {
+            int gcd = GCD(a, b);
+            return gcd != 0 ? Math.Abs(a * b) / gcd : 0;
+        }
+
+        /// <summary>
+        /// Calculates the lowest common divisor (LDC) of two unsigned integers.
+        /// </summary>
+        /// <param name="a">The first unsigned integer.</param>
+        /// <param name="b">The second unsigned integer.</param>
+        /// <returns>The LDC of the two unsigned integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint LDC(uint a, uint b)
+        {
+            uint gcd = GCD(a, b);
+            return gcd != 0 ? a * b / gcd : 0;
+        }
+
+        /// <summary>
+        /// Calculates the lowest common divisor (LDC) of two long integers.
+        /// </summary>
+        /// <param name="a">The first long integer.</param>
+        /// <param name="b">The second long integer.</param>
+        /// <returns>The LDC of the two long integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long LDC(long a, long b)
+        {
+            long gcd = GCD(a, b);
+            return gcd != 0 ? Math.Abs(a * b) / gcd : 0;
+        }
+
+        /// <summary>
+        /// Calculates the lowest common divisor (LDC) of two unsigned long integers.
+        /// </summary>
+        /// <param name="a">The first unsigned long integer.</param>
+        /// <param name="b">The second unsigned long integer.</param>
+        /// <returns>The LDC of the two unsigned long integers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong LDC(ulong a, ulong b)
+        {
+            ulong gcd = GCD(a, b);
+            return gcd != 0 ? a * b / gcd : 0;
+        }
     }
 }

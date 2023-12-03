@@ -114,12 +114,14 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
+#ifndef DEPTH_TEST_ONLY
+
 [earlydepthstencil]
 GeometryData main(PixelInput input)
 {
     float4 baseColor = BaseColor;
     float3 normal = normalize(input.normal);
-    float3 tangent = normalize(input.tangent);    
+    float3 tangent = normalize(input.tangent);
     float3 bitangent = normalize(input.bitangent);
 
     float3 emissive = Emissive;
@@ -134,32 +136,35 @@ GeometryData main(PixelInput input)
     baseColor = float4(color.rgb * color.a, color.a);
 #endif
 
+    if (baseColor.a < 0.5f)
+        discard;
+
 #if HasNormalTex
     normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent, bitangent);
 #endif
-	
+
 #if HasRoughnessTex
     roughness = roughnessTexture.Sample(roughnessTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasMetalnessTex
     metalness = metalnessTexture.Sample(metalnessTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasEmissiveTex
     emissive = emissiveTexture.Sample(emissiveTextureSampler, (float2) input.tex).rgb;
 #endif
-	
+
 #if HasAmbientOcclusionTex
     ao = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasRoughnessMetalnessTex
     float2 rm = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, (float2) input.tex).gb;
     roughness = rm.x;
     metalness = rm.y;
 #endif
-    
+
 #if HasAmbientOcclusionRoughnessMetalnessTex
     float3 orm = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, (float2) input.tex).rgb;
     ao = orm.r;
@@ -167,9 +172,23 @@ GeometryData main(PixelInput input)
     metalness = orm.b;
 #endif
 
-    if (baseColor.a == 0)
-        discard;
-
-    int matID  = -1;
+    int matID = -1;
     return PackGeometryData(matID, baseColor.rgb, normal, roughness, metalness, 0, ao, 0, emissive, 1);
 }
+
+#else
+
+void main(PixelInput input)
+{
+    float4 baseColor = BaseColor;
+
+#if HasBaseColorTex
+	baseColor = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
+#endif
+
+    if (baseColor.a < 0.5f)
+        discard;
+
+}
+
+#endif

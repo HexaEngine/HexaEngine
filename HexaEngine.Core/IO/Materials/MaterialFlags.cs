@@ -40,5 +40,10 @@
         /// Indicates that the material is associated with a node.
         /// </summary>
         Node = 32,
+
+        /// <summary>
+        /// Indicates that the material supports alpha test.
+        /// </summary>
+        AlphaTest = 64,
     }
 }

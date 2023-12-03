@@ -159,12 +159,6 @@
                 ShadowResolution.Low => 128,
                 _ => 1024,// Default to the highest resolution
             };
-
-            var distanceImportance = 1.0f - MathUtil.Clamp01(distance / lightRange);
-            var scaledImportance = atlas.LayerCount - 1 - MathUtil.Clamp(distanceImportance * atlas.LayerCount, 0f, atlas.LayerCount - 1);
-            var maxResolutionIndex = atlas.SizeToIndex(maxResolution);
-            var index = (int)MathF.Floor(MathUtil.Clamp(scaledImportance, maxResolutionIndex, atlas.LayerCount - 1));
-            //ImGui.Text($"index: {index}, maxResolutionIndex: {maxResolutionIndex}, scaledImportance: {scaledImportance}, distanceImportance: {distanceImportance}");
         }
     }
 }

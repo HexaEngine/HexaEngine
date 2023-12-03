@@ -486,6 +486,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 
 

@@ -27,11 +27,13 @@
 
         private ResourceRef<DepthStencil> dsv;
 
-        [JsonIgnore]
-        public override string DebugName { get; protected set; } = nameof(GPUParticleSystem);
+        public ParticleSystemComponent()
+        {
+            QueueIndex = (uint)RenderQueueIndex.Transparency;
+        }
 
         [JsonIgnore]
-        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Transparency;
+        public override string DebugName { get; protected set; } = nameof(GPUParticleSystem);
 
         [JsonIgnore]
         public override BoundingBox BoundingBox { get; }

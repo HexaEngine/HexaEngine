@@ -24,11 +24,13 @@
         private string environmentPath = string.Empty;
         private SkyType skyType;
 
-        [JsonIgnore]
-        public override string DebugName { get; protected set; } = nameof(SkyRenderer);
+        public SkyRendererComponent()
+        {
+            QueueIndex = (uint)RenderQueueIndex.Background;
+        }
 
         [JsonIgnore]
-        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
+        public override string DebugName { get; protected set; } = nameof(SkyRenderer);
 
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Draw;
