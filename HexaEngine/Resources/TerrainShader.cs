@@ -27,7 +27,7 @@ namespace HexaEngine.Resources
         {
             this.device = device;
             this.alphaBlend = alphaBlend;
-            this.macros = macros.Append(new("CLUSTERED_FORWARD", "1")).ToArray();
+            this.macros = [.. macros, new("CLUSTERED_FORWARD", "1")];
         }
 
         public MaterialShaderFlags Flags => flags;
@@ -135,7 +135,6 @@ namespace HexaEngine.Resources
             var psmPipelineDesc = new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/terrain/psm/vs.hlsl",
-                PixelShader = "forward/terrain/psm/ps.hlsl",
                 State = new()
                 {
                     DepthStencil = DepthStencilDescription.Default,
@@ -232,8 +231,6 @@ namespace HexaEngine.Resources
             var osmPipelineDesc = new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/terrain/osm/vs.hlsl",
-                GeometryShader = "forward/terrain/osm/gs.hlsl",
-                PixelShader = "forward/terrain/osm/ps.hlsl",
                 State = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
@@ -248,7 +245,6 @@ namespace HexaEngine.Resources
             var psmPipelineDesc = new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/terrain/psm/vs.hlsl",
-                PixelShader = "forward/terrain/psm/ps.hlsl",
                 State = new()
                 {
                     DepthStencil = DepthStencilDescription.Default,

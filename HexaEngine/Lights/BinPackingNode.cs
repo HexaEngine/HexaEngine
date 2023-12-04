@@ -4,7 +4,7 @@
 
     public class BinPackingNode
     {
-        public Rect32 Rect;
+        public Rectangle Rect;
 
         public int X => Rect.Left;
 

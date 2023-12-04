@@ -82,7 +82,7 @@
                 return;
             }
 
-            atlasHandle.Release();
+            atlasHandle.Dispose();
 
             if (Interlocked.Decrement(ref instances) == 0)
             {

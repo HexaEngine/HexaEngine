@@ -251,6 +251,15 @@
             return new(left.Left / right, left.Top / right, left.Right / right, left.Bottom / right);
         }
 
+        /// <summary>
+        /// Explicitly converts a float  rectangle to a integer rectangle.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        public static explicit operator Rectangle(RectangleF rectangle)
+        {
+            return new((int)rectangle.Left, (int)rectangle.Top, (int)rectangle.Right, (int)rectangle.Bottom);
+        }
+
         /// <inheritdoc/>
         public override readonly string ToString()
         {

@@ -137,7 +137,7 @@
         /// <summary>
         /// Gets the windows border size.
         /// </summary>
-        Rect32 BorderSize { get; }
+        Rectangle BorderSize { get; }
 
         /// <summary>
         /// Event triggered when the window is closing.

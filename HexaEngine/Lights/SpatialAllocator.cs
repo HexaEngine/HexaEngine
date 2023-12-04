@@ -121,10 +121,10 @@ namespace HexaEngine.Lights
             }
         }
 
-        public bool TryAllocate(Vector2 size, [NotNullWhen(true)] out SpatialAllocatorHandle? handle)
+        public bool TryAlloc(Vector2 size, [NotNullWhen(true)] out SpatialAllocatorHandle? handle)
         {
             Space* space;
-            bool result = TryAllocate(size, rootSpace, &space);
+            bool result = TryAlloc(size, rootSpace, &space);
             if (!result)
             {
                 handle = null;
@@ -134,7 +134,7 @@ namespace HexaEngine.Lights
             return true;
         }
 
-        internal bool TryAllocate(Vector2 size, Space* space, Space** outSpace)
+        internal bool TryAlloc(Vector2 size, Space* space, Space** outSpace)
         {
             *outSpace = null;
             if (size == space->Size)
@@ -168,7 +168,7 @@ namespace HexaEngine.Lights
                     }
 
                     // traverse down the tree.
-                    if (TryAllocate(size, subSpace, outSpace))
+                    if (TryAlloc(size, subSpace, outSpace))
                     {
                         // mark space as partially used.
                         space->IsPartiallyUsed = true;

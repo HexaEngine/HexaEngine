@@ -1,76 +1,72 @@
 ﻿namespace HexaEngine.Graphics.Batching
 {
-    using HexaEngine.Core.Scenes;
-
-    public class Batcher<T> : IBatcher where T : IBatchRenderer
+    public class Batcher<T> where T : IBatchInstance
     {
+        private readonly List<T> instances = new();
         private readonly List<Batch<T>> batches = new();
+        private readonly Dictionary<T, Batch<T>> map = new();
 
-        private Batch<T> GetOrCreateBatch(T renderer)
+        public IReadOnlyList<T> Instances => instances;
+
+        public IReadOnlyList<Batch<T>> Batches => batches;
+
+        public void AddInstance(T instance)
         {
-            Batch<T>? batch = null;
-            for (int i = 0; i < batches.Count; i++)
+            if (instances.Contains(instance))
             {
-                batch = batches[i];
-                if (batch.CanBatch(renderer))
-                {
-                    return batch;
-                }
+                return;
             }
 
-            if (batch == null)
-            {
-                batch = new(renderer);
-                batches.Add(batch);
-            }
+            instances.Add(instance);
 
-            return batch;
-        }
-
-        private (Batch<T>, int)? FindBatch(GameObject parent, T renderer)
-        {
+            bool createNew = true;
             for (int i = 0; i < batches.Count; i++)
             {
                 var batch = batches[i];
-                var idx = batch.IndexOf(parent, renderer);
-                if (idx != -1)
+
+                if (batch.Mode != BatchMode.Merged && batch.CanInstantiate(instance))
                 {
-                    return (batch, idx);
+                    batch.AddInstance(instance);
+                    map.Add(instance, batch);
+                    createNew = false;
+                    break;
+                }
+                else if (batch.Mode != BatchMode.Instanced && batch.CanMerge(instance))
+                {
+                    batch.AddInstance(instance);
+                    map.Add(instance, batch);
+                    createNew = false;
+                    break;
                 }
             }
 
-            return null;
+            if (createNew)
+            {
+                Batch<T> batch = new(instance, BatchMode.None);
+                batches.Add(batch);
+                map.Add(instance, batch);
+            }
         }
 
-        public bool TryBatch(GameObject gameObject, IBatchRenderer renderer)
+        public void RemoveInstance(T instance)
         {
-            if (renderer is not T t)
+            int index = instances.IndexOf(instance);
+            if (index == -1)
             {
-                return false;
+                return;
             }
 
-            var batch = GetOrCreateBatch(t);
-            batch.AddObject(gameObject, t);
-            batch.Sort();
+            instances.RemoveAt(index);
 
-            return true;
-        }
+            var batch = map[instance];
+            batch.RemoveInstance(instance);
 
-        public bool TryRemove(GameObject gameObject, IBatchRenderer renderer)
-        {
-            if (renderer is not T t)
+            if (batch.Count == 0)
             {
-                return false;
+                batches.Remove(batch);
             }
 
-            var result = FindBatch(gameObject, t);
-            if (result.HasValue)
-            {
-                (Batch<T> batch, int idx) = result.Value;
-                batch.RemoveAt(idx);
-                return true;
-            }
-            return false;
+            map.Remove(instance);
         }
     }
 }

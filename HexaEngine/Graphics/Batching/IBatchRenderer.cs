@@ -4,24 +4,41 @@
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
 
-    public interface IBatchRenderer : IComparable<IBatchRenderer>, IEquatable<IBatchRenderer>
+    public interface IBatchRenderer : IDisposable
     {
-        void Dispose();
+        void DrawDeferred(IGraphicsContext context, IBatch batch);
 
-        void Initialize(IGraphicsDevice device);
+        void DrawDepth(IGraphicsContext context, IBatch batch);
 
-        void DrawDeferred<T>(IGraphicsContext context, Batch<T> batch) where T : IBatchRenderer;
+        void DrawDepth(IGraphicsContext context, IBatch batch, IBuffer camera);
 
-        void DrawDepth<T>(IGraphicsContext context, Batch<T> batch) where T : IBatchRenderer;
+        void DrawForward(IGraphicsContext context, IBatch batch);
 
-        void DrawDepth<T>(IGraphicsContext context, Batch<T> batch, IBuffer camera) where T : IBatchRenderer;
+        void DrawShadowMap(IGraphicsContext context, IBatch batch, IBuffer light, ShadowType type);
 
-        void DrawForward<T>(IGraphicsContext context, Batch<T> batch) where T : IBatchRenderer;
+        void BeginUpdate(IGraphicsContext context);
 
-        void DrawShadowMap<T>(IGraphicsContext context, Batch<T> batch, IBuffer light, ShadowType type) where T : IBatchRenderer;
+        void Update(IGraphicsContext context, IBatch batch);
 
-        void Update<T>(IGraphicsContext context, Batch<T> batch) where T : IBatchRenderer;
+        void EndUpdate(IGraphicsContext context);
 
-        void VisibilityTest<T>(IGraphicsContext context, Batch<T> batch, Camera camera) where T : IBatchRenderer;
+        void VisibilityTest(IGraphicsContext context, IBatch batch, Camera camera);
+    }
+
+    public interface IBatchRenderer<T> : IBatchRenderer where T : IBatchInstance
+    {
+        void DrawDeferred(IGraphicsContext context, IBatch<T> batch);
+
+        void DrawDepth(IGraphicsContext context, IBatch<T> batch);
+
+        void DrawDepth(IGraphicsContext context, IBatch<T> batch, IBuffer camera);
+
+        void DrawForward(IGraphicsContext context, IBatch<T> batch);
+
+        void DrawShadowMap(IGraphicsContext context, IBatch<T> batch, IBuffer light, ShadowType type);
+
+        void Update(IGraphicsContext context, IBatch<T> batch);
+
+        void VisibilityTest(IGraphicsContext context, IBatch<T> batch, Camera camera);
     }
 }

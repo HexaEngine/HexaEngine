@@ -1,136 +1,72 @@
 ﻿namespace HexaEngine.Graphics.Batching
 {
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
-    using HexaEngine.Lights;
-    using HexaEngine.Scenes;
+    using System.Collections;
 
-    public class Batch<T> : IBatch<T>, IBatch where T : IBatchRenderer
+    public class Batch<T> : IBatch<T> where T : IBatchInstance
     {
-        private readonly List<BatchRendererPair<T>> objects = new();
-        private readonly IBatchRenderer renderer;
+        private readonly List<T> instances = new();
+        private readonly BatchMode mode;
 
-        public Batch(IBatchRenderer renderer)
+        public Batch(T instance, BatchMode mode)
         {
-            this.renderer = renderer;
+            this.mode = mode;
+            instances.Add(instance);
         }
 
-        public IReadOnlyList<BatchRendererPair<T>> Objects => objects;
+        public BatchMode Mode => mode;
 
-        public int Count => objects.Count;
-
-        IEnumerable<BatchRendererPair> IBatch.Objects => objects.Select(x => (BatchRendererPair)x);
-
-        BatchRendererPair IBatch.this[int index] { get => objects[index]; }
-
-        public BatchRendererPair<T> this[int index]
+        public T this[int index]
         {
-            get => objects[index];
+            get => instances[index];
+            set => instances[index] = value;
         }
 
-        public void AddObject(GameObject parent, T t)
+        public int Count => instances.Count;
+
+        IBatchInstance IBatch.this[int index] { get => instances[index]; set => instances[index] = (T)value; }
+
+        public void AddInstance(T instance)
         {
-            objects.Add(new(parent, t));
         }
 
-        public void RemoveObject(GameObject parent, T t)
+        public void RemoveInstance(T instance)
         {
-            objects.Remove(new(parent, t));
         }
 
-        public void RemoveAt(int index)
+        public void AddInstance(IBatchInstance instance)
         {
-            objects.RemoveAt(index);
-        }
-
-        public void Clear()
-        {
-            objects.Clear();
-        }
-
-        public bool Contains(GameObject parent, T t)
-        {
-            return objects.Contains(new(parent, t));
-        }
-
-        public int IndexOf(GameObject parent, T t)
-        {
-            return objects.IndexOf(new(parent, t));
-        }
-
-        public void Sort()
-        {
-            objects.Sort();
-        }
-
-        public bool CanBatch(IBatchRenderer renderer)
-        {
-            return this.renderer.Equals(renderer);
-        }
-
-        public void DrawDeferred(IGraphicsContext context)
-        {
-            renderer.DrawDeferred(context, this);
-        }
-
-        public void DrawDepth(IGraphicsContext context)
-        {
-            renderer.DrawDepth(context, this);
-        }
-
-        public void DrawDepth(IGraphicsContext context, IBuffer camera)
-        {
-            renderer.DrawDepth(context, this, camera);
-        }
-
-        public void DrawForward(IGraphicsContext context)
-        {
-            renderer.DrawForward(context, this);
-        }
-
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
-        {
-            renderer.DrawShadowMap(context, this, light, type);
-        }
-
-        public void Update(IGraphicsContext context)
-        {
-            renderer.Update(context, this);
-        }
-
-        public void VisibilityTest(IGraphicsContext context, Camera camera)
-        {
-            renderer.VisibilityTest(context, this, camera);
-        }
-
-        public void AddObject(GameObject parent, IBatchRenderer t)
-        {
-            if (t is T renderer)
+            if (instance is T t)
             {
-                AddObject(parent, renderer);
+                AddInstance(t);
             }
         }
 
-        public bool Contains(GameObject parent, IBatchRenderer t)
+        public void RemoveInstance(IBatchInstance instance)
         {
-            if (t is T renderer)
-                return Contains(parent, renderer);
-            return false;
-        }
-
-        public int IndexOf(GameObject parent, IBatchRenderer t)
-        {
-            if (t is T renderer)
-                return IndexOf(parent, renderer);
-            return -1;
-        }
-
-        public void RemoveObject(GameObject parent, IBatchRenderer t)
-        {
-            if (t is T renderer)
+            if (instance is T t)
             {
-                RemoveObject(parent, renderer);
+                RemoveInstance(t);
             }
+        }
+
+        public bool CanInstantiate(T instance)
+        {
+            return instances[0].CanInstantiate(this, instance);
+        }
+
+        public bool CanMerge(T instance)
+        {
+            return instances[0].CanMerge(this, instance);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return instances.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return instances.GetEnumerator();
         }
     }
 }

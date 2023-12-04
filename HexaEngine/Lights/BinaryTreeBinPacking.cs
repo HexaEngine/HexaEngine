@@ -16,19 +16,13 @@
 
         public BinPackingNode? AddBlock(int width, int height)
         {
-            BinPackingNode? node = null;
-            while (node == null)
+            BinPackingNode? node = AddBlock(root, width, height);
+
+            if (node != null)
             {
-                node = AddBlock(root, width, height);
-                width /= 2;
-                height /= 2;
-                if (width == 0)
-                {
-                    return null;
-                }
+                node.Used = true;
             }
 
-            node.Used = true;
             return node;
         }
 
@@ -90,9 +84,13 @@
             return AddBlock(node.Right, width, height);
         }
 
-        public void RemoveNode(BinPackingNode node)
+        public void RemoveBlock(BinPackingNode node)
         {
             node.Used = false;
+        }
+
+        public void Defragment()
+        {
         }
 
         public void Clear()

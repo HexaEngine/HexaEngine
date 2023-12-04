@@ -354,11 +354,11 @@
         /// <summary>
         /// Gets the windows border size
         /// </summary>
-        public Rect32 BorderSize
+        public Rectangle BorderSize
         {
             get
             {
-                Rect32 result;
+                Rectangle result;
                 sdl.GetWindowBordersSize(window, &result.Top, &result.Left, &result.Bottom, &result.Right);
                 return result;
             }

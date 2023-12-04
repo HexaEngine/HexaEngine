@@ -65,7 +65,7 @@
 
         private bool init;
 
-        public string Name => "TerrainCellData";
+        public string Name => "Terrain";
 
         public Type Type => typeof(TerrainRendererComponent);
 
@@ -191,7 +191,7 @@
                 }
             }
 
-            ImGui.Checkbox("Edit TerrainCellData", ref editTerrain);
+            ImGui.Checkbox("Edit Terrain", ref editTerrain);
             ImGui.InputFloat("Size", ref size);
             ImGui.InputFloat("Strength", ref strength);
             ImGui.Checkbox("Raise", ref raise);
@@ -202,7 +202,7 @@
 
             if (ImGui.CollapsingHeader("Layers"))
             {
-                if (ImGui.Button("ObjectAdded Layer"))
+                if (ImGui.Button("Add Layer"))
                 {
                     grid.Layers.Add(new("New Layer"));
                 }
@@ -290,7 +290,7 @@
 
                     if (ImGui.TreeNode($"{cell.ID}"))
                     {
-                        if (cell.Right == null && ImGui.Button($"{cell.ID} ObjectAdded Tile X+"))
+                        if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -307,7 +307,7 @@
                             ImGui.SameLine();
                         }
 
-                        if (cell.Top == null && ImGui.Button($"{cell.ID} ObjectAdded Tile Z+"))
+                        if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -488,7 +488,7 @@
                 manager.Rename(material.Name, name);
             }
 
-            if (ImGui.Button("ObjectAdded Property"))
+            if (ImGui.Button("Add Property"))
             {
                 ImGui.OpenPopup("AddMaterialProperty");
             }
@@ -531,7 +531,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.Button("ObjectAdded Texture"))
+            if (ImGui.Button("Add Texture"))
             {
                 ImGui.OpenPopup("AddMaterialTexture");
             }

@@ -23,6 +23,6 @@
         /// <summary>
         /// Indicates that the node is a reference to another node or file.
         /// </summary>
-        Reference
+        Reference,
     }
 }
