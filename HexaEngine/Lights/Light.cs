@@ -137,28 +137,12 @@
 
         public abstract IShaderResourceView? GetShadowMap();
 
+        public abstract bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas);
+
         public abstract void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas);
 
         public abstract void DestroyShadowMap();
 
         public uint GetQueueIndex() => QueueIndex;
-
-        public void ComputeImportance(Camera camera, ShadowAtlas atlas)
-        {
-            var camPos = camera.Transform.GlobalPosition;
-            var lightPos = Transform.GlobalPosition;
-            var distance = Vector3.Distance(camPos, lightPos);
-            var lightRange = range;
-            var profile = shadowMapResolution;
-
-            var maxResolution = profile switch
-            {
-                ShadowResolution.Ultra => 1024,
-                ShadowResolution.High => 512,
-                ShadowResolution.Medium => 256,
-                ShadowResolution.Low => 128,
-                _ => 1024,// Default to the highest resolution
-            };
-        }
     }
 }

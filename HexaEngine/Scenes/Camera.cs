@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Managers;
     using LibGit2Sharp;
@@ -115,6 +116,11 @@
 
             return Vector3.Transform(p, Transform);
             */
+        }
+
+        public float DistanceTo(GameObject other)
+        {
+            return Vector3.Distance(Transform.GlobalPosition, other.Transform.Position);
         }
 
         public static implicit operator CameraTransform(Camera camera) => camera.Transform;

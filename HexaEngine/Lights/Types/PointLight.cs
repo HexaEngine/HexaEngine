@@ -8,6 +8,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;
 
@@ -136,6 +137,11 @@
         public override unsafe bool IntersectFrustum(BoundingBox box)
         {
             return ShadowBox.Intersects(box);
+        }
+
+        public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
+        {
+            return false;
         }
     }
 }

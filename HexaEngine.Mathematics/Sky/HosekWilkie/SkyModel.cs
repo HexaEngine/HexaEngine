@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Mathematics.Sky.HosekWilkie
 {
     using System;
+    using System.Data;
     using System.Numerics;
     using HexaEngine.Mathematics.Sky;
 
@@ -3852,6 +3853,135 @@
                 1 * Math.Pow(value, 5) * spline[5 * stride];
         }
 
+        private static float EvalQuintic(float* w/* [6] */, float* data /* [6] */)
+        {
+            return w[0] * data[0]
+                    + w[1] * data[1]
+                    + w[2] * data[2]
+                    + w[3] * data[3]
+                    + w[4] * data[4]
+                    + w[5] * data[5];
+        }
+
+        private static void EvalQuintic(float* w /* [6] */, float** data /* [6][9] */, float* coeffs /* [9] */)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                coeffs[i] = w[0] * data[0][i]
+                            + w[1] * data[1][i]
+                            + w[2] * data[2][i]
+                            + w[3] * data[3][i]
+                            + w[4] * data[4][i]
+                            + w[5] * data[5][i];
+            }
+        }
+
+        private static void FindQuinticWeights(float s, float* w /*[6]*/)
+        {
+            float s1 = s;
+            float s2 = s1 * s1;
+            float s3 = s1 * s2;
+            float s4 = s2 * s2;
+            float s5 = s2 * s3;
+
+            float is1 = 1.0f - s1;
+            float is2 = is1 * is1;
+            float is3 = is1 * is2;
+            float is4 = is2 * is2;
+            float is5 = is2 * is3;
+
+            w[0] = is5;
+            w[1] = is4 * s1 * 5.0f;
+            w[2] = is3 * s2 * 10.0f;
+            w[3] = is2 * s3 * 10.0f;
+            w[4] = is1 * s4 * 5.0f;
+            w[5] = s5;
+        }
+
+        private static float FindHosekCoeffs
+   (
+         float**** dataset9/*[2][10][6][9]*/,    // albedo x 2, turbidity x 10, quintics x 6, weights x 9
+         float*** datasetR/*[2][10][6]*/,       // albedo x 2, turbidity x 10, quintics x 6
+        float turbidity,
+        float albedo,
+        float solarElevation,
+        float* coeffs/*[9]*/
+    )
+        {
+            int tbi = (int)(MathF.Floor(turbidity));
+
+            if (tbi < 1)
+                tbi = 1;
+            else if (tbi > 9)
+                tbi = 9;
+
+            float tbf = turbidity - tbi;
+
+            float s = MathF.Pow(solarElevation / MathUtil.PIDIV2, (1.0f / 3.0f));
+
+            float* quinticWeights = stackalloc float[6];
+            FindQuinticWeights(s, quinticWeights);
+
+            nint* ix = stackalloc nint[4];
+            float** ic = (float**)ix;
+
+            for (int i = 0; i < 4; i++)
+            {
+                float* ii = stackalloc float[9];
+                ic[i] = ii;
+            }
+
+            EvalQuintic(quinticWeights, dataset9[0][tbi - 1], ic[0]);
+            EvalQuintic(quinticWeights, dataset9[1][tbi - 1], ic[1]);
+            EvalQuintic(quinticWeights, dataset9[0][tbi], ic[2]);
+            EvalQuintic(quinticWeights, dataset9[1][tbi], ic[3]);
+
+            float* ir = stackalloc float[4]
+            {
+                EvalQuintic(quinticWeights, datasetR[0][tbi - 1]),
+                EvalQuintic(quinticWeights, datasetR[1][tbi - 1]),
+                EvalQuintic(quinticWeights, datasetR[0][tbi]),
+                EvalQuintic(quinticWeights, datasetR[1][tbi]),
+            };
+
+            float* cw = stackalloc float[4]
+            {
+                (1.0f - albedo) * (1.0f - tbf),
+                albedo * (1.0f - tbf),
+                (1.0f - albedo) * tbf,
+                albedo* tbf,
+            };
+
+            for (int i = 0; i < 9; i++)
+                coeffs[i] = cw[0] * ic[0][i]
+                          + cw[1] * ic[1][i]
+                          + cw[2] * ic[2][i]
+                          + cw[3] * ic[3][i];
+
+            return cw[0] * ir[0] + cw[1] * ir[1] + cw[2] * ir[2] + cw[3] * ir[3];
+        }
+
+        private static float EvalHosekCoeffs(float* coeffs /* [9] */, float cosTheta, float gamma, float cosGamma)
+        {
+            // Current coeffs ordering is AB I CDEF HG
+            //                            01 2 3456 78
+            float expM = MathF.Exp(coeffs[4] * gamma);   // D g
+            float rayM = cosGamma * cosGamma;       // Rayleigh scattering
+            float mieM = (1.0f + rayM) / MathF.Pow(1.0f + coeffs[8] * coeffs[8] - 2.0f * coeffs[8] * cosGamma, 1.5f);  // G
+            float zenith = MathF.Sqrt(cosTheta);           // vertical zenith gradient
+
+            return (1.0f
+                         + coeffs[0] * MathF.Exp(coeffs[1] / (cosTheta + 0.01f))     // A, B
+                   )
+                 * (1.0f
+                         + coeffs[3] * expM     // C
+                         + coeffs[5] * rayM     // E
+                         + coeffs[6] * mieM     // F
+                         + coeffs[7] * zenith   // H
+                         + (coeffs[2] - 1.0f)   // I
+                   );
+        }
+
         /// <summary>
         /// Calculate sky parameters based on input turbidity, albedo, and sun_theta.
         /// </summary>
@@ -3864,7 +3994,7 @@
         public static double Evaluate(double* dataset, nint stride, float turbidity, float albedo, float sun_theta)
         {
             // splines are functions of elevation^1/3
-            double elevationK = Math.Pow(MathF.Max(0.0f, 1.0f - sun_theta / (float.Pi / 2.0f)), 1.0f / 3.0f);
+            double elevationK = Math.Pow(sun_theta / MathUtil.PIDIV2, 1.0f / 3.0f);
 
             // table has values for turbidity 1..10
             int turbidity0 = Math.Clamp((int)turbidity, 1, 10);
@@ -3879,7 +4009,7 @@
             double a0t1 = EvaluateSpline(datasetA0 + stride * 6 * (turbidity1 - 1), stride, elevationK);
             double a1t1 = EvaluateSpline(datasetA1 + stride * 6 * (turbidity1 - 1), stride, elevationK);
 
-            return a0t0 * (1.0f - albedo) * (1.0f - turbidityK) + a1t0 * albedo * (1.0f - turbidityK) + a0t1 * (1.0f - albedo) * turbidityK + a1t1 * albedo * turbidityK;
+            return (1.0f - albedo) * (1.0f - turbidityK) * a0t0 + albedo * (1.0f - turbidityK) * a1t0 + (1.0f - albedo) * turbidityK * a0t1 + albedo * turbidityK * a1t1;
         }
 
         /// <summary>
@@ -3900,33 +4030,24 @@
         /// <returns>The computed sky radiance based on the input parameters.</returns>
         public static Vector3 HosekWilkie(float cos_theta, float gamma, float cos_gamma, Vector3 A, Vector3 B, Vector3 C, Vector3 D, Vector3 E, Vector3 F, Vector3 G, Vector3 H, Vector3 I)
         {
-            Vector3 chi = new Vector3(1.0f + cos_gamma * cos_gamma) / MathUtil.Pow(H * H + new Vector3(1.0f) - H * (2.0f * cos_gamma), new Vector3(1.5f));
-            Vector3 temp1 = A * MathUtil.Exp2(B * (1.0f / (cos_theta + 0.01f)));
-            Vector3 temp2 = C + D * MathUtil.Exp2(E * gamma) + F * (gamma * gamma) + chi * G + I * (float)Math.Sqrt(Math.Max(0.0f, cos_theta));
+            Vector3 expM = MathUtil.Exp(E * gamma);
+            float rayM = cos_gamma * cos_gamma;
+            Vector3 mieM = new Vector3(1.0f + rayM) / MathUtil.Pow(new Vector3(1.0f) + H * H - 2.0f * H * cos_gamma, new Vector3(1.5f));
+            float zenith = MathF.Sqrt(cos_theta); // vertical zenith gradient
+
+            Vector3 temp1 = A * MathUtil.Exp(B * (1.0f / (cos_theta + 0.01f)));
+            Vector3 temp2 = C + D * expM + F * rayM + mieM * G + I * zenith;
             Vector3 temp = temp1 * temp2;
 
             return temp;
         }
 
-        private static float EvalHosekCoeffs(float* coeffs, float cosTheta, float gamma, float cosGamma)
+        private static float ZenithLuminance(float thetaS, float T)
         {
-            // Current coeffs ordering is AB I CDEF HG
-            //                            01 2 3456 78
-            float expM = MathF.Exp(coeffs[4] * gamma);   // D g
-            float rayM = cosGamma * cosGamma;       // Rayleigh scattering
-            float mieM = (1.0f + rayM) / MathF.Pow((1.0f + coeffs[8] * coeffs[8] - 2.0f * coeffs[8] * cosGamma), 1.5f);  // G
-            float zenith = MathF.Sqrt(cosTheta);           // vertical zenith gradient
-
-            return (1.0f
-                         + coeffs[0] * MathF.Exp(coeffs[1] / (cosTheta + 0.01f))     // A, B
-                   )
-                 * (1.0f
-                         + coeffs[3] * expM     // C
-                         + coeffs[5] * rayM     // E
-                         + coeffs[6] * mieM     // F
-                         + coeffs[7] * zenith   // H
-                         + (coeffs[2] - 1.0f)   // I
-                   );
+            float chi = (4.0f / 9.0f - T / 120.0f) * (float.Pi - 2.0f * thetaS);
+            float Lz = (4.0453f * T - 4.9710f) * MathF.Tan(chi) - 0.2155f * T + 2.4192f;
+            Lz *= 1000.0f;   // conversion from kcd/m^2 to cd/m^2
+            return Lz;
         }
 
         /// <summary>
@@ -3943,7 +4064,7 @@
 
             SkyParameters parameters = default;
 
-            for (int i = 0; i < SkyParameters.Count; i++)
+            for (int i = 0; i < (int)EnumSkyParams.Z; i++)
             {
                 var param = parameters[i];
                 fixed (double* dataset = datasetsRGB[0])
@@ -4071,14 +4192,6 @@
             parameters[(int)EnumSkyParams.Z] = Z;
 
             return parameters;
-        }
-
-        private static float ZenithLuminance(float thetaS, float T)
-        {
-            float chi = (4.0f / 9.0f - T / 120.0f) * (float.Pi - 2.0f * thetaS);
-            float Lz = (4.0453f * T - 4.9710f) * MathF.Tan(chi) - 0.2155f * T + 2.4192f;
-            Lz *= 1000.0f;   // conversion from kcd/m^2 to cd/m^2
-            return Lz;
         }
     }
 }

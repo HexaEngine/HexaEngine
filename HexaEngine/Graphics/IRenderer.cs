@@ -13,6 +13,8 @@
     {
         public uint QueueIndex { get; }
 
+        public bool BatchSupport { get; }
+
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
         public BoundingBox BoundingBox { get; }

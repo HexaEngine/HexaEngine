@@ -151,5 +151,10 @@
         {
             return true;
         }
+
+        public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
+        {
+            return false;
+        }
     }
 }

@@ -45,6 +45,8 @@
             protected set => loaded = value;
         }
 
+        public bool BatchSupport { get; }
+
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
         public abstract void Load(IGraphicsDevice device);

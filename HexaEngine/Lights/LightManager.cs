@@ -200,12 +200,14 @@
             for (int i = 0; i < activeLights.Count; i++)
             {
                 var light = activeLights[i];
-                if (light.ShadowMapEnable && light is DirectionalLight && !light.InUpdateQueue || light.ShadowMapEnable && light.ShadowMapUpdateMode == ShadowUpdateMode.EveryFrame)
+                if (light.ShadowMapEnable && !light.InUpdateQueue)
                 {
-                    light.InUpdateQueue = true;
-                    UpdateShadowLightQueue.Enqueue(light);
+                    if (light.ShadowMapUpdateMode == ShadowUpdateMode.EveryFrame | light.UpdateShadowMapSize(camera, shadowAtlas))
+                    {
+                        light.InUpdateQueue = true;
+                        UpdateShadowLightQueue.Enqueue(light);
+                    }
                 }
-                light.ComputeImportance(camera, shadowAtlas);
             }
         }
 

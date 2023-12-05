@@ -18,6 +18,7 @@
         public GameObject GameObject { get; set; }
 
         public RendererFlags Flags { get; } = RendererFlags.Forward | RendererFlags.Draw | RendererFlags.Update | RendererFlags.NoDepthTest;
+        public bool BatchSupport { get; }
 
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 

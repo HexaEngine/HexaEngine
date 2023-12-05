@@ -5,14 +5,194 @@ namespace HexaEngine.Lights
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
+    public class SpatialCacheHandle
+    {
+        public readonly SpatialAllocatorHandle Handle;
+        public bool IsTaken;
+
+        public SpatialCacheHandle(SpatialAllocatorHandle handle)
+        {
+            Handle = handle;
+        }
+    }
+
+    public class SpatialCache : IDisposable
+    {
+        private readonly Dictionary<Vector2, List<SpatialCacheHandle>> cache = [];
+        private readonly List<List<SpatialCacheHandle>> subCaches = [];
+        private readonly object _lock = new();
+        private bool disposedValue;
+
+        public SpatialCache(Vector2 size, int subdivisions)
+        {
+            Vector2 targetSize = size;
+            for (int i = 0; i < subdivisions; i++)
+            {
+                List<SpatialCacheHandle> handles = [];
+                subCaches.Add(handles);
+                cache.Add(targetSize, handles);
+                targetSize /= 2;
+            }
+        }
+
+        private List<SpatialCacheHandle> GetSubCache(Vector2 size)
+        {
+            if (cache.TryGetValue(size, out var subCache))
+            {
+                return subCache;
+            }
+            throw new InvalidOperationException($"The given size ({size}) is not supported by the cache");
+        }
+
+        private static int IndexOf(List<SpatialCacheHandle> cache, SpatialAllocatorHandle handle)
+        {
+            for (int i = 0; i < cache.Count; i++)
+            {
+                if (handle == cache[i].Handle)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public SpatialCacheHandle AddToCache(SpatialAllocatorHandle handle)
+        {
+            SpatialCacheHandle cacheHandle = new(handle);
+            lock (_lock)
+            {
+                GetSubCache(handle.Size).Add(cacheHandle);
+            }
+            return cacheHandle;
+        }
+
+        public bool TryRemoveFromCache(SpatialAllocatorHandle handle)
+        {
+            lock (_lock)
+            {
+                var cache = GetSubCache(handle.Size);
+                int index = IndexOf(cache, handle);
+
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                var cacheHandle = cache[index];
+
+                if (cacheHandle.IsTaken)
+                {
+                    return false;
+                }
+
+                cacheHandle.IsTaken = true;
+                cache.RemoveAt(index);
+                return true;
+            }
+        }
+
+        public bool TryRemoveFromCache(SpatialCacheHandle handle)
+        {
+            lock (_lock)
+            {
+                if (handle.IsTaken)
+                {
+                    return false;
+                }
+
+                var cache = GetSubCache(handle.Handle.Size);
+                int index = cache.IndexOf(handle);
+
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                handle.IsTaken = true;
+                cache.RemoveAt(index);
+                return true;
+            }
+        }
+
+        public SpatialAllocatorHandle? AllocFromCache(Vector2 size)
+        {
+            lock (_lock)
+            {
+                var cache = GetSubCache(size);
+                if (cache.Count == 0)
+                {
+                    return null;
+                }
+
+                SpatialCacheHandle handle = cache[0];
+                handle.IsTaken = true;
+
+                cache.RemoveAt(0);
+                return handle.Handle;
+            }
+        }
+
+        public bool TryAllocFromCache(Vector2 size, [NotNullWhen(true)] out SpatialAllocatorHandle? handle)
+        {
+            lock (_lock)
+            {
+                var cache = GetSubCache(size);
+                if (cache.Count == 0)
+                {
+                    handle = null;
+                    return false;
+                }
+
+                var cacheHandle = cache[0];
+                cacheHandle.IsTaken = true;
+
+                handle = cacheHandle.Handle;
+                cache.RemoveAt(0);
+                return true;
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_lock)
+            {
+                for (int i = 0; i < subCaches.Count; i++)
+                {
+                    var cache = subCaches[i];
+                    for (int j = 0; j < cache.Count; j++)
+                    {
+                        cache[j].IsTaken = true;
+                    }
+                    cache.Clear();
+                }
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                Clear();
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
     public unsafe class SpatialAllocator
     {
         private Space* rootSpace;
 
-        public SpatialAllocator(Vector2 size, int subDivisions)
+        public SpatialAllocator(Vector2 size, int subdivisions)
         {
             Vector2 targetSize = size;
-            for (int i = 0; i < subDivisions; i++)
+            for (int i = 0; i < subdivisions; i++)
             {
                 targetSize /= 2;
             }

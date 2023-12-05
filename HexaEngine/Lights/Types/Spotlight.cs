@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Lights.Types
 {
-    using HexaEngine.Components;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System;
     using System.Numerics;
@@ -24,6 +25,7 @@
         private float blend;
         private Matrix4x4 view;
         private ShadowAtlasHandle atlasHandle;
+        private readonly List<SpatialCacheHandle> cacheHandles = [];
 
         [JsonIgnore]
         public readonly BoundingFrustum ShadowFrustum = new();
@@ -68,6 +70,7 @@
             }
 
             atlasHandle = atlas.Alloc(ShadowMapSize);
+            last = ShadowMapResolution;
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -123,6 +126,46 @@
             context.SetViewport(viewport);
 
 #nullable enable
+        }
+
+        private ShadowResolution last;
+
+        public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
+        {
+            return false;
+            /*
+            var distance = camera.DistanceTo(this);
+
+            var distanceScaled = distance / Range;
+
+            ShadowResolution resolution = (ShadowResolution)MathUtil.Lerp((float)ShadowMapResolution, (float)ShadowResolution.Low, distanceScaled);
+
+            if (last != resolution)
+            {
+                last = resolution;
+            }
+            else
+            {
+                return false;
+            }
+
+            cacheHandles.Add(atlas.Cache(ref atlasHandle));
+
+            var size = new Vector2(GraphicsSettings.GetSMSizeSpotlight(resolution));
+
+            var index = cacheHandles.FindIndex(x => x.Handle.Size == size);
+
+            SpatialCacheHandle? cacheHandle = null;
+            if (index != -1)
+            {
+                cacheHandle = cacheHandles[index];
+                cacheHandles.RemoveAt(index);
+            }
+
+            atlasHandle = atlas.Alloc(size, cacheHandle);
+
+            return true;
+            */
         }
 
         public float GetConeRadius(float z)
