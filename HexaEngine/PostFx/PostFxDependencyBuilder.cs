@@ -2,19 +2,118 @@
 {
     using HexaEngine.Graphics.Graph;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+
+    public class PostFxNameRegistry
+    {
+        private readonly List<IPostFx> effects = [];
+        private readonly Dictionary<string, IPostFx> nameToEffect = [];
+        private readonly object _lock = new();
+
+        public string? GetNameBy<T>() where T : IPostFx
+        {
+            lock (_lock)
+            {
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    IPostFx effect = effects[i];
+                    if (effect is T)
+                    {
+                        return effect.Name;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public bool TryGetNameBy<T>([NotNullWhen(true)] out string? name) where T : IPostFx
+        {
+            lock (_lock)
+            {
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    IPostFx effect = effects[i];
+                    if (effect is T)
+                    {
+                        name = effect.Name;
+                        return true;
+                    }
+                }
+                name = null;
+                return false;
+            }
+        }
+
+        public IPostFx? GetPostFxByName(string name)
+        {
+            lock (_lock)
+            {
+                if (!nameToEffect.TryGetValue(name, out var effect))
+                {
+                    return null;
+                }
+                return effect;
+            }
+        }
+
+        public bool TryGetPostFxByName(string name, [NotNullWhen(true)] out IPostFx? effect)
+        {
+            lock (_lock)
+            {
+                return nameToEffect.TryGetValue(name, out effect);
+            }
+        }
+
+        public void Add(IPostFx effect)
+        {
+            lock (_lock)
+            {
+                effects.Add(effect);
+                nameToEffect.Add(effect.Name, effect);
+            }
+        }
+
+        public void Remove(IPostFx effect)
+        {
+            lock (_lock)
+            {
+                nameToEffect.Remove(effect.Name);
+                effects.Remove(effect);
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_lock)
+            {
+                effects.Clear();
+                nameToEffect.Clear();
+            }
+        }
+    }
+
+    public class PostFxNotFoundException : Exception
+    {
+        public PostFxNotFoundException(string postFxName) : base($"The effect {postFxName} was not found.")
+        {
+        }
+    }
 
     public class PostFxDependencyBuilder
     {
         private readonly PostFxNode node;
-        private readonly List<ResourceBinding> bindings = new();
-        private readonly List<ResourceBinding> sources = new();
+        private readonly PostFxNameRegistry nameRegistry;
+        private readonly List<ResourceBinding> bindings = [];
+        private readonly List<ResourceBinding> sources = [];
 
-        private readonly List<string> after = new();
-        private readonly List<string> before = new();
+        private readonly List<string> after = [];
+        private readonly List<string> before = [];
+        private readonly List<string> overrides = [];
 
-        public PostFxDependencyBuilder(PostFxNode node)
+        public PostFxDependencyBuilder(PostFxNode node, PostFxNameRegistry nameRegistry)
         {
             this.node = node;
+            this.nameRegistry = nameRegistry;
         }
 
         /// <summary>
@@ -24,15 +123,70 @@
         {
             bindings.Clear();
             sources.Clear();
+            overrides.Clear();
             after.Clear();
             before.Clear();
         }
 
         /// <summary>
-        /// This references a resource and creates a hard dependency.
+        /// Overrides <typeparamref name="T"/>, if it's found.
         /// </summary>
-        /// <param name="binding">The binding.</param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type to override to.</typeparam>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder Override<T>() where T : IPostFx
+        {
+            if (nameRegistry.TryGetNameBy<T>(out string? name))
+            {
+                overrides.Add(name);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a soft dependency <typeparamref name="T"/>, that means if the effect is not available/disabled it will be ignored.
+        /// </summary>
+        /// <typeparam name="T">The effect type.</typeparam>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder RunAfter<T>() where T : IPostFx
+        {
+            if (nameRegistry.TryGetNameBy<T>(out string? name))
+            {
+                after.Add(name);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a dependency if <typeparamref name="T"/> exists and is enabled.
+        /// </summary>
+        /// <typeparam name="T">The effect type.</typeparam>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder RunBefore<T>() where T : IPostFx
+        {
+            if (nameRegistry.TryGetNameBy<T>(out string? name))
+            {
+                before.Add(name);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Overrides a effect with the given <paramref name="name"/>.
+        /// </summary>
+        /// <param name="name">The name of the effect.</param>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder Override(string name)
+        {
+            overrides.Add(name);
+            return this;
+        }
+
+        /// <summary>
+        /// References a resource and creates a hard dependency.
+        /// </summary>
+        /// <param name="binding">The binding name.</param>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder AddBinding(ResourceBinding binding)
         {
             bindings.Add(binding);
@@ -40,10 +194,10 @@
         }
 
         /// <summary>
-        /// This references a resource and creates a hard dependency.
+        /// References a resource and creates a hard dependency.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
+        /// <param name="name">The name of the binding.</param>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder AddBinding(string name)
         {
             bindings.Add(new(name));
@@ -51,10 +205,10 @@
         }
 
         /// <summary>
-        /// This adds a resource source where other effects can reference it.
+        /// Adds a resource source where other effects can reference it.
         /// </summary>
         /// <param name="binding">The binding.</param>
-        /// <returns></returns>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder AddSource(ResourceBinding binding)
         {
             sources.Add(binding);
@@ -62,10 +216,10 @@
         }
 
         /// <summary>
-        /// This adds a source where other effects can reference it.
+        /// Adds a source where other effects can reference it.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
+        /// <param name="name">The name the source.</param>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder AddSource(string name)
         {
             sources.Add(new(name));
@@ -73,10 +227,10 @@
         }
 
         /// <summary>
-        /// This adds a soft dependency to the effect, that means if the effect is not available/disabled it will be ignored.
+        /// Adds a soft dependency to the effect, that means if the effect is not available/disabled it will be ignored.
         /// </summary>
         /// <param name="name">The name the target.</param>
-        /// <returns></returns>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder RunAfter(string name)
         {
             after.Add(name);
@@ -84,13 +238,33 @@
         }
 
         /// <summary>
-        /// This adds a dependency if the other effect exists and is enabled.
+        /// Adds a dependency if the other effect exists and is enabled.
         /// </summary>
         /// <param name="name">The name of the target.</param>
-        /// <returns></returns>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
         public PostFxDependencyBuilder RunBefore(string name)
         {
             before.Add(name);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a soft dependency to all effects that doesn't reference this as run after.
+        /// </summary>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder RunAfterAllNotReferenced()
+        {
+            after.Add("!AllNotReferenced");
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a soft dependency to all effects.
+        /// </summary>
+        /// <returns>Returns <see langword="this"/> for chaining operations.</returns>
+        public PostFxDependencyBuilder RunAfterAll()
+        {
+            after.Add("!All");
             return this;
         }
 
@@ -174,6 +348,11 @@
             }
 
             return false;
+        }
+
+        public bool Overrides(PostFxNode other)
+        {
+            return overrides.Contains(other.Name);
         }
 
         public void Build(IReadOnlyList<PostFxNode> others, IReadOnlyList<ResourceBinding> globalResources)

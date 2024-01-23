@@ -262,7 +262,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 var texture = tex[i];
 
-                if (texture.SRV != null)
+                if (texture.SRV != null || !texture.SRV.IsDisposed)
                 {
                     float aspect = texture.Viewport.Height / texture.Viewport.Width;
                     size.X = MathF.Min(texture.Viewport.Width, size.X);
@@ -273,7 +273,7 @@ namespace HexaEngine.Graphics.Renderers
                         size.Y = size.X * aspect;
                     }
 
-                    if (ImGui.CollapsingHeader(texture.DebugName))
+                    if (ImGui.CollapsingHeader(texture.DebugName ?? $"<unknown>##{i}"))
                     {
                         ImGui.Image(texture.SRV.NativePointer, size);
                     }

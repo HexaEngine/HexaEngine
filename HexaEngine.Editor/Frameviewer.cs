@@ -4,6 +4,7 @@
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
@@ -19,6 +20,7 @@
     {
         private bool isShown;
         private bool isVisible;
+        private bool focus;
 
         public bool IsShown { get => isShown; set => isShown = value; }
 
@@ -41,14 +43,24 @@
             DebugDraw.SetViewport(RenderViewport);
         }
 
+        public void Focus()
+        {
+            focus = true;
+        }
+
         public unsafe void Draw()
         {
             if (!ImGui.Begin("Scene", ref isShown, ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
             {
+                if (focus)
+                {
+                    ImGui.FocusWindow(ImGui.GetCurrentWindow(), ImGuiFocusRequestFlags.UnlessBelowModal);
+                }
                 isVisible = false;
                 ImGui.End();
                 return;
             }
+
             ImGuizmo.SetDrawlist();
             isVisible = true;
             var scene = SceneManager.Current;

@@ -60,10 +60,30 @@
         {
             for (int i = 0; i < nodes.Count; i++)
             {
-                var node = nodes[i];
+                nodes[i].Clear();
+            }
 
-                node.Clear();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
                 node.PostFx.SetupDependencies(node.Builder);
+
+                if (node.Enabled)
+                {
+                    for (int j = 0; j < nodes.Count; j++)
+                    {
+                        var other = nodes[j];
+                        if (node == other)
+                        {
+                            continue;
+                        }
+
+                        if (node.Builder.Overrides(other))
+                        {
+                            other.PostFx.Enabled = false;
+                        }
+                    }
+                }
             }
 
             for (int i = 0; i < nodes.Count; i++)

@@ -26,9 +26,9 @@ namespace HexaEngine.PostFx.BuildIn
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                    .RunAfter("ColorGrading")
-                    .RunAfter("Grain")
-                    .RunAfter("UserLUT");
+                    .RunAfter<ColorGrading>()
+                    .RunAfter<Grain>()
+                    .RunAfter<UserLUT>();
         }
 
         /// <inheritdoc/>

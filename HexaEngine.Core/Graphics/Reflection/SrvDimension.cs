@@ -23,7 +23,7 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// 1D texture array dimension.
         /// </summary>
-        Texture1Darray = 3,
+        Texture1DArray = 3,
 
         /// <summary>
         /// 2D texture dimension.
@@ -33,17 +33,17 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// 2D texture array dimension.
         /// </summary>
-        Texture2Darray = 5,
+        Texture2DArray = 5,
 
         /// <summary>
         /// 2D multisampled texture dimension.
         /// </summary>
-        Texture2Dms = 6,
+        Texture2DMS = 6,
 
         /// <summary>
         /// 2D multisampled texture array dimension.
         /// </summary>
-        Texture2Dmsarray = 7,
+        Texture2DMSArray = 7,
 
         /// <summary>
         /// 3D texture dimension.
@@ -53,16 +53,16 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// Cube texture dimension.
         /// </summary>
-        Texturecube = 9,
+        TextureCube = 9,
 
         /// <summary>
         /// Cube texture array dimension.
         /// </summary>
-        Texturecubearray = 10,
+        TextureCubeArray = 10,
 
         /// <summary>
         /// Extended buffer dimension.
         /// </summary>
-        Bufferex = 11,
+        BufferEx = 11,
     }
 }

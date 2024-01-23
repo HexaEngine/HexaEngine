@@ -127,7 +127,7 @@
         {
             lock (messages)
             {
-                messages.Add(new TerminalMessage() { Message = text, Color = TerminalColor.Black });
+                messages.Add(new TerminalMessage() { Message = text, Color = TerminalColor.White });
             }
         }
 
@@ -135,6 +135,7 @@
         public void Draw()
         {
             DrawMenuBar();
+            ImGui.Separator();
             DrawMessages();
             DrawInput();
         }
@@ -179,7 +180,8 @@
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             lock (messages)
             {
-                ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve));
+                ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve), ImGuiWindowFlags.HorizontalScrollbar);
+
                 for (int i = 0; i < messages.Count; i++)
                 {
                     var msg = messages[i];
@@ -200,6 +202,7 @@
                 }
 
                 scrollToBottom = false;
+
                 ImGui.EndChild();
             }
         }

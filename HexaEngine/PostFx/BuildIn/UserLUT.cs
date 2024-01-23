@@ -53,8 +53,8 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunAfter("ColorGrading")
-                .RunBefore("Grain");
+                .RunAfter<ColorGrading>()
+                .RunBefore<Grain>();
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)

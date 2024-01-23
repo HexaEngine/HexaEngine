@@ -4,8 +4,8 @@
 
     public struct OcclusionParams
     {
-        public uint NoofInstances;
-        public uint NoofPropTypes;
+        public uint NumberOfInstances;
+        public uint NumberOfPropTypes;
         public int ActivateCulling;
         public uint MaxMipLevel;
         public Vector2 RTSize;

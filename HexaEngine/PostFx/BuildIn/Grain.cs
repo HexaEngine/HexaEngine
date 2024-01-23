@@ -67,9 +67,9 @@
         {
             builder
                 .AddBinding("TemporalNoise")
-                .RunAfter("ColorGrading")
-                .RunAfter("UserLUT")
-                .RunBefore("FXAA");
+                .RunAfter<ColorGrading>()
+                .RunAfter<UserLUT>()
+                .RunBefore<FXAA>();
         }
 
         /// <inheritdoc/>

@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
@@ -23,14 +21,14 @@ namespace HexaEngine.PostFx.BuildIn
         private Texture2D intermediateTex;
         private GaussianBlur blur;
 
+        private ISamplerState samplerLinear;
+
         private ResourceRef<Texture2D> ao;
         private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<GBuffer> gbuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         private Viewport viewport;
-
-        private ISamplerState samplerLinear;
 
         private float samplingRadius = 0.5f;
         private uint numSamplingDirections = 8;
@@ -106,6 +104,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
+            builder.Override<SSAO>();
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
@@ -153,7 +152,6 @@ namespace HexaEngine.PostFx.BuildIn
         public override void Resize(int width, int height)
         {
             intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-
             viewport = new(width, height);
         }
 

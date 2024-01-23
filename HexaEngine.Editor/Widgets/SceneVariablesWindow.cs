@@ -7,6 +7,7 @@
     public class SceneVariablesWindow : EditorWindow
     {
         private string _newKeyName = string.Empty;
+
         protected override string Name => "Scene Variables";
 
         public override void DrawContent(IGraphicsContext context)

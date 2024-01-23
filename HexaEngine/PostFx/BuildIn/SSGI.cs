@@ -70,15 +70,15 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                   .RunBefore("ColorGrading")
-                   .RunAfter("HBAO")
-                   .RunBefore("SSR")
-                   .RunBefore("MotionBlur")
-                   .RunBefore("AutoExposure")
-                   .RunBefore("TAA")
-                   .RunBefore("DepthOfField")
-                   .RunBefore("ChromaticAberration")
-                   .RunBefore("Bloom");
+                   .RunBefore<ColorGrading>()
+                   .RunAfter<HBAO>()
+                   .RunBefore<SSR>()
+                   .RunBefore<MotionBlur>()
+                   .RunBefore<AutoExposure>()
+                   .RunBefore<TAA>()
+                   .RunBefore<DepthOfField>()
+                   .RunBefore<ChromaticAberration>()
+                   .RunBefore<Bloom>();
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)

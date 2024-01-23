@@ -1,25 +1,34 @@
 ﻿namespace HexaEngine.Editor
 {
+    using Hexa.NET.ImGuizmo;
     using HexaEngine.Components.Collider;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Editor.Icons;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using Hexa.NET.ImGuizmo;
     using System.Numerics;
-    using HexaEngine.Editor.Icons;
-    using Hardware.Info;
-    using HexaEngine.Core.Debugging;
+
+    [Flags]
+    public enum EditorDrawLightsFlags
+    {
+        None = 0,
+        DrawLights = 1,
+        NoDirectionalLights = 2,
+        NoPointLights = 4,
+        NoSpotLights = 8,
+    }
 
     public partial class Frameviewer
     {
         private static bool inspectorEnabled = true;
         private static bool drawGimbal = true;
         private static bool drawGrid = true;
-        private static bool drawLights = true;
+        private static EditorDrawLightsFlags drawLights = EditorDrawLightsFlags.DrawLights;
         private static bool drawLightBounds = false;
         private static bool drawCameras = true;
         private static bool drawSkeletons = true;
@@ -32,6 +41,8 @@
         private static bool gimbalGrabbed;
         private static Matrix4x4 gimbalBefore;
 
+        private static int gridSize = 100;
+
         public static ImGuizmoOperation Operation { get => operation; set => operation = value; }
 
         public static ImGuizmoMode Mode { get => mode; set => mode = value; }
@@ -42,7 +53,7 @@
 
         public static bool DrawGrid { get => drawGrid; set => drawGrid = value; }
 
-        public static bool DrawLights { get => drawLights; set => drawLights = value; }
+        public static EditorDrawLightsFlags DrawLights { get => drawLights; set => drawLights = value; }
 
         public static bool DrawLightBounds { get => drawLightBounds; set => drawLightBounds = value; }
 
@@ -55,6 +66,8 @@
         public static bool DrawBoundingBoxes { get => drawBoundingBoxes; set => drawBoundingBoxes = value; }
 
         public static bool DrawBoundingSpheres { get => drawBoundingSpheres; set => drawBoundingSpheres = value; }
+
+        public static int GridSize { get => gridSize; set => gridSize = value; }
 
         public static unsafe void InspectorDraw()
         {
@@ -81,20 +94,20 @@
             {
                 if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
                 {
-                    DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, 100, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
                 else if (CameraManager.Dimension == CameraEditorDimension.Dim2D)
                 {
-                    DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), 100, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
             }
 
-            if (drawLights)
+            if ((drawLights & EditorDrawLightsFlags.DrawLights) != 0)
             {
                 for (int i = 0; i < scene.LightManager.Count; i++)
                 {
                     Light light = scene.LightManager.Lights[i];
-                    if (light is DirectionalLight directional)
+                    if ((drawLights & EditorDrawLightsFlags.NoDirectionalLights) == 0 && light is DirectionalLight directional)
                     {
                         DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
                         DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
@@ -103,14 +116,15 @@
                         {
                             for (int j = 0; j < scene.Cameras.Count; j++)
                             {
-                                for (int ji = 0; ji < 16; ji++)
+                                for (int ji = 0; ji < 8; ji++)
                                 {
                                     DebugDraw.DrawFrustum($"{light}{scene.Cameras[j]}{ji}", directional.ShadowFrustra[ji], Vector4.One);
                                 }
                             }
                         }
                     }
-                    if (light is Spotlight spotlight)
+
+                    if ((drawLights & EditorDrawLightsFlags.NoPointLights) == 0 && light is Spotlight spotlight)
                     {
                         DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
                         DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
@@ -124,7 +138,8 @@
                             DebugDraw.DrawFrustum(light.Name + "Bounds", spotlight.ShadowFrustum, Vector4.One);
                         }
                     }
-                    if (light is PointLight pointLight)
+
+                    if ((drawLights & EditorDrawLightsFlags.NoSpotLights) == 0 && light is PointLight pointLight)
                     {
                         DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
                         DebugDraw.DrawRingBillboard(light.Name + "0", light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, (new(0, 0.5f, 0), new(0.5f, 0, 0)), Vector4.One);

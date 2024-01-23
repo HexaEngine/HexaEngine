@@ -7,9 +7,7 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
-    using Silk.NET.Assimp;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public class GBufferPass : RenderPass
     {
@@ -32,7 +30,7 @@
             var viewport = creator.Viewport;
             gbuffer = creator.CreateGBuffer("GBuffer", new((int)viewport.Width, (int)viewport.Height, 4,
                 Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
-                Format.R8G8B8A8UNorm,       // Normal(XYZ)      Roughness(W)
+                Format.R16G16B16A16UNorm,   // Normal(XYZ)      Roughness(W)
                 Format.R8G8B8A8UNorm,       // Metallic         Reflectance             AO      Material Data
                 Format.R8G8B8A8UNorm        // Emission(XYZ)    Emission Strength(W)
                 ));

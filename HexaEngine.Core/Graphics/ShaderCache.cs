@@ -9,15 +9,19 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Threading;
 
     /// <summary>
-    /// Thread-safe shader cache
+    /// Thread-safe shader cache, allows up to 64 read threads at the same time to access the cache and one write thread.
     /// </summary>
     public static class ShaderCache
     {
         private const string file = "cache/shadercache.bin";
-        private static readonly List<ShaderCacheEntry> entries = new();
-        private static readonly SemaphoreSlim s = new(1);
+        private static readonly List<ShaderCacheEntry> entries = [];
+        private static readonly int MaxReadThreads = Environment.ProcessorCount - 1 == 1 ? 2 : Environment.ProcessorCount - 1;
+        private static readonly SemaphoreSlim readSemaphore = new(MaxReadThreads);
+        private static readonly SemaphoreSlim writeSemaphore = new(1);
+        private static readonly ManualResetEvent writeHandle = new(false);
         private const int Version = 2;
 
         static ShaderCache()
@@ -57,22 +61,38 @@
         /// <param name="shader">The pointer to the shader.</param>
         public static unsafe void CacheShader(string path, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
         {
-            lock (entries)
+            if (DisableCache)
             {
-                if (DisableCache)
-                {
-                    return;
-                }
-
-                var entry = new ShaderCacheEntry(path, crc32Hash, language, macros, inputElements, shader->Clone());
-                entries.RemoveAll(x => x.Equals(entry));
-                entries.Add(entry);
-                SaveAsync();
+                return;
             }
+
+            var entry = new ShaderCacheEntry(path, crc32Hash, language, macros, inputElements, shader->Clone());
+
+            BeginRead();
+
+            int index = entries.IndexOf(entry);
+
+            EndRead();
+
+            BeginWrite();
+
+            if (index == -1)
+            {
+                entries.Add(entry);
+            }
+            else
+            {
+                entries[index].Free();
+                entries[index] = entry;
+            }
+
+            EndWrite();
+
+            SaveAsync();
         }
 
         /// <summary>
-        /// Returns true if succesfully found a matching shader
+        /// Returns true if successfully found a matching shader
         /// </summary>
         /// <param filename="path"></param>
         /// <param filename="language"></param>
@@ -82,27 +102,33 @@
         /// <returns></returns>
         public static unsafe bool GetShader(string path, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
-            lock (entries)
-            {
-                *shader = default;
-                inputElements = null;
-                if (DisableCache)
-                {
-                    return false;
-                }
+            *shader = default;
+            inputElements = null;
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                var ventry = new ShaderCacheEntry(path, crc32Hash, language, macros, null, null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-                var entry = entries.FirstOrDefault(x => x.Equals(ventry));
-                if (entry != default && entry.Crc32Hash == crc32Hash)
-                {
-                    inputElements = entry.InputElements;
-                    *shader = entry.Shader->Clone();
-                    return true;
-                }
+            if (DisableCache)
+            {
                 return false;
             }
+
+            BeginRead();
+
+            ShaderCacheEntry vEntry = default;
+            vEntry.Name = path;
+            vEntry.Crc32Hash = crc32Hash;
+            vEntry.Language = language;
+            vEntry.Macros = macros;
+
+            var entry = entries.FirstOrDefault(x => x.Equals(vEntry));
+            if (entry != default && entry.Crc32Hash == crc32Hash)
+            {
+                inputElements = entry.InputElements;
+                *shader = entry.Shader->Clone();
+                EndRead();
+                return true;
+            }
+
+            EndRead();
+            return false;
         }
 
         /// <summary>
@@ -110,84 +136,97 @@
         /// </summary>
         public static void Clear()
         {
-            lock (entries)
+            BeginWrite();
+            Logger.Info("Clearing shader cache ...");
+            for (int i = 0; i < entries.Count; i++)
             {
-                Logger.Info("Clearing shader cache ...");
-                for (int i = 0; i < entries.Count; i++)
-                {
-                    entries[i].Free();
-                }
-                entries.Clear();
-                Logger.Info("Clearing shader cache ... done");
+                entries[i].Free();
             }
-        }
-
-        private static unsafe bool GetShaderInternal(string path, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
-        {
-            lock (entries)
-            {
-                *shader = null;
-                inputElements = null;
-                if (DisableCache)
-                {
-                    return false;
-                }
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                var ventry = new ShaderCacheEntry(path, crc32Hash, language, macros, null, null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-                var entry = entries.FirstOrDefault(x => x.Equals(ventry));
-                if (entry != default)
-                {
-                    inputElements = entry.InputElements;
-                    *shader = entry.Shader;
-                    return true;
-                }
-                return false;
-            }
+            entries.Clear();
+            Logger.Info("Clearing shader cache ... done");
+            EndWrite();
         }
 
         private const int HeaderSize = 8;
 
-        private static void Load()
+        /// <summary>
+        /// Loads the shader cache from disk.
+        /// </summary>
+        public static void Load()
         {
             if (!File.Exists(file))
             {
                 return;
             }
 
-            lock (entries)
-            {
-                var span = (Span<byte>)File.ReadAllBytes(file);
-                if (span.Length < HeaderSize)
-                {
-                    return;
-                }
-                var decoder = Encoding.UTF8.GetDecoder();
-                var version = BinaryPrimitives.ReadInt32LittleEndian(span);
-                if (version != Version)
-                    return;
-                var count = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
-                entries.EnsureCapacity(count);
+            BeginWrite();
 
-                int idx = 8;
-                for (int i = 0; i < count; i++)
-                {
-                    var entry = new ShaderCacheEntry();
-                    idx += entry.Read(span[idx..], decoder);
-                    entries.Add(entry);
-                }
+            var span = (Span<byte>)File.ReadAllBytes(file);
+            if (span.Length < HeaderSize)
+            {
+                EndWrite();
+                return;
             }
+            var decoder = Encoding.UTF8.GetDecoder();
+            var version = BinaryPrimitives.ReadInt32LittleEndian(span);
+            if (version != Version)
+            {
+                EndWrite();
+                return;
+            }
+
+            var count = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
+            entries.EnsureCapacity(count);
+
+            int idx = 8;
+            for (int i = 0; i < count; i++)
+            {
+                var entry = new ShaderCacheEntry();
+                idx += entry.Read(span[idx..], decoder);
+                entries.Add(entry);
+            }
+
+            EndWrite();
         }
 
-        private static void Save()
+        /// <summary>
+        /// Saves the shader cache to disk.
+        /// </summary>
+        public static void Save()
         {
-            s.Wait();
-            lock (entries)
+            BeginRead();
+
+            var encoder = Encoding.UTF8.GetEncoder();
+            var size = HeaderSize + entries.Sum(x => x.SizeOf(encoder));
+            var span = size < 4096 ? stackalloc byte[size] : new byte[size];
+
+            BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
+            BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
+
+            int idx = 8;
+            for (var i = 0; i < entries.Count; i++)
             {
+                var entry = entries[i];
+                idx += entry.Write(span[idx..], encoder);
+            }
+
+            EndRead();
+
+            File.WriteAllBytes(file, span.ToArray());
+        }
+
+        /// <summary>
+        /// Saves the shader cache to disk asynchronously.
+        /// </summary>
+        public static Task SaveAsync()
+        {
+            return Task.Run(() =>
+            {
+                BeginRead();
+
                 var encoder = Encoding.UTF8.GetEncoder();
-                var size = HeaderSize + entries.Sum(x => x.SizeOf(encoder));
-                var span = size < 2048 ? stackalloc byte[size] : new byte[size];
+                var size = 8 + entries.Sum(x => x.SizeOf(encoder));
+                var span = size < 4096 ? stackalloc byte[size] : new byte[size];
 
                 BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
                 BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
@@ -199,36 +238,36 @@
                     idx += entry.Write(span[idx..], encoder);
                 }
 
+                EndRead();
+
                 File.WriteAllBytes(file, span.ToArray());
-            }
-            s.Release();
+            });
         }
 
-        private static Task SaveAsync()
+        private static void BeginWrite()
         {
-            return Task.Run(() =>
-            {
-                s.Wait();
-                lock (entries)
-                {
-                    var encoder = Encoding.UTF8.GetEncoder();
-                    var size = 8 + entries.Sum(x => x.SizeOf(encoder));
-                    var span = size < 2048 ? stackalloc byte[size] : new byte[size];
+            writeSemaphore.Wait();
 
-                    BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
-                    BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
+            // block all read threads and wait for completion.
+            writeHandle.Reset();
+            SpinWait.SpinUntil(() => readSemaphore.CurrentCount == MaxReadThreads);
+        }
 
-                    int idx = 8;
-                    for (var i = 0; i < entries.Count; i++)
-                    {
-                        var entry = entries[i];
-                        idx += entry.Write(span[idx..], encoder);
-                    }
+        private static void EndWrite()
+        {
+            writeHandle.Set();
+            writeSemaphore.Release();
+        }
 
-                    File.WriteAllBytes(file, span.ToArray());
-                }
-                s.Release();
-            });
+        private static void BeginRead()
+        {
+            writeHandle.WaitOne();
+            readSemaphore.Wait();
+        }
+
+        private static void EndRead()
+        {
+            readSemaphore.Release();
         }
     }
 }

@@ -6,11 +6,11 @@
 
     public class PostFxNode : INode
     {
-        public PostFxNode(IPostFx postFx)
+        public PostFxNode(IPostFx postFx, PostFxNameRegistry nameRegistry)
         {
             Name = postFx.Name;
             PostFx = postFx;
-            Builder = new(this);
+            Builder = new(this, nameRegistry);
         }
 
         public string Name { get; }

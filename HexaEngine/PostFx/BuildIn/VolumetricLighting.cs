@@ -152,16 +152,16 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunBefore("ColorGrading")
-                .RunAfter("HBAO")
-                .RunAfter("SSGI")
-                .RunAfter("SSR")
-                .RunBefore("MotionBlur")
-                .RunBefore("AutoExposure")
-                .RunBefore("TAA")
-                .RunBefore("DepthOfField")
-                .RunBefore("ChromaticAberration")
-                .RunBefore("Bloom");
+                .RunBefore<ColorGrading>()
+                .RunAfter<HBAO>()
+                .RunAfter<SSGI>()
+                .RunAfter<SSR>()
+                .RunBefore<MotionBlur>()
+                .RunBefore<AutoExposure>()
+                .RunBefore<TAA>()
+                .RunBefore<DepthOfField>()
+                .RunBefore<ChromaticAberration>()
+                .RunBefore<Bloom>();
         }
 
         /// <inheritdoc/>

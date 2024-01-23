@@ -428,5 +428,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public IFence CreateFence(ulong initialValue, Core.Graphics.FenceFlags flags)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

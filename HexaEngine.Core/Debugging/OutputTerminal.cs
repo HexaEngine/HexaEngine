@@ -144,7 +144,7 @@
         {
             lock (messages)
             {
-                messages.Add(new TerminalMessage() { Message = text, Color = TerminalColor.Black });
+                messages.Add(new TerminalMessage() { Message = text, Color = TerminalColor.White });
             }
             scrollToBottom = true;
         }

@@ -13,7 +13,7 @@
         /// <summary>
         /// points primitive type.
         /// </summary>
-        points = 1,
+        Point = 1,
 
         /// <summary>
         /// Line primitive type.

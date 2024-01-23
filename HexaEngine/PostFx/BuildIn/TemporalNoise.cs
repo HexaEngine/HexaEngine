@@ -19,7 +19,7 @@
         private GraphResourceBuilder creator;
         private ResourceRef<Texture2D> Noise;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private new Viewport Viewport;
+
 #nullable restore
 
         private float scale = 0.1f;
@@ -78,8 +78,6 @@
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             Noise = creator.CreateTexture2D("TemporalNoise", new(Format.R32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-
-            Viewport = new(width, height);
         }
 
         /// <inheritdoc/>

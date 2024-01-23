@@ -9,6 +9,7 @@
     using System.IO;
     using System.IO.Hashing;
     using System.Linq;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Provides utility methods for interacting with the file system.
@@ -451,6 +452,21 @@
             Span<byte> buffer = stackalloc byte[4];
             crc.GetCurrentHash(buffer);
             stream.Close();
+
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        /// <summary>
+        /// Calculates the CRC32 hash of the text.
+        /// </summary>
+        /// <param name="text">The text for which to calculate the CRC32 hash.</param>
+        /// <returns>The CRC32 hash of the text.</returns>
+        public static uint GetCrc32HashFromText(string text)
+        {
+            Crc32 crc = new();
+            crc.Append(MemoryMarshal.AsBytes(text.AsSpan()));
+            Span<byte> buffer = stackalloc byte[4];
+            crc.GetCurrentHash(buffer);
 
             return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
         }

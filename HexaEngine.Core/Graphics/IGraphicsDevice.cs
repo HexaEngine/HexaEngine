@@ -319,5 +319,7 @@
         {
             return Task.Factory.StartNew(() => CreateComputePipeline(desc, filename, line));
         }
+
+        IFence CreateFence(ulong initialValue, FenceFlags flags);
     }
 }

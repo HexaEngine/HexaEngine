@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Components;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Lights;
+    using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Managers;
-    using LibGit2Sharp;
     using System;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject
@@ -25,6 +22,9 @@
             base.Transform = Transform = new();
             AddComponentSingleton<SphereSelectionComponent>();
         }
+
+        [EditorProperty("Visible Layers")]
+        public DrawLayerCollection VisibleLayers { get; set; } = [];
 
         [EditorProperty<ProjectionType>("Type")]
         public ProjectionType ProjectionType { get => Transform.ProjectionType; set => Transform.ProjectionType = value; }

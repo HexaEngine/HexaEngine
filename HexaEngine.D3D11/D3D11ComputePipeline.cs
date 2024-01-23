@@ -59,7 +59,7 @@
                 return;
             }
 
-            ((D3D11GraphicsContext)context).DeviceContext.CSSetShader(cs, null, 0);
+            ((D3D11GraphicsContextBase)context).DeviceContext.CSSetShader(cs, null, 0);
         }
 
         internal void SetComputePipeline(ComPtr<ID3D11DeviceContext3> context)
@@ -89,7 +89,7 @@
                 return;
             }
 
-            var ctx = ((D3D11GraphicsContext)context).DeviceContext;
+            var ctx = ((D3D11GraphicsContextBase)context).DeviceContext;
 
             ctx.CSSetShader(cs, null, 0);
             ctx.Dispatch(x, y, z);
@@ -108,7 +108,7 @@
                 return;
             }
 
-            ((D3D11GraphicsContext)context).DeviceContext.CSSetShader((ID3D11ComputeShader*)null, null, 0);
+            ((D3D11GraphicsContextBase)context).DeviceContext.CSSetShader((ID3D11ComputeShader*)null, null, 0);
         }
 
         public virtual void EndDispatch(ID3D11DeviceContext4* context)

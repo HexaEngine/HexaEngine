@@ -291,7 +291,7 @@
                 MapMode.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
                 MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
                 MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -789,7 +789,7 @@
                 RenderTargetViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.RtvDimension.Texture2Dms,
                 RenderTargetViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.RtvDimension.Texture2Dmsarray,
                 RenderTargetViewDimension.Texture3D => Silk.NET.Direct3D11.RtvDimension.Texture3D,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -806,7 +806,7 @@
                 RenderTargetViewDimension.Texture2DMultisampled => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2DMS: Convert(description.Texture2DMS)),
                 RenderTargetViewDimension.Texture2DMultisampledArray => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2DMSArray: Convert(description.Texture2DMSArray)),
                 RenderTargetViewDimension.Texture3D => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture3D: Convert(description.Texture3D)),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -893,7 +893,7 @@
                 DepthStencilViewDimension.Texture2DArray => Silk.NET.Direct3D11.DsvDimension.Texture2Darray,
                 DepthStencilViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.DsvDimension.Texture2Dms,
                 DepthStencilViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.DsvDimension.Texture2Dmsarray,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -930,7 +930,7 @@
                 DepthStencilViewDimension.Texture2DArray => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DArray: Convert(description.Texture2DArray)),
                 DepthStencilViewDimension.Texture2DMultisampled => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DMS: Convert(description.Texture2DMS)),
                 DepthStencilViewDimension.Texture2DMultisampledArray => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DMSArray: Convert(description.Texture2DMSArray)),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -997,7 +997,7 @@
                 ShaderResourceViewDimension.TextureCube => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(textureCube: Convert(description.TextureCube)),
                 ShaderResourceViewDimension.TextureCubeArray => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(textureCubeArray: Convert(description.TextureCubeArray)),
                 ShaderResourceViewDimension.BufferExtended => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(bufferEx: Convert(description.BufferEx)),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -1436,7 +1436,7 @@
                 LogicOperation.AndInverted => Silk.NET.Direct3D11.LogicOp.AndInverted,
                 LogicOperation.OrReverse => Silk.NET.Direct3D11.LogicOp.OrReverse,
                 LogicOperation.OrInverted => Silk.NET.Direct3D11.LogicOp.OrInverted,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -1760,7 +1760,7 @@
             {
                 InputClassification.PerVertexData => Silk.NET.Direct3D11.InputClassification.PerVertexData,
                 InputClassification.PerInstanceData => Silk.NET.Direct3D11.InputClassification.PerInstanceData,
-                _ => throw new NotImplementedException()
+                _ => throw new NotSupportedException()
             };
         }
 
@@ -2047,21 +2047,21 @@
         {
             return type switch
             {
-                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCbuffer,
-                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTbuffer,
+                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCBuffer,
+                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTBuffer,
                 D3DShaderInputType.D3DSitTexture => ShaderInputType.SitTexture,
                 D3DShaderInputType.D3DSitSampler => ShaderInputType.SitSampler,
-                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwtyped,
+                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwTyped,
                 D3DShaderInputType.D3DSitStructured => ShaderInputType.SitStructured,
-                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwstructured,
-                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteaddress,
-                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwbyteaddress,
+                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwStructured,
+                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteAddress,
+                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
                 D3DShaderInputType.D3DSitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
                 D3DShaderInputType.D3DSitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
-                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwstructuredWithCounter,
-                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtaccelerationstructure,
-                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbacktexture,
-                _ => throw new NotImplementedException(),
+                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
+                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
+                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2071,15 +2071,15 @@
             return returnType switch
             {
                 D3DResourceReturnType.None => ResourceReturnType.None,
-                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.Unorm,
+                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.UNorm,
                 D3DResourceReturnType.D3DReturnTypeSNorm => ResourceReturnType.SNorm,
-                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.Sint,
-                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.Uint,
+                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.SInt,
+                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.UInt,
                 D3DResourceReturnType.D3DReturnTypeFloat => ResourceReturnType.Float,
                 D3DResourceReturnType.D3DReturnTypeMixed => ResourceReturnType.Mixed,
                 D3DResourceReturnType.D3DReturnTypeDouble => ResourceReturnType.Double,
                 D3DResourceReturnType.D3DReturnTypeContinued => ResourceReturnType.Continued,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2091,15 +2091,15 @@
                 D3DSrvDimension.D3DSrvDimensionUnknown => SrvDimension.Unknown,
                 D3DSrvDimension.D3DSrvDimensionBuffer => SrvDimension.Buffer,
                 D3DSrvDimension.D3DSrvDimensionTexture1D => SrvDimension.Texture1D,
-                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1Darray,
+                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1DArray,
                 D3DSrvDimension.D3DSrvDimensionTexture2D => SrvDimension.Texture2D,
-                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2Darray,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2Dms,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2Dmsarray,
+                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2DArray,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2DMS,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2DMSArray,
                 D3DSrvDimension.D3DSrvDimensionTexture3D => SrvDimension.Texture3D,
-                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.Texturecube,
-                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.Texturecubearray,
-                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.Bufferex,
+                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.TextureCube,
+                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.TextureCubeArray,
+                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.BufferEx,
                 _ => throw new NotSupportedException()
             };
         }
@@ -2153,7 +2153,7 @@
                 D3DName.D3DNameDepthLessEqual => Name.DepthLessEqual,
                 D3DName.D3DNameStencilRef => Name.StencilRef,
                 D3DName.D3DNameInnerCoverage => Name.InnerCoverage,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2170,7 +2170,7 @@
                 D3DMinPrecision.Uint16 => MinPrecision.Uint16,
                 D3DMinPrecision.Any16 => MinPrecision.Any16,
                 D3DMinPrecision.Any10 => MinPrecision.Any10,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2183,7 +2183,7 @@
                 D3DRegisterComponentType.D3DRegisterComponentUint32 => RegisterComponentType.Uint32,
                 D3DRegisterComponentType.D3DRegisterComponentSint32 => RegisterComponentType.Sint32,
                 D3DRegisterComponentType.D3DRegisterComponentFloat32 => RegisterComponentType.Float32,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2300,7 +2300,7 @@
                 BufferUnorderedAccessViewFlags.Append => Silk.NET.Direct3D11.BufferUavFlag.Append,
                 BufferUnorderedAccessViewFlags.Counter => Silk.NET.Direct3D11.BufferUavFlag.Counter,
                 BufferUnorderedAccessViewFlags.None => 0,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2316,7 +2316,7 @@
                 UnorderedAccessViewDimension.Texture2D => Silk.NET.Direct3D11.UavDimension.Texture2D,
                 UnorderedAccessViewDimension.Texture2DArray => Silk.NET.Direct3D11.UavDimension.Texture2Darray,
                 UnorderedAccessViewDimension.Texture3D => Silk.NET.Direct3D11.UavDimension.Texture3D,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2347,7 +2347,7 @@
                 TexAlphaMode.Premultiplied => DirectXTex.TexAlphaMode.Premultiplied,
                 TexAlphaMode.Opaque => DirectXTex.TexAlphaMode.Opaque,
                 TexAlphaMode.Custom => DirectXTex.TexAlphaMode.Custom,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2372,7 +2372,7 @@
                 TexDimension.Texture1D => DirectXTex.TexDimension.Texture1D,
                 TexDimension.Texture2D => DirectXTex.TexDimension.Texture2D,
                 TexDimension.Texture3D => DirectXTex.TexDimension.Texture3D,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2400,7 +2400,7 @@
                 DirectXTex.TexDimension.Texture1D => TexDimension.Texture1D,
                 DirectXTex.TexDimension.Texture2D => TexDimension.Texture2D,
                 DirectXTex.TexDimension.Texture3D => TexDimension.Texture3D,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2427,7 +2427,7 @@
                 DirectXTex.TexAlphaMode.Premultiplied => TexAlphaMode.Premultiplied,
                 DirectXTex.TexAlphaMode.Opaque => TexAlphaMode.Opaque,
                 DirectXTex.TexAlphaMode.Custom => TexAlphaMode.Custom,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2475,7 +2475,7 @@
                 SwapChainFlags.HWProtected => Silk.NET.DXGI.SwapChainFlag.HWProtected,
                 SwapChainFlags.AllowTearing => Silk.NET.DXGI.SwapChainFlag.AllowTearing,
                 SwapChainFlags.RestrictedToAllHolographicDisplays => Silk.NET.DXGI.SwapChainFlag.RestrictedToAllHolographicDisplays,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2489,7 +2489,7 @@
                 SwapChainAlphaMode.Straight => Silk.NET.DXGI.AlphaMode.Straight,
                 SwapChainAlphaMode.Ignore => Silk.NET.DXGI.AlphaMode.Ignore,
                 SwapChainAlphaMode.ForceDword => Silk.NET.DXGI.AlphaMode.ForceDword,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2502,7 +2502,7 @@
                 SwapEffect.Sequential => Silk.NET.DXGI.SwapEffect.Sequential,
                 SwapEffect.FlipSequential => Silk.NET.DXGI.SwapEffect.FlipSequential,
                 SwapEffect.FlipDiscard => Silk.NET.DXGI.SwapEffect.FlipDiscard,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2514,7 +2514,7 @@
                 Scaling.Stretch => Silk.NET.DXGI.Scaling.Stretch,
                 Scaling.None => Silk.NET.DXGI.Scaling.None,
                 Scaling.AspectRatioStretch => Silk.NET.DXGI.Scaling.AspectRatioStretch,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2548,7 +2548,7 @@
                 ModeScaling.Unspecified => Silk.NET.DXGI.ModeScaling.Unspecified,
                 ModeScaling.Centered => Silk.NET.DXGI.ModeScaling.Centered,
                 ModeScaling.Stretched => Silk.NET.DXGI.ModeScaling.Stretched,
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
         }
 
@@ -2561,6 +2561,280 @@
                 ModeScanlineOrder.Progressive => Silk.NET.DXGI.ModeScanlineOrder.Progressive,
                 ModeScanlineOrder.UpperFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.UpperFieldFirst,
                 ModeScanlineOrder.LowerFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.LowerFieldFirst,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static PrimitiveTopology ConvertBack(D3DPrimitiveTopology topology)
+        {
+            return topology switch
+            {
+                D3DPrimitiveTopology.D3DPrimitiveTopologyUndefined => PrimitiveTopology.Undefined,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyPointlist => PrimitiveTopology.PointList,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyLinelist => PrimitiveTopology.LineList,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyLinestrip => PrimitiveTopology.LineStrip,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelist => PrimitiveTopology.TriangleList,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestrip => PrimitiveTopology.TriangleStrip,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyLinelistAdj => PrimitiveTopology.LineListAdjacency,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyLinestripAdj => PrimitiveTopology.LineStripAdjacency,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelistAdj => PrimitiveTopology.TriangleListAdjacency,
+                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestripAdj => PrimitiveTopology.TriangleStripAdjacency,
+                D3DPrimitiveTopology.D3DPrimitiveTopology1ControlPointPatchlist => PrimitiveTopology.PatchListWith1ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology2ControlPointPatchlist => PrimitiveTopology.PatchListWith2ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology3ControlPointPatchlist => PrimitiveTopology.PatchListWith3ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology4ControlPointPatchlist => PrimitiveTopology.PatchListWith4ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology5ControlPointPatchlist => PrimitiveTopology.PatchListWith5ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology6ControlPointPatchlist => PrimitiveTopology.PatchListWith6ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology7ControlPointPatchlist => PrimitiveTopology.PatchListWith7ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology8ControlPointPatchlist => PrimitiveTopology.PatchListWith8ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology9ControlPointPatchlist => PrimitiveTopology.PatchListWith9ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology10ControlPointPatchlist => PrimitiveTopology.PatchListWith10ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology11ControlPointPatchlist => PrimitiveTopology.PatchListWith11ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology12ControlPointPatchlist => PrimitiveTopology.PatchListWith12ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology13ControlPointPatchlist => PrimitiveTopology.PatchListWith13ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology14ControlPointPatchlist => PrimitiveTopology.PatchListWith14ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology15ControlPointPatchlist => PrimitiveTopology.PatchListWith15ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology16ControlPointPatchlist => PrimitiveTopology.PatchListWith16ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology17ControlPointPatchlist => PrimitiveTopology.PatchListWith17ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology18ControlPointPatchlist => PrimitiveTopology.PatchListWith18ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology19ControlPointPatchlist => PrimitiveTopology.PatchListWith19ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology20ControlPointPatchlist => PrimitiveTopology.PatchListWith20ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology21ControlPointPatchlist => PrimitiveTopology.PatchListWith21ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology22ControlPointPatchlist => PrimitiveTopology.PatchListWith22ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology23ControlPointPatchlist => PrimitiveTopology.PatchListWith23ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology24ControlPointPatchlist => PrimitiveTopology.PatchListWith24ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology25ControlPointPatchlist => PrimitiveTopology.PatchListWith25ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology26ControlPointPatchlist => PrimitiveTopology.PatchListWith26ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology27ControlPointPatchlist => PrimitiveTopology.PatchListWith27ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology28ControlPointPatchlist => PrimitiveTopology.PatchListWith28ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology29ControlPointPatchlist => PrimitiveTopology.PatchListWith29ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology30ControlPointPatchlist => PrimitiveTopology.PatchListWith30ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology31ControlPointPatchlist => PrimitiveTopology.PatchListWith31ControlPoints,
+                D3DPrimitiveTopology.D3DPrimitiveTopology32ControlPointPatchlist => PrimitiveTopology.PatchListWith32ControlPoints,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Primitive ConvertBack(D3DPrimitive primitive)
+        {
+            return primitive switch
+            {
+                D3DPrimitive.D3DPrimitiveUndefined => Primitive.Undefined,
+                D3DPrimitive.D3DPrimitivePoint => Primitive.Point,
+                D3DPrimitive.D3DPrimitiveLine => Primitive.Line,
+                D3DPrimitive.D3DPrimitiveTriangle => Primitive.Triangle,
+                D3DPrimitive.D3DPrimitiveLineAdj => Primitive.LineAdj,
+                D3DPrimitive.D3DPrimitiveTriangleAdj => Primitive.TriangleAdj,
+                D3DPrimitive.D3DPrimitive1ControlPointPatch => Primitive.PatchListWith1ControlPoint,
+                D3DPrimitive.D3DPrimitive2ControlPointPatch => Primitive.PatchListWith2ControlPoint,
+                D3DPrimitive.D3DPrimitive3ControlPointPatch => Primitive.PatchListWith3ControlPoint,
+                D3DPrimitive.D3DPrimitive4ControlPointPatch => Primitive.PatchListWith4ControlPoint,
+                D3DPrimitive.D3DPrimitive5ControlPointPatch => Primitive.PatchListWith5ControlPoint,
+                D3DPrimitive.D3DPrimitive6ControlPointPatch => Primitive.PatchListWith6ControlPoint,
+                D3DPrimitive.D3DPrimitive7ControlPointPatch => Primitive.PatchListWith7ControlPoint,
+                D3DPrimitive.D3DPrimitive8ControlPointPatch => Primitive.PatchListWith8ControlPoint,
+                D3DPrimitive.D3DPrimitive9ControlPointPatch => Primitive.PatchListWith9ControlPoint,
+                D3DPrimitive.D3DPrimitive10ControlPointPatch => Primitive.PatchListWith10ControlPoint,
+                D3DPrimitive.D3DPrimitive11ControlPointPatch => Primitive.PatchListWith11ControlPoint,
+                D3DPrimitive.D3DPrimitive12ControlPointPatch => Primitive.PatchListWith12ControlPoint,
+                D3DPrimitive.D3DPrimitive13ControlPointPatch => Primitive.PatchListWith13ControlPoint,
+                D3DPrimitive.D3DPrimitive14ControlPointPatch => Primitive.PatchListWith14ControlPoint,
+                D3DPrimitive.D3DPrimitive15ControlPointPatch => Primitive.PatchListWith15ControlPoint,
+                D3DPrimitive.D3DPrimitive16ControlPointPatch => Primitive.PatchListWith16ControlPoint,
+                D3DPrimitive.D3DPrimitive17ControlPointPatch => Primitive.PatchListWith17ControlPoint,
+                D3DPrimitive.D3DPrimitive18ControlPointPatch => Primitive.PatchListWith18ControlPoint,
+                D3DPrimitive.D3DPrimitive19ControlPointPatch => Primitive.PatchListWith19ControlPoint,
+                D3DPrimitive.D3DPrimitive20ControlPointPatch => Primitive.PatchListWith20ControlPoint,
+                D3DPrimitive.D3DPrimitive21ControlPointPatch => Primitive.PatchListWith21ControlPoint,
+                D3DPrimitive.D3DPrimitive22ControlPointPatch => Primitive.PatchListWith22ControlPoint,
+                D3DPrimitive.D3DPrimitive23ControlPointPatch => Primitive.PatchListWith23ControlPoint,
+                D3DPrimitive.D3DPrimitive24ControlPointPatch => Primitive.PatchListWith24ControlPoint,
+                D3DPrimitive.D3DPrimitive25ControlPointPatch => Primitive.PatchListWith25ControlPoint,
+                D3DPrimitive.D3DPrimitive26ControlPointPatch => Primitive.PatchListWith26ControlPoint,
+                D3DPrimitive.D3DPrimitive27ControlPointPatch => Primitive.PatchListWith27ControlPoint,
+                D3DPrimitive.D3DPrimitive28ControlPointPatch => Primitive.PatchListWith28ControlPoint,
+                D3DPrimitive.D3DPrimitive29ControlPointPatch => Primitive.PatchListWith29ControlPoint,
+                D3DPrimitive.D3DPrimitive30ControlPointPatch => Primitive.PatchListWith30ControlPoint,
+                D3DPrimitive.D3DPrimitive31ControlPointPatch => Primitive.PatchListWith31ControlPoint,
+                D3DPrimitive.D3DPrimitive32ControlPointPatch => Primitive.PatchListWith32ControlPoint,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TessellatorOutputPrimitive ConvertBack(D3DTessellatorOutputPrimitive tessellatorOutputPrimitive)
+        {
+            return tessellatorOutputPrimitive switch
+            {
+                D3DTessellatorOutputPrimitive.D3DTessellatorOutputUndefined => TessellatorOutputPrimitive.Undefined,
+                D3DTessellatorOutputPrimitive.D3DTessellatorOutputPoint => TessellatorOutputPrimitive.Point,
+                D3DTessellatorOutputPrimitive.D3DTessellatorOutputLine => TessellatorOutputPrimitive.Line,
+                D3DTessellatorOutputPrimitive.D3DTessellatorOutputTriangleCW => TessellatorOutputPrimitive.TriangleCW,
+                D3DTessellatorOutputPrimitive.D3DTessellatorOutputTriangleCcw => TessellatorOutputPrimitive.TriangleCcw,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TessellatorPartitioning ConvertBack(D3DTessellatorPartitioning tessellatorPartitioning)
+        {
+            return tessellatorPartitioning switch
+            {
+                D3DTessellatorPartitioning.D3DTessellatorPartitioningUndefined => TessellatorPartitioning.Undefined,
+                D3DTessellatorPartitioning.D3DTessellatorPartitioningInteger => TessellatorPartitioning.Integer,
+                D3DTessellatorPartitioning.D3DTessellatorPartitioningPow2 => TessellatorPartitioning.Pow2,
+                D3DTessellatorPartitioning.D3DTessellatorPartitioningFractionalOdd => TessellatorPartitioning.FractionalOdd,
+                D3DTessellatorPartitioning.D3DTessellatorPartitioningFractionalEven => TessellatorPartitioning.FractionalEven,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TessellatorDomain ConvertBack(D3DTessellatorDomain tessellatorDomain)
+        {
+            return tessellatorDomain switch
+            {
+                D3DTessellatorDomain.D3DTessellatorDomainUndefined => TessellatorDomain.Undefined,
+                D3DTessellatorDomain.D3DTessellatorDomainIsoline => TessellatorDomain.Isoline,
+                D3DTessellatorDomain.D3DTessellatorDomainTri => TessellatorDomain.Tri,
+                D3DTessellatorDomain.D3DTessellatorDomainQuad => TessellatorDomain.Quad,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ShaderBufferDesc ConvertBack(Silk.NET.Direct3D11.ShaderBufferDesc shaderBufferDesc)
+        {
+            return new()
+            {
+                Name = ToStringFromUTF8(shaderBufferDesc.Name) ?? string.Empty,
+                Type = ConvertBack(shaderBufferDesc.Type),
+                Variables = new ShaderVariableDesc[shaderBufferDesc.Variables],
+                Size = shaderBufferDesc.Size,
+                UFlags = shaderBufferDesc.UFlags,
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static CBufferType ConvertBack(D3DCBufferType type)
+        {
+            return type switch
+            {
+                D3DCBufferType.D3DCTCbuffer => CBufferType.CBuffer,
+                D3DCBufferType.D3DCTTbuffer => CBufferType.TBuffer,
+                D3DCBufferType.D3DCTInterfacePointers => CBufferType.InterfacePointers,
+                D3DCBufferType.D3DCTResourceBindInfo => CBufferType.ResourceBindInfo,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ShaderInputBindDescription ConvertBack(Silk.NET.Direct3D11.ShaderInputBindDesc shaderInputBindDesc)
+        {
+            return new()
+            {
+                BindCount = shaderInputBindDesc.BindCount,
+                BindPoint = shaderInputBindDesc.BindPoint,
+                Dimension = ConvertBack(shaderInputBindDesc.Dimension),
+                Name = ToStringFromUTF8(shaderInputBindDesc.Name) ?? string.Empty,
+                NumSamples = shaderInputBindDesc.NumSamples,
+                ReturnType = ConvertBack(shaderInputBindDesc.ReturnType),
+                Type = ConvertBack(shaderInputBindDesc.Type),
+                UFlags = shaderInputBindDesc.UFlags,
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ShaderInputType ConvertBack(D3DShaderInputType type)
+        {
+            return type switch
+            {
+                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCBuffer,
+                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTBuffer,
+                D3DShaderInputType.D3DSitTexture => ShaderInputType.SitTexture,
+                D3DShaderInputType.D3DSitSampler => ShaderInputType.SitSampler,
+                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwTyped,
+                D3DShaderInputType.D3DSitStructured => ShaderInputType.SitStructured,
+                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwStructured,
+                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteAddress,
+                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
+                D3DShaderInputType.D3DSitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
+                D3DShaderInputType.D3DSitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
+                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
+                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
+                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ResourceReturnType ConvertBack(D3DResourceReturnType returnType)
+        {
+            return returnType switch
+            {
+                D3DResourceReturnType.None => ResourceReturnType.None,
+                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.UNorm,
+                D3DResourceReturnType.D3DReturnTypeSNorm => ResourceReturnType.SNorm,
+                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.SInt,
+                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.UInt,
+                D3DResourceReturnType.D3DReturnTypeFloat => ResourceReturnType.Float,
+                D3DResourceReturnType.D3DReturnTypeMixed => ResourceReturnType.Mixed,
+                D3DResourceReturnType.D3DReturnTypeDouble => ResourceReturnType.Double,
+                D3DResourceReturnType.D3DReturnTypeContinued => ResourceReturnType.Continued,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static SrvDimension ConvertBack(D3DSrvDimension dimension)
+        {
+            return dimension switch
+            {
+                D3DSrvDimension.D3DSrvDimensionUnknown => SrvDimension.Unknown,
+                D3DSrvDimension.D3DSrvDimensionBuffer => SrvDimension.Buffer,
+                D3DSrvDimension.D3DSrvDimensionTexture1D => SrvDimension.Texture1D,
+                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1DArray,
+                D3DSrvDimension.D3DSrvDimensionTexture2D => SrvDimension.Texture2D,
+                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2DArray,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2DMS,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2DMSArray,
+                D3DSrvDimension.D3DSrvDimensionTexture3D => SrvDimension.Texture3D,
+                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.TextureCube,
+                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.TextureCubeArray,
+                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.BufferEx,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ShaderVariableDesc ConvertBack(Silk.NET.Direct3D11.ShaderVariableDesc shaderVariableDesc)
+        {
+            return new()
+            {
+                DefaultValue = shaderVariableDesc.DefaultValue,
+                Name = ToStringFromUTF8(shaderVariableDesc.Name) ?? string.Empty,
+                SamplerSize = shaderVariableDesc.SamplerSize,
+                Size = shaderVariableDesc.Size,
+                StartOffset = shaderVariableDesc.StartOffset,
+                StartSampler = shaderVariableDesc.StartSampler,
+                StartTexture = shaderVariableDesc.StartTexture,
+                TextureSize = shaderVariableDesc.TextureSize,
+                UFlags = shaderVariableDesc.UFlags,
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Silk.NET.Direct3D11.FenceFlag Convert(FenceFlags flags)
+        {
+            return flags switch
+            {
+                FenceFlags.None => Silk.NET.Direct3D11.FenceFlag.None,
+                FenceFlags.Shared => Silk.NET.Direct3D11.FenceFlag.Shared,
+                FenceFlags.SharedCrossAdapter => Silk.NET.Direct3D11.FenceFlag.SharedCrossAdapter,
+                FenceFlags.NonMonitored => Silk.NET.Direct3D11.FenceFlag.NonMonitored,
+                _ => throw new NotSupportedException(),
             };
         }
     }

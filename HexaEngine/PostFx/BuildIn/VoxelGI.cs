@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.PostFx.BuildIn
+﻿#nullable disable
+
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -44,9 +46,9 @@
             public uint NormalMask;
         }
 
-        public async Task Initialize(IGraphicsDevice device)
+        public void Initialize(IGraphicsDevice device)
         {
-            voxelize = await device.CreateGraphicsPipelineAsync(new()
+            voxelize = device.CreateGraphicsPipeline(new()
             {
                 PixelShader = "gi/VoxelizePS.hlsl",
                 GeometryShader = "gi/VoxelizeGS.hlsl",

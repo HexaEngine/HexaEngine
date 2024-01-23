@@ -18,7 +18,6 @@
 
         private ResourceRef<Texture2D> Velocity;
 
-        private Viewport Viewport;
         private float scale = 64;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
@@ -76,8 +75,6 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
-
-            Viewport = new(width, height);
         }
 
         public override void Update(IGraphicsContext context)

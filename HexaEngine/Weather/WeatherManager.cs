@@ -361,7 +361,7 @@
         }
     }
 
-    public class WeatherRegisty
+    public class WeatherRegistry
     {
         private Dictionary<string, long> nameToId = new();
         private Dictionary<long, Weather> idToWeather = new();

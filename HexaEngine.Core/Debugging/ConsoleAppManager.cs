@@ -110,6 +110,7 @@
             {
                 pendingWriteData = data;
             }
+            inputSignal.Set();
         }
 
         /// <summary>
@@ -121,8 +122,8 @@
             lock (lockObject)
             {
                 pendingWriteData = new(data, 1);
-                inputSignal.Set();
             }
+            inputSignal.Set();
         }
 
         /// <summary>

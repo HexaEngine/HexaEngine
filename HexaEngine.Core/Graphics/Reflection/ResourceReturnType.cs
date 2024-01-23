@@ -16,7 +16,7 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// Unsigned normalized integer return type.
         /// </summary>
-        Unorm = 0x1,
+        UNorm = 0x1,
 
         /// <summary>
         /// Signed normalized integer return type.
@@ -26,12 +26,12 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// Signed integer return type.
         /// </summary>
-        Sint = 0x3,
+        SInt = 0x3,
 
         /// <summary>
         /// Unsigned integer return type.
         /// </summary>
-        Uint = 0x4,
+        UInt = 0x4,
 
         /// <summary>
         /// Floating-point return type.

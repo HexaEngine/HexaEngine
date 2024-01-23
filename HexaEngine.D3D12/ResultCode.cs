@@ -30,6 +30,8 @@
         D3D12_ERROR_ADAPTER_NOT_FOUND = unchecked((int)0x887e0001),
         D3D12_ERROR_DRIVER_VERSION_MISMATCH = unchecked((int)0x887e0002),
 
+        E_NOINTERFACE = unchecked((int)0x80004002),
+
         E_FAIL = unchecked((int)0x80004005),
         E_INVALIDARG = unchecked((int)0x80070057),
         E_OUTOFMEMORY = unchecked((int)0x8007000E),

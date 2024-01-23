@@ -34,19 +34,18 @@
         Large,
     }
 
-    /*
-     TODOS:
-        Filter and Search
-        File Preview
-        Sort and Order by
-        Favorites and Bookmarks
-        Batch operations
-        Version Control
-        Asset Importing
-        Metadata
-        Automatic refresh
-     */
-
+    // TODO: Filter and Search
+    // TODO: File Preview
+    // TODO: Sort and Order by
+    // TODO: Favorites and Bookmarks
+    // TODO: Batch operations
+    // TODO: Version Control
+    // TODO: Asset Importing
+    // TODO: Metadata
+    // TODO: Automatic refresh
+    /// <summary>
+    /// A editor widget for managing assets.
+    /// </summary>
     public class AssetExplorer2 : EditorWindow
     {
         private static readonly ConfigKey config = Config.Global.GetOrCreateKey("Editor").GetOrCreateKey("Asset Explorer");

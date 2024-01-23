@@ -72,16 +72,16 @@
         {
             builder
               .AddBinding("VelocityBuffer")
-              .RunBefore("ColorGrading")
-              .RunAfter("HBAO")
-              .RunAfter("SSGI")
-              .RunAfter("SSR")
-              .RunAfter("VolumetricLighting")
-              .RunBefore("AutoExposure")
-              .RunBefore("TAA")
-              .RunBefore("DepthOfField")
-              .RunBefore("ChromaticAberration")
-              .RunBefore("Bloom");
+              .RunBefore<ColorGrading>()
+              .RunAfter<HBAO>()
+              .RunAfter<SSGI>()
+              .RunAfter<SSR>()
+              .RunAfter<VolumetricLighting>()
+              .RunBefore<AutoExposure>()
+              .RunBefore<TAA>()
+              .RunBefore<DepthOfField>()
+              .RunBefore<ChromaticAberration>()
+              .RunBefore<Bloom>();
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)

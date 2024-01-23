@@ -15,7 +15,7 @@
             Flags = ImGuiWindowFlags.MenuBar;
             Show();
             terminals.Add(new OutputTerminal());
-            terminalNames.Add("ao");
+            terminalNames.Add("Output");
             terminals.Add(new ShellTerminal("cmd.exe"));
             terminalNames.Add("Cmd");
             terminals.Add(new ShellTerminal("powershell.exe"));

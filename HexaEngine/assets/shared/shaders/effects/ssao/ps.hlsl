@@ -3,8 +3,8 @@
 
 struct VSOut
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+    float4 Pos : SV_Position;
+    float2 Tex : TEXCOORD;
 };
 
 cbuffer SSAOParams
@@ -25,7 +25,7 @@ SamplerState samplerState;
 
 static const float3 taps[16] =
 {
-	float3(-0.364452, -0.014985, -0.513535),
+    float3(-0.364452, -0.014985, -0.513535),
 	float3(0.004669, -0.445692, -0.165899),
 	float3(0.607166, -0.571184, 0.377880),
 	float3(-0.607685, -0.352123, -0.663045),
@@ -48,35 +48,35 @@ float4 main(VSOut vs) : SV_Target
     float3 random = noiseTex.Sample(samplerState, vs.Tex * NoiseScale);
 
     float depth = depthTex.Sample(samplerState, vs.Tex);
-	
+
     float3 position = GetPositionVS(vs.Tex, depth);
-	
-    float3 normal = mul(UnpackNormal(normalTex.Sample(samplerState, vs.Tex).xyz), (float3x3)view);
-	
+
+    float3 normal = mul(UnpackNormal(normalTex.Sample(samplerState, vs.Tex).xyz), (float3x3) view);
+
     float3 tangent = normalize(random - normal * dot(random, normal));
     float3 bitangent = cross(normal, tangent);
     float3x3 TBN = float3x3(tangent, bitangent, normal);
 
-	float total = 0.0;
-	for (uint i = 0; i < NUM_TAPS; i++)
-	{
+    float total = 0.0;
+    for (uint i = 0; i < NUM_TAPS; i++)
+    {
         float3 sampleDir = mul(taps[i].xyz, TBN);
         float3 samplePos = position + sampleDir * TAP_SIZE;
-		
+
         float4 offset = float4(samplePos, 1.0);
         offset = mul(offset, proj);
-		
+
         offset.xy = ((offset.xy / offset.w) * float2(1.0f, -1.0f)) * 0.5f + 0.5f;
-		
+
         float sampleDepth = depthTex.Sample(samplerState, offset.xy);
-		
+
         sampleDepth = GetPositionVS(offset.xy, sampleDepth).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, TAP_SIZE / abs(position.z - sampleDepth));
-        total += (sampleDepth >= samplePos.z + BIAS ? 1.0 : 0.0) * rangeCheck;
+        total += (sampleDepth >= samplePos.z + BIAS ? 0.0 : 1.0) * rangeCheck;
     }
 
-	total /= NUM_TAPS;
-	
+    total /= NUM_TAPS;
+
     return float4(pow(total, POWER).xxx, 1.0);
 }

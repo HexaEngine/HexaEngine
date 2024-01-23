@@ -27,6 +27,7 @@
             postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, false);
             postProcessingManager.Add<VelocityBuffer>();
             postProcessingManager.Add<TemporalNoise>();
+            postProcessingManager.Add<SSAO>();
             postProcessingManager.Add<HBAO>();
             postProcessingManager.Add<VolumetricClouds>();
             postProcessingManager.Add<SSR>();

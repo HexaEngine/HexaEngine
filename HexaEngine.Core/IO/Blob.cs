@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Core.Graphics
+﻿namespace HexaEngine.Core.IO
 {
     using System.Runtime.InteropServices;
+    using HexaEngine.Core.Graphics;
 
     /// <summary>
     /// Represents a blob of data that can be manipulated using pointer operations.
@@ -12,7 +13,7 @@
         /// </summary>
         /// <param name="bufferPointer">A pointer to the data buffer.</param>
         /// <param name="pointerSize">The size of the data buffer.</param>
-        public Blob(IntPtr bufferPointer, PointerSize pointerSize)
+        public Blob(nint bufferPointer, PointerSize pointerSize)
         {
             BufferPointer = bufferPointer;
             PointerSize = pointerSize;
@@ -57,7 +58,7 @@
         /// <summary>
         /// Gets the pointer to the data buffer.
         /// </summary>
-        public IntPtr BufferPointer { get; }
+        public nint BufferPointer { get; }
 
         /// <summary>
         /// Gets the size of the data buffer.

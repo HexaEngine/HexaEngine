@@ -1,47 +1,35 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Mathematics;
-    using HexaEngine.PostFx;
     using System.Numerics;
 
-    public class GTAO : IAmbientOcclusion
+    public class GTAO
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<GTAOParams> paramsBuffer;
-        private Texture2D noiseTex;
-        private Texture2D intermediateBuffer;
-        private GaussianBlur blur;
-
-        private Viewport viewport;
-
         private ISamplerState samplerLinear;
 
         private bool disposedValue;
         private int enabled;
 
-        private int QualityLevel = 2;        // 0: low; 1: medium; 2: high; 3: ultra
-        private int DenoisePasses = 1;        // 0: disabled; 1: sharp; 2: medium; 3: soft
-        private float Radius = 0.5f;     // [0.0,  ~ ]   World (view) space size of the occlusion sphere.
+        public int QualityLevel = 2;        // 0: low; 1: medium; 2: high; 3: ultra
+        public int DenoisePasses = 1;        // 0: disabled; 1: sharp; 2: medium; 3: soft
+        public float Radius = 0.5f;     // [0.0,  ~ ]   World (view) space size of the occlusion sphere.
 
         // auto-tune-d settings
-        private float RadiusMultiplier = 1.457f;
+        public float RadiusMultiplier = 1.457f;
 
-        private float FalloffRange = 0.615f;
-        private float SampleDistributionPower = 2.0f;
-        private float ThinOccluderCompensation = 0.0f;
-        private float FinalValuePower = 2.2f;
-        private float DepthMIPSamplingOffset = 3.30f;
-
-        private const int NoiseSize = 4;
-        private const int NoiseStride = 4;
+        public float FalloffRange = 0.615f;
+        public float SampleDistributionPower = 2.0f;
+        public float ThinOccluderCompensation = 0.0f;
+        public float FinalValuePower = 2.2f;
+        public float DepthMIPSamplingOffset = 3.30f;
 
         public GTAO()
         {
@@ -89,55 +77,19 @@ namespace HexaEngine.PostFx.BuildIn
 
         #endregion Properties
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        public void Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/gato/vs.hlsl",
                 PixelShader = "effects/gato/ps.hlsl",
                 State = GraphicsPipelineState.DefaultFullscreen,
             });
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            intermediateBuffer = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R32Float, width, height);
-
-            unsafe
-            {
-                Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
-
-                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
-
-                SubresourceData initialData = default;
-                initialData.DataPointer = (nint)pixelData;
-                initialData.RowPitch = NoiseSize * NoiseStride;
-
-                int idx = 0;
-                for (int i = 0; i < NoiseSize * NoiseSize; i++)
-                {
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = 0.0f;
-                    pixelData[idx++] = 1.0f;
-                }
-
-                noiseTex = new(device, description, initialData);
-            }
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            viewport = new(width, height);
-        }
-
-        public void BeginResize()
-        {
-        }
-
-        public void Resize(int width, int height)
-        {
-            intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-
-            viewport = new(width, height);
         }
 
         public unsafe void Draw(IGraphicsContext context)
@@ -150,9 +102,6 @@ namespace HexaEngine.PostFx.BuildIn
             {
                 pipeline.Dispose();
                 paramsBuffer.Dispose();
-                noiseTex.Dispose();
-                intermediateBuffer.Dispose();
-                blur.Dispose();
                 samplerLinear.Dispose();
                 disposedValue = true;
             }

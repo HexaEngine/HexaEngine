@@ -42,11 +42,11 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .RunBefore("ColorGrading")
-                .RunBefore("Vignette")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("GodRays")
-                .RunAfter("Bloom");
+                .RunBefore<ColorGrading>()
+                .RunBefore<Vignette>()
+                .RunAfter<VolumetricClouds>()
+                .RunAfter<VolumetricScattering>()
+                .RunAfter<Bloom>();
         }
 
         public override unsafe void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)

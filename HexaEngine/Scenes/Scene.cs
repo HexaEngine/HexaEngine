@@ -33,6 +33,7 @@
         private readonly MaterialManager materialManager = new();
         private readonly WeatherManager weatherManager = new();
         private readonly ObjectPickerManager objectPickerManager = new();
+        private DrawLayerManager drawLayerManager = new();
         private QueryManager queryManager;
 
         private readonly SemaphoreSlim semaphore = new(1);
@@ -101,7 +102,9 @@
         [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
 
-        public SceneVariables Variables { get; } = new();
+        public DrawLayerManager DrawLayerManager { get => drawLayerManager; set => drawLayerManager = value; }
+
+        public SceneVariables Variables { get; } = [];
 
         public event Action<GameObject>? OnGameObjectAdded;
 

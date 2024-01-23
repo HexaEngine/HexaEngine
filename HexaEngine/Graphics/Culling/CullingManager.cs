@@ -135,8 +135,8 @@
             occlusionParamBuffer[0] = new()
             {
                 ActivateCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
-                NoofInstances = (uint)instanceCount,
-                NoofPropTypes = (uint)typeCount,
+                NumberOfInstances = (uint)instanceCount,
+                NumberOfPropTypes = (uint)typeCount,
                 MaxMipLevel = (uint)mipChain.MipLevels,
                 RTSize = new(mipChain.Width, mipChain.Height),
                 P00 = camera.Transform.Projection.M11,

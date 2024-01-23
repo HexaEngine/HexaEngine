@@ -40,6 +40,16 @@
         }
 
         /// <summary>
+        /// Sets the name without modifying the id.
+        /// </summary>
+        /// <param name="name"></param>
+        public void SetName(string name)
+        {
+            Name = name;
+            UniqueName = $"{Name}##{RawId}";
+        }
+
+        /// <summary>
         /// Implicitly converts an <see cref="ImGuiName"/> instance to a string.
         /// </summary>
         /// <param name="name">The <see cref="ImGuiName"/> instance to convert.</param>

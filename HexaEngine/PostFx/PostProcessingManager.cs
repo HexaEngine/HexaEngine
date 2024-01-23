@@ -15,8 +15,9 @@
 
         private ShaderMacro[] macros;
         private readonly PostProcessingContext postContext;
+        private readonly PostFxNameRegistry nameRegistry = new();
         private readonly List<IPostFx> effectsSorted = new();
-        private readonly List<IPostFx> effects = new();
+        private readonly List<IPostFx> effects = [];
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
@@ -151,7 +152,8 @@
         {
             lock (effects)
             {
-                graphBuilder.AddNode(new PostFxNode(effect));
+                nameRegistry.Add(effect);
+                graphBuilder.AddNode(new PostFxNode(effect, nameRegistry));
                 effects.Add(effect);
             }
 
@@ -170,7 +172,8 @@
         {
             lock (effects)
             {
-                graphBuilder.RemoveNode(new PostFxNode(effect));
+                nameRegistry.Remove(effect);
+                graphBuilder.RemoveNode(new PostFxNode(effect, nameRegistry));
                 effects.Remove(effect);
             }
 
@@ -525,6 +528,7 @@
                 }
                 effects.Clear();
                 effectsSorted.Clear();
+                nameRegistry.Clear();
 
                 for (int i = 0; i < groups.Count; i++)
                 {

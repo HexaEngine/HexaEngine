@@ -27,7 +27,7 @@
         public static readonly ShaderCompiler Compiler;
         private long graphicsMemoryUsage;
         public ComPtr<ID3D11Device5> Device;
-        public ComPtr<ID3D11DeviceContext3> DeviceContext;
+        public ComPtr<ID3D11DeviceContext4> DeviceContext;
 
         internal ComPtr<ID3D11Debug> Debug;
 
@@ -593,17 +593,6 @@
             return new D3D11Texture3D(texture, description);
         }
 
-        [Flags]
-        public enum RegisterComponentMaskFlags : byte
-        {
-            None = 0,
-            ComponentX = 1,
-            ComponentY = 2,
-            ComponentZ = 4,
-            ComponentW = 8,
-            All
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -662,6 +651,13 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IFence CreateFence(ulong initialValue, FenceFlags flags)
+        {
+            Device.CreateFence(initialValue, Helper.Convert(flags), out ComPtr<ID3D11Fence> fence);
+            return new D3D11Fence(fence);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IGraphicsContext CreateDeferredContext()
         {
             ComPtr<ID3D11DeviceContext3> context;
@@ -676,26 +672,6 @@
             var desc = Helper.Convert(description);
             Device.CreateUnorderedAccessView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle);
             return new D3D11UnorderedAccessView(view, description);
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IComputePipeline CreateComputePipelineFromBytecode(ComputePipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
         }
     }
 }

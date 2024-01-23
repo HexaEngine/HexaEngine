@@ -109,39 +109,42 @@
         public void Draw(IGraphicsContext context, SkyType type)
         {
             WeatherManager.Current.SkyModel = type;
-            switch (type)
+            var hasSun = WeatherManager.Current.WeatherBuffer.Data.LightDir != default;
+            if (hasSun)
             {
-                case SkyType.Skybox:
-                    if (!initialized)
-                        return;
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetShaderResource(0, environment.SRV);
-                    context.PSSetSampler(0, samplerState);
-                    cube.DrawAuto(context, skybox);
-                    break;
+                switch (type)
+                {
+                    case SkyType.Skybox:
+                        if (!initialized)
+                            return;
+                        context.VSSetConstantBuffer(0, worldBuffer);
+                        context.PSSetShaderResource(0, environment.SRV);
+                        context.PSSetSampler(0, samplerState);
+                        cube.DrawAuto(context, skybox);
+                        break;
 
-                case SkyType.UniformColor:
-                    context.VSSetConstantBuffer(0, worldBuffer);
+                    case SkyType.UniformColor:
+                        context.VSSetConstantBuffer(0, worldBuffer);
+                        context.PSSetSampler(0, samplerState);
+                        cube.DrawAuto(context, uniformColorSky);
+                        break;
 
-                    context.PSSetSampler(0, samplerState);
-                    cube.DrawAuto(context, uniformColorSky);
-                    break;
+                    case SkyType.HosekWilkie:
+                        context.VSSetConstantBuffer(0, worldBuffer);
 
-                case SkyType.HosekWilkie:
-                    context.VSSetConstantBuffer(0, worldBuffer);
+                        context.PSSetSampler(0, samplerState);
+                        cube.DrawAuto(context, hoseWilkieSky);
+                        break;
 
-                    context.PSSetSampler(0, samplerState);
-                    cube.DrawAuto(context, hoseWilkieSky);
-                    break;
-
-                case SkyType.Preetham:
-                    if (!initialized)
-                        return;
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetShaderResource(0, environment.SRV);
-                    context.PSSetSampler(0, samplerState);
-                    cube.DrawAuto(context, preethamSky);
-                    break;
+                    case SkyType.Preetham:
+                        if (!initialized)
+                            return;
+                        context.VSSetConstantBuffer(0, worldBuffer);
+                        context.PSSetShaderResource(0, environment.SRV);
+                        context.PSSetSampler(0, samplerState);
+                        cube.DrawAuto(context, preethamSky);
+                        break;
+                }
             }
         }
 

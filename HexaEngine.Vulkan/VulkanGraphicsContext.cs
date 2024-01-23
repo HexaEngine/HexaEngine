@@ -521,5 +521,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public void Signal(IFence fence, ulong value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Wait(IFence fence, ulong value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

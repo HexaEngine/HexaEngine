@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
@@ -13,29 +11,27 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.PostFx;
     using System.Numerics;
 
-    public class SSAO
+    public class SSAO : PostFxBase
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<SSAOParams> paramsBuffer;
         private Texture2D noiseTex;
-        private Texture2D intermediateBuffer;
+        private Texture2D intermediateTex;
         private GaussianBlur blur;
-
-        private Viewport viewport;
 
         private ISamplerState samplerLinear;
 
         private ResourceRef<Texture2D> ao;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<GBuffer> gbuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
-        private bool disposedValue;
-        private bool enabled;
-        private float tapSize;
-        private uint numTaps;
-        private float power;
+        private Viewport viewport;
+
+        private float tapSize = 0.0002f;
+        private uint numTaps = 16;
+        private float power = 1.0f;
 
         private const int NoiseSize = 4;
         private const int NoiseStride = 4;
@@ -63,13 +59,9 @@ namespace HexaEngine.PostFx.BuildIn
 
         #region Properties
 
-        public string Name => "SSAO";
+        public override string Name => "SSAO";
 
-        public bool Enabled
-        {
-            get => enabled;
-            set => enabled = value;
-        }
+        public override PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput;
 
         public float TapSize
         {
@@ -91,7 +83,11 @@ namespace HexaEngine.PostFx.BuildIn
 
         #endregion Properties
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height)
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
+        {
+        }
+
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.device = device;
 
@@ -100,14 +96,14 @@ namespace HexaEngine.PostFx.BuildIn
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             gbuffer = creator.GetGBuffer("GBuffer");
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssao/ps.hlsl",
                 State = GraphicsPipelineState.DefaultFullscreen,
             });
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            intermediateBuffer = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(device, Format.R32Float, width, height);
 
             unsafe
@@ -136,88 +132,58 @@ namespace HexaEngine.PostFx.BuildIn
             viewport = new(width, height);
         }
 
-        public void BeginResize()
+        public override void Resize(int width, int height)
         {
-        }
-
-        public void Resize(int width, int height)
-        {
-            intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-
+            intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             viewport = new(width, height);
         }
 
-        public unsafe void Draw(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            if (ao is null)
+            if (dirty)
             {
-                return;
+                SSAOParams ssaoParams = default;
+                ssaoParams.TapSize = tapSize;
+                ssaoParams.NumTaps = numTaps;
+                ssaoParams.Power = power;
+                ssaoParams.NoiseScale = viewport.Size / NoiseSize;
+                paramsBuffer.Update(context, ssaoParams);
+                dirty = false;
             }
+        }
 
-            if (!enabled)
-            {
-                context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
-                return;
-            }
-
-            SSAOParams ssaoParams = default;
-            ssaoParams.TapSize = tapSize;
-            ssaoParams.NumTaps = numTaps;
-            ssaoParams.Power = power;
-            ssaoParams.NoiseScale = viewport.Size / NoiseSize;
-            paramsBuffer.Update(context, ssaoParams);
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        {
+            context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
             nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
             nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
-            context.SetRenderTarget(intermediateBuffer.RTV, null);
+            context.SetRenderTarget(intermediateTex.RTV, null);
             context.SetViewport(viewport);
-
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.PSSetConstantBuffers(0, 2, (void**)cbs);
             context.PSSetSampler(0, samplerLinear);
-
             context.SetGraphicsPipeline(pipeline);
-
             context.DrawInstanced(4, 1, 0, 0);
-
             context.SetGraphicsPipeline(null);
-
             ZeroMemory(srvs, sizeof(nint) * 3);
             ZeroMemory(cbs, sizeof(nint) * 2);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffers(0, 2, (void**)cbs);
             context.PSSetShaderResources(0, 3, (void**)srvs);
-
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, intermediateBuffer.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
+            blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
         }
 
-        protected virtual unsafe void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                pipeline.Dispose();
-                paramsBuffer.Dispose();
-                noiseTex.Dispose();
-                intermediateBuffer.Dispose();
-                blur.Dispose();
-                samplerLinear.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~SSAO()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            pipeline.Dispose();
+            paramsBuffer.Dispose();
+            noiseTex.Dispose();
+            intermediateTex.Dispose();
+            blur.Dispose();
+            samplerLinear.Dispose();
         }
     }
 }

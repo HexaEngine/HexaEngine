@@ -39,10 +39,10 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                 .RunBefore("ColorGrading")
-                 .RunBefore("Vignette")
-                 .RunAfter("SSR")
-                 .RunBefore("TAA");
+                 .RunBefore<ColorGrading>()
+                 .RunBefore<Vignette>()
+                 .RunAfter<SSR>()
+                 .RunBefore<TAA>();
         }
 
         public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)

@@ -8,12 +8,12 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// Constant buffer.
         /// </summary>
-        SitCbuffer = 0,
+        SitCBuffer = 0,
 
         /// <summary>
         /// Typed buffer.
         /// </summary>
-        SitTbuffer = 1,
+        SitTBuffer = 1,
 
         /// <summary>
         /// Texture.
@@ -28,7 +28,7 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// UAV with raw typed access.
         /// </summary>
-        SitUavRwtyped = 4,
+        SitUavRwTyped = 4,
 
         /// <summary>
         /// Structured buffer.
@@ -38,17 +38,17 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// UAV with raw structured access.
         /// </summary>
-        SitUavRwstructured = 6,
+        SitUavRwStructured = 6,
 
         /// <summary>
         /// Byte address buffer.
         /// </summary>
-        SitByteaddress = 7,
+        SitByteAddress = 7,
 
         /// <summary>
         /// UAV with raw byte address access.
         /// </summary>
-        SitUavRwbyteaddress = 8,
+        SitUavRwByteAddress = 8,
 
         /// <summary>
         /// UAV with append structured access.
@@ -63,16 +63,16 @@ namespace HexaEngine.Core.Graphics.Reflection
         /// <summary>
         /// UAV with raw structured access and counter.
         /// </summary>
-        SitUavRwstructuredWithCounter = 11,
+        SitUavRwStructuredWithCounter = 11,
 
         /// <summary>
         /// Ray tracing acceleration structure.
         /// </summary>
-        SitRtaccelerationstructure = 12,
+        SitRtAccelerationStructure = 12,
 
         /// <summary>
         /// UAV with feedback texture access.
         /// </summary>
-        SitUavFeedbacktexture = 13,
+        SitUavFeedbackTexture = 13,
     }
 }

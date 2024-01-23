@@ -356,5 +356,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public IFence CreateFence(ulong initialValue, FenceFlags flags)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

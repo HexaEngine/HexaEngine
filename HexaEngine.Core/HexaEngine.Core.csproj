@@ -59,4 +59,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Legacy\" />
+	</ItemGroup>
 </Project>

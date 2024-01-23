@@ -13,22 +13,12 @@
         /// <summary>
         /// A pointer to the creator of the shader.
         /// </summary>
-        public unsafe byte* Creator;
+        public string Creator;
 
         /// <summary>
         /// Flags indicating properties of the shader.
         /// </summary>
         public uint Flags;
-
-        /// <summary>
-        /// The number of constant buffers used by the shader.
-        /// </summary>
-        public uint ConstantBuffers;
-
-        /// <summary>
-        /// The number of bound resources.
-        /// </summary>
-        public uint BoundResources;
 
         /// <summary>
         /// The number of input parameters.
@@ -39,8 +29,6 @@
         /// The number of output parameters.
         /// </summary>
         public uint OutputParameters;
-
-        // ... (continue with comments for other fields)
 
         /// <summary>
         /// The topology of the output from the geometry shader.
@@ -101,5 +89,15 @@
         /// The number of texture store instructions.
         /// </summary>
         public uint CTextureStoreInstructions;
+
+        /// <summary>
+        /// Array of <see cref="ShaderBufferDesc"/> representing constant buffers in the shader.
+        /// </summary>
+        public ShaderBufferDesc[] ConstantBuffers;
+
+        /// <summary>
+        /// Array of <see cref="ShaderInputBindDescription"/> representing bound resources in the shader.
+        /// </summary>
+        public ShaderInputBindDescription[] BoundResources;
     }
 }

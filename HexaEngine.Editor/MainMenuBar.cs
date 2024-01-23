@@ -29,6 +29,7 @@
         private static float progress = -1;
         private static string? progressOverlay;
         private static long progressOverlayTime;
+        private static bool showImGuiDemo;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -198,10 +199,41 @@
                         Frameviewer.DrawGrid = drawGrid;
                     }
 
-                    var drawLights = Frameviewer.DrawLights;
-                    if (ImGui.Checkbox("Draw Lights", ref drawLights))
+                    if (ImGui.BeginPopupContextItem())
                     {
-                        Frameviewer.DrawLights = drawLights;
+                        int gridSize = Frameviewer.GridSize;
+                        if (ImGui.SliderInt("Grid Size", ref gridSize, 1, 500))
+                        {
+                            Frameviewer.GridSize = gridSize;
+                        }
+
+                        ImGui.EndPopup();
+                    }
+
+                    var drawLights = (int)Frameviewer.DrawLights;
+                    if (ImGui.CheckboxFlags("Draw Lights", ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
+                    {
+                        Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                    }
+
+                    if (ImGui.BeginPopupContextItem())
+                    {
+                        if (ImGui.CheckboxFlags("No Directional Lights", ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
+                        {
+                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                        }
+
+                        if (ImGui.CheckboxFlags("No Point Lights", ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
+                        {
+                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                        }
+
+                        if (ImGui.CheckboxFlags("No Spot Lights", ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
+                        {
+                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                        }
+
+                        ImGui.EndPopup();
                     }
 
                     var drawCameras = Frameviewer.DrawCameras;
@@ -281,6 +313,14 @@
                     {
                         ImGuiConsole.IsDisplayed = !ImGuiConsole.IsDisplayed;
                     }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("ImGui Demo"))
+                    {
+                        showImGuiDemo = !showImGuiDemo;
+                    }
+
                     ImGui.EndMenu();
                 }
 
@@ -302,6 +342,11 @@
                 }
 
                 ImGui.EndMainMenuBar();
+
+                if (showImGuiDemo)
+                {
+                    ImGui.ShowDemoWindow();
+                }
             }
         }
     }

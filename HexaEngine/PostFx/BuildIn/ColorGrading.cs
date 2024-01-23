@@ -196,9 +196,9 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                 .RunAfter("Vignette")
-                 .RunAfter("!AllNotReferenced")
-                 .RunBefore("UserLUT");
+                 .RunAfter<Vignette>()
+                 .RunAfterAllNotReferenced()
+                 .RunBefore<UserLUT>();
         }
 
         /// <inheritdoc/>

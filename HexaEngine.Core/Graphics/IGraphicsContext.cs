@@ -712,5 +712,21 @@
         /// Marks the end of a section of event code.
         /// </summary>
         void EndEvent();
+
+        /// <summary>
+        /// Updates a fence to a specified value after all previous work has completed.
+        /// </summary>
+        /// <remarks>Note: This method only applies to immediate-mode contexts.</remarks>
+        /// <param name="fence">A Fence object.</param>
+        /// <param name="value">The value to set the fence to.</param>
+        void Signal(IFence fence, ulong value);
+
+        /// <summary>
+        /// Waits until the specified fence reaches or exceeds the specified value before future work can begin.
+        /// </summary>
+        /// <remarks>Note: This method only applies to immediate-mode contexts.</remarks>
+        /// <param name="fence">A Fence object.</param>
+        /// <param name="value">The value that the device context is waiting for the fence to reach or exceed. So when <seealso cref="IFence.GetCompletedValue"/> is greater than or equal to Value, the wait is terminated.</param>
+        void Wait(IFence fence, ulong value);
     }
 }

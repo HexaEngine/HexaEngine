@@ -127,15 +127,15 @@ namespace HexaEngine.PostFx.BuildIn
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-             .RunBefore("ColorGrading")
-             .RunAfter("HBAO")
-             .RunAfter("SSGI")
-             .RunAfter("SSR")
-             .RunAfter("MotionBlur")
-             .RunBefore("TAA")
-             .RunBefore("DepthOfField")
-             .RunBefore("ChromaticAberration")
-             .RunBefore("Bloom");
+             .RunBefore<ColorGrading>()
+             .RunAfter<HBAO>()
+             .RunAfter<SSGI>()
+             .RunAfter<SSR>()
+             .RunAfter<MotionBlur>()
+             .RunBefore<TAA>()
+             .RunBefore<DepthOfField>()
+             .RunBefore<ChromaticAberration>()
+             .RunBefore<Bloom>();
         }
 
         /// <inheritdoc/>

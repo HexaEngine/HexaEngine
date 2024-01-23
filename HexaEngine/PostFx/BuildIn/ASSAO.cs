@@ -1,26 +1,18 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Mathematics;
-    using HexaEngine.PostFx;
     using System.Numerics;
 
-    public class ASSAO : IAmbientOcclusion
+    public class ASSAO
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<ASSAOParams> paramsBuffer;
-        private Texture2D noiseTex;
-        private Texture2D intermediateBuffer;
-        private GaussianBlur blur;
-
-        private Viewport viewport;
 
         private ISamplerState samplerLinear;
 
@@ -41,9 +33,6 @@ namespace HexaEngine.PostFx.BuildIn
         public float TemporalSupersamplingAngleOffset;   // [0.0,  PI] Used to rotate sampling kernel; If using temporal AA / supersampling, suggested to rotate by ( (frame%3)/3.0*PI ) or similar. Kernel is already symmetrical, which is why we use PI and not 2*PI.
         public float TemporalSupersamplingRadiusOffset;  // [0.0, 2.0] Used to scale sampling kernel; If using temporal AA / supersampling, suggested to scale by ( 1.0f + (((frame%3)-1.0)/3.0)*0.1 ) or similar.
         public float DetailShadowStrength;               // [0.0, 5.0] Used for high-res detail AO using neighboring depth pixels: adds a lot of detail but also reduces temporal stability (adds aliasing).
-
-        private const int NoiseSize = 4;
-        private const int NoiseStride = 4;
 
         public ASSAO()
         {
@@ -129,55 +118,19 @@ namespace HexaEngine.PostFx.BuildIn
 
         #endregion Properties
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        public void Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/assao/ps.hlsl",
                 State = GraphicsPipelineState.DefaultFullscreen,
             });
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            intermediateBuffer = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R32Float, width, height);
-
-            unsafe
-            {
-                Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
-
-                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
-
-                SubresourceData initialData = default;
-                initialData.DataPointer = (nint)pixelData;
-                initialData.RowPitch = NoiseSize * NoiseStride;
-
-                int idx = 0;
-                for (int i = 0; i < NoiseSize * NoiseSize; i++)
-                {
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = 0.0f;
-                    pixelData[idx++] = 1.0f;
-                }
-
-                noiseTex = new(device, description, initialData);
-            }
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            viewport = new(width, height);
-        }
-
-        public void BeginResize()
-        {
-        }
-
-        public void Resize(int width, int height)
-        {
-            intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-
-            viewport = new(width, height);
         }
 
         public unsafe void Draw(IGraphicsContext context)
@@ -190,9 +143,6 @@ namespace HexaEngine.PostFx.BuildIn
             {
                 pipeline.Dispose();
                 paramsBuffer.Dispose();
-                noiseTex.Dispose();
-                intermediateBuffer.Dispose();
-                blur.Dispose();
                 samplerLinear.Dispose();
                 disposedValue = true;
             }
