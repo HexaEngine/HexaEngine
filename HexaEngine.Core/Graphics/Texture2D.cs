@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -114,6 +113,7 @@
         }
 
 #nullable disable
+
         /// <summary>
         /// Asynchronously loads a <see cref="Texture2D"/> from assets and returns it.
         /// </summary>
@@ -129,6 +129,7 @@
                 return new Texture2D(data.device, FileSystem.GetAsset(Paths.CurrentTexturePath + data.path), data.generateMips);
             }, (device, path, generateMips));
         }
+
 #nullable restore
 
         private void OnContentChanged(Asset asset)
@@ -447,7 +448,6 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
-
         }
 
 #nullable restore

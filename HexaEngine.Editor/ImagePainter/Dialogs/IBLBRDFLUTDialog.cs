@@ -68,7 +68,7 @@
 
                     brdfLut = new(device, multiscatter, cloth);
 
-                    Texture2DDescription desc = new(Format.R32G32B32A32Float, (int)size, (int)size, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget);
+                    Texture2DDescription desc = new(Format.R32G32B32A32Float, (int)size, (int)size, 1, 1, GpuAccessFlags.RW);
 
                     dstTex = device.CreateTexture2D(desc);
                     dstSrv = device.CreateShaderResourceView(dstTex);

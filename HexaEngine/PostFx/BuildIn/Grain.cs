@@ -105,7 +105,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);

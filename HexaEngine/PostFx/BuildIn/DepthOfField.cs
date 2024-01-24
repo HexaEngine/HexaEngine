@@ -304,7 +304,7 @@ namespace HexaEngine.PostFx.BuildIn
         }
 
         /// <inheritdoc/>
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null)
             {

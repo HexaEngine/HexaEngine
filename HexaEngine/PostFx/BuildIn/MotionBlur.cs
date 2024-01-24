@@ -120,7 +120,7 @@
             }
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             nint* srvs = stackalloc nint[2];
             srvs[0] = Input.NativePointer;

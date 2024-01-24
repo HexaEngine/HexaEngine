@@ -2,15 +2,13 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Graphics.Graph;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
-    public class PostFxGraphBuilder
+    public class PostFxGraph
     {
         private readonly List<PostFxNode> nodes = new();
+        private readonly List<PostFxNode> composeNodes = new();
+        private readonly PostFxNameRegistry nameRegistry = new();
         private readonly TopologicalSorter<PostFxNode> topologicalSorter = new();
 
         public PostFxNode this[int index]
@@ -19,29 +17,61 @@
             set => nodes[index] = value;
         }
 
-        public void AddNode(PostFxNode node)
+        public PostFxNode Add(IPostFx fx)
         {
+            nameRegistry.Add(fx);
+            var node = new PostFxNode(this, fx, nameRegistry);
             nodes.Add(node);
+            return node;
         }
 
-        public bool RemoveNode(PostFxNode node)
+        public void AddComposeNode(PostFxNode node)
         {
-            return nodes.Remove(node);
+            composeNodes.Add(node);
         }
 
-        public void RemoveNodeAt(int index)
+        public void RemoveComposeNode(PostFxNode node)
         {
-            nodes.RemoveAt(index);
+            composeNodes.Remove(node);
+        }
+
+        public void Remove(IPostFx fx)
+        {
+            nameRegistry.Remove(fx);
+            for (var i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                if (node.PostFx == fx)
+                {
+                    nodes.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         public void Clear()
         {
             nodes.Clear();
+            nameRegistry.Clear();
         }
 
         public bool Contains(PostFxNode node)
         {
             return nodes.Contains(node);
+        }
+
+        private void RemoveComposeNodes()
+        {
+            composeNodes.Clear();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                if (node.IsComposeTarget)
+                {
+                    nodes.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         private void CheckOptional()
@@ -58,6 +88,8 @@
 
         public void Build(IList<IPostFx> effectsSorted)
         {
+            RemoveComposeNodes();
+
             for (int i = 0; i < nodes.Count; i++)
             {
                 nodes[i].Clear();
@@ -85,6 +117,8 @@
                     }
                 }
             }
+
+            nodes.AddRange(composeNodes);
 
             for (int i = 0; i < nodes.Count; i++)
             {

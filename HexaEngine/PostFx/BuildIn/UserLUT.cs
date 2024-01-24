@@ -73,7 +73,7 @@
             LUT = Texture2D.LoadFromAssets(device, lutTexPath, false);
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             nint* passSRVs = stackalloc nint[] { Input.NativePointer, LUT?.SRV?.NativePointer ?? 0 };
             nint* passSMPs = stackalloc nint[] { samplerState.NativePointer, lutSamplerState.NativePointer };

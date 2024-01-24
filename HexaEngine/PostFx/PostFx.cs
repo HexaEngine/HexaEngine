@@ -68,7 +68,7 @@
             throw new NotImplementedException();
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public void Draw(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }
@@ -104,6 +104,11 @@
         }
 
         public void SetupDependencies(PostFxDependencyBuilder builder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Compose(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }

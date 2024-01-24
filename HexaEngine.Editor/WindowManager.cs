@@ -10,7 +10,6 @@
     using HexaEngine.Editor.Widgets;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using HexaEngine.Editor.LensEditor;
 
     public static class WindowManager
     {
@@ -38,7 +37,6 @@
             Register<ProfilerWindow>();
             Register<MeshEditorWindow>();
             Register<PoseEditorWindow>();
-            Register<LensEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();

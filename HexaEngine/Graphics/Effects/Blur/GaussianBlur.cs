@@ -82,7 +82,7 @@
             context.SetRenderTarget(null, null);
         }
 
-        public unsafe void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, int srcWidth, int srcHeight, int dstWidth, int dstHeight)
+        public unsafe void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, float srcWidth, float srcHeight, float dstWidth, float dstHeight)
         {
             GaussianBlurParams gaussianBlurParams = default;
             gaussianBlurParams.TextureDimentions = new(srcWidth, srcHeight);

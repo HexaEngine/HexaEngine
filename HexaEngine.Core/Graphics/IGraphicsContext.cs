@@ -1,8 +1,74 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
-    using System.Diagnostics;
     using System.Numerics;
+
+    public interface IGraphicsContext1 : IGraphicsContext
+    {
+        public void VSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void VSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void VSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void HSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void HSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void HSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void DSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void DSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void DSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void GSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void GSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void GSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void PSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void PSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void PSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void CSSetShaderResource(uint slot, ICombinedTex2D? tex);
+
+        public void CSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
+
+        public void CSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
+
+        public void SetRenderTarget(ICombinedTex2D? target, ICombinedTex2D? depthStencil);
+
+        public void SetRenderTargets(IList<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
+
+        public void SetRenderTargets(Span<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
+
+        public void SetRenderTargetsAndUnorderedAccessViews(ICombinedTex2D? renderTargetView, ICombinedTex2D? depthStencilView, uint uavSlot, ICombinedTex2D? unorderedAccessView, uint uavInitialCount = unchecked((uint)-1));
+
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(IList<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, IList<ICombinedTex2D?> unorderedAccessViews, IList<uint> uavInitialCounts);
+
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(Span<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, Span<ICombinedTex2D?> unorderedAccessViews, Span<uint> uavInitialCounts);
+
+        public void CSSetUnorderedAccessView(uint slot, ICombinedTex2D? tex, uint uavInitialCount = unchecked((uint)-1));
+
+        public void CSSetUnorderedAccessViews(uint slot, IList<ICombinedTex2D?> tex, IList<uint> uavInitialCounts);
+
+        public void CSSetUnorderedAccessViews(uint slot, Span<ICombinedTex2D?> tex, Span<uint> uavInitialCounts);
+
+        public void ClearDepthStencilView(ICombinedTex2D depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
+
+        public void ClearRenderTargetView(ICombinedTex2D renderTargetView, Vector4 value);
+
+        public void ClearUnorderedAccessViewFloat(ICombinedTex2D uav, float r, float g, float b, float a);
+
+        public void ClearUnorderedAccessViewUint(ICombinedTex2D uav, uint r, uint g, uint b, uint a);
+
+        public void ClearView(ICombinedTex2D tex, Vector4 color, Rect rect);
+    }
 
     /// <summary>
     /// Provides an interface for graphics context management and operations on a graphics device.

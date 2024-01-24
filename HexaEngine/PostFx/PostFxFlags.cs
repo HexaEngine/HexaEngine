@@ -39,5 +39,15 @@
         /// Will be rendered in immediate mode.
         /// </summary>
         Dynamic = 32,
+
+        /// <summary>
+        /// This Effect will be composed later.
+        /// </summary>
+        Compose = 64,
+
+        /// <summary>
+        /// Do not use or else the effect will be treated as composition target.
+        /// </summary>
+        ComposeTarget = 128,
     }
 }

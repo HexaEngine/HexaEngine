@@ -67,8 +67,14 @@
         /// Draws the post-processing effect.
         /// </summary>
         /// <param name="context">The graphics context.</param>
-        /// <param name="creator">The resource builder for creating resources.</param>
-        void Draw(IGraphicsContext context, GraphResourceBuilder creator);
+        ///
+        void Draw(IGraphicsContext context);
+
+        /// <summary>
+        /// Composes the post-processing effect in a later stage if configured.
+        /// </summary>
+        /// <param name="context"></param>
+        void Compose(IGraphicsContext context);
 
         /// <summary>
         /// Draws the post-processing effect during the pre-pass stage.

@@ -2837,5 +2837,84 @@
                 _ => throw new NotSupportedException(),
             };
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Silk.NET.Direct3D11.Texture2DDesc Convert(CombinedTex2DDesc description)
+        {
+            Silk.NET.Direct3D11.Texture2DDesc desc;
+            desc.Format = Convert(description.Format);
+            desc.Width = (uint)description.Width;
+            desc.Height = (uint)description.Height;
+            desc.ArraySize = (uint)description.ArraySize;
+            desc.MipLevels = (uint)description.MipLevels;
+
+            Convert(description.CpuAccessFlags, description.GpuAccessFlags, out var usage, out var bindFlags);
+
+            desc.Usage = Convert(usage);
+            desc.BindFlags = (uint)Convert(bindFlags);
+
+            desc.CPUAccessFlags = (uint)Convert(description.CpuAccessFlags);
+            desc.MiscFlags = (uint)Convert(description.MiscFlag);
+            desc.SampleDesc = Convert(description.SampleDescription);
+
+            return desc;
+        }
+
+        internal static void Convert(CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, out Usage usage, out BindFlags bindFlags)
+        {
+            usage = 0;
+            bindFlags = 0;
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot read at the same time");
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.ShaderResource;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.RenderTarget;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.UnorderedAccess;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.DepthStencil) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.DepthStencil;
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0)
+            {
+                usage = Usage.Dynamic;
+                bindFlags = BindFlags.ShaderResource;
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0)
+            {
+                usage = Usage.Staging;
+                bindFlags = BindFlags.None;
+            }
+        }
     }
 }

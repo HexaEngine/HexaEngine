@@ -149,5 +149,75 @@
                 return index;
             }
         }
+
+        /// <summary>
+        /// Converts CpuAccessFlags and GpuAccessFlags to Usage and BindFlags
+        /// </summary>
+        /// <param name="cpuAccessFlags">The CpuAccessFlags for cpu access.</param>
+        /// <param name="gpuAccessFlags">The GpuAccessFlags for gpu access.</param>
+        /// <param name="usage">The converted Usage.</param>
+        /// <param name="bindFlags">The converted BindFlags.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public static void Convert(CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, out Usage usage, out BindFlags bindFlags)
+        {
+            usage = 0;
+            bindFlags = 0;
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot read at the same time");
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
+
+            if (gpuAccessFlags.HasFlag(GpuAccessFlags.DepthStencil) && gpuAccessFlags.HasFlag(GpuAccessFlags.Write))
+            {
+                throw new ArgumentException("Cannot bind depth stencil as render target at the same time.");
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.ShaderResource;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.RenderTarget;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.UnorderedAccess;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.DepthStencil) != 0)
+            {
+                usage = Usage.Default;
+                bindFlags |= BindFlags.DepthStencil;
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0)
+            {
+                usage = Usage.Dynamic;
+                bindFlags = BindFlags.ShaderResource;
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0)
+            {
+                usage = Usage.Staging;
+                bindFlags = BindFlags.None;
+            }
+        }
     }
 }

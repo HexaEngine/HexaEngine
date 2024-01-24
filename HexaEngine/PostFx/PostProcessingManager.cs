@@ -15,14 +15,13 @@
 
         private ShaderMacro[] macros;
         private readonly PostProcessingContext postContext;
-        private readonly PostFxNameRegistry nameRegistry = new();
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = [];
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private readonly GraphResourceBuilder creator;
-        private readonly PostFxGraphBuilder graphBuilder = new();
+        private readonly PostFxGraph graph = new();
         private readonly bool debug;
         private readonly bool forceDynamic;
         private int width;
@@ -129,7 +128,6 @@
         private void OnReload(IPostFx postFx)
         {
             semaphore.Wait();
-            int index = effects.IndexOf(postFx);
             postFx.Dispose();
             postFx.Initialize(device, creator, width, height, macros);
             Invalidate();
@@ -152,8 +150,7 @@
         {
             lock (effects)
             {
-                nameRegistry.Add(effect);
-                graphBuilder.AddNode(new PostFxNode(effect, nameRegistry));
+                graph.Add(effect);
                 effects.Add(effect);
             }
 
@@ -172,8 +169,7 @@
         {
             lock (effects)
             {
-                nameRegistry.Remove(effect);
-                graphBuilder.RemoveNode(new PostFxNode(effect, nameRegistry));
+                graph.Remove(effect);
                 effects.Remove(effect);
             }
 
@@ -389,7 +385,7 @@
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
-                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0)
+                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
                     {
                         continue;
                     }
@@ -440,7 +436,7 @@
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
-                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0)
+                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
                     {
                         continue;
                     }
@@ -460,7 +456,7 @@
         {
             lock (_lock)
             {
-                graphBuilder.Build(effectsSorted);
+                graph.Build(effectsSorted);
             }
         }
 
@@ -528,7 +524,7 @@
                 }
                 effects.Clear();
                 effectsSorted.Clear();
-                nameRegistry.Clear();
+                graph.Clear();
 
                 for (int i = 0; i < groups.Count; i++)
                 {

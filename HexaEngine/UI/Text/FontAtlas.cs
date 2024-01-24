@@ -52,7 +52,7 @@
             var pixels = font.PixelData;
             fixed (Vector4* pPixels = pixels)
             {
-                Texture2DDescription description = new(Format.R32G32B32A32Float, width, height, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
+                Texture2DDescription description = new(Format.R32G32B32A32Float, width, height, 1, 1, GpuAccessFlags.Read);
                 SubresourceData subresourceData = new(pPixels, sizeof(Vector4) * width);
                 texture = new(device, description, subresourceData);
             }

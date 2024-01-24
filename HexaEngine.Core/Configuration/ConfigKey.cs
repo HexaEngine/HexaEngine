@@ -812,7 +812,7 @@
 #pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
             if (e != null)
             {
-                property.SetValue(t, float.Parse(e));
+                property.SetValue(t, configValue.GetFloat());
             }
             else
             {
@@ -834,7 +834,7 @@
 #pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
             if (e != null)
             {
-                property.SetValue(t, double.Parse(e));
+                property.SetValue(t, configValue.GetDouble());
             }
             else
             {

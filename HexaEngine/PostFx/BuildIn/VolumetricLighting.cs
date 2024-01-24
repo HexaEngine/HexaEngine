@@ -23,7 +23,7 @@
         private ISamplerState linearClampSampler;
         private ISamplerState shadowSampler;
 
-        private Texture2D buffer;
+        private ResourceRef<Texture2D> buffer;
 
         private ResourceRef<ShadowAtlas> shadowAtlas;
         private ResourceRef<DepthStencil> depth;
@@ -203,7 +203,7 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 
-            buffer = new(device, Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            buffer = creator.CreateTexture2D("Volumetric Lighting Buffer", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
         }
 
         /// <inheritdoc/>
@@ -212,7 +212,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
             var lights = LightManager.Current;
 
@@ -250,8 +250,8 @@
 
             // Volumetric pass
 
-            context.SetRenderTarget(buffer, null);
-            context.SetViewport(buffer.Viewport);
+            (context).SetRenderTarget(buffer.Value, null);
+            context.SetViewport(buffer.Value.Viewport);
 
             context.PSSetConstantBuffer(0, constantBuffer);
             context.PSSetConstantBuffer(1, camera.Value);
@@ -282,7 +282,7 @@
 
             // Blur Pass
 
-            blurParams.Update(context, new(Viewport.Size, buffer.Viewport.Size));
+            blurParams.Update(context, new(Viewport.Size, buffer.Value.Viewport.Size));
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
@@ -290,7 +290,7 @@
             context.PSSetConstantBuffer(0, blurParams);
 
             context.PSSetShaderResource(0, depthChain.Value.SRV);
-            context.PSSetShaderResource(1, buffer);
+            (context).PSSetShaderResource(1, buffer.Value);
 
             context.SetGraphicsPipeline(blurPipeline);
 
@@ -317,7 +317,6 @@
             volumetricLightBuffer.Dispose();
             linearClampSampler.Dispose();
             shadowSampler.Dispose();
-            buffer.Dispose();
         }
     }
 }

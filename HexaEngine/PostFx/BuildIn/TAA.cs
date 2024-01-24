@@ -90,7 +90,7 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.GetTexture2D("VelocityBuffer");
-            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1), false);
+            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, GpuAccessFlags.RW), false);
 
             Viewport = new(width, height);
         }
@@ -109,7 +109,7 @@
             }
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null)
             {
@@ -147,11 +147,6 @@
             sampler.Dispose();
             paramsBuffer.Dispose();
             creator.DisposeResource("Previous");
-        }
-
-        public void Draw(IGraphicsContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -26,7 +26,7 @@
             *pData = Vector4.One;
             SubresourceData data = new(pData, width * sizeof(Vector4));
 
-            _resource = new(device, new Texture2DDescription(Format.R8G8B8A8UNorm, width, height, 1, 1, BindFlags.ShaderResource, Usage.Immutable), new SubresourceData[] { data });
+            _resource = new(device, new Texture2DDescription(Format.R8G8B8A8UNorm, width, height, 1, 1, GpuAccessFlags.Read), new SubresourceData[] { data });
             _shaderResourceView = device.CreateShaderResourceView(_resource);
             _samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 

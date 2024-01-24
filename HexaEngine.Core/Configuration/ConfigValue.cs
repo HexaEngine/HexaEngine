@@ -249,7 +249,7 @@
                 return default;
             }
 
-            return float.Parse(Value);
+            return float.Parse(Value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@
                 return default;
             }
 
-            return double.Parse(Value);
+            return double.Parse(Value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -288,13 +288,8 @@
                 return default;
             }
 
-            string trimed = Value.Trim('<', '>');
+            string trimed = Value.Replace(",", string.Empty).Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < components.Length; i++)
-            {
-                components[i] = components[i].Trim(',', '.');
-            }
-
             return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 
@@ -308,7 +303,7 @@
                 return default;
             }
 
-            string trimed = Value.Trim('<', '>');
+            string trimed = Value.Replace(",", string.Empty).Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[2], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
@@ -323,9 +318,9 @@
                 return default;
             }
 
-            string trimed = Value.Trim('<', '>');
+            string trimed = Value.Replace(",", string.Empty).Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]), float.Parse(components[3]));
+            return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[2], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[3], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 
         /// <summary>

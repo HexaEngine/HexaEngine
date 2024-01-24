@@ -91,7 +91,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Noise.Value?.RTV, null);
             context.SetViewport(Viewport);

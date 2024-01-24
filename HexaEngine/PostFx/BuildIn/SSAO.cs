@@ -152,7 +152,7 @@ namespace HexaEngine.PostFx.BuildIn
             }
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 

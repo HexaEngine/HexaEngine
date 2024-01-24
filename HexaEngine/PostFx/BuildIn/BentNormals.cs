@@ -20,7 +20,7 @@
             throw new NotImplementedException();
         }
 
-        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }

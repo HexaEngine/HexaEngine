@@ -132,7 +132,7 @@
             }
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);

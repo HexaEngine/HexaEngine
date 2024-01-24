@@ -74,7 +74,7 @@
 
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
+            Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW), false);
         }
 
         public override void Update(IGraphicsContext context)
@@ -86,7 +86,7 @@
             }
         }
 
-        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Velocity.Value?.RTV, null);
             context.SetViewport(Viewport);
@@ -101,7 +101,7 @@
 
         public override void Resize(int width, int height)
         {
-            creator.UpdateTexture2D("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            creator.UpdateTexture2D("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW));
             Viewport = new(width, height);
         }
 

@@ -10,6 +10,7 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using static System.Net.Mime.MediaTypeNames;
     using Format = Core.Graphics.Format;
     using MapMode = Core.Graphics.MapMode;
     using MappedSubresource = Core.Graphics.MappedSubresource;
@@ -41,6 +42,8 @@
             Device = device;
             DeviceContext = context;
         }
+
+        #region IGraphicsContext
 
         public void BeginEvent(string name)
         {
@@ -88,36 +91,37 @@
             DeviceContext.ClearUnorderedAccessViewUint((ID3D11UnorderedAccessView*)uav.NativePointer, values);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearView(IDepthStencilView dsv, Vector4 color, Rect rect)
         {
             var rec = Helper.Convert(rect);
             DeviceContext.ClearView((ID3D11View*)dsv.NativePointer, (float*)&color, &rec, 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearView(IRenderTargetView rtv, Vector4 color, Rect rect)
         {
             var rec = Helper.Convert(rect);
             DeviceContext.ClearView((ID3D11View*)rtv.NativePointer, (float*)&color, &rec, 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect)
         {
             var rec = Helper.Convert(rect);
             DeviceContext.ClearView((ID3D11View*)uav.NativePointer, (float*)&color, &rec, 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyResource(IResource dst, IResource src)
         {
             DeviceContext.CopyResource((ID3D11Resource*)dst.NativePointer, (ID3D11Resource*)src.NativePointer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyStructureCount(IBuffer dst, uint alignedByteOffset, IUnorderedAccessView uav)
         {
             DeviceContext.CopyStructureCount((ID3D11Buffer*)dst.NativePointer, alignedByteOffset, (ID3D11UnorderedAccessView*)uav.NativePointer);
-        }
-
-        public void CreateEvent()
-        {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -790,6 +794,589 @@
 
             DeviceContext.Unmap(resource, 0);
         }
+
+        #endregion IGraphicsContext
+
+        #region IGraphicsContext1
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void VSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.VSSetShaderResources(slot, 1, &srv.Handle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void VSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.VSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void VSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.VSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void HSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.HSSetShaderResources(slot, 1, &srv.Handle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void HSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.HSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void HSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.HSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.DSSetShaderResources(slot, 1, &srv.Handle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.DSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.DSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.GSSetShaderResources(slot, 1, &srv.Handle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.GSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.GSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void PSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.PSSetShaderResources(slot, 1, &srv.Handle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void PSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.PSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void PSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.PSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetShaderResource(uint slot, ICombinedTex2D? tex)
+        {
+            var srv = ((D3D11CombinedTex2D?)tex)?.srv ?? null;
+            DeviceContext.CSSetShaderResources(slot, 1, srv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Count;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.CSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex)
+        {
+            var count = (uint)tex.Length;
+            ID3D11ShaderResourceView** srvs = stackalloc ID3D11ShaderResourceView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.srv.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            DeviceContext.CSSetShaderResources(slot, count, srvs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetRenderTarget(ICombinedTex2D? view, ICombinedTex2D? depthStencilView)
+        {
+            ID3D11RenderTargetView* rtv = null;
+            if (view != null)
+            {
+                rtv = ((D3D11CombinedTex2D)view).rtv;
+            }
+
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+
+            DeviceContext.OMSetRenderTargets(1, &rtv, dsv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetRenderTargets(IList<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView)
+        {
+            uint count = (uint)views.Count;
+            ID3D11RenderTargetView** rtvs = stackalloc ID3D11RenderTargetView*[views.Count];
+            for (int i = 0; i < count; i++)
+            {
+                if (views[i] is D3D11CombinedTex2D texture)
+                {
+                    rtvs[i] = texture.rtv.Handle;
+                }
+                else
+                {
+                    rtvs[i] = null;
+                }
+            }
+
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+
+            DeviceContext.OMSetRenderTargets(count, rtvs, dsv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetRenderTargets(Span<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView)
+        {
+            uint count = (uint)views.Length;
+            ID3D11RenderTargetView** rtvs = stackalloc ID3D11RenderTargetView*[views.Length];
+            for (int i = 0; i < count; i++)
+            {
+                if (views[i] is D3D11CombinedTex2D texture)
+                {
+                    rtvs[i] = texture.rtv.Handle;
+                }
+                else
+                {
+                    rtvs[i] = null;
+                }
+            }
+
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+
+            DeviceContext.OMSetRenderTargets(count, rtvs, dsv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetRenderTargetsAndUnorderedAccessViews(ICombinedTex2D? renderTargetView, ICombinedTex2D? depthStencilView, uint uavSlot, ICombinedTex2D? unorderedAccessView, uint uavInitialCount = unchecked((uint)-1))
+        {
+            ID3D11RenderTargetView* rtv = null;
+            if (renderTargetView != null)
+            {
+                rtv = ((D3D11CombinedTex2D)renderTargetView).rtv;
+            }
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+            ID3D11UnorderedAccessView* uav = null;
+            if (unorderedAccessView != null)
+            {
+                uav = ((D3D11CombinedTex2D)unorderedAccessView).uav;
+            }
+
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(1, &rtv, dsv, uavSlot, 1, &uav, uavInitialCount);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(IList<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, IList<ICombinedTex2D?> unorderedAccessViews, IList<uint> uavInitialCounts)
+        {
+            uint rtvCount = (uint)views.Count;
+            ID3D11RenderTargetView** rtvs = stackalloc ID3D11RenderTargetView*[views.Count];
+            for (int i = 0; i < rtvCount; i++)
+            {
+                if (views[i] is D3D11CombinedTex2D texture)
+                {
+                    rtvs[i] = texture.rtv.Handle;
+                }
+                else
+                {
+                    rtvs[i] = null;
+                }
+            }
+
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+
+            var uavCount = (uint)unorderedAccessViews.Count;
+            ID3D11UnorderedAccessView** uavs = stackalloc ID3D11UnorderedAccessView*[(int)uavCount];
+            for (int i = 0; i < uavCount; i++)
+            {
+                if (unorderedAccessViews[i] is D3D11CombinedTex2D texture)
+                {
+                    uavs[i] = texture.uav.Handle;
+                }
+                else
+                {
+                    uavs[i] = null;
+                }
+            }
+
+            uint countInit = (uint)uavInitialCounts.Count;
+            uint* pUavInitialCounts = stackalloc uint[uavInitialCounts.Count];
+            for (int i = 0; i < countInit; i++)
+            {
+                pUavInitialCounts[i] = uavInitialCounts[i];
+            }
+
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(rtvCount, rtvs, dsv, uavSlot, uavCount, uavs, pUavInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(Span<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, Span<ICombinedTex2D?> unorderedAccessViews, Span<uint> uavInitialCounts)
+        {
+            uint rtvCount = (uint)views.Length;
+            ID3D11RenderTargetView** rtvs = stackalloc ID3D11RenderTargetView*[views.Length];
+            for (int i = 0; i < rtvCount; i++)
+            {
+                if (views[i] is D3D11CombinedTex2D texture)
+                {
+                    rtvs[i] = texture.rtv.Handle;
+                }
+                else
+                {
+                    rtvs[i] = null;
+                }
+            }
+
+            ID3D11DepthStencilView* dsv = null;
+            if (depthStencilView != null)
+            {
+                dsv = ((D3D11CombinedTex2D)depthStencilView).dsv;
+            }
+
+            var uavCount = (uint)unorderedAccessViews.Length;
+            ID3D11UnorderedAccessView** uavs = stackalloc ID3D11UnorderedAccessView*[(int)uavCount];
+            for (int i = 0; i < uavCount; i++)
+            {
+                if (unorderedAccessViews[i] is D3D11CombinedTex2D texture)
+                {
+                    uavs[i] = texture.uav.Handle;
+                }
+                else
+                {
+                    uavs[i] = null;
+                }
+            }
+
+            uint countInit = (uint)uavInitialCounts.Length;
+            uint* pUavInitialCounts = stackalloc uint[uavInitialCounts.Length];
+            for (int i = 0; i < countInit; i++)
+            {
+                pUavInitialCounts[i] = uavInitialCounts[i];
+            }
+
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(rtvCount, rtvs, dsv, uavSlot, uavCount, uavs, pUavInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetUnorderedAccessView(uint slot, ICombinedTex2D? tex, uint uavInitialCount = unchecked((uint)-1))
+        {
+            var uav = ((D3D11CombinedTex2D?)tex)?.uav ?? null;
+            DeviceContext.CSSetUnorderedAccessViews(slot, 1, uav, &uavInitialCount);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetUnorderedAccessViews(uint slot, IList<ICombinedTex2D?> tex, IList<uint> uavInitialCounts)
+        {
+            var count = (uint)tex.Count;
+            ID3D11UnorderedAccessView** srvs = stackalloc ID3D11UnorderedAccessView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.uav.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            uint countInit = (uint)uavInitialCounts.Count;
+            uint* pUavInitialCounts = stackalloc uint[uavInitialCounts.Count];
+            for (int i = 0; i < countInit; i++)
+            {
+                pUavInitialCounts[i] = uavInitialCounts[i];
+            }
+
+            DeviceContext.CSSetUnorderedAccessViews(slot, count, srvs, pUavInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetUnorderedAccessViews(uint slot, Span<ICombinedTex2D?> tex, Span<uint> uavInitialCounts)
+        {
+            var count = (uint)tex.Length;
+            ID3D11UnorderedAccessView** srvs = stackalloc ID3D11UnorderedAccessView*[(int)count];
+            for (int i = 0; i < count; i++)
+            {
+                if (tex[i] is D3D11CombinedTex2D texture)
+                {
+                    srvs[i] = texture.uav.Handle;
+                }
+                else
+                {
+                    srvs[i] = null;
+                }
+            }
+
+            uint countInit = (uint)uavInitialCounts.Length;
+            uint* pUavInitialCounts = stackalloc uint[uavInitialCounts.Length];
+            for (int i = 0; i < countInit; i++)
+            {
+                pUavInitialCounts[i] = uavInitialCounts[i];
+            }
+
+            DeviceContext.CSSetUnorderedAccessViews(slot, count, srvs, pUavInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearDepthStencilView(ICombinedTex2D depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
+        {
+            DeviceContext.ClearDepthStencilView(((D3D11CombinedTex2D)depthStencilView).dsv, (uint)Helper.Convert(flags), depth, stencil);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearRenderTargetView(ICombinedTex2D renderTargetView, Vector4 value)
+        {
+            DeviceContext.ClearRenderTargetView(((D3D11CombinedTex2D)renderTargetView).rtv, (float*)&value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearUnorderedAccessViewFloat(ICombinedTex2D uav, float r, float g, float b, float a)
+        {
+            float* values = stackalloc float[4] { r, g, b, a };
+            DeviceContext.ClearUnorderedAccessViewFloat(((D3D11CombinedTex2D)uav).uav, values);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearUnorderedAccessViewUint(ICombinedTex2D uav, uint r, uint g, uint b, uint a)
+        {
+            uint* values = stackalloc uint[4] { r, g, b, a };
+            DeviceContext.ClearUnorderedAccessViewUint(((D3D11CombinedTex2D)uav).uav, values);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearView(ICombinedTex2D tex, Vector4 color, Rect rect)
+        {
+            var rec = Helper.Convert(rect);
+
+            var texture = (D3D11CombinedTex2D)tex;
+            if (texture.IsRTV)
+            {
+                DeviceContext.ClearView((ID3D11View*)texture.rtv.Handle, (float*)&color, &rec, 1);
+            }
+
+            if (texture.IsUAV)
+            {
+                DeviceContext.ClearView((ID3D11View*)texture.uav.Handle, (float*)&color, &rec, 1);
+            }
+
+            if (texture.IsDSV)
+            {
+                DeviceContext.ClearView((ID3D11View*)texture.dsv.Handle, (float*)&color, &rec, 1);
+            }
+        }
+
+        #endregion IGraphicsContext1
 
         protected virtual void Dispose(bool disposing)
         {

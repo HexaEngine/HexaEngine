@@ -321,5 +321,6 @@
         }
 
         IFence CreateFence(ulong initialValue, FenceFlags flags);
+        ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
     }
 }

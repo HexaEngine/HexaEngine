@@ -112,7 +112,12 @@
         }
 
         /// <inheritdoc/>
-        public abstract void Draw(IGraphicsContext context, GraphResourceBuilder creator);
+        public abstract void Draw(IGraphicsContext context);
+
+        /// <inheritdoc/>
+        public virtual void Compose(IGraphicsContext context)
+        {
+        }
 
         /// <inheritdoc/>
         public virtual void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)

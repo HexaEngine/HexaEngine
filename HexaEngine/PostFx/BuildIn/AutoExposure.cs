@@ -212,7 +212,7 @@ namespace HexaEngine.PostFx.BuildIn
         }
 
         /// <inheritdoc/>
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             context.CSSetShaderResource(0, Input);
             context.CSSetConstantBuffer(0, lumaParams);

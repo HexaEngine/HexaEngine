@@ -132,7 +132,7 @@
             this.creator = creator;
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            sunMask = creator.CreateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            sunMask = creator.CreateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, GpuAccessFlags.RW));
 
             if (!string.IsNullOrEmpty(sunSpriteTexPath))
             {
@@ -206,7 +206,7 @@
 
         public override void Resize(int width, int height)
         {
-            creator.UpdateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            creator.UpdateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, GpuAccessFlags.RW));
         }
 
         /// <inheritdoc/>
@@ -217,7 +217,7 @@
         }
 
         /// <inheritdoc/>
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             var camera = CameraManager.Current;
             var lights = LightManager.Current;

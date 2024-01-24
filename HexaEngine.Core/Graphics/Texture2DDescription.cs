@@ -84,7 +84,7 @@
         /// <param name="mipLevels">The maximum number of mipmap levels in the texture.</param>
         /// <param name="bindFlags">The <see cref="BindFlags"/> for binding to pipeline stages.</param>
         /// <param name="usage">Value that identifies how the texture is to be read from and written to.</param>
-        /// <param name="cpuAccessFlags">The <see cref="BindFlags"/> to specify the types of CPU access allowed.</param>
+        /// <param name="cpuAccessFlags">The <see cref="CpuAccessFlags"/> to specify the types of CPU access allowed.</param>
         /// <param name="sampleCount">Specifies multisampling parameters for the texture.</param>
         /// <param name="sampleQuality">Specifies multisampling parameters for the texture.</param>
         /// <param name="miscFlags">The <see cref="ResourceMiscFlag"/> that identify other, less common resource options. </param>
@@ -129,6 +129,62 @@
             SampleDescription = new(sampleCount, sampleQuality);
             Usage = usage;
             BindFlags = bindFlags;
+            CPUAccessFlags = cpuAccessFlags;
+            MiscFlags = miscFlags;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture2DDescription"/> struct.
+        /// </summary>
+        /// <param name="format">Texture format.</param>
+        /// <param name="width">Texture width (in texels).</param>
+        /// <param name="height">Texture height (in texels).</param>
+        /// <param name="arraySize">Number of textures in the array.</param>
+        /// <param name="mipLevels">The maximum number of mipmap levels in the texture.</param>
+        /// <param name="gpuAccessFlags">The <see cref="GpuAccessFlags"/> for binding to pipeline stages.</param>
+        /// <param name="cpuAccessFlags">The <see cref="CpuAccessFlags"/> to specify the types of CPU access allowed.</param>
+        /// <param name="sampleCount">Specifies multisampling parameters for the texture.</param>
+        /// <param name="sampleQuality">Specifies multisampling parameters for the texture.</param>
+        /// <param name="miscFlags">The <see cref="ResourceMiscFlag"/> that identify other, less common resource options. </param>
+        public Texture2DDescription(
+          Format format,
+          int width,
+          int height,
+          int arraySize = 1,
+          int mipLevels = 0,
+          GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read,
+          CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None,
+          int sampleCount = 1,
+          int sampleQuality = 0,
+          ResourceMiscFlag miscFlags = ResourceMiscFlag.None)
+        {
+            if (format == Format.Unknown)
+            {
+                throw new ArgumentException($"format need to be valid", nameof(format));
+            }
+
+            if (width < 1 || width > IResource.MaximumTexture2DSize)
+            {
+                throw new ArgumentException($"Width need to be in range 1-{IResource.MaximumTexture2DSize}", nameof(width));
+            }
+
+            if (height < 1 || height > IResource.MaximumTexture2DSize)
+            {
+                throw new ArgumentException($"Height need to be in range 1-{IResource.MaximumTexture2DSize}", nameof(height));
+            }
+
+            if (arraySize < 1 || arraySize > IResource.MaximumTexture2DArraySize)
+            {
+                throw new ArgumentException($"Array size need to be in range 1-{IResource.MaximumTexture2DArraySize}", nameof(arraySize));
+            }
+
+            Width = width;
+            Height = height;
+            MipLevels = mipLevels;
+            ArraySize = arraySize;
+            Format = format;
+            SampleDescription = new(sampleCount, sampleQuality);
+            TextureHelper.Convert(cpuAccessFlags, gpuAccessFlags, out Usage, out BindFlags);
             CPUAccessFlags = cpuAccessFlags;
             MiscFlags = miscFlags;
         }

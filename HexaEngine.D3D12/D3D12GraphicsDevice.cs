@@ -433,5 +433,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

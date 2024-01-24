@@ -12,27 +12,32 @@
         None = unchecked(0),
 
         /// <summary>
-        /// Read access to the GPU.
+        /// Read access to the GPU. (SRV)
         /// </summary>
         Read = unchecked(131072),
 
         /// <summary>
-        /// Write access to the GPU.
+        /// Write access to the GPU. (RTV)
         /// </summary>
         Write = unchecked(65536),
 
         /// <summary>
-        /// Unordered access (UA) to the GPU.
+        /// Unordered access (UAV) to the GPU.
         /// </summary>
         UA = unchecked(262144),
 
         /// <summary>
-        /// Read and write access to the GPU.
+        /// Depth stencil flag (DSV)
+        /// </summary>
+        DepthStencil = unchecked(524288),
+
+        /// <summary>
+        /// Read and write access to the GPU. (RTV, SRV)
         /// </summary>
         RW = Read | Write,
 
         /// <summary>
-        /// All access rights to the GPU.
+        /// All access rights to the GPU. (RTV, SRV, UAV)
         /// </summary>
         All = Read | Write | UA,
     }

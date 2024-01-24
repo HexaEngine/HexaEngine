@@ -6,18 +6,24 @@
 
     public class PostFxNode : INode
     {
-        public PostFxNode(IPostFx postFx, PostFxNameRegistry nameRegistry)
+        public PostFxNode(PostFxGraph graph, IPostFx postFx, PostFxNameRegistry nameRegistry, bool isComposeNode = false)
         {
             Name = postFx.Name;
+            Graph = graph;
             PostFx = postFx;
             Builder = new(this, nameRegistry);
+            IsComposeTarget = isComposeNode;
         }
 
         public string Name { get; }
 
+        public PostFxGraph Graph { get; }
+
         public IPostFx PostFx { get; set; }
 
         public bool Enabled => PostFx.Enabled;
+
+        public bool IsComposeTarget { get; }
 
         public List<PostFxNode> Dependencies { get; } = [];
 

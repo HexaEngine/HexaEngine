@@ -110,6 +110,11 @@
 
         public D3DFeatureLevel Level { get; protected set; }
 
+        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
+        {
+            return new D3D11CombinedTex2D(this, desc);
+        }
+
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return adapter.CreateSwapChainForWindow(this, window);

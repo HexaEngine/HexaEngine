@@ -1,43 +1,81 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Lights;
-    using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics.Noise;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Scenes.Managers;
-    using HexaEngine.Weather;
     using System.Numerics;
 
     public class LensFlare : PostFxBase
     {
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<Texture2D> sunMask;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<ConstantBuffer<CBWeather>> weather;
-        private IGraphicsPipeline pipeline;
-        private ISamplerState sampler;
-        private ConstantBuffer<LensFlareParams> paramsBuffer;
+        private IGraphicsPipeline downsamplePipeline;
+        private ConstantBuffer<DownsampleParams> downsampleCB;
+        private ISamplerState samplerState;
+        private ResourceRef<Texture2D> downsampleBuffer;
+        private ResourceRef<Texture2D> accumBuffer;
 
-        public struct LensFlareParams
+        private IGraphicsPipeline lensPipeline;
+        private ConstantBuffer<LensParams> lensCB;
+
+        private GaussianBlur blur;
+
+        private IGraphicsPipeline blendPipeline;
+        private Texture2D lensDirt;
+
+        private Vector4 scale = new(0.02f);
+        private Vector4 bias = new(-3);
+        private uint ghosts = 8;
+        private float ghostDispersal = 0.37f;
+        private float haloWidth = 0.47f;
+        private float distortion = 1.5f;
+
+        private struct DownsampleParams
         {
-            public Vector4 SunPosition;
-            public Vector4 Tint;
+            public Vector4 Scale;
+            public Vector4 Bias;
 
-            public LensFlareParams(Vector4 sunPosition, Vector4 tint)
+            public DownsampleParams(Vector4 scale, Vector4 bias)
             {
-                SunPosition = sunPosition;
-                Tint = tint;
+                Scale = scale;
+                Bias = bias;
             }
         }
 
-        public override string Name => "LensFlare";
+        private struct LensParams
+        {
+            public uint Ghosts;
+            public float GhostDispersal;
+            public Vector2 TextureSize;
+            public float HaloWidth;
+            public float Distortion;
+            public Vector2 Padd;
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
+            public LensParams(uint ghosts, float ghostDispersal, Vector2 textureSize, float haloWidth, float distortion)
+            {
+                Ghosts = ghosts;
+                GhostDispersal = ghostDispersal;
+                TextureSize = textureSize;
+                HaloWidth = haloWidth;
+                Distortion = distortion;
+            }
+        }
+
+        public override string Name { get; } = "LensFlare";
+
+        public override PostFxFlags Flags { get; } = PostFxFlags.Compose;
+
+        public Vector4 Scale { get => scale; set => NotifyPropertyChangedAndSet(ref scale, value); }
+
+        public Vector4 Bias { get => bias; set => NotifyPropertyChangedAndSet(ref bias, value); }
+
+        public uint Ghosts { get => ghosts; set => NotifyPropertyChangedAndSet(ref ghosts, value); }
+
+        public float GhostDispersal { get => ghostDispersal; set => NotifyPropertyChangedAndSet(ref ghostDispersal, value); }
+
+        public float HaloWidth { get => haloWidth; set => NotifyPropertyChangedAndSet(ref haloWidth, value); }
+
+        public float Distortion { get => distortion; set => NotifyPropertyChangedAndSet(ref distortion, value); }
 
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
@@ -46,96 +84,92 @@
                 .RunBefore<Vignette>()
                 .RunAfter<VolumetricClouds>()
                 .RunAfter<VolumetricScattering>()
-                .RunAfter<Bloom>();
+                .RunBefore<Bloom>()
+                .RunBefore<TAA>()
+                .RunBefore<MotionBlur>()
+                .Compose()
+                    .After<TAA>()
+                    .After<MotionBlur>()
+                    .Before<ColorGrading>()
+                    .Before<Vignette>();
         }
 
-        public override unsafe void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            sunMask = creator.GetTexture2D("SunMask");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
-
-            pipeline = device.CreateGraphicsPipeline(new()
+            downsamplePipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/lensflare/ps.hlsl",
-                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
+                PixelShader = "effects/lensflare/downsample.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
             });
+            downsampleCB = new(device, CpuAccessFlags.Write);
+            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            downsampleBuffer = creator.CreateTexture2D("LENS_DOWNSAMPLE_BUFFER", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
 
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            lensPipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/lensflare/lens.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
+            lensCB = new(device, CpuAccessFlags.Write);
 
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            accumBuffer = creator.CreateTexture2D("LENS_ACCUMULATION_BUFFER", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
 
-            Viewport = new(width, height);
-        }
+            blur = new(device, Format.R16G16B16A16Float, width, height, false, true);
 
-        public override void Resize(int width, int height)
-        {
+            blendPipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/lensflare/blend.hlsl",
+                State = GraphicsPipelineState.DefaultFullscreen,
+                Macros = macros
+            });
         }
 
         public override void Update(IGraphicsContext context)
         {
+            downsampleCB.Update(context, new(scale, bias));
+            lensCB.Update(context, new(ghosts, ghostDispersal, downsampleBuffer.Value.Viewport.Size, haloWidth, distortion));
         }
 
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context)
         {
-            if (Output == null)
-            {
-                return;
-            }
+            // downsample and threshold
+            context.SetGraphicsPipeline(downsamplePipeline);
+            context.SetRenderTarget(downsampleBuffer.Value.RTV, null);
+            context.SetViewport(downsampleBuffer.Value.Viewport);
+            context.PSSetShaderResource(0, Input);
+            context.PSSetSampler(0, samplerState);
+            context.PSSetConstantBuffer(0, downsampleCB);
+            context.DrawInstanced(4, 1, 0, 0);
 
-            var camera = CameraManager.Current;
-            var lights = LightManager.Current;
-            if (camera == null || lights == null)
-            {
-                return;
-            }
+            // lens
+            context.SetGraphicsPipeline(lensPipeline);
+            context.SetRenderTarget(accumBuffer.Value.RTV, null);
+            context.SetViewport(accumBuffer.Value.Viewport);
+            context.PSSetShaderResource(0, downsampleBuffer.Value.SRV);
+            context.PSSetConstantBuffer(0, lensCB);
+            context.DrawInstanced(4, 1, 0, 0);
+        }
 
-            for (int i = 0; i < lights.ActiveCount; i++)
-            {
-                var light = lights.Active[i];
-                if (light is DirectionalLight)
-                {
-                    Vector3 sunPosition = Vector3.Transform(light.Transform.Backward * camera.Transform.ClipRange + camera.Transform.GlobalPosition, camera.Transform.View);
-
-                    // skip render, the light is behind the camera.
-                    if (sunPosition.Z < 0.0f)
-                    {
-                        return;
-                    }
-
-                    var screenPos = camera.ProjectPosition(sunPosition);
-
-                    LensFlareParams lensFlare;
-                    lensFlare.SunPosition = new(screenPos.X, screenPos.Y, screenPos.Z, 1);
-                    lensFlare.Tint = new Vector4(1.4f, 1.2f, 1.0f, 1);
-
-                    paramsBuffer.Update(context, lensFlare);
-
-                    context.SetRenderTarget(Output, default);
-                    context.SetViewport(Viewport);
-                    context.PSSetConstantBuffer(0, paramsBuffer);
-                    context.PSSetConstantBuffer(1, this.camera.Value);
-                    context.PSSetConstantBuffer(2, weather.Value);
-                    context.PSSetShaderResource(0, depth.Value);
-                    context.PSSetShaderResource(2, sunMask.Value);
-                    context.PSSetSampler(0, sampler);
-                    context.SetGraphicsPipeline(pipeline);
-                    context.DrawInstanced(4, 1, 0, 0);
-                    context.ClearState();
-
-                    break;
-                }
-            }
+        public override void Compose(IGraphicsContext context)
+        {
+            // upscale, blur and blend
+            blur.Blur(context, accumBuffer.Value.SRV, Output, accumBuffer.Value.Viewport.Width, accumBuffer.Value.Viewport.Height, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()
         {
-            pipeline.Dispose();
-            sampler.Dispose();
-            paramsBuffer.Dispose();
+            downsamplePipeline.Dispose();
+            downsampleCB.Dispose();
+            samplerState.Dispose();
+            lensPipeline.Dispose();
+            lensCB.Dispose();
+            blur.Dispose();
+            blendPipeline.Dispose();
         }
     }
 }

@@ -45,12 +45,14 @@
                     continue;
                 }
 
-                if ((effect.Flags & PostFxFlags.NoInput) == 0)
+                var flags = effect.Flags;
+
+                if ((flags & PostFxFlags.NoInput) == 0 && (flags & PostFxFlags.ComposeTarget) == 0)
                 {
                     effect.SetInput(postContext.Previous.SRV, postContext.Previous);
                 }
 
-                if ((effect.Flags & PostFxFlags.NoOutput) == 0)
+                if ((flags & PostFxFlags.NoOutput) == 0 && (flags & PostFxFlags.Compose) == 0)
                 {
                     var buffer = postContext.Current;
 
@@ -66,11 +68,11 @@
                     bool skipSwap = false;
                     if (i < Passes.Count - 1)
                     {
-                        skipSwap = (Passes[i + 1].Flags & PostFxFlags.Inline) != 0;
+                        skipSwap = ShouldSkipSwap(Passes[i + 1]);
                     }
                     else if (!isLastGroup)
                     {
-                        skipSwap = (next.Passes[0].Flags & PostFxFlags.Inline) != 0;
+                        skipSwap = ShouldSkipSwap(next.Passes[0]);
                     }
 
                     if (!skipSwap)
@@ -81,6 +83,12 @@
             }
         }
 
+        private static bool ShouldSkipSwap(IPostFx fx)
+        {
+            var flags = fx.Flags;
+            return (flags & PostFxFlags.Inline) != 0 || (flags & PostFxFlags.ComposeTarget) != 0;
+        }
+
         private void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             for (int i = 0; i < Passes.Count; i++)
@@ -88,7 +96,7 @@
 #if DEBUG
                 context.BeginEvent(Passes[i].Name);
 #endif
-                Passes[i].Draw(context, creator);
+                Passes[i].Draw(context);
 #if DEBUG
                 context.EndEvent();
 #endif

@@ -9,6 +9,8 @@
     using System.Runtime.CompilerServices;
     using System.Text;
     using HexaEngine.Core.Configuration;
+    using System.Numerics;
+    using System.Globalization;
 
     public class PreferencesWidget : EditorWindow
     {
@@ -17,6 +19,8 @@
 
         private string? recodingId;
         private string? filter = string.Empty;
+
+        private bool unsavedChanges;
 
         protected override string Name => "Preferences";
 
@@ -86,6 +90,17 @@
             if (displayedKey != null)
             {
                 ImGui.InputText("Search", ref filter, 256);
+
+                ImGui.SameLine();
+
+                ImGui.BeginDisabled(!unsavedChanges);
+                if (ImGui.Button("Save"))
+                {
+                    config.Save();
+                    unsavedChanges = false;
+                    Flags &= ~ImGuiWindowFlags.UnsavedDocument;
+                }
+                ImGui.EndDisabled();
 
                 ImGui.Separator();
 
@@ -228,7 +243,7 @@
                                 changed = ImGui.InputFloat(value.Name, ref v);
                                 if (changed)
                                 {
-                                    val = v.ToString();
+                                    val = v.ToString(null, CultureInfo.InvariantCulture);
                                 }
                             }
                             break;
@@ -239,7 +254,7 @@
                                 changed = ImGui.InputDouble(value.Name, ref v);
                                 if (changed)
                                 {
-                                    val = v.ToString();
+                                    val = v.ToString(null, CultureInfo.InvariantCulture);
                                 }
                             }
                             break;
@@ -250,7 +265,7 @@
                                 changed = ImGui.InputFloat2(value.Name, ref v);
                                 if (changed)
                                 {
-                                    val = v.ToString();
+                                    val = v.ToString(null, CultureInfo.InvariantCulture);
                                 }
                             }
                             break;
@@ -261,7 +276,7 @@
                                 changed = ImGui.InputFloat3(value.Name, ref v);
                                 if (changed)
                                 {
-                                    val = v.ToString();
+                                    val = v.ToString(null, CultureInfo.InvariantCulture);
                                 }
                             }
                             break;
@@ -272,7 +287,7 @@
                                 changed = ImGui.InputFloat4(value.Name, ref v);
                                 if (changed)
                                 {
-                                    val = v.ToString();
+                                    val = v.ToString(null, CultureInfo.InvariantCulture);
                                 }
                             }
                             break;
@@ -380,6 +395,8 @@
                     if (changed)
                     {
                         value.Value = val;
+                        unsavedChanges = true;
+                        Flags |= ImGuiWindowFlags.UnsavedDocument;
                     }
                 }
             }

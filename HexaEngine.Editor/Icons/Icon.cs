@@ -23,7 +23,7 @@
             fixed (Vector4* ppixels = pixels)
             {
                 SubresourceData data = new(ppixels, sizeof(Vector4) * 2);
-                Texture2DDescription desc = new(Format.R32G32B32A32Float, 2, 2, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
+                Texture2DDescription desc = new(Format.R32G32B32A32Float, 2, 2, 1, 1, GpuAccessFlags.Read);
                 icon = new(device, desc, data);
             }
 

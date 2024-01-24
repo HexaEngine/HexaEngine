@@ -291,7 +291,7 @@
         }
 
         /// <inheritdoc/>
-        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context)
         {
             context.PSSetConstantBuffer(0, downsampleCBuffer);
             context.PSSetSampler(0, linearSampler);
