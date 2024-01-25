@@ -48,6 +48,8 @@
 
         public SystemFlags Flags { get; } = SystemFlags.PhysicsUpdate | SystemFlags.Awake | SystemFlags.Destroy;
 
+        public const float TimestepDuration = 1 / 60f;
+
         public void Awake(Scene scene)
         {
             scene.QueryManager.AddQuery(colliders);
@@ -65,7 +67,10 @@
                 colliders[i].BeginUpdate();
             }
 
-            Simulation.Timestep(delta, dispatcher);
+            lock (Simulation)
+            {
+                Simulation.Timestep(delta, dispatcher);
+            }
 
             for (int i = 0; i < colliders.Count; i++)
             {
@@ -75,6 +80,7 @@
 
         public void Destroy()
         {
+            contactEvents.Flush();
             contactEvents.Dispose();
             characterControllers.Dispose();
             materials.Dispose();

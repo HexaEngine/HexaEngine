@@ -15,7 +15,7 @@
     public class Bloom : PostFxBase
     {
 #nullable disable
-        private GraphResourceBuilder creator;
+        private PostFxGraphResourceBuilder creator;
 
         private IGraphicsPipeline downsample;
         private ConstantBuffer<DownsampleParams> downsampleCBuffer;
@@ -51,6 +51,9 @@
 
         /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         /// <summary>
         /// Gets or sets the filter radius for bloom.
@@ -157,7 +160,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
 
@@ -221,7 +224,7 @@
 
             for (int i = 0; i < levels; i++)
             {
-                var tex = creator.CreateTexture2D($"Bloom{(i == 0 ? "" : $".{i}")}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
+                var tex = creator.CreateTexture2D($"BLOOM_BUFFER_{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
 #nullable disable
                 mipChainRTVs[i] = tex.Value.RTV;
                 mipChainSRVs[i] = tex.Value.SRV;
@@ -260,9 +263,9 @@
 
             for (int i = 0; i < levels; i++)
             {
-                var name = $"Bloom{(i == 0 ? "" : $".{i}")}";
+                var name = $"BLOOM_BUFFER_{i}";
                 creator.DisposeResource(name);
-                var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+                var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None).Value;
 #nullable disable
                 mipChainRTVs[i] = tex.RTV;
                 mipChainSRVs[i] = tex.SRV;
@@ -359,7 +362,7 @@
 
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
-                creator.DisposeResource($"Bloom{(i == 0 ? "" : $".{i}")}");
+                creator.DisposeResource($"BLOOM_BUFFER_{i}");
             }
         }
     }

@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    public enum CameraEditorMode
+    public enum EditorCameraMode
     {
         Orbit,
         Free,
     }
 
-    public enum CameraEditorDimension
+    public enum EditorCameraDimension
     {
         Dim3D,
         Dim2D

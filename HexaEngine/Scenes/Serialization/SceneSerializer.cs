@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Serialization
 {
+    using HexaEngine.Core;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Bson;
@@ -42,6 +43,14 @@
             serializer.Serialize(writer, scene);
 
             writer.Close();
+
+            if (Application.InEditorMode)
+            {
+                var dir = Path.GetDirectoryName(path) ?? string.Empty;
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                var editorConfigPath = Path.Combine(dir, fileName + ".editor.json");
+                scene.EditorConfig.SaveTo(editorConfigPath);
+            }
         }
 
         public static bool TrySerialize(Scene scene, string path, [NotNullWhen(false)] out Exception? exception)
@@ -63,11 +72,20 @@
         {
             BsonDataReader reader = new(File.OpenRead(path));
 
-            Scene? result = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
-            result.Path = path;
-            result.BuildReferences();
+            Scene? scene = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+            scene.Path = path;
+            scene.BuildReferences();
             reader.Close();
-            return result;
+
+            if (Application.InEditorMode)
+            {
+                var dir = Path.GetDirectoryName(path) ?? string.Empty;
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                var editorConfigPath = Path.Combine(dir, fileName + ".editor.json");
+                scene.EditorConfig = Config.LoadFrom(editorConfigPath);
+            }
+
+            return scene;
         }
 
         public static bool TryDeserialize(string path, [NotNullWhen(true)] out Scene? scene, [NotNullWhen(false)] out Exception? exception)

@@ -90,7 +90,7 @@
         /// <summary>
         /// Gets or sets the graphics pipeline state.
         /// </summary>
-        public GraphicsPipelineState State;
+        public GraphicsPipelineState State = GraphicsPipelineState.Default;
 
         /// <summary>
         /// Gets or sets the macros of the graphics pipeline.

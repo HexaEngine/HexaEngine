@@ -19,7 +19,7 @@
         public float Height
         { get => height; set { height = value; update = true; } }
 
-        [EditorProperty("depth")]
+        [EditorProperty("Depth")]
         public float Depth
         { get => depth; set { depth = value; update = true; } }
 
@@ -32,7 +32,10 @@
 
             Box box = new(width * 2, height * 2, depth * 2);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            index = simulation.Shapes.Add(box);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(box);
+            }
             inertia = box.ComputeInertia(Mass);
             hasShape = true;
         }

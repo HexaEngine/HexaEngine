@@ -10,7 +10,7 @@
         private float radius = 1;
         private float length = 1;
 
-        [EditorProperty("FilterRadius")]
+        [EditorProperty("Radius")]
         public float Radius
         { get => radius; set { radius = value; update = true; } }
 
@@ -27,7 +27,10 @@
 
             Cylinder cylinder = new(radius, length * 2);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            index = simulation.Shapes.Add(cylinder);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(cylinder);
+            }
             inertia = cylinder.ComputeInertia(Mass);
             hasShape = true;
         }

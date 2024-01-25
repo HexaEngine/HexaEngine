@@ -53,6 +53,9 @@
         public abstract PostFxFlags Flags { get; }
 
         /// <inheritdoc/>
+        public abstract PostFxColorSpace ColorSpace { get; }
+
+        /// <inheritdoc/>
         public bool Initialized => initialized;
 
         /// <inheritdoc/>
@@ -79,7 +82,7 @@
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        void IPostFx.Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        void IPostFx.Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             if (initialized)
                 return;
@@ -96,7 +99,7 @@
         /// <param name="width">The width of the rendering area.</param>
         /// <param name="height">The height of the rendering area.</param>
         /// <param name="macros">The shader macros to use during initialization.</param>
-        public abstract void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
+        public abstract void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         /// <inheritdoc/>
         public abstract void SetupDependencies(PostFxDependencyBuilder builder);

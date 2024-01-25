@@ -27,6 +27,8 @@
 
         public bool Enabled { get => parent.Enabled; set => parent.Enabled = value; }
 
+        public PostFxColorSpace ColorSpace => parent.ColorSpace;
+
         public event Action<IPostFx, bool>? OnEnabledChanged
         {
             add => parent.OnEnabledChanged += value;
@@ -47,7 +49,7 @@
             parent.Compose(context);
         }
 
-        public void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             throw new NotSupportedException();
         }

@@ -39,7 +39,7 @@
         public void Update()
         {
             ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
-            ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
+            ImGuizmo.SetOrthographic(CameraManager.Dimension == EditorCameraDimension.Dim2D);
             DebugDraw.SetViewport(RenderViewport);
         }
 
@@ -90,18 +90,18 @@
 
                 if (ImGui.BeginMenuBar())
                 {
-                    if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
+                    if (CameraManager.Dimension == EditorCameraDimension.Dim3D)
                     {
                         if (ImGui.Button("3D"))
                         {
-                            CameraManager.Dimension = CameraEditorDimension.Dim2D;
+                            CameraManager.Dimension = EditorCameraDimension.Dim2D;
                         }
                     }
                     else
                     {
                         if (ImGui.Button("2D"))
                         {
-                            CameraManager.Dimension = CameraEditorDimension.Dim3D;
+                            CameraManager.Dimension = EditorCameraDimension.Dim3D;
                         }
                     }
 

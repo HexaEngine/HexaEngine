@@ -92,11 +92,11 @@
 
             if (drawGrid)
             {
-                if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
+                if (CameraManager.Dimension == EditorCameraDimension.Dim3D)
                 {
                     DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
-                else if (CameraManager.Dimension == CameraEditorDimension.Dim2D)
+                else if (CameraManager.Dimension == EditorCameraDimension.Dim2D)
                 {
                     DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
@@ -243,7 +243,7 @@
                 GameObject? element = GameObject.Selected.First();
                 Camera? camera = CameraManager.Current;
                 ImGuizmo.Enable(true);
-                ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
+                ImGuizmo.SetOrthographic(CameraManager.Dimension == EditorCameraDimension.Dim2D);
                 if (camera == null)
                 {
                     return;

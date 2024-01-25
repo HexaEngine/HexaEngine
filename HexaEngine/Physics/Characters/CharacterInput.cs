@@ -2,7 +2,7 @@
 using BepuPhysics.Collidables;
 using BepuUtilities;
 using HexaEngine.Core.Input;
-using HexaEngine.Mathematics;
+using HexaEngine.Scenes;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -50,31 +50,16 @@ namespace HexaEngine.Physics.Characters
             this.shape = shape;
         }
 
-        public Key MoveForward = Key.W;
-        public Key MoveBackward = Key.S;
-        public Key MoveRight = Key.D;
-        public Key MoveLeft = Key.A;
-        public Key Sprint = Key.LShift;
-        public Key Jump = Key.Space;
+        private static Key MoveForward = Key.W;
+        private static Key MoveBackward = Key.S;
+        private static Key MoveRight = Key.D;
+        private static Key MoveLeft = Key.A;
+        private static Key Sprint = Key.LShift;
+        private static Key Jump = Key.Space;
 
-        public void UpdateCharacterGoals(Transform camera, float simulationTimestepDuration)
+        public void UpdateCharacterGoals(Camera camera, float simulationTimestepDuration)
         {
-            ref var character = ref characters.GetCharacterByBodyHandle(bodyHandle);
             Vector2 movementDirection = default;
-
-            if (Gamepads.Controllers.Count > 0)
-            {
-                var gamepad = Gamepads.Controllers[0];
-                var lx = (gamepad.AxisStates[GamepadAxis.LeftX] + short.MaxValue) / (float)short.MaxValue - 1;
-                var ly = (gamepad.AxisStates[GamepadAxis.LeftY] + short.MaxValue) / (float)short.MaxValue - 1;
-                movementDirection += -1 * new Vector2(lx, ly);
-
-                if (gamepad.IsDown(GamepadButton.A))
-                {
-                    character.TryJump |= true;
-                }
-            }
-
             if (Keyboard.IsDown(MoveForward))
             {
                 movementDirection = new Vector2(0, 1);
@@ -85,11 +70,11 @@ namespace HexaEngine.Physics.Characters
             }
             if (Keyboard.IsDown(MoveLeft))
             {
-                movementDirection += new Vector2(1, 0);
+                movementDirection += new Vector2(-1, 0);
             }
             if (Keyboard.IsDown(MoveRight))
             {
-                movementDirection += new Vector2(-1, 0);
+                movementDirection += new Vector2(1, 0);
             }
             var movementDirectionLengthSquared = movementDirection.LengthSquared();
             if (movementDirectionLengthSquared > 0)
@@ -97,15 +82,19 @@ namespace HexaEngine.Physics.Characters
                 movementDirection /= MathF.Sqrt(movementDirectionLengthSquared);
             }
 
+            ref var character = ref characters.GetCharacterByBodyHandle(bodyHandle);
             character.TryJump |= Keyboard.IsDown(Jump);
             var characterBody = new BodyReference(bodyHandle, characters.Simulation.Bodies);
             var effectiveSpeed = Keyboard.IsDown(Sprint) ? speed * 1.75f : speed;
             var newTargetVelocity = movementDirection * effectiveSpeed;
-            var viewDirection = camera.Forward;
+            var viewDirection = camera.Transform.Forward;
             //Modifying the character's raw data does not automatically wake the character up, so we do so explicitly if necessary.
             //If you don't explicitly wake the character up, it won't respond to the changed motion goals.
             //(You can also specify a negative deactivation threshold in the BodyActivityDescription to prevent the character from sleeping at all.)
-            if (!characterBody.Awake && (character.TryJump || newTargetVelocity != Vector2.Zero && character.ViewDirection != viewDirection))
+            if (!characterBody.Awake &&
+                (character.TryJump && character.Supported ||
+                newTargetVelocity != character.TargetVelocity ||
+                newTargetVelocity != Vector2.Zero && character.ViewDirection != viewDirection))
             {
                 characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
             }
@@ -139,25 +128,21 @@ namespace HexaEngine.Physics.Characters
                     //While we shouldn't allow the character to continue accelerating in the air indefinitely, trying to move in a given direction should never slow us down in that direction.
                     var velocityChangeAlongMovementDirection = MathF.Max(0, targetVelocity - currentVelocity);
                     characterBody.Velocity.Linear += worldMovementDirection * velocityChangeAlongMovementDirection;
-                    if (!characterBody.Awake)
-                    {
-                        characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
-                    }
                     Debug.Assert(characterBody.Awake, "Velocity changes don't automatically update objects; the character should have already been woken up before applying air control.");
                 }
             }
         }
 
-        public void UpdateCameraPosition(Transform camera, float cameraBackwardOffsetScale = 4)
+        public void UpdateCameraPosition(Camera camera, float cameraBackwardOffsetScale = 4)
         {
             //We'll override the demo harness's camera control by attaching the camera to the character controller body.
             ref var character = ref characters.GetCharacterByBodyHandle(bodyHandle);
             var characterBody = new BodyReference(bodyHandle, characters.Simulation.Bodies);
             //Use a simple sorta-neck model so that when the camera looks down, the center of the screen sees past the character.
             //Makes mouselocked ray picking easier.
-            camera.Position = characterBody.Pose.Position + new Vector3(0, shape.HalfLength / 2, 0);// +
-                                                                                                    //camera.Transform.Up * (shape.FilterRadius * 1.2f) -
-                                                                                                    //camera.Transform.Forward * (shape.HalfLength + shape.FilterRadius) * cameraBackwardOffsetScale;
+            camera.Transform.Position = characterBody.Pose.Position + new Vector3(0, shape.HalfLength, 0) +
+                camera.Transform.Up * (shape.Radius * 1.2f) -
+                camera.Transform.Forward * (shape.HalfLength + shape.Radius) * cameraBackwardOffsetScale;
         }
 
         /// <summary>

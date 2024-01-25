@@ -35,6 +35,9 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; }
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         /// <summary>
         /// Enumeration representing the quality presets for SSR.
         /// </summary>
@@ -199,7 +202,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");

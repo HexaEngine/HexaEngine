@@ -34,7 +34,10 @@
             Triangle triangle = new(pos1, pos2, pos3);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = triangle.ComputeInertia(Mass);
-            index = simulation.Shapes.Add(triangle);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(triangle);
+            }
             hasShape = true;
         }
     }

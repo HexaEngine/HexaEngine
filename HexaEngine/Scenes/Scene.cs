@@ -25,15 +25,15 @@
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<string> cameraNames = new();
-        private readonly ScriptManager scriptManager = new();
+        private ScriptManager scriptManager;
         private ModelManager meshManager;
         private LightManager lightManager;
         private RenderManager renderManager;
-        private AnimationManager animationManager = new();
-        private readonly MaterialManager materialManager = new();
-        private readonly WeatherManager weatherManager = new();
-        private readonly ObjectPickerManager objectPickerManager = new();
-        private DrawLayerManager drawLayerManager = new();
+        private AnimationManager animationManager;
+        private MaterialManager materialManager;
+        private WeatherManager weatherManager;
+        private ObjectPickerManager objectPickerManager;
+        private DrawLayerManager drawLayerManager;
         private QueryManager queryManager;
 
         private readonly SemaphoreSlim semaphore = new(1);
@@ -43,10 +43,7 @@
 
         public int ActiveCamera;
 
-#pragma warning disable CS8618 // Non-nullable field 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
         public Scene()
-#pragma warning restore CS8618 // Non-nullable field 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             Name = "Scene";
             root = new SceneRootNode(this);
@@ -106,6 +103,9 @@
 
         public SceneVariables Variables { get; } = [];
 
+        [JsonIgnore]
+        public Config EditorConfig { get; set; } = new();
+
         public event Action<GameObject>? OnGameObjectAdded;
 
         public event Action<GameObject>? OnGameObjectRemoved;
@@ -117,16 +117,24 @@
         public void Initialize(IGraphicsDevice device)
         {
             queryManager = new(this);
+            scriptManager = new();
+            meshManager = new();
             lightManager = new();
-            meshManager ??= new();
             lightManager.Initialize(device).Wait();
+            renderManager = new(device, lightManager);
+            animationManager = new();
+            materialManager = new();
+            weatherManager = new();
+            objectPickerManager = new();
+            drawLayerManager = new();
+
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device, lightManager));
+            systems.Add(renderManager);
             systems.Add(weatherManager);
             systems.Add(objectPickerManager);
 
@@ -149,16 +157,24 @@
         public async Task InitializeAsync(IGraphicsDevice device)
         {
             queryManager = new(this);
+            scriptManager = new();
+            meshManager = new();
             lightManager = new();
-            meshManager ??= new();
             await lightManager.Initialize(device);
+            renderManager = new(device, lightManager);
+            animationManager = new();
+            materialManager = new();
+            weatherManager = new();
+            objectPickerManager = new();
+            drawLayerManager = new();
+
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device, lightManager));
+            systems.Add(renderManager);
             systems.Add(weatherManager);
             systems.Add(objectPickerManager);
 
@@ -258,6 +274,23 @@
 #endif
             }
 
+            var physics = systems[SystemFlags.PhysicsUpdate];
+
+            for (int i = 0; i < physics.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(physics[i]);
+#endif
+                physics[i].Update(Time.Delta);
+#if PROFILE
+                Profiler.End(physics[i]);
+#endif
+            }
+
+#if PROFILE
+            Profiler.Start(systems);
+#endif
+
             var late = systems[SystemFlags.LateUpdate];
 
             for (int i = 0; i < late.Count; i++)
@@ -279,22 +312,6 @@
         {
             semaphore.Wait();
 
-            var physics = systems[SystemFlags.PhysicsUpdate];
-
-            for (int i = 0; i < physics.Count; i++)
-            {
-#if PROFILE
-                Profiler.Start(physics[i]);
-#endif
-                physics[i].Update(Time.FixedDelta);
-#if PROFILE
-                Profiler.End(physics[i]);
-#endif
-            }
-
-#if PROFILE
-            Profiler.Start(systems);
-#endif
             var fixedUpdate = systems[SystemFlags.FixedUpdate];
 
             for (int i = 0; i < fixedUpdate.Count; i++)
@@ -302,7 +319,7 @@
 #if PROFILE
                 Profiler.Start(fixedUpdate[i]);
 #endif
-                fixedUpdate[i].Update(Time.Delta);
+                fixedUpdate[i].Update(Time.FixedDelta);
 #if PROFILE
                 Profiler.End(fixedUpdate[i]);
 #endif
@@ -545,6 +562,10 @@
             Time.FixedUpdate -= FixedUpdate;
             root.Uninitialize();
             lightManager.Dispose();
+            meshManager.Clear();
+            materialManager.Clear();
+            animationManager.Clear();
+
             for (int i = 0; i < systems.Count; i++)
             {
                 systems[i].Destroy();

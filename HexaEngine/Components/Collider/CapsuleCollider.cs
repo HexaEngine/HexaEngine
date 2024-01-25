@@ -10,7 +10,7 @@
         private float radius = 1;
         private float length = 2;
 
-        [EditorProperty("FilterRadius")]
+        [EditorProperty("Radius")]
         public float Radius
         { get => radius; set { radius = value; update = true; } }
 
@@ -28,7 +28,10 @@
             Capsule capsule = new(radius, length);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = capsule.ComputeInertia(Mass);
-            index = simulation.Shapes.Add(capsule);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(capsule);
+            }
             hasShape = true;
         }
     }

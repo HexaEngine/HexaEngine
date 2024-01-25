@@ -35,7 +35,12 @@
                 vertexCount += meh.IndicesCount;
             }
 
-            bufferPool.Take((int)vertexCount / 3, out Buffer<Triangle> buffer);
+            Buffer<Triangle> buffer;
+            lock (bufferPool)
+            {
+                bufferPool.Take((int)vertexCount / 3, out buffer);
+            }
+
             int m = 0;
             for (int i = 0; i < data.Meshes.Count; i++)
             {
@@ -52,7 +57,11 @@
             mesh = new(buffer, scale, bufferPool);
             inertia = mesh.ComputeClosedInertia(Mass);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            index = simulation.Shapes.Add(mesh);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(mesh);
+            }
+
             hasShape = true;
         }
 
@@ -62,10 +71,15 @@
             {
                 return;
             }
-
-            simulation.Shapes.Remove(index);
+            lock (simulation)
+            {
+                simulation.Shapes.Remove(index);
+            }
             hasShape = false;
-            mesh.Dispose(bufferPool);
+            lock (bufferPool)
+            {
+                mesh.Dispose(bufferPool);
+            }
         }
     }
 }

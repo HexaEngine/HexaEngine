@@ -7,12 +7,14 @@
         public T Desc;
         public ResourceRef Ref;
         public Func<IGraphicsDevice, T, IDisposable> Constructor;
+        public ResourceCreationFlags Flags;
 
-        public LazyInitDesc(T desc, ResourceRef @ref, Func<IGraphicsDevice, T, IDisposable> constructor)
+        public LazyInitDesc(T desc, ResourceRef @ref, Func<IGraphicsDevice, T, IDisposable> constructor, ResourceCreationFlags flags)
         {
             Desc = desc;
             Ref = @ref;
             Constructor = constructor;
+            Flags = flags;
         }
 
         public readonly void Construct<TType>(IGraphicsDevice device, List<TType> group) where TType : class, IDisposable

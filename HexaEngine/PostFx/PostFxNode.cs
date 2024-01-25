@@ -12,6 +12,7 @@
             Graph = graph;
             PostFx = postFx;
             Builder = new(this, nameRegistry);
+            Container = new();
             IsComposeTarget = isComposeNode;
         }
 
@@ -33,14 +34,20 @@
 
         public PostFxDependencyBuilder Builder { get; }
 
+        public GraphResourceContainer Container { get; }
+
         List<INode> INode.Dependencies => Dependencies.Cast<INode>().ToList();
 
-        public void Clear()
+        public void Clear(bool clearContainer = false)
         {
             Dependencies.Clear();
             GlobalDependencies.Clear();
             Dependents.Clear();
             Builder.Clear();
+            if (clearContainer)
+            {
+                Container.Clear();
+            }
         }
 
         public static bool operator ==(PostFxNode left, PostFxNode right)

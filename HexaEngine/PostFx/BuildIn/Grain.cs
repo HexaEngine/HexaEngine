@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
-    using System.Numerics;
 
     /// <summary>
     /// Post-processing effect for adding grain to the scene.
@@ -12,29 +11,49 @@
     public class Grain : PostFxBase
     {
 #nullable disable
-        private IGraphicsPipeline pipeline;
-        private ConstantBuffer<GrainParams> paramsBuffer;
-        private ISamplerState samplerState;
+        private ResourceRef<IGraphicsPipeline> pipeline;
+        private ResourceRef<ConstantBuffer<GrainParams>> paramsBuffer;
+        private ResourceRef<ISamplerState> samplerState;
+        private float grainIntensity = 0.05f;
+        private float grainSize = 1.6f;
+        private bool grainColored = false;
+        private float grainColorAmount = 0.6f;
+        private float grainLumaAmount = 1;
 
-        private ResourceRef<Texture2D> noise;
+        public float GrainIntensity { get => grainIntensity; set => NotifyPropertyChangedAndSet(ref grainIntensity, value); }
+
+        public float GrainSize { get => grainSize; set => NotifyPropertyChangedAndSet(ref grainSize, value); }
+
+        public bool GrainColored { get => grainColored; set => NotifyPropertyChangedAndSet(ref grainColored, value); }
+
+        public float GrainColorAmount { get => grainColorAmount; set => NotifyPropertyChangedAndSet(ref grainColorAmount, value); }
+
+        public float GrainLumaAmount { get => grainLumaAmount; set => NotifyPropertyChangedAndSet(ref grainLumaAmount, value); }
+
 #nullable restore
-
-        private Vector3 color = Vector3.One;
-        private float intensity = 0.05f;
 
         private struct GrainParams
         {
-            public Vector3 Color;
+            public float Width;
+            public float Height;
             public float Time;
-            public float Intensity;
-            public Vector3 Padd;
+            public float GrainIntensity;
 
-            public GrainParams(Vector3 color, float time, float intensity)
+            public float GrainSize;
+            public int GrainColored;
+            public float GrainColorAmount;
+            public float GrainLumaAmount;
+
+            public GrainParams(float width, float height, float time, float grainIntensity, float grainSize, bool grainColored, float grainColorAmount, float grainLumaAmount)
             {
-                Color = color;
+                Width = width;
+                Height = height;
                 Time = time;
-                Intensity = intensity;
-                Padd = default;
+                GrainIntensity = grainIntensity;
+                GrainSize = grainSize;
+                GrainColored = grainColored ? 1 : 0;
+                GrainColorAmount = grainColorAmount;
+                GrainLumaAmount = grainLumaAmount;
             }
         }
 
@@ -44,39 +63,23 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
-        /// <summary>
-        /// Gets or sets the color of the grain.
-        /// </summary>
-        public Vector3 Color
-        {
-            get => color;
-            set => NotifyPropertyChangedAndSet(ref color, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the intensity of the grain effect.
-        /// </summary>
-        public float Intensity
-        {
-            get => intensity;
-            set => NotifyPropertyChangedAndSet(ref intensity, value);
-        }
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.SDR;
 
         /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
-                .AddBinding("TemporalNoise")
                 .RunAfter<ColorGrading>()
                 .RunAfter<UserLUT>()
                 .RunBefore<FXAA>();
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            paramsBuffer = new(device, CpuAccessFlags.Write);
-            pipeline = device.CreateGraphicsPipeline(new()
+            paramsBuffer = creator.CreateConstantBuffer<GrainParams>("GRAIN_CONSTANT_BUFFER", CpuAccessFlags.Write);
+            pipeline = creator.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/grain/ps.hlsl",
@@ -84,24 +87,12 @@
                 Macros = macros
             });
 
-            noise = creator.GetTexture2D("TemporalNoise");
-
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            samplerState = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
         }
 
-        /// <inheritdoc/>
-        public override unsafe void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            if (dirty)
-            {
-                paramsBuffer.Update(context, new(color, Time.CumulativeFrameTime, intensity));
-                dirty = false;
-            }
-            else
-            {
-                paramsBuffer.Local->Time = Time.CumulativeFrameTime;
-                paramsBuffer.Update(context);
-            }
+            paramsBuffer.Value.Update(context, new(Viewport.Width, Viewport.Height, Time.CumulativeFrameTime, grainIntensity, grainSize, grainColored, grainColorAmount, grainLumaAmount));
         }
 
         /// <inheritdoc/>
@@ -110,16 +101,14 @@
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, noise.Value);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState);
-            context.SetGraphicsPipeline(pipeline);
+            context.PSSetConstantBuffer(0, paramsBuffer.Value);
+            context.PSSetSampler(0, samplerState.Value);
+            context.SetGraphicsPipeline(pipeline.Value);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);
-            context.PSSetShaderResource(1, null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
@@ -127,9 +116,6 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            pipeline.Dispose();
-            paramsBuffer.Dispose();
-            samplerState.Dispose();
         }
     }
 }

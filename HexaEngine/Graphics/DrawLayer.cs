@@ -43,6 +43,7 @@
 
         public DrawLayerManager()
         {
+            /*
             drawLayers.Add(new("Default", true));
             drawLayers.Add(new("Background", true));
             drawLayers.Add(new("Terrain", true));
@@ -50,6 +51,7 @@
             drawLayers.Add(new("Effect", true));
             drawLayers.Add(new("UI", true));
             drawLayers.Add(new("Skybox", true));
+            */
         }
 
         public int Count

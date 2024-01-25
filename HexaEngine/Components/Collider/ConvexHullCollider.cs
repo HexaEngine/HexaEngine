@@ -41,10 +41,14 @@
             var data = scene.ModelManager.Load(mesh);
             points = data.GetAllPoints();
 
-            ConvexHullHelper.CreateShape(points, bufferPool, out var dat, out center, out var ull);
-            hullData = dat;
+            lock (bufferPool)
+            {
+                ConvexHullHelper.CreateShape(points, bufferPool, out var dat, out center, out var ull);
 
-            convexHull = ull;
+                hullData = dat;
+
+                convexHull = ull;
+            }
         }
 
         public override void CreateShape()
@@ -57,7 +61,10 @@
             var ull = convexHull.Value;
             inertia = ull.ComputeInertia(Mass);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            index = simulation.Shapes.Add(ull);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(ull);
+            }
             hasShape = true;
         }
 
@@ -67,10 +74,15 @@
             {
                 return;
             }
-
-            simulation.Shapes.Remove(index);
+            lock (simulation)
+            {
+                simulation.Shapes.Remove(index);
+            }
             hasShape = false;
-            convexHull?.Dispose(bufferPool);
+            lock (bufferPool)
+            {
+                convexHull?.Dispose(bufferPool);
+            }
         }
     }
 }

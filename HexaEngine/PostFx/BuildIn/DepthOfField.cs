@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
@@ -32,7 +30,7 @@ namespace HexaEngine.PostFx.BuildIn
         private IGraphicsPipeline dof;
         private IGraphicsPipeline bokehDraw;
 
-        private Texture2D blurTex;
+        private ResourceRef<Texture2D> buffer;
         private StructuredUavBuffer<Bokeh> bokehBuffer;
         private DrawIndirectArgsBuffer<DrawInstancedIndirectArgs> bokehIndirectBuffer;
 
@@ -60,6 +58,9 @@ namespace HexaEngine.PostFx.BuildIn
 
         /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         /// <summary>
         /// Gets or sets the focus range for the depth of field effect.
@@ -217,7 +218,7 @@ namespace HexaEngine.PostFx.BuildIn
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -232,7 +233,7 @@ namespace HexaEngine.PostFx.BuildIn
                 Macros = macros,
             });
 
-            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
+            gaussianBlur = new(creator, "DOF");
             DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
 
             dof = device.CreateGraphicsPipeline(new()
@@ -257,7 +258,9 @@ namespace HexaEngine.PostFx.BuildIn
             });
 
             bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
-            blurTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+
+            buffer = creator.CreateBuffer("DOF_BUFFER");
+
             bokehIndirectBuffer = new(device, new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
 
             cbBokeh = new(device, CpuAccessFlags.Write);
@@ -274,7 +277,6 @@ namespace HexaEngine.PostFx.BuildIn
             this.width = width;
             this.height = height;
             bokehBuffer.Capacity = (uint)(width * height);
-            blurTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
         /// <inheritdoc/>
@@ -326,12 +328,12 @@ namespace HexaEngine.PostFx.BuildIn
                 context.SetComputePipeline(null);
             }
 
-            gaussianBlur.Blur(context, Input, blurTex, width, height);
+            gaussianBlur.Blur(context, Input, buffer.Value, width, height);
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetSampler(0, linearWrapSampler);
-            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, blurTex.SRV.NativePointer, depth.Value.SRV.NativePointer };
+            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, buffer.Value.SRV.NativePointer, depth.Value.SRV.NativePointer };
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
             context.PSSetConstantBuffer(0, cbDof);
             context.PSSetConstantBuffer(1, camera.Value);
@@ -371,7 +373,6 @@ namespace HexaEngine.PostFx.BuildIn
             dof.Dispose();
             bokehDraw.Dispose();
 
-            blurTex.Dispose();
             bokehBuffer.Dispose();
             bokehIndirectBuffer.Dispose();
 

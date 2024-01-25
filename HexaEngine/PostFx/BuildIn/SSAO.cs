@@ -63,6 +63,9 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput;
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.None;
+
         public float TapSize
         {
             get => tapSize;
@@ -87,7 +90,7 @@ namespace HexaEngine.PostFx.BuildIn
         {
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.device = device;
 
@@ -104,7 +107,7 @@ namespace HexaEngine.PostFx.BuildIn
             });
             paramsBuffer = new(device, CpuAccessFlags.Write);
             intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R32Float, width, height);
+            blur = new(creator, "SSAO", Format.R32Float);
 
             unsafe
             {

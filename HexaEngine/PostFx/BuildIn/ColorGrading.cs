@@ -78,6 +78,9 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; }
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         public float ShoulderStrength
         {
             get => shoulderStrength;
@@ -202,7 +205,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipeline(new()

@@ -346,6 +346,18 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ExecuteGroupDepth(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName)
+        {
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                profiler?.Begin($"{groupDebugName}.{renderer.DebugName}");
+                renderer.DrawDepth(context);
+                profiler?.End($"{groupDebugName}.{renderer.DebugName}");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void ExecuteGroup(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path, void** rtvs, uint rtvCount, IDepthStencilView dsv)
         {
             for (int i = 0; i < renderers.Count; i++)

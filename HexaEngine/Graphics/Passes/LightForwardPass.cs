@@ -156,11 +156,11 @@
                 profiler?.Begin("LightForward.Geometry");
                 RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.Geometry");
-            }
 
-            profiler?.Begin("LightForward.AlphaTest");
-            RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightForward", RenderPath.Forward);
-            profiler?.End("LightForward.AlphaTest");
+                profiler?.Begin("LightForward.AlphaTest");
+                RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightForward", RenderPath.Forward);
+                profiler?.End("LightForward.AlphaTest");
+            }
 
             profiler?.Begin("LightForward.GeometryLast");
             RenderManager.ExecuteGroup(renderers.GeometryLastQueue, context, profiler, "LightForward", RenderPath.Forward);

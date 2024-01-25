@@ -65,6 +65,9 @@
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Compose;
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         public Vector4 Scale { get => scale; set => NotifyPropertyChangedAndSet(ref scale, value); }
 
         public Vector4 Bias { get => bias; set => NotifyPropertyChangedAndSet(ref bias, value); }
@@ -94,7 +97,7 @@
                     .Before<Vignette>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             downsamplePipeline = device.CreateGraphicsPipeline(new()
             {
@@ -105,7 +108,7 @@
             });
             downsampleCB = new(device, CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            downsampleBuffer = creator.CreateTexture2D("LENS_DOWNSAMPLE_BUFFER", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
+            downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
 
             lensPipeline = device.CreateGraphicsPipeline(new()
             {
@@ -116,9 +119,9 @@
             });
             lensCB = new(device, CpuAccessFlags.Write);
 
-            accumBuffer = creator.CreateTexture2D("LENS_ACCUMULATION_BUFFER", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
+            accumBuffer = creator.CreateBufferHalfRes("LENS_ACCUMULATION_BUFFER");
 
-            blur = new(device, Format.R16G16B16A16Float, width, height, false, true);
+            blur = new(creator, "LENS", false, true);
 
             blendPipeline = device.CreateGraphicsPipeline(new()
             {

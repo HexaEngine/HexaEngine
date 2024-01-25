@@ -232,6 +232,38 @@
                 File.WriteAllText("config.json", JsonSerializer.Serialize(this, typeof(Config), SourceGenerationContext.Default));
             }
         }
+
+        /// <summary>
+        /// Saves the configuration to the specified path.
+        /// </summary>
+        /// <param name="path">The path to the config.</param>
+        public void SaveTo(string path)
+        {
+            lock (_lock)
+            {
+                File.WriteAllText(path, JsonSerializer.Serialize(this, typeof(Config), SourceGenerationContext.Default));
+            }
+        }
+
+        /// <summary>
+        /// Loads a configuration from the specified path.
+        /// </summary>
+        /// <param name="path">The path to the config.</param>
+        public static Config LoadFrom(string path)
+        {
+            Config config;
+            if (File.Exists(path))
+            {
+                config = (Config?)JsonSerializer.Deserialize(File.ReadAllText(path), typeof(Config), SourceGenerationContext.Default) ?? new();
+            }
+            else
+            {
+                config = new Config();
+                config.Save();
+            }
+
+            return config;
+        }
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]

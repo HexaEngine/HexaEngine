@@ -54,7 +54,7 @@
         public float SleepThreshold
         { get => sleepThreshold; set { sleepThreshold = value; update = true; } }
 
-        [EditorProperty("_lock Rotation")]
+        [EditorProperty("Lock Rotation")]
         public bool LockRotation
         { get => lockRotation; set { lockRotation = value; update = true; } }
 
@@ -153,7 +153,11 @@
                 return;
             }
 
-            simulation.Shapes.Remove(index);
+            lock (simulation)
+            {
+                simulation.Shapes.Remove(index);
+            }
+
             hasShape = false;
         }
 
@@ -172,22 +176,25 @@
                 inertia = default;
             }
 
-            if (Type == ColliderType.Static)
+            lock (simulation)
             {
-                staticHandle = simulation.Statics.Add(new(pose, index));
-                system.Materials.Allocate(staticHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
-            }
-            if (Type == ColliderType.Dynamic)
-            {
-                bodyHandle = simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, default, inertia, new CollidableDescription(index), new(SleepThreshold)));
-                bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
-                system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
-            }
-            if (Type == ColliderType.Kinematic)
-            {
-                bodyHandle = simulation.Bodies.Add(BodyDescription.CreateKinematic(pose, default, new CollidableDescription(index), new(SleepThreshold)));
-                bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
-                system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
+                if (Type == ColliderType.Static)
+                {
+                    staticHandle = simulation.Statics.Add(new(pose, index));
+                    system.Materials.Allocate(staticHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
+                }
+                if (Type == ColliderType.Dynamic)
+                {
+                    bodyHandle = simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, default, inertia, new CollidableDescription(index), new(SleepThreshold)));
+                    bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
+                    system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
+                }
+                if (Type == ColliderType.Kinematic)
+                {
+                    bodyHandle = simulation.Bodies.Add(BodyDescription.CreateKinematic(pose, default, new CollidableDescription(index), new(SleepThreshold)));
+                    bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
+                    system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
+                }
             }
 
             hasBody = true;
@@ -202,13 +209,16 @@
             }
 
             hasBody = false;
-            if (Type == ColliderType.Static)
+            lock (simulation)
             {
-                simulation.Statics.Remove(staticHandle);
-            }
-            else
-            {
-                simulation.Bodies.Remove(bodyHandle);
+                if (Type == ColliderType.Static)
+                {
+                    simulation.Statics.Remove(staticHandle);
+                }
+                else
+                {
+                    simulation.Bodies.Remove(bodyHandle);
+                }
             }
 
             DestroyShape();

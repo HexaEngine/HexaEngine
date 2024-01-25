@@ -9,7 +9,7 @@
     {
         private float radius = 1;
 
-        [EditorProperty("FilterRadius")]
+        [EditorProperty("Radius")]
         public float Radius
         { get => radius; set { radius = value; update = true; } }
 
@@ -23,7 +23,10 @@
             Sphere sphere = new(radius);
             pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = sphere.ComputeInertia(Mass);
-            index = simulation.Shapes.Add(sphere);
+            lock (simulation)
+            {
+                index = simulation.Shapes.Add(sphere);
+            }
             hasShape = true;
         }
     }

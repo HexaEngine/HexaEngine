@@ -45,15 +45,12 @@
             context.CSSetConstantBuffer(1, camera.Value);
 
             profiler?.Begin("PrePass.Geometry");
-            var geometry = renderers.GeometryQueue;
-            for (int i = 0; i < geometry.Count; i++)
-            {
-                var renderer = geometry[i];
-                profiler?.Begin($"PrePass.{renderer.DebugName}");
-                renderer.DrawDepth(context);
-                profiler?.End($"PrePass.{renderer.DebugName}");
-            }
+            RenderManager.ExecuteGroupDepth(renderers.GeometryQueue, context, profiler, "Geometry");
             profiler?.End("PrePass.Geometry");
+
+            profiler?.Begin("PrePass.AlphaTest");
+            RenderManager.ExecuteGroupDepth(renderers.AlphaTestQueue, context, profiler, "AlphaTest");
+            profiler?.End("PrePass.AlphaTest");
 
             profiler?.Begin("PrePass.Transparency");
             var transparency = renderers.TransparencyQueue;

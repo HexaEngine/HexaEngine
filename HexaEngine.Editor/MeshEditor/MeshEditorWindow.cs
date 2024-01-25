@@ -13,12 +13,12 @@
     using HexaEngine.Editor.MeshEditor.Dialogs;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Scenes;
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using HexaEngine.Scenes;
 
     [EditorWindowCategory("Tools")]
     public unsafe class MeshEditorWindow : EditorWindow

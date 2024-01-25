@@ -27,6 +27,7 @@
         private readonly IGraphicsDevice device;
         private Viewport viewport;
         private Viewport outputViewport;
+        private GraphResourceContainer? container;
 
         public GraphResourceBuilder(IGraphicsDevice device)
         {
@@ -76,6 +77,8 @@
         public IReadOnlyList<ShadowAtlas> ShadowAtlas => shadowAtlas;
 
         public IReadOnlyList<GBuffer> GBuffers => gBuffers;
+
+        public GraphResourceContainer? Container { get => container; set => container = value; }
 
         internal void CreateResources()
         {
@@ -187,6 +190,7 @@
             ResourceRef resource = new(name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
+            container?.AddResource(resource);
             return resource;
         }
 
@@ -200,6 +204,7 @@
             ResourceRef resource = new(name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
+            container?.AddResource(resource);
             return new(resource);
         }
 
@@ -213,6 +218,7 @@
             resource = new(name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
+            container?.AddResource(resource);
             return resource;
         }
 
@@ -226,6 +232,7 @@
             resource = new(name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
+            container?.AddResource(resource);
             return new(resource);
         }
 
@@ -286,6 +293,7 @@
             {
                 nameToResource.Remove(name);
                 resources.Remove(resource);
+                container?.RemoveResource(resource);
                 resource.Dispose();
                 return true;
             }
@@ -323,57 +331,9 @@
 
         public ITexture2D OutputTex { get; internal set; }
 
-        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            StructuredUavBuffer<T> structuredBuffer = new(device, accessFlags, uavFlags, srvFlags, name);
-            structuredUavBuffers.Add(structuredBuffer);
-
-            var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
-            resource.Value = structuredBuffer;
-
-            return resource;
-        }
-
-        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            StructuredUavBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, uavFlags, srvFlags, name);
-            structuredUavBuffers.Add(structuredBuffer);
-
-            var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
-            resource.Value = structuredBuffer;
-
-            return resource;
-        }
-
         public ResourceRef<StructuredUavBuffer<T>> GetStructuredUavBuffer<T>(string name) where T : unmanaged
         {
             return GetOrAddResource<StructuredUavBuffer<T>>(name);
-        }
-
-        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            StructuredBuffer<T> structuredBuffer = new(device, accessFlags, name);
-            structuredBuffers.Add(structuredBuffer);
-
-            var resource = GetOrAddResource<StructuredBuffer<T>>(name);
-            resource.Value = structuredBuffer;
-
-            return resource;
-        }
-
-        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            StructuredBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, name);
-            structuredBuffers.Add(structuredBuffer);
-
-            var resource = GetOrAddResource<StructuredBuffer<T>>(name);
-            resource.Value = structuredBuffer;
-
-            return resource;
         }
 
         public ResourceRef<StructuredBuffer<T>> GetStructuredBuffer<T>(string name) where T : unmanaged
@@ -381,38 +341,9 @@
             return GetOrAddResource<StructuredBuffer<T>>(name);
         }
 
-        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            ConstantBuffer<T> constantBuffer = new(device, accessFlags, name);
-            constantBuffers.Add(constantBuffer);
-
-            var resource = GetOrAddResource<ConstantBuffer<T>>(name);
-            resource.Value = constantBuffer;
-
-            return resource;
-        }
-
-        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, T value, CpuAccessFlags accessFlags, bool lazyInit = true) where T : unmanaged
-        {
-            // creation of constant buffers cannot be deferred, because of generics.
-            ConstantBuffer<T> constantBuffer = new(device, value, accessFlags, name);
-            constantBuffers.Add(constantBuffer);
-
-            var resource = GetOrAddResource<ConstantBuffer<T>>(name);
-            resource.Value = constantBuffer;
-
-            return resource;
-        }
-
         public ResourceRef<ConstantBuffer<T>> GetConstantBuffer<T>(string name) where T : unmanaged
         {
             return GetOrAddResource<ConstantBuffer<T>>(name);
-        }
-
-        public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas, lazyShadowAtlas, lazyInit);
         }
 
         public void UpdateShadowAtlas(string name, ShadowAtlasDescription description)
@@ -430,11 +361,6 @@
             return GetOrAddResource<ShadowAtlas>(name);
         }
 
-        public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains, lazyDepthMipChains, lazyInit);
-        }
-
         public void UpdateDepthMipChain(string name, DepthStencilBufferDescription description)
         {
             UpdateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains);
@@ -443,11 +369,6 @@
         public ResourceRef<DepthMipChain> GetDepthMipChain(string name)
         {
             return GetOrAddResource<DepthMipChain>(name);
-        }
-
-        public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, lazyDepthStencilBuffers, lazyInit);
         }
 
         public void UpdateDepthStencilBuffer(string name, DepthStencilBufferDescription description)
@@ -460,11 +381,6 @@
             return GetOrAddResource<DepthStencil>(name);
         }
 
-        public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, lazyGBuffers, lazyInit);
-        }
-
         public void UpdateGBuffer(string name, GBufferDescription description)
         {
             UpdateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers);
@@ -473,11 +389,6 @@
         public ResourceRef<GBuffer> GetGBuffer(string name)
         {
             return GetOrAddResource<GBuffer>(name);
-        }
-
-        public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, lazyTextures1d, lazyInit);
         }
 
         public void UpdateTexture1D(string name, Texture1DDescription description)
@@ -490,11 +401,6 @@
             return GetOrAddResource<Texture1D>(name);
         }
 
-        public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, lazyTextures2d, lazyInit);
-        }
-
         public void UpdateTexture2D(string name, Texture2DDescription description)
         {
             UpdateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d);
@@ -503,11 +409,6 @@
         public ResourceRef<Texture2D> GetTexture2D(string name)
         {
             return GetOrAddResource<Texture2D>(name);
-        }
-
-        public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, lazyTextures3d, lazyInit);
         }
 
         public void UpdateTexture3D(string name, Texture3DDescription description)
@@ -520,11 +421,6 @@
             return GetOrAddResource<Texture3D>(name);
         }
 
-        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => dev.CreateSamplerState(desc), samplerStates, lazySamplerStates, lazyInit);
-        }
-
         public void UpdateSamplerState(string name, SamplerStateDescription desc)
         {
             UpdateResource(name, desc, (dev, desc) => dev.CreateSamplerState(desc), samplerStates);
@@ -533,17 +429,6 @@
         public ResourceRef<ISamplerState> GetSamplerState(string name)
         {
             return GetOrAddResource<ISamplerState>(name);
-        }
-
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, bool lazyInit = true)
-        {
-            string name = description.GetHashCode().ToString();
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, lazyInit);
-        }
-
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, lazyInit);
         }
 
         public void UpdateGraphicsPipeline(string name, GraphicsPipelineDesc desc)
@@ -556,16 +441,6 @@
             return GetOrAddResource<IGraphicsPipeline>(name);
         }
 
-        public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, bool lazyInit = true)
-        {
-            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, lazyInit);
-        }
-
-        public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, bool lazyInit = true)
-        {
-            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, lazyInit);
-        }
-
         public void UpdateComputePipeline(string name, ComputePipelineDesc desc)
         {
             UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines);
@@ -574,36 +449,6 @@
         public ResourceRef<IComputePipeline> GetComputePipeline(string name)
         {
             return GetOrAddResource<IComputePipeline>(name);
-        }
-
-        public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, bool lazyInit) where TType : class, IDisposable
-        {
-            if (TryGetResource<TType>(name, out var resourceRef) && resourceRef.Value != null)
-            {
-                throw new InvalidOperationException($"Resource {name} is already created ({resourceRef.Value})");
-            }
-
-            resourceRef ??= AddResource<TType>(name);
-
-            var idx = lazyDescs.IndexOf(new LazyInitDesc<TDesc>(default, resourceRef.Resource, null));
-            var contains = idx != -1;
-
-            if (!lazyInit)
-            {
-                TType resource = constructor(device, description);
-                resourceRef.Value = resource;
-                group.Add(resource);
-                if (contains)
-                {
-                    lazyDescs.RemoveAt(idx);
-                }
-            }
-            else if (!contains)
-            {
-                lazyDescs.Add(new(description, resourceRef.Resource, constructor));
-            }
-
-            return resourceRef;
         }
 
         public void UpdateResource<TType, TDesc>(string name, TDesc desc, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group) where TType : class, IDisposable
@@ -622,6 +467,169 @@
             TType resource = resourceRef.Value = constructor(device, desc);
 
             group.Add(resource);
+        }
+
+        public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, flags);
+        }
+
+        public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, flags);
+        }
+
+        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            ConstantBuffer<T> constantBuffer = new(device, accessFlags, name);
+            constantBuffers.Add(constantBuffer);
+
+            var resource = GetOrAddResource<ConstantBuffer<T>>(name);
+            resource.Value = constantBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            ConstantBuffer<T> constantBuffer = new(device, value, accessFlags, name);
+            constantBuffers.Add(constantBuffer);
+
+            var resource = GetOrAddResource<ConstantBuffer<T>>(name);
+            resource.Value = constantBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains, lazyDepthMipChains, flags);
+        }
+
+        public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, lazyDepthStencilBuffers, flags);
+        }
+
+        public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, lazyGBuffers, flags);
+        }
+
+        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            string name = description.GetHashCode().ToString();
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, flags);
+        }
+
+        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, flags);
+        }
+
+        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => dev.CreateSamplerState(desc), samplerStates, lazySamplerStates, flags);
+        }
+
+        public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas, lazyShadowAtlas, flags);
+        }
+
+        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            StructuredBuffer<T> structuredBuffer = new(device, accessFlags, name);
+            structuredBuffers.Add(structuredBuffer);
+
+            var resource = GetOrAddResource<StructuredBuffer<T>>(name);
+            resource.Value = structuredBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            StructuredBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, name);
+            structuredBuffers.Add(structuredBuffer);
+
+            var resource = GetOrAddResource<StructuredBuffer<T>>(name);
+            resource.Value = structuredBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            StructuredUavBuffer<T> structuredBuffer = new(device, accessFlags, uavFlags, srvFlags, name);
+            structuredUavBuffers.Add(structuredBuffer);
+
+            var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
+            resource.Value = structuredBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        {
+            // creation of constant buffers cannot be deferred, because of generics.
+            StructuredUavBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, uavFlags, srvFlags, name);
+            structuredUavBuffers.Add(structuredBuffer);
+
+            var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
+            resource.Value = structuredBuffer;
+
+            return resource;
+        }
+
+        public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, lazyTextures1d, flags);
+        }
+
+        public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, lazyTextures2d, flags);
+        }
+
+        public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        {
+            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, lazyTextures3d, flags);
+        }
+
+        public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, ResourceCreationFlags flags) where TType : class, IDisposable
+        {
+            if (TryGetResource<TType>(name, out var resourceRef) && resourceRef.Value != null)
+            {
+                throw new InvalidOperationException($"Resource {name} is already created ({resourceRef.Value})");
+            }
+
+            resourceRef ??= AddResource<TType>(name);
+
+            var idx = lazyDescs.IndexOf(new LazyInitDesc<TDesc>(default, resourceRef.Resource, null, 0));
+            var contains = idx != -1;
+
+            if ((flags & ResourceCreationFlags.LazyInit) == 0)
+            {
+                TType resource = constructor(device, description);
+                resourceRef.Value = resource;
+                group.Add(resource);
+                if (contains)
+                {
+                    lazyDescs.RemoveAt(idx);
+                }
+            }
+            else if (!contains)
+            {
+                lazyDescs.Add(new(description, resourceRef.Resource, constructor, flags));
+            }
+
+            return resourceRef;
         }
     }
 }

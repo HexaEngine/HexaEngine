@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Input;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
@@ -10,28 +11,40 @@
     public static class CameraManager
     {
         internal static readonly Camera camera = new() { Far = 1000 };
+        private static ConfigKey? config;
         private static Camera? culling;
         private static Vector3 center = default;
-        private static CameraEditorMode mode = CameraEditorMode.Orbit;
-        private static Vector3 sc = new(10, 0, 0);
+        private static EditorCameraMode mode = EditorCameraMode.Orbit;
+        private static Vector3 orbitPosition = new(10, 0, 0);
         private static bool first = true;
-        private static CameraEditorDimension dimension;
+        private static EditorCameraDimension dimension;
         public const float Speed = 10F;
         public const float AngularSpeed = 20F;
 
         public static Vector3 Center { get => center; set => center = value; }
 
-        public static CameraEditorMode Mode
-        { get => mode; set { mode = value; first = true; } }
+        public static EditorCameraMode Mode
+        {
+            get => mode;
+            set
+            {
+                mode = value;
+                config?.SetValue("Mode", value);
+                first = true;
+            }
+        }
 
-        public static CameraEditorDimension Dimension
+        public static EditorCameraDimension Dimension
         {
             get => dimension; set
             {
                 dimension = value;
-                camera.ProjectionType = value == CameraEditorDimension.Dim3D ? ProjectionType.Perspective : ProjectionType.Orthographic;
+                camera.ProjectionType = value == EditorCameraDimension.Dim3D ? ProjectionType.Perspective : ProjectionType.Orthographic;
                 camera.Transform.Position = Vector3.Zero;
                 camera.Transform.Rotation = Vector3.Zero;
+                config?.SetValue("Dimension", value);
+                config?.SetValue("Position", Vector3.Zero);
+                config?.SetValue("Rotation", Vector3.Zero);
                 first = true;
             }
         }
@@ -46,9 +59,27 @@
             {
                 if (e.KeyCode == Key.F6)
                 {
-                    Mode = mode == CameraEditorMode.Orbit ? CameraEditorMode.Free : CameraEditorMode.Orbit;
+                    Mode = mode == EditorCameraMode.Orbit ? EditorCameraMode.Free : EditorCameraMode.Orbit;
                 }
             };
+
+            SceneManager.SceneChanged += SceneChanged;
+        }
+
+        private static void SceneChanged(object? sender, SceneChangedEventArgs e)
+        {
+            if (e.Scene == null)
+            {
+                return;
+            }
+
+            config = e.Scene.EditorConfig.GetOrCreateKey("EditorCamera");
+            Mode = config.GetOrAddValue("Mode", EditorCameraMode.Orbit);
+            Dimension = config.GetOrAddValue("Dimension", EditorCameraDimension.Dim3D);
+            camera.Transform.Position = config.GetOrAddValue("Position", Vector3.Zero);
+            camera.Transform.Rotation = config.GetOrAddValue("Rotation", Vector3.Zero);
+            orbitPosition = config.GetOrAddValue("OrbitPosition", new Vector3(10, 0, 0));
+            first = true;
         }
 
         public static void Update()
@@ -58,9 +89,9 @@
                 return;
             }
 
-            if (dimension == CameraEditorDimension.Dim3D)
+            if (dimension == EditorCameraDimension.Dim3D)
             {
-                if (mode == CameraEditorMode.Orbit)
+                if (mode == EditorCameraMode.Orbit)
                 {
                     Vector2 delta = Vector2.Zero;
                     if (Mouse.IsDown(MouseButton.Middle))
@@ -77,24 +108,29 @@
                     // Only update the camera's position if the mouse got moved in either direction
                     if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
                     {
-                        sc.X += sc.X / 2 * -wheel;
+                        orbitPosition.X += orbitPosition.X / 2 * -wheel;
 
                         // Rotate the camera left and right
-                        sc.Y += -delta.X * Time.Delta * 2;
+                        orbitPosition.Y += -delta.X * Time.Delta * 2;
 
                         // Rotate the camera up and down
                         // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                        sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * 2, -float.Pi / 2, float.Pi / 2);
+                        orbitPosition.Z = Math.Clamp(orbitPosition.Z + delta.Y * Time.Delta * 2, -float.Pi / 2, float.Pi / 2);
 
                         first = false;
 
                         // Calculate the cartesian coordinates
-                        Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
-                        var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
-                        camera.Transform.PositionRotation = (pos, orientation);
+                        Vector3 position = SphereHelper.GetCartesianCoordinates(orbitPosition) + center;
+                        Quaternion orientation = Quaternion.CreateFromYawPitchRoll(-orbitPosition.Y, orbitPosition.Z, 0);
+
+                        camera.Transform.Position = position;
+                        camera.Transform.Orientation = orientation;
+                        config?.SetValue("OrbitPosition", orbitPosition);
+                        config?.SetValue("Position", position);
+                        config?.SetValue("Rotation", camera.Transform.Rotation);
                     }
                 }
-                if (mode == CameraEditorMode.Free)
+                if (mode == EditorCameraMode.Free)
                 {
                     Vector2 delta = Vector2.Zero;
                     if (Mouse.IsDown(MouseButton.Middle))
@@ -102,95 +138,68 @@
                         delta = Mouse.Delta;
                     }
 
+                    var position = camera.Transform.Position;
+                    var rotation = camera.Transform.Rotation;
+
                     if (delta.X != 0 | delta.Y != 0 || first)
                     {
                         var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
-                        camera.Transform.Rotation += re;
-                        if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
+                        rotation += re;
+                        if (rotation.Y < 270 & rotation.Y > 180)
                         {
-                            camera.Transform.Rotation = new Vector3(camera.Transform.Rotation.X, 270f, camera.Transform.Rotation.Z);
+                            rotation = new Vector3(rotation.X, 270f, rotation.Z);
                         }
-                        if (camera.Transform.Rotation.Y > 90 & camera.Transform.Rotation.Y < 270)
+                        if (rotation.Y > 90 & rotation.Y < 270)
                         {
-                            camera.Transform.Rotation = new Vector3(camera.Transform.Rotation.X, 90f, camera.Transform.Rotation.Z);
+                            rotation = new Vector3(rotation.X, 90f, rotation.Z);
                         }
                     }
 
+                    var speedMult = Speed;
+                    if (Keyboard.IsDown(Key.LShift))
+                    {
+                        speedMult *= 2;
+                    }
+                    speedMult *= Time.Delta;
+
                     if (Keyboard.IsDown(Key.W))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), camera.Transform.Rotation.Y.ToRad(), 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitZ, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), camera.Transform.Rotation.Y.ToRad(), 0f);
+                        position += Vector3.Transform(Vector3.UnitZ, rotationM) * speedMult;
                     }
                     if (Keyboard.IsDown(Key.S))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitZ, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        position += Vector3.Transform(-Vector3.UnitZ, rotationM) * speedMult;
                     }
                     if (Keyboard.IsDown(Key.A))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitX, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        position += Vector3.Transform(-Vector3.UnitX, rotationM) * speedMult;
                     }
                     if (Keyboard.IsDown(Key.D))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitX, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        position += Vector3.Transform(Vector3.UnitX, rotationM) * speedMult;
                     }
                     if (Keyboard.IsDown(Key.Space))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(Vector3.UnitY, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        position += Vector3.Transform(Vector3.UnitY, rotationM) * speedMult;
                     }
                     if (Keyboard.IsDown(Key.C))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
-                        if (Keyboard.IsDown(Key.LShift))
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;
-                        }
-                        else
-                        {
-                            camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * Time.Delta;
-                        }
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        position += Vector3.Transform(-Vector3.UnitY, rotationM) * speedMult;
                     }
+
+                    camera.Transform.Position = position;
+                    camera.Transform.Rotation = rotation;
+                    config?.SetValue("Position", position);
+                    config?.SetValue("Rotation", rotation);
                 }
             }
-            else if (dimension == CameraEditorDimension.Dim2D)
+            else if (dimension == EditorCameraDimension.Dim2D)
             {
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
@@ -198,17 +207,19 @@
                     delta = Mouse.Delta;
                 }
 
-                var newPos = camera.Transform.Position;
+                var position = camera.Transform.Position;
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
                     var re = new Vector3(-delta.X, delta.Y, 0) * Time.Delta;
-                    newPos += re;
+                    position += re;
                 }
 
-                newPos.Z = -camera.Near;
-                camera.Transform.Position = newPos;
+                position.Z = -camera.Near;
+                camera.Transform.Position = position;
                 camera.Transform.Rotation = Vector3.Zero;
+                config?.SetValue("Position", position);
+                config?.SetValue("Rotation", Vector3.Zero);
             }
             camera.Transform.Recalculate();
         }

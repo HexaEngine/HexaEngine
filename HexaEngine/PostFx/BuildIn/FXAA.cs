@@ -23,6 +23,9 @@ namespace HexaEngine.PostFx.BuildIn
         public override PostFxFlags Flags => PostFxFlags.None;
 
         /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.SDR;
+
+        /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
@@ -32,7 +35,7 @@ namespace HexaEngine.PostFx.BuildIn
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             pipeline = device.CreateGraphicsPipeline(new()
             {

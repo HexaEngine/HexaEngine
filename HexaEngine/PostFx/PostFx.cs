@@ -35,6 +35,7 @@
         public PostFxPassCollection Passes { get; set; } = new();
 
         public bool Initialized { get; }
+        public PostFxColorSpace ColorSpace { get; }
 
         public event Action<IPostFx, bool>? OnEnabledChanged;
 
@@ -73,12 +74,7 @@
             throw new NotImplementedException();
         }
 
-        public Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             throw new NotImplementedException();
         }

@@ -375,7 +375,7 @@
             {
                 if (!TryGetValue(key, out string? value))
                 {
-                    AddValue(key, DataType.Float, defaultValue.ToString(), false);
+                    AddValue(key, DataType.Float, defaultValue.ToString(null, CultureInfo.InvariantCulture), false);
                     return defaultValue;
                 }
                 if (value == null)
@@ -383,7 +383,32 @@
                     return defaultValue;
                 }
 
-                return float.Parse(value);
+                return float.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
+            }
+        }
+
+        /// <summary>
+        /// Gets the double floating-point value associated with the specified key. If the key does not exist,
+        /// it adds a new floating-point value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default double floating-point value to add if the key doesn't exist.</param>
+        /// <returns>The double floating-point value associated with the key or the default value if the key doesn't exist.</returns>
+        public double GetOrAddValue(string key, double defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetValue(key, out string? value))
+                {
+                    AddValue(key, DataType.Double, defaultValue.ToString(null, CultureInfo.InvariantCulture), false);
+                    return defaultValue;
+                }
+                if (value == null)
+                {
+                    return defaultValue;
+                }
+
+                return double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
             }
         }
 
@@ -413,6 +438,32 @@
         }
 
         /// <summary>
+        /// Gets a Vector2 value associated with the specified key. If the key does not exist,
+        /// it adds a new Vector2 value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default Vector2 value to add if the key doesn't exist.</param>
+        /// <returns>The Vector2 value associated with the key or the default value if the key doesn't exist.</returns>
+        public Vector2 GetOrAddValue(string key, Vector2 defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    AddValue(key, DataType.Float2, defaultValue.ToString(null, CultureInfo.InvariantCulture), false);
+                    return defaultValue;
+                }
+
+                if (value == null)
+                {
+                    return defaultValue;
+                }
+
+                return value.GetVector2();
+            }
+        }
+
+        /// <summary>
         /// Gets a Vector3 value associated with the specified key. If the key does not exist,
         /// it adds a new Vector3 value with the provided default value.
         /// </summary>
@@ -423,9 +474,9 @@
         {
             lock (_lock)
             {
-                if (!TryGetValue(key, out string? value))
+                if (!TryGetKeyValue(key, out var value))
                 {
-                    AddValue(key, DataType.Float3, defaultValue.ToString(), false);
+                    AddValue(key, DataType.Float3, defaultValue.ToString(null, CultureInfo.InvariantCulture), false);
                     return defaultValue;
                 }
 
@@ -434,7 +485,33 @@
                     return defaultValue;
                 }
 
-                return default;
+                return value.GetVector3();
+            }
+        }
+
+        /// <summary>
+        /// Gets a Vector4 value associated with the specified key. If the key does not exist,
+        /// it adds a new Vector4 value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default Vector4 value to add if the key doesn't exist.</param>
+        /// <returns>The Vector4 value associated with the key or the default value if the key doesn't exist.</returns>
+        public Vector4 GetOrAddValue(string key, Vector4 defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    AddValue(key, DataType.Float4, defaultValue.ToString(null, CultureInfo.InvariantCulture), false);
+                    return defaultValue;
+                }
+
+                if (value == null)
+                {
+                    return defaultValue;
+                }
+
+                return value.GetVector4();
             }
         }
 
@@ -506,6 +583,86 @@
                 if (TryGetKeyValue(key, out var kvalue))
                 {
                     kvalue.Value = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a double value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The double value to set.</param>
+        public void SetValue(string key, double value)
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value.ToString(null, CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a float value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The float value to set.</param>
+        public void SetValue(string key, float value)
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value.ToString(null, CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a Vector2 value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The Vector2 value to set.</param>
+        public void SetValue(string key, Vector2 value)
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value.ToString(null, CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a Vector3 value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The Vector3 value to set.</param>
+        public void SetValue(string key, Vector3 value)
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value.ToString(null, CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets a Vector4 value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The Vector4 value to set.</param>
+        public void SetValue(string key, Vector4 value)
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value.ToString(null, CultureInfo.InvariantCulture);
                 }
             }
         }

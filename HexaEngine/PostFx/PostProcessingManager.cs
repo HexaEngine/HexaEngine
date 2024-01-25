@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
+    using HexaEngine.PostFx.BuildIn;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostProcessingManager : IDisposable
@@ -20,14 +21,13 @@
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
-        private readonly GraphResourceBuilder creator;
+        private readonly PostProcessingFlags flags;
+        private readonly PostFxGraphResourceBuilder creator;
         private readonly PostFxGraph graph = new();
-        private readonly bool debug;
-        private readonly bool forceDynamic;
         private int width;
         private int height;
 
-        private List<PostProcessingExecutionGroup> groups = new();
+        private readonly List<PostProcessingExecutionGroup> groups = [];
 
         private bool isDirty;
         private bool isInitialized = false;
@@ -36,18 +36,22 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false, bool forceDynamic = true)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, PostProcessingFlags flags = PostProcessingFlags.HDR)
         {
+            Format format = (flags & PostProcessingFlags.HDR) != 0 ? Format.R16G16B16A16Float : Format.R8G8B8A8UNorm;
+            Current ??= this;
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
-            this.creator = creator;
-            this.debug = debug;
-            this.forceDynamic = forceDynamic;
-            postContext = new(device, Format.R16G16B16A16Float, width, height, bufferCount);
+            this.flags = flags;
+            this.creator = new(creator, device, format, width, height);
+
+            postContext = new(device, format, width, height, bufferCount);
 
             deferredContext = device.CreateDeferredContext();
-            macros = Array.Empty<ShaderMacro>();
+            macros = [];
         }
+
+        public static PostProcessingManager? Current { get; private set; }
 
         public Texture2D Input { get => postContext.Input; set => postContext.Input = value; }
 
@@ -72,11 +76,23 @@
 
         public int Count => effectsSorted.Count;
 
+        public PostFxGraph Graph => graph;
+
         public IReadOnlyList<IPostFx> Effects => effectsSorted;
+
+        public IReadOnlyList<PostProcessingExecutionGroup> Groups => groups;
+
+        public object SyncObject => _lock;
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
-        public bool Debug => debug;
+        public bool IsInitialized => isInitialized;
+
+        public bool IsDirty => isDirty;
+
+        public bool IsReloading => isReloading;
+
+        public PostProcessingFlags Flags => flags;
 
         public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
@@ -103,9 +119,13 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                if (effects[i].Enabled)
+                var effect = effects[i];
+                if (effect.Enabled)
                 {
-                    effects[i].Initialize(device, creator, width, height, macros);
+                    PostFxNode node = graph.GetNode(effect);
+                    creator.Container = node.Container;
+                    effect.Initialize(device, creator, width, height, macros);
+                    creator.Container = null;
                 }
             }
 
@@ -128,8 +148,13 @@
         private void OnReload(IPostFx postFx)
         {
             semaphore.Wait();
+            GraphResourceContainer container = graph.GetNode(postFx).Container;
             postFx.Dispose();
+            container.DisposeResources();
+
+            creator.Container = container;
             postFx.Initialize(device, creator, width, height, macros);
+            creator.Container = null;
             Invalidate();
             semaphore.Release();
         }
@@ -274,6 +299,7 @@
                 var effect = effects[i];
                 if (effect.Initialized)
                 {
+                    graph.GetNode(effect).Container.DisposeResources();
                     effect.Dispose();
                 }
             }
@@ -291,7 +317,10 @@
                 var effect = effects[i];
                 if (effect.Enabled)
                 {
+                    PostFxNode node = graph.GetNode(effect);
+                    creator.Container = node.Container;
                     effect.Initialize(device, creator, width, height, macros);
+                    creator.Container = null;
                 }
             });
 
@@ -315,6 +344,7 @@
                     var effect = effects[i];
                     if (effect.Initialized)
                     {
+                        graph.GetNode(effect).Container.DisposeResources();
                         effect.Dispose();
                     }
                 }
@@ -334,7 +364,10 @@
                     var effect = effects[i];
                     if (effect.Enabled)
                     {
+                        PostFxNode node = graph.GetNode(effect);
+                        creator.Container = node.Container;
                         effect.Initialize(device, creator, width, height, macros);
+                        creator.Container = null;
                     }
                 });
 
@@ -479,13 +512,13 @@
             lock (_lock)
             {
                 IPostFx first = effectsSorted[0];
-                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || forceDynamic, false);
+                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), false);
                 group.Passes.Add(first);
                 groups.Add(group);
                 for (int i = 1; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
-                    var isDynamic = effect.Flags.HasFlag(PostFxFlags.Dynamic) || forceDynamic;
+                    var isDynamic = effect.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic);
 
                     if (group.IsDynamic != isDynamic)
                     {
@@ -510,11 +543,17 @@
         {
             if (!disposedValue)
             {
+                if (Current == this)
+                {
+                    Current = null;
+                }
+
                 for (int i = 0; i < effects.Count; i++)
                 {
                     var effect = effects[i];
                     if (effect.Initialized)
                     {
+                        graph.GetNode(effect).Container.DisposeResources();
                         effect.Dispose();
                     }
 

@@ -63,12 +63,12 @@ namespace HexaEngine.Physics.Characters
         public float CosMaximumSlope;
 
         /// <summary>
-        /// depth threshold beyond which a contact is considered a support if it the normal allows it.
+        /// Depth threshold beyond which a contact is considered a support if it the normal allows it.
         /// </summary>
         public float MinimumSupportDepth;
 
         /// <summary>
-        /// depth threshold beyond which a contact is considered a support if the previous frame had support, even if it isn't deep enough to meet the MinimumSupportDepth.
+        /// Depth threshold beyond which a contact is considered a support if the previous frame had support, even if it isn't deep enough to meet the MinimumSupportDepth.
         /// </summary>
         public float MinimumSupportContinuationDepth;
 
@@ -115,9 +115,7 @@ namespace HexaEngine.Physics.Characters
         /// <param name="pool">Pool to allocate resources from.</param>
         /// <param name="initialCharacterCapacity">Number of characters to initially allocate space for.</param>
         /// <param name="initialBodyHandleCapacity">Number of body handles to initially allocate space for in the body handle->character mapping.</param>
-#pragma warning disable CS8618 // Non-nullable property 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public CharacterControllers(BufferPool pool, int initialCharacterCapacity = 4096, int initialBodyHandleCapacity = 4096)
-#pragma warning restore CS8618 // Non-nullable property 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
             this.pool = pool;
             characters = new QuickList<CharacterController>(initialCharacterCapacity, pool);
@@ -194,10 +192,7 @@ namespace HexaEngine.Physics.Characters
             Debug.Assert(bodyHandle.Value >= 0 && (bodyHandle.Value >= bodyHandleToCharacterIndex.Length || bodyHandleToCharacterIndex[bodyHandle.Value] == -1),
                 "Cannot allocate more than one character for the same body handle.");
             if (bodyHandle.Value >= bodyHandleToCharacterIndex.Length)
-            {
                 ResizeBodyHandleCapacity(Math.Max(bodyHandle.Value + 1, bodyHandleToCharacterIndex.Length * 2));
-            }
-
             var characterIndex = characters.Count;
             ref var character = ref characters.Allocate(pool);
             character = default;
@@ -254,7 +249,7 @@ namespace HexaEngine.Physics.Characters
                 pool.Take(maximumCharacterCount, out SupportCandidates);
                 for (int i = 0; i < maximumCharacterCount; ++i)
                 {
-                    //InitializeAsync the depths to a value that guarantees replacement.
+                    //Initialize the depths to a value that guarantees replacement.
                     SupportCandidates[i].Depth = float.MinValue;
                 }
             }
@@ -412,9 +407,7 @@ namespace HexaEngine.Physics.Characters
             Debug.Assert(contactCollectionWorkerCaches.Allocated && workerIndex < contactCollectionWorkerCaches.Length && contactCollectionWorkerCaches[workerIndex].SupportCandidates.Allocated,
                 "Worker caches weren't properly allocated; did you forget to call PrepareForContacts before collision detection?");
             if (manifold.Count == 0)
-            {
                 return false;
-            }
             //It's possible for neither, one, or both collidables to be a character. Check each one, treating the other as a potential support.
             var aIsCharacter = TryReportContacts(pair.A, pair.B, pair, ref manifold, workerIndex);
             var bIsCharacter = TryReportContacts(pair.B, pair.A, pair, ref manifold, workerIndex);
@@ -472,9 +465,7 @@ namespace HexaEngine.Physics.Characters
         /// <summary>
         /// Preallocates space for support data collected during the narrow phase. Should be called before the narrow phase executes.
         /// </summary>
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher = null)
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             Debug.Assert(!contactCollectionWorkerCaches.Allocated, "Worker caches were already allocated; did you forget to call AnalyzeContacts after collision detection to flush the previous frame's results?");
             var threadCount = threadDispatcher == null ? 1 : threadDispatcher.ThreadCount;
@@ -508,9 +499,7 @@ namespace HexaEngine.Physics.Characters
                 }
 
                 boundingBoxExpansionJobIndex = -1;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 threadDispatcher.DispatchWorkers(expandBoundingBoxesWorker, boundingBoxExpansionJobs.Length);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 pool.Return(ref boundingBoxExpansionJobs);
             }
         }
@@ -604,7 +593,7 @@ namespace HexaEngine.Physics.Characters
                         //Further, during this analysis loop, we do not create any constraints. We only set up pending additions to be processed after the multithreaded analysis completes.
                     }
 
-                    //The body is active. We may need to remove the associated constraint from the solver. ObjectRemoved if any of the following hold:
+                    //The body is active. We may need to remove the associated constraint from the solver. Remove if any of the following hold:
                     //1) The character was previously supported but is no longer.
                     //2) The character was previously supported by a body, and is now supported by a different body.
                     //3) The character was previously supported by a static, and is now supported by a body.
@@ -900,15 +889,11 @@ namespace HexaEngine.Physics.Characters
             }
             var targetHandleCapacity = BufferPool.GetCapacityForCount<int>(Math.Max(lastOccupiedIndex + 1, bodyHandleCapacity));
             if (targetHandleCapacity != bodyHandleToCharacterIndex.Length)
-            {
                 ResizeBodyHandleCapacity(targetHandleCapacity);
-            }
 
             var targetCharacterCapacity = BufferPool.GetCapacityForCount<int>(Math.Max(characters.Count, characterCapacity));
             if (targetCharacterCapacity != characters.Span.Length)
-            {
                 characters.Resize(targetCharacterCapacity, pool);
-            }
         }
 
         private bool disposed;

@@ -35,6 +35,9 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         /// <summary>
         /// Gets or sets the intensity of the chromatic aberration effect.
         /// </summary>
@@ -60,7 +63,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipeline(new()

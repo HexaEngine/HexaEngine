@@ -43,6 +43,9 @@
 
         public override PostFxFlags Flags { get; }
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         public MotionBlurQualityPreset QualityPreset
         {
             get => qualityPreset;
@@ -84,7 +87,7 @@
               .RunBefore<Bloom>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             List<ShaderMacro> shaderMacros = new(macros)
             {

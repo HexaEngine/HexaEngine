@@ -21,6 +21,11 @@
         public PostFxFlags Flags { get; }
 
         /// <summary>
+        /// Gets the color space of the post-processing effect. (eg. SDR or HDR)
+        /// </summary>
+        public PostFxColorSpace ColorSpace { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the post-processing effect has been initialized.
         /// </summary>
         public bool Initialized { get; }
@@ -48,7 +53,7 @@
         /// <param name="width">The width of the rendering area.</param>
         /// <param name="height">The height of the rendering area.</param>
         /// <param name="macros">The shader macros to use during initialization.</param>
-        void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
+        void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         /// <summary>
         /// Sets up dependencies for the post-processing effect.

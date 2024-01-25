@@ -29,42 +29,47 @@
             {
                 return;
             }
-
-            colliderChildren = GameObject.GetComponentsFromChilds<IColliderComponent>().ToList();
-            CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
-            for (int i = 0; i < colliderChildren.Count; i++)
+            lock (bufferPool)
             {
-                colliderChildren[i].BuildCompound(ref builder);
+                lock (simulation)
+                {
+                    colliderChildren = GameObject.GetComponentsFromChilds<IColliderComponent>().ToList();
+                    CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
+                    for (int i = 0; i < colliderChildren.Count; i++)
+                    {
+                        colliderChildren[i].BuildCompound(ref builder);
+                    }
+
+                    pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
+
+                    if (Type == ColliderType.Dynamic)
+                    {
+                        builder.BuildDynamicCompound(out compoundChildren, out inertia, out center);
+                    }
+
+                    if (Type == ColliderType.Kinematic)
+                    {
+                        builder.BuildKinematicCompound(out compoundChildren, out center);
+                    }
+
+                    if (Type == ColliderType.Static)
+                    {
+                        builder.Dispose();
+                        Logger.Warn("Compound cannot be a static type");
+                        return;
+                    }
+
+                    compound = new(compoundChildren);
+                    index = simulation.Shapes.Add(compound);
+
+                    center -= GameObject.Transform.GlobalPosition;
+                    for (int i = 0; i < compoundChildren.Length; i++)
+                    {
+                        colliderChildren[i].SetCompoundData(this, compoundChildren[i]);
+                    }
+                    builder.Dispose();
+                }
             }
-
-            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-
-            if (Type == ColliderType.Dynamic)
-            {
-                builder.BuildDynamicCompound(out compoundChildren, out inertia, out center);
-            }
-
-            if (Type == ColliderType.Kinematic)
-            {
-                builder.BuildKinematicCompound(out compoundChildren, out center);
-            }
-
-            if (Type == ColliderType.Static)
-            {
-                builder.Dispose();
-                Logger.Warn("Compound cannot be a static type");
-                return;
-            }
-
-            compound = new(compoundChildren);
-            index = simulation.Shapes.Add(compound);
-
-            center -= GameObject.Transform.GlobalPosition;
-            for (int i = 0; i < compoundChildren.Length; i++)
-            {
-                colliderChildren[i].SetCompoundData(this, compoundChildren[i]);
-            }
-            // builder.Dispose();
             hasShape = true;
         }
 
@@ -74,14 +79,23 @@
             {
                 return;
             }
+            lock (simulation)
+            {
+                simulation.Shapes.Remove(index);
+            }
+            lock (bufferPool)
+            {
+                compound.Dispose(bufferPool);
+            }
 
-            compound.Dispose(bufferPool);
-            simulation.Shapes.Remove(index);
             for (int i = 0; i < colliderChildren.Count; i++)
             {
                 colliderChildren[i].DestroyCompound();
             }
-            bufferPool.Return(ref compoundChildren);
+            lock (bufferPool)
+            {
+                bufferPool.Return(ref compoundChildren);
+            }
             hasShape = false;
         }
     }

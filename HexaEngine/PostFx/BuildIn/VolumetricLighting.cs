@@ -105,6 +105,9 @@
         /// <inheritdoc/>
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
 
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
         public VolumetricLightingQualityPreset QualityPreset
         {
             get => qualityPreset;
@@ -165,7 +168,7 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
@@ -203,7 +206,7 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 
-            buffer = creator.CreateTexture2D("Volumetric Lighting Buffer", new(Format.R16G16B16A16Float, width / 2, height / 2, 1, 1, GpuAccessFlags.RW));
+            buffer = creator.CreateBufferHalfRes("VOLUMETRIC_LIGHTNING_BUFFER");
         }
 
         /// <inheritdoc/>

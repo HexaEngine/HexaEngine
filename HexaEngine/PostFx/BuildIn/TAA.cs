@@ -5,9 +5,9 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
 
-    public class TAA : PostFxBase, IAntialiasing
+    public class TAA : PostFxBase
     {
-        private GraphResourceBuilder creator;
+        private PostFxGraphResourceBuilder creator;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
@@ -23,6 +23,9 @@
         public override string Name => "TAA";
 
         public override PostFxFlags Flags => PostFxFlags.None;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         public float Alpha
         {
@@ -74,7 +77,7 @@
                 .Override<FXAA>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
 
@@ -90,7 +93,7 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.GetTexture2D("VelocityBuffer");
-            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, GpuAccessFlags.RW), false);
+            Previous = creator.CreateBuffer("TAA_PREVIOUS_BUFFER");
 
             Viewport = new(width, height);
         }

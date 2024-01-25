@@ -38,9 +38,4 @@
 
         public float FloatMax { get; }
     }
-
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class CheckboxAttribute : Attribute
-    {
-    }
 }

@@ -2,11 +2,14 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Graphics.Graph;
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     public class PostFxGraph
     {
         private readonly List<PostFxNode> nodes = new();
+        private readonly Dictionary<IPostFx, PostFxNode> effectToNode = new();
         private readonly List<PostFxNode> composeNodes = new();
         private readonly PostFxNameRegistry nameRegistry = new();
         private readonly TopologicalSorter<PostFxNode> topologicalSorter = new();
@@ -22,6 +25,7 @@
             nameRegistry.Add(fx);
             var node = new PostFxNode(this, fx, nameRegistry);
             nodes.Add(node);
+            effectToNode.Add(fx, node);
             return node;
         }
 
@@ -33,25 +37,38 @@
         public void RemoveComposeNode(PostFxNode node)
         {
             composeNodes.Remove(node);
+            effectToNode.Remove(node.PostFx);
         }
 
         public void Remove(IPostFx fx)
         {
             nameRegistry.Remove(fx);
-            for (var i = 0; i < nodes.Count; i++)
+
+            if (effectToNode.TryGetValue(fx, out var node))
             {
-                var node = nodes[i];
-                if (node.PostFx == fx)
-                {
-                    nodes.RemoveAt(i);
-                    break;
-                }
+                nodes.Remove(node);
+                effectToNode.Remove(fx);
             }
+        }
+
+        public PostFxNode GetNode(IPostFx effect)
+        {
+            return effectToNode[effect];
+        }
+
+        public bool TryGetNode(IPostFx effect, [NotNullWhen(true)] out PostFxNode? node)
+        {
+            return effectToNode.TryGetValue(effect, out node);
         }
 
         public void Clear()
         {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                nodes[i].Clear(true);
+            }
             nodes.Clear();
+            effectToNode.Clear();
             nameRegistry.Clear();
         }
 

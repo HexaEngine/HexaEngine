@@ -36,6 +36,9 @@
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.Dynamic;
 
         /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
+        /// <inheritdoc/>
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
@@ -45,7 +48,7 @@
                  .RunBefore<TAA>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             depthMip = creator.GetDepthMipChain("HiZBuffer");
@@ -74,7 +77,7 @@
             worleyTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
 
             intermediateTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height, true);
+            gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", true);
         }
 
         public override void Update(IGraphicsContext context)

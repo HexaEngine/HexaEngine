@@ -17,7 +17,7 @@ namespace HexaEngine.PostFx.BuildIn
     /// </summary>
     public class AutoExposure : PostFxBase
     {
-        private GraphResourceBuilder creator;
+        private PostFxGraphResourceBuilder creator;
         private int width;
         private int height;
 
@@ -41,6 +41,9 @@ namespace HexaEngine.PostFx.BuildIn
 
         /// <inheritdoc/>
         public override PostFxFlags Flags => PostFxFlags.None;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         /// <summary>
         /// Gets or sets the minimum log luminance value.
@@ -139,7 +142,7 @@ namespace HexaEngine.PostFx.BuildIn
         }
 
         /// <inheritdoc/>
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
             this.width = width;
@@ -174,7 +177,7 @@ namespace HexaEngine.PostFx.BuildIn
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
-            lumaTex = creator.CreateTexture2D("Luma", new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, BindFlags.ShaderResource | BindFlags.UnorderedAccess), false);
+            lumaTex = creator.CreateTexture2D("Luma", new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, GpuAccessFlags.UA | GpuAccessFlags.Read), ResourceCreationFlags.None);
 
             linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

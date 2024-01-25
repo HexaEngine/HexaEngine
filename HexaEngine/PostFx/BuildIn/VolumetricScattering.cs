@@ -17,7 +17,7 @@
 
     public class VolumetricScattering : PostFxBase
     {
-        private GraphResourceBuilder creator;
+        private PostFxGraphResourceBuilder creator;
 
         private IGraphicsPipeline godrays;
         private ISamplerState linearClampSampler;
@@ -45,6 +45,9 @@
         public override string Name => "GodRays";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass | PostFxFlags.Dynamic;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         public float SunSize
         {
@@ -127,12 +130,12 @@
                 .RunBefore<TAA>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            sunMask = creator.CreateTexture2D("SunMask", new(Format.R16G16B16A16Float, width, height, 1, 1, GpuAccessFlags.RW));
+            sunMask = creator.CreateBuffer("VOLUMETRIC_SCATTERING_SUN_MASK");
 
             if (!string.IsNullOrEmpty(sunSpriteTexPath))
             {

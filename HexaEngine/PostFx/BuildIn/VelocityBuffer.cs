@@ -21,11 +21,14 @@
         private float scale = 64;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private GraphResourceBuilder creator;
+        private PostFxGraphResourceBuilder creator;
 
         public override string Name => "VelocityBuffer";
 
         public override PostFxFlags Flags => PostFxFlags.NoOutput | PostFxFlags.NoInput | PostFxFlags.Optional;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.None;
 
         public float Scale
         {
@@ -55,7 +58,7 @@
             builder.AddSource("VelocityBuffer");
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
 
@@ -74,7 +77,7 @@
 
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW), false);
+            Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
         public override void Update(IGraphicsContext context)

@@ -12,8 +12,8 @@
         private IGraphicsDevice device;
         private IGraphicsPipeline pipelineSSGI;
         private ConstantBuffer<SSGIParams> ssgiParams;
-        private Texture2D inputChain;
-        private Texture2D outputBuffer;
+        private ResourceRef<Texture2D> inputChain;
+        private ResourceRef<Texture2D> outputBuffer;
         private GaussianBlur blur;
         private ISamplerState linearWrapSampler;
         private IGraphicsPipeline copy;
@@ -28,6 +28,9 @@
         public override string Name { get; } = "SSGI";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
+
+        /// <inheritdoc/>
+        public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
         public float Intensity
         {
@@ -81,7 +84,7 @@
                    .RunBefore<Bloom>();
         }
 
-        public override void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             depth = creator.GetDepthMipChain("HiZBuffer");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -110,9 +113,9 @@
             });
 
             ssgiParams = new(device, new SSGIParams(), CpuAccessFlags.Write);
-            inputChain = new(device, Format.R16G16B16A16Float, width, height, 1, 10, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.GenerateMips);
-            outputBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R16G16B16A16Float, width, height);
+            inputChain = creator.CreateBuffer("SSGI_INPUT_CHAIN_BUFFER", 1, 10);
+            outputBuffer = creator.CreateBuffer("SSGI_OUTPUT_BUFFER");
+            blur = new(creator, "SSGI");
         }
 
         public override void Update(IGraphicsContext context)
@@ -162,8 +165,6 @@
             copy.Dispose();
             linearWrapSampler.Dispose();
             ssgiParams.Dispose();
-            inputChain.Dispose();
-            outputBuffer.Dispose();
             blur.Dispose();
         }
     }
