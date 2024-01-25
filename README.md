@@ -4,7 +4,7 @@
 </p>
 
 # Build
-- .NET SDK 7.0
+- .NET SDK 8.0
 - CMake<br/>
 Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine.Native
 
