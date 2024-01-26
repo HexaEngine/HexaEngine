@@ -25,7 +25,7 @@
             Register<PreferencesWidget>();
             Register<ProjectExplorer>();
             Register<PipelineWidget>();
-            Register<AssetExplorer2>();
+            Register<AssetExplorer>();
             Register<GitWidget>();
             Register<LayoutWidget>();
             Register<PropertiesWidget>();

@@ -2,7 +2,7 @@
 {
     public class GraphDependencyBuilder
     {
-        private RenderGraphNode node;
+        private readonly RenderGraphNode node;
         private readonly List<ResourceBinding> bindings = new();
         private readonly List<ResourceTarget> sources = new();
 

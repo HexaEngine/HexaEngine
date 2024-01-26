@@ -8,6 +8,7 @@
     using HexaEngine.D3D11;
     using HexaEngine.D3D12;
     using HexaEngine.Editor.Plugins;
+    using HexaEngine.Jobs;
     using HexaEngine.OpenAL;
     using HexaEngine.OpenGL;
     using HexaEngine.Projects;
@@ -97,6 +98,7 @@
                 return;
             }
 
+            JobScheduler.Default.Dispose();
             PluginManager.Unload();
             Logger.Close();
         }

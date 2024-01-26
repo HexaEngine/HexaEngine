@@ -10,6 +10,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -19,6 +20,7 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
+    [EditorCategory("Renderer")]
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
     public class SkinnedMeshRendererComponent : BaseRendererComponent
     {
@@ -115,7 +117,7 @@
 
             renderer = new(device);
 
-            UpdateModel().Wait();
+            UpdateModel();
         }
 
         public override void Unload()
@@ -160,7 +162,7 @@
             throw new NotImplementedException();
         }
 
-        private Task UpdateModel()
+        private Job UpdateModel()
         {
             Loaded = false;
             renderer?.Uninitialize();
@@ -168,7 +170,7 @@
             model = null;
             tmpModel?.Dispose();
 
-            return Task.Factory.StartNew(async state =>
+            return Job.Run("Skinned Model Load", this, state =>
             {
                 if (state is not SkinnedMeshRendererComponent component)
                 {
@@ -192,7 +194,7 @@
                     MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
 
                     component.model = new(source, library);
-                    await component.model.LoadAsync();
+                    component.model.LoadAsync().Wait();
 
                     var flags = component.model.ShaderFlags;
                     component.QueueIndex = (uint)RenderQueueIndex.Geometry;
@@ -211,7 +213,7 @@
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }
-            }, this);
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }
 }

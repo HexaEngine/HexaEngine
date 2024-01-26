@@ -46,7 +46,7 @@
     /// <summary>
     /// A editor widget for managing assets.
     /// </summary>
-    public class AssetExplorer2 : EditorWindow
+    public class AssetExplorer : EditorWindow
     {
         private static readonly ConfigKey config = Config.Global.GetOrCreateKey("Editor").GetOrCreateKey("Asset Explorer");
         private DirectoryInfo? currentDir;
@@ -77,7 +77,7 @@
             public string NameNoExtension = System.IO.Path.GetFileNameWithoutExtension(path);
         }
 
-        public AssetExplorer2()
+        public AssetExplorer()
         {
             IsShown = true;
             FileSystem.Changed += FileSystemChanged;

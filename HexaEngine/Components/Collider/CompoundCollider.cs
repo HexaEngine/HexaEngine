@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Numerics;
 
+    [EditorCategory("Collider")]
     [EditorComponent(typeof(CompoundCollider), "Compound Collider")]
     public class CompoundCollider : BaseCollider, ICompoundCollider
     {

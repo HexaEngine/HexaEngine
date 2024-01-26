@@ -49,10 +49,12 @@
         public SystemFlags Flags { get; } = SystemFlags.PhysicsUpdate | SystemFlags.Awake | SystemFlags.Destroy;
 
         public const float TimestepDuration = 1 / 60f;
+        private float accumulator;
 
         public void Awake(Scene scene)
         {
             scene.QueryManager.AddQuery(colliders);
+            accumulator = 0;
         }
 
         public void Update(float delta)
@@ -67,9 +69,15 @@
                 colliders[i].BeginUpdate();
             }
 
+            accumulator += delta;
+
             lock (Simulation)
             {
-                Simulation.Timestep(delta, dispatcher);
+                while (accumulator > TimestepDuration)
+                {
+                    Simulation.Timestep(TimestepDuration, dispatcher);
+                    accumulator -= TimestepDuration;
+                }
             }
 
             for (int i = 0; i < colliders.Count; i++)
@@ -87,6 +95,7 @@
             simulation.Dispose();
             bufferPool.Clear();
             dispatcher.Dispose();
+            accumulator = 0;
         }
     }
 }

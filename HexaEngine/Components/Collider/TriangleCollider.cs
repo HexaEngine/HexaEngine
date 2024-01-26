@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Attributes;
     using System.Numerics;
 
+    [EditorCategory("Collider")]
     [EditorComponent<TriangleCollider>("Triangle Collider")]
     public class TriangleCollider : BaseCollider
     {

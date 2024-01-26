@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
+    [EditorCategory("Audio")]
     [EditorComponent<ListenerComponent>("Listener")]
     public class ListenerComponent : IAudioComponent
     {

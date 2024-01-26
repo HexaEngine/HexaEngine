@@ -82,15 +82,7 @@
 
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, History.Default.CanUndo))
-                    {
-                        History.Default.Undo();
-                    }
-                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, History.Default.CanRedo))
-                    {
-                        History.Default.Redo();
-                    }
-
+                    EditSubMenu();
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("View"))
@@ -346,6 +338,41 @@
                 if (showImGuiDemo)
                 {
                     ImGui.ShowDemoWindow();
+                }
+            }
+        }
+
+        private static unsafe void EditSubMenu()
+        {
+            if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, History.Default.CanUndo))
+            {
+                History.Default.Undo();
+            }
+            if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, History.Default.CanRedo))
+            {
+                History.Default.Redo();
+            }
+
+            var history = History.Default;
+
+            lock (history.SyncObject)
+            {
+                ImGui.Text("Undo-Stack");
+                for (int i = 0; i < history.UndoCount; i++)
+                {
+                    var item = history.UndoStack[i];
+                    if (ImGui.MenuItem(item.Item2.ActionName))
+                    {
+                    }
+                }
+                ImGui.Separator();
+                ImGui.Text("Redo-Stack");
+                for (int i = 0; i < history.UndoCount; i++)
+                {
+                    var item = history.UndoStack[i];
+                    if (ImGui.MenuItem(item.Item2.ActionName))
+                    {
+                    }
                 }
             }
         }

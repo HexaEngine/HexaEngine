@@ -113,7 +113,7 @@
             // Initialize time if requested.
             if (resetTime)
             {
-                Time.Initialize();
+                Time.ResetTime();
                 resetTime = false;
             }
 

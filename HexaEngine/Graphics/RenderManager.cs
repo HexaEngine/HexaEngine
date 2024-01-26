@@ -61,7 +61,6 @@
     public class RenderManager : ISystem
     {
         private readonly IGraphicsDevice device;
-        private readonly FlaggedList<RendererFlags, IRendererComponent> rendererComponents = new();
         private readonly ComponentTypeQuery<IRendererComponent> renderers = new();
         private readonly List<IRendererComponent> backgroundQueue = new();
         private readonly List<IRendererComponent> geometryQueue = new();

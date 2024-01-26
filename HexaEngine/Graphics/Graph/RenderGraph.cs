@@ -9,6 +9,7 @@
         private readonly List<ResourceBinding> globalResources = new();
         private readonly Dictionary<ResourceBinding, RenderGraphNode> globalResourcesLastWrite = new();
         private readonly List<RenderGraphNode> sortedNodes = new();
+        private readonly RenderGraphNameRegistry nameRegistry = new();
         private readonly List<int> sortedNodeIndices = new();
 
         private readonly TopologicalSorter<RenderGraphNode> sorter = new();
@@ -31,6 +32,7 @@
             int index = nodes.Count;
             RenderGraphNode node = new(metadata.Name);
             nodes.Add(node);
+            //nameRegistry.Add();
             return index;
         }
 

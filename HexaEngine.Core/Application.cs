@@ -259,7 +259,7 @@
         private static void PlatformRun()
         {
             Event evnt;
-            Time.Initialize();
+            Time.ResetTime();
 
             while (!exiting)
             {

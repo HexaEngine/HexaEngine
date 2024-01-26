@@ -79,7 +79,7 @@
 
             if (firstFrame)
             {
-                Time.Initialize();
+                Time.ResetTime();
                 firstFrame = false;
             }
 

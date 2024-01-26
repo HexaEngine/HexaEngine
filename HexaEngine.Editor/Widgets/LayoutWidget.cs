@@ -13,11 +13,14 @@
     using System.Numerics;
     using System.Reflection;
 
+    // TODO: Needs major overhaul.
+    /// <summary>
+    ///
+    /// </summary>
     public class LayoutWidget : EditorWindow
     {
         private readonly Dictionary<string, EditorGameObjectAttribute> cache = new();
-
-        public static bool ShowHidden;
+        private bool showHidden;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public LayoutWidget()
@@ -47,12 +50,22 @@
 
         protected override string Name => "Layout";
 
+        private void DrawSettingsMenu()
+        {
+            if (ImGui.BeginMenu("\xE713 Settings"))
+            {
+                ImGui.Checkbox("Show Hidden", ref showHidden);
+
+                ImGui.EndMenu();
+            }
+        }
+
         private void DisplayContextMenu()
         {
             var scene = SceneManager.Current;
-            if (ImGui.BeginPopupContextWindow("LayoutContextMenu"))
+            if (ImGui.BeginPopupContextWindow())
             {
-                if (ImGui.BeginMenu("Add"))
+                if (ImGui.BeginMenu("\xE710 Add"))
                 {
                     foreach (var item in cache)
                     {
@@ -68,10 +81,7 @@
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.MenuItem("Show Hidden"))
-                {
-                    ShowHidden = !ShowHidden;
-                }
+                DrawSettingsMenu();
 
                 ImGui.EndPopup();
             }
@@ -82,22 +92,29 @@
             ImGui.PushID(element.Name);
             if (ImGui.BeginPopupContextItem(element.Name))
             {
-                if (ImGui.MenuItem("Focus (F)"))
+                if (ImGui.MenuItem("\xE71E Focus"))
                 {
                     CameraManager.Center = element.Transform.GlobalPosition;
                 }
-                if (ImGui.MenuItem("Unfocus (F)"))
+                if (ImGui.MenuItem("\xE71F Defocus"))
                 {
                     CameraManager.Center = Vector3.Zero;
                 }
-                if (ImGui.MenuItem("Unselect"))
+
+                ImGui.Separator();
+
+                if (ImGui.MenuItem("\xE8E6 Unselect"))
                 {
                     GameObject.Selected.ClearSelection();
                 }
-                if (ImGui.MenuItem("Delete"))
+
+                ImGui.Separator();
+
+                if (ImGui.MenuItem("\xE738 Delete"))
                 {
                     GameObject.Selected.PurgeSelection();
                 }
+
                 ImGui.EndPopup();
             }
             ImGui.PopID();
@@ -105,7 +122,7 @@
 
         private void DisplayNode(GameObject element)
         {
-            if (element.IsHidden && !ShowHidden)
+            if (element.IsHidden && !showHidden)
             {
                 return;
             }

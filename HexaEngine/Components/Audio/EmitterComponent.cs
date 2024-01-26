@@ -7,6 +7,7 @@ namespace HexaEngine.Components.Audio
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
+    [EditorCategory("Audio")]
     [EditorComponent<EmitterComponent>("Emitter")]
     public class EmitterComponent : IAudioComponent
     {

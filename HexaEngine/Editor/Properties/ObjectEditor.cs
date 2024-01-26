@@ -198,7 +198,7 @@
 
                 if (editor.Item2.Draw(context, instance, ref value))
                 {
-                    History.Default.Do((instance, editor.Item1), oldValue, value, DoAction, UndoAction);
+                    History.Default.Do($"Set Value ({editor.Item2.Name})", (instance, editor.Item1), oldValue, value, DoAction, UndoAction);
                 }
             }
 

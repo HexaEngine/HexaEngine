@@ -56,34 +56,6 @@
                 DisplayKeyNode(keys[i]);
             }
 
-            void DisplayKeyNode(ConfigKey key)
-            {
-                ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
-                if (displayedKey == key)
-                {
-                    flags |= ImGuiTreeNodeFlags.Selected;
-                }
-
-                if (key.Keys.Count == 0)
-                {
-                    flags |= ImGuiTreeNodeFlags.Leaf;
-                }
-
-                bool isOpen = ImGui.TreeNodeEx(key.Name, flags);
-                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                {
-                    displayedKey = key;
-                }
-                if (isOpen)
-                {
-                    for (int j = 0; j < key.Keys.Count; j++)
-                    {
-                        DisplayKeyNode(key.Keys[j]);
-                    }
-                    ImGui.TreePop();
-                }
-            }
-            //ImGui.SameLine();
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 5);
             ImGui.TableNextColumn();
 
@@ -402,6 +374,34 @@
             }
 
             ImGui.EndTable();
+        }
+
+        private void DisplayKeyNode(ConfigKey key)
+        {
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
+            if (displayedKey == key)
+            {
+                flags |= ImGuiTreeNodeFlags.Selected;
+            }
+
+            if (key.Keys.Count == 0)
+            {
+                flags |= ImGuiTreeNodeFlags.Leaf;
+            }
+
+            bool isOpen = ImGui.TreeNodeEx(key.Name, flags);
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+            {
+                displayedKey = key;
+            }
+            if (isOpen)
+            {
+                for (int j = 0; j < key.Keys.Count; j++)
+                {
+                    DisplayKeyNode(key.Keys[j]);
+                }
+                ImGui.TreePop();
+            }
         }
     }
 }

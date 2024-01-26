@@ -10,6 +10,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -19,6 +20,7 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
+    [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
     public class MeshRendererComponent : BaseRendererComponent, ISelectableRayTest
     {
@@ -63,7 +65,7 @@
 
             renderer = new(device);
 
-            UpdateModel().Wait();
+            UpdateModel();
         }
 
         public override void Unload()
@@ -140,7 +142,7 @@
             return false;
         }
 
-        private Task UpdateModel()
+        private Job UpdateModel()
         {
             Loaded = false;
             renderer?.Uninitialize();
@@ -148,7 +150,7 @@
             model = null;
             tmpModel?.Dispose();
 
-            return Task.Factory.StartNew(async state =>
+            return Job.Run("Model Load Job", this, state =>
             {
                 if (state is not MeshRendererComponent component)
                 {
@@ -172,7 +174,7 @@
                     MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
 
                     component.model = new(source, library);
-                    await component.model.LoadAsync();
+                    component.model.LoadAsync().Wait();
                     var flags = component.model.ShaderFlags;
                     component.QueueIndex = (uint)RenderQueueIndex.Geometry;
 
@@ -190,7 +192,7 @@
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }
-            }, this);
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }
 }

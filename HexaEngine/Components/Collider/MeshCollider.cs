@@ -6,6 +6,7 @@
     using HexaEngine.Editor.Attributes;
     using System.Numerics;
 
+    [EditorCategory("Collider")]
     [EditorComponent(typeof(MeshCollider), "Mesh Collider")]
     public class MeshCollider : BaseCollider
     {

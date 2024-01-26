@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Attributes;
     using System.Numerics;
 
+    [EditorCategory("Collider")]
     [EditorComponent(typeof(ConvexHullCollider), "Convex Hull Collider")]
     public class ConvexHullCollider : BaseCollider
     {

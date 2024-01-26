@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents an attribute used to mark properties as editor categories.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false)]
     public class EditorCategoryAttribute : Attribute
     {
         /// <summary>

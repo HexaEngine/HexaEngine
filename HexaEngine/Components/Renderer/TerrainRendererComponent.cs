@@ -11,7 +11,8 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
 
-    [EditorComponent<TerrainRendererComponent>("TerrainCellData", false, true)]
+    [EditorCategory("Renderer")]
+    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
     public class TerrainRendererComponent : BaseRendererComponent
     {
         private StaticTerrainRenderer renderer;

@@ -25,6 +25,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryContext{T1, T2}"/> struct.
         /// </summary>
+        /// <param name="actionName">The action name associated with the history action.</param>
         /// <param name="target">The target object associated with the history action.</param>
         /// <param name="oldValue">The old value associated with the history action.</param>
         /// <param name="newValue">The new value associated with the history action.</param>

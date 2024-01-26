@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
 
+    [EditorCategory("Collider")]
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
     public class CapsuleCollider : BaseCollider
     {

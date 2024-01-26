@@ -7,6 +7,7 @@
     using HexaEngine.Physics;
     using System.Linq;
 
+    [EditorCategory("Collider")]
     [EditorComponent(typeof(BigCompoundCollider), "Big Compound Collider")]
     public class BigCompoundCollider : CompoundCollider
     {

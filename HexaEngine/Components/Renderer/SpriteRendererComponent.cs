@@ -8,15 +8,18 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System;
     using System.Numerics;
 
+    [EditorCategory("Renderer")]
     [EditorComponent<SpriteRendererComponent>("Sprite Renderer")]
     public class SpriteRendererComponent : BaseRendererComponent
     {
+        private IGraphicsDevice? device;
         private SpriteRenderer renderer;
         private SpriteBatch spriteBatch;
         private SpriteAtlas? spriteAtlas;
@@ -66,12 +69,13 @@
 
         public override void Load(IGraphicsDevice device)
         {
+            this.device = device;
             DebugName = GameObject.Name + DebugName;
             renderer = new(device);
             spriteBatch = new(device);
             spriteBatch.Add(sprite);
 
-            UpdateAtlasAsync().Wait();
+            UpdateAtlasAsync();
         }
 
         public override void Unload()
@@ -113,19 +117,27 @@
             throw new NotImplementedException();
         }
 
-        private Task UpdateAtlasAsync()
+        private Job UpdateAtlasAsync()
         {
             Loaded = false;
             var tmpAtlas = spriteAtlas;
             spriteAtlas = null;
             tmpAtlas?.Dispose();
 
-            var state = new Tuple<IGraphicsDevice, SpriteRendererComponent>(Application.GraphicsDevice, this);
-            return Task.Factory.StartNew(async (state) =>
+            return Job.Run("Sprite Load Job", this, state =>
             {
-                var p = (Tuple<IGraphicsDevice, SpriteRendererComponent>)state;
-                var device = p.Item1;
-                var component = p.Item2;
+                if (state is not SpriteRendererComponent component)
+                {
+                    return;
+                }
+
+                if (component.device == null)
+                {
+                    return;
+                }
+
+                var device = component.device;
+
                 var path = Paths.CurrentAssetsPath + component.atlasPath;
 
                 if (FileSystem.Exists(path))
@@ -133,7 +145,7 @@
                     component.spriteAtlas = new(device, SamplerStateDescription.PointClamp, path);
                     component.Loaded = true;
                 }
-            }, state);
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }
 }

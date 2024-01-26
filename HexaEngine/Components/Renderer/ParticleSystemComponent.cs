@@ -16,6 +16,7 @@
     using System;
     using System.Numerics;
 
+    [EditorCategory("Particles")]
     [EditorComponent<ParticleSystemComponent>("GPU Particle System", false, false)]
     public class ParticleSystemComponent : BaseRendererComponent, ISelectableRayTest
     {
@@ -103,7 +104,7 @@
 
             dsv = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
 
-            UpdateTextureAsync().Wait();
+            UpdateTextureAsync();
         }
 
         public override void Unload()

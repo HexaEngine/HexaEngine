@@ -62,9 +62,9 @@
         public static event EventHandler? FixedUpdate;
 
         /// <summary>
-        /// Initializes the Time system.
+        /// Resets the time system.
         /// </summary>
-        public static void Initialize()
+        public static void ResetTime()
         {
             last = sdl.GetPerformanceCounter();
             fixedTime = 0;

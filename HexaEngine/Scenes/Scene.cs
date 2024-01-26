@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Graphics;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Queries;
@@ -141,7 +142,6 @@
             semaphore.Wait();
 
             Time.FixedUpdate += FixedUpdate;
-            Time.Initialize();
 
             root.Initialize();
             Validate();
@@ -181,7 +181,6 @@
             await semaphore.WaitAsync();
 
             Time.FixedUpdate += FixedUpdate;
-            Time.Initialize();
 
             root.Initialize();
             Validate();
@@ -201,6 +200,10 @@
             {
                 load[i].Load(device);
             }
+
+            Job.WaitAll(JobScheduler.Default.GetAllJobsWithFlag(JobFlags.BlockOnSceneLoad));
+
+            Time.ResetTime();
         }
 
         public void Unload()

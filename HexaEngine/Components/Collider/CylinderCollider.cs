@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
 
+    [EditorCategory("Collider")]
     [EditorComponent<CylinderCollider>("Cylinder Collider")]
     public class CylinderCollider : BaseCollider
     {

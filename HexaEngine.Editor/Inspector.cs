@@ -275,7 +275,7 @@
                     if (gimbalGrabbed)
                     {
                         var oldValue = gimbalBefore;
-                        History.Default.Push(element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
+                        History.Default.Push("Transform Object", element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
                     }
                     gimbalGrabbed = false;
                     gimbalBefore = element.Transform.Local;

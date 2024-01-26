@@ -7,6 +7,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -14,6 +15,7 @@
     using System;
     using System.Threading.Tasks;
 
+    [EditorCategory("Renderer")]
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]
     public class SkyRendererComponent : BaseRendererComponent
     {
@@ -53,15 +55,14 @@
                     return;
                 }
 
-                UpdateEnvAsync(device);
+                UpdateEnvAsync();
             }
         }
 
         public override void Load(IGraphicsDevice device)
         {
             renderer = new(device);
-
-            UpdateEnvAsync(device).Wait();
+            UpdateEnvAsync();
         }
 
         public override void Unload()
@@ -103,7 +104,7 @@
             throw new NotSupportedException();
         }
 
-        private Task UpdateEnvAsync(IGraphicsDevice device)
+        private Job UpdateEnvAsync()
         {
             Loaded = false;
             renderer?.Uninitialize();
@@ -111,22 +112,30 @@
             skybox = null;
             tmpSkybox?.Dispose();
 
-            var state = new Tuple<IGraphicsDevice, SkyRendererComponent>(device, this);
-            return Task.Factory.StartNew(async (state) =>
+            return Job.Run("Sky Load Job", this, state =>
             {
-                var p = (Tuple<IGraphicsDevice, SkyRendererComponent>)state;
-                var device = p.Item1;
-                var component = p.Item2;
+                if (state is not SkyRendererComponent component)
+                {
+                    return;
+                }
+
+                if (component.device == null)
+                {
+                    return;
+                }
+
+                var device = component.device;
+
                 var path = Paths.CurrentAssetsPath + component.environmentPath;
 
                 if (FileSystem.Exists(path))
                 {
                     component.skybox = new(device);
-                    await component.skybox.LoadAsync(path);
+                    component.skybox.LoadAsync(path).Wait();
                     component.renderer.Initialize(component.skybox);
                     component.Loaded = true;
                 }
-            }, state);
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }
 }

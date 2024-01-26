@@ -8,10 +8,11 @@
     /// </summary>
     public class History
     {
-        private readonly Stack<(object, HistoryItem)> undoStack = new();
-        private readonly Stack<(object, HistoryItem)> redoStack = new();
+        private readonly HistoryStack<(object, HistoryItem)> undoStack = new();
+        private readonly HistoryStack<(object, HistoryItem)> redoStack = new();
         private readonly int maxEntries;
         private readonly bool autoDispose;
+        private readonly object _lock = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="History"/> class with a specified maximum number of entries and auto-dispose setting.
@@ -45,46 +46,103 @@
         public bool CanRedo => redoStack.Count != 0;
 
         /// <summary>
-        /// Gets the number of undoable actions in the history.
+        /// Gets the number of undo-able actions in the history.
         /// </summary>
         public int UndoCount => undoStack.Count;
 
         /// <summary>
-        /// Gets the number of redoable actions in the history.
+        /// Gets the number of redo-able actions in the history.
         /// </summary>
         public int RedoCount => redoStack.Count;
+
+        /// <summary>
+        /// Gets the undo stack. Use <see cref="SyncObject"/> to access it thread-safe.
+        /// </summary>
+        public IReadOnlyList<(object, HistoryItem)> UndoStack => undoStack;
+
+        /// <summary>
+        /// Gets the redo stack. Use <see cref="SyncObject"/> to access it thread-safe.
+        /// </summary>
+        public IReadOnlyList<(object, HistoryItem)> RedoStack => redoStack;
+
+        /// <summary>
+        /// Gets the sync object for thread synchronisation.
+        /// </summary>
+        public object SyncObject => _lock;
 
         /// <summary>
         /// Gets the default instance of the <see cref="History"/> class.
         /// </summary>
         public static History Default { get; } = new();
 
-        private struct HistoryItem
+        /// <summary>
+        /// Represents an action in the history.
+        /// </summary>
+        public struct HistoryItem
         {
+            /// <summary>
+            /// The name of the action.
+            /// </summary>
+            public string ActionName;
+
+            /// <summary>
+            /// The action to perform.
+            /// </summary>
             public Action<object> DoAction;
+
+            /// <summary>
+            /// The action to undo the previous action.
+            /// </summary>
             public Action<object> UndoAction;
 
-            public HistoryItem(Action<object> doAction, Action<object> undoAction)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="HistoryItem"/> struct.
+            /// </summary>
+            /// <param name="actionName">The name of the action.</param>
+            /// <param name="doAction">The action to perform.</param>
+            /// <param name="undoAction">The action to undo the previous action.</param>
+            public HistoryItem(string actionName, Action<object> doAction, Action<object> undoAction)
             {
+                ActionName = actionName;
                 DoAction = doAction;
                 UndoAction = undoAction;
             }
         }
 
         /// <summary>
+        /// Enters the lock.
+        /// </summary>
+        public void EnterLock()
+        {
+            Monitor.Enter(_lock);
+        }
+
+        /// <summary>
+        /// Exits the lock.
+        /// </summary>
+        public void ExitLock()
+        {
+            Monitor.Exit(_lock);
+        }
+
+        /// <summary>
         /// Pushes a new action onto the undo stack.
         /// </summary>
+        /// <param name="actionName"></param>
         /// <param name="context">The context object associated with the action.</param>
         /// <param name="doAction">The action to perform.</param>
         /// <param name="undoAction">The action to undo the previous action.</param>
-        public void Push(object context, Action<object> doAction, Action<object> undoAction)
+        public void Push(string actionName, object context, Action<object> doAction, Action<object> undoAction)
         {
-            if (undoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(undoStack.Pop());
+                if (undoStack.Count == maxEntries)
+                {
+                    DestroyObject(undoStack.Pop());
+                }
+                undoStack.Push((context, new(actionName, doAction, undoAction)));
+                ClearRedo();
             }
-            undoStack.Push((context, new(doAction, undoAction)));
-            ClearRedo();
         }
 
         /// <summary>
@@ -92,37 +150,45 @@
         /// </summary>
         /// <typeparam name="T1">The type of the first parameter.</typeparam>
         /// <typeparam name="T2">The type of the second parameter.</typeparam>
+        /// <param name="actionName">The name of the action.</param>
         /// <param name="target">The target object associated with the action.</param>
         /// <param name="oldValue">The old value associated with the action.</param>
         /// <param name="newValue">The new value associated with the action.</param>
         /// <param name="doAction">The action to perform.</param>
         /// <param name="undoAction">The action to undo the previous action.</param>
-        public void Push<T1, T2>(T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
+        public void Push<T1, T2>(string actionName, T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
         {
-            if (undoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(undoStack.Pop());
+                if (undoStack.Count == maxEntries)
+                {
+                    DestroyObject(undoStack.Pop());
+                }
+                var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
+                undoStack.Push((context, new(actionName, doAction, undoAction)));
+                ClearRedo();
             }
-            var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
-            undoStack.Push((context, new(doAction, undoAction)));
-            ClearRedo();
         }
 
         /// <summary>
         /// Performs an action and pushes it onto the undo stack.
         /// </summary>
+        /// <param name="actionName">The name of the action.</param>
         /// <param name="context">The context object associated with the action.</param>
         /// <param name="doAction">The action to perform.</param>
         /// <param name="undoAction">The action to undo the previous action.</param>
-        public void Do(object context, Action<object> doAction, Action<object> undoAction)
+        public void Do(string actionName, object context, Action<object> doAction, Action<object> undoAction)
         {
-            if (undoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(undoStack.Pop());
+                if (undoStack.Count == maxEntries)
+                {
+                    DestroyObject(undoStack.Pop());
+                }
+                doAction(context);
+                undoStack.Push((context, new(actionName, doAction, undoAction)));
+                ClearRedo();
             }
-            doAction(context);
-            undoStack.Push((context, new(doAction, undoAction)));
-            ClearRedo();
         }
 
         /// <summary>
@@ -130,21 +196,25 @@
         /// </summary>
         /// <typeparam name="T1">The type of the first parameter.</typeparam>
         /// <typeparam name="T2">The type of the second parameter.</typeparam>
+        /// <param name="actionName">The name of the action.</param>
         /// <param name="target">The target object associated with the action.</param>
         /// <param name="oldValue">The old value associated with the action.</param>
         /// <param name="newValue">The new value associated with the action.</param>
         /// <param name="doAction">The action to perform.</param>
         /// <param name="undoAction">The action to undo the previous action.</param>
-        public void Do<T1, T2>(T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
+        public void Do<T1, T2>(string actionName, T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
         {
-            if (undoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(undoStack.Pop());
+                if (undoStack.Count == maxEntries)
+                {
+                    DestroyObject(undoStack.Pop());
+                }
+                var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
+                doAction(context);
+                undoStack.Push((context, new(actionName, doAction, undoAction)));
+                ClearRedo();
             }
-            var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
-            doAction(context);
-            undoStack.Push((context, new(doAction, undoAction)));
-            ClearRedo();
         }
 
         /// <summary>
@@ -153,8 +223,11 @@
         /// <returns>A tuple containing the context, do action, and undo action of the popped action.</returns>
         public (object, Action<object>, Action<object>) Pop()
         {
-            var e = undoStack.Pop();
-            return (e.Item1, e.Item2.DoAction, e.Item2.UndoAction);
+            lock (_lock)
+            {
+                var e = undoStack.Pop();
+                return (e.Item1, e.Item2.DoAction, e.Item2.UndoAction);
+            }
         }
 
         /// <summary>
@@ -162,8 +235,11 @@
         /// </summary>
         public void Clear()
         {
-            ClearUndo();
-            ClearRedo();
+            lock (_lock)
+            {
+                ClearUndo();
+                ClearRedo();
+            }
         }
 
         /// <summary>
@@ -171,9 +247,12 @@
         /// </summary>
         public void ClearRedo()
         {
-            while (redoStack.TryPop(out var result))
+            lock (_lock)
             {
-                DestroyObject(result);
+                while (redoStack.TryPop(out var result))
+                {
+                    DestroyObject(result);
+                }
             }
         }
 
@@ -182,9 +261,12 @@
         /// </summary>
         public void ClearUndo()
         {
-            while (undoStack.TryPop(out var result))
+            lock (_lock)
             {
-                DestroyObject(result);
+                while (undoStack.TryPop(out var result))
+                {
+                    DestroyObject(result);
+                }
             }
         }
 
@@ -193,13 +275,16 @@
         /// </summary>
         public void Undo()
         {
-            var item = undoStack.Pop();
-            item.Item2.UndoAction(item.Item1);
-            if (redoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(redoStack.Pop());
+                var item = undoStack.Pop();
+                item.Item2.UndoAction(item.Item1);
+                if (redoStack.Count == maxEntries)
+                {
+                    DestroyObject(redoStack.Pop());
+                }
+                redoStack.Push(item);
             }
-            redoStack.Push(item);
         }
 
         /// <summary>
@@ -208,17 +293,20 @@
         /// <returns><c>true</c> if the undo operation was successful; otherwise, <c>false</c>.</returns>
         public bool TryUndo()
         {
-            if (undoStack.TryPop(out var item))
+            lock (_lock)
             {
-                item.Item2.UndoAction(item.Item1);
-                if (redoStack.Count == maxEntries)
+                if (undoStack.TryPop(out var item))
                 {
-                    DestroyObject(redoStack.Pop());
+                    item.Item2.UndoAction(item.Item1);
+                    if (redoStack.Count == maxEntries)
+                    {
+                        DestroyObject(redoStack.Pop());
+                    }
+                    redoStack.Push(item);
+                    return true;
                 }
-                redoStack.Push(item);
-                return true;
+                return false;
             }
-            return false;
         }
 
         /// <summary>
@@ -226,13 +314,16 @@
         /// </summary>
         public void Redo()
         {
-            var item = redoStack.Pop();
-            item.Item2.DoAction(item.Item1);
-            if (undoStack.Count == maxEntries)
+            lock (_lock)
             {
-                DestroyObject(undoStack.Pop());
+                var item = redoStack.Pop();
+                item.Item2.DoAction(item.Item1);
+                if (undoStack.Count == maxEntries)
+                {
+                    DestroyObject(undoStack.Pop());
+                }
+                undoStack.Push(item);
             }
-            undoStack.Push(item);
         }
 
         /// <summary>
@@ -241,17 +332,20 @@
         /// <returns><c>true</c> if the redo operation was successful; otherwise, <c>false</c>.</returns>
         public bool TryRedo()
         {
-            if (redoStack.TryPop(out var item))
+            lock (_lock)
             {
-                item.Item2.DoAction(item.Item1);
-                if (undoStack.Count == maxEntries)
+                if (redoStack.TryPop(out var item))
                 {
-                    DestroyObject(undoStack.Pop());
+                    item.Item2.DoAction(item.Item1);
+                    if (undoStack.Count == maxEntries)
+                    {
+                        DestroyObject(undoStack.Pop());
+                    }
+                    undoStack.Push(item);
+                    return true;
                 }
-                undoStack.Push(item);
-                return true;
+                return false;
             }
-            return false;
         }
 
         private void DestroyObject((object, HistoryItem) obj)
