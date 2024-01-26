@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent<SphereCollider>("Sphere Collider")]
-    public class SphereCollider : BaseCollider
+    public class SphereCollider : BepuBaseCollider
     {
         private float radius = 1;
 

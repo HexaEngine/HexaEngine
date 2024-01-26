@@ -7,7 +7,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent(typeof(ConvexHullCollider), "Convex Hull Collider")]
-    public class ConvexHullCollider : BaseCollider
+    public class ConvexHullCollider : BepuBaseCollider
     {
         private string mesh = string.Empty;
         private ConvexHull? convexHull;

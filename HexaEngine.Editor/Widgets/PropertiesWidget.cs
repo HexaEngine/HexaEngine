@@ -454,6 +454,9 @@ namespace HexaEngine.Editor.Widgets
                 {
                     continue;
                 }
+                string name = $"{editor.Name}##{i}";
+
+                ImGui.PushID(name);
 
                 ImGui.BeginDisabled(editor.IsHidden);
 
@@ -465,8 +468,6 @@ namespace HexaEngine.Editor.Widgets
                     flags |= ImGuiTreeNodeFlags.DefaultOpen;
                 }
 
-                string name = $"{editor.Name}##{i}";
-
                 if (ImGui.CollapsingHeader(name, flags))
                 {
                     editor?.Draw(context);
@@ -475,6 +476,8 @@ namespace HexaEngine.Editor.Widgets
                 DrawContextMenuComponent(scene, element, component);
 
                 ImGui.EndDisabled();
+
+                ImGui.PopID();
             }
         }
 

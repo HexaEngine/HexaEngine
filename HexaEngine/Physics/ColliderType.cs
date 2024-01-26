@@ -6,4 +6,11 @@
         Dynamic,
         Kinematic
     }
+
+    public enum PhysXColliderType
+    {
+        Static,
+        Dynamic,
+        Kinematic
+    }
 }

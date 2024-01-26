@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class TerrainCollider : BaseCollider
+    public class TerrainCollider : BepuBaseCollider
     {
         public override void CreateShape()
         {

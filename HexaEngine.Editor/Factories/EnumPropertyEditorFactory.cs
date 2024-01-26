@@ -14,7 +14,7 @@
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new EnumPropertyEditor(nameAttr.Name, property);
+            return new EnumPropertyEditor(nameAttr, property);
         }
     }
 }

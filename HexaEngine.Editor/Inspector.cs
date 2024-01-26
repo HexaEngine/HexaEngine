@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Components.Collider;
+    using HexaEngine.Components.Collider.PhysX;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Scenes;
@@ -210,29 +211,60 @@
                     for (int j = 0; j < scene.GameObjects[i].Components.Count; j++)
                     {
                         IComponent component = scene.GameObjects[i].Components[j];
-                        if (component is BoxCollider box)
                         {
-                            DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                            if (component is BoxCollider box)
+                            {
+                                DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                            }
+                            if (component is SphereCollider sphere)
+                            {
+                                DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                            }
+                            if (component is CapsuleCollider capsule)
+                            {
+                                DebugDraw.DrawCapsule(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                            }
+                            if (component is CylinderCollider cylinder)
+                            {
+                                DebugDraw.DrawCylinder(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
+                            }
+                            if (component is TriangleCollider triangle)
+                            {
+                                DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
+                            }
+                            if (component is CompoundCollider compound)
+                            {
+                                DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition + compound.Center, Quaternion.Identity, 0.1f, new(1, 1, 0, 1));
+                            }
                         }
-                        if (component is SphereCollider sphere)
+
                         {
-                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
-                        }
-                        if (component is CapsuleCollider capsule)
-                        {
-                            DebugDraw.DrawCapsule(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
-                        }
-                        if (component is CylinderCollider cylinder)
-                        {
-                            DebugDraw.DrawCylinder(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
-                        }
-                        if (component is TriangleCollider triangle)
-                        {
-                            DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
-                        }
-                        if (component is CompoundCollider compound)
-                        {
-                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition + compound.Center, Quaternion.Identity, 0.1f, new(1, 1, 0, 1));
+                            if (component is PhysXBoxCollider box)
+                            {
+                                DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                            }
+                            if (component is PhysXSphereCollider sphere)
+                            {
+                                DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                            }
+                            /*
+                            if (component is CapsuleCollider capsule)
+                            {
+                                DebugDraw.DrawCapsule(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                            }
+                            if (component is CylinderCollider cylinder)
+                            {
+                                DebugDraw.DrawCylinder(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
+                            }
+                            if (component is TriangleCollider triangle)
+                            {
+                                DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
+                            }
+                            if (component is CompoundCollider compound)
+                            {
+                                DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition + compound.Center, Quaternion.Identity, 0.1f, new(1, 1, 0, 1));
+                            }
+                            */
                         }
                     }
                 }

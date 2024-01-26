@@ -4,7 +4,7 @@
     using BepuPhysics.Collidables;
     using HexaEngine.Scenes;
 
-    public interface IColliderComponent : IComponent
+    public interface IBepuColliderComponent : IComponent
     {
         BodyHandle BodyHandle { get; }
 

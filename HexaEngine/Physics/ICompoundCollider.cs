@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    public interface ICompoundCollider : IColliderComponent
+    public interface ICompoundCollider : IBepuColliderComponent
     {
         Vector3 Center { get; }
-        IReadOnlyList<IColliderComponent>? Children { get; }
+        IReadOnlyList<IBepuColliderComponent>? Children { get; }
     }
 }

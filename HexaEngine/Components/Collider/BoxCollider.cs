@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent(typeof(BoxCollider), "Box Collider")]
-    public class BoxCollider : BaseCollider
+    public class BoxCollider : BepuBaseCollider
     {
         private float height = 1;
         private float depth = 1;

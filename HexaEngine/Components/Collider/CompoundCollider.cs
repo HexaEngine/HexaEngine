@@ -11,9 +11,9 @@
 
     [EditorCategory("Collider")]
     [EditorComponent(typeof(CompoundCollider), "Compound Collider")]
-    public class CompoundCollider : BaseCollider, ICompoundCollider
+    public class CompoundCollider : BepuBaseCollider, ICompoundCollider
     {
-        protected List<IColliderComponent>? colliderChildren;
+        protected List<IBepuColliderComponent>? colliderChildren;
         protected Buffer<CompoundChild> compoundChildren;
         protected Vector3 center;
         protected Compound compound;
@@ -22,7 +22,7 @@
         public Vector3 Center => center;
 
         [JsonIgnore]
-        public IReadOnlyList<IColliderComponent>? Children => colliderChildren;
+        public IReadOnlyList<IBepuColliderComponent>? Children => colliderChildren;
 
         public override void CreateShape()
         {
@@ -34,7 +34,7 @@
             {
                 lock (simulation)
                 {
-                    colliderChildren = GameObject.GetComponentsFromChilds<IColliderComponent>().ToList();
+                    colliderChildren = GameObject.GetComponentsFromChilds<IBepuColliderComponent>().ToList();
                     CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
                     for (int i = 0; i < colliderChildren.Count; i++)
                     {

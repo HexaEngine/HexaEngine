@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent<CylinderCollider>("Cylinder Collider")]
-    public class CylinderCollider : BaseCollider
+    public class CylinderCollider : BepuBaseCollider
     {
         private float radius = 1;
         private float length = 1;

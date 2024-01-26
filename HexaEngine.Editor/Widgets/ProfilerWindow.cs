@@ -412,7 +412,7 @@
                 }
             }
 
-            var simulation = scene.GetRequiredSystem<PhysicsSystem>().Simulation;
+            var simulation = scene.GetRequiredSystem<BepuPhysicsSystem>().Simulation;
 
             if (physics)
             {

@@ -8,7 +8,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent(typeof(MeshCollider), "Mesh Collider")]
-    public class MeshCollider : BaseCollider
+    public class MeshCollider : BepuBaseCollider
     {
         private string meshPath = string.Empty;
         private Mesh mesh;

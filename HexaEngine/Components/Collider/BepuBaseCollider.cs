@@ -10,7 +10,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Systems;
 
-    public abstract class BaseCollider : IColliderComponent
+    public abstract class BepuBaseCollider : IBepuColliderComponent
     {
         protected bool hasBody = false;
         protected bool hasShape = false;
@@ -26,7 +26,7 @@
         protected PhysicsMaterial material;
 
         protected Scene? scene;
-        protected PhysicsSystem? system;
+        protected BepuPhysicsSystem? system;
         protected Simulation? simulation;
         protected BufferPool? bufferPool;
         protected ColliderType type;
@@ -107,7 +107,7 @@
         public virtual void Awake()
         {
             scene = GameObject.GetScene();
-            system = scene.GetRequiredSystem<PhysicsSystem>();
+            system = scene.GetRequiredSystem<BepuPhysicsSystem>();
             simulation = system.Simulation;
             bufferPool = system.BufferPool;
             CreateBody();

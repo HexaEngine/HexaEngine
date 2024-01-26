@@ -10,9 +10,9 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class PhysicsSystem : ISystem
+    public class BepuPhysicsSystem : ISystem
     {
-        private readonly ComponentTypeQuery<IColliderComponent> colliders = new();
+        private readonly ComponentTypeQuery<IBepuColliderComponent> colliders = new();
 
         private readonly ThreadDispatcher dispatcher;
         private readonly BufferPool bufferPool;
@@ -22,7 +22,7 @@
         private readonly ContactEvents contactEvents;
         private readonly CollidableProperty<PhysicsMaterial> materials;
 
-        public PhysicsSystem()
+        public BepuPhysicsSystem()
         {
             dispatcher = new(Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1));
             bufferPool = new BufferPool();
@@ -32,7 +32,7 @@
             simulation = Simulation.Create(bufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents, materials), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
         }
 
-        public string Name => "PhysicsUpdate";
+        public string Name => "Physics";
 
         public ThreadDispatcher Dispatcher => dispatcher;
 

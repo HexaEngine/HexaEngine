@@ -7,7 +7,7 @@
 
     [EditorCategory("Collider")]
     [EditorComponent<TriangleCollider>("Triangle Collider")]
-    public class TriangleCollider : BaseCollider
+    public class TriangleCollider : BepuBaseCollider
     {
         private Vector3 pos1;
         private Vector3 pos2;

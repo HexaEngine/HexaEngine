@@ -6,17 +6,20 @@
     using HexaEngine.Scripts;
     using Hexa.NET.ImGui;
     using System.Reflection;
+    using HexaEngine.Editor.Attributes;
 
     public class EnumPropertyEditor : IPropertyEditor
     {
         private readonly ImGuiName guiName;
         private readonly Type propType;
+        private readonly EditorPropertyAttribute attr;
 
-        public EnumPropertyEditor(string name, PropertyInfo property)
+        public EnumPropertyEditor(EditorPropertyAttribute attr, PropertyInfo property)
         {
-            Name = name;
+            Name = attr.Name;
+            this.attr = attr;
             Property = property;
-            guiName = new(name);
+            guiName = new(attr.Name);
             propType = property.PropertyType;
         }
 
@@ -26,8 +29,8 @@
 
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            var enums = AssemblyManager.GetEnumValues(propType);
-            var names = AssemblyManager.GetEnumNames(propType);
+            var enums = attr.EnumValues;
+            var names = attr.EnumNames;
             int index = Array.IndexOf(enums, value);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

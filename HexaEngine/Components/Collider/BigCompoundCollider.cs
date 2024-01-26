@@ -23,7 +23,7 @@
             {
                 lock (simulation)
                 {
-                    colliderChildren = GameObject.GetComponentsFromChilds<IColliderComponent>().ToList();
+                    colliderChildren = GameObject.GetComponentsFromChilds<IBepuColliderComponent>().ToList();
                     CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
                     for (int i = 0; i < colliderChildren.Count; i++)
                     {
