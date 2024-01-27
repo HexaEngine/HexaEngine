@@ -133,8 +133,7 @@
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
-            systems.Add(new BepuPhysicsSystem());
-            systems.Add(new PhysXPhysicsSystem());
+            systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager);
             systems.Add(weatherManager);
@@ -173,8 +172,7 @@
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
-            systems.Add(new BepuPhysicsSystem());
-            systems.Add(new PhysXPhysicsSystem());
+            systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager);
             systems.Add(weatherManager);

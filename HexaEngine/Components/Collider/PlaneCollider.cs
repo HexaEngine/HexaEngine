@@ -1,11 +1,11 @@
-﻿namespace HexaEngine.Components.Collider.PhysX
+﻿namespace HexaEngine.Components.Collider
 {
     using HexaEngine.Editor.Attributes;
     using MagicPhysX;
 
-    [EditorCategory("Collider (PhysX)")]
-    [EditorComponent<PhysXPlaneCollider>("Plane Collider (PhysX)")]
-    public unsafe class PhysXPlaneCollider : PhysXBaseCollider
+    [EditorCategory("Collider")]
+    [EditorComponent<PlaneCollider>("Plane Collider")]
+    public unsafe class PlaneCollider : BaseCollider
     {
         public override unsafe void CreateShape()
         {

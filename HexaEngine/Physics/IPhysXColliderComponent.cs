@@ -11,15 +11,13 @@
 
         bool InCompound { get; }
 
-        PhysXColliderType Type { get; set; }
+        ColliderType Type { get; set; }
 
         void CreateActor();
 
         void CreateShape();
 
         void DestroyActor();
-
-        void DestroyShape();
 
         void BeginUpdate();
 

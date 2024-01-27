@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Components.Collider
 {
-    using BepuPhysics.Collidables;
-    using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
+    using MagicPhysX;
 
     [EditorCategory("Collider")]
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
-    public class CapsuleCollider : BepuBaseCollider
+    public unsafe class CapsuleCollider : BaseCollider
     {
         private float radius = 1;
         private float length = 2;
@@ -21,19 +20,8 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || GameObject == null || simulation == null || hasShape)
-            {
-                return;
-            }
-
-            Capsule capsule = new(radius, length);
-            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            inertia = capsule.ComputeInertia(Mass);
-            lock (simulation)
-            {
-                index = simulation.Shapes.Add(capsule);
-            }
-            hasShape = true;
+            var capsule = NativeMethods.PxCapsuleGeometry_new(radius, length);
+            shape = pxPhysics->CreateShapeMut((PxGeometry*)&capsule, material, true, PxShapeFlags.Visualization | PxShapeFlags.SimulationShape | PxShapeFlags.SceneQueryShape);
         }
     }
 }

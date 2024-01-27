@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Components.Collider.PhysX
+﻿namespace HexaEngine.Components.Collider
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
@@ -10,7 +10,7 @@
     using MagicPhysX;
     using System.Numerics;
 
-    public abstract unsafe class PhysXBaseCollider : IPhysXColliderComponent
+    public abstract unsafe class BaseCollider : IPhysXColliderComponent
     {
         protected bool hasActor = false;
         protected bool hasShape = false;
@@ -18,11 +18,11 @@
         protected bool update = true;
 
         protected Scene? scene;
-        protected PhysXPhysicsSystem? system;
+        protected PhysicsSystem? system;
         protected PxScene* pxScene;
         protected PxPhysics* pxPhysics;
         protected object syncObject = new();
-        protected PhysXColliderType type;
+        protected ColliderType type;
 
         protected PxRigidActor* actor;
         protected PxShape* shape;
@@ -34,8 +34,8 @@
         private float staticFriction = 0.5f;
         private float restitution = 0.6f;
 
-        [EditorProperty<PhysXColliderType>("Type")]
-        public PhysXColliderType Type
+        [EditorProperty<ColliderType>("Type")]
+        public ColliderType Type
         { get => type; set { type = value; update = true; } }
 
         [EditorProperty("Density")]
@@ -69,9 +69,9 @@
         public void Awake()
         {
             scene = GameObject.GetScene();
-            system = scene.GetRequiredSystem<PhysXPhysicsSystem>();
+            system = scene.GetRequiredSystem<PhysicsSystem>();
             pxScene = system.PxScene;
-            pxPhysics = system.PxPhysics;
+            pxPhysics = PhysicsSystem.PxPhysics;
             syncObject = system.SyncObject;
             CreateActor();
         }
@@ -95,29 +95,38 @@
             DestroyActor();
             CreateShape();
 
-            Logger.Assert(shape != null);
-
             var transform = PhysXHelper.Convert(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation); ;
             var offset = NativeMethods.PxTransform_new_2(PxIDENTITY.PxIdentity);
 
             lock (syncObject)
             {
-                if (Type == PhysXColliderType.Static)
+                if (Type == ColliderType.Static)
                 {
                     actor = (PxRigidActor*)NativeMethods.PxPhysics_createRigidStatic_mut(pxPhysics, &transform);
                 }
-                if (Type == PhysXColliderType.Dynamic)
+                if (Type == ColliderType.Dynamic)
                 {
                     actor = (PxRigidActor*)NativeMethods.PxPhysics_createRigidDynamic_mut(pxPhysics, &transform);
                 }
-                if (Type == PhysXColliderType.Kinematic)
+                if (Type == ColliderType.Kinematic)
                 {
                     //actor = (PxRigidActor*)NativeMethods.PxPhysics_createRi(pxPhysics, &transform);
                 }
-                bool wasAttached = actor->AttachShapeMut(shape);
-                if (!wasAttached)
+
+                if (shape != null)
                 {
-                    Logger.Error($"{GameObject.FullName}: Shape couldn't be attached to actor");
+                    bool wasAttached = actor->AttachShapeMut(shape);
+
+                    shape->ReleaseMut();
+
+                    if (!wasAttached)
+                    {
+                        Logger.Error($"{GameObject.FullName}: Shape couldn't be attached to actor");
+                    }
+                }
+                else
+                {
+                    AddShapes(actor);
                 }
 
                 Logger.Assert(actor != null, "Actor was null");
@@ -143,25 +152,12 @@
             hasActor = false;
 
             actor->ReleaseMut();
-
-            DestroyShape();
         }
 
         public abstract void CreateShape();
 
-        public void DestroyShape()
+        public virtual void AddShapes(PxRigidActor* actor)
         {
-            if (Application.InDesignMode || GameObject == null || pxPhysics == null || !hasShape)
-            {
-                return;
-            }
-
-            lock (syncObject)
-            {
-                shape->ReleaseMut();
-            }
-
-            hasShape = false;
         }
 
         public void BeginUpdate()
@@ -171,7 +167,7 @@
                 CreateActor();
             }
 
-            if (type != PhysXColliderType.Static && GameObject != null)
+            if (type != ColliderType.Static && GameObject != null)
             {
                 PxTransform transform = PhysXHelper.Convert(GameObject.Transform.PositionRotation);
 
@@ -186,7 +182,7 @@
                 CreateActor();
             }
 
-            if (type != PhysXColliderType.Static && GameObject != null)
+            if (type != ColliderType.Static && GameObject != null)
             {
                 var pose = actor->GetGlobalPose();
                 GameObject.Transform.PositionRotation = PhysXHelper.Convert(pose);

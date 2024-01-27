@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Components.Collider
 {
-    using BepuPhysics.Collidables;
-    using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
+    using MagicPhysX;
 
     [EditorCategory("Collider")]
-    [EditorComponent(typeof(BoxCollider), "Box Collider")]
-    public class BoxCollider : BepuBaseCollider
+    [EditorComponent<BoxCollider>("Box Collider")]
+    public unsafe class BoxCollider : BaseCollider
     {
         private float height = 1;
         private float depth = 1;
@@ -26,19 +25,8 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || GameObject == null || simulation == null || hasShape)
-            {
-                return;
-            }
-
-            Box box = new(width * 2, height * 2, depth * 2);
-            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
-            lock (simulation)
-            {
-                index = simulation.Shapes.Add(box);
-            }
-            inertia = box.ComputeInertia(Mass);
-            hasShape = true;
+            var box = NativeMethods.PxBoxGeometry_new(width, height, depth);
+            shape = pxPhysics->CreateShapeMut((PxGeometry*)&box, material, true, PxShapeFlags.Visualization | PxShapeFlags.SimulationShape | PxShapeFlags.SceneQueryShape);
         }
     }
 }

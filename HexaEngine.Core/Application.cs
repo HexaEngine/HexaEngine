@@ -134,6 +134,11 @@
         public static event Action<bool>? OnEditorModeChanged;
 
         /// <summary>
+        /// Occurs when the application shuts down.
+        /// </summary>
+        public static event Action? OnApplicationClose;
+
+        /// <summary>
         /// Gets the folder path for the specified special folder.
         /// </summary>
         /// <param name="folder">The special folder.</param>
@@ -598,6 +603,8 @@
             }
 
             ((SdlWindow)mainWindow).DestroyWindow();
+
+            OnApplicationClose?.Invoke();
 
             SdlCheckError();
             sdl.Quit();
