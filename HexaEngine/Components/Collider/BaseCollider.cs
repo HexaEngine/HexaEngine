@@ -6,11 +6,10 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Systems;
     using MagicPhysX;
     using System.Numerics;
 
-    public abstract unsafe class BaseCollider : IPhysXColliderComponent
+    public abstract unsafe class BaseCollider : IColliderComponent
     {
         protected bool hasActor = false;
         protected bool hasShape = false;
@@ -95,7 +94,7 @@
             DestroyActor();
             CreateShape();
 
-            var transform = PhysXHelper.Convert(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation); ;
+            var transform = Helper.Convert(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation); ;
             var offset = NativeMethods.PxTransform_new_2(PxIDENTITY.PxIdentity);
 
             lock (syncObject)
@@ -169,9 +168,8 @@
 
             if (type != ColliderType.Static && GameObject != null)
             {
-                PxTransform transform = PhysXHelper.Convert(GameObject.Transform.PositionRotation);
-
-                //actor->SetGlobalPoseMut(&transform, true);
+                PxTransform transform = Helper.Convert(GameObject.Transform.PositionRotation);
+                actor->SetGlobalPoseMut(&transform, true);
             }
         }
 
@@ -185,8 +183,114 @@
             if (type != ColliderType.Static && GameObject != null)
             {
                 var pose = actor->GetGlobalPose();
-                GameObject.Transform.PositionRotation = PhysXHelper.Convert(pose);
+                GameObject.Transform.PositionRotation = Helper.Convert(pose);
             }
+        }
+
+        [JsonIgnore]
+        public bool IsSleeping
+        {
+            get
+            {
+                if (type != ColliderType.Dynamic)
+                {
+                    return true;
+                }
+
+                return ((PxRigidDynamic*)actor)->IsSleeping();
+            }
+        }
+
+        [JsonIgnore]
+        public Vector3 AngularVelocity
+        {
+            get
+            {
+                if (type != ColliderType.Dynamic)
+                {
+                    return Vector3.Zero;
+                }
+
+                return ((PxRigidDynamic*)actor)->GetAngularVelocity();
+            }
+
+            set
+            {
+                if (type != ColliderType.Dynamic)
+                {
+                    return;
+                }
+
+                ((PxRigidDynamic*)actor)->SetAngularVelocityMut((PxVec3*)&value, true);
+            }
+        }
+
+        [JsonIgnore]
+        public Vector3 LinearVelocity
+        {
+            get
+            {
+                if (type != ColliderType.Dynamic)
+                {
+                    return Vector3.Zero;
+                }
+
+                return ((PxRigidDynamic*)actor)->GetLinearVelocity();
+            }
+
+            set
+            {
+                if (type != ColliderType.Dynamic)
+                {
+                    return;
+                }
+
+                ((PxRigidDynamic*)actor)->SetLinearVelocityMut((PxVec3*)&value, true);
+            }
+        }
+
+        public event Action? OnWakeUp;
+
+        public event Action? OnSleep;
+
+        public void WakeUp()
+        {
+            if (type != ColliderType.Dynamic)
+            {
+                return;
+            }
+
+            ((PxRigidDynamic*)actor)->WakeUpMut();
+        }
+
+        public void PutToSleep()
+        {
+            if (type != ColliderType.Dynamic)
+            {
+                return;
+            }
+
+            ((PxRigidDynamic*)actor)->PutToSleepMut();
+        }
+
+        public void AddForce(Vector3 force, ForceMode mode, bool autoAwake = true)
+        {
+            if (type != ColliderType.Dynamic)
+            {
+                return;
+            }
+
+            ((PxRigidBody*)actor)->AddForceMut((PxVec3*)&force, Helper.Convert(mode), autoAwake);
+        }
+
+        public void AddTorque(Vector3 torque, ForceMode mode, bool autoAwake = true)
+        {
+            if (type != ColliderType.Dynamic)
+            {
+                return;
+            }
+
+            ((PxRigidBody*)actor)->AddTorqueMut((PxVec3*)&torque, Helper.Convert(mode), autoAwake);
         }
     }
 }

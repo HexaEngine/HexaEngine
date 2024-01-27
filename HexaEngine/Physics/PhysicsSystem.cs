@@ -1,9 +1,8 @@
-﻿namespace HexaEngine.Scenes.Systems
+﻿namespace HexaEngine.Physics
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
-    using HexaEngine.Physics;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;
@@ -13,10 +12,13 @@
         private static readonly PersistentCache cookingCache = new("./cache/cookingcache.bin", "./cache/cookingcache.index");
         private static readonly PxFoundation* foundation;
         private static readonly PxPhysics* physics;
+        private static readonly PxDefaultCpuDispatcher* dispatcher;
 
-        private readonly ComponentTypeQuery<IPhysXColliderComponent> colliders = new();
+        private readonly ComponentTypeQuery<IColliderComponent> colliders = new();
         private readonly PxScene* pxScene;
-        private readonly PxDefaultCpuDispatcher* dispatcher;
+
+        private readonly SimulationEventCallbacks eventCallbacks;
+        private readonly ControllerManager controllerManager;
 
         private readonly object _lock = new();
 
@@ -26,6 +28,9 @@
 
         static PhysicsSystem()
         {
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+            Application.OnApplicationClose += OnApplicationClose;
+
             uint PX_PHYSICS_VERSION_MAJOR = 5;
             uint PX_PHYSICS_VERSION_MINOR = 1;
             uint PX_PHYSICS_VERSION_BUGFIX = 3;
@@ -49,8 +54,7 @@
                 Logger.Error("Failed to create PxPhysics", true);
             }
 
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-            Application.OnApplicationClose += OnApplicationClose;
+            dispatcher = NativeMethods.phys_PxDefaultCpuDispatcherCreate((uint)Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1), null, PxDefaultCpuDispatcherWaitForWorkMode.WaitForWork, 0);
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -62,6 +66,7 @@
         {
             cookingCache.Dispose();
 
+            dispatcher->ReleaseMut();
             physics->ReleaseMut();
             foundation->ReleaseMut();
         }
@@ -71,7 +76,6 @@
             PxSceneDesc sceneDesc = NativeMethods.PxSceneDesc_new(NativeMethods.PxPhysics_getTolerancesScale(physics));
             sceneDesc.gravity = new() { x = 0, y = -9.81f, z = 0 };
 
-            dispatcher = NativeMethods.phys_PxDefaultCpuDispatcherCreate((uint)Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1), null, PxDefaultCpuDispatcherWaitForWorkMode.WaitForWork, 0);
             sceneDesc.cpuDispatcher = (PxCpuDispatcher*)dispatcher;
             sceneDesc.filterShader = NativeMethods.get_default_simulation_filter_shader();
 
@@ -81,6 +85,9 @@
             {
                 Logger.Error("Failed to create PxScene", true);
             }
+
+            eventCallbacks = new(this);
+            controllerManager = new(this);
         }
 
         public const float TimestepDuration = 1 / 60f;
@@ -95,6 +102,10 @@
         public static PxPhysics* PxPhysics => physics;
 
         public PxScene* PxScene => pxScene;
+
+        public SimulationEventCallbacks EventCallbacks => eventCallbacks;
+
+        public ControllerManager ControllerManager => controllerManager;
 
         public void Awake(Scene scene)
         {
@@ -141,9 +152,9 @@
 
         public void Destroy()
         {
+            eventCallbacks.Dispose();
+            controllerManager.Dispose();
             NativeMethods.PxScene_release_mut(pxScene);
-            NativeMethods.PxDefaultCpuDispatcher_release_mut(dispatcher);
-
             accumulator = 0;
         }
     }

@@ -9,6 +9,7 @@
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;

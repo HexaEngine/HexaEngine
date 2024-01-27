@@ -3,7 +3,7 @@
     using HexaEngine.Scenes;
     using MagicPhysX;
 
-    public unsafe interface IPhysXColliderComponent : IComponent
+    public unsafe interface IColliderComponent : IComponent
     {
         bool HasActor { get; }
 

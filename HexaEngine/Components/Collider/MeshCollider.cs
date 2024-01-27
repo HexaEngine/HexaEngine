@@ -6,7 +6,7 @@
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Scenes.Systems;
+    using HexaEngine.Physics;
     using MagicPhysX;
     using System;
     using System.Collections.Generic;
@@ -16,14 +16,14 @@
     [EditorComponent(typeof(MeshCollider), "Mesh Collider")]
     public unsafe class MeshCollider : BaseCollider
     {
-        private string meshPath = string.Empty;
+        private string model = string.Empty;
 
         private readonly List<Pointer<PxTriangleMesh>> pxTriangleMeshes = new();
         private Node[]? nodes;
 
-        [EditorProperty("Mesh")]
-        public string MeshPath
-        { get => meshPath; set { meshPath = value; update = true; } }
+        [EditorProperty("Model", null, ".model")]
+        public string Model
+        { get => model; set { model = value; update = true; } }
 
         [EditorButton("Cook")]
         public void CookButton()
@@ -39,7 +39,7 @@
                 mesh.Data->ReleaseMut();
             }
 
-            string path = Paths.CurrentAssetsPath + meshPath;
+            string path = Paths.CurrentAssetsPath + this.model;
 
             if (!FileSystem.Exists(path))
             {

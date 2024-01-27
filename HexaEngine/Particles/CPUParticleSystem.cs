@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Particles
 {
-    using BepuPhysics;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public class CPUParticleSystem
     {
