@@ -1,6 +1,7 @@
-# Looking for help, if anyone wanna help me out feel free to text me.
+## :warning: Looking for help, if anyone wanna help me out feel free to text me. :warning:
+### Discord: https://discord.gg/VawN5d8HMh
 
-# HexaEngine
+# HexaEngine :construction: Work in progress :construction:
 <p align="center">
   <img width="300" height="300" src="https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/master/icon.png">
 </p>
@@ -23,16 +24,20 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Audio System (Wav-file support)
 - Culling (Frustum and Occlusion) (doesn't work/integrated properly)
 
+# Volumetrc Lightning
+![image](https://github.com/HexaEngine/HexaEngine/assets/46632782/731a1c0b-6b97-4824-b0d9-fc71fe87c96d)
+
+
 # (WIP) Material editor + Shader generator
 ![image](https://github.com/JunaMeinhold/HexaEngine/assets/46632782/8a3acc3d-3fad-4083-88fd-3613ffd6b30f)
 
-# Backends
+# Graphics Backends
 | API     | Supported          |
 | ------- | ------------------ |
 | D3D11   | :white_check_mark: |
-| D3D12   | :ballot_box_with_check: (wip) |
-| Vulkan  | :ballot_box_with_check: (wip) |
-| OpenGL  | :ballot_box_with_check: (wip) |
+| D3D12   | :construction: (wip) |
+| Vulkan  | :construction: (wip) |
+| OpenGL  | :construction: (wip) |
 
 # Credits
 https://github.com/ocornut/imgui  
@@ -43,5 +48,9 @@ https://github.com/dotnet/Silk.NET
 https://github.com/bepu/bepuphysics2  
 https://github.com/MiloszKrajewski/K4os.Compression.LZ4  
 https://www.newtonsoft.com/json  
-https://github.com/mellinoe/ImGui.NET *modified*  
-https://github.com/FaberSanZ/SPIRV-Cross.NET *modified*  
+https://github.com/Jinjinov/Hardware.Info  
+https://github.com/libgit2/libgit2sharp/  
+https://github.com/Cysharp/MagicPhysX  
+https://github.com/octokit/octokit.net  
+https://github.com/aaubry/YamlDotNet  
+https://github.com/commandlineparser/commandline  
