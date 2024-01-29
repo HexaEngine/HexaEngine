@@ -7,31 +7,243 @@
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+    using System.Diagnostics.CodeAnalysis;
+
+    public interface IObjectEditorElement
+    {
+        /// <summary>
+        /// Gets the name associated with the editor element.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the property information associated with the editor element.
+        /// </summary>
+        PropertyInfo? Property { get; }
+
+        /// <summary>
+        /// Gets the method information associated with the editor element.
+        /// </summary>
+        MethodInfo? Method { get; }
+
+        public bool IsVisible { get; }
+
+        EditorPropertyCondition? Condition { get; set; }
+
+        EditorPropertyConditionMode ConditionMode { get; set; }
+
+        public bool UpdateVisibility(object instance);
+
+        public void Draw(IGraphicsContext context, object instance);
+    }
+
+    public class PropertyEditorObjectEditorElement : IObjectEditorElement
+    {
+        private readonly IPropertyEditor propertyEditor;
+        private bool conditionState;
+        private bool isVisible;
+
+        public PropertyEditorObjectEditorElement(IPropertyEditor propertyEditor)
+        {
+            this.propertyEditor = propertyEditor;
+        }
+
+        public string Name => propertyEditor.Name;
+
+        public PropertyInfo? Property => propertyEditor.Property;
+
+        public MethodInfo? Method { get; }
+
+        public EditorPropertyCondition? Condition { get; set; }
+
+        public EditorPropertyConditionMode ConditionMode { get; set; }
+
+        public bool IsVisible => isVisible;
+
+        public bool UpdateVisibility(object instance)
+        {
+            if (Condition != null)
+            {
+                conditionState = Condition(instance);
+
+                isVisible = ConditionMode != EditorPropertyConditionMode.Visible || !conditionState;
+                return isVisible;
+            }
+            else
+            {
+                return isVisible = true;
+            }
+        }
+
+        public void Draw(IGraphicsContext context, object instance)
+        {
+            if (!isVisible)
+            {
+                return;
+            }
+
+            var value = propertyEditor.Property.GetValue(instance);
+            var oldValue = value;
+
+            if (ConditionMode == EditorPropertyConditionMode.None || ConditionMode == EditorPropertyConditionMode.Visible)
+            {
+                DrawEditor(context, instance, value, oldValue);
+                return;
+            }
+
+            ImGui.BeginDisabled(!conditionState);
+            DrawEditor(context, instance, value, oldValue);
+            ImGui.EndDisabled();
+        }
+
+        private void DrawEditor(IGraphicsContext context, object instance, object? value, object? oldValue)
+        {
+            if (propertyEditor.Draw(context, instance, ref value))
+            {
+                History.Default.Do($"Set Value ({propertyEditor.Name})", (instance, propertyEditor.Property), oldValue, value, DoAction, UndoAction);
+            }
+        }
+
+        /// <summary>
+        /// Action to perform when applying changes during a history action.
+        /// </summary>
+        /// <param name="context">The context containing information about the history action.</param>
+        private static void DoAction(object context)
+        {
+            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
+            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.NewValue);
+        }
+
+        /// <summary>
+        /// Action to perform when undoing changes during a history action.
+        /// </summary>
+        /// <param name="context">The context containing information about the history action.</param>
+        private static void UndoAction(object context)
+        {
+            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
+            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
+        }
+    }
+
+    public class EditorButtonObjectEditorElement : IObjectEditorElement
+    {
+        private readonly ObjectEditorButton objectEditorButton;
+        private bool isVisible;
+        private bool conditionState;
+
+        public EditorButtonObjectEditorElement(ObjectEditorButton objectEditorButton)
+        {
+            this.objectEditorButton = objectEditorButton;
+        }
+
+        public string Name => objectEditorButton.Name;
+
+        public PropertyInfo? Property { get; }
+
+        public MethodInfo? Method => objectEditorButton.Method;
+
+        public EditorPropertyCondition? Condition { get; set; }
+
+        public EditorPropertyConditionMode ConditionMode { get; set; }
+
+        public bool IsVisible => isVisible;
+
+        public bool UpdateVisibility(object instance)
+        {
+            if (Condition != null)
+            {
+                conditionState = Condition(instance);
+                return isVisible = ConditionMode != EditorPropertyConditionMode.Visible || conditionState;
+            }
+            else
+            {
+                return isVisible = true;
+            }
+        }
+
+        public void Draw(IGraphicsContext context, object instance)
+        {
+            if (!isVisible)
+            {
+                return;
+            }
+
+            if (Condition == null || ConditionMode == EditorPropertyConditionMode.None)
+            {
+                objectEditorButton.Draw(instance);
+                return;
+            }
+
+            ImGui.BeginDisabled(!conditionState);
+            objectEditorButton.Draw(instance);
+            ImGui.EndDisabled();
+        }
+    }
+
+    public class BaseTypeSorter
+    {
+        public List<PropertyInfo> propertyInfos = new();
+    }
 
     /// <summary>
     /// Implementation of the <see cref="IObjectEditor"/> interface for managing object editing in a graphical context.
     /// </summary>
     public sealed class ObjectEditor : IObjectEditor
     {
-        private readonly List<(PropertyInfo, IPropertyEditor)> editors = new();
-        private readonly List<ObjectEditorButton> buttons = new();
+        private readonly List<IObjectEditorElement> elements = new();
         private readonly List<EditorCategory> categories = new();
         private readonly Dictionary<string, EditorCategory> nameToCategory = new();
+
         private ImGuiName guiName;
         private readonly bool isHidden;
         private readonly Type type;
         private object? instance;
+
+        private static PropertyInfo[] GetBasePropertiesFirst([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+        {
+            var orderList = new List<Type>();
+            var iteratingType = type;
+            do
+            {
+                orderList.Insert(0, iteratingType);
+                iteratingType = iteratingType.BaseType;
+            } while (iteratingType != null);
+
+            var props = type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance)
+                .OrderBy(x => orderList.IndexOf(x.DeclaringType))
+                .ToArray();
+
+            return props;
+        }
+
+        private static MethodInfo[] GetBaseMethodsFirst([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type type)
+        {
+            var orderList = new List<Type>();
+            var iteratingType = type;
+            do
+            {
+                orderList.Insert(0, iteratingType);
+                iteratingType = iteratingType.BaseType;
+            } while (iteratingType != null);
+
+            var props = type.GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance)
+                .OrderBy(x => orderList.IndexOf(x.DeclaringType))
+                .ToArray();
+
+            return props;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectEditor"/> class.
         /// </summary>
         /// <param name="type">The type of the object being edited.</param>
         /// <param name="factories">A list of property editor factories used to create property editors.</param>
-        public ObjectEditor(Type type, List<IPropertyEditorFactory> factories)
+        public ObjectEditor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] Type type, List<IPropertyEditorFactory> factories)
         {
             this.type = type;
-            PropertyInfo[] properties = type.GetProperties();
-            MethodInfo[] methods = type.GetMethods();
+            PropertyInfo[] properties = GetBasePropertiesFirst(type); //type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo[] methods = GetBaseMethodsFirst(type); //type.GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance);
+
             var componentNameAttr = type.GetCustomAttribute<EditorComponentAttribute>();
             if (componentNameAttr == null)
             {
@@ -56,25 +268,33 @@
                 {
                     continue;
                 }
+
                 if (string.IsNullOrEmpty(nameAttr.Name))
                 {
                     nameAttr.Name = property.Name;
                 }
 
                 var categoryAttr = property.GetCustomAttribute<EditorCategoryAttribute>();
+                var conditionAttr = property.GetCustomAttribute<EditorPropertyConditionAttribute>();
 
                 for (int i = 0; i < factories.Count; i++)
                 {
                     if (factories[i].TryCreate(property, nameAttr, out var editor))
                     {
+                        PropertyEditorObjectEditorElement element = new(editor)
+                        {
+                            Condition = conditionAttr?.Condition,
+                            ConditionMode = conditionAttr?.Mode ?? EditorPropertyConditionMode.None
+                        };
+
                         if (categoryAttr != null)
                         {
                             var category = CreateOrGetCategory(categoryAttr);
-                            category.Properties.Add(new(property, editor));
+                            category.Elements.Add(element);
                         }
                         else
                         {
-                            editors.Add(new(property, editor));
+                            elements.Add(element);
                             break;
                         }
                     }
@@ -90,7 +310,25 @@
                     continue;
                 }
 
-                buttons.Add(new(buttonAttr, method));
+                var categoryAttr = method.GetCustomAttribute<EditorCategoryAttribute>();
+                var conditionAttr = method.GetCustomAttribute<EditorPropertyConditionAttribute>();
+
+                EditorButtonObjectEditorElement element = new(new(buttonAttr, method))
+                {
+                    Condition = conditionAttr?.Condition,
+                    ConditionMode = conditionAttr?.Mode ?? EditorPropertyConditionMode.None
+                };
+
+                if (categoryAttr != null)
+                {
+                    var category = CreateOrGetCategory(categoryAttr);
+                    category.Elements.Add(element);
+                }
+                else
+                {
+                    elements.Add(element);
+                    break;
+                }
             }
 
             Queue<EditorCategory> removeQueue = new();
@@ -160,7 +398,7 @@
         /// <summary>
         /// Gets a value indicating whether the object editor is empty.
         /// </summary>
-        public bool IsEmpty => editors.Count == 0 && buttons.Count == 0 && categories.Count == 0;
+        public bool IsEmpty => elements.Count == 0 && categories.Count == 0;
 
         /// <summary>
         /// Gets a value indicating whether the object editor is hidden.
@@ -190,55 +428,29 @@
                 ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             }
 
-            for (int i = 0; i < editors.Count; i++)
+            for (int i = 0; i < elements.Count; i++)
             {
-                var editor = editors[i];
-                var value = editor.Item1.GetValue(instance);
-                var oldValue = value;
-
-                if (editor.Item2.Draw(context, instance, ref value))
-                {
-                    History.Default.Do($"Set Value ({editor.Item2.Name})", (instance, editor.Item1), oldValue, value, DoAction, UndoAction);
-                }
+                elements[i].UpdateVisibility(instance);
             }
 
-            for (int i = 0; i < buttons.Count; i++)
+            for (int i = 0; i < elements.Count; i++)
             {
-                buttons[i].Draw(instance);
+                elements[i].Draw(context, instance);
             }
+
+            object? nullObj = null;
 
             for (int i = 0; i < categories.Count; i++)
             {
                 var category = categories[i];
-#nullable disable // analyser being stupid again....
-                category.Draw(context, instance, ref instance);
-#nullable restore
+
+                category.Draw(context, instance, ref nullObj);
             }
 
             if (!NoTable)
             {
                 ImGui.EndTable();
             }
-        }
-
-        /// <summary>
-        /// Action to perform when applying changes during a history action.
-        /// </summary>
-        /// <param name="context">The context containing information about the history action.</param>
-        private static void DoAction(object context)
-        {
-            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
-            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.NewValue);
-        }
-
-        /// <summary>
-        /// Action to perform when undoing changes during a history action.
-        /// </summary>
-        /// <param name="context">The context containing information about the history action.</param>
-        private static void UndoAction(object context)
-        {
-            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
-            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
         }
 
         /// <summary>

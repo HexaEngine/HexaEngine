@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Attributes
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents an attribute that provides additional information about a property for the editor.
@@ -95,6 +94,91 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name and mode.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        /// <param name="mode">The editor property mode.</param>
+        public EditorPropertyAttribute(string name, string tooltip, EditorPropertyMode mode = EditorPropertyMode.Default)
+        {
+            Name = name;
+            Tooltip = tooltip;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, starting path, filter, relativeTo, and mode for file picker.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        /// <param name="startingPath">The starting path for the file picker.</param>
+        /// <param name="filter">The filename filter for the file picker.</param>
+        /// <param name="relativeTo">The path relative to this value.</param>
+        /// <param name="mode">The editor property mode for file picker.</param>
+        public EditorPropertyAttribute(string name, string tooltip, string? startingPath, string? filter = null, string? relativeTo = null, EditorPropertyMode mode = EditorPropertyMode.Filepicker)
+        {
+            Name = name;
+            StartingPath = startingPath;
+            Filter = filter;
+            RelativeTo = relativeTo;
+            Tooltip = tooltip;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, enum values, enum names, and mode for enum property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        /// <param name="enumValues">The values of the enum property.</param>
+        /// <param name="enumNames">The names of the enum values.</param>
+        /// <param name="mode">The editor property mode for enum property.</param>
+        public EditorPropertyAttribute(string name, string tooltip, object[] enumValues, string[] enumNames, EditorPropertyMode mode = EditorPropertyMode.Enum)
+        {
+            Name = name;
+            EnumValues = enumValues;
+            EnumNames = enumNames;
+            Tooltip = tooltip;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, min, max, and mode for slider property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        /// <param name="min">The minimum value for the slider property.</param>
+        /// <param name="max">The maximum value for the slider property.</param>
+        /// <param name="mode">The editor property mode for slider property.</param>
+        public EditorPropertyAttribute(string name, string tooltip, object min, object max, EditorPropertyMode mode = EditorPropertyMode.Slider)
+        {
+            Name = name;
+            Min = min;
+            Max = max;
+            Tooltip = tooltip;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, target type, types, type names, and mode for type selector property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        /// <param name="target">The target type for the type selector property.</param>
+        /// <param name="types">The types available in the type selector property.</param>
+        /// <param name="typeNames">The names of the available types.</param>
+        /// <param name="mode">The editor property mode for type selector property.</param>
+        public EditorPropertyAttribute(string name, string tooltip, Type target, Type[] types, string[] typeNames, EditorPropertyMode mode = EditorPropertyMode.TypeSelector)
+        {
+            Name = name;
+            TargetType = target;
+            Types = types;
+            TypeNames = typeNames;
+            Tooltip = tooltip;
+            Mode = mode;
+        }
+
+        /// <summary>
         /// Gets or sets the name of the property.
         /// </summary>
         public string Name { get; set; }
@@ -153,6 +237,11 @@
         /// Returns the path relative to this value
         /// </summary>
         public string? RelativeTo { get; }
+
+        /// <summary>
+        /// Gets the tooltip for this property.
+        /// </summary>
+        public string? Tooltip { get; }
     }
 
     /// <summary>
@@ -167,6 +256,20 @@
         /// <param name="name">The name of the property.</param>
         public EditorPropertyAttribute(string name) :
             base(name,
+                Enum.GetValues<T>().Cast<object>().ToArray(),
+                Enum.GetNames<T>(),
+                EditorPropertyMode.Enum)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute{T}"/> class with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="tooltip">The tooltip of this property.</param>
+        public EditorPropertyAttribute(string name, string tooltip) :
+            base(name,
+                tooltip,
                 Enum.GetValues<T>().Cast<object>().ToArray(),
                 Enum.GetNames<T>(),
                 EditorPropertyMode.Enum)

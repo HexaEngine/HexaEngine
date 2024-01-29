@@ -361,7 +361,7 @@ namespace HexaEngine.Graphics.Renderers
             // Setup backend capabilities flags
             var bd = AllocT<RendererData>();
             io.BackendRendererUserData = bd;
-            io.BackendRendererName = "ImGui_Generic_Renderer".ToUTF8();
+            io.BackendRendererName = "ImGui_Generic_Renderer".ToUTF8Ptr();
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset; // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
             io.BackendFlags |= ImGuiBackendFlags.RendererHasViewports; // We can create multi-viewports on the Renderer side (optional)
 

@@ -9,36 +9,14 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<Configurations>Debug;Release;TraceLeak;</Configurations>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<LangVersion>preview</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove="assets\shared\shaders\compute\light\**" />

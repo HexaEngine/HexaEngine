@@ -36,6 +36,8 @@
             ObjectEditorFactory.AddFactory(new Vector4PropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
 
+            PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
+
             ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());
         }

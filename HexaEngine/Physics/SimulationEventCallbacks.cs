@@ -48,8 +48,11 @@
 
         public void Dispose()
         {
-            pxScene->SetSimulationEventCallbackMut(null);
-            callback->Delete();
+            if (callback != null)
+            {
+                pxScene->SetSimulationEventCallbackMut(null);
+                callback->Delete();
+            }
         }
     }
 }

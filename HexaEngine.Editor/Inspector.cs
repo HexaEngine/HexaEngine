@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGuizmo;
-    using HexaEngine.Components.Collider;
+    using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Scenes;
@@ -227,9 +227,10 @@
                 }
             }
 
-            if (drawGimbal)
+            var gameObject = SelectionCollection.Global.First<GameObject>();
+
+            if (drawGimbal && gameObject != null)
             {
-                GameObject? element = GameObject.Selected.First();
                 Camera? camera = CameraManager.Current;
                 ImGuizmo.Enable(true);
                 ImGuizmo.SetOrthographic(CameraManager.Dimension == EditorCameraDimension.Dim2D);
@@ -238,25 +239,20 @@
                     return;
                 }
 
-                if (element == null)
-                {
-                    return;
-                }
-
                 Matrix4x4 view = camera.Transform.View;
                 Matrix4x4 proj = camera.Transform.Projection;
-                Matrix4x4 transform = element.Transform.Global;
+                Matrix4x4 transform = gameObject.Transform.Global;
 
                 if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
                 {
                     gimbalGrabbed = true;
-                    if (element.Transform.Parent == null)
+                    if (gameObject.Transform.Parent == null)
                     {
-                        element.Transform.Local = transform;
+                        gameObject.Transform.SetMatrixOverwrite(transform);
                     }
                     else
                     {
-                        element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
+                        gameObject.Transform.SetMatrixOverwrite(transform * gameObject.Transform.Parent.GlobalInverse);
                     }
                 }
                 else if (!ImGuizmo.IsUsing())
@@ -264,10 +260,10 @@
                     if (gimbalGrabbed)
                     {
                         var oldValue = gimbalBefore;
-                        History.Default.Push("Transform Object", element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
+                        History.Default.Push("Transform Object", gameObject.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
                     }
                     gimbalGrabbed = false;
-                    gimbalBefore = element.Transform.Local;
+                    gimbalBefore = gameObject.Transform.Local;
                 }
             }
         }
@@ -275,13 +271,13 @@
         private static void SetMatrix(object context)
         {
             var ctx = (HistoryContext<Transform, Matrix4x4>)context;
-            ctx.Target.Local = ctx.NewValue;
+            ctx.Target.SetMatrixOverwrite(ctx.NewValue);
         }
 
         private static void RestoreMatrix(object context)
         {
             var ctx = (HistoryContext<Transform, Matrix4x4>)context;
-            ctx.Target.Local = ctx.OldValue;
+            ctx.Target.SetMatrixOverwrite(ctx.OldValue);
         }
     }
 }

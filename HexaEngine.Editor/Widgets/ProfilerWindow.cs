@@ -332,7 +332,6 @@
 
             if (cpu)
             {
-                Update.Add(renderer.Profiler["Update"] * 1000);
                 ObjectCulling.Add(renderer.Profiler["ObjectCulling"] * 1000);
                 LightCulling.Add(renderer.Profiler["LightCulling"] * 1000);
                 ShadowMaps.Add(renderer.Profiler["ShadowMaps"] * 1000);

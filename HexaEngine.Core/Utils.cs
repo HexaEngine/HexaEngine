@@ -234,7 +234,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns>The pointer, must be freed after usage.</returns>
-        public static char* ToUTF16(this string str)
+        public static char* ToUTF16Ptr(this string str)
         {
             char* dst = AllocT<char>(str.Length + 1);
             fixed (char* src = str)
@@ -268,7 +268,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns>The pointer, must be freed after usage.</returns>
-        public static byte* ToUTF8(this string str)
+        public static byte* ToUTF8Ptr(this string str)
         {
             var byteCount = Encoding.UTF8.GetByteCount(str);
             byte* dst = AllocT<byte>(Encoding.UTF8.GetByteCount(str) + 1);

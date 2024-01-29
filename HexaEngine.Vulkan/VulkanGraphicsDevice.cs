@@ -93,7 +93,7 @@
             byte** ptrs = (byte**)AllocArray((uint)DeviceExtensions.Length);
             for (int i = 0; i < DeviceExtensions.Length; i++)
             {
-                ptrs[i] = DeviceExtensions[i].ToUTF8();
+                ptrs[i] = DeviceExtensions[i].ToUTF8Ptr();
             }
 
             count = (uint)DeviceExtensions.Length;
@@ -105,7 +105,7 @@
             byte** ptrs = (byte**)AllocArray((uint)ValidationLayers.Length);
             for (int i = 0; i < ValidationLayers.Length; i++)
             {
-                ptrs[i] = ValidationLayers[i].ToUTF8();
+                ptrs[i] = ValidationLayers[i].ToUTF8Ptr();
             }
 
             count = (uint)ValidationLayers.Length;

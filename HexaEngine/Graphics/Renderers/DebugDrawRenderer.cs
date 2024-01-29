@@ -34,9 +34,30 @@
 
         private static void CreateDeviceObjects()
         {
-            var desc = RasterizerDescription.CullNone;
-            desc.AntialiasedLineEnable = true;
-            desc.MultisampleEnable = false;
+            var blendDesc = new BlendDescription
+            {
+                AlphaToCoverageEnable = false
+            };
+
+            blendDesc.RenderTarget[0] = new RenderTargetBlendDescription
+            {
+                BlendOperationAlpha = BlendOperation.Add,
+                IsBlendEnabled = true,
+                BlendOperation = BlendOperation.Add,
+                DestinationBlendAlpha = Blend.InverseSourceAlpha,
+                DestinationBlend = Blend.InverseSourceAlpha,
+                SourceBlend = Blend.SourceAlpha,
+                SourceBlendAlpha = Blend.SourceAlpha,
+                RenderTargetWriteMask = ColorWriteEnable.All
+            };
+
+            var rasterDesc = new RasterizerDescription
+            {
+                FillMode = FillMode.Solid,
+                CullMode = CullMode.None,
+                DepthClipEnable = true,
+                AntialiasedLineEnable = true,
+            };
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -44,11 +65,9 @@
                 PixelShader = "internal/debugdraw/ps.hlsl",
                 State = new GraphicsPipelineState()
                 {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Blend = BlendDescription.NonPremultiplied,
-                    Rasterizer = desc,
-                    BlendFactor = Vector4.One,
-                    SampleMask = int.MaxValue,
+                    DepthStencil = DepthStencilDescription.DepthRead,
+                    Blend = blendDesc,
+                    Rasterizer = rasterDesc,
                 },
                 InputElements =
                 [
@@ -304,6 +323,8 @@
                 constantBuffer.Dispose();
                 vertexBuffer.Dispose();
                 indexBuffer.Dispose();
+                fontSampler.Dispose();
+                fontTextureView.Dispose();
                 disposedValue = true;
             }
         }

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
+    using HexaEngine.Core.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
@@ -7,10 +8,12 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 
-    public partial class GameObject : EntityNotifyBase
-    {
-        private static readonly GameObjectSelection selected = new();
+    public delegate void GameObjectOnEnabledChanged(GameObject gameObject, bool enabled);
 
+    public delegate void GameObjectOnNameChanged(GameObject gameObject, string name);
+
+    public partial class GameObject : EntityNotifyBase, IHierarchyObject, IEditorSelectable
+    {
         private readonly List<GameObject> children = new();
         private readonly List<IComponent> components = new();
         private Scene? scene;
@@ -116,6 +119,8 @@
                 }
 
                 SetAndNotify(ref isEnabled, value);
+                OnEnabledChanged?.Invoke(this, value);
+
                 for (int i = 0; i < Children.Count; i++)
                 {
                     Children[i].IsEnabled = value;
@@ -150,9 +155,6 @@
 
         [JsonIgnore]
         public bool Initialized => initialized;
-
-        [JsonIgnore]
-        public static GameObjectSelection Selected => selected;
 
         [JsonIgnore]
         public bool IsEditorSelected => isEditorSelected;
@@ -201,7 +203,13 @@
 
         public Type Type => type ??= GetType();
 
-        public event Action<GameObject, string>? OnNameChanged;
+        IHierarchyObject? IHierarchyObject.Parent => parent;
+
+        bool IEditorSelectable.IsEditorSelected { get => isEditorSelected; set => isEditorSelected = value; }
+
+        public event GameObjectOnEnabledChanged? OnEnabledChanged;
+
+        public event GameObjectOnNameChanged? OnNameChanged;
 
         public event Action<GameObject, object?>? OnTagChanged;
 
@@ -219,7 +227,7 @@
             transform.Updated += TransformUpdated;
         }
 
-        protected virtual void TransformUpdated(object? sender, EventArgs e)
+        protected virtual void TransformUpdated(Transform transform)
         {
             OnTransformed?.Invoke(this);
         }
@@ -525,16 +533,37 @@
             return false;
         }
 
-        public virtual IEnumerable<T> GetComponentsFromChilds<T>() where T : IComponent
+        public virtual List<T> GetComponentsFromChilds<T>() where T : IComponent
         {
             List<T> components = new();
+            GetComponentsFromChilds(components);
+            return components;
+        }
+
+        public virtual void GetComponentsFromChilds<T>(List<T> components) where T : IComponent
+        {
             for (int i = 0; i < children.Count; i++)
             {
                 var child = children[i];
                 components.AddRange(child.GetComponents<T>());
-                components.AddRange(child.GetComponentsFromChilds<T>());
+                child.GetComponentsFromChilds(components);
             }
+        }
+
+        public virtual List<T> GetComponentsFromTree<T>() where T : IComponent
+        {
+            List<T> components = [];
+            GetComponentsFromTree(components);
             return components;
+        }
+
+        public virtual void GetComponentsFromTree<T>(List<T> components) where T : IComponent
+        {
+            components.AddRange(GetComponents<T>());
+            for (int i = 0; i < children.Count; i++)
+            {
+                children[i].GetComponentsFromTree(components);
+            }
         }
 
         public static void RemoveComponent(ValueTuple<GameObject, IComponent> values)
@@ -584,6 +613,22 @@
                 {
                     yield return t;
                 }
+            }
+        }
+
+        void IHierarchyObject.AddChild(IHierarchyObject selectable)
+        {
+            if (selectable is GameObject gameObject)
+            {
+                AddChild(gameObject);
+            }
+        }
+
+        void IHierarchyObject.RemoveChild(IHierarchyObject selectable)
+        {
+            if (selectable is GameObject gameObject)
+            {
+                RemoveChild(gameObject);
             }
         }
     }

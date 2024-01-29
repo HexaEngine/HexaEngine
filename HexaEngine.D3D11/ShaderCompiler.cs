@@ -30,7 +30,7 @@ namespace HexaEngine.D3D11
 #else
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
-            byte* pSource = source.ToUTF8();
+            byte* pSource = source.ToUTF8Ptr();
             int sourceLen = Encoding.UTF8.GetByteCount(source) + 1;
 
             var pMacros = macros.Length > 0 ? AllocT<D3DShaderMacro>(macros.Length + 1) : null;
@@ -38,8 +38,8 @@ namespace HexaEngine.D3D11
             for (int i = 0; i < macros.Length; i++)
             {
                 var macro = macros[i];
-                var pName = macro.Name.ToUTF8();
-                var pDef = macro.Definition.ToUTF8();
+                var pName = macro.Name.ToUTF8Ptr();
+                var pDef = macro.Definition.ToUTF8Ptr();
                 pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)
@@ -48,9 +48,9 @@ namespace HexaEngine.D3D11
                 pMacros[macros.Length].Definition = null;
             }
 
-            byte* pEntryPoint = entryPoint.ToUTF8();
-            byte* pSourceName = sourceName.ToUTF8();
-            byte* pProfile = profile.ToUTF8();
+            byte* pEntryPoint = entryPoint.ToUTF8Ptr();
+            byte* pSourceName = sourceName.ToUTF8Ptr();
+            byte* pProfile = profile.ToUTF8Ptr();
 
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;

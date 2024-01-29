@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Components
+﻿namespace HexaEngine.Components.Physics
 {
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;

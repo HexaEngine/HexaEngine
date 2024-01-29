@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Physics
 {
+    using HexaEngine.Mathematics;
     using MagicPhysX;
     using System.Numerics;
 
@@ -79,6 +80,69 @@
                 ForceMode.Acceleration => PxForceMode.Acceleration,
                 _ => throw new NotSupportedException()
             };
+        }
+
+        public static PxTransform Convert(Matrix4x4 transform, out Vector3 scale)
+        {
+            Matrix4x4.Decompose(transform, out scale, out var rotation, out var translation);
+            return new() { p = translation, q = rotation };
+        }
+
+        public static PxActorFlags Convert(ActorFlags flags)
+        {
+            PxActorFlags result = 0;
+
+            if ((flags & ActorFlags.Visualization) != 0)
+            {
+                result |= PxActorFlags.Visualization;
+            }
+            if ((flags & ActorFlags.DisableGravity) != 0)
+            {
+                result |= PxActorFlags.DisableGravity;
+            }
+            if ((flags & ActorFlags.SendSleepNotifies) != 0)
+            {
+                result |= PxActorFlags.SendSleepNotifies;
+            }
+            if ((flags & ActorFlags.DisableSimulation) != 0)
+            {
+                result |= PxActorFlags.DisableSimulation;
+            }
+
+            return result;
+        }
+
+        public static PxRigidDynamicLockFlags Convert(TransformFlags flags)
+        {
+            PxRigidDynamicLockFlags result = 0;
+
+            if ((flags & TransformFlags.LockPositionX) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockLinearX;
+            }
+            if ((flags & TransformFlags.LockPositionY) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockLinearY;
+            }
+            if ((flags & TransformFlags.LockPositionZ) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockLinearZ;
+            }
+
+            if ((flags & TransformFlags.LockRotationX) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockAngularX;
+            }
+            if ((flags & TransformFlags.LockRotationY) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockAngularY;
+            }
+            if ((flags & TransformFlags.LockRotationZ) != 0)
+            {
+                result |= PxRigidDynamicLockFlags.LockAngularZ;
+            }
+
+            return result;
         }
     }
 }

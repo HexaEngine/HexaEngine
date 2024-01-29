@@ -51,7 +51,7 @@
         /// <summary>
         /// Gets the current profiling entry.
         /// </summary>
-        public Entry* Current => &entries.Data[currentEntry];
+        public Entry* Current => &entries.Data[currentEntry - 1 < 0 ? bufferSize - 1 : currentEntry - 1];
 
         /// <summary>
         /// Gets the number of profiling stages created.
@@ -69,7 +69,10 @@
         /// <param name="index">The index of the scope to get or set.</param>
         public ref Scope this[int index]
         {
-            get { return ref entries[currentEntry].Stages.Data[index]; }
+            get
+            {
+                return ref entries[currentEntry].Stages.Data[index];
+            }
         }
 
         /// <summary>
@@ -78,13 +81,23 @@
         /// <param name="index">The name of the scope to get or set.</param>
         public ref Scope this[string index]
         {
-            get { return ref entries[currentEntry].Stages.Data[nameToId[index]]; }
+            get
+            {
+                return ref entries[currentEntry].Stages.Data[nameToId[index]];
+            }
         }
 
         /// <inheritdoc/>
         double ICPUProfiler.this[string index]
         {
-            get { return entries[currentEntry].Stages.Data[nameToId[index]].Duration; }
+            get
+            {
+                if (nameToId.TryGetValue(index, out var value))
+                {
+                    return entries[currentEntry].Stages.Data[value].Duration;
+                }
+                return 0;
+            }
         }
 
         /// <summary>

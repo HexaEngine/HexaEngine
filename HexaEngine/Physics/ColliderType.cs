@@ -7,6 +7,13 @@
         Kinematic
     }
 
+    public enum ActorType
+    {
+        Static,
+        Dynamic,
+        Kinematic
+    }
+
     public enum CharacterControllerShape
     {
         Capsule,

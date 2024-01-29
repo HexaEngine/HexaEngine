@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Components.Collider
+﻿namespace HexaEngine.Components.Physics.Collider
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
@@ -12,8 +12,8 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    [EditorCategory("Collider")]
-    [EditorComponent(typeof(MeshCollider), "Mesh Collider")]
+    [EditorCategory("Collider", "Physics")]
+    [EditorComponent<MeshCollider>("Mesh Collider")]
     public unsafe class MeshCollider : BaseCollider
     {
         private string model = string.Empty;
@@ -21,24 +21,18 @@
         private readonly List<Pointer<PxTriangleMesh>> pxTriangleMeshes = new();
         private Node[]? nodes;
 
-        [EditorProperty("Model", null, ".model")]
+        [EditorProperty("Model", startingPath: null, ".model")]
         public string Model
-        { get => model; set { model = value; update = true; } }
+        { get => model; set { model = value; } }
 
         [EditorButton("Cook")]
         public void CookButton()
         {
-            CookShape(true);
+            CookShape(PhysicsSystem.PxPhysics, true);
         }
 
-        private void CookShape(bool bypassCache = false)
+        private void CookShape(PxPhysics* physics, bool bypassCache = false)
         {
-            for (int i = 0; i < pxTriangleMeshes.Count; i++)
-            {
-                var mesh = pxTriangleMeshes[i];
-                mesh.Data->ReleaseMut();
-            }
-
             string path = Paths.CurrentAssetsPath + this.model;
 
             if (!FileSystem.Exists(path))
@@ -51,7 +45,7 @@
 
             try
             {
-                model = scene.ModelManager.Load(path);
+                model = GameObject.GetScene().ModelManager.Load(path);
             }
             catch (Exception ex)
             {
@@ -65,17 +59,15 @@
             int nodesIndex = 0;
             model.Root.FillNodes(nodes, ref nodesIndex);
 
-            pxTriangleMeshes.Clear();
-
             for (uint i = 0; i < model.Meshes.Count; i++)
             {
                 var mesh = model.Meshes[(int)i];
-                var key = $"{path}+{mesh.Name}";
-                CookMesh(key, mesh, bypassCache);
+                var key = $"{path}+{mesh.Name}+TriCook";
+                CookMesh(physics, key, mesh, bypassCache);
             }
         }
 
-        public void CookMesh(string key, MeshData data, bool bypassCache)
+        public void CookMesh(PxPhysics* physics, string key, MeshData data, bool bypassCache)
         {
             bool ownsBuffer = true;
 
@@ -128,7 +120,7 @@
 
             PxDefaultMemoryInputData* read = NativeMethods.PxDefaultMemoryInputData_new_alloc(pData, dataSize);
 
-            PxTriangleMesh* pxTriangleMesh = pxPhysics->CreateTriangleMeshMut((PxInputStream*)read);
+            PxTriangleMesh* pxTriangleMesh = physics->CreateTriangleMeshMut((PxInputStream*)read);
 
             if (ownsBuffer)
             {
@@ -151,13 +143,9 @@
             pxTriangleMeshes.Add(pxTriangleMesh);
         }
 
-        public override void CreateShape()
+        public override unsafe void AddShapes(PxPhysics* physics, PxScene* scene, PxRigidActor* actor, PxTransform localPose, Vector3 scale)
         {
-        }
-
-        public override unsafe void AddShapes(PxRigidActor* actor)
-        {
-            CookShape();
+            CookShape(physics);
 
             if (nodes == null)
             {
@@ -167,30 +155,40 @@
             for (int i = 0; i < nodes.Length; i++)
             {
                 var node = nodes[i];
-                var transform = node.GetGlobalTransform();
-                Matrix4x4.Decompose(transform, out var scale, out var rotation, out var translation);
+                var nodeTransform = node.GetGlobalTransform();
+                Matrix4x4.Decompose(nodeTransform, out var nodeScale, out var nodeRotation, out var nodeTranslation);
                 for (int j = 0; j < node.Meshes.Count; j++)
                 {
                     var meshIdx = node.Meshes[j];
                     var triangleMesh = pxTriangleMeshes[(int)meshIdx];
 
                     PxMeshScale pxMeshScale = new();
-                    pxMeshScale.scale = scale;
+                    pxMeshScale.scale = nodeScale * scale;
 
                     var geometry = NativeMethods.PxTriangleMeshGeometry_new(triangleMesh, &pxMeshScale, 0);
 
-                    var shape = pxPhysics->CreateShapeMut((PxGeometry*)&geometry, material, true, PxShapeFlags.Visualization | PxShapeFlags.SimulationShape | PxShapeFlags.SceneQueryShape);
+                    var shape = physics->CreateShapeMut((PxGeometry*)&geometry, material, true, PxShapeFlags.Visualization | PxShapeFlags.SimulationShape | PxShapeFlags.SceneQueryShape);
 
-                    PxTransform localPose = new();
-                    localPose.q = rotation;
-                    localPose.p = translation;
+                    PxTransform localPoseNode = new()
+                    {
+                        q = nodeRotation * localPose.q,
+                        p = nodeTranslation + localPose.p
+                    };
 
-                    shape->SetLocalPoseMut(&localPose);
-
-                    actor->AttachShapeMut(shape);
-                    shape->ReleaseMut();
+                    AttachShape(actor, shape, localPoseNode);
                 }
             }
+        }
+
+        public override void DestroyShapes()
+        {
+            base.DestroyShapes();
+            for (int i = 0; i < pxTriangleMeshes.Count; i++)
+            {
+                var mesh = pxTriangleMeshes[i];
+                mesh.Data->ReleaseMut();
+            }
+            pxTriangleMeshes.Clear();
         }
     }
 }

@@ -105,14 +105,14 @@
 
                 if (ImGui.MenuItem("\xE8E6 Unselect"))
                 {
-                    GameObject.Selected.ClearSelection();
+                    SelectionCollection.Global.ClearSelection();
                 }
 
                 ImGui.Separator();
 
                 if (ImGui.MenuItem("\xE738 Delete"))
                 {
-                    GameObject.Selected.PurgeSelection();
+                    SelectionCollection.Global.PurgeSelection();
                 }
 
                 ImGui.EndPopup();
@@ -155,11 +155,11 @@
             }
             if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
             {
-                GameObject.Selected.PurgeSelection();
+                SelectionCollection.Global.PurgeSelection();
             }
             if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
             {
-                GameObject.Selected.ClearSelection();
+                SelectionCollection.Global.ClearSelection();
             }
 
             DisplayNodeContextMenu(element);
@@ -173,7 +173,7 @@
                     {
                         Guid id = *(Guid*)payload.Data;
                         var gameObject = SceneManager.Current.FindByGuid(id);
-                        GameObject.Selected.MoveSelection(element);
+                        SelectionCollection.Global.MoveSelection(element);
                     }
                 }
                 ImGui.EndDragDropTarget();
@@ -194,16 +194,19 @@
                 {
                     if (ImGui.GetIO().KeyCtrl)
                     {
-                        GameObject.Selected.AddSelection(element);
+                        SelectionCollection.Global.AddSelection(element);
                     }
                     else if (ImGui.GetIO().KeyShift)
                     {
-                        var last = GameObject.Selected.Last();
-                        GameObject.Selected.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
+                        var last = SelectionCollection.Global.Last<GameObject>();
+                        if (last != null)
+                        {
+                            SelectionCollection.Global.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
+                        }
                     }
                     else if (!element.IsEditorSelected)
                     {
-                        GameObject.Selected.AddOverwriteSelection(element);
+                        SelectionCollection.Global.AddOverwriteSelection(element);
                     }
                 }
             }

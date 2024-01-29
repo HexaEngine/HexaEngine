@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;
@@ -11,16 +12,19 @@
     {
         private static readonly PersistentCache cookingCache = new("./cache/cookingcache.bin", "./cache/cookingcache.index");
         private static readonly PxFoundation* foundation;
+        private static readonly PxTolerancesScale tolerancesScale;
         private static readonly PxPhysics* physics;
         private static readonly PxDefaultCpuDispatcher* dispatcher;
 
-        private readonly ComponentTypeQuery<IColliderComponent> colliders = new();
-        private readonly PxScene* pxScene;
+        private readonly ComponentTypeQuery<IActorComponent> actors = new();
+        private PxScene* pxScene;
 
         private readonly SimulationEventCallbacks eventCallbacks;
         private readonly ControllerManager controllerManager;
 
         private readonly object _lock = new();
+
+        private PxSimulationStatistics statistics;
 
         public string Name { get; } = "Physics";
 
@@ -36,7 +40,10 @@
             uint PX_PHYSICS_VERSION_BUGFIX = 3;
             uint versionNumber = (PX_PHYSICS_VERSION_MAJOR << 24) + (PX_PHYSICS_VERSION_MINOR << 16) + (PX_PHYSICS_VERSION_BUGFIX << 8);
 
-            PxDefaultErrorCallback* errorCallback = NativeMethods.get_default_error_callback();
+            //nint fnPtr = Marshal.GetFunctionPointerForDelegate(ReportError);
+            //var errorCallback = NativeMethods.create_error_callback((delegate* unmanaged[Cdecl]<PxErrorCode, sbyte*, sbyte*, uint, void*, void>)fnPtr, null);
+
+            var errorCallback = NativeMethods.get_default_error_callback();
             PxDefaultAllocator* allocator = NativeMethods.get_default_allocator();
 
             foundation = NativeMethods.phys_PxCreateFoundation(versionNumber, (PxAllocatorCallback*)allocator, (PxErrorCallback*)errorCallback);
@@ -46,8 +53,9 @@
                 Logger.Error("Failed to create PxFoundation", true);
             }
 
-            var tolerancesScale = new PxTolerancesScale { length = 1, speed = 10 };
-            physics = NativeMethods.phys_PxCreatePhysics(versionNumber, foundation, &tolerancesScale, true, null, null);
+            tolerancesScale = new PxTolerancesScale { length = 1, speed = 10 };
+            var scale = tolerancesScale;
+            physics = NativeMethods.phys_PxCreatePhysics(versionNumber, foundation, &scale, true, null, null);
 
             if (physics == null)
             {
@@ -90,27 +98,66 @@
             controllerManager = new(this);
         }
 
-        public const float TimestepDuration = 1 / 60f;
-        private float accumulator;
-
         public object SyncObject => _lock;
 
         public static PersistentCache CookingCache => cookingCache;
 
         public static PxFoundation* PxFoundation => foundation;
 
+        public static PxTolerancesScale TolerancesScale => tolerancesScale;
+
         public static PxPhysics* PxPhysics => physics;
 
         public PxScene* PxScene => pxScene;
+
+        public PxSimulationStatistics Statistics => statistics;
 
         public SimulationEventCallbacks EventCallbacks => eventCallbacks;
 
         public ControllerManager ControllerManager => controllerManager;
 
+        public static bool Debug { get; internal set; }
+
         public void Awake(Scene scene)
         {
-            scene.QueryManager.AddQuery(colliders);
-            accumulator = 0;
+            scene.QueryManager.AddQuery(actors);
+
+            actors.OnAdded += OnActorAdded;
+            actors.OnRemoved += OnActorRemoved;
+
+            for (int i = 0; i < actors.Count; i++)
+            {
+                actors[i].CreateActor(physics, pxScene);
+            }
+        }
+
+        private void OnActorAdded(GameObject gameObject, IActorComponent actor)
+        {
+            actor.OnRecreate += OnActorRecreate;
+            // lock, caller could be potentially a different thread.
+            lock (_lock)
+            {
+                actor.CreateActor(physics, pxScene);
+            }
+        }
+
+        private void OnActorRemoved(GameObject gameObject, IActorComponent actor)
+        {
+            actor.OnRecreate -= OnActorRecreate;
+            // lock, caller could be potentially a different thread.
+            lock (_lock)
+            {
+                actor.DestroyActor();
+            }
+        }
+
+        private void OnActorRecreate(IActorComponent actor)
+        {
+            lock (_lock)
+            {
+                actor.DestroyActor();
+                actor.CreateActor(physics, pxScene);
+            }
         }
 
         public void Update(float delta)
@@ -120,42 +167,78 @@
                 return;
             }
 
-            for (int i = 0; i < colliders.Count; i++)
+            for (int i = 0; i < actors.Count; i++)
             {
-                colliders[i].BeginUpdate();
+                actors[i].BeginUpdate();
             }
-
-            accumulator += delta;
 
             lock (_lock)
             {
-                while (accumulator >= TimestepDuration)
+                pxScene->SimulateMut(Time.FixedDelta, null, null, 0, true);
+
+                uint error = 0;
+                pxScene->FetchResultsMut(true, &error);
+
+                if (error != 0)
                 {
-                    NativeMethods.PxScene_simulate_mut(pxScene, TimestepDuration, null, null, 0, true);
-                    uint error = 0;
-                    pxScene->FetchResultsMut(true, &error);
-
-                    if (error != 0)
-                    {
-                        Logger.Error($"PhysX Error: {(PxErrorCode)error}");
-                    }
-
-                    accumulator -= TimestepDuration;
+                    Logger.Error($"PhysX Error: {(PxErrorCode)error}");
                 }
             }
 
-            for (int i = 0; i < colliders.Count; i++)
+            //PxSimulationStatistics stats;
+            //pxScene->GetSimulationStatistics(&stats);
+            //statistics = stats;
+
+            for (int i = 0; i < actors.Count; i++)
             {
-                colliders[i].EndUpdate();
+                actors[i].EndUpdate();
             }
         }
 
         public void Destroy()
         {
+            for (int i = 0; i < actors.Count; i++)
+            {
+                actors[i].OnRecreate -= OnActorRecreate;
+                actors[i].DestroyActor();
+            }
+            actors.OnAdded -= OnActorAdded;
+            actors.OnRemoved -= OnActorRemoved;
+
+            actors.Dispose();
+
             eventCallbacks.Dispose();
             controllerManager.Dispose();
-            NativeMethods.PxScene_release_mut(pxScene);
-            accumulator = 0;
+            if (pxScene != null)
+            {
+                pxScene->ReleaseMut();
+                pxScene = null;
+            }
+        }
+
+        private static void ReportError(PxErrorCode code, sbyte* message, sbyte* file, uint line, void* userdata)
+        {
+            var msg = ToStringFromUTF8(((byte*)message));
+
+            switch (code)
+            {
+                case PxErrorCode.DebugInfo:
+                    Logger.Info(msg);
+                    break;
+
+                case PxErrorCode.PerfWarning:
+                case PxErrorCode.DebugWarning:
+                    Logger.Warn(msg);
+                    break;
+
+                case PxErrorCode.InvalidParameter:
+                case PxErrorCode.InvalidOperation:
+                case PxErrorCode.OutOfMemory:
+                case PxErrorCode.InternalError:
+                case PxErrorCode.Abort:
+                    Logger.Error(msg);
+                    break;
+            }
         }
     }
 }
