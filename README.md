@@ -1,3 +1,5 @@
+# Looking for help, if anyone wanna help me out feel free to text me.
+
 # HexaEngine
 <p align="center">
   <img width="300" height="300" src="https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/master/icon.png">
