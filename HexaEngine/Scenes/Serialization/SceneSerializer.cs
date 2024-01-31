@@ -13,6 +13,7 @@
             ConstructorHandling = ConstructorHandling.Default,
             DefaultValueHandling = DefaultValueHandling.Include,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.All,
             TypeNameHandling = TypeNameHandling.Auto,
             NullValueHandling = NullValueHandling.Include,
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,

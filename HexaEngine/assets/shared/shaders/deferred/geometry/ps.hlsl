@@ -7,8 +7,8 @@
 #ifndef Roughness
 #define Roughness 0.8
 #endif
-#ifndef Metalness
-#define Metalness 0
+#ifndef Metallic
+#define Metallic 0
 #endif
 #ifndef Ao
 #define Ao 1
@@ -26,8 +26,8 @@
 #ifndef HasDisplacementTex
 #define HasDisplacementTex 0
 #endif
-#ifndef HasMetalnessTex
-#define HasMetalnessTex 0
+#ifndef HasMetallicTex
+#define HasMetallicTex 0
 #endif
 #ifndef HasRoughnessTex
 #define HasRoughnessTex 0
@@ -38,11 +38,11 @@
 #ifndef HasAmbientOcclusionTex
 #define HasAmbientOcclusionTex 0
 #endif
-#ifndef HasRoughnessMetalnessTex
-#define HasRoughnessMetalnessTex 0
+#ifndef HasRoughnessMetallicTex
+#define HasRoughnessMetallicTex 0
 #endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex
-#define HasAmbientOcclusionRoughnessMetalnessTex 0
+#ifndef HasAmbientOcclusionRoughnessMetallicTex
+#define HasAmbientOcclusionRoughnessMetallicTex 0
 #endif
 
 #if HasBaseColorTex
@@ -57,9 +57,9 @@ SamplerState normalTextureSampler : register(s1);
 Texture2D roughnessTexture : register(t2);
 SamplerState roughnessTextureSampler : register(s2);
 #endif
-#if HasMetalnessTex
-Texture2D metalnessTexture : register(t3);
-SamplerState metalnessTextureSampler : register(s3);
+#if HasMetallicTex
+Texture2D metallicTexture : register(t3);
+SamplerState metallicTextureSampler : register(s3);
 #endif
 #if HasEmissiveTex
 Texture2D emissiveTexture : register(t4);
@@ -69,13 +69,13 @@ SamplerState emissiveTextureSampler : register(s4);
 Texture2D ambientOcclusionTexture : register(t5);
 SamplerState ambientOcclusionTextureSampler : register(s5);
 #endif
-#if HasRoughnessMetalnessTex
-Texture2D roughnessMetalnessTexture : register(t6);
-SamplerState roughnessMetalnessTextureSampler : register(s6);
+#if HasRoughnessMetallicTex
+Texture2D roughnessMetallicTexture : register(t6);
+SamplerState roughnessMetallicTextureSampler : register(s6);
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex
-Texture2D ambientOcclusionRoughnessMetalnessTexture : register(t7);
-SamplerState ambientOcclusionRoughnessMetalnessSampler : register(s7);
+#if HasAmbientOcclusionRoughnessMetallicTex
+Texture2D ambientOcclusionRoughnessMetallicTexture : register(t7);
+SamplerState ambientOcclusionRoughnessMetallicSampler : register(s7);
 #endif
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)
@@ -129,7 +129,7 @@ GeometryData main(PixelInput input)
 
     float ao = Ao;
     float roughness = Roughness;
-    float metalness = Metalness;
+    float metallic = Metallic;
 
 #if HasBaseColorTex
 	float4 color = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
@@ -147,8 +147,8 @@ GeometryData main(PixelInput input)
     roughness = roughnessTexture.Sample(roughnessTextureSampler, (float2) input.tex).r;
 #endif
 
-#if HasMetalnessTex
-    metalness = metalnessTexture.Sample(metalnessTextureSampler, (float2) input.tex).r;
+#if HasMetallicTex
+    metallic = metallicTexture.Sample(metallicTextureSampler, (float2) input.tex).r;
 #endif
 
 #if HasEmissiveTex
@@ -159,21 +159,21 @@ GeometryData main(PixelInput input)
     ao = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, (float2) input.tex).r;
 #endif
 
-#if HasRoughnessMetalnessTex
-    float2 rm = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, (float2) input.tex).gb;
+#if HasRoughnessMetallicTex
+    float2 rm = roughnessMetallicTexture.Sample(roughnessMetallicTextureSampler, (float2) input.tex).gb;
     roughness = rm.x;
-    metalness = rm.y;
+    metallic = rm.y;
 #endif
 
-#if HasAmbientOcclusionRoughnessMetalnessTex
-    float3 orm = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, (float2) input.tex).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex
+    float3 orm = ambientOcclusionRoughnessMetallicTexture.Sample(ambientOcclusionRoughnessMetallicSampler, (float2) input.tex).rgb;
     ao = orm.r;
     roughness = orm.g;
-    metalness = orm.b;
+    metallic = orm.b;
 #endif
 
     int matID = -1;
-    return PackGeometryData(matID, baseColor.rgb, normal, roughness, metalness, 0, ao, 0, emissive, 1);
+    return PackGeometryData(matID, baseColor.rgb, normal, roughness, metallic, 0, ao, 0, emissive, 1);
 }
 
 #else

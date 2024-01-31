@@ -21,13 +21,17 @@
         private float linearAngle = 0.24f;
         private float toeStrength = 0.272f;
         private float whiteLevel = 5.3f;
-        private float whiteClip = 10;
+        private float whiteClip = 1;
         private float postExposure = 0.93f;
         private float temperature = 0;
         private float tint = 0;
         private float hueShift = 0;
         private float saturation = 1;
         private float contrast = 1;
+        private float contrastMidpoint = 0.5f;
+        private float lift = 0;
+        private float gamma = 2.2f;
+        private float gain = 1;
         private Vector3 channelMaskRed = new(1, 0, 0);
         private Vector3 channelMaskGreen = new(0, 1, 0);
         private Vector3 channelMaskBlue = new(0, 0, 1);
@@ -46,7 +50,8 @@
 
             public float Saturation;    // Adjusts saturation (color intensity).
             public float Contrast;      // Adjusts the contrast.
-            public Vector2 _padd0;
+            public float ContrastMidpoint;
+            public float _padd0;
 
             public Vector3 WhiteBalance;
             public float _padd1;
@@ -57,6 +62,11 @@
             public float _padd3;
             public Vector3 ChannelMaskBlue;
             public float _padd4;
+
+            public float Lift;
+            public float GammaInv;
+            public float Gain;
+            public float _padd5;
 
             public ColorGradingParams()
             {
@@ -177,6 +187,12 @@
             set => NotifyPropertyChangedAndSet(ref contrast, value);
         }
 
+        public float ContrastMidpoint
+        {
+            get => contrastMidpoint;
+            set => NotifyPropertyChangedAndSet(ref contrastMidpoint, value);
+        }
+
         public Vector3 ChannelMaskRed
         {
             get => channelMaskRed;
@@ -193,6 +209,24 @@
         {
             get => channelMaskBlue;
             set => NotifyPropertyChangedAndSet(ref channelMaskBlue, value);
+        }
+
+        public float Lift
+        {
+            get => lift;
+            set => NotifyPropertyChangedAndSet(ref lift, value);
+        }
+
+        public float Gamma
+        {
+            get => gamma;
+            set => NotifyPropertyChangedAndSet(ref gamma, value);
+        }
+
+        public float Gain
+        {
+            get => gain;
+            set => NotifyPropertyChangedAndSet(ref gain, value);
         }
 
         /// <inheritdoc/>
@@ -259,9 +293,13 @@
                 colorGradingParams.HueShift = hueShift;
                 colorGradingParams.Saturation = saturation;
                 colorGradingParams.Contrast = contrast;
+                colorGradingParams.ContrastMidpoint = contrastMidpoint;
                 colorGradingParams.ChannelMaskRed = channelMaskRed;
                 colorGradingParams.ChannelMaskGreen = channelMaskGreen;
                 colorGradingParams.ChannelMaskBlue = channelMaskBlue;
+                colorGradingParams.Lift = lift;
+                colorGradingParams.GammaInv = 1 / gamma;
+                colorGradingParams.Gain = gain;
                 paramsBuffer.Update(context, colorGradingParams);
                 dirty = false;
             }

@@ -14,32 +14,4 @@
 
         void DestroyShapes();
     }
-
-    public unsafe interface IActorComponent : IComponent
-    {
-        ActorType Type { get; set; }
-
-        public event Action<IActorComponent>? OnRecreate;
-
-        void BeginUpdate();
-
-        void CreateActor(PxPhysics* physics, PxScene* scene);
-
-        void DestroyActor();
-
-        void EndUpdate();
-    }
-
-    public unsafe interface IRigidBodyComponent : IActorComponent
-    {
-    }
-
-    [Flags]
-    public enum ActorFlags
-    {
-        Visualization = 1,
-        DisableGravity = 2,
-        SendSleepNotifies = 4,
-        DisableSimulation = 8
-    }
 }

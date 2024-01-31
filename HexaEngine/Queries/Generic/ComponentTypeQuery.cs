@@ -25,9 +25,13 @@
 
         public event Action? OnQueryRefreshed;
 
-        public event Action<GameObject, T>? OnAdded;
+        public event OnAddedDelegate? OnAdded;
 
-        public event Action<GameObject, T>? OnRemoved;
+        public event OnRemovedDelegate? OnRemoved;
+
+        public delegate void OnAddedDelegate(GameObject gameObject, T component);
+
+        public delegate void OnRemovedDelegate(GameObject gameObject, T component);
 
         public virtual void OnGameObjectAdded(GameObject gameObject)
         {

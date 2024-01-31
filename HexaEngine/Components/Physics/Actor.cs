@@ -10,7 +10,7 @@
 
     // TODO: Constraints.
     // TODO: Dominance Group Editor.
-    public abstract unsafe class ActorBase : IActorComponent
+    public abstract unsafe class Actor : IActorComponent
     {
         private PxActor* actor;
         private byte* name;

@@ -19,6 +19,8 @@ namespace HexaEngine.D3D11
     {
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
+        private static SemaphoreSlim semaphore = new(1);
+
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
@@ -40,6 +42,7 @@ namespace HexaEngine.D3D11
                 var macro = macros[i];
                 var pName = macro.Name.ToUTF8Ptr();
                 var pDef = macro.Definition.ToUTF8Ptr();
+                ImGuiConsole.WriteLine(macro);
                 pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)

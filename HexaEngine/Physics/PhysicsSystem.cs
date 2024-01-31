@@ -7,6 +7,7 @@
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;
+    using System.Numerics;
 
     public unsafe class PhysicsSystem : ISystem
     {
@@ -17,6 +18,7 @@
         private static readonly PxDefaultCpuDispatcher* dispatcher;
 
         private readonly ComponentTypeQuery<IActorComponent> actors = new();
+        private readonly ComponentTypeQuery<IJointComponent> joints = new();
         private PxScene* pxScene;
 
         private readonly SimulationEventCallbacks eventCallbacks;
@@ -43,7 +45,7 @@
             //nint fnPtr = Marshal.GetFunctionPointerForDelegate(ReportError);
             //var errorCallback = NativeMethods.create_error_callback((delegate* unmanaged[Cdecl]<PxErrorCode, sbyte*, sbyte*, uint, void*, void>)fnPtr, null);
 
-            var errorCallback = NativeMethods.get_default_error_callback();
+            PxDefaultErrorCallback* errorCallback = NativeMethods.get_default_error_callback();
             PxDefaultAllocator* allocator = NativeMethods.get_default_allocator();
 
             foundation = NativeMethods.phys_PxCreateFoundation(versionNumber, (PxAllocatorCallback*)allocator, (PxErrorCallback*)errorCallback);
@@ -121,13 +123,70 @@
         public void Awake(Scene scene)
         {
             scene.QueryManager.AddQuery(actors);
+            scene.QueryManager.AddQuery(joints);
 
             actors.OnAdded += OnActorAdded;
             actors.OnRemoved += OnActorRemoved;
 
+            joints.OnAdded += OnJointAdded;
+            joints.OnRemoved += OnJointRemoved;
+
             for (int i = 0; i < actors.Count; i++)
             {
                 actors[i].CreateActor(physics, pxScene);
+            }
+
+            for (int i = 0; i < joints.Count; i++)
+            {
+                joints[i].CreateJoint(physics, pxScene);
+            }
+        }
+
+        /// <summary>
+        /// Shift the scene origin by the specified vector. The poses of all objects in the
+        /// scene and the corresponding data structures will get adjusted to reflect the
+        /// new origin location (the shift vector will get subtracted from all object positions).
+        /// It is the user's responsibility to keep track of the summed total origin shift
+        /// and adjust all input/output to/from PhysX accordingly. Do not use this method
+        /// while the simulation is running. Calls to this method while the simulation is
+        /// running will be ignored. Make sure to propagate the origin shift to other dependent
+        /// modules (for example, the character controller module etc.). This is an expensive
+        /// operation and we recommend to use it only in the case where distance related
+        /// precision issues may arise in areas far from the origin.
+        /// </summary>
+        /// <param name="shift"></param>
+        public void ShiftOrigin(Vector3 shift)
+        {
+            lock (_lock)
+            {
+                pxScene->ShiftOriginMut((PxVec3*)&shift);
+            }
+        }
+
+        private void OnJointAdded(GameObject gameObject, IJointComponent joint)
+        {
+            joint.OnRecreate += OnJointRecreate;
+            lock (_lock)
+            {
+                joint.CreateJoint(physics, pxScene);
+            }
+        }
+
+        private void OnJointRemoved(GameObject gameObject, IJointComponent joint)
+        {
+            joint.OnRecreate -= OnJointRecreate;
+            lock (_lock)
+            {
+                joint.DestroyJoint();
+            }
+        }
+
+        private void OnJointRecreate(IJointComponent joint)
+        {
+            lock (_lock)
+            {
+                joint.DestroyJoint();
+                joint.CreateJoint(physics, pxScene);
             }
         }
 
@@ -197,11 +256,23 @@
 
         public void Destroy()
         {
+            for (int i = 0; i < joints.Count; i++)
+            {
+                joints[i].OnRecreate -= OnJointRecreate;
+                joints[i].DestroyJoint();
+            }
+
+            joints.OnAdded -= OnJointAdded;
+            joints.OnRemoved -= OnJointRemoved;
+
+            joints.Dispose();
+
             for (int i = 0; i < actors.Count; i++)
             {
                 actors[i].OnRecreate -= OnActorRecreate;
                 actors[i].DestroyActor();
             }
+
             actors.OnAdded -= OnActorAdded;
             actors.OnRemoved -= OnActorRemoved;
 

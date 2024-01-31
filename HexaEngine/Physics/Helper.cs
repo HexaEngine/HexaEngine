@@ -2,6 +2,7 @@
 {
     using HexaEngine.Mathematics;
     using MagicPhysX;
+    using Silk.NET.DirectWrite;
     using System.Numerics;
 
     public static class Helper
@@ -143,6 +144,14 @@
             }
 
             return result;
+        }
+
+        public static PxTransform Convert(Matrix4x4 matrix)
+        {
+            Vector3 position = matrix.Translation;
+            Quaternion rotation = Quaternion.CreateFromRotationMatrix(matrix);
+
+            return new() { p = position, q = rotation };
         }
     }
 }

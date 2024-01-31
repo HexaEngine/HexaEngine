@@ -51,8 +51,10 @@
                 return false;
             }
 
-            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
-            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+            TextureList.Bind(context);
+
+            //context.PSSetSamplers(TextureList.StartSlot, TextureList.SlotCount, TextureList.Samplers);
+            //context.PSSetShaderResources(TextureList.StartSlot, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }

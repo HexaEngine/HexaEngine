@@ -226,7 +226,7 @@
         /// </summary>
         public void Erase()
         {
-            Memset(data, default, size);
+            Memset(data, 0, size);
             size = 0;
         }
 

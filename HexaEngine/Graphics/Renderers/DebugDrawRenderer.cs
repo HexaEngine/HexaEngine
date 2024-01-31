@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Numerics;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public unsafe class DebugDrawRenderer : IDisposable
     {
@@ -66,7 +64,7 @@
                 State = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = blendDesc,
+                    Blend = BlendDescription.NonPremultiplied,
                     Rasterizer = rasterDesc,
                 },
                 InputElements =
@@ -86,9 +84,11 @@
 
         private static unsafe void CreateFontsTexture()
         {
-            uint* pixels = stackalloc uint[] { 0xffffffff };
-            int width = 1;
-            int height = 1;
+            int width = 256;
+            int height = 256;
+
+            uint* pixels = AllocT<uint>(width * height);
+            Memset(pixels, 0xffffffff, width * height);
 
             var texDesc = new Texture2DDescription
             {
@@ -98,7 +98,7 @@
                 ArraySize = 1,
                 Format = Format.R8G8B8A8UNorm,
                 SampleDescription = new SampleDescription { Count = 1 },
-                Usage = Usage.Default,
+                Usage = Usage.Immutable,
                 BindFlags = BindFlags.ShaderResource,
                 CPUAccessFlags = CpuAccessFlags.None
             };

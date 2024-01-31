@@ -8,6 +8,9 @@ struct VertexOut
     float3 tex : TEXCOORD;
 };
 
+TextureCube cubeMap : register(t0);
+SamplerState linearWrapSampler : register(s0);
+
 float saturatedDot(in float3 a, in float3 b)
 {
     return max(dot(a, b), 0.0);
@@ -81,7 +84,7 @@ float4 main(VertexOut pin) : SV_TARGET
         lerpFactor *= max(a, 0.1);
     }
 
-    float3 skyColor = sky_color.xyz;
+    float3 skyColor = cubeMap.Sample(linearWrapSampler, pin.tex).xyz * 0.4;
 
     float3 finalColor = lerp(skyLuminance, skyColor * (1 - lerpFactor), saturate(pin.tex.y)) + skyLuminance * lerpFactor;
 

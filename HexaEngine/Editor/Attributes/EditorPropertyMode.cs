@@ -26,7 +26,7 @@
         Slider,
 
         /// <summary>
-        /// Angle slider mode for editor properties.
+        /// Angle slider mode for editor properties. (degrees)
         /// </summary>
         SliderAngle,
 
@@ -39,5 +39,10 @@
         /// File picker mode for editor properties.
         /// </summary>
         Filepicker,
+
+        /// <summary>
+        /// Reference selector mode for editor properties.
+        /// </summary>
+        ReferenceSelector,
     }
 }

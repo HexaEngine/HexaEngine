@@ -83,7 +83,7 @@ namespace HexaEngine.Core.Debugging
             {
                 verts[i].Position = Vector3.Transform(positions[i], matrix);
                 verts[i].Color = color;
-                verts[i].UV = default;
+                verts[i].UV = WhiteUV;
             }
         }
 
@@ -102,7 +102,7 @@ namespace HexaEngine.Core.Debugging
             {
                 verts[i].Position = Vector3.Transform(positions[i], matrix);
                 verts[i].Color = color;
-                verts[i].UV = default;
+                verts[i].UV = WhiteUV;
             }
         }
 
@@ -117,7 +117,7 @@ namespace HexaEngine.Core.Debugging
             {
                 verts[i].Position = Vector3.Transform(positions[i], matrix);
                 verts[i].Color = col;
-                verts[i].UV = default;
+                verts[i].UV = WhiteUV;
             }
             immediateList.RecordCmd(topology);
         }
@@ -240,7 +240,7 @@ namespace HexaEngine.Core.Debugging
             {
                 vertices[i].Color = color;
                 vertices[i].Position = corners[i];
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
             }
 
             immediateList.RecordCmd(PrimitiveTopology.LineList);
@@ -286,7 +286,7 @@ namespace HexaEngine.Core.Debugging
             for (int i = 0; i < vertexCount; i++)
             {
                 vertices[i].Color = color;
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
             }
 
             immediateList.RecordCmd(PrimitiveTopology.LineList);
@@ -544,9 +544,9 @@ namespace HexaEngine.Core.Debugging
             vertices[1].Color = color;
             vertices[2].Color = color;
 
-            vertices[0].UV = default;
-            vertices[1].UV = default;
-            vertices[2].UV = default;
+            vertices[0].UV = WhiteUV;
+            vertices[1].UV = WhiteUV;
+            vertices[2].UV = WhiteUV;
 
             immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
@@ -581,8 +581,8 @@ namespace HexaEngine.Core.Debugging
             vertices[0].Color = color;
             vertices[1].Color = color;
 
-            vertices[0].UV = default;
-            vertices[1].UV = default;
+            vertices[0].UV = WhiteUV;
+            vertices[1].UV = WhiteUV;
 
             immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
@@ -649,7 +649,7 @@ namespace HexaEngine.Core.Debugging
                 Vector3 pos = majorAxis * incrementalCos;
                 pos = minorAxis * incrementalSin + pos;
                 vertices[i].Position = Vector3.Transform(pos, orientation) + origin;
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
                 vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
@@ -700,7 +700,7 @@ namespace HexaEngine.Core.Debugging
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
                 vertices[i].Position = pos;
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
                 vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
@@ -753,7 +753,7 @@ namespace HexaEngine.Core.Debugging
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
                 vertices[i].Position = pos;
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
                 vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
@@ -811,7 +811,7 @@ namespace HexaEngine.Core.Debugging
                 Vector3 pos = majorAxis * incrementalCos;
                 pos = minorAxis * incrementalSin + pos;
                 vertices[i].Position = Vector3.Transform(pos, mat);
-                vertices[i].UV = default;
+                vertices[i].UV = WhiteUV;
                 vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
@@ -1288,6 +1288,8 @@ new Vector3(+1, +1, +1),
 32,63,
 24,56,
             };
+
+        public static Vector2 WhiteUV { get; private set; } = Vector2.One / 2;
 
         #endregion Cylinder Data
 

@@ -1086,6 +1086,22 @@
         /// <param name="value">The byte value to set the memory to.</param>
         /// <param name="count">The number of elements to set.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memset<T>(T* ptr, T value, int count) where T : unmanaged
+        {
+            for (int i = 0; i < count; i++)
+            {
+                ptr[i] = value;
+            }
+        }
+
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of elements.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="count">The number of elements to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memset<T>(T* ptr, byte value, int count) where T : unmanaged
         {
             new Span<byte>(ptr, count * sizeof(T)).Fill(value);

@@ -9,10 +9,9 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    // TODO: Dynamic Locks, needs deeper implementation.
     [EditorCategory("Physics")]
     [EditorComponent<RigidBody>("Rigid Body")]
-    public unsafe class RigidBody : ActorBase, IRigidBodyComponent
+    public unsafe class RigidBody : Actor, IRigidBodyComponent
     {
         protected PxRigidActor* actor;
         protected PxTransform pose;
@@ -31,6 +30,8 @@
         private float maxDepenetrationVelocity = float.MaxValue;
         private float maxContactImpulse = float.MaxValue;
         private float contactSlopCoefficient = 0;
+
+        internal PxRigidActor* Actor => actor;
 
         public override void Awake()
         {
@@ -56,7 +57,7 @@
         {
             DestroyActor();
 
-            colliders = GameObject.GetComponentsFromTree<IColliderComponent>();
+            colliders = GameObject.DiscoverComponents<IColliderComponent, RigidBody>().ToList();
 
             PxTransform transform = Helper.Convert(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
 
@@ -154,7 +155,7 @@
         {
             get
             {
-                if (type == ActorType.Static && !isUpdating)
+                if (type == ActorType.Static || actor == null || isUpdating)
                 {
                     return true;
                 }
@@ -567,7 +568,7 @@
                     return default;
                 }
 
-                if (actor == null && !isUpdating)
+                if (actor != null && !isUpdating)
                 {
                     bodyFlags = ((PxRigidBody*)actor)->GetRigidBodyFlags();
                 }
@@ -603,7 +604,7 @@
                     return default;
                 }
 
-                if (actor == null && !isUpdating)
+                if (actor != null && !isUpdating)
                 {
                     bodyFlags = ((PxRigidBody*)actor)->GetRigidBodyFlags();
                 }
@@ -639,7 +640,7 @@
                     return default;
                 }
 
-                if (actor == null && !isUpdating)
+                if (actor != null && !isUpdating)
                 {
                     bodyFlags = ((PxRigidBody*)actor)->GetRigidBodyFlags();
                 }
@@ -675,7 +676,7 @@
                     return default;
                 }
 
-                if (actor == null && !isUpdating)
+                if (actor != null && !isUpdating)
                 {
                     bodyFlags = ((PxRigidBody*)actor)->GetRigidBodyFlags();
                 }

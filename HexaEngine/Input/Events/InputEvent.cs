@@ -7,292 +7,232 @@
     [StructLayout(LayoutKind.Explicit)]
     public struct InputEvent
     {
-        public InputEvent(MouseMotionEventArgs eventArgs) : this(0, eventArgs)
+        public InputEvent(MouseMotionEventArgs eventArgs)
         {
-        }
-
-        public InputEvent(MouseButtonEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(MouseWheelEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(KeyboardEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(JoystickAxisMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(JoystickBallMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(JoystickButtonEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(JoystickHatMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(GamepadAxisMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(GamepadButtonEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(GamepadSensorUpdateEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(GamepadTouchpadEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(GamepadTouchpadMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(TouchEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(TouchMotionEventArgs eventArgs) : this(0, eventArgs)
-        {
-        }
-
-        public InputEvent(long timestamp, MouseMotionEventArgs eventArgs)
-        {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.MouseMoved;
             DeviceId = eventArgs.MouseId;
             MouseMovedEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, MouseButtonEventArgs eventArgs)
+        public InputEvent(MouseButtonEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == MouseButtonState.Up ? InputEventType.MouseUp : InputEventType.MouseDown;
             DeviceId = eventArgs.MouseId;
             MouseEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, MouseWheelEventArgs eventArgs)
+        public InputEvent(MouseWheelEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.MouseWheel;
             DeviceId = eventArgs.MouseId;
             MouseWheelEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, KeyboardEventArgs eventArgs)
+        public InputEvent(KeyboardEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == KeyState.Up ? InputEventType.KeyboardKeyUp : InputEventType.KeyboardKeyDown;
             DeviceId = 0;
             KeyboardEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, JoystickAxisMotionEventArgs eventArgs)
+        public InputEvent(JoystickAxisMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.JoystickAxisMotion;
             DeviceId = eventArgs.JoystickId;
             JoystickAxisMotionEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, JoystickBallMotionEventArgs eventArgs)
+        public InputEvent(JoystickBallMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.JoystickBallMotion;
             DeviceId = eventArgs.JoystickId;
             JoystickBallMotionEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, JoystickButtonEventArgs eventArgs)
+        public InputEvent(JoystickButtonEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == JoystickButtonState.Up ? InputEventType.JoystickButtonUp : InputEventType.JoystickButtonDown;
             DeviceId = eventArgs.JoystickId;
             JoystickButtonEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, JoystickHatMotionEventArgs eventArgs)
+        public InputEvent(JoystickHatMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.JoystickHatMotion;
             DeviceId = eventArgs.JoystickId;
             JoystickHatMotionEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, GamepadAxisMotionEventArgs eventArgs)
+        public InputEvent(GamepadAxisMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.GamepadAxisMotion;
             DeviceId = eventArgs.GamepadId;
             GamepadAxisMotionEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, GamepadButtonEventArgs eventArgs)
+        public InputEvent(GamepadButtonEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == GamepadButtonState.Up ? InputEventType.GamepadButtonUp : InputEventType.GamepadButtonDown;
             DeviceId = eventArgs.GamepadId;
             GamepadButtonEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, GamepadSensorUpdateEventArgs eventArgs)
+        public InputEvent(GamepadSensorUpdateEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.GamepadSensorUpdate;
             DeviceId = eventArgs.GamepadId;
             GamepadSensorUpdateEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, GamepadTouchpadEventArgs eventArgs)
+        public InputEvent(GamepadTouchpadEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == FingerState.Up ? InputEventType.GamepadTouchPadUp : InputEventType.GamepadTouchPadDown;
             DeviceId = eventArgs.GamepadId;
             GamepadTouchPadEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, GamepadTouchpadMotionEventArgs eventArgs)
+        public InputEvent(GamepadTouchpadMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.GamepadTouchPadMotion;
             DeviceId = eventArgs.GamepadId;
             GamepadTouchPadMotionEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, TouchEventArgs eventArgs)
+        public InputEvent(TouchEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = eventArgs.State == FingerState.Up ? InputEventType.TouchDeviceTouchUp : InputEventType.TouchDeviceTouchDown;
             DeviceId = eventArgs.TouchDeviceId;
             TouchDeviceTouchEvent = new(eventArgs);
         }
 
-        public InputEvent(long timestamp, TouchMotionEventArgs eventArgs)
+        public InputEvent(TouchMotionEventArgs eventArgs)
         {
-            Timestamp = timestamp;
+            Timestamp = eventArgs.Timestamp;
             Type = InputEventType.TouchDeviceTouchMotion;
             DeviceId = eventArgs.TouchDeviceId;
             TouchDeviceTouchMotionEvent = new(eventArgs);
         }
 
         /// <summary>
-        /// The timestamp of the event in ticks.
+        /// The timestamp of the event in milliseconds since app start.
         /// </summary>
         [FieldOffset(0)]
-        public long Timestamp;
+        public uint Timestamp;
 
         /// <summary>
         /// The event type.
         /// </summary>
-        [FieldOffset(8)]
+        [FieldOffset(4)]
         public InputEventType Type;
 
         /// <summary>
         /// The device id that issued the event.
         /// </summary>
-        [FieldOffset(12)]
+        [FieldOffset(8)]
         public long DeviceId;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseMoved"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public MouseMovedEvent MouseMovedEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseDown"/> <see cref="InputEventType.MouseUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public MouseEvent MouseEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseWheel"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public MouseWheelEvent MouseWheelEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.KeyboardKeyDown"/> <see cref="InputEventType.KeyboardKeyUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public KeyboardEvent KeyboardEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickAxisMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public JoystickAxisMotionEvent JoystickAxisMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickBallMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public JoystickBallMotionEvent JoystickBallMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickButtonDown"/> <see cref="InputEventType.JoystickButtonUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public JoystickButtonEvent JoystickButtonEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickHatMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public JoystickHatMotionEvent JoystickHatMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadAxisMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public GamepadAxisMotionEvent GamepadAxisMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadButtonDown"/> <see cref="InputEventType.GamepadButtonUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public GamepadButtonEvent GamepadButtonEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadSensorUpdate"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public GamepadSensorUpdateEvent GamepadSensorUpdateEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadTouchPadDown"/> <see cref="InputEventType.GamepadTouchPadUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public GamepadTouchPadEvent GamepadTouchPadEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadTouchPadMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public GamepadTouchPadMotionEvent GamepadTouchPadMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.TouchDeviceTouchDown"/> <see cref="InputEventType.TouchDeviceTouchUp"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public TouchDeviceTouchEvent TouchDeviceTouchEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.TouchDeviceTouchMotion"/>.
         /// </summary>
-        [FieldOffset(20)]
+        [FieldOffset(16)]
         public TouchDeviceTouchMotionEvent TouchDeviceTouchMotionEvent;
     }
 }

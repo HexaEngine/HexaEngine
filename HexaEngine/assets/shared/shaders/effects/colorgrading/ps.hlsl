@@ -37,7 +37,8 @@ cbuffer TonemapParams
 
     float Saturation; // Adjusts saturation (color intensity).
     float Contrast; // Adjusts the contrast.
-    float2 _padd0;
+    float ContrastMidpoint;
+    float _padd0;
 
     float3 WhiteBalance;
     float _padd1;
@@ -48,33 +49,38 @@ cbuffer TonemapParams
     float _padd3;
     float3 ChannelMaskBlue;
     float _padd4;
+
+    float Lift;
+    float GammaInv;
+    float Gain;
 };
 
 float3 NeutralCurve(float3 x)
 {
-    const float A = ShoulderStrength;
-    const float B = LinearStrength;
-    const float C = LinearAngle;
-    const float D = ToeStrength;
+    const float a = ShoulderStrength;
+    const float b = LinearStrength;
+    const float c = LinearAngle;
+    const float d = ToeStrength;
 
     // Not exposed as settings
-    const float E = 0.02f;
-    const float F = 0.3f;
+    const float e = 0.02f;
+    const float f = 0.3f;
 
-    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;
+    return ((x * (a * x + c * b) + d * e) / (x * (a * x + b) + d * f)) - e / f;
 }
 
 float3 NeutralTonemap(float3 x)
 {
-    float3 whiteScale = 1 / NeutralCurve(WhiteLevel);
-    x = NeutralCurve(whiteScale * x);
+    x = max((0.0).xxx, x);
+
+    float3 whiteScale = (1.0).xxx / NeutralCurve(WhiteLevel);
+    x = NeutralCurve(x * whiteScale);
     x *= whiteScale;
 
     // Post-curve white point adjustment
     x /= WhiteClip.xxx;
 
     return x;
-
 }
 
 float3 ACESFilmTonemap(float3 x)
@@ -95,11 +101,6 @@ float3 Tonemap(float3 x)
 #endif
 }
 
-float3 OECF_sRGBFast(float3 color)
-{
-    return pow(color.rgb, float3(1.0 / GAMMA, 1.0 / GAMMA, 1.0 / GAMMA));
-}
-
 float3 AdjustWhiteBalance(float3 color)
 {
     float3 lms = LinearToLMS(color);
@@ -107,31 +108,46 @@ float3 AdjustWhiteBalance(float3 color)
     return LMSToLinear(lms);
 }
 
-float3 AdjustHueSaturation(float3 color, float hueShift, float saturation)
+float3 AdjustHue(float3 color, float hueShift)
 {
-	// Convert RGB to HSL (Hue, Saturation, Lightness) color space.
-    float3 hsl = RGBtoHSL(color);
-
-	// Adjust Hue and Saturation.
-    hsl.x += hueShift;
-    hsl.y = saturate(hsl.y * saturation);
-
-	// Convert back to RGB color space.
-    return HSLtoRGB(hsl);
+    float3 hsl = RgbToHsv(color);
+    hsl.x += RotateHue(hueShift, 0, 1);
+    return HsvToRgb(hsl);
 }
 
-float3 AdjustContrast(float3 color)
+float3 AdjustSaturation(float3 c, float sat)
 {
-    return ((color - 0.5f) * Contrast) + 0.5f;
+    float luma = Luminance(c);
+    return luma.xxx + sat.xxx * (c - luma.xxx);
+}
+
+float3 AdjustContrast(float3 c, float midpoint, float contrast)
+{
+    return (c - midpoint) * contrast + midpoint;
+}
+
+float3 LiftGammaGainHDR(float3 c, float3 lift, float3 invgamma, float3 gain)
+{
+    c = c * gain + lift;
+
+    // ACEScg will output negative values, as clamping to 0 will lose precious information we'll
+    // mirror the gamma function instead
+    return sign(c) * pow(abs(c), invgamma);
+}
+
+float3 LiftGammaGainLDR(float3 c, float3 lift, float3 invgamma, float3 gain)
+{
+    c = saturate(pow(saturate(c), invgamma));
+    return gain * c + lift * (1.0 - c);
 }
 
 float3 ChannelMix(float3 color)
 {
-    float4 output;
-    output.r = dot(color, ChannelMaskRed);
-    output.g = dot(color, ChannelMaskGreen);
-    output.b = dot(color, ChannelMaskBlue);
-    return output;
+    return float3(
+        dot(color, ChannelMaskRed),
+        dot(color, ChannelMaskGreen),
+        dot(color, ChannelMaskBlue)
+    );
 }
 
 float4 main(VSOut vs) : SV_Target
@@ -141,43 +157,16 @@ float4 main(VSOut vs) : SV_Target
     if (color.a == 0)
         discard;
 
-    color.rgb = Tonemap(color.rgb);
-
     color.rgb = color.rgb * PostExposure;
     color.rgb = AdjustWhiteBalance(color.rgb);
-    color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
-    color.rgb = AdjustContrast(color.rgb);
+    color.rgb = AdjustHue(color.rgb, HueShift);
+    color.rgb = AdjustSaturation(color.rgb, Saturation);
+    color.rgb = AdjustContrast(color.rgb, ContrastMidpoint, Contrast);
     color.rgb = ChannelMix(color.rgb);
+    color.rgb = Tonemap(color.rgb);
+    color.rgb = LiftGammaGainLDR(color.rgb, Lift, GammaInv, Gain);
 
-    color.rgb = OECF_sRGBFast(color.rgb);
+    color.a = 1;
 
     return color;
-}
-
-#ifndef LUT_TileSizeXY
-#define LUT_TileSizeXY 32
-#endif
-#ifndef LUT_TileAmount
-#define LUT_TileAmount 32
-#endif
-
-cbuffer BakeCBuffer
-{
-    uint tileIndex;
-};
-
-float4 bake(VSOut vs)
-{
-    float2 tileCoord = vs.Tex;
-    float r = tileCoord.x;
-    float g = tileCoord.y;
-    float b = (float) tileIndex / (float) LUT_TileAmount;
-    float3 color = float3(r, g, b);
-
-    color.rgb = AdjustWhiteBalance(color.rgb);
-    color.rgb = AdjustHueSaturation(color.rgb, HueShift, Saturation);
-    color.rgb = AdjustContrast(color.rgb);
-    color.rgb = ChannelMix(color.rgb);
-
-    return float4(color, 1);
 }

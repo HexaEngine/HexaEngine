@@ -226,7 +226,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToDeg(this float v)
         {
-            return (float)(v * RadToDefFactor);
+            return v == 0 ? 0.0f : (float)(v * RadToDefFactor);
         }
 
         /// <summary>

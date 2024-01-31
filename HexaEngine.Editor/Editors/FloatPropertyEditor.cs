@@ -7,22 +7,67 @@
     using Hexa.NET.ImGui;
     using System.Reflection;
     using System.Collections;
+    using HexaEngine.Mathematics;
 
     public class FloatPropertyEditor : IPropertyEditor
     {
         private readonly ImGuiName guiName;
         private readonly EditorPropertyMode mode;
-        private readonly float min;
-        private readonly float max;
+        private readonly float min = float.MinValue;
+        private readonly float max = float.MaxValue;
 
-        public FloatPropertyEditor(string name, PropertyInfo property, EditorPropertyMode mode, float min, float max)
+        public FloatPropertyEditor(string name, PropertyInfo property, EditorPropertyMode mode, object? min, object? max)
         {
             Name = name;
             Property = property;
             guiName = new(name);
             this.mode = mode;
-            this.min = min;
-            this.max = max;
+
+            if (min is int iMin)
+            {
+                this.min = iMin;
+            }
+
+            if (max is int iMax)
+            {
+                this.max = iMax;
+            }
+
+            if (min is float fMin)
+            {
+                this.min = fMin;
+            }
+
+            if (max is float fMax)
+            {
+                this.max = fMax;
+            }
+
+            if (min is double dMin)
+            {
+                this.min = (float)dMin;
+            }
+
+            if (max is double dMax)
+            {
+                this.max = (float)dMax;
+            }
+
+            if (mode == EditorPropertyMode.SliderAngle)
+            {
+                this.min = this.min.ToDeg();
+                this.max = this.max.ToDeg();
+            }
+
+            if (mode == EditorPropertyMode.SliderAngle && min == null)
+            {
+                this.min = -360;
+            }
+
+            if (mode == EditorPropertyMode.SliderAngle && max == null)
+            {
+                this.max = 360;
+            }
         }
 
         public string Name { get; }
