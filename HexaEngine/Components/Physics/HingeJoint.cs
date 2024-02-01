@@ -7,7 +7,7 @@
     using MagicPhysX;
     using System.Numerics;
 
-    [EditorCategory("Physics")]
+    [EditorCategory("Joints", "Physics")]
     [EditorComponent<HingeJoint>("Hinge Joint")]
     public unsafe class HingeJoint : Joint
     {
@@ -27,7 +27,7 @@
         private bool enableMotorFreeSpin;
         private float motorForceLimit = float.MaxValue;
         private float motorGearRatio = 1;
-        private float motorVelocity = 0;
+        private float motorTargetVelocity = 0;
 
         [EditorProperty("Auto Calculate")]
         public bool AutoCalculate
@@ -138,6 +138,24 @@
         }
 
         [EditorCategory("Motor")]
+        [EditorProperty("Target Velocity")]
+        public float MotorTargetVelocity
+        {
+            get => motorTargetVelocity;
+            set
+            {
+                value = MathUtil.Clamp(value, float.MinValue, float.MaxValue);
+
+                motorTargetVelocity = value;
+
+                if (joint != null && !updating && !Application.InDesignMode)
+                {
+                    joint->SetDriveVelocityMut(value, true);
+                }
+            }
+        }
+
+        [EditorCategory("Motor")]
         [EditorProperty("Free Spin")]
         public bool EnableMotorFreeSpin
         {
@@ -169,24 +187,6 @@
             }
         }
 
-        [EditorCategory("Motor")]
-        [EditorProperty("Velocity")]
-        public float MotorVelocity
-        {
-            get => motorVelocity;
-            set
-            {
-                value = MathUtil.Clamp(value, float.MinValue, float.MaxValue);
-
-                motorVelocity = value;
-
-                if (joint != null && !updating && !Application.InDesignMode)
-                {
-                    joint->SetDriveVelocityMut(value, true);
-                }
-            }
-        }
-
         [EditorCategory("Limits")]
         [EditorProperty("Enable Limits")]
         public bool EnableLimit
@@ -204,19 +204,6 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorProperty("Min", EditorPropertyMode.SliderAngle)]
-        public float LimitMin
-        {
-            get => limitMin;
-            set
-            {
-                limitMin = value;
-
-                UpdateLimits();
-            }
-        }
-
-        [EditorCategory("Limits")]
         [EditorProperty("Max", EditorPropertyMode.SliderAngle)]
         public float LimitMax
         {
@@ -224,6 +211,19 @@
             set
             {
                 limitMax = value;
+
+                UpdateLimits();
+            }
+        }
+
+        [EditorCategory("Limits")]
+        [EditorProperty("Min", EditorPropertyMode.SliderAngle)]
+        public float LimitMin
+        {
+            get => limitMin;
+            set
+            {
+                limitMin = value;
 
                 UpdateLimits();
             }
@@ -273,24 +273,6 @@
             }
         }
 
-        private void UpdateLimits()
-        {
-            if (joint == null || updating)
-            {
-                return;
-            }
-
-            PxJointAngularLimitPair limits;
-            limits.lower = limitMin;
-            limits.upper = limitMax;
-            limits.restitution = limitRestitution;
-            limits.bounceThreshold = limitBounceThreshold;
-            limits.stiffness = springStiffness;
-            limits.damping = springDamping;
-
-            joint->SetLimitMut(&limits);
-        }
-
         public void SetMotorVelocity(float value, bool autoAwake = true)
         {
             if (joint == null || updating)
@@ -325,10 +307,28 @@
 
             if (!Application.InDesignMode)
             {
-                joint->SetDriveVelocityMut(motorVelocity, true);
+                joint->SetDriveVelocityMut(motorTargetVelocity, true);
             }
 
             return (PxJoint*)joint;
+        }
+
+        private void UpdateLimits()
+        {
+            if (joint == null || updating)
+            {
+                return;
+            }
+
+            PxJointAngularLimitPair limits;
+            limits.lower = limitMin;
+            limits.upper = limitMax;
+            limits.restitution = limitRestitution;
+            limits.bounceThreshold = limitBounceThreshold;
+            limits.stiffness = springStiffness;
+            limits.damping = springDamping;
+
+            joint->SetLimitMut(&limits);
         }
 
         // Calculate local transform for the hinge joint based on anchor point and axis

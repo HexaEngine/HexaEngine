@@ -1,22 +1,22 @@
 ﻿----------
 Planned:
 
-Volumetric Lights
 SSS (Sub Surface Scattering)
 revisit SSR (for roughness support and physical correctness)
 Specular and Specular Tint Textures
 Ansiotropic (IBL and SSS)
 Cleancoat / Glossy
-Emission
 
 -----------
 
 Work in progress:
+Graphics abstraction layer to work with different backends like D3D11, OpenGl, Vulkan, D3D12
 
 -----------
 Done/Optimization/"Working" Stage:
 
-Graphics abstraction layer to work with different backends like D3D11, OpenGl, Vulkan, D3D12
+Emission
+Volumetric Lights
 Skinned meshes
 Instancing
 Decal rendering

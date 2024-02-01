@@ -153,5 +153,16 @@
 
             return new() { p = position, q = rotation };
         }
+
+        public static PxD6Motion Convert(D6Motion value)
+        {
+            return value switch
+            {
+                D6Motion.Locked => PxD6Motion.Locked,
+                D6Motion.Limited => PxD6Motion.Limited,
+                D6Motion.Free => PxD6Motion.Free,
+                _ => throw new NotSupportedException()
+            };
+        }
     }
 }

@@ -176,7 +176,7 @@
                 value = MaskRotation(value);
 
                 rotation = value;
-                orientation = value.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
+                orientation = value.NormalizeEulerAngleDegrees().ToRad().ToQuaternion();
                 OnChanged();
             }
         }
@@ -912,7 +912,7 @@
             local = matrix;
             Matrix4x4.Invert(local, out localInverse);
             Matrix4x4.Decompose(local, out scale, out orientation, out position);
-            rotation = orientation.GetYawPitchRoll().ToDeg();
+            rotation = orientation.ToYawPitchRoll().ToDeg();
             OnChanged();
         }
 
@@ -1066,9 +1066,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public Quaternion MaskRotation(Quaternion rotation, out Vector3 euler)
         {
-            euler = rotation.GetYawPitchRoll();
+            euler = rotation.ToYawPitchRoll();
             euler = MaskRotation(euler);
-            rotation = euler.GetQuaternion();
+            rotation = euler.ToQuaternion();
             return rotation;
         }
 
@@ -1117,7 +1117,7 @@
             }
 
             rotation = value;
-            orientation = value.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
+            orientation = value.NormalizeEulerAngleDegrees().ToRad().ToQuaternion();
             OnChanged();
         }
 
@@ -1134,7 +1134,7 @@
             }
 
             orientation = value;
-            rotation = value.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
+            rotation = value.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
             OnChanged();
         }
 
@@ -1206,7 +1206,7 @@
                 orientation = value / parent.globalOrientation;
             }
 
-            rotation = value.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
+            rotation = value.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
 
             OnChanged();
         }
@@ -1251,7 +1251,7 @@
             oldpos = position;
             (position, orientation) = (value.position, value.rotation);
             velocity = position - oldpos;
-            rotation = value.rotation.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
+            rotation = value.rotation.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
             OnChanged();
         }
 
@@ -1270,7 +1270,7 @@
             oldpos = position;
             (position, orientation, scale) = (value.position, value.rotation, value.scale);
             velocity = position - oldpos;
-            rotation = value.rotation.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
+            rotation = value.rotation.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
             OnChanged();
         }
     }

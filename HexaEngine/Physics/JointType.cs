@@ -2,13 +2,12 @@
 {
     public enum JointType
     {
-        Contact,
         D6,
-        Distance,
-        Fixed,
-        Prismatic,
-        Revolute,
-        Spherical,
+        Distance, // Done
+        Fixed, // Done
+        Prismatic, // Done
+        Revolute, // Done
+        Spherical, // Done
         Gear,
         RackAndPinion
     }

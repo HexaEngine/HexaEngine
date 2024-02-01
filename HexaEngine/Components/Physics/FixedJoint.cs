@@ -7,7 +7,7 @@
     using MagicPhysX;
     using System.Numerics;
 
-    [EditorCategory("Physics")]
+    [EditorCategory("Joints", "Physics")]
     [EditorComponent<FixedJoint>("Fixed Joint")]
     public unsafe class FixedJoint : Joint
     {

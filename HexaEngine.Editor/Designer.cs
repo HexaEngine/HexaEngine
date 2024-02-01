@@ -35,6 +35,7 @@
             ObjectEditorFactory.AddFactory(new Vector2PropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new Vector3PropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new Vector4PropertyEditorFactory());
+            ObjectEditorFactory.AddFactory<QuaternionPropertyEditorFactory>();
             ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
 
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
