@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Attributes
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents an attribute that provides additional information about a property for the editor.

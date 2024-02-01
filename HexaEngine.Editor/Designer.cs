@@ -25,6 +25,7 @@
             WindowManager.Init(device);
             PopupManager.Show<OpenProjectWindow>();
 
+            ObjectEditorFactory.AddFactory<GameObjectReferenceEditorFactory>();
             ObjectEditorFactory.AddFactory(new DrawLayerPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new BoolPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());
@@ -34,7 +35,10 @@
             ObjectEditorFactory.AddFactory(new Vector2PropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new Vector3PropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new Vector4PropertyEditorFactory());
+            ObjectEditorFactory.AddFactory<QuaternionPropertyEditorFactory>();
             ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
+
+            PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
 
             ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());

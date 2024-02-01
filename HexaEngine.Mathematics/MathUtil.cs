@@ -188,7 +188,7 @@
         /// <param name="r">The input <see cref="Quaternion"/>.</param>
         /// <returns>A <see cref="Vector3"/> containing yaw, pitch, and roll angles (in radians).</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 GetYawPitchRoll(this Quaternion r)
+        public static Vector3 ToYawPitchRoll(this Quaternion r)
         {
             float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
             float pitch = MathF.Asin(2.0f * (r.X * r.W - r.Y * r.Z));
@@ -226,7 +226,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToDeg(this float v)
         {
-            return (float)(v * RadToDefFactor);
+            return v == 0 ? 0.0f : (float)(v * RadToDefFactor);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@
         /// <param name="vector">The input <see cref="Vector3"/> with yaw, pitch, and roll angles.</param>
         /// <returns>The corresponding <see cref="Quaternion"/> representing the rotation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Quaternion GetQuaternion(this Vector3 vector)
+        public static Quaternion ToQuaternion(this Vector3 vector)
         {
             return Quaternion.CreateFromYawPitchRoll(vector.X, vector.Y, vector.Z);
         }
@@ -2278,6 +2278,39 @@
         {
             ulong gcd = GCD(a, b);
             return gcd != 0 ? a * b / gcd : 0;
+        }
+
+        /// <summary>
+        /// Checks if all components are equal.
+        /// </summary>
+        /// <param name="vec">The <see cref="Vector2"/>.</param>
+        /// <returns>returns <c>true</c> if all components of the <see cref="Vector2"/> are equals, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ComponentsEquals(this Vector2 vec)
+        {
+            return vec.X == vec.Y;
+        }
+
+        /// <summary>
+        /// Checks if all components are equal.
+        /// </summary>
+        /// <param name="vec">The <see cref="Vector3"/>.</param>
+        /// <returns>returns <c>true</c> if all components of the <see cref="Vector3"/> are equals, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ComponentsEquals(this Vector3 vec)
+        {
+            return vec.X == vec.Y && vec.X == vec.Z;
+        }
+
+        /// <summary>
+        /// Checks if all components are equal.
+        /// </summary>
+        /// <param name="vec">The <see cref="Vector4"/>.</param>
+        /// <returns>returns <c>true</c> if all components of the <see cref="Vector4"/> are equals, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ComponentsEquals(this Vector4 vec)
+        {
+            return vec.X == vec.Y && vec.X == vec.Z && vec.X == vec.W;
         }
     }
 }

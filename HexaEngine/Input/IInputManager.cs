@@ -4,7 +4,7 @@
 
     public interface IInputManager : IDisposable
     {
-        public InputBuffer InputBuffer { get; }
+        public InputEventBuffer InputBuffer { get; }
 
         float GetAxis(string name);
 

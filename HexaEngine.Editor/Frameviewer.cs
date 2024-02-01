@@ -79,11 +79,11 @@
                     {
                         if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
                         {
-                            GameObject.Selected.AddSelection(gameObject);
+                            SelectionCollection.Global.AddSelection(gameObject);
                         }
                         else
                         {
-                            GameObject.Selected.AddOverwriteSelection(gameObject);
+                            SelectionCollection.Global.AddOverwriteSelection(gameObject);
                         }
                     }
                 }

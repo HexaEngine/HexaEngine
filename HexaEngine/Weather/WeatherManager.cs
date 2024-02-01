@@ -20,6 +20,7 @@
         UniformColor,
         HosekWilkie,
         Preetham,
+        Custom,
     }
 
     /// <summary>

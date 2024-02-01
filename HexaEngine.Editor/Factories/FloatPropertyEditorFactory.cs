@@ -14,7 +14,7 @@
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new FloatPropertyEditor(nameAttr.Name, property, nameAttr.Mode, (float)(nameAttr.Min ?? float.MinValue), (float)(nameAttr.Max ?? float.MaxValue));
+            return new FloatPropertyEditor(nameAttr.Name, property, nameAttr.Mode, nameAttr.Min, nameAttr.Max);
         }
     }
 }

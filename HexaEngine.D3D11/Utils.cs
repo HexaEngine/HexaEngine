@@ -46,7 +46,7 @@
             Guid guid = D3DDebugObjectName;
             if (name != null)
             {
-                byte* pName = name.ToUTF8();
+                byte* pName = name.ToUTF8Ptr();
                 child->SetPrivateData(&guid, (uint)name.Length, pName);
                 Free(pName);
             }

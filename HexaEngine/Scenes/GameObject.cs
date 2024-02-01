@@ -1,16 +1,21 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
+    using HexaEngine.Core.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 
-    public partial class GameObject : EntityNotifyBase
-    {
-        private static readonly GameObjectSelection selected = new();
+    public delegate void GameObjectOnEnabledChanged(GameObject gameObject, bool enabled);
 
+    public delegate void GameObjectOnNameChanged(GameObject gameObject, string name);
+
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public partial class GameObject : EntityNotifyBase, IHierarchyObject, IEditorSelectable
+    {
         private readonly List<GameObject> children = new();
         private readonly List<IComponent> components = new();
         private Scene? scene;
@@ -116,6 +121,8 @@
                 }
 
                 SetAndNotify(ref isEnabled, value);
+                OnEnabledChanged?.Invoke(this, value);
+
                 for (int i = 0; i < Children.Count; i++)
                 {
                     Children[i].IsEnabled = value;
@@ -150,9 +157,6 @@
 
         [JsonIgnore]
         public bool Initialized => initialized;
-
-        [JsonIgnore]
-        public static GameObjectSelection Selected => selected;
 
         [JsonIgnore]
         public bool IsEditorSelected => isEditorSelected;
@@ -201,7 +205,13 @@
 
         public Type Type => type ??= GetType();
 
-        public event Action<GameObject, string>? OnNameChanged;
+        IHierarchyObject? IHierarchyObject.Parent => parent;
+
+        bool IEditorSelectable.IsEditorSelected { get => isEditorSelected; set => isEditorSelected = value; }
+
+        public event GameObjectOnEnabledChanged? OnEnabledChanged;
+
+        public event GameObjectOnNameChanged? OnNameChanged;
 
         public event Action<GameObject, object?>? OnTagChanged;
 
@@ -219,7 +229,7 @@
             transform.Updated += TransformUpdated;
         }
 
-        protected virtual void TransformUpdated(object? sender, EventArgs e)
+        protected virtual void TransformUpdated(Transform transform)
         {
             OnTransformed?.Invoke(this);
         }
@@ -420,7 +430,7 @@
             parent?.GetDepth(ref depth);
         }
 
-        public virtual T? GetParentNodeOf<T>() where T : GameObject
+        public virtual T? FindParent<T>() where T : GameObject
         {
             GameObject? current = parent;
             while (true)
@@ -436,6 +446,99 @@
                 else
                 {
                     return null;
+                }
+            }
+        }
+
+        public virtual T? FindChild<T>() where T : GameObject
+        {
+            for (int i = 0; i < children?.Count; i++)
+            {
+                var child = children[i];
+                if (child is T t)
+                {
+                    return t;
+                }
+
+                var result = child.FindChild<T>();
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
+
+        public virtual T? GetComponentFromParent<T>() where T : IComponent
+        {
+            var current = parent;
+
+            while (current != null)
+            {
+                var component = current.GetComponent<T>();
+
+                if (component != null)
+                {
+                    return component;
+                }
+
+                current = current.parent;
+            }
+
+            return default;
+        }
+
+        public virtual IEnumerable<T> GetComponentsFromParents<T>() where T : IComponent
+        {
+            var current = parent;
+
+            while (current != null)
+            {
+                var components = current.GetComponents<T>();
+
+                foreach (var component in components)
+                {
+                    yield return component;
+                }
+
+                current = current.parent;
+            }
+        }
+
+        public virtual T? GetComponentFromChild<T>() where T : IComponent
+        {
+            for (int i = 0; i < children?.Count; i++)
+            {
+                var child = children[i];
+                var component = child.GetComponent<T>();
+                if (component != null)
+                {
+                    return component;
+                }
+
+                var result = child.GetComponentFromChild<T>();
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return default;
+        }
+
+        public virtual IEnumerable<T> GetComponentsFromChilds<T>() where T : IComponent
+        {
+            for (int i = 0; i < children?.Count; i++)
+            {
+                var child = children[i];
+                var components = child.GetComponents<T>();
+                foreach (var component in components)
+                {
+                    yield return component;
+                }
+
+                foreach (var component in child.GetComponentsFromChilds<T>())
+                {
+                    yield return component;
                 }
             }
         }
@@ -525,16 +628,41 @@
             return false;
         }
 
-        public virtual IEnumerable<T> GetComponentsFromChilds<T>() where T : IComponent
+        public virtual IEnumerable<T> GetComponentsFromTree<T>() where T : IComponent
         {
-            List<T> components = new();
-            for (int i = 0; i < children.Count; i++)
+            foreach (var component in GetComponents<T>())
             {
-                var child = children[i];
-                components.AddRange(child.GetComponents<T>());
-                components.AddRange(child.GetComponentsFromChilds<T>());
+                yield return component;
             }
-            return components;
+
+            foreach (var child in Children)
+            {
+                foreach (var component in child.GetComponentsFromTree<T>())
+                {
+                    yield return component;
+                }
+            }
+        }
+
+        public virtual IEnumerable<T> DiscoverComponents<T, TStop>() where T : IComponent where TStop : IComponent
+        {
+            foreach (var component in GetComponents<T>())
+            {
+                yield return component;
+            }
+
+            foreach (var child in Children)
+            {
+                if (child.HasComponent<TStop>())
+                {
+                    continue;
+                }
+
+                foreach (var component in child.DiscoverComponents<T, TStop>())
+                {
+                    yield return component;
+                }
+            }
         }
 
         public static void RemoveComponent(ValueTuple<GameObject, IComponent> values)
@@ -585,6 +713,27 @@
                     yield return t;
                 }
             }
+        }
+
+        void IHierarchyObject.AddChild(IHierarchyObject selectable)
+        {
+            if (selectable is GameObject gameObject)
+            {
+                AddChild(gameObject);
+            }
+        }
+
+        void IHierarchyObject.RemoveChild(IHierarchyObject selectable)
+        {
+            if (selectable is GameObject gameObject)
+            {
+                RemoveChild(gameObject);
+            }
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return FullName;
         }
     }
 }

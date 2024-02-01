@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Numerics;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public unsafe class DebugDrawRenderer : IDisposable
     {
@@ -34,9 +32,30 @@
 
         private static void CreateDeviceObjects()
         {
-            var desc = RasterizerDescription.CullNone;
-            desc.AntialiasedLineEnable = true;
-            desc.MultisampleEnable = false;
+            var blendDesc = new BlendDescription
+            {
+                AlphaToCoverageEnable = false
+            };
+
+            blendDesc.RenderTarget[0] = new RenderTargetBlendDescription
+            {
+                BlendOperationAlpha = BlendOperation.Add,
+                IsBlendEnabled = true,
+                BlendOperation = BlendOperation.Add,
+                DestinationBlendAlpha = Blend.InverseSourceAlpha,
+                DestinationBlend = Blend.InverseSourceAlpha,
+                SourceBlend = Blend.SourceAlpha,
+                SourceBlendAlpha = Blend.SourceAlpha,
+                RenderTargetWriteMask = ColorWriteEnable.All
+            };
+
+            var rasterDesc = new RasterizerDescription
+            {
+                FillMode = FillMode.Solid,
+                CullMode = CullMode.None,
+                DepthClipEnable = true,
+                AntialiasedLineEnable = true,
+            };
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -44,11 +63,9 @@
                 PixelShader = "internal/debugdraw/ps.hlsl",
                 State = new GraphicsPipelineState()
                 {
-                    DepthStencil = DepthStencilDescription.Default,
+                    DepthStencil = DepthStencilDescription.DepthRead,
                     Blend = BlendDescription.NonPremultiplied,
-                    Rasterizer = desc,
-                    BlendFactor = Vector4.One,
-                    SampleMask = int.MaxValue,
+                    Rasterizer = rasterDesc,
                 },
                 InputElements =
                 [
@@ -67,9 +84,11 @@
 
         private static unsafe void CreateFontsTexture()
         {
-            uint* pixels = stackalloc uint[] { 0xffffffff };
-            int width = 1;
-            int height = 1;
+            int width = 256;
+            int height = 256;
+
+            uint* pixels = AllocT<uint>(width * height);
+            Memset(pixels, 0xffffffff, width * height);
 
             var texDesc = new Texture2DDescription
             {
@@ -79,7 +98,7 @@
                 ArraySize = 1,
                 Format = Format.R8G8B8A8UNorm,
                 SampleDescription = new SampleDescription { Count = 1 },
-                Usage = Usage.Default,
+                Usage = Usage.Immutable,
                 BindFlags = BindFlags.ShaderResource,
                 CPUAccessFlags = CpuAccessFlags.None
             };
@@ -304,6 +323,8 @@
                 constantBuffer.Dispose();
                 vertexBuffer.Dispose();
                 indexBuffer.Dispose();
+                fontSampler.Dispose();
+                fontTextureView.Dispose();
                 disposedValue = true;
             }
         }

@@ -64,15 +64,6 @@
         public RingBuffer<double> GpuDebugDraw = new(SampleBufferSize);
         public RingBuffer<double> GpuImGuiDraw = new(SampleBufferSize);
 
-        public RingBuffer<double> Simulation = new(SampleBufferSize);
-        public RingBuffer<double> PoseIntegrator = new(SampleBufferSize);
-        public RingBuffer<double> Sleeper = new(SampleBufferSize);
-        public RingBuffer<double> BroadPhaseUpdate = new(SampleBufferSize);
-        public RingBuffer<double> CollisionTesting = new(SampleBufferSize);
-        public RingBuffer<double> NarrowPhaseFlush = new(SampleBufferSize);
-        public RingBuffer<double> Solver = new(SampleBufferSize);
-        public RingBuffer<double> BatchCompressor = new(SampleBufferSize);
-
         public RingBuffer<double> MemoryUsage = new(SampleBufferSize);
         public RingBuffer<double> VideoMemoryUsage = new(SampleBufferSize);
 
@@ -254,11 +245,11 @@
                 {
                     ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
                     ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
-                    ImPlot.PlotShaded("Physics", ref Simulation.Values[0], Simulation.Length, fill, 1, 0, ImPlotShadedFlags.None, Simulation.Head);
+                    // TODO: PhysX Profiler
                     ImPlot.PopStyleVar();
 
                     ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
-                    ImPlot.PlotLine("Physics", ref Simulation.Values[0], Simulation.Length, 1, 0, ImPlotLineFlags.None, Simulation.Head);
+
                     ImPlot.EndPlot();
                 }
 
@@ -299,25 +290,10 @@
                 ImPlot.SetNextAxesToFit();
                 if (ImPlot.BeginPlot("Physics", new Vector2(-1, 0), ImPlotFlags.NoInputs))
                 {
+                    // TODO: PhysX Profiler.
                     ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Total", ref Simulation.Values[0], Simulation.Length, fill, 1, 0, ImPlotShadedFlags.None, Simulation.Head);
-                    ImPlot.PlotShaded("PoseIntegrator", ref PoseIntegrator.Values[0], PoseIntegrator.Length, fill, 1, 0, ImPlotShadedFlags.None, PoseIntegrator.Head);
-                    ImPlot.PlotShaded("Sleeper", ref Sleeper.Values[0], Sleeper.Length, fill, 1, 0, ImPlotShadedFlags.None, Sleeper.Head);
-                    ImPlot.PlotShaded("BroadPhaseUpdate", ref BroadPhaseUpdate.Values[0], BroadPhaseUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, BroadPhaseUpdate.Head);
-                    ImPlot.PlotShaded("CollisionTesting", ref CollisionTesting.Values[0], CollisionTesting.Length, fill, 1, 0, ImPlotShadedFlags.None, CollisionTesting.Head);
-                    ImPlot.PlotShaded("NarrowPhaseFlush", ref NarrowPhaseFlush.Values[0], NarrowPhaseFlush.Length, fill, 1, 0, ImPlotShadedFlags.None, NarrowPhaseFlush.Head);
-                    ImPlot.PlotShaded("Solver", ref Solver.Values[0], Solver.Length, fill, 1, 0, ImPlotShadedFlags.None, Solver.Head);
-                    ImPlot.PlotShaded("BatchCompressor", ref BatchCompressor.Values[0], BatchCompressor.Length, fill, 1, 0, ImPlotShadedFlags.None, BatchCompressor.Head);
-                    ImPlot.PopStyleVar();
 
-                    ImPlot.PlotLine("Total", ref Simulation.Values[0], Simulation.Length, 1, 0, ImPlotLineFlags.None, Simulation.Head);
-                    ImPlot.PlotLine("PoseIntegrator", ref PoseIntegrator.Values[0], PoseIntegrator.Length, 1, 0, ImPlotLineFlags.None, PoseIntegrator.Head);
-                    ImPlot.PlotLine("Sleeper", ref Sleeper.Values[0], Sleeper.Length, 1, 0, ImPlotLineFlags.None, Sleeper.Head);
-                    ImPlot.PlotLine("BroadPhaseUpdate", ref BroadPhaseUpdate.Values[0], BroadPhaseUpdate.Length, 1, 0, ImPlotLineFlags.None, BroadPhaseUpdate.Head);
-                    ImPlot.PlotLine("CollisionTesting", ref CollisionTesting.Values[0], CollisionTesting.Length, 1, 0, ImPlotLineFlags.None, CollisionTesting.Head);
-                    ImPlot.PlotLine("NarrowPhaseFlush", ref NarrowPhaseFlush.Values[0], NarrowPhaseFlush.Length, 1, 0, ImPlotLineFlags.None, NarrowPhaseFlush.Head);
-                    ImPlot.PlotLine("Solver", ref Solver.Values[0], Solver.Length, 1, 0, ImPlotLineFlags.None, Solver.Head);
-                    ImPlot.PlotLine("BatchCompressor", ref BatchCompressor.Values[0], BatchCompressor.Length, 1, 0, ImPlotLineFlags.None, BatchCompressor.Head);
+                    ImPlot.PopStyleVar();
 
                     ImPlot.EndPlot();
                 }
@@ -356,7 +332,6 @@
 
             if (cpu)
             {
-                Update.Add(renderer.Profiler["Update"] * 1000);
                 ObjectCulling.Add(renderer.Profiler["ObjectCulling"] * 1000);
                 LightCulling.Add(renderer.Profiler["LightCulling"] * 1000);
                 ShadowMaps.Add(renderer.Profiler["ShadowMaps"] * 1000);
@@ -410,20 +385,6 @@
                     buffer.Add(value * 1000);
                     systems[system] = buffer;
                 }
-            }
-
-            var simulation = scene.GetRequiredSystem<PhysicsSystem>().Simulation;
-
-            if (physics)
-            {
-                Simulation.Add(simulation.Profiler[simulation] * 1000);
-                PoseIntegrator.Add(simulation.Profiler[simulation.PoseIntegrator] * 1000);
-                Sleeper.Add(simulation.Profiler[simulation.Sleeper] * 1000);
-                BroadPhaseUpdate.Add(simulation.Profiler[simulation.BroadPhase] * 1000);
-                CollisionTesting.Add(simulation.Profiler[simulation.BroadPhaseOverlapFinder] * 1000);
-                NarrowPhaseFlush.Add(simulation.Profiler[simulation.NarrowPhase] * 1000);
-                Solver.Add(simulation.Profiler[simulation.Solver]);
-                BatchCompressor.Add(simulation.Profiler[simulation.SolverBatchCompressor]);
             }
         }
     }

@@ -194,6 +194,9 @@
                 // Update the current scene
                 SceneManager.Current?.Update();
 
+                // Do fixed update tick if necessary.
+                Time.FixedUpdateTick();
+
                 // Signal and wait for synchronization with the main thread.
                 syncBarrier.SignalAndWait();
             }

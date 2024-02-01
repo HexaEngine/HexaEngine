@@ -232,8 +232,8 @@ namespace HexaEngine.Resources
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/geometry/osm/vs.hlsl",
-                    PixelShader = "forward/geometry/osm/ps.hlsl",
+                    VertexShader = "forward/geometry/dpsm/vs.hlsl",
+                    PixelShader = "forward/geometry/dpsm/ps.hlsl",
                     State = new()
                     {
                         DepthStencil = DepthStencilDescription.Default,
@@ -264,8 +264,8 @@ namespace HexaEngine.Resources
                     csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
                     csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
                     csmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
-                    osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
+                    osmPipelineDesc.HullShader = "forward/geometry/dpsm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/geometry/dpsm/ds.hlsl";
                     osmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
                     psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
@@ -470,8 +470,8 @@ namespace HexaEngine.Resources
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/geometry/osm/vs.hlsl",
-                    PixelShader = "forward/geometry/osm/ps.hlsl",
+                    VertexShader = "forward/geometry/dpsm/vs.hlsl",
+                    PixelShader = "forward/geometry/dpsm/ps.hlsl",
                     State = new()
                     {
                         DepthStencil = DepthStencilDescription.Default,
@@ -502,8 +502,8 @@ namespace HexaEngine.Resources
                     csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
                     csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
                     csmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
-                    osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
+                    osmPipelineDesc.HullShader = "forward/geometry/dpsm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/geometry/dpsm/ds.hlsl";
                     osmPipelineDesc.State.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                     psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
                     psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";

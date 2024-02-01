@@ -234,7 +234,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns>The pointer, must be freed after usage.</returns>
-        public static char* ToUTF16(this string str)
+        public static char* ToUTF16Ptr(this string str)
         {
             char* dst = AllocT<char>(str.Length + 1);
             fixed (char* src = str)
@@ -268,7 +268,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns>The pointer, must be freed after usage.</returns>
-        public static byte* ToUTF8(this string str)
+        public static byte* ToUTF8Ptr(this string str)
         {
             var byteCount = Encoding.UTF8.GetByteCount(str);
             byte* dst = AllocT<byte>(Encoding.UTF8.GetByteCount(str) + 1);
@@ -1076,6 +1076,22 @@
                 MemcpyT(src, dst, length, length);
             }
             return values;
+        }
+
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of elements.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="count">The number of elements to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memset<T>(T* ptr, T value, int count) where T : unmanaged
+        {
+            for (int i = 0; i < count; i++)
+            {
+                ptr[i] = value;
+            }
         }
 
         /// <summary>

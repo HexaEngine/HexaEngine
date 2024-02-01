@@ -14,8 +14,7 @@
     /// </summary>
     public class EditorCategory : IPropertyEditor
     {
-        private readonly List<(PropertyInfo, IPropertyEditor)> editors = new();
-        private readonly List<ObjectEditorButton> buttons = new();
+        private readonly List<IObjectEditorElement> elements = new();
         private PropertyInfo? enableProp;
         private ImGuiName enablePropName = new("Enable");
         private List<EditorCategory> childCategories = new();
@@ -59,14 +58,9 @@
         public List<EditorCategory> ChildCategories => childCategories;
 
         /// <summary>
-        /// Gets the list of properties within this category.
+        /// Gets the list of elements within this category.
         /// </summary>
-        public List<(PropertyInfo, IPropertyEditor)> Properties => editors;
-
-        /// <summary>
-        /// Gets the list of buttons within this category.
-        /// </summary>
-        public List<ObjectEditorButton> Buttons => buttons;
+        public List<IObjectEditorElement> Elements => elements;
 
         /// <summary>
         /// Gets the name associated with the property editor (always an empty string for categories).
@@ -114,6 +108,23 @@
             }
         }
 
+        private bool IsVisible(object instance)
+        {
+            bool visible = true;
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                visible &= elements[i].UpdateVisibility(instance);
+            }
+
+            for (int i = 0; i < childCategories.Count; i++)
+            {
+                visible &= childCategories[i].IsVisible(instance);
+            }
+
+            return visible;
+        }
+
         /// <summary>
         /// Draws the category within the specified graphics context.
         /// </summary>
@@ -123,7 +134,7 @@
         /// <returns><c>true</c> if the category was modified; otherwise, <c>false</c>.</returns>
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            if (value == null)
+            if (!IsVisible(instance))
             {
                 return false;
             }
@@ -135,7 +146,7 @@
             {
                 Color();
                 ImGui.TableSetColumnIndex(0);
-                Draw(context, value);
+                Draw(context, instance);
                 ImGui.TreePop();
                 return false;
             }
@@ -151,21 +162,9 @@
         /// <param name="instance">The instance of the object containing the category.</param>
         private void Draw(IGraphicsContext context, object instance)
         {
-            for (int i = 0; i < editors.Count; i++)
+            for (int i = 0; i < elements.Count; i++)
             {
-                var editor = editors[i];
-                var value = editor.Item1.GetValue(instance);
-                var oldValue = value;
-
-                if (editor.Item2.Draw(context, instance, ref value))
-                {
-                    History.Default.Do($"Set Value ({editor.Item2.Name})", (instance, editor.Item1), oldValue, value, DoAction, UndoAction);
-                }
-            }
-
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                buttons[i].Draw(instance);
+                elements[i].Draw(context, instance);
             }
 
             for (int i = 0; i < childCategories.Count; i++)

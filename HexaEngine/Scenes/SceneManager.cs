@@ -6,6 +6,7 @@ namespace HexaEngine.Scenes
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Editor;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
@@ -113,7 +114,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Load(Scene scene)
         {
-            GameObject.Selected.ClearSelection();
+            SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
             window.Dispatcher.InvokeBlocking(state =>
@@ -183,7 +184,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Reload()
         {
-            GameObject.Selected.ClearSelection();
+            SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
             window.Dispatcher.InvokeBlocking(state =>
             {
@@ -220,7 +221,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void BeginReload()
         {
-            GameObject.Selected.ClearSelection();
+            SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
             window.Dispatcher.InvokeBlocking(() =>
@@ -303,7 +304,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task AsyncLoad(Scene scene)
         {
-            GameObject.Selected.ClearSelection();
+            SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
             return window.Dispatcher.InvokeAsync(async state =>

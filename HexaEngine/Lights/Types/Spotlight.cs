@@ -105,7 +105,7 @@
             float texel = 1.0f / atlasHandle.Atlas.Size;
 
             var vp = atlasHandle.Handle.Viewport;
-            coords[0] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
+            coords[0] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
 
             views[0] = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
         }

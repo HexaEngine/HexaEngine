@@ -53,31 +53,6 @@
         public Vector3 Forward;
 
         /// <summary>
-        /// The global backward direction.
-        /// </summary>
-        public Vector3 Backward;
-
-        /// <summary>
-        /// The global left direction.
-        /// </summary>
-        public Vector3 Left;
-
-        /// <summary>
-        /// The global right direction.
-        /// </summary>
-        public Vector3 Right;
-
-        /// <summary>
-        /// The global up direction.
-        /// </summary>
-        public Vector3 Up;
-
-        /// <summary>
-        /// The global down direction.
-        /// </summary>
-        public Vector3 Down;
-
-        /// <summary>
         /// The global transformation matrix.
         /// </summary>
         public Matrix4x4 Global;
@@ -116,5 +91,10 @@
         /// The previous position of the transformation.
         /// </summary>
         public Vector3 OldPos;
+
+        /// <summary>
+        /// The flags of the transform.
+        /// </summary>
+        public TransformFlags Flags;
     }
 }

@@ -134,6 +134,11 @@
         public static event Action<bool>? OnEditorModeChanged;
 
         /// <summary>
+        /// Occurs when the application shuts down.
+        /// </summary>
+        public static event Action? OnApplicationClose;
+
+        /// <summary>
         /// Gets the folder path for the specified special folder.
         /// </summary>
         /// <param name="folder">The special folder.</param>
@@ -256,7 +261,7 @@
         /// <summary>
         /// The main loop of the application.
         /// </summary>
-        private static void PlatformRun()
+        private static unsafe void PlatformRun()
         {
             Event evnt;
             Time.ResetTime();
@@ -266,324 +271,12 @@
                 sdl.PumpEvents();
                 while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
-                    for (int i = 0; i < hooks.Count; i++)
+                    for (int j = 0; j < hooks.Count; j++)
                     {
-                        hooks[i](evnt);
+                        hooks[j](evnt);
                     }
 
-                    EventType type = (EventType)evnt.Type;
-                    switch (type)
-                    {
-                        case EventType.Firstevent:
-                            break;
-
-                        case EventType.Quit:
-                            exiting = true;
-                            break;
-
-                        case EventType.AppTerminating:
-                            exiting = true;
-                            break;
-
-                        case EventType.AppLowmemory:
-                            break;
-
-                        case EventType.AppWillenterbackground:
-                            break;
-
-                        case EventType.AppDidenterbackground:
-                            break;
-
-                        case EventType.AppWillenterforeground:
-                            break;
-
-                        case EventType.AppDidenterforeground:
-                            break;
-
-                        case EventType.Localechanged:
-                            break;
-
-                        case EventType.Displayevent:
-                            break;
-
-                        case EventType.Windowevent:
-                            {
-                                var even = evnt.Window;
-                                if (even.WindowID == mainWindow.WindowID)
-                                {
-                                    ((SdlWindow)mainWindow).ProcessEvent(even);
-                                    if ((WindowEventID)evnt.Window.Event == WindowEventID.Close)
-                                    {
-                                        exiting = true;
-                                    }
-                                }
-                            }
-
-                            break;
-
-                        case EventType.Syswmevent:
-                            break;
-
-                        case EventType.Keydown:
-                            {
-                                var even = evnt.Key;
-                                Keyboard.OnKeyDown(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
-                            }
-                            break;
-
-                        case EventType.Keyup:
-                            {
-                                var even = evnt.Key;
-                                Keyboard.OnKeyUp(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
-                            }
-                            break;
-
-                        case EventType.Textediting:
-                            break;
-
-                        case EventType.Textinput:
-                            {
-                                var even = evnt.Text;
-                                Keyboard.OnTextInput(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputText(even);
-                            }
-                            break;
-
-                        case EventType.Keymapchanged:
-                            break;
-
-                        case EventType.Mousemotion:
-                            {
-                                var even = evnt.Motion;
-                                Mouse.OnMotion(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
-                            }
-                            break;
-
-                        case EventType.Mousebuttondown:
-                            {
-                                var even = evnt.Button;
-                                Mouse.OnButtonDown(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
-                            }
-                            break;
-
-                        case EventType.Mousebuttonup:
-                            {
-                                var even = evnt.Button;
-                                Mouse.OnButtonUp(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
-                            }
-                            break;
-
-                        case EventType.Mousewheel:
-                            {
-                                var even = evnt.Wheel;
-                                Mouse.OnWheel(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
-                            }
-                            break;
-
-                        case EventType.Joyaxismotion:
-                            {
-                                var even = evnt.Jaxis;
-                                Joysticks.OnAxisMotion(even);
-                            }
-                            break;
-
-                        case EventType.Joyballmotion:
-                            {
-                                var even = evnt.Jball;
-                                Joysticks.OnBallMotion(even);
-                            }
-                            break;
-
-                        case EventType.Joyhatmotion:
-                            {
-                                var even = evnt.Jhat;
-                                Joysticks.OnHatMotion(even);
-                            }
-                            break;
-
-                        case EventType.Joybuttondown:
-                            {
-                                var even = evnt.Jbutton;
-                                Joysticks.OnButtonDown(even);
-                            }
-                            break;
-
-                        case EventType.Joybuttonup:
-                            {
-                                var even = evnt.Jbutton;
-                                Joysticks.OnButtonUp(even);
-                            }
-                            break;
-
-                        case EventType.Joydeviceadded:
-                            {
-                                var even = evnt.Jdevice;
-                                Joysticks.AddJoystick(even);
-                            }
-                            break;
-
-                        case EventType.Joydeviceremoved:
-                            {
-                                var even = evnt.Jdevice;
-                                Joysticks.RemoveJoystick(even);
-                            }
-                            break;
-
-                        case EventType.Controlleraxismotion:
-                            {
-                                var even = evnt.Caxis;
-                                Gamepads.OnAxisMotion(even);
-                            }
-                            break;
-
-                        case EventType.Controllerbuttondown:
-                            {
-                                var even = evnt.Cbutton;
-                                Gamepads.OnButtonDown(even);
-                            }
-                            break;
-
-                        case EventType.Controllerbuttonup:
-                            {
-                                var even = evnt.Cbutton;
-                                Gamepads.OnButtonUp(even);
-                            }
-                            break;
-
-                        case EventType.Controllerdeviceadded:
-                            {
-                                var even = evnt.Cdevice;
-                                Gamepads.AddController(even);
-                            }
-                            break;
-
-                        case EventType.Controllerdeviceremoved:
-                            {
-                                var even = evnt.Cdevice;
-                                Gamepads.RemoveController(even);
-                            }
-                            break;
-
-                        case EventType.Controllerdeviceremapped:
-                            {
-                                var even = evnt.Cdevice;
-                                Gamepads.OnRemapped(even);
-                            }
-                            break;
-
-                        case EventType.Controllertouchpaddown:
-                            {
-                                var even = evnt.Ctouchpad;
-                                Gamepads.OnTouchPadDown(even);
-                            }
-                            break;
-
-                        case EventType.Controllertouchpadmotion:
-                            {
-                                var even = evnt.Ctouchpad;
-                                Gamepads.OnTouchPadMotion(even);
-                            }
-                            break;
-
-                        case EventType.Controllertouchpadup:
-                            {
-                                var even = evnt.Ctouchpad;
-                                Gamepads.OnTouchPadUp(even);
-                            }
-                            break;
-
-                        case EventType.Controllersensorupdate:
-                            {
-                                var even = evnt.Csensor;
-                                Gamepads.OnSensorUpdate(even);
-                            }
-                            break;
-
-                        case EventType.Fingerdown:
-                            {
-                                var even = evnt.Tfinger;
-                                TouchDevices.FingerDown(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputTouchDown(even);
-                            }
-                            break;
-
-                        case EventType.Fingerup:
-                            {
-                                var even = evnt.Tfinger;
-                                TouchDevices.FingerUp(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputTouchUp(even);
-                            }
-                            break;
-
-                        case EventType.Fingermotion:
-                            {
-                                var even = evnt.Tfinger;
-                                TouchDevices.FingerMotion(even);
-                                if (even.WindowID == mainWindow.WindowID)
-                                    ((SdlWindow)mainWindow).ProcessInputTouchMotion(even);
-                            }
-                            break;
-
-                        case EventType.Dollargesture:
-                            break;
-
-                        case EventType.Dollarrecord:
-                            break;
-
-                        case EventType.Multigesture:
-                            break;
-
-                        case EventType.Clipboardupdate:
-                            break;
-
-                        case EventType.Dropfile:
-                            break;
-
-                        case EventType.Droptext:
-                            break;
-
-                        case EventType.Dropbegin:
-                            break;
-
-                        case EventType.Dropcomplete:
-                            break;
-
-                        case EventType.Audiodeviceadded:
-                            break;
-
-                        case EventType.Audiodeviceremoved:
-                            break;
-
-                        case EventType.Sensorupdate:
-                            break;
-
-                        case EventType.RenderTargetsReset:
-                            break;
-
-                        case EventType.RenderDeviceReset:
-                            break;
-
-                        case EventType.Userevent:
-                            break;
-
-                        case EventType.Lastevent:
-                            break;
-                    }
+                    HandleEvent(evnt);
                 }
 
                 mainWindow.Render(graphicsContext);
@@ -599,9 +292,328 @@
 
             ((SdlWindow)mainWindow).DestroyWindow();
 
+            OnApplicationClose?.Invoke();
+
             SdlCheckError();
             sdl.Quit();
             //SdlCheckError();
+        }
+
+        private static void HandleEvent(Event evnt)
+        {
+            EventType type = (EventType)evnt.Type;
+            switch (type)
+            {
+                case EventType.Firstevent:
+                    break;
+
+                case EventType.Quit:
+                    exiting = true;
+                    break;
+
+                case EventType.AppTerminating:
+                    exiting = true;
+                    break;
+
+                case EventType.AppLowmemory:
+                    break;
+
+                case EventType.AppWillenterbackground:
+                    break;
+
+                case EventType.AppDidenterbackground:
+                    break;
+
+                case EventType.AppWillenterforeground:
+                    break;
+
+                case EventType.AppDidenterforeground:
+                    break;
+
+                case EventType.Localechanged:
+                    break;
+
+                case EventType.Displayevent:
+                    break;
+
+                case EventType.Windowevent:
+                    {
+                        var even = evnt.Window;
+                        if (even.WindowID == mainWindow.WindowID)
+                        {
+                            ((SdlWindow)mainWindow).ProcessEvent(even);
+                            if ((WindowEventID)evnt.Window.Event == WindowEventID.Close)
+                            {
+                                exiting = true;
+                            }
+                        }
+                    }
+
+                    break;
+
+                case EventType.Syswmevent:
+                    break;
+
+                case EventType.Keydown:
+                    {
+                        var even = evnt.Key;
+                        Keyboard.OnKeyDown(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
+                    }
+                    break;
+
+                case EventType.Keyup:
+                    {
+                        var even = evnt.Key;
+                        Keyboard.OnKeyUp(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
+                    }
+                    break;
+
+                case EventType.Textediting:
+                    break;
+
+                case EventType.Textinput:
+                    {
+                        var even = evnt.Text;
+                        Keyboard.OnTextInput(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputText(even);
+                    }
+                    break;
+
+                case EventType.Keymapchanged:
+                    break;
+
+                case EventType.Mousemotion:
+                    {
+                        var even = evnt.Motion;
+                        Mouse.OnMotion(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                    }
+                    break;
+
+                case EventType.Mousebuttondown:
+                    {
+                        var even = evnt.Button;
+                        Mouse.OnButtonDown(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                    }
+                    break;
+
+                case EventType.Mousebuttonup:
+                    {
+                        var even = evnt.Button;
+                        Mouse.OnButtonUp(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                    }
+                    break;
+
+                case EventType.Mousewheel:
+                    {
+                        var even = evnt.Wheel;
+                        Mouse.OnWheel(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                    }
+                    break;
+
+                case EventType.Joyaxismotion:
+                    {
+                        var even = evnt.Jaxis;
+                        Joysticks.OnAxisMotion(even);
+                    }
+                    break;
+
+                case EventType.Joyballmotion:
+                    {
+                        var even = evnt.Jball;
+                        Joysticks.OnBallMotion(even);
+                    }
+                    break;
+
+                case EventType.Joyhatmotion:
+                    {
+                        var even = evnt.Jhat;
+                        Joysticks.OnHatMotion(even);
+                    }
+                    break;
+
+                case EventType.Joybuttondown:
+                    {
+                        var even = evnt.Jbutton;
+                        Joysticks.OnButtonDown(even);
+                    }
+                    break;
+
+                case EventType.Joybuttonup:
+                    {
+                        var even = evnt.Jbutton;
+                        Joysticks.OnButtonUp(even);
+                    }
+                    break;
+
+                case EventType.Joydeviceadded:
+                    {
+                        var even = evnt.Jdevice;
+                        Joysticks.AddJoystick(even);
+                    }
+                    break;
+
+                case EventType.Joydeviceremoved:
+                    {
+                        var even = evnt.Jdevice;
+                        Joysticks.RemoveJoystick(even);
+                    }
+                    break;
+
+                case EventType.Controlleraxismotion:
+                    {
+                        var even = evnt.Caxis;
+                        Gamepads.OnAxisMotion(even);
+                    }
+                    break;
+
+                case EventType.Controllerbuttondown:
+                    {
+                        var even = evnt.Cbutton;
+                        Gamepads.OnButtonDown(even);
+                    }
+                    break;
+
+                case EventType.Controllerbuttonup:
+                    {
+                        var even = evnt.Cbutton;
+                        Gamepads.OnButtonUp(even);
+                    }
+                    break;
+
+                case EventType.Controllerdeviceadded:
+                    {
+                        var even = evnt.Cdevice;
+                        Gamepads.AddController(even);
+                    }
+                    break;
+
+                case EventType.Controllerdeviceremoved:
+                    {
+                        var even = evnt.Cdevice;
+                        Gamepads.RemoveController(even);
+                    }
+                    break;
+
+                case EventType.Controllerdeviceremapped:
+                    {
+                        var even = evnt.Cdevice;
+                        Gamepads.OnRemapped(even);
+                    }
+                    break;
+
+                case EventType.Controllertouchpaddown:
+                    {
+                        var even = evnt.Ctouchpad;
+                        Gamepads.OnTouchPadDown(even);
+                    }
+                    break;
+
+                case EventType.Controllertouchpadmotion:
+                    {
+                        var even = evnt.Ctouchpad;
+                        Gamepads.OnTouchPadMotion(even);
+                    }
+                    break;
+
+                case EventType.Controllertouchpadup:
+                    {
+                        var even = evnt.Ctouchpad;
+                        Gamepads.OnTouchPadUp(even);
+                    }
+                    break;
+
+                case EventType.Controllersensorupdate:
+                    {
+                        var even = evnt.Csensor;
+                        Gamepads.OnSensorUpdate(even);
+                    }
+                    break;
+
+                case EventType.Fingerdown:
+                    {
+                        var even = evnt.Tfinger;
+                        TouchDevices.FingerDown(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputTouchDown(even);
+                    }
+                    break;
+
+                case EventType.Fingerup:
+                    {
+                        var even = evnt.Tfinger;
+                        TouchDevices.FingerUp(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputTouchUp(even);
+                    }
+                    break;
+
+                case EventType.Fingermotion:
+                    {
+                        var even = evnt.Tfinger;
+                        TouchDevices.FingerMotion(even);
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessInputTouchMotion(even);
+                    }
+                    break;
+
+                case EventType.Dollargesture:
+                    break;
+
+                case EventType.Dollarrecord:
+                    break;
+
+                case EventType.Multigesture:
+                    break;
+
+                case EventType.Clipboardupdate:
+                    break;
+
+                case EventType.Dropfile:
+                    break;
+
+                case EventType.Droptext:
+                    break;
+
+                case EventType.Dropbegin:
+                    break;
+
+                case EventType.Dropcomplete:
+                    break;
+
+                case EventType.Audiodeviceadded:
+                    break;
+
+                case EventType.Audiodeviceremoved:
+                    break;
+
+                case EventType.Sensorupdate:
+                    break;
+
+                case EventType.RenderTargetsReset:
+                    break;
+
+                case EventType.RenderDeviceReset:
+                    break;
+
+                case EventType.Userevent:
+                    break;
+
+                case EventType.Lastevent:
+                    break;
+            }
         }
     }
 }

@@ -11,10 +11,12 @@
         private static readonly Sdl sdl = Application.sdl;
         private static long frame;
         private static ulong last;
+        private static ulong lastFixed;
         private static float fixedTime;
-        private static float cumulativeFrameTime;
-        private static float gameTime;
+        private static volatile float cumulativeFrameTime;
+        private static volatile float gameTime;
         private static float gameTimeScale = 20;
+        private static volatile float delta;
 
         /// <summary>
         /// Gets how many frames have passed since the start.
@@ -24,7 +26,7 @@
         /// <summary>
         /// Gets the time elapsed since the last frame in seconds.
         /// </summary>
-        public static float Delta { get; private set; }
+        public static float Delta { get => delta; }
 
         /// <summary>
         /// Gets the cumulative frame time since the engine initialization in seconds.
@@ -34,12 +36,12 @@
         /// <summary>
         /// Gets or sets the fixed update rate in frames per second (FPS).
         /// </summary>
-        public static int FixedUpdateRate { get; set; } = 10;
+        public static int FixedUpdateRate { get; set; } = 60;
 
         /// <summary>
         /// Gets the fixed time step size in seconds.
         /// </summary>
-        public static float FixedDelta => FixedUpdateRate / 1000F;
+        public static float FixedDelta => 1f / FixedUpdateRate;
 
         /// <summary>
         /// Gets or sets the maximum allowed frame time in seconds.
@@ -66,10 +68,11 @@
         /// </summary>
         public static void ResetTime()
         {
-            last = sdl.GetPerformanceCounter();
-            fixedTime = 0;
-            cumulativeFrameTime = 0;
-            gameTime = 0;
+            Interlocked.Exchange(ref last, 0);
+            Interlocked.Exchange(ref lastFixed, 0);
+            Interlocked.Exchange(ref fixedTime, 0);
+            Interlocked.Exchange(ref cumulativeFrameTime, 0);
+            Interlocked.Exchange(ref gameTime, 0);
         }
 
         /// <summary>
@@ -78,14 +81,22 @@
         /// <exception cref="InvalidOperationException">Thrown when the delta time is 0 or less than 0.</exception>
         public static void FrameUpdate()
         {
-            frame++;
+            Interlocked.Increment(ref frame);
+
             ulong now = sdl.GetPerformanceCounter();
+
+            if (last == 0)
+            {
+                last = now;
+                delta = 1 / sdl.GetPerformanceFrequency();
+                return;
+            }
+
             double deltaTime = (double)(now - last) / sdl.GetPerformanceFrequency();
             last = now;
 
-            Delta = (float)deltaTime;
+            delta = (float)deltaTime;
             cumulativeFrameTime += Delta;
-            fixedTime += Delta;
 
             if (deltaTime == 0 || deltaTime < 0)
             {
@@ -94,11 +105,40 @@
 
             gameTime += (float)(deltaTime * gameTimeScale) / 60 / 60;
             gameTime %= 24;
+        }
 
-            while (fixedTime > FixedDelta)
+        /// <summary>
+        /// Executes the fixed update tick based on a fixed time interval.
+        /// </summary>
+        /// <remarks>
+        /// This method accumulates time between fixed update ticks and invokes the FixedUpdate event
+        /// each time the accumulated time exceeds the fixed time interval.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Thrown when the delta time is 0 or less than 0.</exception>
+        public static void FixedUpdateTick()
+        {
+            ulong now = sdl.GetPerformanceCounter();
+
+            if (lastFixed == 0)
             {
-                fixedTime -= FixedDelta;
+                lastFixed = now;
+                return;
+            }
+
+            double deltaTime = (double)(now - lastFixed) / sdl.GetPerformanceFrequency();
+            lastFixed = now;
+
+            fixedTime += (float)deltaTime;
+
+            if (deltaTime == 0 || deltaTime < 0)
+            {
+                throw new InvalidOperationException("Delta time cannot be 0 or less than 0");
+            }
+
+            while (fixedTime >= FixedDelta)
+            {
                 FixedUpdate?.Invoke(null, EventArgs.Empty);
+                fixedTime -= FixedDelta;
             }
         }
     }

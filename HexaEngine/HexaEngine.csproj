@@ -9,36 +9,14 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<Configurations>Debug;Release;TraceLeak;</Configurations>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<LangVersion>preview</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
@@ -66,12 +44,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LibGit2Sharp" Version="0.28.0" />
+		<PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+		<PackageReference Include="MagicPhysX" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-		<PackageReference Include="Octokit" Version="9.0.0" />
-		<PackageReference Include="Silk.NET.Assimp" Version="2.19.0" />
+		<PackageReference Include="Octokit" Version="9.1.1" />
+		<PackageReference Include="Silk.NET.Assimp" Version="2.20.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -232,6 +211,18 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\filter\prefilter\cs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\dpsm\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\dpsm\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\dpsm\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\sky\custom.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\sky\preethamSky.hlsl">
@@ -909,6 +900,7 @@
 	  <Folder Include="assets\shared\shaders\forward\sun\" />
 	  <Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
+	  <Folder Include="Components\Physics\Joints\" />
 	  <Folder Include="UI\Editor\" />
 	</ItemGroup>
 

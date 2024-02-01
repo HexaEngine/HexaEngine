@@ -187,7 +187,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
             switch (light.type)
             {
                 case POINT_LIGHT:
-                    shadowFactor = ShadowFactorPointLight(shadowSampler, depthAtlas, light, data, position, N, length(VN));
+                    shadowFactor = ShadowFactorPointLight(shadowSampler, depthAtlas, light, data, position, N);
                     break;
                 case SPOT_LIGHT:
                     shadowFactor = ShadowFactorSpotlight(shadowSampler, depthAtlas, light, data, position, N);

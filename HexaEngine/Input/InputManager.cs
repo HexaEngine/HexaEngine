@@ -17,7 +17,7 @@
         private readonly HashSet<Key> frameDownKeys = new();
         private readonly HashSet<MouseButton> frameUpMouseButtons = new();
         private readonly HashSet<MouseButton> frameDownMouseButtons = new();
-        private readonly InputBuffer inputBuffer = new();
+        private readonly InputEventBuffer inputBuffer = new();
         private bool disposedValue;
 
         public InputManager()
@@ -132,7 +132,7 @@
             return frameUpKeys.Contains(key);
         }
 
-        public InputBuffer InputBuffer => InputBuffer;
+        public InputEventBuffer InputBuffer => InputBuffer;
 
         internal void Update()
         {
@@ -148,6 +148,7 @@
             frameDownMouseButtons.Clear();
             frameUpMouseButtons.Clear();
             InputEvent inputEvent = default;
+
             while (inputBuffer.PollEvent(ref inputEvent))
             {
                 for (int i = 0; i < virtualAxes.Count; i++)
@@ -340,7 +341,7 @@
                 TouchDevices.TouchDown -= OnTouchDevicesTouchDown;
                 TouchDevices.TouchUp -= OnTouchDevicesTouchUp;
                 TouchDevices.TouchMotion -= OnTouchDevicesTouchMotion;
-                inputBuffer.Clear();
+                inputBuffer.Dispose();
                 disposedValue = true;
             }
         }

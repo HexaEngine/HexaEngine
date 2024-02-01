@@ -25,6 +25,16 @@
         }
 
         /// <summary>
+        /// The Name of the editor button.
+        /// </summary>
+        public string Name => guiName;
+
+        /// <summary>
+        /// The target method of the editor button.
+        /// </summary>
+        public MethodInfo Method => info;
+
+        /// <summary>
         /// Draws the button in the object editor.
         /// </summary>
         /// <param name="instance">The instance of the object associated with the button.</param>

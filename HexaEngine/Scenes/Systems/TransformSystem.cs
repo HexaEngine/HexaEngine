@@ -35,14 +35,11 @@ namespace HexaEngine.Scenes.Systems
             updateQueue.Enqueue(gameObject.Transform);
         }
 
-        private void TransformChanged(object? sender, EventArgs e)
+        private void TransformChanged(Transform transform)
         {
-            if (sender is Transform transform)
+            if (!updateQueue.Contains(transform))
             {
-                if (!updateQueue.Contains(transform))
-                {
-                    updateQueue.Enqueue(transform);
-                }
+                updateQueue.Enqueue(transform);
             }
         }
 

@@ -35,7 +35,7 @@
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.Draw;
 
-        [EditorProperty("Atlas", null)]
+        [EditorProperty("Atlas", startingPath: null)]
         public string AtlasPath
         {
             get => atlasPath; set

@@ -43,7 +43,7 @@
         [EditorProperty<SkyType>("Type")]
         public SkyType SkyType { get => skyType; set => skyType = value; }
 
-        [EditorProperty("Env", null)]
+        [EditorProperty("Env", startingPath: null)]
         public string Environment
         {
             get => environmentPath;

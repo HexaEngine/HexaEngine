@@ -45,7 +45,7 @@
             {
                 if (wasShown)
                 {
-                    Closed?.Invoke(this);
+                    OnClosed();
                 }
                 wasShown = false;
                 ImGui.End();
@@ -54,7 +54,7 @@
 
             if (!wasShown)
             {
-                Shown?.Invoke(this);
+                OnShown();
             }
             wasShown = true;
 
@@ -66,6 +66,16 @@
             {
                 ImGui.End();
             }
+        }
+
+        protected virtual void OnShown()
+        {
+            Shown?.Invoke(this);
+        }
+
+        protected virtual void OnClosed()
+        {
+            Closed?.Invoke(this);
         }
 
         public abstract void DrawContent(IGraphicsContext context);

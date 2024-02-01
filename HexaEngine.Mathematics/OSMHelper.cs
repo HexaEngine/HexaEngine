@@ -8,13 +8,18 @@
     public static class OSMHelper
     {
         /// <summary>
+        /// Point light Z-Near.
+        /// </summary>
+        public const float ZNear = 0.001f;
+
+        /// <summary>
         /// Gets the projection matrix for rendering with the specified far clipping distance.
         /// </summary>
         /// <param name="far">The far clipping distance.</param>
         /// <returns>The projection matrix.</returns>
         public static Matrix4x4 GetProjectionMatrix(float far)
         {
-            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.001f, far);
+            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, ZNear, far);
         }
 
         /// <summary>

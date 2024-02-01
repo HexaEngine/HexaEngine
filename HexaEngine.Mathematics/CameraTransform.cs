@@ -124,7 +124,7 @@
                 }
 
                 projectionType = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -142,7 +142,7 @@
                 }
 
                 width = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -160,7 +160,7 @@
                 }
 
                 height = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -188,7 +188,7 @@
                     return;
                 }
 
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -206,7 +206,7 @@
                 }
 
                 near = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -224,7 +224,7 @@
                 }
 
                 far = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -265,7 +265,7 @@
             Matrix4x4.Invert(projection, out projectionInv);
 
             OnUpdated();
-            dirty = true;
+            IsDirty = true;
             return true;
         }
 

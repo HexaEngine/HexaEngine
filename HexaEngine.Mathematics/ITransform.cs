@@ -4,6 +4,25 @@
     using System.Numerics;
 
     /// <summary>
+    /// Represents the method that handles the event raised when a transform is updated.
+    /// </summary>
+    /// <param name="transform">The transform that was updated.</param>
+    public delegate void TransformUpdatedEventHandler(Transform transform);
+
+    /// <summary>
+    /// Represents the method that handles the event raised when a transform is changed.
+    /// </summary>
+    /// <param name="transform">The transform that was changed.</param>
+    public delegate void TransformChangedEventHandler(Transform transform);
+
+    /// <summary>
+    /// Represents the method that handles the event raised when transform flags are changed.
+    /// </summary>
+    /// <param name="transform">The transform for which flags were changed.</param>
+    /// <param name="flags">The new flags value.</param>
+    public delegate void TransformFlagsChangedEventHandler(Transform transform, TransformFlags flags);
+
+    /// <summary>
     /// Represents a 3D transformation interface providing properties and methods
     /// for manipulating and querying transformation data.
     /// </summary>
@@ -127,7 +146,7 @@
         /// <summary>
         /// Occurs when the transformation is updated.
         /// </summary>
-        event EventHandler? Updated;
+        event TransformUpdatedEventHandler? Updated;
 
         /// <summary>
         /// Creates a clone of the current transformation instance.

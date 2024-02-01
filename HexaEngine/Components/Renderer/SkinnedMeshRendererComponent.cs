@@ -18,7 +18,6 @@
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
@@ -35,7 +34,7 @@
         {
         }
 
-        [EditorProperty("Model", null, ".model")]
+        [EditorProperty("Model", startingPath: null, ".model")]
         public string Model
         {
             get => modelPath;

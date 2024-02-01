@@ -3,10 +3,12 @@
     using System.Collections.Concurrent;
     using System.Diagnostics;
 
-    public readonly struct SceneProfiler
+    public struct SceneProfiler
     {
         private readonly ConcurrentDictionary<object, double> stages;
         private readonly ConcurrentDictionary<object, long> startTimeStamps;
+        private readonly object _lock = new();
+        private bool enabled = true;
 
         public SceneProfiler(int initialStageCount)
         {
@@ -18,43 +20,73 @@
         {
             get
             {
-                if (stages.TryGetValue(stage, out var value))
+                if (!enabled)
                 {
-                    return value;
+                    return -1.0;
                 }
-
+                lock (_lock)
+                {
+                    if (stages.TryGetValue(stage, out var value))
+                    {
+                        return value;
+                    }
+                }
                 return -1.0;
             }
         }
 
         public int Count => stages.Count;
 
+        public bool Enabled { get => enabled; set => enabled = value; }
+
         public void Start(object o)
         {
-            startTimeStamps.TryAdd(o, Stopwatch.GetTimestamp());
+            if (!enabled)
+            {
+                return;
+            }
+
+            lock (_lock)
+            {
+                startTimeStamps.TryAdd(o, Stopwatch.GetTimestamp());
+            }
         }
 
         public void End(object o)
         {
-            long timestamp = Stopwatch.GetTimestamp();
-            if (!stages.TryGetValue(o, out var value))
+            if (!enabled)
             {
-                value = 0.0;
+                return;
             }
 
-            stages[o] = value + (timestamp - startTimeStamps[o]) / (double)Stopwatch.Frequency;
-            startTimeStamps.TryRemove(o, out _);
+            lock (_lock)
+            {
+                long timestamp = Stopwatch.GetTimestamp();
+                if (!stages.TryGetValue(o, out var value))
+                {
+                    value = 0.0;
+                }
+
+                stages[o] = value + (timestamp - startTimeStamps[o]) / (double)Stopwatch.Frequency;
+                startTimeStamps.TryRemove(o, out _);
+            }
         }
 
         public void Set(object o, double value)
         {
-            stages[o] = value;
-            startTimeStamps.TryRemove(o, out _);
+            lock (_lock)
+            {
+                stages[o] = value;
+                startTimeStamps.TryRemove(o, out _);
+            }
         }
 
         public void Clear()
         {
-            stages.Clear();
+            lock (_lock)
+            {
+                stages.Clear();
+            }
         }
     }
 }

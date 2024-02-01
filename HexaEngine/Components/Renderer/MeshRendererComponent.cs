@@ -35,7 +35,7 @@
         {
         }
 
-        [EditorProperty("Model", null, ".model")]
+        [EditorProperty("Model", startingPath: null, ".model")]
         public string Model
         {
             get => modelPath;

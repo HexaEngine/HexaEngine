@@ -55,7 +55,7 @@
     /// Specifies a condition for the visibility, enabling, or read-only state of an editor property.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
-    public class EditorPropertyConditionAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T> : EditorPropertyConditionAttribute
+    public class EditorPropertyConditionAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.NonPublicMethods)] T> : EditorPropertyConditionAttribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorPropertyConditionAttribute{T}"/> class with the specified method name and mode.
@@ -64,10 +64,10 @@
         /// <param name="mode">The editor property condition mode.</param>
         public EditorPropertyConditionAttribute(string methodName, EditorPropertyConditionMode mode = EditorPropertyConditionMode.Visible) : base(methodName, mode)
         {
-            var method = typeof(T).GetMethod(methodName);
+            var method = typeof(T).GetMethod(methodName, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
             if (method == null)
             {
-                throw new InvalidOperationException($"Method ({methodName}) was not found.");
+                throw new InvalidOperationException($"Method ({methodName}) was not found, make sure that the method is public and static.");
             }
             GenericCondition = method.CreateDelegate<EditorPropertyCondition<T>>();
             Condition = ConditionMethod;

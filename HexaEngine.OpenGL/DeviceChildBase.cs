@@ -26,7 +26,7 @@
             {
                 if (value != null)
                 {
-                    byte* pName = value.ToUTF8();
+                    byte* pName = value.ToUTF8Ptr();
                     gl.ObjectLabel(Identifier, nativePointer, (uint)value.Length, pName);
                 }
                 else

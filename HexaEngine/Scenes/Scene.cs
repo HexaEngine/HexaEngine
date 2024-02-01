@@ -9,6 +9,7 @@
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;
@@ -259,7 +260,6 @@
             CameraManager.Update();
 
             Dispatcher.ExecuteInvokes();
-            semaphore.Release();
 
             var early = systems[SystemFlags.Update];
 
@@ -277,23 +277,6 @@
 #endif
             }
 
-            var physics = systems[SystemFlags.PhysicsUpdate];
-
-            for (int i = 0; i < physics.Count; i++)
-            {
-#if PROFILE
-                Profiler.Start(physics[i]);
-#endif
-                physics[i].Update(Time.Delta);
-#if PROFILE
-                Profiler.End(physics[i]);
-#endif
-            }
-
-#if PROFILE
-            Profiler.Start(systems);
-#endif
-
             var late = systems[SystemFlags.LateUpdate];
 
             for (int i = 0; i < late.Count; i++)
@@ -309,11 +292,26 @@
 #if PROFILE
             Profiler.End(systems);
 #endif
+
+            semaphore.Release();
         }
 
         private void FixedUpdate(object? sender, EventArgs e)
         {
             semaphore.Wait();
+
+            var physics = systems[SystemFlags.PhysicsUpdate];
+
+            for (int i = 0; i < physics.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(physics[i]);
+#endif
+                physics[i].Update(Time.FixedDelta);
+#if PROFILE
+                Profiler.End(physics[i]);
+#endif
+            }
 
             var fixedUpdate = systems[SystemFlags.FixedUpdate];
 
@@ -327,9 +325,7 @@
                 Profiler.End(fixedUpdate[i]);
 #endif
             }
-#if PROFILE
-            Profiler.End(systems);
-#endif
+
             semaphore.Release();
         }
 

@@ -6,6 +6,11 @@
     public enum EditorPropertyConditionMode
     {
         /// <summary>
+        /// None.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// The property condition affects visibility.
         /// </summary>
         Visible,

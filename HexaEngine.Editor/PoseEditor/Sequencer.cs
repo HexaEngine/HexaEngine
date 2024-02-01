@@ -308,10 +308,10 @@
                 var time = (int)TimeToFrame((float)keyframe.Time);
                 if (time == Frame)
                 {
-                    var rot = keyframe.Value.GetYawPitchRoll().ToDeg();
+                    var rot = keyframe.Value.ToYawPitchRoll().ToDeg();
                     if (ImGui.InputFloat3("Rotation", ref rot))
                     {
-                        keyframe.Value = rot.ToRad().GetQuaternion();
+                        keyframe.Value = rot.ToRad().ToQuaternion();
                         channel.RotationKeyframes[i] = keyframe;
                     }
                 }

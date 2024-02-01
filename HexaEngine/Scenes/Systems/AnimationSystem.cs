@@ -5,7 +5,7 @@
 
     public class AnimationSystem : ISystem
     {
-        private readonly ComponentTypeQuery<IAnimator> animations = new();
+        private readonly ComponentTypeQuery<IAnimator> animators = new();
         private readonly Scene scene;
 
         public string Name => "Animations";
@@ -19,22 +19,14 @@
 
         public void Awake(Scene scene)
         {
-            scene.QueryManager.AddQuery(animations);
-        }
-
-        public void Destroy()
-        {
-        }
-
-        public void FixedUpdate()
-        {
+            scene.QueryManager.AddQuery(animators);
         }
 
         public void Update(float delta)
         {
-            for (int i = 0; i < animations.Count; i++)
+            for (int i = 0; i < animators.Count; i++)
             {
-                animations[i].Update(scene, delta);
+                animators[i].Update(scene, delta);
             }
         }
     }

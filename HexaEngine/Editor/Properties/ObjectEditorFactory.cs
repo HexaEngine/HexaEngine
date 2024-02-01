@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Factory class responsible for creating and managing object editors.
@@ -80,7 +81,7 @@
         /// </summary>
         /// <param name="type">The type for which an object editor is created.</param>
         /// <returns>An instance of the object editor for the specified type.</returns>
-        public static IObjectEditor CreateEditor(Type type)
+        public static IObjectEditor CreateEditor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] Type type)
         {
             if (!editors.TryGetValue(type, out IObjectEditor? editor))
             {
@@ -95,7 +96,7 @@
         /// </summary>
         /// <typeparam name="T">The generic type for which an object editor is created.</typeparam>
         /// <returns>An instance of the object editor for the specified generic type.</returns>
-        public static IObjectEditor CreateEditor<T>()
+        public static IObjectEditor CreateEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>()
         {
             return CreateEditor(typeof(T));
         }

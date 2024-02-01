@@ -76,7 +76,7 @@
                     case LightType.Point:
                         profiler?.Begin("ShadowMap.UpdatePoint");
                         var pointLight = (PointLight)light;
-                        for (int i = 0; i < 6; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, i);
                             for (int j = 0; j < renderers.Count; j++)

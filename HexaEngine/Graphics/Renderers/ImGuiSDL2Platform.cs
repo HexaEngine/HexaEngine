@@ -356,7 +356,7 @@
             BackendData* bd = AllocT<BackendData>();
             ZeroMemoryT(bd);
             io.BackendPlatformUserData = bd;
-            io.BackendPlatformName = "ImGui_SDL2_Platform".ToUTF8();
+            io.BackendPlatformName = "ImGui_SDL2_Platform".ToUTF8Ptr();
             io.BackendFlags |= ImGuiBackendFlags.HasMouseCursors | ImGuiBackendFlags.HasSetMousePos;
 
             if (mouse_can_use_global_state)

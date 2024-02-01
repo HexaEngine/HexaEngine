@@ -158,89 +158,161 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 #endif
 }
 
-static const float3 gridSamplingDisk[20] =
+float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
 {
-    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
-	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
-	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
-	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
-};
-
-float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N, float viewDistance)
-{
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
-    float currentDepth = length(lightDirection) / light.range;
-
-    if (currentDepth > 1.0f)
-        return 1.0;
-
-    // calculate bias (based on slope)
-    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
-    const float bias = 0.005;
-
-#if HARD_SHADOWS_POINTLIGHTS
-
-    int face = GetPointLightFace(lightDirection);
-    float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
-    return shadowAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
-#else
-
-    float percentLit = 0.0f;
-    float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
-
-    for (int i = 0; i < 20; ++i)
-    {
-        float3 newPosition = position + gridSamplingDisk[i] * diskRadius;
-        lightDirection = newPosition - light.position.xyz;
-        int face = GetPointLightFace(lightDirection);
-        float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
-        percentLit += shadowAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
-    }
-
-    return percentLit /= 20;
-#endif
-}
-
-float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N, float viewDistance)
-{
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
-    float depth = length(lightDirection) / light.range;
-
-    if (depth > 1.0f)
-        return 1.0;
+    // float3 lightDirection = position - light.position.xyz;
+    // float3 L = normalize(lightDirection);
 
     // calculate bias (based on slope)
     // float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
-    const float bias = 0.005;
+    const float bias = 0.0005f;
+
+    const float near = 0.001;
+    const float far = light.range;
+
+    // transform into lightspace
+    float4 lightPos = mul(float4(position, 1), data.views[0]);
+
+#if !HARD_SHADOWS_POINTLIGHTS
+
+    float percentLit = 0.0f;
+
+    const float dx = 1.0f / data.size;
+    const float softness = data.softness;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+#endif
+
+    if (lightPos.z >= 0.0f)
+    {
+        float4 posFront = paraboloid(lightPos, 1, near, far);
+        float2 uvFront = float2(0.5, 0.5) + float2(0.5, 0.5) * (posFront.xy * float2(1, -1));
 
 #if HARD_SHADOWS_POINTLIGHTS
 
-    int face = GetPointLightFace(lightDirection);
-    float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
-    float shadowDepth = shadowAtlas.SampleLevel(state, uv.xy, 0);
-    return 1.0f - ((depth - bias > shadowDepth) ? 1.0f : 0.0f);
+        return shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvFront, data.regions[0]), posFront.z - bias);
+
 #else
 
-    float percentLit = 0.0f;
-    float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            percentLit += shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvFront + offsets[i], data.regions[0]), posFront.z - bias).r;
+        }
 
-    for (int i = 0; i < 20; ++i)
-    {
-        float3 newPosition = position + gridSamplingDisk[i] * diskRadius;
-        lightDirection = newPosition - light.position.xyz;
-        int face = GetPointLightFace(lightDirection);
-        float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
-        float shadowDepth = shadowAtlas.SampleLevel(state, uv, 0);
-        percentLit += (depth - bias > shadowDepth) ? 1.0f : 0.0f;
-    }
+        return percentLit /= 9;
 
-    return 1.0f - (percentLit /= 20);
 #endif
+    }
+    else
+    {
+        float4 posBack = paraboloid(lightPos, -1, near, far);
+        float2 uvBack = float2(0.5, 0.5) + float2(0.5, 0.5) * (posBack.xy * float2(1, -1));
+
+#if HARD_SHADOWS_POINTLIGHTS
+
+        return shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvBack, data.regions[1]), posBack.z - bias);
+#else
+
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            percentLit += shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvBack + offsets[i], data.regions[1]), posBack.z - bias).r;
+        }
+
+        return percentLit /= 9;
+
+#endif
+    }
+}
+
+float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+{
+    // float3 lightDirection = position - light.position.xyz;
+    // float3 L = normalize(lightDirection);
+
+    // calculate bias (based on slope)
+    // float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    const float bias = 0.0005f;
+
+    const float near = 0.001;
+    const float far = light.range;
+
+    // transform into lightspace
+    float4 lightPos = mul(float4(position, 1), data.views[0]);
+
+#if !HARD_SHADOWS_POINTLIGHTS
+
+    float percentLit = 0.0f;
+
+    const float dx = 1.0f / data.size;
+    const float softness = data.softness;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+#endif
+
+    if (lightPos.z >= 0.0f)
+    {
+        float4 posFront = paraboloid(lightPos, 1, near, far);
+        float2 uvFront = float2(0.5, 0.5) + float2(0.5, 0.5) * (posFront.xy * float2(1, -1));
+
+#if HARD_SHADOWS_POINTLIGHTS
+
+        float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvFront, data.regions[0]), 0);
+        return 1.0f - ((posFront.z - bias > shadowDepth) ? 1.0f : 0.0f);
+
+#else
+
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvFront + offsets[i], data.regions[0]), 0);
+            percentLit += (posFront.z - bias > shadowDepth) ? 1.0f : 0.0f;
+        }
+
+        return percentLit /= 9;
+
+#endif
+    }
+    else
+    {
+        float4 posBack = paraboloid(lightPos, -1, near, far);
+        float2 uvBack = float2(0.5, 0.5) + float2(0.5, 0.5) * (posBack.xy * float2(1, -1));
+
+#if HARD_SHADOWS_POINTLIGHTS
+
+        float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvBack, data.regions[1]), 0);
+        return 1.0f - ((posBack.z - bias > shadowDepth) ? 1.0f : 0.0f);
+
+#else
+
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvBack + offsets[i], data.regions[1]), 0);
+            percentLit += (posBack.z - bias > shadowDepth) ? 1.0f : 0.0f;
+        }
+
+        return percentLit /= 9;
+
+#endif
+    }
 }
 
 float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
@@ -462,76 +534,151 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 #endif
 }
 
-float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float viewDistance)
+float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
 {
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
+    const float bias = 0.0005f;
 
-    float currentDepth = length(lightDirection) / light.range;
+    const float near = 0.001;
+    const float far = light.range;
 
-    if (currentDepth > 1.0f)
-        return 1.0;
+    // transform into lightspace
+    float4 lightPos = mul(float4(position, 1), data.views[0]);
 
-    const float bias = 0.005;
+#if !HARD_SHADOWS_POINTLIGHTS
+
+    float percentLit = 0.0f;
+
+    const float dx = 1.0f / data.size;
+    const float softness = data.softness;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+#endif
+
+    if (lightPos.z >= 0.0f)
+    {
+        float4 posFront = paraboloid(lightPos, 1, near, far);
+        float2 uvFront = float2(0.5, 0.5) + float2(0.5, 0.5) * (posFront.xy * float2(1, -1));
 
 #if HARD_SHADOWS_POINTLIGHTS
 
-    int face = GetPointLightFace(lightDirection);
-    float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
-    return shadowAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
+        return shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvFront, data.regions[0]), posFront.z - bias);
+
 #else
 
-    float percentLit = 0.0f;
-    float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            percentLit += shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvFront + offsets[i], data.regions[0]), posFront.z - bias).r;
+        }
 
-    for (int i = 0; i < 20; ++i)
-    {
-        float3 newPosition = position + gridSamplingDisk[i] * diskRadius;
-        lightDirection = newPosition - light.position.xyz;
-        int face = GetPointLightFace(lightDirection);
-        float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
-        percentLit += shadowAtlas.SampleCmpLevelZero(state, uv.xy, currentDepth - bias);
-    }
+        return percentLit /= 9;
 
-    return percentLit /= 20;
 #endif
+    }
+    else
+    {
+        float4 posBack = paraboloid(lightPos, -1, near, far);
+        float2 uvBack = float2(0.5, 0.5) + float2(0.5, 0.5) * (posBack.xy * float2(1, -1));
+
+#if HARD_SHADOWS_POINTLIGHTS
+
+        return shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvBack, data.regions[1]), posBack.z - bias);
+#else
+
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            percentLit += shadowAtlas.SampleCmpLevelZero(state, NormalizeShadowAtlasUV(uvBack + offsets[i], data.regions[1]), posBack.z - bias).r;
+        }
+
+        return percentLit /= 9;
+
+#endif
+    }
 }
 
-float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float viewDistance)
+float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
 {
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
+    const float bias = 0.0005f;
 
-    float depth = length(lightDirection) / light.range;
+    const float near = 0.001;
+    const float far = light.range;
 
-    if (depth > 1.0f)
-        return 1.0;
+    // transform into lightspace
+    float4 lightPos = mul(float4(position, 1), data.views[0]);
 
-    const float bias = 0.005;
+#if !HARD_SHADOWS_POINTLIGHTS
+
+    float percentLit = 0.0f;
+
+    const float dx = 1.0f / data.size;
+    const float softness = data.softness;
+
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+#endif
+
+    if (lightPos.z >= 0.0f)
+    {
+        float4 posFront = paraboloid(lightPos, 1, near, far);
+        float2 uvFront = float2(0.5, 0.5) + float2(0.5, 0.5) * (posFront.xy * float2(1, -1));
 
 #if HARD_SHADOWS_POINTLIGHTS
 
-    int face = GetPointLightFace(lightDirection);
-    float2 uv = GetShadowAtlasUV(position, data.size, data.regions[face], data.views[face]);
-    float shadowDepth = shadowAtlas.SampleLevel(state, uv.xy, 0);
-    return 1.0f - ((depth - bias > shadowDepth) ? 1.0f : 0.0f);
+        float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvFront, data.regions[0]), 0);
+        return 1.0f - ((posFront.z - bias > shadowDepth) ? 1.0f : 0.0f);
+
 #else
 
-    float percentLit = 0.0f;
-    float diskRadius = (1.0 + (viewDistance / camFar)) / 25.0;
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvFront + offsets[i], data.regions[0]), 0);
+            percentLit += (posFront.z - bias > shadowDepth) ? 1.0f : 0.0f;
+        }
 
-    for (int i = 0; i < 20; ++i)
-    {
-        float3 newPosition = position + gridSamplingDisk[i] * diskRadius;
-        lightDirection = newPosition - light.position.xyz;
-        int face = GetPointLightFace(lightDirection);
-        float2 uv = GetShadowAtlasUV(newPosition, data.size, data.regions[face], data.views[face]);
-        float shadowDepth = shadowAtlas.SampleLevel(state, uv, 0);
-        percentLit += (depth - bias > shadowDepth) ? 1.0f : 0.0f;
-    }
+        return percentLit /= 9;
 
-    return 1.0f - (percentLit /= 20);
 #endif
+    }
+    else
+    {
+        float4 posBack = paraboloid(lightPos, -1, near, far);
+        float2 uvBack = float2(0.5, 0.5) + float2(0.5, 0.5) * (posBack.xy * float2(1, -1));
+
+#if HARD_SHADOWS_POINTLIGHTS
+
+        float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvBack, data.regions[1]), 0);
+        return 1.0f - ((posBack.z - bias > shadowDepth) ? 1.0f : 0.0f);
+
+#else
+
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            offsets[i] = offsets[i] * float2(softness, softness);
+            float shadowDepth = shadowAtlas.SampleLevel(state, NormalizeShadowAtlasUV(uvBack + offsets[i], data.regions[1]), 0);
+            percentLit += (posBack.z - bias > shadowDepth) ? 1.0f : 0.0f;
+        }
+
+        return percentLit /= 9;
+
+#endif
+    }
 }
 
 float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas, ShadowData data, float3 position)
