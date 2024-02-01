@@ -16,13 +16,22 @@
     public class PointLight : Light
     {
         private static ulong instances;
-        private static ConstantBuffer<OmniShadowData>? osmBuffer;
+        private static ConstantBuffer<DPSMOmniShadowData>? osmBuffer;
 
         private struct OmniShadowData
         {
             public Matrix4x4 View;
             public Vector3 Position;
             public float Far;
+        }
+
+        private struct DPSMOmniShadowData
+        {
+            public Matrix4x4 View;
+            public float Near;
+            public float Far;
+            public float HemiDir;
+            public float _padd;
         }
 
         private ShadowAtlasRangeHandle atlasHandle;
@@ -54,7 +63,7 @@
                 return;
             }
 
-            atlasHandle = atlas.AllocRange(ShadowMapSize, 6);
+            atlasHandle = atlas.AllocRange(ShadowMapSize, 2);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -88,13 +97,13 @@
 
             float texel = 1.0f / atlasHandle.Atlas.Size;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
+                coords[i] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
             }
 
-            OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
+            DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
         }
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, int pass)
@@ -103,6 +112,7 @@
             {
                 return;
             }
+
 #nullable disable
 
             var data = buffer.Local + QueueIndex;
@@ -113,18 +123,19 @@
 
             float texel = 1.0f / atlasHandle.Atlas.Size;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
+                coords[i] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
             }
 
-            OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
+            DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
 
             var viewport = atlasHandle.Handles[pass].Viewport;
-            osmBuffer.Local->View = views[pass];
-            osmBuffer.Local->Position = Transform.GlobalPosition;
+            osmBuffer.Local->View = views[0];
+            osmBuffer.Local->Near = DPSMHelper.ZNear;
             osmBuffer.Local->Far = Range;
+            osmBuffer.Local->HemiDir = pass == 0 ? 1 : -1;
             osmBuffer.Update(context);
 
             context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);

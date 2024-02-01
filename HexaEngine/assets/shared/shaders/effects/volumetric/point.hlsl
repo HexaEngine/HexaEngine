@@ -58,7 +58,7 @@ float3 PointLightVolumetric2(float4 screenCoords, float2 texCoords, float3 posit
 
         float distanceAttenuation = exp(-density * distance);
 
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, light, shadowData, x, viewDistance);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, light, shadowData, x);
         result += visibility * MieScattering(V, -L) * distanceAttenuation;
         x += deltaStep;
     }
@@ -94,7 +94,7 @@ float3 PointLightVolumetric3(float4 screenCoords, float2 texCoords, float3 posit
         float mieScattering = MieScattering(V, -L);
         float scatteringContribution = rayleighScattering + mieScattering;
 
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, light, shadowData, x, viewDistance);
+        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, light, shadowData, x);
 
         result += visibility * distanceAttenuation * scatteringContribution;
         x += deltaStep;

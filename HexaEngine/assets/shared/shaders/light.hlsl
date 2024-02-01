@@ -52,7 +52,7 @@ inline bool GetBit(int value, int bit)
     return value != 0;
 }
 
-float3 GetShadowUVD(float3 pos, float4x4 view)
+inline float3 GetShadowUVD(float3 pos, float4x4 view)
 {
     float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
     fragPosLightSpace.y = -fragPosLightSpace.y;
@@ -61,24 +61,49 @@ float3 GetShadowUVD(float3 pos, float4x4 view)
     return projCoords;
 }
 
-float3 GetShadowAtlasUVD(float3 pos, float size, float4 region, float4x4 view)
+inline float3 GetShadowAtlasUVD(float3 pos, float size, float4 region, float4x4 view)
 {
     float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
     fragPosLightSpace.y = -fragPosLightSpace.y;
     float3 shadowSpaceCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
     shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
-    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * (region.zw - region.xy);
+    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * region.zw;
     return shadowSpaceCoord;
 }
 
-float2 GetShadowAtlasUV(float3 pos, float size, float4 region, float4x4 view)
+inline float2 GetShadowAtlasUV(float3 pos, float size, float4 region, float4x4 view)
 {
     float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
     fragPosLightSpace.y = -fragPosLightSpace.y;
     float2 shadowSpaceCoord = fragPosLightSpace.xy / fragPosLightSpace.w;
     shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
-    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * (region.zw - region.xy);
+    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * region.zw;
     return shadowSpaceCoord;
+}
+
+inline float2 NormalizeShadowAtlasUV(float2 shadowSpaceCoord, float4 region)
+{
+    return region.xy + shadowSpaceCoord.xy * region.zw;
+}
+
+inline float4 paraboloid(float4 frag_pos, float dir, float near, float far)
+{
+    float4 result = frag_pos;
+
+    result /= result.w;
+
+    result.z *= dir;
+
+    float len = length(result.xyz);
+    result /= len;
+
+    result.x /= result.z + 1.0f;
+    result.y /= result.z + 1.0f;
+
+    result.z = (len - near) / (far - near);
+    result.w = 1.0;
+
+    return result;
 }
 
 int GetPointLightFace(float3 r)
