@@ -47,6 +47,8 @@
             Register<RendererWidget>();
             Register<MemoryWidget>();
             Register<InputManagerWindow>();
+
+            Register<BakeWindow>();
         }
 
         public static IReadOnlyList<IEditorWindow> Windows => windows;

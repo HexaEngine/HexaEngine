@@ -27,6 +27,8 @@ namespace HexaEngine.Graphics.Renderers
             PostProcessPass postProcessPass = new();
             OverlayPass overlayPass = new();
 
+            RadiosityBakePass radiosityBakePass = new();
+
             brdfLutPass.Build(this);
             depthPrePass.Build(this);
             postProcessPrePass.Build(this);
@@ -39,6 +41,8 @@ namespace HexaEngine.Graphics.Renderers
             lightForwardPass.Build(this);
             postProcessPass.Build(this);
             overlayPass.Build(this);
+
+            radiosityBakePass.Build(this);
 
             Passes =
             [
@@ -53,7 +57,8 @@ namespace HexaEngine.Graphics.Renderers
                 lightDeferredPass,
                 lightForwardPass,
                 postProcessPass,
-                overlayPass
+                overlayPass,
+                radiosityBakePass
             ];
         }
     }

@@ -38,12 +38,17 @@
         public Vector4 AtlasCoord6;
         public Vector4 AtlasCoord7;
 
+        public float NormalBias;
+        public float SlopeScaleDepthBias;
+
         public ShadowData(PointLight light, float size)
         {
             View0 = light.Transform.View;
             Size = size;
             Softness = 1;
             CascadeCount = 0;
+            NormalBias = light.ShadowMapNormalBias;
+            SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
         }
 
         public ShadowData(Spotlight light, float size)
@@ -52,6 +57,8 @@
             Size = size;
             Softness = 1;
             CascadeCount = 0;
+            NormalBias = light.ShadowMapNormalBias;
+            SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
         }
 
         public ShadowData(DirectionalLight light, float size)
@@ -60,6 +67,8 @@
             Size = size;
             Softness = 1;
             CascadeCount = light.CascadeCount;
+            NormalBias = light.ShadowMapNormalBias;
+            SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

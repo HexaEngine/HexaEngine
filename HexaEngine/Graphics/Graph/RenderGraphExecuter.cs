@@ -11,7 +11,7 @@
         private readonly RenderGraph renderGraph;
         private readonly RenderPass[] renderPasses;
         private readonly RenderPass[] renderPassesSorted;
-        private HashSet<RenderPass> triggeredPasses;
+        private HashSet<RenderPass> triggeredPasses = new();
         private bool oneHitPassed;
 
         public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph, RenderPass[] renderPasses)

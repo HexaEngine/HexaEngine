@@ -10,7 +10,7 @@
 
         public ResourceInstance<MaterialShader>? Shader;
 
-        public MaterialTextureList TextureList = new();
+        public MaterialTextureList TextureList = [];
 
         private bool loaded;
 
@@ -33,8 +33,7 @@
                 return false;
             }
 
-            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
-            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+            TextureList.Bind(context);
 
             return true;
         }
@@ -52,9 +51,6 @@
             }
 
             TextureList.Bind(context);
-
-            //context.PSSetSamplers(TextureList.StartSlot, TextureList.SlotCount, TextureList.Samplers);
-            //context.PSSetShaderResources(TextureList.StartSlot, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }
@@ -111,8 +107,7 @@
                 return false;
             }
 
-            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
-            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+            TextureList.Bind(context);
 
             return true;
         }
@@ -173,6 +168,44 @@
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
 
             EndDrawDepth(context);
+        }
+
+        public bool BeginBake(IGraphicsContext context)
+        {
+            if (!loaded)
+            {
+                return false;
+            }
+
+            if (!Shader.Value.BeginBake(context))
+            {
+                return false;
+            }
+
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+
+            return true;
+        }
+
+        public void EndBake(IGraphicsContext context)
+        {
+            nint* temp = stackalloc nint[(int)TextureList.SlotCount];
+            context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
+            context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
+            Shader.Value.EndBake(context);
+        }
+
+        public void Bake(IGraphicsContext context, uint indexCount, uint instanceCount)
+        {
+            if (!BeginBake(context))
+            {
+                return;
+            }
+
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndBake(context);
         }
 
         public void Update(MaterialData desc)

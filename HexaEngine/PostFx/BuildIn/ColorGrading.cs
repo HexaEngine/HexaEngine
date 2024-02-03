@@ -2,9 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graphics.Graph;
     using System.Numerics;
-    using System.Runtime.InteropServices;
+
+    public enum Tonemap
+    {
+        ACESFilm,
+        Neutral,
+        Custom,
+    }
 
     /// <summary>
     /// A post-processing effect for color grading adjustments.
@@ -35,6 +40,7 @@
         private Vector3 channelMaskRed = new(1, 0, 0);
         private Vector3 channelMaskGreen = new(0, 1, 0);
         private Vector3 channelMaskBlue = new(0, 0, 1);
+        private Tonemap tonemap;
 
         public struct ColorGradingParams
         {
@@ -90,6 +96,12 @@
 
         /// <inheritdoc/>
         public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
+
+        public Tonemap Tonemap
+        {
+            get => tonemap;
+            set => NotifyPropertyChangedAndSet(ref tonemap, value);
+        }
 
         public float ShoulderStrength
         {

@@ -110,12 +110,13 @@
 
             Sort();
 
-            macros = new ShaderMacro[effects.Count];
+            macros = new ShaderMacro[effects.Count + 1];
             for (int i = 0; i < effects.Count; i++)
             {
                 var effect = effects[i];
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
+            macros[^1] = new ShaderMacro("HDR", (flags & PostProcessingFlags.HDR) != 0 ? "1" : "0");
 
             for (int i = 0; i < effects.Count; i++)
             {

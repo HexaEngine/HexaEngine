@@ -149,7 +149,7 @@ namespace HexaEngine.Resources
             csm = device.CreateGraphicsPipeline(csmPipelineDesc);
             osm = device.CreateGraphicsPipeline(osmPipelineDesc);
             psm = device.CreateGraphicsPipeline(psmPipelineDesc);
-            flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
+            flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.DepthTest;
 
             initialized = true;
         }
@@ -259,7 +259,7 @@ namespace HexaEngine.Resources
             csm = await device.CreateGraphicsPipelineAsync(csmPipelineDesc);
             osm = await device.CreateGraphicsPipelineAsync(osmPipelineDesc);
             psm = await device.CreateGraphicsPipelineAsync(psmPipelineDesc);
-            flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
+            flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.DepthTest;
 
             initialized = true;
         }

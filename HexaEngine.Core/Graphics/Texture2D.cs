@@ -79,22 +79,40 @@
                 local = (byte*)Alloc(rowPitch * height);
                 ZeroMemory(local, rowPitch * height);
             }
+
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
                 uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
                 uav.DebugName = dbgName + ".UAV";
             }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
                 srv.DebugName = dbgName + ".SRV";
             }
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture);
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
                 rtv.DebugName = dbgName + ".RTV";
             }
+
             MemoryManager.Register(texture);
         }
 
@@ -180,20 +198,37 @@
                 local = (byte*)Alloc(rowPitch * height);
                 ZeroMemory(local, rowPitch * height);
             }
+
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
                 uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
                 uav.DebugName = dbgName + ".UAV";
             }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
                 srv.DebugName = dbgName + ".SRV";
             }
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture);
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
                 rtv.DebugName = dbgName + ".RTV";
             }
 
@@ -298,13 +333,28 @@
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
                 srv.DebugName = dbgName + ".SRV";
             }
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture);
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
                 rtv.DebugName = dbgName + ".RTV";
             }
         }
@@ -510,22 +560,29 @@
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
                 srv.DebugName = dbgName + ".SRV";
             }
 
-            ArraySlices = new IRenderTargetView[description.ArraySize];
-
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture);
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
                 rtv.DebugName = dbgName + ".RTV";
-
-                for (int i = 0; i < description.ArraySize; i++)
-                {
-                    ArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
-                    ArraySlices[i].DebugName = dbgName + $".RTV.{i}";
-                }
             }
         }
 
@@ -643,7 +700,17 @@
         /// <summary>
         /// Gets an array of render target views for each array slice of the texture.
         /// </summary>
-        public IRenderTargetView[] ArraySlices;
+        public IRenderTargetView[] RTVArraySlices;
+
+        /// <summary>
+        /// Gets an array of shader resource views for each array slice of the texture.
+        /// </summary>
+        public IShaderResourceView[] SRVArraySlices;
+
+        /// <summary>
+        /// Gets an array of unordered access views for each array slice of the texture.
+        /// </summary>
+        public IUnorderedAccessView[] UAVArraySlices;
 
         /// <summary>
         /// Gets a viewport with the dimensions of the texture.
@@ -963,6 +1030,36 @@
             srv?.Dispose();
             rtv?.Dispose();
             uav?.Dispose();
+
+            bool hadSlices = false;
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0 && RTVArraySlices != null)
+            {
+                hadSlices = true;
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    RTVArraySlices[i].Dispose();
+                }
+            }
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0 && UAVArraySlices != null)
+            {
+                hadSlices = true;
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    UAVArraySlices[i].Dispose();
+                }
+            }
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0 && SRVArraySlices != null)
+            {
+                hadSlices = true;
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    SRVArraySlices[i].Dispose();
+                }
+            }
+
             MemoryManager.Unregister(texture);
             texture = device.TextureLoader.LoadTexture2D(asset.FullPath);
             texture.DebugName = dbgName;
@@ -990,25 +1087,83 @@
                 local = (byte*)Alloc(rowPitch * height);
                 ZeroMemory(local, rowPitch * height);
             }
+
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
                 uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
                 uav.DebugName = dbgName + ".UAV";
             }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
                 srv.DebugName = dbgName + ".SRV";
             }
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture);
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            if (hadSlices)
+            {
+                CreateArraySlices(device);
+            }
+
             MemoryManager.Register(texture);
 
             TextureReloaded?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Creates separate views for all array slices
+        /// </summary>
+        public void CreateArraySlices(IGraphicsDevice device)
+        {
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                RTVArraySlices = new IRenderTargetView[description.ArraySize];
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    RTVArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    RTVArraySlices[i].DebugName = dbgName + $".RTV.{i}";
+                }
+            }
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                UAVArraySlices = new IUnorderedAccessView[description.ArraySize];
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    UAVArraySlices[i] = device.CreateUnorderedAccessView(texture, new UnorderedAccessViewDescription(texture, UnorderedAccessViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    UAVArraySlices[i].DebugName = dbgName + $".UAV.{i}";
+                }
+            }
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                SRVArraySlices = new IShaderResourceView[description.ArraySize];
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    SRVArraySlices[i] = device.CreateShaderResourceView(texture, new ShaderResourceViewDescription(texture, ShaderResourceViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    SRVArraySlices[i].DebugName = dbgName + $".SRV.{i}";
+                }
+            }
         }
 
         /// <summary>
@@ -1042,6 +1197,30 @@
                 uav?.Dispose();
                 if (cpuAccessFlags != CpuAccessFlags.None)
                     Free(local);
+
+                if ((description.BindFlags & BindFlags.RenderTarget) != 0 && RTVArraySlices != null)
+                {
+                    for (int i = 0; i < description.ArraySize; i++)
+                    {
+                        RTVArraySlices[i].Dispose();
+                    }
+                }
+
+                if ((description.BindFlags & BindFlags.UnorderedAccess) != 0 && UAVArraySlices != null)
+                {
+                    for (int i = 0; i < description.ArraySize; i++)
+                    {
+                        UAVArraySlices[i].Dispose();
+                    }
+                }
+
+                if ((description.BindFlags & BindFlags.ShaderResource) != 0 && SRVArraySlices != null)
+                {
+                    for (int i = 0; i < description.ArraySize; i++)
+                    {
+                        SRVArraySlices[i].Dispose();
+                    }
+                }
 
                 disposedValue = true;
                 OnDisposed?.Invoke(this, EventArgs.Empty);

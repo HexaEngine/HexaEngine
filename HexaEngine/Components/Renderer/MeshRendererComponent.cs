@@ -18,7 +18,6 @@
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
@@ -57,6 +56,9 @@
 
         [JsonIgnore]
         public Matrix4x4 Transform => GameObject?.Transform ?? Matrix4x4.Identity;
+
+        [JsonIgnore]
+        public Model? ModelInstance => model;
 
         public override void Load(IGraphicsDevice device)
         {
@@ -112,6 +114,7 @@
 
         public override void Bake(IGraphicsContext context)
         {
+            renderer.Bake(context);
         }
 
         public bool SelectRayTest(Ray ray, ref float depth)

@@ -7,6 +7,11 @@
     using System;
     using System.Numerics;
 
+    public enum SceneRendererDrawFlags
+    {
+        NoPostProcessing
+    }
+
     public interface ISceneRenderer : IDisposable
     {
         ICPUFlameProfiler Profiler { get; }

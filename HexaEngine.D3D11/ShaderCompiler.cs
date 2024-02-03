@@ -19,8 +19,6 @@ namespace HexaEngine.D3D11
     {
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
-        private static SemaphoreSlim semaphore = new(1);
-
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
@@ -42,7 +40,7 @@ namespace HexaEngine.D3D11
                 var macro = macros[i];
                 var pName = macro.Name.ToUTF8Ptr();
                 var pDef = macro.Definition.ToUTF8Ptr();
-                ImGuiConsole.WriteLine(macro);
+                Logger.Info(macro);
                 pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)
@@ -132,7 +130,7 @@ namespace HexaEngine.D3D11
             D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
         }
 
-        public unsafe void Reflect(Shader* blob)
+        public unsafe ShaderReflection Reflect(Shader* blob)
         {
             Reflect(blob, out ComPtr<ID3D11ShaderReflection> reflection);
 
@@ -187,6 +185,8 @@ namespace HexaEngine.D3D11
             }
 
             reflection.Release();
+
+            return shaderReflection;
         }
 
         public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)

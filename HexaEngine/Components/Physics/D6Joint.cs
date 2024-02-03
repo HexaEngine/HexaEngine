@@ -18,12 +18,12 @@
         private Vector3 axis = new(1, 0, 0);
         private Vector3 connectedAnchor;
         private Vector3 secondaryAxis = new(0, 1, 0);
-        private D6Motion motionX;
-        private D6Motion motionY;
-        private D6Motion motionZ;
-        private D6Motion twist;
-        private D6Motion swingY;
-        private D6Motion swingZ;
+        private D6Motion motionX = D6Motion.Free;
+        private D6Motion motionY = D6Motion.Free;
+        private D6Motion motionZ = D6Motion.Free;
+        private D6Motion twist = D6Motion.Free;
+        private D6Motion swingY = D6Motion.Free;
+        private D6Motion swingZ = D6Motion.Free;
         private Vector3 linearSpringStiffness;
         private Vector3 linearSpringDamping;
         private Vector3 linearLimitMax = new(float.MaxValue);
@@ -120,7 +120,7 @@
             }
         }
 
-        [EditorProperty("Motion X")]
+        [EditorProperty<D6Motion>("Motion X")]
         public D6Motion MotionX
         {
             get => motionX;
@@ -134,7 +134,7 @@
             }
         }
 
-        [EditorProperty("Motion Y")]
+        [EditorProperty<D6Motion>("Motion Y")]
         public D6Motion MotionY
         {
             get => motionY;
@@ -148,7 +148,7 @@
             }
         }
 
-        [EditorProperty("Motion Z")]
+        [EditorProperty<D6Motion>("Motion Z")]
         public D6Motion MotionZ
         {
             get => motionZ;
@@ -162,7 +162,7 @@
             }
         }
 
-        [EditorProperty("Twist")]
+        [EditorProperty<D6Motion>("Twist")]
         public D6Motion Twist
         {
             get => twist;
@@ -176,7 +176,7 @@
             }
         }
 
-        [EditorProperty("Swing Y")]
+        [EditorProperty<D6Motion>("Swing Y")]
         public D6Motion SwingY
         {
             get => swingY;
@@ -190,7 +190,7 @@
             }
         }
 
-        [EditorProperty("Swing Z")]
+        [EditorProperty<D6Motion>("Swing Z")]
         public D6Motion SwingZ
         {
             get => swingZ;
@@ -202,12 +202,6 @@
                     joint->SetMotionMut(PxD6Axis.Swing2, Helper.Convert(value));
                 }
             }
-        }
-
-        public float DistanceLimit
-        {
-            get;
-            set;
         }
 
         [EditorCategory("Linear Spring")]

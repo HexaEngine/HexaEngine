@@ -8,7 +8,7 @@ cbuffer cb
 StructuredBuffer<float4x4> worldMatrices;
 StructuredBuffer<uint> worldMatrixOffsets;
 
-#if HasBakedLightMap
+#if HasBakedLightMap || BAKE_PASS
 Buffer<float4> BakedVertexData : register(t2);
 #endif
 
@@ -104,7 +104,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
     output.bitangent = mul(input.bitangent, (float3x3) mat);
     output.position = mul(output.position, viewProj);
 
-#if HasBakedLightMap
+#if HasBakedLightMap || BAKE_PASS
     uint location = vertexId * 3;
     float4 sample0 = BakedVertexData.Load(location + 0);
     float4 sample1 = BakedVertexData.Load(location + 1);

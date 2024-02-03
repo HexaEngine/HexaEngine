@@ -10,7 +10,7 @@ SamplerState linearClampSampler : register(s0);
  * 2: AECS Film
  * fallback: None
 */
-#define TONEMAP 1
+#define TONEMAP 2
 #endif
 
 #ifndef GAMMA
@@ -83,9 +83,24 @@ float3 NeutralTonemap(float3 x)
     return x;
 }
 
-float3 ACESFilmTonemap(float3 x)
+float3 ACESFilmTonemap(const float3 x)
 {
-    return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+    const float a = 2.51;
+    const float b = 0.03;
+    const float c = 2.43;
+    const float d = 0.59;
+    const float e = 0.14;
+    return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
+}
+
+float3 ACESFilmRec2020(float3 x)
+{
+    const float a = 15.8f;
+    const float b = 2.12f;
+    const float c = 1.2f;
+    const float d = 5.92f;
+    const float e = 1.9f;
+    return (x * (a * x + b)) / (x * (c * x + d) + e);
 }
 
 float3 Tonemap(float3 x)
@@ -95,7 +110,11 @@ float3 Tonemap(float3 x)
 #elif TONEMAP == 1
     return NeutralTonemap(x);
 #elif TONEMAP == 2
+#if HDR
+    return ACESFilmRec2020(x);
+#else
     return ACESFilmTonemap(x);
+#endif
 #else
     return x;
 #endif
@@ -164,8 +183,12 @@ float4 main(VSOut vs) : SV_Target
     color.rgb = AdjustContrast(color.rgb, ContrastMidpoint, Contrast);
     color.rgb = ChannelMix(color.rgb);
     color.rgb = Tonemap(color.rgb);
-    color.rgb = LiftGammaGainLDR(color.rgb, Lift, GammaInv, Gain);
 
+#if HDR
+    color.rgb = LiftGammaGainHDR(color.rgb, Lift, GammaInv, Gain);
+#else
+    color.rgb = LiftGammaGainLDR(color.rgb, Lift, GammaInv, Gain);
+#endif
     color.a = 1;
 
     return color;

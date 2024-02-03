@@ -1,13 +1,13 @@
-#ifndef RTSize_
-#define RTSize_ 64
+#ifndef RT_SIZE
+#define RT_SIZE 64
 #endif
 
-#ifndef NumFaces_
-#define NumFaces_ 5
+#ifndef NUM_FACES
+#define NUM_FACES 5
 #endif
 
-#ifndef NumBounceSumThreads_
-#define NumBounceSumThreads_ 512
+#ifndef NUM_BOUNCE_SUM_THREADS
+#define NUM_BOUNCE_SUM_THREADS 512
 #endif
 
 //======================================================================
@@ -20,27 +20,15 @@
 //
 //======================================================================
 
-//======================================================================================
-// Constant buffers
-//======================================================================================
-cbuffer Constants : register(cb0)
+cbuffer Constants : register(b0)
 {
-    float4x4 ToTangentSpace[5] : packoffset(c0);
-    float FinalWeight : packoffset(c20);
-    uint VertexIndex : packoffset(c21);
-    uint NumElements : packoffset(c22);
+    float4x4 ToTangentSpace[5];
+    float FinalWeight;
+    uint VertexIndex;
+    uint NumElements;
 }
 
-//======================================================================================
-// Resources
-//======================================================================================
 Texture2DArray<float4> RadianceMap : register(t0);
-
-Buffer<float4> InputBuffer : register(t0);
-
-Buffer<float4> InputBuffer0 : register(t0);
-Buffer<float4> InputBuffer1 : register(t1);
-
 RWBuffer<float4> OutputBuffer : register(u0);
 
 //-------------------------------------------------------------------------------------------------
@@ -99,15 +87,15 @@ void ConvertToHBasis(in float3 sh[9], out float3 hBasis[4])
 }
 
 // Shared memory for summing H-Basis coefficients for a row
-groupshared float3 RowHBasis[RTSize_][4];
+groupshared float3 RowHBasis[RT_SIZE][4];
 
 //=================================================================================================
 // Performs the initial integration/weighting for each pixel and sums together all SH coefficients
 // for a row. The integration is based on the "Projection from Cube Maps" section of Peter Pike
 // Sloan's "Stupid Spherical Harmonics Tricks".
 //=================================================================================================
-[numthreads(RTSize_, 1, 1)]
-void IntegrateCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
+[numthreads(RT_SIZE, 1, 1)]
+void main(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
 					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
 {
 	// Gather RGB from the texels
@@ -115,8 +103,8 @@ void IntegrateCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_Dispatc
     float3 radiance = RadianceMap.Load(int4(location.xy, location.z, 0)).xyz;
 
 	// Calculate the location in [-1, 1] texture space
-    float u = (location.x / float(RTSize_)) * 2.0f - 1.0f;
-    float v = -((location.y / float(RTSize_)) * 2.0f - 1.0f);
+    float u = (location.x / float(RT_SIZE)) * 2.0f - 1.0f;
+    float v = -((location.y / float(RT_SIZE)) * 2.0f - 1.0f);
 
 	// Calculate weight
     float temp = 1.0f + u * u + v * v;
@@ -143,8 +131,8 @@ void IntegrateCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_Dispatc
     GroupMemoryBarrierWithGroupSync();
 
 	// Sum the coefficients for the row
-	[unroll(RTSize_)]
-    for (uint s = RTSize_ / 2; s > 0; s >>= 1)
+	[unroll(RT_SIZE)]
+    for (uint s = RT_SIZE / 2; s > 0; s >>= 1)
     {
         if (GroupThreadID.x < s)
         {
@@ -164,57 +152,7 @@ void IntegrateCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_Dispatc
         for (uint i = 0; i < 3; ++i)
         {
             float4 packed = float4(RowHBasis[0][0][i], RowHBasis[0][1][i], RowHBasis[0][2][i], RowHBasis[0][3][i]);
-            OutputBuffer[GroupID.y + RTSize_ * i + RTSize_ * 3 * location.z] = packed;
+            OutputBuffer[GroupID.y + RT_SIZE * i + RT_SIZE * 3 * location.z] = packed;
         }
     }
-}
-
-// Shared memory for reducing H-Basis coefficients
-groupshared float4 ColumnHBasis[RTSize_][3][NumFaces_];
-
-//======================================================================================
-// Reduces to a 1x1 buffer
-//======================================================================================
-[numthreads(RTSize_, 1, NumFaces_)]
-void ReductionCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
-					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
-{
-    const int3 location = int3(GroupThreadID.x, GroupID.y, GroupThreadID.z);
-
-	// Store in shared memory
-    ColumnHBasis[location.x][location.y][location.z] = InputBuffer[location.x + RTSize_ * location.y + RTSize_ * 3 * location.z];
-    GroupMemoryBarrierWithGroupSync();
-
-	// Sum the coefficients for the column
-	[unroll(RTSize_)]
-    for (uint s = RTSize_ / 2; s > 0; s >>= 1)
-    {
-        if (GroupThreadID.x < s)
-            ColumnHBasis[location.x][location.y][location.z] += ColumnHBasis[location.x + s][location.y][location.z];
-
-        GroupMemoryBarrierWithGroupSync();
-    }
-
-	// Have the first thread write out to the output buffer
-    if (GroupThreadID.x == 0 && GroupThreadID.z == 0)
-    {
-        float4 output = 0.0f;
-		[unroll(NumFaces_)]
-        for (uint i = 0; i < NumFaces_; ++i)
-            output += ColumnHBasis[location.x][location.y][i];
-        output *= FinalWeight;
-        OutputBuffer[VertexIndex * 3 + location.y] = output;
-    }
-}
-
-//======================================================================================
-// Sums the result of two bounce passes
-//======================================================================================
-[numthreads(NumBounceSumThreads_, 1, 1)]
-void SumBouncesCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
-					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
-{
-    const uint index = GroupThreadID.x + GroupID.x * NumBounceSumThreads_;
-    if (index < NumElements)
-        OutputBuffer[index] = InputBuffer0[index] + InputBuffer1[index];
 }

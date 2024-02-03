@@ -22,8 +22,8 @@
 #define HasBakedLightMap 0
 #endif
 
-#ifndef BAKE_FORWARD
-#define BAKE_FORWARD 0
+#ifndef BAKE_PASS
+#define BAKE_PASS 0
 #endif
 
 struct VertexInput
@@ -78,15 +78,11 @@ struct PixelInput
     float3 tangent : TANGENT;
     float3 bitangent : BINORMAL;
 
-#if HasBakedLightMap
+#if HasBakedLightMap || BAKE_PASS
     float3 H0 : H0;
     float3 H1 : H1;
     float3 H2 : H2;
     float3 H3 : H3;
-#endif
-
-#if BAKE_FORWARD
-    bool IsFrontFace : SV_IsFrontFace;
 #endif
 };
 

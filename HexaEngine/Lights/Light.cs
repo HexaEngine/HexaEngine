@@ -1,14 +1,12 @@
 ﻿namespace HexaEngine.Lights
 {
     using HexaEngine.Components;
-    using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
-    using System;
     using System.Numerics;
 
     public abstract class Light : GameObject

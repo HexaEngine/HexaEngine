@@ -43,6 +43,8 @@ struct ShadowData
     float softness;
     float cascadeCount;
     float4 regions[8];
+    float bias;
+    float slopeBias;
 };
 
 inline bool GetBit(int value, int bit)

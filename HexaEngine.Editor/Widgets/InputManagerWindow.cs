@@ -197,21 +197,21 @@
                     {
                         VirtualAxisBindingType.KeyboardKey => $"Keyboard Key: {binding.KeyboardKeyBinding.Key}##{i}",
                         VirtualAxisBindingType.MouseButton => $"Mouse Button: {binding.MouseButtonBinding.Button}##{i}",
-                        VirtualAxisBindingType.JoystickButton => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadButton => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadTouch => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadTouchPressure => throw new NotImplementedException(),
-                        VirtualAxisBindingType.Touch => throw new NotImplementedException(),
-                        VirtualAxisBindingType.TouchPressure => throw new NotImplementedException(),
+                        VirtualAxisBindingType.JoystickButton => $"Joystick Button: {binding.JoystickButtonBinding.Button}##{i}",
+                        VirtualAxisBindingType.GamepadButton => $"Gamepad Button: {binding.GamepadButtonBinding.Button}##{i}",
+                        VirtualAxisBindingType.GamepadTouch => $"Gamepad Touch: {binding.DeviceId}##{i}",
+                        VirtualAxisBindingType.GamepadTouchPressure => $"Gamepad Touch Pressure: {binding.DeviceId}##{i}",
+                        VirtualAxisBindingType.Touch => $"Touch: {binding.DeviceId}##{i}",
+                        VirtualAxisBindingType.TouchPressure => $"Touch Pressure: {binding.DeviceId}##{i}",
                         VirtualAxisBindingType.MouseWheel => $"Mouse Wheel: {binding.MouseWheelBinding.Wheel}##{i}",
                         VirtualAxisBindingType.MouseMovement => $"Mouse Move: {binding.MouseMovementBinding.Axis}##{i}",
-                        VirtualAxisBindingType.JoystickBall => throw new NotImplementedException(),
-                        VirtualAxisBindingType.JoystickAxis => throw new NotImplementedException(),
-                        VirtualAxisBindingType.JoystickHat => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadAxis => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadTouchMovement => throw new NotImplementedException(),
-                        VirtualAxisBindingType.GamepadSensor => throw new NotImplementedException(),
-                        VirtualAxisBindingType.TouchMovement => throw new NotImplementedException(),
+                        VirtualAxisBindingType.JoystickBall => $"Joystick Ball: {binding.JoystickBallBinding.Ball}, {binding.JoystickBallBinding.Axis}##{i}",
+                        VirtualAxisBindingType.JoystickAxis => $"Joystick Axis: {binding.JoystickAxisBinding.Axis}##{i}",
+                        VirtualAxisBindingType.JoystickHat => $"Joystick Hat: {binding.JoystickHatBinding.Hat}##{i}",
+                        VirtualAxisBindingType.GamepadAxis => $"Gamepad Axis: {binding.GamepadAxisBinding.Axis}##{i}",
+                        VirtualAxisBindingType.GamepadTouchMovement => $"Gamepad Touch Move: {binding.GamepadTouchMovementBinding.Axis}##{i}",
+                        VirtualAxisBindingType.GamepadSensor => $"Gamepad Sensor: {binding.MouseMovementBinding.Axis}##{i}",
+                        VirtualAxisBindingType.TouchMovement => $"Touch Move: {binding.TouchMovementBinding.Axis}##{i}",
                         _ => "unknown",
                     };
                     var selected = currentBinding == i;
@@ -238,6 +238,14 @@
 
                 ImGui.Separator();
 
+                changed |= ImGui.InputInt("DeviceId", ref binding.DeviceId);
+                TooltipHelper.Tooltip("Set to -1 for all devices");
+
+                changed |= ImGui.Checkbox("Invert", ref binding.Invert);
+                TooltipHelper.Tooltip("Invert the value eg. when key w is pressed value == -1");
+
+                ImGui.Separator();
+
                 switch (binding.Type)
                 {
                     case VirtualAxisBindingType.KeyboardKey:
@@ -260,9 +268,73 @@
                         }
                         break;
 
+                    case VirtualAxisBindingType.JoystickButton:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ImGui.InputInt("Button", ref binding.JoystickButtonBinding.Button);
+                        break;
+
+                    case VirtualAxisBindingType.GamepadButton:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<GamepadButton>.Combo("Button", ref binding.GamepadButtonBinding.Button);
+                        break;
+
+                    case VirtualAxisBindingType.GamepadTouch:
+                        break;
+
+                    case VirtualAxisBindingType.GamepadTouchPressure:
+                        break;
+
+                    case VirtualAxisBindingType.Touch:
+                        break;
+
+                    case VirtualAxisBindingType.TouchPressure:
+                        break;
+
+                    case VirtualAxisBindingType.MouseWheel:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.MouseWheelBinding.Wheel);
+                        break;
+
                     case VirtualAxisBindingType.MouseMovement:
                         ImGui.SetNextItemWidth(100);
                         changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.MouseMovementBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.JoystickBall:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ImGui.InputInt("Button", ref binding.JoystickBallBinding.Ball);
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.JoystickBallBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.JoystickAxis:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ImGui.InputInt("Axis", ref binding.JoystickAxisBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.JoystickHat:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<JoystickHatState>.Combo("Hat", ref binding.JoystickHatBinding.Hat);
+                        break;
+
+                    case VirtualAxisBindingType.GamepadAxis:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<GamepadAxis>.Combo("Axis", ref binding.GamepadAxisBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.GamepadTouchMovement:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.GamepadTouchMovementBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.GamepadSensor:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.GamepadSensorBinding.Axis);
+                        break;
+
+                    case VirtualAxisBindingType.TouchMovement:
+                        ImGui.SetNextItemWidth(100);
+                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.TouchMovementBinding.Axis);
                         break;
                 }
 
@@ -296,7 +368,7 @@
 
         private void AddNewBinding()
         {
-            currentAxis?.Bindings.Add(new());
+            currentAxis?.Bindings.Add(new() { DeviceId = -1 });
         }
 
         private void AddNew()

@@ -257,8 +257,14 @@ struct Pixel
     float4 Normal : SV_Target1;
 };
 
+#if !BAKE_PASS
 [earlydepthstencil]
-Pixel main(PixelInput input)
+#endif
+Pixel main(PixelInput input
+#if BAKE_PASS
+    , bool IsFrontFace : SV_IsFrontFace
+#endif
+)
 {
     float3 position = input.pos;
     float4 baseColor = BaseColor;
@@ -387,18 +393,18 @@ Pixel main(PixelInput input)
     ambient = (ambient + BRDF_IBL(linearWrapSampler, globalDiffuse, globalSpecular, brdfLUT, F0, N, V, baseColor.xyz, roughness)) * ao;
     ambient += emissive;
 
-#if HasBakedLightMap
-	ambient += GetHBasisIrradiance(normal, input.H0, input.H1, input.H2, input.H3) / 3.14159f;
+#if HasBakedLightMap || BAKE_PASS
+    ambient += GetHBasisIrradiance(normal, input.H0, input.H1, input.H2, input.H3) / 3.14159f;
 #endif
 
     Pixel output;
     output.Color = float4(ambient + Lo, baseColor.a);
     output.Normal = float4(PackNormal(N), baseColor.a);
 
-#if BAKE_FORWARD
+#if BAKE_PASS
 	// For baking we render without backface culling, so that we still get occlusions inside meshes that
 	// don't have full modeled interiors. If it is a backface triangle, we output pure black.
-	output.Color = input.IsFrontFace ? output.Color : 0.0f;
+    output.Color = IsFrontFace ? output.Color : 0.0f;
 #endif
 
     return output;

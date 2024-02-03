@@ -21,7 +21,7 @@
         private static readonly int MaxReadThreads = Environment.ProcessorCount - 1 == 1 ? 2 : Environment.ProcessorCount - 1;
         private static readonly SemaphoreSlim readSemaphore = new(MaxReadThreads);
         private static readonly SemaphoreSlim writeSemaphore = new(1);
-        private static readonly ManualResetEvent writeHandle = new(false);
+        private static readonly ManualResetEvent writeHandle = new(true);
         private const int Version = 2;
 
         static ShaderCache()

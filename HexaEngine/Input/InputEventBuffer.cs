@@ -241,58 +241,66 @@
     [StructLayout(LayoutKind.Explicit)]
     public struct VirtualAxisBinding
     {
+        private const int UnionOffset = 12;
+
         [FieldOffset(0)]
         public VirtualAxisBindingType Type;
 
         [FieldOffset(4)]
+        public int DeviceId;
+
+        [FieldOffset(8)]
+        public bool Invert;
+
+        [FieldOffset(UnionOffset)]
         public VirtualAxisKeyboardKeyBinding KeyboardKeyBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisMouseButtonBinding MouseButtonBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisJoystickButtonBinding JoystickButtonBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadButtonBinding GamepadButtonBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadTouchBinding GamepadTouchBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadTouchPressureBinding GamepadTouchPressureBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisTouchBinding TouchBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisTouchPressureBinding TouchPressureBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisMouseWheelBinding MouseWheelBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisMouseMovementBinding MouseMovementBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisJoystickBallBinding JoystickBallBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisJoystickAxisBinding JoystickAxisBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisJoystickHatBinding JoystickHatBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadAxisBinding GamepadAxisBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadTouchMovementBinding GamepadTouchMovementBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisGamepadSensorBinding GamepadSensorBinding;
 
-        [FieldOffset(4)]
+        [FieldOffset(UnionOffset)]
         public VirtualAxisTouchMovementBinding TouchMovementBinding;
 
         public struct VirtualAxisKeyboardKeyBinding
@@ -317,22 +325,18 @@
 
         public struct VirtualAxisGamepadTouchBinding
         {
-            public int DeviceId;
         }
 
         public struct VirtualAxisGamepadTouchPressureBinding
         {
-            public int DeviceId;
         }
 
         public struct VirtualAxisTouchBinding
         {
-            public int DeviceId;
         }
 
         public struct VirtualAxisTouchPressureBinding
         {
-            public int DeviceId;
         }
 
         public struct VirtualAxisMouseWheelBinding
@@ -368,17 +372,18 @@
 
         public struct VirtualAxisGamepadTouchMovementBinding
         {
-            public int Movement;
+            public Axis Axis;
         }
 
         public struct VirtualAxisGamepadSensorBinding
         {
             public SensorType Sensor;
+            public Axis Axis;
         }
 
         public struct VirtualAxisTouchMovementBinding
         {
-            public int DeviceId;
+            public Axis Axis;
         }
     }
 

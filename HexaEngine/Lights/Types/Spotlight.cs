@@ -132,13 +132,13 @@
 
         public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
         {
-            return false;
-            /*
             var distance = camera.DistanceTo(this);
 
             var distanceScaled = distance / Range;
 
             ShadowResolution resolution = (ShadowResolution)MathUtil.Lerp((float)ShadowMapResolution, (float)ShadowResolution.Low, distanceScaled);
+
+            resolution = (ShadowResolution)MathUtil.Clamp((int)resolution, (int)ShadowResolution.Low, (int)ShadowMapResolution);
 
             if (last != resolution)
             {
@@ -165,7 +165,6 @@
             atlasHandle = atlas.Alloc(size, cacheHandle);
 
             return true;
-            */
         }
 
         public float GetConeRadius(float z)

@@ -1,8 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Components.Renderer;
+    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Threading;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -10,7 +13,20 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
+
+    public struct MeshBakerStatistics
+    {
+        public bool Running;
+        public uint CurrentBounce;
+        public uint BounceCount;
+        public uint CurrentMesh;
+        public uint MeshCount;
+        public uint CurrentVertex;
+        public uint VertexCount;
+        public uint VerticesPerSecond;
+    }
 
     public unsafe class MeshBaker
     {
@@ -69,6 +85,8 @@
         private readonly List<UavBuffer>[] summedMeshBuffers = { new(), new() };
         private readonly List<IShaderResourceView> meshBakeData = new();
 
+        private static MeshBakerStatistics statistics;
+
         public MeshBaker()
         {
             camera = new();
@@ -83,6 +101,8 @@
                 timeDeltaBuffer[i] = 0;
             }
         }
+
+        public static MeshBakerStatistics Statistics => statistics;
 
         private static unsafe Matrix4x4 CameraMatrixForVertex(uint face, Vertex vertex)
         {
@@ -190,9 +210,10 @@
             return rect;
         }
 
-        private unsafe void Initialize(IGraphicsDevice device)
+        public unsafe void Initialize(IGraphicsDevice device)
         {
-            initialRadiance = new(device, Format.R16G16B16A16Float, (int)RTSize, (int)RTSize, 1, 1, CpuAccessFlags.None);
+            initialRadiance = new(device, Format.R16G16B16A16Float, (int)RTSize, (int)RTSize, (int)NumFaces, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            initialRadiance.CreateArraySlices(device);
             reductionBuffer = new(device, 16, RTSize * NumSHTargets * NumFaces, Format.R32G32B32A32Float, false, false);
             dsBuffer = new(device, Format.D32Float, (int)RTSize, (int)RTSize);
 
@@ -201,36 +222,27 @@
             integrateConstants = new(device, CpuAccessFlags.Write);
 
             // Load the integration shaders
-            string facesString = NumFaces + "0";
 
-            string rtSizeString = RTSize.ToString();
-
-            string numThreadsString = NumBounceSumThreads.ToString();
-
-            ShaderMacro[] defines = new ShaderMacro[3];
-            defines[0].Name = "NumFaces_";
-            defines[0].Definition = facesString;
-            defines[1].Name = "RTSize_";
-            defines[1].Definition = rtSizeString;
-            defines[2].Name = "NumBounceSumThreads_";
-            defines[2].Definition = numThreadsString;
+            ShaderMacro[] defines =
+            [
+                new("NUM_FACES", NumFaces),
+                new("RT_SIZE", RTSize),
+                new("NUM_BOUNCE_SUM_THREADS", NumBounceSumThreads)
+            ];
 
             integrateCS = device.CreateComputePipeline(new()
             {
-                Entry = "IntegrateCS",
                 Path = "compute/bake/integrate.hlsl",
                 Macros = defines
             });
             reductionCS = device.CreateComputePipeline(new()
             {
-                Entry = "ReductionCS",
-                Path = "compute/bakintegrate.hlsl",
+                Path = "compute/bake/reduction.hlsl",
                 Macros = defines
             });
             sumBouncesCS = device.CreateComputePipeline(new()
             {
-                Entry = "SumBouncesCS",
-                Path = "compute/bakintegrate.hlsl",
+                Path = "compute/bake/sumBounces.hlsl",
                 Macros = defines
             });
 
@@ -255,8 +267,9 @@
         }
 
         // Bakes an entire model
-        public void Bake(IGraphicsDevice device, IGraphicsContext context, Model model, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
+        public void Bake(IGraphicsDevice device, IGraphicsContext context, Model model, ISceneRenderer sceneRenderer, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
         {
+            statistics.Running = true;
             for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
             {
                 // Create an input layout for each mesh
@@ -283,7 +296,7 @@
                 {
                     Mesh mesh = model.Meshes[meshIdx];
 
-                    BakeMesh(context, model, mesh, meshIdx, bounce, meshRenderer, skyRenderer);
+                    BakeMesh(context, model, mesh, meshIdx, bounce, sceneRenderer, meshRenderer, skyRenderer);
                 }
 
                 if (bounce == 0)
@@ -307,10 +320,75 @@
                     }
                 }
             }
+            statistics.Running = false;
+        }
+
+        public Task BakeAsync(IGraphicsDevice device, IGraphicsContext context, ISceneRenderer sceneRenderer, Model model, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer, CancellationToken? cancellationToken = null)
+        {
+            return Task.Run(() =>
+            {
+                statistics.Running = true;
+                var dispatcher = Application.MainWindow.Dispatcher;
+                dispatcher.TimeBudget = TimeSpan.FromMilliseconds(16);
+                for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
+                {
+                    // Create an input layout for each mesh
+                    Mesh mesh = model.Meshes[meshIdx];
+
+                    // Create bake data for each mesh
+                    UavBuffer meshData, summedMeshData, summedMeshData2;
+                    meshData = new(device, 16, mesh.IndexCount * NumSHTargets, Format.R32G32B32A32Float, true, true);
+                    summedMeshData = new(device, 16, mesh.IndexCount * NumSHTargets, Format.R32G32B32A32Float, true, true);
+                    summedMeshData2 = new(device, 16, mesh.IndexCount * NumSHTargets, Format.R32G32B32A32Float, true, true);
+
+                    currentMeshBuffers.Add(meshData);
+                    summedMeshBuffers[0].Add(summedMeshData);
+                    summedMeshBuffers[1].Add(summedMeshData2);
+                }
+
+                // Bake one mesh at a time
+                for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
+                {
+                    Mesh mesh = model.Meshes[meshIdx];
+
+                    // Iterate through the bounces
+                    for (uint bounce = 0; bounce < NumIterations; ++bounce)
+                    {
+                        //PIXEvent bounceEvent((L"Bounce " + ToString(bounce)).c_str());
+
+                        cancellationToken?.ThrowIfCancellationRequested();
+                        BakeMeshAsync(dispatcher, context, model, mesh, meshIdx, bounce, sceneRenderer, meshRenderer, skyRenderer, cancellationToken);
+
+                        if (bounce == 0)
+                        {
+                            cancellationToken?.ThrowIfCancellationRequested();
+                            // We don't need to sum bounces, so just copy to the output buffers
+
+                            dispatcher.InvokeBlocking(() =>
+                            {
+                                context.CopyResource(summedMeshBuffers[0][(int)meshIdx].Buffer, currentMeshBuffers[(int)meshIdx].Buffer);
+                            });
+
+                            meshBakeData.Add(summedMeshBuffers[0][(int)meshIdx].SRV);
+                        }
+                        else
+                        {
+                            cancellationToken?.ThrowIfCancellationRequested();
+
+                            // Sum together this bounce with the previous bounces
+                            SumBouncesAsync(dispatcher, context, bounce);
+
+                            meshBakeData.Add(summedMeshBuffers[bounce % 2][(int)meshIdx].SRV);
+                        }
+                    }
+                }
+
+                statistics.Running = false;
+            });
         }
 
         // Bakes all vertices of a single mesh
-        private void BakeMesh(IGraphicsContext context, Model model, Mesh mesh, uint meshIdx, uint bounce, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
+        private void BakeMesh(IGraphicsContext context, Model model, Mesh mesh, uint meshIdx, uint bounce, ISceneRenderer sceneRenderer, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
         {
             // FindByName the position, normal, tangent, and binormal elements
             int posOffset = 0xFFFFFFF;
@@ -388,20 +466,147 @@
 
             UavBuffer meshData = currentMeshBuffers[(int)meshIdx];
 
+            long timestamp = Stopwatch.GetTimestamp() + 1 * Stopwatch.Frequency;
+
             // Bake each vertex
             for (uint vertIdx = 0; vertIdx < numVerts; ++vertIdx)
             {
-                BakeVertex(context, verts[vertIdx], vertIdx, meshData, bounce, meshRenderer, skyRenderer);
+                BakeVertex(context, verts[vertIdx], vertIdx, meshData, bounce, sceneRenderer, meshRenderer, skyRenderer);
 
-                string text = "Iteration " + (bounce + 1) + " of " + NumIterations + "\n";
-                text += "Baking mesh " + (meshIdx + 1) + " of " + model.Meshes.Length;
-                text += "\nBaking vertex " + (vertIdx + 1) + " of " + numVerts;
+                long now = Stopwatch.GetTimestamp();
+                if (now >= timestamp)
+                {
+                    timestamp = now + 1 * Stopwatch.Frequency;
+
+                    var oldVertex = statistics.CurrentVertex;
+
+                    statistics.CurrentBounce = bounce + 1;
+                    statistics.BounceCount = NumIterations;
+                    statistics.CurrentMesh = meshIdx + 1;
+                    statistics.MeshCount = (uint)model.Meshes.Length;
+                    statistics.CurrentVertex = vertIdx + 1;
+                    statistics.VertexCount = numVerts;
+                    statistics.VerticesPerSecond = statistics.CurrentVertex - oldVertex;
+                }
             }
+        }
+
+        // Bakes all vertices of a single mesh
+        private void BakeMeshAsync(ThreadDispatcher dispatcher, IGraphicsContext context, Model model, Mesh mesh, uint meshIdx, uint bounce, ISceneRenderer sceneRenderer, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer, CancellationToken? cancellationToken)
+        {
+            // FindByName the position, normal, tangent, and binormal elements
+            int posOffset = 0xFFFFFFF;
+            int nmlOffset = 0xFFFFFFF;
+            int tangentOffset = 0xFFFFFFF;
+            int binormalOffset = 0xFFFFFFF;
+            for (uint i = 0; i < mesh.InputElements.Length; ++i)
+            {
+                InputElementDescription element = mesh.InputElements[i];
+                string semantic = element.SemanticName;
+                if (semantic == "POSITION")
+                {
+                    posOffset = element.AlignedByteOffset;
+                }
+                else if (semantic == "NORMAL")
+                {
+                    nmlOffset = element.AlignedByteOffset;
+                }
+                else if (semantic == "TANGENT")
+                {
+                    tangentOffset = element.AlignedByteOffset;
+                }
+                else if (semantic == "BINORMAL")
+                {
+                    binormalOffset = element.AlignedByteOffset;
+                }
+            }
+
+            if (posOffset == 0xFFFFFFF)
+            {
+                Logger.Error("Can't bake a mesh with no positions!");
+                return;
+            }
+
+            if (nmlOffset == 0xFFFFFFF)
+            {
+                Logger.Error("Can't bake a mesh with no normals!");
+                return;
+            }
+
+            if (tangentOffset == 0xFFFFFFF || binormalOffset == 0xFFFFFFF)
+            {
+                Logger.Error("Can't bake a mesh with no tangent frame!");
+                return;
+            }
+
+            // Pull out the vertex data from the mesh
+            uint numVerts = mesh.VertexCount;
+            uint vtxStride = mesh.Stride;
+            Vertex[] verts = new Vertex[numVerts];
+
+            int vertexIndex = 0;
+            for (uint i = 0; i < numVerts; ++i)
+            {
+                Vector3 position = mesh.Data.Positions[i];
+                Vector3 normal = mesh.Data.Normals[i];
+                Vector3 tangent = mesh.Data.Tangents[i];
+                Vector3 binormal = mesh.Data.Bitangents[i];
+
+                // Transform the positions + tangent frame to world space
+                Vector3 positionWS = Vector3.Transform(position, meshRenderer.Transform);
+                Vector3 normalWS = Vector3.TransformNormal(normal, meshRenderer.Transform);
+                normalWS = Vector3.Normalize(normalWS);
+
+                Vector3 tangentWS = Vector3.TransformNormal(tangent, meshRenderer.Transform);
+                tangentWS = Vector3.Normalize(tangentWS);
+
+                Vector3 binormalWS = Vector3.TransformNormal(binormal, meshRenderer.Transform);
+                binormalWS = Vector3.Normalize(binormalWS);
+
+                Vertex vertex;
+                vertex.Position = positionWS;
+                vertex.Normal = normalWS;
+                vertex.Tangent = tangentWS;
+                vertex.Binormal = binormalWS;
+                verts[vertexIndex++] = vertex;
+            }
+
+            UavBuffer meshData = currentMeshBuffers[(int)meshIdx];
+
+            WaitHandle?[] tasks = new WaitHandle[numVerts];
+            // Bake each vertex
+            for (uint vertIdx = 0; vertIdx < numVerts; vertIdx++)
+            {
+                tasks[vertIdx] = dispatcher.InvokeWaitHandle(state =>
+                {
+                    var localVertIdx = (uint)state;
+
+                    if (cancellationToken?.IsCancellationRequested ?? false)
+                        return;
+
+                    BakeVertex(context, verts[localVertIdx], localVertIdx, meshData, bounce, sceneRenderer, meshRenderer, skyRenderer);
+                    var oldVertex = statistics.CurrentVertex;
+                    statistics.CurrentBounce = bounce + 1;
+                    statistics.BounceCount = NumIterations;
+                    statistics.CurrentMesh = meshIdx + 1;
+                    statistics.MeshCount = (uint)model.Meshes.Length;
+                    statistics.CurrentVertex = localVertIdx + 1;
+                    statistics.VertexCount = numVerts;
+                }, vertIdx);
+            }
+
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                tasks[i]?.WaitOne();
+                tasks[i]?.Dispose();
+            }
+
+            cancellationToken?.ThrowIfCancellationRequested();
         }
 
         // Bakes a single vertex by rendering the entire scene 5 times to generate the radiance hemicube,
         // and then integrate it down to a single set of H-basis coefficients
-        private void BakeVertex(IGraphicsContext context, Vertex vertex, uint vertIdx, UavBuffer meshData, uint bounce, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
+        private void BakeVertex(IGraphicsContext context, Vertex vertex, uint vertIdx, UavBuffer meshData, uint bounce, ISceneRenderer sceneRenderer, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
         {
             Matrix4x4 worldToTangent = Matrix4x4.Identity;
             worldToTangent[0, 0] = vertex.Tangent.X;
@@ -429,7 +634,7 @@
                 for (uint face = 0; face < NumFaces; ++face)
                 {
                     // Set the render target and clear it
-                    IRenderTargetView renderTarget = initialRadiance.ArraySlices[face];
+                    IRenderTargetView renderTarget = initialRadiance.RTVArraySlices[face];
 
                     context.SetRenderTarget(renderTarget, dsBuffer.DSV);
 
@@ -459,12 +664,12 @@
                     }
                     else if (bounce == 1)
                     {
-                        LightManager.Current.BakePass(context, meshRenderer, camera);
+                        sceneRenderer.Render(context, Application.MainWindow, viewport, SceneManager.Current, camera);
                     }
                     else
                     {
                         // TODO: ObjectAdded way to suppress shadow mapping and directional lights
-                        LightManager.Current.BakePass(context, meshRenderer, camera);
+                        sceneRenderer.Render(context, Application.MainWindow, viewport, SceneManager.Current, camera);
                     }
 
                     if (bounce == 0)
@@ -532,7 +737,7 @@
             context.Dispatch(1, RTSize, NumFaces);
 
             // Set the shader
-            context.SetComputePipeline(null);
+            context.SetComputePipeline(reductionCS);
 
             // Set outputs
             context.CSSetUnorderedAccessView(0, (void*)meshData.UAV.NativePointer);
@@ -587,6 +792,15 @@
             inputBuffers[1] = 0;
             context.CSSetShaderResources(0, 2, (void**)inputBuffers);
             context.CSSetUnorderedAccessView(0, null);
+        }
+
+        // Sums the results from two bounce passes
+        private void SumBouncesAsync(ThreadDispatcher dispatcher, IGraphicsContext context, uint bounce)
+        {
+            dispatcher.InvokeBlocking(() =>
+            {
+                SumBounces(context, bounce);
+            });
         }
 
         // Retrieve the buffer containing H-basis coefficients for all verts in a mesh
