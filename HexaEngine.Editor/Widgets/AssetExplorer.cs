@@ -60,6 +60,7 @@
         private string? CurrentFolder = null;
 
         private bool showExtensions = false;
+        private bool showHidden = false;
 
         private AssetExplorerDisplayMode displayMode = AssetExplorerDisplayMode.Pretty;
         private AssetExplorerIconSize iconSize = AssetExplorerIconSize.Medium;
@@ -153,6 +154,18 @@
             }
         }
 
+        public bool ShowHidden
+        {
+            get => showHidden;
+            set
+            {
+                showHidden = value;
+                config.SetValue("Show Hidden", showHidden);
+                Config.Global.Save();
+                Refresh();
+            }
+        }
+
         public void Refresh()
         {
             files.Clear();
@@ -172,12 +185,17 @@
                     continue;
                 }
 
-                if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden))
+                if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden) && !showHidden)
                 {
                     continue;
                 }
 
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                {
+                    continue;
+                }
+
+                if (fse.EndsWith(".meta") && !showHidden)
                 {
                     continue;
                 }
@@ -611,6 +629,11 @@
                     if (ImGui.Checkbox("Show Extensions", ref showExtensions))
                     {
                         ShowExtensions = showExtensions;
+                    }
+
+                    if (ImGui.Checkbox("Show Hidden", ref showHidden))
+                    {
+                        ShowHidden = showHidden;
                     }
 
                     ImGui.EndMenu();

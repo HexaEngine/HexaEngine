@@ -53,7 +53,7 @@
             {
                 var dir = Path.GetDirectoryName(path) ?? string.Empty;
                 var fileName = Path.GetFileNameWithoutExtension(path);
-                var editorConfigPath = Path.Combine(dir, fileName + ".editor.json");
+                var editorConfigPath = Path.Combine(dir, fileName + ".meta");
                 scene.EditorConfig.SaveTo(editorConfigPath);
             }
         }
@@ -94,7 +94,7 @@
             {
                 var dir = Path.GetDirectoryName(path) ?? string.Empty;
                 var fileName = Path.GetFileNameWithoutExtension(path);
-                var editorConfigPath = Path.Combine(dir, fileName + ".editor.json");
+                var editorConfigPath = Path.Combine(dir, fileName + ".meta");
                 scene.EditorConfig = Config.LoadFrom(editorConfigPath);
             }
 
