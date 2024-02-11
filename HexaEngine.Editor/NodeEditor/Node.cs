@@ -25,6 +25,8 @@
         public uint TitleHoveredColor = 0x5e60ceff;
 
         public uint TitleSelectedColor = 0x7400b8ff;
+        private Vector2 position;
+        private Vector2 size;
 
         public Node(int id, string name, bool removable, bool isStatic)
         {
@@ -38,6 +40,10 @@
         public event EventHandler<Pin>? PinValueChanging;
 
         public event EventHandler<Pin>? PinValueChanged;
+
+        public event EventHandler<Node>? NodeValueChanging;
+
+        public event EventHandler<Node>? NodeValueChanged;
 
         public event EventHandler<Pin>? PinAdded;
 
@@ -56,11 +62,12 @@
         public List<Pin> Pins => pins;
 
         [JsonIgnore]
-        public Vector2 Position { get => ImNodes.GetNodeEditorSpacePos(id); set => ImNodes.SetNodeEditorSpacePos(id, value); }
+        public Vector2 Position { get => position; set => ImNodes.SetNodeEditorSpacePos(id, value); }
 
         [JsonIgnore]
-        public Vector2 Size => ImNodes.GetNodeDimensions(id);
+        public Vector2 Size => size;
 
+        [JsonIgnore]
         public bool IsEditing
         {
             get => isEditing;
@@ -70,6 +77,7 @@
             }
         }
 
+        [JsonIgnore]
         public bool IsHovered { get; set; }
 
         public virtual void Initialize(NodeEditor editor)
@@ -84,6 +92,16 @@
                 pins[i].ValueChanging += ValueChanging;
                 pins[i].ValueChanged += ValueChanged;
             }
+        }
+
+        protected void OnValueChanged()
+        {
+            NodeValueChanged?.Invoke(this, this);
+        }
+
+        protected void OnValueChanging()
+        {
+            NodeValueChanging?.Invoke(this, this);
         }
 
         private void ValueChanged(object? sender, Pin e)
@@ -303,6 +321,9 @@
 
             ImNodes.EndNode();
             ImNodes.PopColorStyle();
+
+            position = ImNodes.GetNodeEditorSpacePos(id);
+            size = ImNodes.GetNodeDimensions(id);
         }
 
         protected virtual void DrawContentBeforePins()

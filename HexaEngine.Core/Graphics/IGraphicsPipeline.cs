@@ -16,23 +16,6 @@
         string DebugName { get; }
 
         /// <summary>
-        /// Gets the current state of the graphics pipeline, which includes rendering settings.
-        /// </summary>
-        GraphicsPipelineState State { get; }
-
-        /// <summary>
-        /// Begins a drawing operation with the specified graphics context using this graphics pipeline.
-        /// </summary>
-        /// <param name="context">The graphics context to begin drawing with.</param>
-        void BeginDraw(IGraphicsContext context);
-
-        /// <summary>
-        /// Ends a drawing operation with the specified graphics context.
-        /// </summary>
-        /// <param name="context">The graphics context to end the drawing operation with.</param>
-        void EndDraw(IGraphicsContext context);
-
-        /// <summary>
         /// Recompiles the graphics pipeline, updating its shaders and state settings.
         /// </summary>
         void Recompile();

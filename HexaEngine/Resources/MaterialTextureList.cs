@@ -7,7 +7,7 @@
     public unsafe class MaterialTextureList : IList<ResourceInstance<MaterialTexture>?>, IDisposable
     {
         private const uint DefaultCapacity = 4;
-        private readonly List<ResourceInstance<MaterialTexture>?> textures = new();
+        private readonly List<ResourceInstance<MaterialTexture>?> textures = [];
         private uint capacity;
         private uint count;
         private uint startSlot;
@@ -74,10 +74,14 @@
 
         public void Update()
         {
-            startSlot = int.MaxValue;
-            count = 0;
             ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
             ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
+
+            textures.Sort(TextureIndexSorter.Instance);
+
+            startSlot = 0;
+            count = 0;
+
             for (int i = 0; i < textures.Count; i++)
             {
                 var texture = textures[i];
@@ -87,42 +91,17 @@
                     continue;
                 }
 
-                var slot = GetIndexFor(texture.Value.Desc.Type);
-
-                if (slot == uint.MaxValue)
-                {
-                    continue;
-                }
-
-                EnsureCapacity(slot + 1);
-                shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
-                samplers[slot] = (void*)texture.Value.Sampler.NativePointer;
-                count = Math.Max(slot + 1, count);
-                startSlot = Math.Min(slot, startSlot);
+                EnsureCapacity(count + 1);
+                shaderResourceViews[count] = (void*)texture.Value.ShaderResourceView.NativePointer;
+                samplers[count] = (void*)texture.Value.Sampler.NativePointer;
+                count++;
             }
         }
 
         public void Bind(IGraphicsContext context)
         {
-            for (int i = 0; i < textures.Count; i++)
-            {
-                var texture = textures[i];
-
-                if (texture == null || texture.Value == null)
-                {
-                    continue;
-                }
-
-                var slot = GetIndexFor(texture.Value.Desc.Type);
-
-                if (slot == uint.MaxValue)
-                {
-                    continue;
-                }
-
-                context.PSSetShaderResource(slot, texture.Value.ShaderResourceView);
-                context.PSSetSampler(slot, texture.Value.Sampler);
-            }
+            context.PSSetShaderResources(0, count, shaderResourceViews);
+            context.PSSetSamplers(0, count, samplers);
         }
 
         public bool Contains(ResourceInstance<MaterialTexture>? texture)
@@ -130,35 +109,53 @@
             return textures.Contains(texture);
         }
 
-        public static uint GetIndexFor(MaterialTextureType type)
+        public class TextureIndexSorter : IComparer<ResourceInstance<MaterialTexture>?>
         {
-            return type switch
+            public static readonly TextureIndexSorter Instance = new();
+
+            public int Compare(ResourceInstance<MaterialTexture>? x, ResourceInstance<MaterialTexture>? y)
             {
-                MaterialTextureType.None => uint.MaxValue,
-                MaterialTextureType.Diffuse => 0,
-                MaterialTextureType.Specular => uint.MaxValue,
-                MaterialTextureType.Ambient => uint.MaxValue,
-                MaterialTextureType.Emissive => 4,
-                MaterialTextureType.Height => uint.MaxValue,
-                MaterialTextureType.Normal => 1,
-                MaterialTextureType.Shininess => uint.MaxValue,
-                MaterialTextureType.Opacity => uint.MaxValue,
-                MaterialTextureType.Displacement => uint.MaxValue,
-                MaterialTextureType.AmbientOcclusionRoughnessMetallic => 7,
-                MaterialTextureType.Reflection => uint.MaxValue,
-                MaterialTextureType.BaseColor => 0,
-                MaterialTextureType.NormalCamera => uint.MaxValue,
-                MaterialTextureType.EmissionColor => uint.MaxValue,
-                MaterialTextureType.Metallic => 3,
-                MaterialTextureType.Roughness => 2,
-                MaterialTextureType.AmbientOcclusion => 5,
-                MaterialTextureType.Sheen => uint.MaxValue,
-                MaterialTextureType.Clearcoat => uint.MaxValue,
-                MaterialTextureType.Transmission => uint.MaxValue,
-                MaterialTextureType.RoughnessMetallic => 6,
-                MaterialTextureType.Unknown => uint.MaxValue,
-                _ => uint.MaxValue,
-            };
+                if (x == null || y == null || x.Value == null || y.Value == null)
+                {
+                    return 0;
+                }
+
+                var xPriority = GetPriorityFor(x.Value.Desc.Type);
+                var yPriority = GetPriorityFor(y.Value.Desc.Type);
+
+                return xPriority.CompareTo(yPriority);
+            }
+
+            public static uint GetPriorityFor(MaterialTextureType type)
+            {
+                return type switch
+                {
+                    MaterialTextureType.None => uint.MaxValue,
+                    MaterialTextureType.Diffuse => 0,
+                    MaterialTextureType.Specular => uint.MaxValue,
+                    MaterialTextureType.Ambient => uint.MaxValue,
+                    MaterialTextureType.Emissive => 4,
+                    MaterialTextureType.Height => uint.MaxValue,
+                    MaterialTextureType.Normal => 1,
+                    MaterialTextureType.Shininess => uint.MaxValue,
+                    MaterialTextureType.Opacity => uint.MaxValue,
+                    MaterialTextureType.Displacement => uint.MaxValue,
+                    MaterialTextureType.AmbientOcclusionRoughnessMetallic => 7,
+                    MaterialTextureType.Reflection => uint.MaxValue,
+                    MaterialTextureType.BaseColor => 0,
+                    MaterialTextureType.NormalCamera => uint.MaxValue,
+                    MaterialTextureType.EmissionColor => uint.MaxValue,
+                    MaterialTextureType.Metallic => 3,
+                    MaterialTextureType.Roughness => 2,
+                    MaterialTextureType.AmbientOcclusion => 5,
+                    MaterialTextureType.Sheen => uint.MaxValue,
+                    MaterialTextureType.Clearcoat => uint.MaxValue,
+                    MaterialTextureType.Transmission => uint.MaxValue,
+                    MaterialTextureType.RoughnessMetallic => 6,
+                    MaterialTextureType.Unknown => uint.MaxValue,
+                    _ => uint.MaxValue,
+                };
+            }
         }
 
         protected virtual void Dispose(bool disposing)

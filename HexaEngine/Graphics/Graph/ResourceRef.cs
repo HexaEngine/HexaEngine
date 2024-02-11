@@ -3,6 +3,14 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    public delegate void ResourceRefChangedEventHandler<T>(ResourceRef resourceRef, T? value) where T : class, IDisposable;
+
+    public delegate void ResourceRefNotNullChangedEventHandler<T>(ResourceRefNotNull resourceRef, T? value) where T : class, IDisposable;
+
+    public delegate void ResourceRefTChangedEventHandler<T>(ResourceRef<T> resourceRef, T? value) where T : class, IDisposable;
+
+    public delegate void ResourceRefNotNullTChangedEventHandler<T>(ResourceRefNotNull<T> resourceRef, T? value) where T : class, IDisposable;
+
     public class ResourceRef
     {
         private IDisposable? _value;
@@ -25,7 +33,7 @@
             }
         }
 
-        public event EventHandler<IDisposable?>? ValueChanged;
+        public event ResourceRefChangedEventHandler<IDisposable>? ValueChanged;
 
         public void Dispose()
         {
@@ -65,7 +73,7 @@
             ValueChanged?.Invoke(this, disposable ?? throw new NullReferenceException(nameof(resource.Value)));
         }
 
-        public event EventHandler<IDisposable>? ValueChanged;
+        public event ResourceRefNotNullChangedEventHandler<IDisposable>? ValueChanged;
 
         public ResourceRef Resource => resource;
     }
@@ -103,7 +111,7 @@
             ValueChanged?.Invoke(this, disposable as T);
         }
 
-        public event EventHandler<T?>? ValueChanged;
+        public event ResourceRefTChangedEventHandler<T>? ValueChanged;
 
         public static implicit operator T(ResourceRef<T> resourceRef)
         {
@@ -149,6 +157,6 @@
             ValueChanged?.Invoke(this, disposable as T ?? throw new NullReferenceException());
         }
 
-        public event EventHandler<T?>? ValueChanged;
+        public event ResourceRefNotNullTChangedEventHandler<T>? ValueChanged;
     }
 }

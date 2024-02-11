@@ -10,7 +10,6 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using static System.Net.Mime.MediaTypeNames;
     using Format = Core.Graphics.Format;
     using MapMode = Core.Graphics.MapMode;
     using MappedSubresource = Core.Graphics.MappedSubresource;
@@ -48,6 +47,18 @@
         public void BeginEvent(string name)
         {
             DeviceContext.BeginEventInt(name, 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetResourceBindingList(IResourceBindingList rootDescriptorTable)
+        {
+            ((D3D11ResourceBindingList)rootDescriptorTable).BindGraphics(DeviceContext);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UnsetResourceBindingList(IResourceBindingList rootDescriptorTable)
+        {
+            ((D3D11ResourceBindingList)rootDescriptorTable).UnbindGraphics(DeviceContext);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -507,24 +518,31 @@
             DeviceContext.Unmap(resource, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetComputePipeline(IComputePipeline? pipeline)
         {
             if (pipeline == null)
             {
-                D3D11GraphicsPipeline.EndDraw(DeviceContext);
+                D3D11ComputePipeline.EndDispatch(DeviceContext);
                 return;
             }
             ((D3D11ComputePipeline)pipeline).SetComputePipeline(DeviceContext);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetGraphicsPipeline(IGraphicsPipeline? pipeline)
         {
-            if (pipeline == null)
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetPipelineState(IGraphicsPipelineState? state)
+        {
+            if (state == null)
             {
-                D3D11GraphicsPipeline.EndDraw(DeviceContext);
+                D3D11GraphicsPipelineState.UnsetState(DeviceContext);
                 return;
             }
-            ((D3D11GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
+            ((D3D11GraphicsPipelineState)state).SetState(DeviceContext);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

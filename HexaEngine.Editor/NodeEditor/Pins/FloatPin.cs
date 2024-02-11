@@ -19,7 +19,7 @@
         private float valueY;
         private float valueZ;
         private float valueW;
-        private bool changing;
+        private bool changed;
         private string? defaultExpression;
 
         [JsonConstructor]
@@ -130,7 +130,7 @@
                     {
                         valueX = val[0];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -140,7 +140,7 @@
                     {
                         valueX = val[0];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -156,7 +156,7 @@
                         valueX = val[0];
                         valueY = val[1];
                         OnValueChanging();
-                        changing = true;
+                        this.changed = true;
                     }
                 }
                 if ((Type == PinType.Float2 || Type == PinType.Float2OrFloat) && flags == PinFlags.Slider)
@@ -166,7 +166,7 @@
                         valueX = val[0];
                         valueY = val[1];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -185,7 +185,7 @@
                         valueY = val[1];
                         valueZ = val[2];
                         OnValueChanging();
-                        changing = true;
+                        this.changed = true;
                     }
                 }
                 if ((Type == PinType.Float3 || Type == PinType.Float3OrFloat) && flags == PinFlags.ColorEdit)
@@ -196,7 +196,7 @@
                         valueY = val[1];
                         valueZ = val[2];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -208,7 +208,7 @@
                         valueY = val[1];
                         valueZ = val[2];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -220,7 +220,7 @@
                         valueY = val[1];
                         valueZ = val[2];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -242,7 +242,7 @@
                         valueZ = val[2];
                         valueW = val[3];
                         OnValueChanging();
-                        changing = true;
+                        this.changed = true;
                     }
                 }
                 if ((Type == PinType.Float4 || Type == PinType.Float4OrFloat) && flags == PinFlags.ColorEdit)
@@ -254,7 +254,7 @@
                         valueZ = val[2];
                         valueW = val[3];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -267,7 +267,7 @@
                         valueZ = val[2];
                         valueW = val[3];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -280,7 +280,7 @@
                         valueZ = val[2];
                         valueW = val[3];
                         OnValueChanging();
-                        changing = true;
+                        changed = true;
                     }
                     IsActive |= ImGui.IsItemActive();
                 }
@@ -292,9 +292,9 @@
                 base.DrawContent();
             }
 
-            if (changing && !IsActive)
+            if (changed && !IsActive)
             {
-                changing = false;
+                changed = false;
                 OnValueChanged();
             }
         }

@@ -6,28 +6,148 @@
     using HexaEngine.Core.UI;
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Extensions;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO.Metadata;
+    using System.Text;
+    using HexaEngine.Editor.Dialogs;
 
-    public class MaterialLibraryWindow : EditorWindow
+    public class MaterialLibraryEditorWindow : EditorWindow
     {
-        private readonly MaterialEditorWindow materialEditor;
+        private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
+        private readonly SaveFileDialog saveFileDialog = new(null, ".matlib");
 
-        public MaterialLibraryWindow(MaterialEditorWindow materialEditor)
+        private MaterialLibrary? materialLibrary;
+        private string? currentFile;
+        private MaterialData? material;
+
+        public MaterialLibraryEditorWindow()
         {
-            this.materialEditor = materialEditor;
-            IsShown = true;
+            Flags = ImGuiWindowFlags.MenuBar;
         }
 
         protected override string Name => "Material Library";
 
+        public void Open(string filename)
+        {
+            try
+            {
+                materialLibrary = MaterialLibrary.LoadExternal(filename);
+                currentFile = filename;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load material library: {filename}", ex.Message);
+                Logger.Error($"Failed to load material library: {filename}");
+                Logger.Log(ex);
+            }
+        }
+
+        public void Unload()
+        {
+            material = null;
+            materialLibrary = null;
+            currentFile = null;
+        }
+
+        public void Save()
+        {
+            if (currentFile == null)
+                return;
+
+            SaveAs(currentFile);
+        }
+
+        public void CreateNew()
+        {
+            materialLibrary = new();
+        }
+
+        public void SaveAs(string filename)
+        {
+            if (materialLibrary == null)
+                return;
+
+            try
+            {
+                materialLibrary.Save(filename, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save material library: {filename}", ex.Message);
+                Logger.Error($"Failed to save material library: {filename}");
+                Logger.Log(ex);
+            }
+        }
+
+        private void DrawMenuBar()
+        {
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.BeginMenu("File"))
+                {
+                    if (ImGui.MenuItem("New"))
+                    {
+                        CreateNew();
+                    }
+
+                    if (ImGui.MenuItem("Load"))
+                    {
+                        openFileDialog.Show();
+                    }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Save"))
+                    {
+                        Save();
+                    }
+
+                    if (ImGui.MenuItem("Save as"))
+                    {
+                        saveFileDialog.Show();
+                    }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Close"))
+                    {
+                        Unload();
+                    }
+
+                    ImGui.EndMenu();
+                }
+
+                ImGui.EndMenuBar();
+            }
+        }
+
         public override void DrawContent(IGraphicsContext context)
         {
-            if (materialEditor.MaterialLibrary == null)
+            DrawMenuBar();
+
+            if (openFileDialog.Draw())
+            {
+                if (openFileDialog.Result == OpenFileResult.Ok)
+                {
+                    Open(openFileDialog.FullPath);
+                }
+            }
+
+            if (saveFileDialog.Draw())
+            {
+                if (saveFileDialog.Result == SaveFileResult.Ok)
+                {
+                    SaveAs(saveFileDialog.FullPath);
+                }
+            }
+
+            if (materialLibrary == null)
             {
                 ImGui.Text("No material lib opened");
                 return;
             }
 
-            var lib = materialEditor.MaterialLibrary;
+            var lib = materialLibrary;
 
             if (ImGui.Button("New material"))
             {
@@ -40,21 +160,21 @@
             for (int i = 0; i < lib.Materials.Count; i++)
             {
                 var mat = lib.Materials[i];
-                if (ImGui.MenuItem(mat.Name, mat == materialEditor.Material))
+                if (ImGui.MenuItem(mat.Name, mat == material))
                 {
-                    materialEditor.Material = mat;
+                    material = mat;
                 }
             }
 
             ImGui.EndListBox();
 
-            if (materialEditor.Material == null)
+            if (material == null)
             {
                 ImGui.Text("No material selected");
                 return;
             }
 
-            var sel = materialEditor.Material;
+            var sel = material;
             EditMaterial(sel);
         }
 
@@ -70,20 +190,20 @@
 
         public bool EditMaterial(MaterialData material)
         {
-            var name = material.Name;
             isActive = false;
+            var name = material.Name;
+
             if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 material.Name = name;
-                //manager.Rename(material.Name, name);
             }
 
-            if (ImGui.Button("ObjectAdded Property"))
+            if (ImGui.Button("Add Property"))
             {
-                ImGui.OpenPopup("AddMaterialProperty");
+                ImGui.OpenPopup("Add Property");
             }
 
-            if (ImGui.BeginPopup("AddMaterialProperty", ImGuiWindowFlags.None))
+            if (ImGui.BeginPopup("Add Property", ImGuiWindowFlags.None))
             {
                 ImGui.InputText("Name", ref newPropName, 256);
                 if (ComboEnumHelper<MaterialPropertyType>.Combo("Type", ref newPropType))
@@ -126,12 +246,12 @@
 
             ImGui.Separator();
 
-            if (ImGui.Button("ObjectAdded Texture"))
+            if (ImGui.Button("Add Texture"))
             {
-                ImGui.OpenPopup("AddMaterialTexture");
+                ImGui.OpenPopup("Add Texture");
             }
 
-            if (ImGui.BeginPopup("AddMaterialTexture", ImGuiWindowFlags.None))
+            if (ImGui.BeginPopup("Add Texture", ImGuiWindowFlags.None))
             {
                 ComboEnumHelper<MaterialTextureType>.Combo("Type", ref newTexType);
                 ImGui.InputText("Path", ref newTexPath, 256);

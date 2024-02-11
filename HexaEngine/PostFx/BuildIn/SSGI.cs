@@ -10,13 +10,13 @@
     public class SSGI : PostFxBase
     {
         private IGraphicsDevice device;
-        private IGraphicsPipeline pipelineSSGI;
+        private IGraphicsPipelineState psoSSGI;
         private ConstantBuffer<SSGIParams> ssgiParams;
         private ResourceRef<Texture2D> inputChain;
         private ResourceRef<Texture2D> outputBuffer;
         private GaussianBlur blur;
         private ISamplerState linearWrapSampler;
-        private IGraphicsPipeline copy;
+        private IGraphicsPipelineState copy;
 
         private ResourceRef<DepthMipChain> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
@@ -94,23 +94,18 @@
 
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            pipelineSSGI = device.CreateGraphicsPipeline(new()
+            psoSSGI = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssgi/ps.hlsl",
-                State = new()
-                {
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleStrip
-                },
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            copy = device.CreateGraphicsPipeline(new()
+            copy = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             ssgiParams = new(device, new SSGIParams(), CpuAccessFlags.Write);
             inputChain = creator.CreateBuffer("SSGI_INPUT_CHAIN_BUFFER", 1, 10);
@@ -145,11 +140,11 @@
             context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, linearWrapSampler);
 
-            context.SetGraphicsPipeline(pipelineSSGI);
+            context.SetPipelineState(psoSSGI);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(1, null);
@@ -161,7 +156,7 @@
 
         protected override void DisposeCore()
         {
-            pipelineSSGI.Dispose();
+            psoSSGI.Dispose();
             copy.Dispose();
             linearWrapSampler.Dispose();
             ssgiParams.Dispose();

@@ -164,22 +164,22 @@
             return new OpenGLGraphicsPipeline(this, desc, inputElements, macros, $"({nameof(OpenGLGraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new OpenGLGraphicsPipeline(this, desc, state, $"({nameof(OpenGLGraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new OpenGLGraphicsPipeline(this, desc, state, macros, $"({nameof(OpenGLGraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new OpenGLGraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(OpenGLGraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new OpenGLGraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(OpenGLGraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
@@ -342,12 +342,12 @@
             throw new NotImplementedException();
         }
 
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }
 
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }
@@ -363,6 +363,16 @@
         }
 
         public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
         {
             throw new NotImplementedException();
         }

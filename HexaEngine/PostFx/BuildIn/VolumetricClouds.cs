@@ -14,7 +14,7 @@
     public class VolumetricClouds : PostFxBase
     {
         private IGraphicsDevice device;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ISamplerState linearWrapSampler;
         private ISamplerState pointWrapSampler;
 
@@ -57,16 +57,15 @@
             gbuffer = creator.GetGBuffer("GBuffer");
 
             this.device = device;
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/clouds/ps.hlsl",
-                State = new()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = Vector4.One,
-                    Topology = PrimitiveTopology.TriangleStrip
-                }
+            }, new()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.One,
+                Topology = PrimitiveTopology.TriangleStrip
             });
 
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
@@ -101,7 +100,7 @@
             nint* cbcs = stackalloc nint[] { camera.Value.NativePointer, weather.Value.NativePointer };
             context.PSSetConstantBuffers(1, 2, (void**)cbcs);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
 
             context.ClearState();

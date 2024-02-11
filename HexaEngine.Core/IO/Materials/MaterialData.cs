@@ -147,6 +147,27 @@
         }
 
         /// <summary>
+        /// Gets the index of the material property based on the specified type.
+        /// </summary>
+        /// <param name="type">The type of material property.</param>
+        /// <returns>
+        /// The index of the material property if found; otherwise, -1.
+        /// </returns>
+        public int GetPropertyIndex(MaterialPropertyType type)
+        {
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                var prop = Properties[i];
+                if (prop.Type == type)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Checks whether the material has a texture of the specified type with a non-empty file path.
         /// </summary>
         /// <param name="type">The type of the material texture.</param>
@@ -204,6 +225,26 @@
         }
 
         /// <summary>
+        /// Gets the index of the texture description based on the specified type.
+        /// </summary>
+        /// <param name="type">The type of material texture.</param>
+        /// <returns>
+        /// The index of the texture description if found; otherwise, -1.
+        /// </returns>
+        public int GetTextureIndex(MaterialTextureType type)
+        {
+            for (int i = 0; i < Textures.Count; i++)
+            {
+                var tex = Textures[i];
+                if (tex.Type == type)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
         /// Checks whether the material has a shader of the specified type.
         /// </summary>
         /// <param name="type">The type of the material shader.</param>
@@ -258,6 +299,27 @@
             }
             shader = default;
             return false;
+        }
+
+        /// <summary>
+        /// Gets the index of the material shader based on the specified type.
+        /// </summary>
+        /// <param name="type">The type of material shader.</param>
+        /// <returns>
+        /// The index of the material shader if found; otherwise, -1.
+        /// </returns>
+        public int GetShaderIndex(MaterialShaderType type)
+        {
+            for (int i = 0; i < Shaders.Count; i++)
+            {
+                var shd = Shaders[i];
+                if (shd.Type == type)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         /// <summary>

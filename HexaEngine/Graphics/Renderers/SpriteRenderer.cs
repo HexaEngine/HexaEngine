@@ -8,7 +8,7 @@
 
     public class SpriteRenderer : IDisposable
     {
-        private readonly IGraphicsPipeline pipeline;
+        private readonly IGraphicsPipelineState pipeline;
         private readonly ConstantBuffer<Constants> constantBuffer;
 
         private struct Constants
@@ -20,14 +20,13 @@
 
         public SpriteRenderer(IGraphicsDevice device)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/sprite/vs.hlsl",
                 PixelShader = "deferred/sprite/ps.hlsl",
-                State = new()
-                {
-                    Topology = PrimitiveTopology.TriangleStrip
-                }
+            }, new()
+            {
+                Topology = PrimitiveTopology.TriangleStrip
             });
             constantBuffer = new(device, CpuAccessFlags.Write);
         }
@@ -46,7 +45,7 @@
 
             constantBuffer.Update(context, constants);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.VSSetShaderResource(0, batch.Buffer.SRV);
             context.VSSetConstantBuffer(0, constantBuffer);
 
@@ -62,7 +61,7 @@
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetConstantBuffer(1, null);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public void Dispose()

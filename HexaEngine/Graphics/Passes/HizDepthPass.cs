@@ -11,7 +11,7 @@
         private ResourceRef<DepthStencil> depthStencil;
         private ResourceRef<IComputePipeline> downsample;
         private ResourceRef<ConstantBuffer<Vector4>> cbDownsample;
-        private ResourceRef<IGraphicsPipeline> copy;
+        private ResourceRef<IGraphicsPipelineState> copy;
         private ResourceRef<ISamplerState> samplerState;
         private ResourceRef<DepthMipChain> chain;
 
@@ -29,12 +29,11 @@
                 Path = "compute/hiz/shader.hlsl",
             });
 
-            copy = creator.CreateGraphicsPipeline(new()
+            copy = creator.CreateGraphicsPipelineState(new(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen));
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
@@ -54,9 +53,9 @@
             context.SetRenderTarget(chain.RTV, null);
             context.PSSetShaderResource(0, input);
             context.SetViewport(viewports[0]);
-            context.SetGraphicsPipeline(copy.Value);
+            context.SetPipelineState(copy.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetRenderTarget(null, null);
 
             context.SetRenderTarget(null, null);

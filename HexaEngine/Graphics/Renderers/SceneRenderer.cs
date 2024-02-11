@@ -29,19 +29,14 @@ namespace HexaEngine.Graphics.Renderers
         private RenderGraphExecuter graphExecuter;
 
         private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
-        private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
 
         private bool initialized;
         private bool disposedValue;
-
-        private DepthStencil depthStencil;
 
         private ConfigKey configKey;
         private float RenderResolution;
         private int width;
         private int height;
-        private int rendererWidth;
-        private int rendererHeight;
 
         public ICPUFlameProfiler Profiler => profiler;
 
@@ -59,7 +54,17 @@ namespace HexaEngine.Graphics.Renderers
 
         public int Height => height;
 
-        public Vector2 Size => new(width, height);
+        public Vector2 Size
+        {
+            get => new(width, height);
+            set
+            {
+                OnRendererResizeBegin();
+                width = (int)value.X;
+                height = (int)value.Y;
+                OnRendererResizeEnd(width, height);
+            }
+        }
 
         public SceneRenderer(Windows.RendererFlags flags)
         {
@@ -67,6 +72,8 @@ namespace HexaEngine.Graphics.Renderers
         }
 
         public static SceneRenderer Current { get; private set; }
+
+        public SceneDrawFlags DrawFlags { get; set; }
 
         /// <summary>
         /// Initializes the renderer.
@@ -91,11 +98,10 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter = new(device, renderGraph, renderGraph.Passes);
 
-            return
-            Task.Factory.StartNew(Initialize);
+            return Task.Factory.StartNew(Initialize);
         }
 
-        private async void Initialize()
+        private void Initialize()
         {
             InitializeSettings();
 
@@ -103,8 +109,8 @@ namespace HexaEngine.Graphics.Renderers
             resourceCreator.Viewport = new(width, height);
 
             cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write, ResourceCreationFlags.None);
-            weatherBuffer = resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, ResourceCreationFlags.None);
-            aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, ResourceCreationFlags.None);
+            resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
 
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
             graphExecuter.Init(profiler);
@@ -117,23 +123,23 @@ namespace HexaEngine.Graphics.Renderers
         {
             {
                 configKey.TryGetOrAddKeyValue("Width", "1920", DataType.Int32, false, out var val);
-                rendererWidth = val.GetInt32();
+                width = val.GetInt32();
                 val.ValueChanged += (ss, ee) =>
                 {
-                    rendererWidth = ss.GetInt32();
+                    width = ss.GetInt32();
                     OnRendererResizeBegin();
-                    OnRendererResizeEnd(rendererWidth, rendererHeight);
+                    OnRendererResizeEnd(width, height);
                     Config.Global.Save();
                 };
             }
             {
                 configKey.TryGetOrAddKeyValue("Height", "1080", DataType.Int32, false, out var val);
-                rendererHeight = val.GetInt32();
+                height = val.GetInt32();
                 val.ValueChanged += (ss, ee) =>
                 {
-                    rendererHeight = ss.GetInt32();
+                    height = ss.GetInt32();
                     OnRendererResizeBegin();
-                    OnRendererResizeEnd(rendererWidth, rendererHeight);
+                    OnRendererResizeEnd(width, height);
                     Config.Global.Save();
                 };
             }
@@ -165,9 +171,6 @@ namespace HexaEngine.Graphics.Renderers
                 };
             }
 
-            width = rendererWidth;
-            height = rendererHeight;
-
             Config.Global.Save();
         }
 
@@ -178,7 +181,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            depthStencil.Dispose();
+            graphExecuter.ResizeBegin();
         }
 
         private void OnRendererResizeEnd(int width, int height)
@@ -187,8 +190,15 @@ namespace HexaEngine.Graphics.Renderers
             {
                 return;
             }
+            var resourceCreator = graphExecuter.ResourceBuilder;
+            resourceCreator.Viewport = new(width, height);
 
-            depthStencil = new(device, Format.D32Float, width, height);
+            cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write, ResourceCreationFlags.None);
+            resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, ResourceCreationFlags.None);
+            resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
+
+            graphExecuter.ResizeEnd(profiler);
 
             var scene = SceneManager.Current;
             if (scene == null)
@@ -197,10 +207,7 @@ namespace HexaEngine.Graphics.Renderers
             }
         }
 
-        private int selected = -1;
-        private ResourceRef<Texture2D> aoBuffer;
-
-        public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera camera)
+        public unsafe void Render(IGraphicsContext context, Mathematics.Viewport viewport, Scene scene, Camera camera)
         {
             if (!initialized)
             {
@@ -221,7 +228,31 @@ namespace HexaEngine.Graphics.Renderers
             scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
-            graphExecuter.ResourceBuilder.OutputTex = swapChain.Backbuffer;
+            graphExecuter.ResourceBuilder.OutputViewport = viewport;
+            graphExecuter.Execute(context, profiler);
+        }
+
+        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, Scene scene, Camera camera)
+        {
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (camera == null)
+            {
+                return;
+            }
+
+            var cameraBuffer = this.cameraBuffer.Value;
+            cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
+            cameraBuffer.Update(context);
+
+            scene.RenderManager.Update(context);
+            scene.WeatherManager.Update(context);
+            scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
+
+            graphExecuter.ResourceBuilder.Output = target;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
             graphExecuter.Execute(context, profiler);
         }
@@ -236,7 +267,6 @@ namespace HexaEngine.Graphics.Renderers
             Texture2D tempTexture = new(context.Device, Format.R8G8B8A8UNorm, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
-            graphExecuter.ResourceBuilder.OutputTex = tempTexture;
             graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;
             graphExecuter.Execute(context, profiler);
 

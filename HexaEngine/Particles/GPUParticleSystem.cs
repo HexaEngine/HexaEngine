@@ -38,7 +38,7 @@
         private readonly IComputePipeline particleReset;
         private readonly IComputePipeline particleEmit;
         private readonly IComputePipeline particleSimulate;
-        private readonly IGraphicsPipeline particles;
+        private readonly IGraphicsPipelineState particles;
         private readonly IComputePipeline particleSortInitArgs;
         private readonly IComputePipeline particleSort512;
         private readonly IComputePipeline particleBitonicSortStep;
@@ -195,16 +195,15 @@
             particleBitonicSortStep = device.CreateComputePipeline(new("forward/particles/BitonicSortStepCS.hlsl"));
             particleSortInner512 = device.CreateComputePipeline(new("forward/particles/SortInner512CS.hlsl"));
 
-            particles = device.CreateGraphicsPipeline(new()
+            particles = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/particles/ParticleVS.hlsl",
                 PixelShader = "forward/particles/ParticlePS.hlsl",
-                State = new()
-                {
-                    Blend = BlendDescription.AlphaBlend,
-                    BlendFactor = Vector4.One,
-                    Rasterizer = RasterizerDescription.CullBack,
-                }
+            }, new()
+            {
+                Blend = BlendDescription.AlphaBlend,
+                BlendFactor = Vector4.One,
+                Rasterizer = RasterizerDescription.CullBack,
             });
 
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -378,9 +377,9 @@
             context.PSSetShaderResources(0, 2, (void**)ps_srvs);
             context.PSSetSampler(0, linearClampSampler);
 
-            context.SetGraphicsPipeline(particles);
+            context.SetPipelineState(particles);
             context.DrawIndexedInstancedIndirect(indirectRenderArgsBuffer, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetSampler(0, null);
             ZeroMemory(vs_srvs, sizeof(nint) * 3);

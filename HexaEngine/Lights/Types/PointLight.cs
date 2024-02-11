@@ -15,25 +15,6 @@
     [EditorGameObject<PointLight>("Point Light")]
     public class PointLight : Light
     {
-        private static ulong instances;
-        private static ConstantBuffer<DPSMOmniShadowData>? osmBuffer;
-
-        private struct OmniShadowData
-        {
-            public Matrix4x4 View;
-            public Vector3 Position;
-            public float Far;
-        }
-
-        private struct DPSMOmniShadowData
-        {
-            public Matrix4x4 View;
-            public float Near;
-            public float Far;
-            public float HemiDir;
-            public float _padd;
-        }
-
         private ShadowAtlasRangeHandle atlasHandle;
 
         [JsonIgnore]
@@ -46,10 +27,7 @@
         public override LightType LightType => LightType.Point;
 
         [JsonIgnore]
-        public override bool HasShadowMap => atlasHandle.IsValid;
-
-        [JsonIgnore]
-        public static IBuffer OSMBuffer => osmBuffer;
+        public override bool HasShadowMap => atlasHandle?.IsValid ?? false;
 
         public override IShaderResourceView? GetShadowMap()
         {
@@ -58,37 +36,31 @@
 
         public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
-            if (atlasHandle.IsValid)
+            if (HasShadowMap)
             {
                 return;
             }
 
             atlasHandle = atlas.AllocRange(ShadowMapSize, 2);
-
-            if (Interlocked.Increment(ref instances) == 1)
-            {
-                osmBuffer = new(device, CpuAccessFlags.Write);
-            }
         }
 
         public override void DestroyShadowMap()
         {
-            if (!atlasHandle.IsValid)
+            if (!HasShadowMap)
             {
                 return;
             }
 
             atlasHandle.Dispose();
-            if (Interlocked.Decrement(ref instances) == 0)
-            {
-                osmBuffer?.Dispose();
-                osmBuffer = null;
-                osmBuffer = null;
-            }
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
         {
+            if (!HasShadowMap)
+            {
+                return;
+            }
+
             var data = buffer.Local + QueueIndex;
             data->Size = ShadowMapSize;
             data->Softness = 1;
@@ -106,9 +78,9 @@
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, int pass)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<DPSMShadowParams> osmBuffer, int pass)
         {
-            if (!atlasHandle.IsValid)
+            if (!HasShadowMap)
             {
                 return;
             }

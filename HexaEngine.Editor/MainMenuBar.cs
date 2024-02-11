@@ -173,89 +173,89 @@
 
                 if (ImGui.BeginMenu("Inspector"))
                 {
-                    var enabled = Frameviewer.InspectorEnabled;
+                    var enabled = Inspector.Enabled;
                     if (ImGui.Checkbox("Enabled", ref enabled))
                     {
-                        Frameviewer.InspectorEnabled = enabled;
+                        Inspector.Enabled = enabled;
                     }
 
-                    var drawGimbal = Frameviewer.DrawGimbal;
+                    var drawGimbal = Inspector.DrawGimbal;
                     if (ImGui.Checkbox("Draw Gimbal", ref drawGimbal))
                     {
-                        Frameviewer.DrawGimbal = drawGimbal;
+                        Inspector.DrawGimbal = drawGimbal;
                     }
 
-                    var drawGrid = Frameviewer.DrawGrid;
+                    var drawGrid = Inspector.DrawGrid;
                     if (ImGui.Checkbox("Draw Grid", ref drawGrid))
                     {
-                        Frameviewer.DrawGrid = drawGrid;
+                        Inspector.DrawGrid = drawGrid;
                     }
 
                     if (ImGui.BeginPopupContextItem())
                     {
-                        int gridSize = Frameviewer.GridSize;
+                        int gridSize = Inspector.GridSize;
                         if (ImGui.SliderInt("Grid Size", ref gridSize, 1, 500))
                         {
-                            Frameviewer.GridSize = gridSize;
+                            Inspector.GridSize = gridSize;
                         }
 
                         ImGui.EndPopup();
                     }
 
-                    var drawLights = (int)Frameviewer.DrawLights;
+                    var drawLights = (int)Inspector.DrawLights;
                     if (ImGui.CheckboxFlags("Draw Lights", ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
                     {
-                        Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                        Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
 
                     if (ImGui.BeginPopupContextItem())
                     {
                         if (ImGui.CheckboxFlags("No Directional Lights", ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
                         {
-                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                            Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                         }
 
                         if (ImGui.CheckboxFlags("No Point Lights", ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
                         {
-                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                            Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                         }
 
                         if (ImGui.CheckboxFlags("No Spot Lights", ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
                         {
-                            Frameviewer.DrawLights = (EditorDrawLightsFlags)drawLights;
+                            Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                         }
 
                         ImGui.EndPopup();
                     }
 
-                    var drawCameras = Frameviewer.DrawCameras;
+                    var drawCameras = Inspector.DrawCameras;
                     if (ImGui.Checkbox("Draw Cameras", ref drawCameras))
                     {
-                        Frameviewer.DrawCameras = drawCameras;
+                        Inspector.DrawCameras = drawCameras;
                     }
 
-                    var drawLightBounds = Frameviewer.DrawLightBounds;
+                    var drawLightBounds = Inspector.DrawLightBounds;
                     if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
                     {
-                        Frameviewer.DrawLightBounds = drawLightBounds;
+                        Inspector.DrawLightBounds = drawLightBounds;
                     }
 
-                    var drawSkeletons = Frameviewer.DrawSkeletons;
+                    var drawSkeletons = Inspector.DrawSkeletons;
                     if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
                     {
-                        Frameviewer.DrawSkeletons = drawSkeletons;
+                        Inspector.DrawSkeletons = drawSkeletons;
                     }
 
-                    var drawColliders = Frameviewer.DrawColliders;
+                    var drawColliders = Inspector.DrawColliders;
                     if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
                     {
-                        Frameviewer.DrawColliders = drawColliders;
+                        Inspector.DrawColliders = drawColliders;
                     }
 
-                    var drawBoundingBoxes = Frameviewer.DrawBoundingBoxes;
+                    var drawBoundingBoxes = Inspector.DrawBoundingBoxes;
                     if (ImGui.Checkbox("Draw Bounding Boxes", ref drawBoundingBoxes))
                     {
-                        Frameviewer.DrawBoundingBoxes = drawBoundingBoxes;
+                        Inspector.DrawBoundingBoxes = drawBoundingBoxes;
                     }
 
                     ImGui.EndMenu();

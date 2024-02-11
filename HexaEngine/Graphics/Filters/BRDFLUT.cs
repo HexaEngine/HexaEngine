@@ -6,20 +6,19 @@ namespace HexaEngine.Graphics.Filters
 
     public class BRDFLUT
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
 
         public IRenderTargetView Target;
         private bool disposedValue;
 
         public BRDFLUT(IGraphicsDevice device, bool multiscatter, bool cloth)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/dfg/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = [new("MULTISCATTER", multiscatter ? "1" : "0"), new("CLOTH", cloth ? "1" : "0")]
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
         public void Draw(IGraphicsContext context, uint width, uint height)
@@ -34,11 +33,11 @@ namespace HexaEngine.Graphics.Filters
             context.SetRenderTarget(Target, null);
             context.SetViewport(new(width, height));
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetRenderTarget(null, null);
         }
 

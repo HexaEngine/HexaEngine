@@ -16,25 +16,27 @@
             return await manager.CreateInstanceAsync<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Name, (mesh, material, debone));
         }
 
-        public static void UpdateMaterialShader(this ResourceManager manager, ref ResourceInstance<Resources.MaterialShader>? shader)
+        public static void UpdateMaterialShader(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? shader, MaterialData material)
         {
             if (shader == null || shader.Value == null)
             {
                 return;
             }
 
+            shader.Value.Update(material);
             shader.Value.Reload();
         }
 
-        public static async Task<ResourceInstance<Resources.MaterialShader>?> UpdateMaterialShaderAsync(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? pipeline)
+        public static async Task<ResourceInstance<Resources.MaterialShader>?> UpdateMaterialShaderAsync(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? shader, MaterialData material)
         {
-            if (pipeline == null || pipeline.Value == null)
+            if (shader == null || shader.Value == null)
             {
                 return null;
             }
 
-            await pipeline.Value.ReloadAsync();
-            return pipeline;
+            shader.Value.Update(material);
+            await shader.Value.ReloadAsync();
+            return shader;
         }
 
         public static void RecompileShaders(this ResourceManager manager)

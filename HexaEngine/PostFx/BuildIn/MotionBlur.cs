@@ -4,14 +4,14 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
+    using Silk.NET.Vulkan;
     using System.Numerics;
 
     public class MotionBlur : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<MotionBlurParams> paramsBuffer;
         private ISamplerState sampler;
-
         private ResourceRef<Texture2D> Velocity;
 
         private MotionBlurQualityPreset qualityPreset = MotionBlurQualityPreset.High;
@@ -99,13 +99,13 @@
                 shaderMacros.Add(new("SAMPLE_COUNT", sampleCount));
             }
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/motionblur/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = [.. shaderMacros]
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
             paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
@@ -137,11 +137,11 @@
 
             context.PSSetConstantBuffer(0, paramsBuffer);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetConstantBuffer(0, null);
 

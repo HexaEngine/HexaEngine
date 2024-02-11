@@ -19,7 +19,7 @@
             this.desc = desc;
         }
 
-        public MaterialData Desc => desc;
+        public MaterialData Data => desc;
 
         public bool BeginDrawForward(IGraphicsContext context)
         {

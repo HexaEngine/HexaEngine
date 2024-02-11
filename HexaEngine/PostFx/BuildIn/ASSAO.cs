@@ -11,7 +11,7 @@ namespace HexaEngine.PostFx.BuildIn
     public class ASSAO
     {
         private IGraphicsDevice device;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ASSAOParams> paramsBuffer;
 
         private ISamplerState samplerLinear;
@@ -122,12 +122,11 @@ namespace HexaEngine.PostFx.BuildIn
         {
             this.device = device;
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/assao/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);

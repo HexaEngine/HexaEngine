@@ -26,6 +26,8 @@
             PopupManager.Show<OpenProjectWindow>();
 
             ObjectEditorFactory.AddFactory<GameObjectReferenceEditorFactory>();
+            ObjectEditorFactory.AddFactory<MaterialMappingPropertyEditorFactory>();
+            ObjectEditorFactory.AddFactory<MaterialPropertyEditorFactory>();
             ObjectEditorFactory.AddFactory(new DrawLayerPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new BoolPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());

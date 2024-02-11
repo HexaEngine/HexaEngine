@@ -10,7 +10,6 @@
     {
         private const int DefaultCapacity = 4;
 
-        private Allocator* allocator;
         private T* data;
         private int size;
         private int capacity;
@@ -20,17 +19,6 @@
         /// </summary>
         public UnsafeStack()
         {
-            allocator = Allocator.Default;
-            EnsureCapacity(DefaultCapacity);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UnsafeStack{T}"/> struct with a custom allocator and the default capacity.
-        /// </summary>
-        /// <param name="customAllocator">The custom allocator to use.</param>
-        public UnsafeStack(Allocator* customAllocator)
-        {
-            allocator = customAllocator;
             EnsureCapacity(DefaultCapacity);
         }
 
@@ -40,7 +28,6 @@
         /// <param name="capacity">The initial capacity of the stack.</param>
         public UnsafeStack(int capacity)
         {
-            allocator = Allocator.Default;
             EnsureCapacity(capacity);
         }
 
@@ -59,11 +46,11 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = allocator->Allocate<T>(value);
+                var tmp = AllocT<T>(value);
                 var oldsize = size * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(data, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                allocator->Free(data);
+                Free(data);
                 data = tmp;
                 capacity = value;
                 size = capacity < size ? capacity : size;
@@ -79,16 +66,6 @@
             get => data[index];
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set => data[index] = value;
-        }
-
-        /// <summary>
-        /// Sets the allocator for the stack.
-        /// </summary>
-        /// <param name="allocator">The allocator to set.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetAllocator(Allocator* allocator)
-        {
-            this.allocator = allocator;
         }
 
         /// <summary>
@@ -280,7 +257,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Release()
         {
-            allocator->Free(data);
+            Free(data);
             data = null;
             capacity = 0;
             size = 0;

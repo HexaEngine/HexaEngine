@@ -94,11 +94,26 @@
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             capacity = initialCapacity;
-            items = AllocT<T>(initialCapacity);
-            ZeroMemory(items, (int)initialCapacity * sizeof(T));
+
+            if (accessFlags != CpuAccessFlags.None)
+            {
+                items = AllocT<T>(initialCapacity);
+                ZeroMemory(items, (int)initialCapacity * sizeof(T));
+            }
+
             bufferDescription = new(sizeof(T) * (int)initialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
-            buffer = device.CreateBuffer(items, initialCapacity, bufferDescription);
-            buffer.DebugName = dbgName;
+
+            if (items != null)
+            {
+                buffer = device.CreateBuffer(items, initialCapacity, bufferDescription);
+                buffer.DebugName = dbgName;
+            }
+            else
+            {
+                buffer = device.CreateBuffer(bufferDescription);
+                buffer.DebugName = dbgName;
+            }
+
             if (canWrite || canRead)
             {
                 copyDescription = new(sizeof(T) * (int)initialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
@@ -222,13 +237,17 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = AllocT<T>((int)value);
-                ZeroMemory(tmp, DefaultCapacity * sizeof(T));
-                var oldsize = count * sizeof(T);
-                var newsize = value * sizeof(T);
-                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                Free(items);
-                items = tmp;
+                if (items != null)
+                {
+                    var tmp = AllocT<T>((int)value);
+                    ZeroMemory(tmp, DefaultCapacity * sizeof(T));
+                    var oldsize = count * sizeof(T);
+                    var newsize = value * sizeof(T);
+                    Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
+                    Free(items);
+                    items = tmp;
+                }
+
                 capacity = value;
                 count = capacity < count ? capacity : count;
                 srv.Dispose();
@@ -506,6 +525,7 @@
             context.CopyResource(copyBuffer, buffer);
             context.Read(copyBuffer, items, capacity);
         }
+
         /// <summary>
         /// Copies the content of the buffer to another buffer using the graphics context.
         /// </summary>
@@ -530,6 +550,12 @@
                 uav.Dispose();
                 buffer.Dispose();
                 copyBuffer?.Dispose();
+
+                if (items != null)
+                {
+                    Free(items);
+                    items = null;
+                }
                 count = 0;
                 capacity = 0;
                 disposedValue = true;

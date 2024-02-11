@@ -4,6 +4,7 @@
     using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     public class Pin
     {
@@ -239,6 +240,47 @@
             }
 
             editor = null;
+        }
+
+        public Pin? FindLink<TNode>(PinKind searchFor) where TNode : Node
+        {
+            return FindNode<TNode>(this, searchFor);
+        }
+
+        public static Pin? FindNode<TNode>(Pin startPin, PinKind searchFor) where TNode : Node
+        {
+            var visited = new HashSet<Pin>();
+            var stack = new Stack<Pin>();
+            stack.Push(startPin);
+
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                visited.Add(current);
+
+                if (current.Parent is TNode)
+                {
+                    return current;
+                }
+
+                // Check pins based on the direction of search
+                foreach (var pin in current.Parent.Pins)
+                {
+                    if (pin.Kind != searchFor)
+                    {
+                        foreach (var link in pin.Links)
+                        {
+                            var adjacentPin = pin.Kind == PinKind.Input ? link.Output : link.Input;
+                            if (!visited.Contains(adjacentPin))
+                            {
+                                stack.Push(adjacentPin);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

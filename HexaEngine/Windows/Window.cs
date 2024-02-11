@@ -268,7 +268,7 @@
 #nullable disable // a few lines above there is a null check.
                 SceneManager.Current.GraphicsUpdate(context);
 #nullable restore
-                sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
+                sceneRenderer.Render(context, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
             // Invoke virtual method for post-render operations.

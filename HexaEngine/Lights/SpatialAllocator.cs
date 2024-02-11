@@ -203,6 +203,10 @@ namespace HexaEngine.Lights
             rootSpace->InitSubSpaces(rootSpace, targetSize);
         }
 
+        public bool IsDisposed => rootSpace == null;
+
+        public event Action<SpatialAllocator>? OnDisposing;
+
         internal unsafe struct Space
         {
             public Vector2 Size;
@@ -316,6 +320,11 @@ namespace HexaEngine.Lights
 
         internal bool TryAlloc(Vector2 size, Space* space, Space** outSpace)
         {
+            if (rootSpace == null)
+            {
+                throw new ObjectDisposedException(nameof(SpatialAllocator));
+            }
+
             *outSpace = null;
             if (size == space->Size)
             {
@@ -378,6 +387,11 @@ namespace HexaEngine.Lights
 
         private Space* Alloc(Vector2 size, Space* space)
         {
+            if (rootSpace == null)
+            {
+                throw new ObjectDisposedException(nameof(SpatialAllocator));
+            }
+
             if (size == space->Size)
             {
                 // we can't use a used or partially used space.
@@ -423,6 +437,11 @@ namespace HexaEngine.Lights
 
         internal void Free(Space* space)
         {
+            if (rootSpace == null)
+            {
+                return;
+            }
+
             if (space == null)
             {
                 return;
@@ -466,14 +485,23 @@ namespace HexaEngine.Lights
 
         public void Clear()
         {
+            if (rootSpace == null)
+            {
+                throw new ObjectDisposedException(nameof(SpatialAllocator));
+            }
+
             rootSpace->Clear();
         }
 
         public void Dispose()
         {
-            rootSpace->Release();
-            Utils.Free(rootSpace);
-            rootSpace = null;
+            if (rootSpace != null)
+            {
+                OnDisposing?.Invoke(this);
+                rootSpace->Release();
+                Utils.Free(rootSpace);
+                rootSpace = null;
+            }
         }
     }
 }

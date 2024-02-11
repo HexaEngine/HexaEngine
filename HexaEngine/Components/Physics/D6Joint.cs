@@ -800,7 +800,7 @@
 
             ConfigureJoint();
 
-            if (!Application.InDesignMode)
+            if (!Application.InEditMode)
             {
                 //joint->SetDriveVelocityMut(motorVelocity, true);
             }
@@ -995,7 +995,7 @@
 
         private void UpdateMotorVelocity()
         {
-            if (joint == null || updating || Application.InDesignMode)
+            if (joint == null || updating || Application.InEditMode)
             {
                 return;
             }
@@ -1007,7 +1007,7 @@
 
         private void UpdateMotorPosition()
         {
-            if (joint == null || updating || Application.InDesignMode)
+            if (joint == null || updating || Application.InEditMode)
             {
                 return;
             }

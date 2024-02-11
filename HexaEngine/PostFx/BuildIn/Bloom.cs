@@ -17,13 +17,13 @@
 #nullable disable
         private PostFxGraphResourceBuilder creator;
 
-        private IGraphicsPipeline downsample;
+        private IGraphicsPipelineState downsample;
         private ConstantBuffer<DownsampleParams> downsampleCBuffer;
 
-        private IGraphicsPipeline upsample;
+        private IGraphicsPipelineState upsample;
         private ConstantBuffer<UpsampleParams> upsampleCBuffer;
 
-        private IGraphicsPipeline compose;
+        private IGraphicsPipelineState compose;
         private ConstantBuffer<BloomParams> bloomCBuffer;
 
         private ISamplerState linearSampler;
@@ -190,29 +190,26 @@
                 }
             }
 
-            downsample = device.CreateGraphicsPipeline(new()
+            downsample = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            upsample = device.CreateGraphicsPipeline(new()
+            upsample = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            compose = device.CreateGraphicsPipeline(new()
+            compose = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = [.. shaderMacros]
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -298,7 +295,7 @@
         {
             context.PSSetConstantBuffer(0, downsampleCBuffer);
             context.PSSetSampler(0, linearSampler);
-            context.SetGraphicsPipeline(downsample);
+            context.SetPipelineState(downsample);
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
                 if (i > 0)
@@ -318,7 +315,7 @@
             }
 
             context.PSSetConstantBuffer(0, upsampleCBuffer);
-            context.SetGraphicsPipeline(upsample);
+            context.SetPipelineState(upsample);
             for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
@@ -334,14 +331,14 @@
 #nullable restore
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.SetGraphicsPipeline(compose);
+            context.SetPipelineState(compose);
             context.PSSetConstantBuffer(0, bloomCBuffer);
             context.PSSetShaderResources(0, 3, (void**)composeSRVs);
             context.DrawInstanced(4, 1, 0, 0);
             nint* emptySRVs = stackalloc nint[] { 0, 0, 0 };
             context.PSSetShaderResources(0, 3, (void**)emptySRVs);
             context.PSSetConstantBuffer(0, null);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

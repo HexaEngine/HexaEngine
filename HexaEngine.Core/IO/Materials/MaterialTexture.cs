@@ -188,7 +188,7 @@
         /// </summary>
         /// <param name="mode">The <see cref="TextureMapMode"/> to convert.</param>
         /// <returns>The equivalent <see cref="TextureAddressMode"/>.</returns>
-        private static TextureAddressMode Convert(TextureMapMode mode)
+        public static TextureAddressMode Convert(TextureMapMode mode)
         {
             return mode switch
             {
@@ -196,6 +196,22 @@
                 TextureMapMode.Clamp => TextureAddressMode.Clamp,
                 TextureMapMode.Mirror => TextureAddressMode.Mirror,
                 TextureMapMode.Decal => TextureAddressMode.Clamp,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        /// <summary>
+        /// Converts a texture address mode to a corresponding texture map mode.
+        /// </summary>
+        /// <param name="mode">The texture address mode to convert.</param>
+        /// <returns>The converted texture map mode.</returns>
+        public static TextureMapMode Convert(TextureAddressMode mode)
+        {
+            return mode switch
+            {
+                TextureAddressMode.Wrap => TextureMapMode.Wrap,
+                TextureAddressMode.Clamp => TextureMapMode.Clamp,
+                TextureAddressMode.Mirror => TextureMapMode.Mirror,
                 _ => throw new NotSupportedException(),
             };
         }

@@ -8,7 +8,7 @@
     public class Pencil : Tool
     {
         private Vector2 brushSize = Vector2.One;
-        private IGraphicsPipeline brushPipeline;
+        private IGraphicsPipelineState brushPipeline;
 
         public override string Icon => "\xEC87##PencilTool";
 
@@ -27,18 +27,17 @@
                 FrontFace = DepthStencilOperationDescription.DefaultFront,
                 BackFace = DepthStencilOperationDescription.DefaultBack
             };
-            brushPipeline = device.CreateGraphicsPipeline(new()
+            brushPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "tools/image/brush/ps.hlsl",
-                State = new()
-                {
-                    Blend = BlendDescription.AlphaBlend,
-                    BlendFactor = Vector4.Zero,
-                    DepthStencil = depthStencil,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                }
+            }, new()
+            {
+                Blend = BlendDescription.AlphaBlend,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = depthStencil,
+                Rasterizer = RasterizerDescription.CullBack,
+                Topology = PrimitiveTopology.TriangleStrip,
             });
         }
 
@@ -50,17 +49,17 @@
         public override void Draw(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetGraphicsPipeline(brushPipeline);
+            context.SetPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetGraphicsPipeline(brushPipeline);
+            context.SetPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public override void Dispose()

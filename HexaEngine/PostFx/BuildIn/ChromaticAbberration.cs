@@ -11,7 +11,7 @@
     public class ChromaticAberration : PostFxBase
     {
 #nullable disable
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ChromaticAberrationParams> paramsBuffer;
         private ISamplerState samplerState;
 #nullable restore
@@ -66,12 +66,11 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/chromaticaberration/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
@@ -94,9 +93,9 @@
             context.PSSetShaderResource(0, Input);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, samplerState);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);

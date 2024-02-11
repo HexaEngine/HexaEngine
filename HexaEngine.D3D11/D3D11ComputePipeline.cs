@@ -111,19 +111,9 @@
             ((D3D11GraphicsContextBase)context).DeviceContext.CSSetShader((ID3D11ComputeShader*)null, null, 0);
         }
 
-        public virtual void EndDispatch(ID3D11DeviceContext4* context)
+        public static void EndDispatch(ComPtr<ID3D11DeviceContext3> context)
         {
-            if (!valid)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            context->CSSetShader(null, null, 0);
+            context.CSSetShader((ID3D11ComputeShader*)null, null, 0);
         }
 
         public void Recompile()

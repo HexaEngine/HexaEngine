@@ -46,36 +46,36 @@
 #endif
 
 #if HasBaseColorTex
-Texture2D baseColorTexture : register(t0);
-SamplerState baseColorTextureSampler : register(s0);
+Texture2D baseColorTexture;
+SamplerState baseColorTextureSampler;
 #endif
 #if HasNormalTex
-Texture2D normalTexture : register(t1);
-SamplerState normalTextureSampler : register(s1);
+Texture2D normalTexture;
+SamplerState normalTextureSampler;
 #endif
 #if HasRoughnessTex
-Texture2D roughnessTexture : register(t2);
-SamplerState roughnessTextureSampler : register(s2);
+Texture2D roughnessTexture;
+SamplerState roughnessTextureSampler;
 #endif
 #if HasMetallicTex
-Texture2D metallicTexture : register(t3);
-SamplerState metallicTextureSampler : register(s3);
+Texture2D metallicTexture;
+SamplerState metallicTextureSampler;
 #endif
 #if HasEmissiveTex
-Texture2D emissiveTexture : register(t4);
-SamplerState emissiveTextureSampler : register(s4);
+Texture2D emissiveTexture;
+SamplerState emissiveTextureSampler;
 #endif
 #if HasAmbientOcclusionTex
-Texture2D ambientOcclusionTexture : register(t5);
-SamplerState ambientOcclusionTextureSampler : register(s5);
+Texture2D ambientOcclusionTexture;
+SamplerState ambientOcclusionTextureSampler;
 #endif
 #if HasRoughnessMetallicTex
-Texture2D roughnessMetallicTexture : register(t6);
-SamplerState roughnessMetallicTextureSampler : register(s6);
+Texture2D roughnessMetallicTexture;
+SamplerState roughnessMetallicTextureSampler;
 #endif
 #if HasAmbientOcclusionRoughnessMetallicTex
-Texture2D ambientOcclusionRoughnessMetallicTexture : register(t7);
-SamplerState ambientOcclusionRoughnessMetallicSampler : register(s7);
+Texture2D ambientOcclusionRoughnessMetallicTexture;
+SamplerState ambientOcclusionRoughnessMetallicSampler;
 #endif
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)

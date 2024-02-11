@@ -16,8 +16,6 @@
 
         IRenderTargetView? Output { get; }
 
-        ITexture2D OutputTex { get; }
-
         Viewport OutputViewport { get; }
 
         IReadOnlyList<ShadowAtlas> ShadowAtlas { get; }
@@ -45,9 +43,9 @@
 
         ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All);
 
-        ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All);
+        ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All);
 
-        ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All);
+        ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All);
 
         ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, ResourceCreationFlags flags) where TType : class, IDisposable;
 
@@ -81,7 +79,7 @@
 
         ResourceRef<GBuffer> GetGBuffer(string name);
 
-        ResourceRef<IGraphicsPipeline> GetGraphicsPipeline(string name);
+        ResourceRef<IGraphicsPipelineState> GetGraphicsPipelineState(string name);
 
         ResourceRef GetOrAddResource(string name);
 
@@ -121,7 +119,7 @@
 
         void UpdateGBuffer(string name, GBufferDescription description);
 
-        void UpdateGraphicsPipeline(string name, GraphicsPipelineDesc desc);
+        void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc);
 
         void UpdateResource<TType, TDesc>(string name, TDesc desc, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group) where TType : class, IDisposable;
 

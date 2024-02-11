@@ -53,9 +53,9 @@
         }
 
         /// <inheritdoc/>
-        public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)
+        public void DrawAuto(IGraphicsContext context, IGraphicsPipelineState pipeline)
         {
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
@@ -68,7 +68,7 @@
                 context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
             context.SetVertexBuffer(null, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         /// <inheritdoc/>
@@ -86,7 +86,7 @@
                 context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
             context.SetVertexBuffer(null, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         /// <inheritdoc/>

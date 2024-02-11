@@ -35,6 +35,7 @@
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
+            Register<Profiler2Window>();
             Register<MeshEditorWindow>();
             Register<PoseEditorWindow>();
             Register<MaterialEditorWindow>();

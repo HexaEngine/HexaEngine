@@ -304,7 +304,6 @@
             }
         }
 
-
         /// <summary>
         /// Finalizes an instance of the <see cref="UavBuffer"/> class.
         /// </summary>
@@ -896,6 +895,7 @@
                 if (items != null)
                 {
                     Free(items);
+                    items = null;
                 }
                 srv?.Dispose();
                 uav.Dispose();

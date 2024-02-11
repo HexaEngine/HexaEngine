@@ -14,7 +14,7 @@
         protected readonly GraphicsPipelineDesc desc;
         protected ShaderMacro[]? macros;
         protected uint program;
-        protected GraphicsPipelineState state = GraphicsPipelineState.Default;
+        protected GraphicsPipelineStateDesc state = GraphicsPipelineStateDesc.Default;
 
         protected bool valid;
         protected volatile bool initialized;
@@ -28,7 +28,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -38,7 +38,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -49,7 +49,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -82,7 +82,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, ShaderMacro[] macros, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -107,7 +107,7 @@
 
         public string DebugName => dbgName;
 
-        public GraphicsPipelineState State
+        public GraphicsPipelineStateDesc State
         {
             get => state;
             set => throw new NotImplementedException();

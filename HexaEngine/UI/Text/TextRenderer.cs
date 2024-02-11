@@ -7,7 +7,7 @@
 
     public class TextRenderer : IDisposable
     {
-        private readonly IGraphicsPipeline pipeline;
+        private readonly IGraphicsPipelineState pipeline;
         private readonly ConstantBuffer<TextConstants> constantsBuffer;
         private readonly ConstantBuffer<Vector4> colorBuffer;
         private bool disposedValue;
@@ -21,11 +21,11 @@
 
         public TextRenderer(IGraphicsDevice device)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/text/vs.hlsl",
                 PixelShader = "forward/text/ps.hlsl"
-            });
+            }, GraphicsPipelineStateDesc.Default);
 
             constantsBuffer = new(device, CpuAccessFlags.Write);
             colorBuffer = new(device, CpuAccessFlags.Write);
@@ -49,7 +49,7 @@
             constantsBuffer.Update(context, constants);
             colorBuffer.Update(context, color);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             context.VSSetConstantBuffer(0, constantsBuffer);
 
@@ -65,7 +65,7 @@
 
             context.VSSetConstantBuffer(0, null);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public void Draw(IGraphicsContext context, GlyphRun run, Vector4 color, Matrix4x4 transform)

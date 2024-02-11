@@ -11,7 +11,7 @@
 
     public class VelocityBuffer : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VelocityBufferParams> paramsBuffer;
 
         private ISamplerState sampler;
@@ -65,13 +65,12 @@
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/velocity/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
@@ -97,7 +96,7 @@
             context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, sampler);
             context.PSSetShaderResource(0, depth.Value.SRV);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

@@ -121,11 +121,10 @@
             queryManager = new(this);
             scriptManager = new();
             meshManager = new();
-            lightManager = new();
-            lightManager.Initialize(device).Wait();
+            lightManager = new(device);
             renderManager = new(device, lightManager);
             animationManager = new();
-            materialManager = new();
+            materialManager = new(path);
             weatherManager = new();
             objectPickerManager = new();
             drawLayerManager = new();
@@ -160,11 +159,10 @@
             queryManager = new(this);
             scriptManager = new();
             meshManager = new();
-            lightManager = new();
-            await lightManager.Initialize(device);
+            lightManager = new(device);
             renderManager = new(device, lightManager);
             animationManager = new();
-            materialManager = new();
+            materialManager = new(path);
             weatherManager = new();
             objectPickerManager = new();
             drawLayerManager = new();
@@ -257,7 +255,6 @@
         {
             Profiler.Clear();
             semaphore.Wait();
-            CameraManager.Update();
 
             Dispatcher.ExecuteInvokes();
 

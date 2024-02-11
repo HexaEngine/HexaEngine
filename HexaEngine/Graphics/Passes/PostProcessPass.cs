@@ -3,8 +3,10 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.PostFx;
     using HexaEngine.PostFx.BuildIn;
+    using HexaEngine.Scenes;
 
     public class PostProcessPass : DrawPass
     {
@@ -53,6 +55,7 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
+            postProcessingManager.Enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoPostProcessing) == 0;
             postProcessingManager.Input = lightBuffer.Value;
             postProcessingManager.Output = postFxBuffer.Value;
             postProcessingManager.OutputTex = postFxBuffer.Value;

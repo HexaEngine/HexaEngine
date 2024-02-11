@@ -364,7 +364,12 @@
                 MemoryManager.Unregister(buffer);
                 srv.Dispose();
                 buffer.Dispose();
-                Free(items);
+                if (items != null)
+                {
+                    Free(items);
+                    items = null;
+                }
+
                 count = 0;
                 capacity = 0;
                 disposedValue = true;

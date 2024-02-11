@@ -39,16 +39,16 @@ namespace HexaEngine.Graphics.Passes
         private unsafe void** smps;
         private const uint nSamplers = 4;
 
-        private ResourceRef<IGraphicsPipeline> deferredIndirect;
+        private ResourceRef<IGraphicsPipelineState> deferredIndirect;
         private unsafe void** indirectSrvs;
         private const uint nIndirectSrvsBase = 11;
         private const uint nIndirectSrvs = 13;
 
-        private ResourceRef<IGraphicsPipeline> deferred;
+        private ResourceRef<IGraphicsPipelineState> deferred;
         private unsafe void** deferredSrvs;
         private const uint nDeferredSrvs = 10;
 
-        private ResourceRef<IGraphicsPipeline> deferredClusterd;
+        private ResourceRef<IGraphicsPipelineState> deferredClusterd;
         private unsafe void** deferredClusterdSrvs;
         private const uint nDeferredClusterdSrvs = 12;
 
@@ -97,26 +97,35 @@ namespace HexaEngine.Graphics.Passes
             deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
             deferredClusterdSrvs = AllocArrayAndZero(nDeferredClusterdSrvs);
 
-            deferredIndirect = creator.CreateGraphicsPipeline(new()
+            deferredIndirect = creator.CreateGraphicsPipelineState(new()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "deferred/brdf/indirect.hlsl",
-                State = GraphicsPipelineState.DefaultAdditiveFullscreen
+                Pipeline = new()
+                {
+                    VertexShader = "quad.hlsl",
+                    PixelShader = "deferred/brdf/indirect.hlsl",
+                },
+                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
             });
 
-            deferred = creator.CreateGraphicsPipeline(new()
+            deferred = creator.CreateGraphicsPipelineState(new()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "deferred/brdf/light.hlsl",
-                State = GraphicsPipelineState.DefaultAdditiveFullscreen
+                Pipeline = new()
+                {
+                    VertexShader = "quad.hlsl",
+                    PixelShader = "deferred/brdf/light.hlsl",
+                },
+                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
             });
 
-            deferredClusterd = creator.CreateGraphicsPipeline(new()
+            deferredClusterd = creator.CreateGraphicsPipelineState(new()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "deferred/brdf/light.hlsl",
-                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
-                Macros = [new("CLUSTERED_DEFERRED", 1)]
+                Pipeline = new()
+                {
+                    VertexShader = "quad.hlsl",
+                    PixelShader = "deferred/brdf/light.hlsl",
+                    Macros = [new("CLUSTERED_DEFERRED", 1)]
+                },
+                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen,
             });
         }
 
@@ -202,9 +211,9 @@ namespace HexaEngine.Graphics.Passes
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(0, nIndirectSrvs, indirectSrvs);
 
-            context.SetGraphicsPipeline(deferredIndirect.Value);
+            context.SetPipelineState(deferredIndirect.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(deferredIndirect.Value);
+            context.SetPipelineState(null);
 
             nint* null_samplers = stackalloc nint[4];
             context.PSSetSamplers(0, 4, (void**)null_samplers);
@@ -238,9 +247,9 @@ namespace HexaEngine.Graphics.Passes
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
 
-            context.SetGraphicsPipeline(deferred.Value);
+            context.SetPipelineState(deferred.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             nint* null_samplers = stackalloc nint[(int)nSamplers];
             context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
@@ -259,9 +268,9 @@ namespace HexaEngine.Graphics.Passes
             context.PSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
 
-            context.SetGraphicsPipeline(deferredClusterd.Value);
+            context.SetPipelineState(deferredClusterd.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             nint* null_samplers = stackalloc nint[(int)nSamplers];
             context.PSSetSamplers(0, nSamplers, (void**)null_samplers);

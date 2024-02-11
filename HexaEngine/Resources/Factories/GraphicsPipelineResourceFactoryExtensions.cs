@@ -24,16 +24,5 @@
             pipeline.BeginLoad();
             pipeline.EndLoad(pipe);
         }
-
-        public static async void UpdatePipelineAsync(this ResourceManager manager, ResourceInstance<IGraphicsPipeline>? pipeline, GraphicsPipelineDesc desc)
-        {
-            if (pipeline == null)
-            {
-                return;
-            }
-            var pipe = await manager.GraphicsDevice.CreateGraphicsPipelineAsync(desc);
-            pipeline.BeginLoad();
-            pipeline.EndLoad(pipe);
-        }
     }
 }

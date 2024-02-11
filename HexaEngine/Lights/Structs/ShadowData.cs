@@ -4,6 +4,44 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
+    public struct CSMShadowParams
+    {
+        public Matrix4x4 View;
+
+        public CSMShadowParams(Matrix4x4 view)
+        {
+            View = view;
+        }
+    }
+
+    public struct PSMShadowParams
+    {
+        public Matrix4x4 View;
+
+        public PSMShadowParams(Matrix4x4 view)
+        {
+            View = view;
+        }
+    }
+
+    public struct DPSMShadowParams
+    {
+        public Matrix4x4 View;
+        public float Near;
+        public float Far;
+        public float HemiDir;
+        public float _padd;
+
+        public DPSMShadowParams(Matrix4x4 view, float near, float far, float hemiDir)
+        {
+            View = view;
+            Near = near;
+            Far = far;
+            HemiDir = hemiDir;
+            _padd = 0;
+        }
+    }
+
     public struct ShadowData
     {
         public static readonly unsafe int CascadePointerOffset = sizeof(Matrix4x4) * 8;

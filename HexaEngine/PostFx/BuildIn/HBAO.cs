@@ -15,7 +15,7 @@ namespace HexaEngine.PostFx.BuildIn
     public class HBAO : PostFxBase
     {
         private IGraphicsDevice device;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<HBAOParams> paramsBuffer;
         private Texture2D noiseTex;
         private Texture2D intermediateTex;
@@ -119,12 +119,11 @@ namespace HexaEngine.PostFx.BuildIn
 
             this.device = device;
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(device, CpuAccessFlags.Write);
             intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "HBAO", Format.R32Float);
@@ -188,9 +187,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.PSSetConstantBuffers(0, 2, (void**)cbs);
             context.PSSetSampler(0, samplerLinear);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             ZeroMemory(srvs, sizeof(nint) * 3);
             ZeroMemory(cbs, sizeof(nint) * 2);
             context.PSSetSampler(0, null);

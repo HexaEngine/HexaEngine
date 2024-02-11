@@ -49,15 +49,15 @@
 
     internal class TerrainEditor : IObjectEditor
     {
-        private IGraphicsPipeline brushOverlay;
+        private IGraphicsPipelineState brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
         private ConstantBuffer<CBColorMask> maskBuffer;
         private ConstantBuffer<Matrix4x4> WorldBuffer;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private DepthStencil depthStencil;
 
-        private IGraphicsPipeline maskOverlay;
-        private IGraphicsPipeline maskEdit;
+        private IGraphicsPipelineState maskOverlay;
+        private IGraphicsPipelineState maskEdit;
         private ISamplerState maskSampler;
 
         private bool isDown;
@@ -110,31 +110,29 @@
 
                 depthStencil = new(device, Format.D32Float, 1024, 1024);
 
-                brushOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
+                brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
                     VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
                     PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
-                    State = new()
-                    {
-                        DepthStencil = DepthStencilDescription.None,
-                        Rasterizer = RasterizerDescription.CullBack,
-                        Blend = BlendDescription.Opaque,
-                        Topology = PrimitiveTopology.TriangleList,
-                    },
+                }, new()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
                     InputElements = inputElements
                 });
 
-                maskOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
+                maskOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
                     VertexShader = "tools/terrain/overlay/mask/vs.hlsl",
                     PixelShader = "tools/terrain/overlay/mask/ps.hlsl",
-                    State = new()
-                    {
-                        DepthStencil = DepthStencilDescription.None,
-                        Rasterizer = RasterizerDescription.CullBack,
-                        Blend = BlendDescription.Opaque,
-                        Topology = PrimitiveTopology.TriangleList,
-                    },
+                }, new()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
                     InputElements = inputElements
                 });
                 DepthStencilDescription depthStencilD = new()
@@ -149,17 +147,16 @@
                     BackFace = DepthStencilOperationDescription.DefaultBack
                 };
 
-                maskEdit = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
+                maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
                     VertexShader = "quad.hlsl",
                     PixelShader = "tools/terrain/edit/mask/ps.hlsl",
-                    State = new GraphicsPipelineState()
-                    {
-                        DepthStencil = depthStencilD,
-                        Rasterizer = RasterizerDescription.CullBack,
-                        Blend = BlendDescription.AlphaBlend,
-                        Topology = PrimitiveTopology.TriangleStrip,
-                    },
+                }, new()
+                {
+                    DepthStencil = depthStencilD,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.AlphaBlend,
+                    Topology = PrimitiveTopology.TriangleStrip,
                     InputElements = inputElements
                 });
                 maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
@@ -347,7 +344,7 @@
                         {
                             context.PSSetShaderResource(0, tuple.Value.Item2.SRV);
                             context.PSSetSampler(0, maskSampler);
-                            context.SetGraphicsPipeline(maskOverlay);
+                            context.SetPipelineState(maskOverlay);
                             context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
                         }
                     }
@@ -361,7 +358,7 @@
                         }
                         brushBuffer.Update(context);
 
-                        context.SetGraphicsPipeline(brushOverlay);
+                        context.SetPipelineState(brushOverlay);
                         context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
 
                         if (Mouse.IsDown(MouseButton.Left))
@@ -409,7 +406,7 @@
                                 context.PSSetShaderResource(0, null);
                                 context.PSSetConstantBuffer(0, maskBuffer);
                                 context.SetRenderTarget(tuple.Value.Item2.RTV, depthStencil.DSV);
-                                context.SetGraphicsPipeline(maskEdit);
+                                context.SetPipelineState(maskEdit);
                                 context.SetViewport(tuple.Value.Item2.Viewport);
 
                                 Matrix4x4.Invert(cell.Transform, out var inverse);

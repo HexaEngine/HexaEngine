@@ -11,7 +11,7 @@
     /// </summary>
     public class SSR : PostFxBase
     {
-        private IGraphicsPipeline pipelineSSR;
+        private IGraphicsPipelineState pipelineSSR;
 
         private ISamplerState pointClampSampler;
         private ISamplerState linearClampSampler;
@@ -228,13 +228,12 @@
                 ssrParamsBuffer = new(device, CpuAccessFlags.Write);
             }
 
-            pipelineSSR = device.CreateGraphicsPipeline(new()
+            pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssr/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = [.. shaderMacros]
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
         /// <inheritdoc/>
@@ -267,9 +266,9 @@
             nint* smps = stackalloc nint[] { pointClampSampler.NativePointer, linearClampSampler.NativePointer, linearBorderSampler.NativePointer };
             context.PSSetSamplers(0, 3, (void**)smps);
 
-            context.SetGraphicsPipeline(pipelineSSR);
+            context.SetPipelineState(pipelineSSR);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             nint* emptySmps = stackalloc nint[3];
             context.PSSetSamplers(0, 3, (void**)emptySmps);

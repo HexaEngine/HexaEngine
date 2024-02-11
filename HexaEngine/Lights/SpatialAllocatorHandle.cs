@@ -26,7 +26,7 @@
 
         public Viewport Viewport => new(Offset, Size);
 
-        public bool IsValid => space != null;
+        public bool IsValid => space != null && !allocator.IsDisposed;
 
         public void Reallocate(Vector2 size)
         {

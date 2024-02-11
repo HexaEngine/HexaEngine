@@ -62,6 +62,11 @@
         {
         }
 
+        public virtual void OnResize(GraphResourceBuilder creator)
+        {
+            Release();
+        }
+
         private void AddBinding(ResourceBinding binding)
         {
             readAndWriteBindings.Add(binding);

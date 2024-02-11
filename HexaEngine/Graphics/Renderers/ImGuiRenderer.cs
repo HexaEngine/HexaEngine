@@ -17,7 +17,7 @@ namespace HexaEngine.Graphics.Renderers
     {
         private static IGraphicsDevice device;
         private static IGraphicsContext context;
-        private static IGraphicsPipeline pipeline;
+        private static IGraphicsPipelineState pso;
         private static IBuffer vertexBuffer;
         private static IBuffer indexBuffer;
         private static IBuffer constantBuffer;
@@ -46,7 +46,7 @@ namespace HexaEngine.Graphics.Renderers
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
-            ctx.SetGraphicsPipeline(pipeline);
+            ctx.SetPipelineState(pso);
             ctx.SetViewport(viewport);
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
@@ -204,7 +204,7 @@ namespace HexaEngine.Graphics.Renderers
                 global_vtx_offset += cmdList->VtxBuffer.Size;
             }
 
-            ctx.SetGraphicsPipeline(null);
+            ctx.SetPipelineState(null);
             ctx.SetViewport(default);
             ctx.SetVertexBuffer(null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);
@@ -318,16 +318,15 @@ namespace HexaEngine.Graphics.Renderers
                 new InputElementDescription( "COLOR",    0, Format.R8G8B8A8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
             };
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "internal/imgui/vs.hlsl",
                 PixelShader = "internal/imgui/ps.hlsl",
-                State = new()
-                {
-                    Blend = blendDesc,
-                    DepthStencil = depthDesc,
-                    Rasterizer = rasterDesc,
-                },
+            }, new()
+            {
+                Blend = blendDesc,
+                DepthStencil = depthDesc,
+                Rasterizer = rasterDesc,
                 InputElements = inputElements
             });
 
@@ -345,7 +344,7 @@ namespace HexaEngine.Graphics.Renderers
 
         private static void InvalidateDeviceObjects()
         {
-            pipeline.Dispose();
+            pso.Dispose();
             fontSampler.Dispose();
             fontTextureView.Dispose();
             indexBuffer.Dispose();

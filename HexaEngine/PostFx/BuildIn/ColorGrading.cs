@@ -17,9 +17,7 @@
     public class ColorGrading : PostFxBase
     {
 #nullable disable
-        private IGraphicsPipeline pipeline;
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
-        private ISamplerState samplerState;
 #nullable restore
         private float shoulderStrength = 0.2f;
         private float linearStrength = 0.29f;
@@ -254,14 +252,19 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            pipeline = device.CreateGraphicsPipeline(new()
+
+            var pass = new PostFxPass(creator, new()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/colorgrading/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
+                Pipeline = new()
+                {
+                    VertexShader = "quad.hlsl",
+                    PixelShader = "effects/colorgrading/ps.hlsl",
+                },
+                State = GraphicsPipelineStateDesc.DefaultFullscreenF
             });
 
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            pass.Bindings.SetCBV("TonemapParams", paramsBuffer);
+            Passes.Add(pass);
         }
 
         /// <inheritdoc/>
@@ -318,29 +321,9 @@
         }
 
         /// <inheritdoc/>
-        public override void Draw(IGraphicsContext context)
-        {
-            context.SetRenderTarget(Output, null);
-            context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState);
-            context.SetGraphicsPipeline(pipeline);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
-            context.SetRenderTarget(null, null);
-        }
-
-        /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            pipeline.Dispose();
             paramsBuffer.Dispose();
-            samplerState.Dispose();
         }
     }
 }

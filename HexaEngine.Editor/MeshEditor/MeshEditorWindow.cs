@@ -499,7 +499,7 @@
 
                     if (drawWireframe && meshSource.Overlay.IsValid && meshSource.Overlay.IsInitialized)
                     {
-                        context.SetGraphicsPipeline(meshSource.Overlay);
+                        context.SetPipelineState(meshSource.Overlay);
                         meshSource.Draw(context);
                     }
 
@@ -523,14 +523,14 @@
 
                         boneBuffer.Update(context);
                         context.VSSetShaderResource(0, boneBuffer.SRV);
-                        context.SetGraphicsPipeline(meshSource.Solid);
+                        context.SetPipelineState(meshSource.Solid);
                         meshSource.Draw(context);
                     }
 
                     if ((drawNormals || drawTangents || drawBitangents) && meshSource.Normals.IsValid && meshSource.Normals.IsInitialized)
                     {
                         context.GSSetConstantBuffer(0, ntbView);
-                        context.SetGraphicsPipeline(meshSource.Normals);
+                        context.SetPipelineState(meshSource.Normals);
                         meshSource.Draw(context);
                     }
 

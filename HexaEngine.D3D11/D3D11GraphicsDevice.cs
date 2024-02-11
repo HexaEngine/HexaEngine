@@ -17,7 +17,7 @@
     using SubresourceData = Core.Graphics.SubresourceData;
     using Usage = Core.Graphics.Usage;
 
-    public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
+    public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice, IGraphicsDevice1
     {
         internal readonly D3D11 D3D11;
 
@@ -140,49 +140,14 @@
             return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11ComputePipeline(this, desc, macros, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new D3D11GraphicsPipeline(this, desc, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new D3D11GraphicsPipeline(this, desc, macros, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, state, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, state, macros, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return new D3D11GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipelineState(this, (D3D11GraphicsPipeline)pipeline, desc, $"({nameof(D3D11GraphicsPipelineState)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -677,6 +642,12 @@
             var desc = Helper.Convert(description);
             Device.CreateUnorderedAccessView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle);
             return new D3D11UnorderedAccessView(view, description);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        {
+            return new D3D11ResourceBindingList((D3D11GraphicsPipeline)pipeline);
         }
     }
 }

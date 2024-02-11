@@ -11,7 +11,7 @@ namespace HexaEngine.PostFx.BuildIn
     public class GTAO
     {
         private IGraphicsDevice device;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<GTAOParams> paramsBuffer;
         private ISamplerState samplerLinear;
 
@@ -81,12 +81,11 @@ namespace HexaEngine.PostFx.BuildIn
         {
             this.device = device;
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "effects/gato/vs.hlsl",
                 PixelShader = "effects/gato/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);

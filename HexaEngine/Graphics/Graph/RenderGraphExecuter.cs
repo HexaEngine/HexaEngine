@@ -11,7 +11,7 @@
         private readonly RenderGraph renderGraph;
         private readonly RenderPass[] renderPasses;
         private readonly RenderPass[] renderPassesSorted;
-        private HashSet<RenderPass> triggeredPasses = new();
+        private readonly HashSet<RenderPass> triggeredPasses = [];
         private bool oneHitPassed;
 
         public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph, RenderPass[] renderPasses)
@@ -89,6 +89,27 @@
 #endif
             }
             oneHitPassed = true;
+        }
+
+        public void ResizeBegin()
+        {
+            resourceCreator.ReleaseResources();
+            pipelineCreator.ReleaseResources();
+            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            {
+                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                pass.OnResize(resourceCreator);
+            }
+        }
+
+        public void ResizeEnd(ICPUProfiler? profiler)
+        {
+            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            {
+                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                pass.Init(resourceCreator, profiler);
+            }
+            resourceCreator.CreateResources();
         }
 
         public void Release()

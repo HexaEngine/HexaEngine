@@ -1,32 +1,23 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Input;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Metadata;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Generator;
-    using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
     using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
     using HexaEngine.Editor.NodeEditor;
-    using Hexa.NET.ImGui;
-    using HexaEngine.Lights;
-    using HexaEngine.Lights.Structs;
-    using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using System.IO;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
     using System.Reflection;
     using System.Text;
@@ -34,77 +25,110 @@
     [EditorWindowCategory("Tools")]
     public class MaterialEditorWindow : EditorWindow
     {
-        private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
-        private readonly SaveFileDialog saveFileDialog = new(null, ".matlib");
-
         private const string MetadataKey = "MatNodes.Data";
 
-        private readonly MaterialLibraryWindow libraryWindow;
+        private IGraphicsDevice device;
 
         private NodeEditor? editor;
         private InputNode geometryNode;
         private BRDFShadingModelNode outputNode;
 
-        private List<TextureFileNode> textureFiles = new();
-
-        private Sphere sphere;
-
-        private ConstantBuffer<Matrix4x4> world;
-        private ConstantBuffer<CBCamera> view;
-
-        private StructuredBuffer<LightData> lights;
-        private ConstantBuffer<DeferredLightParams> lightParams;
-
-        private readonly PointLight pointLight = new();
-
-        private DepthStencil depthStencil;
-        private Texture2D textureTonemap;
-        private Texture2D texturePreview;
-        private Texture2D iblDFG;
-
-        private IGraphicsDevice device;
-        private IGraphicsPipeline? pipeline;
-        private ISamplerState sampler;
-        private IGraphicsPipeline dfg;
-        private IGraphicsPipeline tonemap;
-        private IGraphicsPipeline fxaa;
-
-        private Vector3 sc = new(2, 0, 0);
-        private const float speed = 1;
-        private static bool first = true;
-
-        private CameraTransform camera = new();
         private (string, Type)[] intrinsicFuncs;
         private (string, Type)[] operatorFuncs;
         private readonly ShaderGenerator generator = new();
         private bool autoGenerate = true;
-        private volatile bool compiling;
+
+        private Task updateMaterialTask;
+
         private readonly SemaphoreSlim semaphore = new(1);
 
-        private string? currentFile;
-        private MaterialLibrary? materialLibrary;
+        private readonly List<TextureFileNode> textureFiles = new();
+
         private MaterialData? material;
+        private bool unsavedData;
+        private bool unsavedDataDialogIsOpen;
 
         public MaterialEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
-            libraryWindow = new(this);
+
+            Application.OnEditorPlayStateTransition += ApplicationOnEditorPlayStateTransition;
+            Application.MainWindow.Closing += MainWindowClosing;
         }
 
-        public string? CurrentFile => currentFile;
+        private void MainWindowClosing(object? sender, Core.Windows.Events.CloseEventArgs e)
+        {
+            if (unsavedData)
+            {
+                e.Handled = true;
+                if (!unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("(Material Editor) Unsaved changes", $"Do you want to save the changes in material {material?.Name}?", this, (messageBox, state) =>
+                    {
+                        if (state is not MaterialEditorWindow materialEditor)
+                        {
+                            return;
+                        }
 
-        public MaterialLibrary? MaterialLibrary => materialLibrary;
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            materialEditor.Save();
+                            Application.MainWindow.Close();
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            materialEditor.unsavedData = false;
+                            Application.MainWindow.Close();
+                        }
+
+                        materialEditor.unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
+        }
+
+        private void ApplicationOnEditorPlayStateTransition(EditorPlayStateTransitionEventArgs args)
+        {
+            if (unsavedData && args.NewState == EditorPlayState.Play)
+            {
+                args.Cancel = true;
+                if (!unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("(Material Editor) Unsaved changes", $"Do you want to save the changes in material {material?.Name}?", (this, args), (messageBox, state) =>
+                    {
+                        if (state is not (MaterialEditorWindow materialEditor, EditorPlayStateTransitionEventArgs args))
+                        {
+                            return;
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            materialEditor.Save();
+                            SceneWindow.TransitionToState(args.NewState);
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            materialEditor.unsavedData = false;
+                            SceneWindow.TransitionToState(args.NewState);
+                        }
+
+                        materialEditor.unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
+        }
 
         public MaterialData? Material
         {
             get => material;
             set
             {
-                if (device == null || materialLibrary == null)
-                    return;
-
-                if (!materialLibrary.Materials.Contains(value))
+                if (device == null)
                     return;
 
                 if (editor != null)
@@ -319,6 +343,50 @@
             }
         }
 
+        private static void InsertTextures(MaterialData material, NodeEditor editor)
+        {
+            material.Textures.Clear();
+            foreach (var textureNode in editor.GetNodes<TextureFileNode>())
+            {
+                if (string.IsNullOrWhiteSpace(textureNode.Path))
+                {
+                    continue;
+                }
+
+                var connection = textureNode.OutColor.FindLink<BRDFShadingModelNode>(PinKind.Input);
+
+                if (connection is not PropertyPin propertyPin)
+                    continue;
+
+                if (!Enum.TryParse<MaterialTextureType>(propertyPin.PropertyName, true, out var type))
+                    continue;
+
+                var desc = textureNode.SamplerDescription;
+
+                Core.IO.Materials.MaterialTexture texture;
+                texture.Type = type;
+                texture.File = textureNode.Path;
+                texture.Blend = BlendMode.Default;
+                texture.Op = TextureOp.Add;
+                texture.Mapping = 0;
+                texture.UVWSrc = 0;
+                texture.U = Core.IO.Materials.MaterialTexture.Convert(desc.AddressU);
+                texture.V = Core.IO.Materials.MaterialTexture.Convert(desc.AddressV);
+                texture.Flags = TextureFlags.None;
+
+                int index = material.GetTextureIndex(type);
+
+                if (index != -1)
+                {
+                    material.Textures[index] = texture;
+                }
+                else
+                {
+                    material.Textures.Add(texture);
+                }
+            }
+        }
+
         public void Sort()
         {
             var groups = NodeEditor.TreeTraversal2(outputNode, true);
@@ -347,68 +415,34 @@
             editor.EndModify();
         }
 
-        public void Open(string filename)
-        {
-            try
-            {
-                materialLibrary = MaterialLibrary.LoadExternal(filename);
-                currentFile = filename;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to load material library: {filename}", ex.Message);
-                Logger.Error($"Failed to load material library: {filename}");
-                Logger.Log(ex);
-            }
-        }
-
         public void Unload()
         {
+            unsavedData = false;
             Material = null;
-            materialLibrary = null;
-            currentFile = null;
         }
 
         public void Save()
         {
-            if (currentFile == null)
-                return;
-
-            SaveAs(currentFile);
-        }
-
-        public void CreateNew()
-        {
-            materialLibrary = new();
-        }
-
-        public void SaveAs(string filename)
-        {
-            if (materialLibrary == null)
-                return;
+            unsavedData = false;
 
             if (material != null && editor != null)
             {
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 InsertProperties(material, editor);
+                InsertTextures(material, editor);
+                MaterialManager.Current?.SaveChanges(material);
             }
+        }
 
-            try
-            {
-                materialLibrary.Save(filename, Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to save material library: {filename}", ex.Message);
-                Logger.Error($"Failed to save material library: {filename}");
-                Logger.Log(ex);
-            }
+        public void CreateNew()
+        {
+            material = new();
         }
 
         protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
-            libraryWindow.Init(device);
+
             generator.OnPreBuildTable += GeneratorOnPreBuildTable;
 
             if (material != null)
@@ -416,77 +450,36 @@
                 Material = material;
             }
 
-            sphere = new(device);
-            world = new(device, Matrix4x4.Transpose(Matrix4x4.Identity), CpuAccessFlags.None);
-            view = new(device, CpuAccessFlags.Write);
-            lightParams = new(device, CpuAccessFlags.Write);
-            lights = new(device, CpuAccessFlags.Write);
-            pointLight.Transform.Position = new(10, 10, -10);
-            pointLight.Transform.Recalculate();
-            lights.Add(new(pointLight));
-
-            depthStencil = new(device, Format.D32Float, 1024, 1024);
-            textureTonemap = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            texturePreview = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            tonemap = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/colorgrading/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
-            fxaa = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/fxaa/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
-            });
-
-            camera.Fov = 90;
-            camera.Width = 1;
-            camera.Height = 1;
-
             intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
             intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
             operatorFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
-
-            dfg = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/dfg/ps.hlsl",
-                State = GraphicsPipelineState.Default,
-                Macros = [new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0")]
-            });
-
-            iblDFG = new(device, Format.R16G16B16A16Float, 128, 128, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            var context = device.Context;
-            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
-            {
-                context.SetRenderTarget(iblDFG.RTV, null);
-                context.SetViewport(new(128, 128));
-                context.SetGraphicsPipeline(dfg);
-                context.DrawInstanced(4, 1, 0, 0);
-                context.SetGraphicsPipeline(null);
-                context.SetRenderTarget(null, null);
-            });
         }
 
         private void LinkRemoved(object? sender, Link e)
         {
             if (autoGenerate)
-                Generate();
+            {
+                UpdateMaterial();
+            }
+            unsavedData = true;
         }
 
         private void LinkAdded(object? sender, Link e)
         {
             if (autoGenerate)
-                Generate();
+            {
+                UpdateMaterial();
+            }
+            unsavedData = true;
         }
 
         private void NodePinValueChanged(object? sender, Pin e)
         {
             if (autoGenerate)
-                Generate();
+            {
+                UpdateMaterial();
+            }
+            unsavedData = true;
         }
 
         private void GeneratorOnPreBuildTable(VariableTable table)
@@ -497,62 +490,82 @@
 
         protected override void DisposeCore()
         {
-            libraryWindow.Dispose();
-
             if (editor != null && material != null)
             {
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 editor.Destroy();
                 editor = null;
             }
-
-            sphere.Dispose();
-
-            world.Dispose();
-            view.Dispose();
-
-            lights.Dispose();
-            lightParams.Dispose();
-
-            depthStencil.Dispose();
-            textureTonemap.Dispose();
-            texturePreview.Dispose();
-            iblDFG.Dispose();
-
-            pipeline?.Dispose();
-            sampler.Dispose();
-            dfg.Dispose();
-            tonemap.Dispose();
-            fxaa.Dispose();
         }
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (openFileDialog.Draw())
+            HandleHotkeys();
+
+            if (unsavedData)
             {
-                if (openFileDialog.Result == OpenFileResult.Ok)
-                {
-                    Open(openFileDialog.FullPath);
-                }
+                Flags |= ImGuiWindowFlags.UnsavedDocument;
+            }
+            else
+            {
+                Flags &= ~ImGuiWindowFlags.UnsavedDocument;
             }
 
-            if (saveFileDialog.Draw())
-            {
-                if (saveFileDialog.Result == SaveFileResult.Ok)
-                {
-                    SaveAs(saveFileDialog.FullPath);
-                }
-            }
+            DrawMenuBar(context);
 
-            libraryWindow.DrawWindow(context);
+            ImGui.BeginTable("Table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable);
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("");
 
-            DrawMenuBar();
-            DrawNodesWindow(context);
-            DrawPreviewWindow(context);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+
             editor?.Draw();
+
+            ImGui.TableSetColumnIndex(1);
+
+            if (material != null)
+            {
+                var name = material.Name;
+                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                {
+                    material.Name = name;
+                }
+
+                var flags = (int)material.Flags;
+                if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+                {
+                    material.Flags = (MaterialFlags)flags;
+                    unsavedData = true;
+                    UpdateMaterial();
+                }
+                if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
+                {
+                    material.Flags = (MaterialFlags)flags;
+                    unsavedData = true;
+                    UpdateMaterial();
+                }
+            }
+
+            ImGui.EndTable();
         }
 
-        private void DrawMenuBar()
+        private void HandleHotkeys()
+        {
+            bool focused = ImGui.IsWindowFocused(ImGuiFocusedFlags.ChildWindows);
+
+            if (!focused)
+            {
+                return;
+            }
+
+            if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl) && ImGui.IsKeyDown(ImGuiKey.S))
+            {
+                Save();
+            }
+        }
+
+        private void DrawMenuBar(IGraphicsContext context)
         {
             if (ImGui.BeginMenuBar())
             {
@@ -563,19 +576,9 @@
                         CreateNew();
                     }
 
-                    if (ImGui.MenuItem("Load"))
-                    {
-                        openFileDialog.Show();
-                    }
-
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Save"))
-                    {
-                        Save();
-                    }
-
-                    if (ImGui.MenuItem("Save as"))
                     {
                         Save();
                     }
@@ -589,13 +592,20 @@
 
                     ImGui.EndMenu();
                 }
+
+                if (ImGui.BeginMenu("Nodes"))
+                {
+                    DrawNodesMenu(context);
+                    ImGui.EndMenu();
+                }
+
                 if (ImGui.MenuItem("Sort"))
                 {
                     Sort();
                 }
                 if (ImGui.MenuItem("Generate"))
                 {
-                    Generate();
+                    UpdateMaterial();
                 }
 
                 ImGui.Checkbox("Auto", ref autoGenerate);
@@ -604,20 +614,14 @@
             }
         }
 
-        private void DrawNodesWindow(IGraphicsContext context)
+        private void DrawNodesMenu(IGraphicsContext context)
         {
             if (editor == null)
             {
-                ImGui.Text("No material open");
-                return;
-            }
-            if (!ImGui.Begin("Add SplitNode"))
-            {
-                ImGui.End();
                 return;
             }
 
-            if (ImGui.CollapsingHeader("Textures"))
+            if (ImGui.BeginMenu("Textures"))
             {
                 if (ImGui.MenuItem("Texture File"))
                 {
@@ -625,18 +629,22 @@
                     editor.AddNode(node);
                     textureFiles.Add(node);
                 }
+
+                ImGui.EndMenu();
             }
 
-            if (ImGui.CollapsingHeader("Methods"))
+            if (ImGui.BeginMenu("Methods"))
             {
                 if (ImGui.MenuItem("Normal Map"))
                 {
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
+
+                ImGui.EndMenu();
             }
 
-            if (ImGui.CollapsingHeader("Constants"))
+            if (ImGui.BeginMenu("Constants"))
             {
                 if (ImGui.MenuItem("Converter"))
                 {
@@ -668,9 +676,11 @@
                     CamPosNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
+
+                ImGui.EndMenu();
             }
 
-            if (ImGui.CollapsingHeader("Operators"))
+            if (ImGui.BeginMenu("Operators"))
             {
                 for (int i = 0; i < operatorFuncs.Length; i++)
                 {
@@ -681,9 +691,11 @@
                         editor.AddNode(node);
                     }
                 }
+
+                ImGui.EndMenu();
             }
 
-            if (ImGui.CollapsingHeader("Intrinsic Functions"))
+            if (ImGui.BeginMenu("Intrinsic Functions"))
             {
                 for (int i = 0; i < intrinsicFuncs.Length; i++)
                 {
@@ -694,146 +706,42 @@
                         editor.AddNode(node);
                     }
                 }
-            }
 
-            ImGui.End();
+                ImGui.EndMenu();
+            }
         }
 
-        private void DrawPreviewWindow(IGraphicsContext context)
-        {
-            if (!ImGui.Begin("Preview"))
-            {
-                ImGui.End();
-                return;
-            }
-
-            if (pipeline != null && pipeline.IsValid && pipeline.IsInitialized && !compiling)
-            {
-                view.Update(context, new(camera, new(1024, 1024)));
-                lights.Update(context);
-                lightParams.Update(context, new(lights.Count));
-
-                context.ClearRenderTargetView(texturePreview.RTV, new(0, 0, 0, 1));
-                context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.All, 1, 0);
-                context.SetRenderTarget(texturePreview.RTV, depthStencil.DSV);
-                context.PSSetShaderResource(0, lights.SRV);
-                context.PSSetShaderResource(1, iblDFG.SRV);
-                context.PSSetSampler(0, sampler);
-
-                for (int i = 0; i < textureFiles.Count; i++)
-                {
-                    var tex = textureFiles[i];
-                    if (generator.TextureMapping.TryGetValue(tex, out uint slot))
-                    {
-                        context.PSSetShaderResource(slot, tex.Image);
-                        context.PSSetSampler(slot, tex.Sampler);
-                    }
-                }
-
-                context.VSSetConstantBuffer(0, world);
-                context.VSSetConstantBuffer(1, view);
-                context.PSSetConstantBuffer(0, lightParams);
-                context.PSSetConstantBuffer(1, view);
-                context.SetViewport(new(1024, 1024));
-                context.SetGraphicsPipeline(pipeline);
-
-                sphere.DrawAuto(context);
-
-                context.SetGraphicsPipeline(null);
-                context.VSSetConstantBuffer(0, null);
-                context.VSSetConstantBuffer(1, null);
-                context.PSSetConstantBuffer(0, null);
-                context.PSSetConstantBuffer(1, null);
-
-                for (int i = 0; i < textureFiles.Count; i++)
-                {
-                    var tex = textureFiles[i];
-                    if (generator.TextureMapping.TryGetValue(tex, out uint slot))
-                    {
-                        context.PSSetShaderResource(slot, null);
-                        context.PSSetSampler(slot, null);
-                    }
-                }
-
-                context.PSSetSampler(0, null);
-                context.PSSetShaderResource(0, null);
-                context.PSSetShaderResource(1, null);
-                context.SetRenderTarget(null, null);
-
-                context.ClearRenderTargetView(textureTonemap.RTV, new(0, 0, 0, 1));
-                context.SetRenderTarget(textureTonemap.RTV, null);
-                context.SetGraphicsPipeline(tonemap);
-                context.PSSetShaderResource(0, texturePreview.SRV);
-                context.PSSetSampler(0, sampler);
-                context.DrawInstanced(4, 1, 0, 0);
-                context.PSSetSampler(0, null);
-                context.PSSetShaderResource(0, null);
-                context.SetGraphicsPipeline(null);
-                context.SetRenderTarget(null, null);
-
-                context.SetRenderTarget(texturePreview.RTV, null);
-                context.SetGraphicsPipeline(fxaa);
-                context.PSSetShaderResource(0, textureTonemap.SRV);
-                context.PSSetSampler(0, sampler);
-                context.DrawInstanced(4, 1, 0, 0);
-                context.PSSetSampler(0, null);
-                context.PSSetShaderResource(0, null);
-                context.SetGraphicsPipeline(null);
-                context.SetRenderTarget(null, null);
-            }
-            var size = ImGui.GetContentRegionAvail();
-            size.Y = size.X;
-            ImGui.Image(texturePreview.SRV?.NativePointer ?? 0, size);
-
-            if (ImGui.IsItemHovered() || first)
-            {
-                Vector2 delta = Vector2.Zero;
-                if (Mouse.IsDown(MouseButton.Middle))
-                {
-                    delta = Mouse.Delta;
-                }
-
-                float wheel = 0;
-                if (Keyboard.IsDown(Key.LCtrl))
-                {
-                    wheel = Mouse.DeltaWheel.Y * Time.Delta;
-                }
-
-                // Only update the camera's position if the mouse got moved in either direction
-                if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
-                {
-                    sc.X += sc.X / 2 * -wheel;
-
-                    // Rotate the camera left and right
-                    sc.Y += -delta.X * Time.Delta * speed;
-
-                    // Rotate the camera up and down
-                    // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * speed, -MathF.PI / 2, MathF.PI / 2);
-
-                    first = false;
-
-                    // Calculate the cartesian coordinates
-                    Vector3 pos = SphereHelper.GetCartesianCoordinates(sc);
-                    var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
-                    camera.PositionRotation = (pos, orientation);
-                    camera.Recalculate();
-                }
-            }
-
-            ImGui.End();
-        }
-
-        private void Generate()
+        private void UpdateMaterial()
         {
             if (editor == null)
                 return;
 
-            semaphore.Wait();
-            ResourceManager.Shared.UpdateMaterial(material);
-            compiling = true;
-            Directory.CreateDirectory("generated/" + "shaders/");
+            if (updateMaterialTask != null && !updateMaterialTask.IsCompleted)
+            {
+                updateMaterialTask.ContinueWith(t =>
+                {
+                    UpdateMaterialTaskVoid();
+                });
+            }
+            else
+            {
+                updateMaterialTask = Task.Run(UpdateMaterialTaskVoid);
+            }
+        }
 
+        private void UpdateMaterialTaskVoid()
+        {
+            semaphore.Wait();
+
+            InsertProperties(material, editor);
+            InsertTextures(material, editor);
+
+            ResourceManager.Shared.BeginNoGCRegion();
+            ResourceManager.Shared.UpdateMaterial(material);
+            ResourceManager.Shared.EndNoGCRegion();
+
+            Directory.CreateDirectory("generated/" + "shaders/");
+            /*
             IOSignature inputSig = new("Pixel",
                 new SignatureDef("pos", new(VectorType.Float4)),
                 new SignatureDef("uv", new(VectorType.Float3)),
@@ -853,27 +761,7 @@
             string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
 
             File.WriteAllText("assets/generated/shaders/generated/usercodeMaterial.hlsl", result);
-            FileSystem.Refresh();
-            pipeline ??= device.CreateGraphicsPipeline(new()
-            {
-                PixelShader = "generated/main.hlsl",
-                VertexShader = "generated/vs.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = default,
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    SampleMask = 0,
-                    StencilRef = 0,
-                    Topology = PrimitiveTopology.TriangleList
-                }
-            });
-
-            pipeline.Recompile();
-            first = true;
-
-            compiling = false;
+            */
             semaphore.Release();
         }
     }

@@ -69,6 +69,12 @@
             LightGridBuffer = creator.CreateStructuredUavBuffer<LightGrid>("LightGridBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
         }
 
+        public override void OnResize(GraphResourceBuilder creator)
+        {
+            recreateClusters = true;
+            base.OnResize(creator);
+        }
+
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;

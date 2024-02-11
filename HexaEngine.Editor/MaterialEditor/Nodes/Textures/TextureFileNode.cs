@@ -59,6 +59,7 @@
             {
                 path = value;
                 Reload();
+                OnValueChanged();
             }
         }
 
@@ -95,7 +96,10 @@
                         sampler = device.CreateSamplerState(samplerDescription);
                         return;
                     }
-                    var tmp = device.TextureLoader.LoadTexture2D(path);
+                    var scratchImage = device.TextureLoader.LoadFormAssets(path);
+                    scratchImage.Resize(128, 128, 0);
+                    var tmp = scratchImage.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
+                    scratchImage.Dispose();
                     image = device.CreateShaderResourceView(tmp);
                     tmp.Dispose();
 
@@ -113,7 +117,7 @@
             {
                 if (dialog.Result == OpenFileResult.Ok)
                 {
-                    Path = dialog.FullPath;
+                    Path = System.IO.Path.GetRelativePath("textures", FileSystem.GetRelativePath(dialog.FullPath));
                     Reload();
                 }
             }
@@ -129,6 +133,7 @@
             if (ImGui.InputText("Path", ref path, 512, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 Reload();
+                OnValueChanged();
             }
 
             ImGui.SameLine();

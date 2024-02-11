@@ -10,6 +10,8 @@
     using System.IO.Hashing;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Text.RegularExpressions;
+    using System.Text;
 
     /// <summary>
     /// Provides utility methods for interacting with the file system.
@@ -124,8 +126,9 @@
         }
 
         /// <summary>
-        /// Refreshes the file system by recreating the file indices. Note: normally you don't need to manually refresh.
+        /// Refreshes the file system by recreating the file indices.
         /// </summary>
+        /// <remarks>Normally you don't need to manually refresh, the file system automatically does that for you.</remarks>
         public static void Refresh()
         {
             initLock.Reset();
@@ -592,11 +595,43 @@
             return false;
         }
 
+        public static Regex CreateRegexPattern(string pattern)
+        {
+            // prepare the pattern to the form appropriate for Regex class
+            StringBuilder sb = new(pattern);
+            // remove superflous occurences of  "?*" and "*?"
+            sb.Replace("?*", "*");
+            sb.Replace("*?", "*");
+
+            // remove superflous occurences of asterisk '*'
+            sb.Replace("**", "*");
+
+            // if only asterisk '*' is left, the mask is ".*"
+            if (sb.Equals("*"))
+            {
+                pattern = ".*";
+            }
+            else
+            {
+                // replace '.' with "\."
+                sb.Replace(".", "\\.");
+                // replaces all occurrences of '*' with ".*"
+                sb.Replace("*", ".*");
+                // replaces all occurrences of '?' with '.*'
+                sb.Replace("?", ".");
+                // add "\b" to the beginning and end of the pattern
+                sb.Insert(0, "\\b");
+                sb.Append("\\b");
+                pattern = sb.ToString();
+            }
+            return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
+
         /// <summary>
         /// Gets the files at the specified path.
         /// </summary>
         /// <param name="path">The path to get the files for.</param>
-        /// <returns>An bundles of file paths.</returns>
+        /// <returns>An array of file paths.</returns>
         public static string[] GetFiles(string path)
         {
             initLock.Wait();
@@ -604,6 +639,51 @@
             realPath = realPath.Replace(@"\\", @"\");
             var files = bundleAssets.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
             return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).Union(files).ToArray();
+        }
+
+        /// <summary>
+        /// Gets the files at the specified path.
+        /// </summary>
+        /// <param name="path">The path to get the files for.</param>
+        /// <param name="pattern"></param>
+        /// <returns>An array of file paths.</returns>
+        public static string[] GetFiles(string path, string pattern)
+        {
+            Regex regex = CreateRegexPattern(pattern);
+            initLock.Wait();
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
+            var files = bundleAssets.Where(x => x.Path.StartsWith(realPath) && regex.IsMatch(x.Path)).Select(x => x.Path);
+            return fileIndices.Where(x => x.Key.StartsWith(realPath) && regex.IsMatch(x.Key)).Select(x => x.Key).Union(files).ToArray();
+        }
+
+        /// <summary>
+        /// Gets the full path of <paramref name="path"/>
+        /// </summary>
+        /// <param name="path">The path to a source.</param>
+        /// <returns>The full path</returns>
+        public static string GetFullPath(string path)
+        {
+            initLock.Wait();
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
+
+            if (fileIndices.TryGetValue(realPath, out string? value))
+            {
+                return value;
+            }
+            else if (File.Exists(path))
+            {
+                return path;
+            }
+            else if (!string.IsNullOrWhiteSpace(realPath))
+            {
+                var rel = Path.GetRelativePath("assets/", realPath);
+                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                throw new NotSupportedException();
+            }
+
+            throw new FileNotFoundException(realPath);
         }
 
         /// <summary>

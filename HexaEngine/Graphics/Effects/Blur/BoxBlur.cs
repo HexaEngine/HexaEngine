@@ -7,7 +7,7 @@
 
     public class BoxBlur : IBlur
     {
-        private readonly IGraphicsPipeline pipeline;
+        private readonly IGraphicsPipelineState pso;
         private readonly ConstantBuffer<BoxBlurParams> paramsBuffer;
         private readonly ISamplerState linearClampSampler;
         private bool disposedValue;
@@ -22,12 +22,12 @@
 
         public BoxBlur(IGraphicsDevice device, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/box.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
             paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
@@ -48,9 +48,9 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetShaderResource(0, src);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pso);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetShaderResource(0, null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
@@ -62,7 +62,7 @@
         {
             if (!disposedValue)
             {
-                pipeline.Dispose();
+                pso.Dispose();
                 paramsBuffer.Dispose();
                 linearClampSampler.Dispose();
                 disposedValue = true;

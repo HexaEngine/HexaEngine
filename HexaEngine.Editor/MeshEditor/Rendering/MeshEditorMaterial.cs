@@ -10,9 +10,9 @@
     public unsafe class MeshEditorMaterial : IDisposable
     {
         public MaterialData Data;
-        public IGraphicsPipeline Basic;
-        public IGraphicsPipeline Textured;
-        public IGraphicsPipeline Shaded;
+        public IGraphicsPipelineState Basic;
+        public IGraphicsPipelineState Textured;
+        public IGraphicsPipelineState Shaded;
 
         public TextureList TextureList = new();
 
@@ -26,58 +26,55 @@
 
             ShaderMacro[] macros = material.GetShaderMacros();
 
-            Basic = device.CreateGraphicsPipeline(new()
+            Basic = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "tools/mesh/basic/vs.hlsl",
                 PixelShader = "tools/mesh/basic/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = Vector4.Zero,
-                    DepthStencil = DepthStencilDescription.DefaultLess,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Topology = PrimitiveTopology.TriangleList,
-                    SampleMask = uint.MaxValue,
-                    StencilRef = 0,
-                },
-                InputElements = inputElements,
                 Macros = macros
+            }, new()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = DepthStencilDescription.DefaultLess,
+                Rasterizer = RasterizerDescription.CullNone,
+                Topology = PrimitiveTopology.TriangleList,
+                SampleMask = uint.MaxValue,
+                StencilRef = 0,
+                InputElements = inputElements,
             });
 
-            Textured = device.CreateGraphicsPipeline(new()
+            Textured = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "tools/mesh/textured/vs.hlsl",
                 PixelShader = "tools/mesh/textured/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = Vector4.Zero,
-                    DepthStencil = DepthStencilDescription.DefaultLess,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Topology = PrimitiveTopology.TriangleList,
-                    SampleMask = uint.MaxValue,
-                    StencilRef = 0,
-                },
-                InputElements = inputElements,
                 Macros = macros
+            }, new()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = DepthStencilDescription.DefaultLess,
+                Rasterizer = RasterizerDescription.CullNone,
+                Topology = PrimitiveTopology.TriangleList,
+                SampleMask = uint.MaxValue,
+                StencilRef = 0,
+                InputElements = inputElements,
             });
 
-            Shaded = device.CreateGraphicsPipeline(new()
+            Shaded = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "tools/mesh/shaded/vs.hlsl",
                 PixelShader = "tools/mesh/shaded/ps.hlsl",
-                State = new()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = Vector4.Zero,
-                    DepthStencil = DepthStencilDescription.DefaultLess,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Topology = PrimitiveTopology.TriangleList,
-                    SampleMask = uint.MaxValue,
-                    StencilRef = 0,
-                },
-                InputElements = inputElements,
                 Macros = macros
+            }, new()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = DepthStencilDescription.DefaultLess,
+                Rasterizer = RasterizerDescription.CullNone,
+                Topology = PrimitiveTopology.TriangleList,
+                SampleMask = uint.MaxValue,
+                StencilRef = 0,
+                InputElements = inputElements,
             });
 
             for (int i = 0; i < material.Textures.Count; i++)
@@ -95,10 +92,10 @@
             if (!Basic.IsReady)
                 return;
 
-            context.SetGraphicsPipeline(Basic);
+            context.SetPipelineState(Basic);
             mesh.Draw(context, instanceCount);
             nint* temp = stackalloc nint[(int)TextureList.SlotCount];
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public void DrawTextured(IGraphicsContext context, MeshEditorMesh mesh, uint instanceCount)
@@ -106,14 +103,14 @@
             if (!Textured.IsReady)
                 return;
 
-            context.SetGraphicsPipeline(Textured);
+            context.SetPipelineState(Textured);
             context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
             context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
             mesh.Draw(context, instanceCount);
             nint* temp = stackalloc nint[(int)TextureList.SlotCount];
             context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
             context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         public void DrawShaded(IGraphicsContext context, MeshEditorMesh mesh, uint instanceCount)
@@ -121,14 +118,14 @@
             if (!Shaded.IsReady)
                 return;
 
-            context.SetGraphicsPipeline(Shaded);
+            context.SetPipelineState(Shaded);
             context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
             context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
             mesh.Draw(context, instanceCount);
             nint* temp = stackalloc nint[(int)TextureList.SlotCount];
             context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
             context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -12,10 +12,10 @@
     public class SkyRenderer : IDisposable
     {
         private readonly Sphere cube;
-        private readonly IGraphicsPipeline skybox;
-        private readonly IGraphicsPipeline uniformColorSky;
-        private readonly IGraphicsPipeline hoseWilkieSky;
-        private readonly IGraphicsPipeline preethamSky;
+        private readonly IGraphicsPipelineState skybox;
+        private readonly IGraphicsPipelineState uniformColorSky;
+        private readonly IGraphicsPipelineState hoseWilkieSky;
+        private readonly IGraphicsPipelineState preethamSky;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
 
         private ISamplerState samplerState;
@@ -29,49 +29,45 @@
             cube = new(device);
             worldBuffer = new(device, CpuAccessFlags.Write);
 
-            skybox = device.CreateGraphicsPipeline(new()
+            skybox = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/skybox.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone,
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = BlendDescription.Opaque
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone,
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Blend = BlendDescription.Opaque
             });
-            uniformColorSky = device.CreateGraphicsPipeline(new()
+            uniformColorSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/uniformColorSky.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone,
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = BlendDescription.Opaque
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone,
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Blend = BlendDescription.Opaque
             });
-            hoseWilkieSky = device.CreateGraphicsPipeline(new()
+            hoseWilkieSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/hoseWilkieSky.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone,
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = BlendDescription.Opaque
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone,
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Blend = BlendDescription.Opaque
             });
-            preethamSky = device.CreateGraphicsPipeline(new()
+            preethamSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
                 PixelShader = "forward/sky/preethamSky.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone,
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = BlendDescription.Opaque
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone,
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Blend = BlendDescription.Opaque
             });
         }
 

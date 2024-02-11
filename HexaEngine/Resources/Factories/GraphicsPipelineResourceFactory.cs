@@ -22,10 +22,11 @@
             instance.EndLoad(pipeline);
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, GraphicsPipelineDesc desc)
+        protected override Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance, GraphicsPipelineDesc desc)
         {
-            var pipeline = await device.CreateGraphicsPipelineAsync(desc);
+            var pipeline = device.CreateGraphicsPipeline(desc);
             instance.EndLoad(pipeline);
+            return Task.CompletedTask;
         }
 
         protected override void UnloadInstance(ResourceManager manager, ResourceInstance<IGraphicsPipeline> instance)

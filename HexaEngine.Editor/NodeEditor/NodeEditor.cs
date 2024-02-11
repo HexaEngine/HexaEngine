@@ -4,9 +4,11 @@
     using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using YamlDotNet.Core.Tokens;
 
     public class NodeEditor
     {
+        private bool initialized = false;
         private string? state;
         private ImNodesEditorContextPtr context;
 
@@ -22,6 +24,14 @@
 
         public event EventHandler<Pin>? NodePinValueChanged;
 
+        public event EventHandler<Node>? NodeValueChanging;
+
+        public event EventHandler<Node>? NodeValueChanged;
+
+        public event EventHandler<NodeEditor>? ValueChanging;
+
+        public event EventHandler<NodeEditor>? ValueChanged;
+
         public event EventHandler<Node>? NodeAdded;
 
         public event EventHandler<Node>? NodeRemoved;
@@ -36,8 +46,6 @@
         public List<Link> Links => links;
 
         public int CurrentId { get => currentId; set => currentId = value; }
-
-        public string State { get => SaveState(); set => RestoreState(value); }
 
         public bool Minimap { get; set; }
 
@@ -62,7 +70,7 @@
                 {
                     Links.Add(editor.Links[i].GetId());
                 }
-                State = editor.State;
+                State = editor.SaveState();
                 CurrentId = editor.CurrentId;
             }
 
@@ -98,19 +106,43 @@
                 {
                     editor.CreateLinkFromId(Links[i]);
                 }
-                editor.State = State;
+                editor.RestoreState(State);
                 editor.CurrentId = CurrentId;
             }
         }
 
-        private void ValueChanged(object? sender, Pin e)
+        private void OnPinValueChanged(object? sender, Pin e)
         {
             NodePinValueChanged?.Invoke(this, e);
+            OnValueChanged(e);
         }
 
-        private void ValueChanging(object? sender, Pin e)
+        private void OnPinValueChanging(object? sender, Pin e)
         {
             NodePinValueChanging?.Invoke(this, e);
+            OnValueChanging(e);
+        }
+
+        private void OnNodeValueChanged(object? sender, Node e)
+        {
+            NodeValueChanged?.Invoke(this, e);
+            OnValueChanged(e);
+        }
+
+        private void OnNodeValueChanging(object? sender, Node e)
+        {
+            NodeValueChanging?.Invoke(this, e);
+            OnValueChanging(e);
+        }
+
+        private void OnValueChanged(object? sender)
+        {
+            ValueChanged?.Invoke(sender, this);
+        }
+
+        private void OnValueChanging(object? sender)
+        {
+            ValueChanging?.Invoke(sender, this);
         }
 
         public string Serialize()
@@ -164,15 +196,21 @@
                 if (createContext)
                     context = ImNodes.EditorContextCreate();
 
-                for (int i = 0; i < nodes.Count; i++)
+                if (!initialized)
                 {
-                    nodes[i].Initialize(this);
-                    nodes[i].PinValueChanging += ValueChanging;
-                    nodes[i].PinValueChanged += ValueChanged;
-                }
-                for (int i = 0; i < links.Count; i++)
-                {
-                    links[i].Initialize(this);
+                    for (int i = 0; i < nodes.Count; i++)
+                    {
+                        nodes[i].Initialize(this);
+                        nodes[i].PinValueChanging += OnPinValueChanging;
+                        nodes[i].PinValueChanged += OnPinValueChanged;
+                        nodes[i].NodeValueChanging += OnNodeValueChanging;
+                        nodes[i].NodeValueChanged += OnNodeValueChanged;
+                    }
+                    for (int i = 0; i < links.Count; i++)
+                    {
+                        links[i].Initialize(this);
+                    }
+                    initialized = true;
                 }
             }
         }
@@ -235,8 +273,15 @@
 
         public void AddNode(Node node)
         {
-            if (!context.IsNull)
+            if (initialized)
+            {
                 node.Initialize(this);
+                node.PinValueChanging += OnPinValueChanging;
+                node.PinValueChanged += OnPinValueChanged;
+                node.NodeValueChanging += OnNodeValueChanging;
+                node.NodeValueChanged += OnNodeValueChanged;
+            }
+
             nodes.Add(node);
             NodeAdded?.Invoke(this, node);
         }
@@ -249,8 +294,11 @@
 
         public void AddLink(Link link)
         {
-            if (!context.IsNull)
+            if (initialized)
+            {
                 link.Initialize(this);
+            }
+
             links.Add(link);
             LinkAdded?.Invoke(this, link);
         }
@@ -388,13 +436,17 @@
             var nodes = this.nodes.ToArray();
             for (int i = 0; i < nodes.Length; i++)
             {
-                nodes[i].PinValueChanged -= ValueChanged;
-                nodes[i].PinValueChanging -= ValueChanging;
+                nodes[i].PinValueChanged -= OnPinValueChanged;
+                nodes[i].PinValueChanging -= OnPinValueChanging;
+                nodes[i].NodeValueChanging -= OnNodeValueChanging;
+                nodes[i].NodeValueChanged -= OnNodeValueChanged;
                 nodes[i].Destroy();
             }
             this.nodes.Clear();
-            ImNodes.EditorContextFree(context);
+            if (!context.IsNull)
+                ImNodes.EditorContextFree(context);
             context = null;
+            initialized = false;
         }
 
         public static bool Validate(Pin startPin, Pin endPin)

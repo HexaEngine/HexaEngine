@@ -11,7 +11,7 @@
         private int height;
         private int bufferCount;
 
-        private readonly IGraphicsPipeline copy;
+        private readonly IGraphicsPipelineState copy;
 
         private int bufferIndex;
         private Texture2D previous;
@@ -32,12 +32,11 @@
             this.height = height;
             this.bufferCount = bufferCount;
 
-            copy = device.CreateGraphicsPipeline(new()
+            copy = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 PixelShader = "effects/copy/ps.hlsl",
                 VertexShader = "quad.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
         public Format Format => format;
@@ -83,7 +82,7 @@
             context.SetRenderTarget(Output, null);
             context.PSSetShaderResource(0, Input.SRV);
             context.SetViewport(OutputViewport);
-            context.SetGraphicsPipeline(copy);
+            context.SetPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

@@ -1,256 +1,39 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11GraphicsPipelineState : DisposableBase, IGraphicsPipelineState
-    {
-        private readonly D3D11GraphicsPipeline pipeline;
-
-        protected ComPtr<ID3D11VertexShader> vs;
-        protected ComPtr<ID3D11HullShader> hs;
-        protected ComPtr<ID3D11DomainShader> ds;
-        protected ComPtr<ID3D11GeometryShader> gs;
-        protected ComPtr<ID3D11PixelShader> ps;
-
-        protected ComPtr<ID3D11InputLayout> layout;
-        protected ComPtr<ID3D11RasterizerState2> rasterizerState;
-        protected ComPtr<ID3D11DepthStencilState> depthStencilState;
-        protected ComPtr<ID3D11BlendState1> blendState;
-        protected GraphicsPipelineState state = GraphicsPipelineState.Default;
-
-        protected D3DPrimitiveTopology primitiveTopology;
-
-        public D3D11GraphicsPipelineState(D3D11GraphicsDevice device, D3D11GraphicsPipeline pipeline, string dbgName = "")
-        {
-            {
-                this.pipeline = pipeline;
-                pipeline.OnCompile += OnPipelineCompile;
-                vs = pipeline.vs;
-                hs = pipeline.hs;
-                ds = pipeline.ds;
-                gs = pipeline.gs;
-                ps = pipeline.ps;
-            }
-
-            {
-                ComPtr<ID3D11RasterizerState2> rs;
-
-                var rsDesc = Helper.Convert(state.Rasterizer);
-                device.Device.CreateRasterizerState2(&rsDesc, &rs.Handle);
-                rasterizerState = rs;
-                Utils.SetDebugName(rasterizerState, $"{dbgName}.{nameof(rasterizerState)}");
-
-                ComPtr<ID3D11DepthStencilState> ds;
-                var dsDesc = Helper.Convert(state.DepthStencil);
-                device.Device.CreateDepthStencilState(&dsDesc, &ds.Handle);
-                depthStencilState = ds;
-                Utils.SetDebugName(depthStencilState, $"{dbgName}.{nameof(depthStencilState)}");
-
-                ComPtr<ID3D11BlendState1> bs;
-                var bsDesc = Helper.Convert(state.Blend);
-                device.Device.CreateBlendState1(&bsDesc, &bs.Handle);
-                blendState = bs;
-                Utils.SetDebugName(blendState, $"{dbgName}.{nameof(blendState)}");
-
-                primitiveTopology = Helper.Convert(state.Topology);
-            }
-        }
-
-        private void OnPipelineCompile(IGraphicsPipeline pipe)
-        {
-            D3D11GraphicsPipeline pipeline = (D3D11GraphicsPipeline)pipe;
-            vs = pipeline.vs;
-            hs = pipeline.hs;
-            ds = pipeline.ds;
-            gs = pipeline.gs;
-            ps = pipeline.ps;
-        }
-
-        public GraphicsPipelineState Description => state;
-
-        public PrimitiveTopology Topology
-        {
-            get => state.Topology;
-            set
-            {
-                state.Topology = value;
-                primitiveTopology = Helper.Convert(value);
-            }
-        }
-
-        internal void SetState(ComPtr<ID3D11DeviceContext3> context)
-        {
-            context.VSSetShader(vs, null, 0);
-            context.HSSetShader(hs, null, 0);
-            context.DSSetShader(ds, null, 0);
-            context.GSSetShader(gs, null, 0);
-            context.PSSetShader(ps, null, 0);
-
-            context.RSSetState(rasterizerState);
-
-            var factor = state.BlendFactor;
-            float* fac = (float*)&factor;
-
-            context.OMSetBlendState(blendState, fac, uint.MaxValue);
-            context.OMSetDepthStencilState(depthStencilState, state.StencilRef);
-            context.IASetInputLayout(layout);
-            context.IASetPrimitiveTopology(primitiveTopology);
-        }
-
-        internal static void UnsetState(ComPtr<ID3D11DeviceContext3> context)
-        {
-            context.VSSetShader((ID3D11VertexShader*)null, null, 0);
-            context.HSSetShader((ID3D11HullShader*)null, null, 0);
-            context.DSSetShader((ID3D11DomainShader*)null, null, 0);
-            context.GSSetShader((ID3D11GeometryShader*)null, null, 0);
-            context.PSSetShader((ID3D11PixelShader*)null, null, 0);
-
-            context.RSSetState((ID3D11RasterizerState*)null);
-            context.OMSetBlendState((ID3D11BlendState*)null, (float*)null, uint.MaxValue);
-            context.OMSetDepthStencilState((ID3D11DepthStencilState*)null, 0);
-            context.IASetInputLayout((ID3D11InputLayout*)null);
-            context.IASetPrimitiveTopology(0);
-        }
-
-        protected override void DisposeCore()
-        {
-            pipeline.OnCompile -= OnPipelineCompile;
-
-            if (layout.Handle != null)
-            {
-                layout.Release();
-            }
-
-            if (rasterizerState.Handle != null)
-            {
-                rasterizerState.Release();
-            }
-
-            if (rasterizerState.Handle != null)
-            {
-                depthStencilState.Release();
-            }
-
-            if (rasterizerState.Handle != null)
-            {
-                blendState.Release();
-            }
-        }
-    }
-
     public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline
     {
         private readonly string dbgName;
-        private bool disposedValue;
-        protected readonly D3D11GraphicsDevice device;
-        protected InputElementDescription[]? inputElements;
-        protected readonly GraphicsPipelineDesc desc;
-        protected ShaderMacro[]? macros;
+        private readonly D3D11GraphicsDevice device;
+        private readonly GraphicsPipelineDesc desc;
+        private ShaderMacro[]? macros;
         internal ComPtr<ID3D11VertexShader> vs;
         internal ComPtr<ID3D11HullShader> hs;
         internal ComPtr<ID3D11DomainShader> ds;
         internal ComPtr<ID3D11GeometryShader> gs;
         internal ComPtr<ID3D11PixelShader> ps;
-        protected ComPtr<ID3D11InputLayout> layout;
-        protected ComPtr<ID3D11RasterizerState2> rasterizerState;
-        protected ComPtr<ID3D11DepthStencilState> depthStencilState;
-        protected ComPtr<ID3D11BlendState1> blendState;
-        protected GraphicsPipelineState state = GraphicsPipelineState.Default;
-        protected bool valid;
-        protected volatile bool initialized;
+
+        internal Shader* vertexShaderBlob;
+        internal Shader* hullShaderBlob;
+        internal Shader* domainShaderBlob;
+        internal Shader* geometryShaderBlob;
+        internal Shader* pixelShaderBlob;
+
+        internal Blob? signature;
+        internal InputElementDescription[]? inputElements;
+        private bool valid;
+        private volatile bool initialized;
 
         public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
-            State = desc.State;
             macros = desc.Macros;
-            inputElements = desc.InputElements;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            this.macros = macros;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            this.inputElements = inputElements;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            this.inputElements = inputElements;
-            this.macros = macros;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            State = state;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            State = state;
-            this.macros = macros;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            this.inputElements = inputElements;
-            State = state;
-            this.dbgName = dbgName;
-            Compile();
-            PipelineManager.Register(this);
-            initialized = true;
-        }
-
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
-        {
-            this.device = device;
-            this.desc = desc;
-            this.inputElements = inputElements;
-            State = state;
-            this.macros = macros;
             this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
@@ -269,51 +52,7 @@
 
         public event Action<IGraphicsPipeline>? OnCompile;
 
-        public GraphicsPipelineState State
-        {
-            get => state;
-            set
-            {
-                state = value;
-                if (rasterizerState.Handle != null)
-                {
-                    rasterizerState.Release();
-                }
-
-                rasterizerState = null;
-                if (depthStencilState.Handle != null)
-                {
-                    depthStencilState.Release();
-                }
-
-                depthStencilState.Handle = null;
-                if (blendState.Handle != null)
-                {
-                    blendState.Release();
-                }
-
-                blendState = null;
-
-                ComPtr<ID3D11RasterizerState2> rs;
-
-                var rsDesc = Helper.Convert(value.Rasterizer);
-                device.Device.CreateRasterizerState2(&rsDesc, &rs.Handle);
-                rasterizerState = rs;
-                Utils.SetDebugName(rasterizerState, $"{dbgName}.{nameof(rasterizerState)}");
-
-                ComPtr<ID3D11DepthStencilState> ds;
-                var dsDesc = Helper.Convert(value.DepthStencil);
-                device.Device.CreateDepthStencilState(&dsDesc, &ds.Handle);
-                depthStencilState = ds;
-                Utils.SetDebugName(depthStencilState, $"{dbgName}.{nameof(depthStencilState)}");
-
-                ComPtr<ID3D11BlendState1> bs;
-                var bsDesc = Helper.Convert(value.Blend);
-                device.Device.CreateBlendState1(&bsDesc, &bs.Handle);
-                blendState = bs;
-                Utils.SetDebugName(blendState, $"{dbgName}.{nameof(blendState)}");
-            }
-        }
+        public event Action<IGraphicsPipeline, InputElementDescription[]?, Blob>? OnCreateLayout;
 
         public void Recompile()
         {
@@ -322,35 +61,69 @@
             if (vs.Handle != null)
             {
                 vs.Release();
+                vs = default;
             }
 
-            vs = null;
             if (hs.Handle != null)
             {
                 hs.Release();
+                hs = default;
             }
 
-            hs = null;
             if (ds.Handle != null)
             {
                 ds.Release();
+                ds = default;
             }
 
-            ds = null;
             if (gs.Handle != null)
             {
                 gs.Release();
+                gs = default;
             }
 
-            gs = null;
             if (ps.Handle != null)
             {
                 ps.Release();
+                ps = default;
             }
 
-            ps = null;
-            layout.Release();
-            layout = null;
+            if (signature != null)
+            {
+                signature.Dispose();
+                signature = null;
+            }
+
+            if (vertexShaderBlob != null)
+            {
+                Free(vertexShaderBlob);
+                vertexShaderBlob = null;
+            }
+
+            if (hullShaderBlob != null)
+            {
+                Free(hullShaderBlob);
+                hullShaderBlob = null;
+            }
+
+            if (domainShaderBlob != null)
+            {
+                Free(domainShaderBlob);
+                domainShaderBlob = null;
+            }
+
+            if (geometryShaderBlob != null)
+            {
+                Free(geometryShaderBlob);
+                geometryShaderBlob = null;
+            }
+
+            if (pixelShaderBlob != null)
+            {
+                Free(pixelShaderBlob);
+                pixelShaderBlob = null;
+            }
+
             Compile(true);
             initialized = true;
         }
@@ -359,25 +132,9 @@
         {
             if (macros == null)
             {
-                return Array.Empty<ShaderMacro>();
+                return [];
             }
             return macros;
-        }
-
-        private static bool CanSkipLayout(InputElementDescription[]? inputElements)
-        {
-            ArgumentNullException.ThrowIfNull(inputElements, nameof(inputElements));
-
-            for (int i = 0; i < inputElements.Length; i++)
-            {
-                var inputElement = inputElements[i];
-                if (inputElement.SemanticName is not "SV_VertexID" and not "SV_InstanceID")
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private unsafe void Compile(bool bypassCache = false)
@@ -386,38 +143,21 @@
             if (desc.VertexShader != null)
             {
                 Shader* shader;
-                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFileWithInputSignature(desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader, out var elements, out var signature, bypassCache);
-                if (shader == null || signature == null || inputElements == null && elements == null)
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFileWithInputSignature(desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader, out inputElements, out signature, bypassCache);
+                if (shader == null || signature == null)
                 {
                     valid = false;
                     return;
                 }
+
+                OnCreateLayout?.Invoke(this, inputElements, signature);
 
                 ComPtr<ID3D11VertexShader> vertexShader;
                 device.Device.CreateVertexShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &vertexShader.Handle);
                 vs = vertexShader;
                 Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
 
-                inputElements ??= elements;
-
-                if (!CanSkipLayout(inputElements))
-                {
-                    ComPtr<ID3D11InputLayout> il;
-                    InputElementDesc* descs = AllocT<InputElementDesc>(inputElements.Length);
-                    Helper.Convert(inputElements, descs);
-                    device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
-                    Helper.Free(descs, inputElements.Length);
-                    Free(descs);
-                    layout = il;
-
-                    Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
-                }
-                else
-                {
-                    layout = default;
-                }
-
-                Free(shader);
+                vertexShaderBlob = shader;
             }
 
             if (desc.HullShader != null)
@@ -435,7 +175,7 @@
                 hs = hullShader;
                 Utils.SetDebugName(hs, $"{dbgName}.{nameof(hs)}");
 
-                Free(shader);
+                hullShaderBlob = shader;
             }
 
             if (desc.DomainShader != null)
@@ -453,7 +193,7 @@
                 ds = domainShader;
                 Utils.SetDebugName(ds, $"{dbgName}.{nameof(hs)}");
 
-                Free(shader);
+                domainShaderBlob = shader;
             }
 
             if (desc.GeometryShader != null)
@@ -471,7 +211,7 @@
                 gs = geometryShader;
                 Utils.SetDebugName(gs, $"{dbgName}.{nameof(gs)}");
 
-                Free(shader);
+                geometryShaderBlob = shader;
             }
 
             if (desc.PixelShader != null)
@@ -489,102 +229,12 @@
                 ps = pixelShader;
                 Utils.SetDebugName(ps, $"{dbgName}.{nameof(ps)}");
 
-                Free(shader);
+                pixelShaderBlob = shader;
             }
 
             valid = true;
 
             OnCompile?.Invoke(this);
-        }
-
-        public void BeginDraw(IGraphicsContext context)
-        {
-            if (context is not D3D11GraphicsContextBase contextd3d11)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            ComPtr<ID3D11DeviceContext3> ctx = contextd3d11.DeviceContext;
-            ctx.VSSetShader(vs, null, 0);
-            ctx.HSSetShader(hs, null, 0);
-            ctx.DSSetShader(ds, null, 0);
-            ctx.GSSetShader(gs, null, 0);
-            ctx.PSSetShader(ps, null, 0);
-
-            ctx.RSSetState(rasterizerState);
-
-            var factor = State.BlendFactor;
-            float* fac = (float*)&factor;
-
-            ctx.OMSetBlendState(blendState, fac, state.SampleMask);
-            ctx.OMSetDepthStencilState(depthStencilState, state.StencilRef);
-            ctx.IASetInputLayout(layout);
-            ctx.IASetPrimitiveTopology(Helper.Convert(state.Topology));
-        }
-
-        public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext3> context)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            context.VSSetShader(vs, null, 0);
-            context.HSSetShader(hs, null, 0);
-            context.DSSetShader(ds, null, 0);
-            context.GSSetShader(gs, null, 0);
-            context.PSSetShader(ps, null, 0);
-
-            context.RSSetState(rasterizerState);
-
-            var factor = State.BlendFactor;
-            float* fac = (float*)&factor;
-
-            context.OMSetBlendState(blendState, fac, uint.MaxValue);
-            context.OMSetDepthStencilState(depthStencilState, state.StencilRef);
-            context.IASetInputLayout(layout);
-            context.IASetPrimitiveTopology(Helper.Convert(state.Topology));
-        }
-
-        public void EndDraw(IGraphicsContext context)
-        {
-            if (context is not D3D11GraphicsContextBase contextd3d11)
-            {
-                return;
-            }
-
-            EndDraw(contextd3d11.DeviceContext);
-        }
-
-        public static void EndDraw(ComPtr<ID3D11DeviceContext3> context)
-        {
-            context.VSSetShader((ID3D11VertexShader*)null, null, 0);
-            context.HSSetShader((ID3D11HullShader*)null, null, 0);
-            context.DSSetShader((ID3D11DomainShader*)null, null, 0);
-            context.GSSetShader((ID3D11GeometryShader*)null, null, 0);
-            context.PSSetShader((ID3D11PixelShader*)null, null, 0);
-
-            context.RSSetState((ID3D11RasterizerState*)null);
-
-            context.OMSetBlendState((ID3D11BlendState*)null, (float*)null, uint.MaxValue);
-            context.OMSetDepthStencilState((ID3D11DepthStencilState*)null, 0);
-            context.IASetInputLayout((ID3D11InputLayout*)null);
-            context.IASetPrimitiveTopology(0);
         }
 
         protected override void DisposeCore()
@@ -594,46 +244,67 @@
             if (vs.Handle != null)
             {
                 vs.Release();
+                vs = default;
             }
 
             if (hs.Handle != null)
             {
                 hs.Release();
+                hs = default;
             }
 
             if (ds.Handle != null)
             {
                 ds.Release();
+                ds = default;
             }
 
             if (gs.Handle != null)
             {
                 gs.Release();
+                gs = default;
             }
 
             if (ps.Handle != null)
             {
                 ps.Release();
+                ps = default;
             }
 
-            if (layout.Handle != null)
+            if (signature != null)
             {
-                layout.Release();
+                signature.Dispose();
+                signature = null;
             }
 
-            if (rasterizerState.Handle != null)
+            if (vertexShaderBlob != null)
             {
-                rasterizerState.Release();
+                Free(vertexShaderBlob);
+                vertexShaderBlob = null;
             }
 
-            if (rasterizerState.Handle != null)
+            if (hullShaderBlob != null)
             {
-                depthStencilState.Release();
+                Free(hullShaderBlob);
+                hullShaderBlob = null;
             }
 
-            if (rasterizerState.Handle != null)
+            if (domainShaderBlob != null)
             {
-                blendState.Release();
+                Free(domainShaderBlob);
+                domainShaderBlob = null;
+            }
+
+            if (geometryShaderBlob != null)
+            {
+                Free(geometryShaderBlob);
+                geometryShaderBlob = null;
+            }
+
+            if (pixelShaderBlob != null)
+            {
+                Free(pixelShaderBlob);
+                pixelShaderBlob = null;
             }
         }
     }

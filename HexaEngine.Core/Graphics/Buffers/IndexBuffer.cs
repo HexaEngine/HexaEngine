@@ -464,7 +464,11 @@
                 buffer?.Dispose();
                 capacity = 0;
                 count = 0;
-                Free(items);
+                if (items != null)
+                {
+                    Free(items);
+                    items = null;
+                }
 
                 disposedValue = true;
             }

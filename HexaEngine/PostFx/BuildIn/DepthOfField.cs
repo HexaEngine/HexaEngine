@@ -27,8 +27,8 @@ namespace HexaEngine.PostFx.BuildIn
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private IComputePipeline bokehGenerate;
         private GaussianBlur gaussianBlur;
-        private IGraphicsPipeline dof;
-        private IGraphicsPipeline bokehDraw;
+        private IGraphicsPipelineState dof;
+        private IGraphicsPipelineState bokehDraw;
 
         private ResourceRef<Texture2D> buffer;
         private StructuredUavBuffer<Bokeh> bokehBuffer;
@@ -236,25 +236,23 @@ namespace HexaEngine.PostFx.BuildIn
             gaussianBlur = new(creator, "DOF");
             DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
 
-            dof = device.CreateGraphicsPipeline(new()
+            dof = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/dof/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            bokehDraw = device.CreateGraphicsPipeline(new()
+            bokehDraw = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 PixelShader = "effects/bokeh/mask.hlsl",
                 GeometryShader = "effects/bokeh/gs.hlsl",
                 VertexShader = "effects/bokeh/vs.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Topology = PrimitiveTopology.PointList,
-                    Blend = BlendDescription.Additive,
-                    BlendFactor = Vector4.One
-                },
+            }, new GraphicsPipelineStateDesc()
+            {
+                Topology = PrimitiveTopology.PointList,
+                Blend = BlendDescription.Additive,
+                BlendFactor = Vector4.One
             });
 
             bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
@@ -337,9 +335,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
             context.PSSetConstantBuffer(0, cbDof);
             context.PSSetConstantBuffer(1, camera.Value);
-            context.SetGraphicsPipeline(dof);
+            context.SetPipelineState(dof);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetConstantBuffer(1, null);
             context.PSSetConstantBuffer(0, null);
             Memset(srvs_dof, 0, 3);
@@ -350,9 +348,9 @@ namespace HexaEngine.PostFx.BuildIn
                 context.CopyStructureCount(bokehIndirectBuffer, 0, bokehBuffer.UAV);
                 context.VSSetShaderResource(0, bokehBuffer.SRV);
                 context.PSSetShaderResource(0, bokehTex);
-                context.SetGraphicsPipeline(bokehDraw);
+                context.SetPipelineState(bokehDraw);
                 context.DrawInstancedIndirect(bokehIndirectBuffer, 0);
-                context.SetGraphicsPipeline(null);
+                context.SetPipelineState(null);
                 context.PSSetShaderResource(0, null);
                 context.VSSetShaderResource(0, null);
             }

@@ -221,7 +221,7 @@
 
         public void Update(float delta)
         {
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 return;
             }

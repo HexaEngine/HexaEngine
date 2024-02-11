@@ -12,7 +12,7 @@
     public class IBLRoughnessPrefilter : IDisposable
     {
         private readonly Cube cube;
-        private readonly IGraphicsPipeline pipeline;
+        private readonly IGraphicsPipelineState pipeline;
         private readonly ConstantBuffer<Matrix4x4> viewBuffer;
         private readonly ConstantBuffer<RoughnessParams> roughnessBuffer;
         private readonly ISamplerState sampler;
@@ -40,17 +40,16 @@
         {
             Cameras = new CubeFaceCamera[6];
             cube = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/prefilter/vs.hlsl",
                 PixelShader = "filter/prefilter/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                }
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = RasterizerDescription.CullNone,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
             });
 
             SetViewPoint(Vector3.Zero);

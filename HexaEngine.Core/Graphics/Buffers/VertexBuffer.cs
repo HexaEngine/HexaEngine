@@ -447,6 +447,7 @@
                 if (items != null)
                 {
                     Free(items);
+                    items = null;
                 }
 
                 disposedValue = true;

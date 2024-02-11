@@ -17,7 +17,7 @@ namespace HexaEngine.PostFx.BuildIn
 
     internal class VoxelGI
     {
-        private IGraphicsPipeline voxelize;
+        private IGraphicsPipelineState voxelize;
 
         public bool voxelGI = false;
         public bool VoxelDebug = false;
@@ -48,15 +48,14 @@ namespace HexaEngine.PostFx.BuildIn
 
         public void Initialize(IGraphicsDevice device)
         {
-            voxelize = device.CreateGraphicsPipeline(new()
+            voxelize = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 PixelShader = "gi/VoxelizePS.hlsl",
                 GeometryShader = "gi/VoxelizeGS.hlsl",
                 VertexShader = "gi/VoxelizeVS.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Rasterizer = RasterizerDescription.CullNone
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone
             });
             voxelConstantBuffer = new(device, CpuAccessFlags.Write);
             lights = new(device, (int)VoxelizeMaxLights, CpuAccessFlags.Write);
@@ -130,7 +129,7 @@ namespace HexaEngine.PostFx.BuildIn
         {
             context.SetRenderTargetsAndUnorderedAccessViews(null, null, 0, voxels.UAV);
             context.PSSetShaderResource(1, lights.SRV);
-            context.SetGraphicsPipeline(voxelize);
+            context.SetPipelineState(voxelize);
             context.SetViewport(new(VoxelResolution));
         }
     }

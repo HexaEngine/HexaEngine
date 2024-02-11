@@ -19,10 +19,10 @@
     {
         private PostFxGraphResourceBuilder creator;
 
-        private IGraphicsPipeline godrays;
+        private IGraphicsPipelineState godrays;
         private ISamplerState linearClampSampler;
         private Quad quad;
-        private IGraphicsPipeline sun;
+        private IGraphicsPipelineState sun;
         private ConstantBuffer<GodRaysParams> paramsBuffer;
         private ConstantBuffer<CBWorld> paramsWorldBuffer;
 
@@ -155,41 +155,39 @@
                 new("VOLUMETRIC_SCATTERING_QUALITY", ((int)quality).ToString())
             };
 
-            godrays = device.CreateGraphicsPipeline(new()
+            godrays = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/godrays/ps.hlsl",
-                State = new()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Additive,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                    BlendFactor = default,
-                    SampleMask = int.MaxValue
-                },
                 Macros = [.. shaderMacros],
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullBack,
+                Blend = BlendDescription.Additive,
+                Topology = PrimitiveTopology.TriangleStrip,
+                BlendFactor = default,
+                SampleMask = int.MaxValue
             });
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             quad = new(device, sunSize);
 
-            sun = device.CreateGraphicsPipeline(new()
+            sun = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "effects/sun/vs.hlsl",
                 PixelShader = "effects/sun/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Blend = BlendDescription.Opaque,
-                    BlendFactor = Vector4.One,
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    SampleMask = int.MaxValue,
-                    StencilRef = 0,
-                    Topology = PrimitiveTopology.TriangleList
-                },
                 Macros = macros
+            }, new()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.One,
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Rasterizer = RasterizerDescription.CullBack,
+                SampleMask = int.MaxValue,
+                StencilRef = 0,
+                Topology = PrimitiveTopology.TriangleList
             });
 
             paramsWorldBuffer = new(device, CpuAccessFlags.Write);
@@ -283,7 +281,7 @@
             context.PSSetShaderResource(0, sunMask.Value);
             context.PSSetShaderResource(1, noiseTex);
             context.PSSetSampler(0, linearClampSampler);
-            context.SetGraphicsPipeline(godrays);
+            context.SetPipelineState(godrays);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

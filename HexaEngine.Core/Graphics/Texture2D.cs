@@ -1140,7 +1140,7 @@
                 RTVArraySlices = new IRenderTargetView[description.ArraySize];
                 for (int i = 0; i < description.ArraySize; i++)
                 {
-                    RTVArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    RTVArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2DArray, firstArraySlice: i, arraySize: 1));
                     RTVArraySlices[i].DebugName = dbgName + $".RTV.{i}";
                 }
             }
@@ -1150,7 +1150,7 @@
                 UAVArraySlices = new IUnorderedAccessView[description.ArraySize];
                 for (int i = 0; i < description.ArraySize; i++)
                 {
-                    UAVArraySlices[i] = device.CreateUnorderedAccessView(texture, new UnorderedAccessViewDescription(texture, UnorderedAccessViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    UAVArraySlices[i] = device.CreateUnorderedAccessView(texture, new UnorderedAccessViewDescription(texture, UnorderedAccessViewDimension.Texture2DArray, firstArraySlice: i, arraySize: 1));
                     UAVArraySlices[i].DebugName = dbgName + $".UAV.{i}";
                 }
             }
@@ -1160,7 +1160,7 @@
                 SRVArraySlices = new IShaderResourceView[description.ArraySize];
                 for (int i = 0; i < description.ArraySize; i++)
                 {
-                    SRVArraySlices[i] = device.CreateShaderResourceView(texture, new ShaderResourceViewDescription(texture, ShaderResourceViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
+                    SRVArraySlices[i] = device.CreateShaderResourceView(texture, new ShaderResourceViewDescription(texture, ShaderResourceViewDimension.Texture2DArray, firstArraySlice: i, arraySize: 1));
                     SRVArraySlices[i].DebugName = dbgName + $".SRV.{i}";
                 }
             }

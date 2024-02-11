@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
     using HexaEngine.D3D11;
     using HexaEngine.D3D12;
@@ -67,7 +66,7 @@
             if (editor)
             {
                 PluginManager.Load();
-                Application.InDesignMode = true;
+                Application.EditorPlayState = EditorPlayState.Edit;
                 Application.InEditorMode = true;
             }
             else if (window is Window window1)

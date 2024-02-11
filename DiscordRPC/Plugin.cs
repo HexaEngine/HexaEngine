@@ -23,7 +23,7 @@
         {
             ProjectManager.ProjectChanged += ProjectChanged;
             SceneManager.SceneChanged += SceneChanged;
-            Application.OnDesignModeChanged += OnDesignModeChanged;
+            Application.OnEditorPlayStateChanged += OnPlayStateChanged;
 
             try
             {
@@ -73,7 +73,7 @@
                 return;
             }
 
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 rpcClient.Presence = new RichPresence()
                     .WithState($"{ProjectManager.Project.Name}: editing {Path.GetFileName(SceneManager.Current.Path)}")
@@ -89,7 +89,7 @@
             }
         }
 
-        private void OnDesignModeChanged(bool obj)
+        private void OnPlayStateChanged(EditorPlayState state)
         {
             SetSceneState();
         }
@@ -138,7 +138,7 @@
             {
                 ProjectManager.ProjectChanged -= ProjectChanged;
                 SceneManager.SceneChanged -= SceneChanged;
-                Application.OnDesignModeChanged -= OnDesignModeChanged;
+                Application.OnEditorPlayStateChanged -= OnPlayStateChanged;
                 rpcClient.Dispose();
                 rpcClient = null;
             }

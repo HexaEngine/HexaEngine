@@ -17,6 +17,7 @@
         private uint count;
 
 #nullable disable
+
         private ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
         {
             dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -39,6 +40,7 @@
                 _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
             };
         }
+
 #nullable restore
 
         /// <summary>
@@ -269,6 +271,7 @@
             if (items != null)
             {
                 Free(items);
+                items = null;
             }
 
             items = null;

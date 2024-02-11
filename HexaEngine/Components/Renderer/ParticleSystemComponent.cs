@@ -115,7 +115,7 @@
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            if (particleTexture == null || Application.InDesignMode)
+            if (particleTexture == null || Application.InEditMode)
                 return;
 
             renderer.Draw(context, dsv.Value.SRV);

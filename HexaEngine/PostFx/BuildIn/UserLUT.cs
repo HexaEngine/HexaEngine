@@ -8,7 +8,7 @@
 
     public class UserLUT : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<LUTParams> paramsBuffer;
         private ISamplerState samplerState;
         private ISamplerState lutSamplerState;
@@ -62,13 +62,12 @@
 
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lut/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(device, new LUTParams(), CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             lutSamplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -85,9 +84,9 @@
             context.PSSetShaderResources(0, 2, (void**)passSRVs);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSamplers(0, 2, (void**)passSMPs);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             nint* empty = stackalloc nint[] { 0, 0 };
             context.PSSetSamplers(0, 2, (void**)empty);
             context.PSSetConstantBuffer(0, null);

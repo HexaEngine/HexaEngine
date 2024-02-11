@@ -52,6 +52,10 @@
 
         public float Size => size;
 
+        public bool IsDisposed => disposedValue;
+
+        public event Action<ShadowAtlas>? OnDisposing;
+
         public void Clear()
         {
             mutex.WaitOne();
@@ -143,7 +147,7 @@
             return new(this, handles);
         }
 
-        public SpatialCacheHandle Cache(ref ShadowAtlasHandle handle)
+        public SpatialCacheHandle Cache(ShadowAtlasHandle handle)
         {
             mutex.WaitOne();
             var cacheHandle = cache.AddToCache(handle.Handle);
@@ -152,7 +156,7 @@
             return cacheHandle;
         }
 
-        public SpatialCacheHandle[] CacheRange(ref ShadowAtlasRangeHandle handle)
+        public SpatialCacheHandle[] CacheRange(ShadowAtlasRangeHandle handle)
         {
             SpatialCacheHandle[] cacheHandles = new SpatialCacheHandle[handle.Handles.Length];
             mutex.WaitOne();
@@ -165,7 +169,7 @@
             return cacheHandles;
         }
 
-        public void Free(ref ShadowAtlasHandle handle)
+        public void Free(ShadowAtlasHandle handle)
         {
             mutex.WaitOne();
             handle.Handle.Dispose();
@@ -173,7 +177,7 @@
             handle.IsValid = false;
         }
 
-        public void FreeRange(ref ShadowAtlasRangeHandle handle)
+        public void FreeRange(ShadowAtlasRangeHandle handle)
         {
             var handles = handle.Handles;
             mutex.WaitOne();
@@ -189,6 +193,7 @@
         {
             if (!disposedValue)
             {
+                OnDisposing?.Invoke(this);
                 cache.Dispose();
                 allocator.Dispose();
                 texture.Dispose();

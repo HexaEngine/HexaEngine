@@ -12,7 +12,7 @@
     public class IBLDiffuseIrradiance : IDisposable
     {
         private readonly Cube cube;
-        private readonly IGraphicsPipeline pipeline;
+        private readonly IGraphicsPipelineState pipeline;
         private readonly ConstantBuffer<Matrix4x4> viewBuffer;
         private readonly ISamplerState sampler;
 
@@ -31,17 +31,16 @@
         {
             Cameras = new CubeFaceCamera[6];
             cube = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/irradiance/vs.hlsl",
                 PixelShader = "filter/irradiance/ps.hlsl",
-                State = new()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                }
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = RasterizerDescription.CullNone,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
             });
 
             SetViewPoint(Vector3.Zero);
@@ -90,7 +89,7 @@
             context.PSSetSampler(0, sampler);
             context.PSSetShaderResource(0, Source);
             context.VSSetConstantBuffer(0, viewBuffer);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             for (int i = 0; i < 6; i++)
             {
@@ -99,7 +98,7 @@
                 cube.DrawAuto(context);
             }
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetShaderResource(0, null);
             context.VSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);

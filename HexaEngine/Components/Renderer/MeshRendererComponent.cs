@@ -17,7 +17,81 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
+    using System;
+    using System.Collections;
     using System.Numerics;
+
+    public struct MaterialMapping
+    {
+        public readonly MeshData Mesh;
+        private MaterialData? material;
+
+        public MaterialData? Material
+        {
+            readonly get => material; set
+            {
+                material = value;
+
+                Mesh.MaterialName = material?.Name ?? string.Empty;
+            }
+        }
+
+        public MaterialMapping(MeshData mesh, MaterialData material)
+        {
+            Mesh = mesh;
+            this.material = material;
+        }
+    }
+
+    public class MaterialMappingCollection : ICollection<MaterialMapping>
+    {
+        private readonly List<MaterialMapping> mappings = [];
+
+        public int Count => mappings.Count;
+
+        public bool IsReadOnly => false;
+
+        public MaterialMapping this[int index]
+        {
+            get => mappings[index];
+            set => mappings[index] = value;
+        }
+
+        public void Add(MaterialMapping item)
+        {
+            mappings.Add(item);
+        }
+
+        public void Clear()
+        {
+            mappings.Clear();
+        }
+
+        public bool Contains(MaterialMapping item)
+        {
+            return mappings.Contains(item);
+        }
+
+        public void CopyTo(MaterialMapping[] array, int arrayIndex)
+        {
+            mappings.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<MaterialMapping> GetEnumerator()
+        {
+            return mappings.GetEnumerator();
+        }
+
+        public bool Remove(MaterialMapping item)
+        {
+            return mappings.Remove(item);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return mappings.GetEnumerator();
+        }
+    }
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
@@ -59,6 +133,10 @@
 
         [JsonIgnore]
         public Model? ModelInstance => model;
+
+        [EditorProperty("Materials")]
+        [JsonIgnore]
+        public MaterialMappingCollection Materials { get; } = new();
 
         public override void Load(IGraphicsDevice device)
         {
@@ -160,6 +238,8 @@
                     return;
                 }
 
+                component.Materials.Clear();
+
                 if (component.GameObject == null)
                 {
                     return;
@@ -178,6 +258,15 @@
 
                     component.model = new(source, library);
                     component.model.LoadAsync().Wait();
+
+                    for (int i = 0; i < component.model.Meshes.Length; i++)
+                    {
+                        var mesh = component.model.Meshes[i];
+                        var material = component.model.Materials.FirstOrDefault(x => x.Name == mesh.Data.MaterialName);
+                        MaterialMapping mapping = new(mesh.Data, material?.Data);
+                        component.Materials.Add(mapping);
+                    }
+
                     var flags = component.model.ShaderFlags;
                     component.QueueIndex = (uint)RenderQueueIndex.Geometry;
 
@@ -196,6 +285,11 @@
                     component.GameObject.SendUpdateTransformed();
                 }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
+        }
+
+        public void Hide(Mesh mesh)
+        {
+            throw new NotImplementedException();
         }
     }
 }

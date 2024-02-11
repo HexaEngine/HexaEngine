@@ -624,5 +624,20 @@
         {
             throw new NotImplementedException();
         }
+
+        public void SetPipelineState(IGraphicsPipelineState? state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetResourceBindingList(IResourceBindingList rootDescriptorTable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnsetResourceBindingList(IResourceBindingList rootDescriptorTable)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

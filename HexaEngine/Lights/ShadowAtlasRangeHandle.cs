@@ -1,29 +1,47 @@
 ﻿namespace HexaEngine.Lights
 {
-    public struct ShadowAtlasRangeHandle : IDisposable
+    public class ShadowAtlasRangeHandle : IDisposable
     {
-        private ShadowAtlas atlas;
-        private SpatialAllocatorHandle[] handles;
-        private bool valid;
+        private readonly ShadowAtlas atlas;
+        private readonly SpatialAllocatorHandle[] handles;
+        private bool isValid;
 
         public ShadowAtlasRangeHandle(ShadowAtlas atlas, SpatialAllocatorHandle[] handles)
         {
             this.atlas = atlas;
             this.handles = handles;
-            valid = true;
+            atlas.OnDisposing += OnDisposing;
+            isValid = true;
         }
 
-        public readonly ShadowAtlas Atlas => atlas;
+        private void OnDisposing(ShadowAtlas obj)
+        {
+            Dispose(false);
+        }
 
-        public readonly SpatialAllocatorHandle[] Handles => handles;
+        public ShadowAtlas Atlas => atlas;
 
-        public bool IsValid { readonly get => valid; internal set => valid = value; }
+        public SpatialAllocatorHandle[] Handles => handles;
+
+        public bool IsValid { get => isValid; internal set => isValid = value; }
 
         public void Dispose()
         {
-            if (valid)
-                atlas.FreeRange(ref this);
-            this = default;
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (isValid)
+            {
+                if (disposing)
+                {
+                    atlas.FreeRange(this);
+                }
+
+                atlas.OnDisposing -= OnDisposing;
+                isValid = false;
+            }
         }
     }
 }

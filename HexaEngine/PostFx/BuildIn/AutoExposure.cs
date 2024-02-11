@@ -29,7 +29,7 @@ namespace HexaEngine.PostFx.BuildIn
         private ConstantBuffer<LumaAvgParams> lumaAvgParams;
         private ResourceRef<Texture2D> lumaTex;
 
-        private IGraphicsPipeline compose;
+        private IGraphicsPipelineState compose;
         private ISamplerState linearSampler;
 
         private float minLogLuminance = -8;
@@ -168,12 +168,11 @@ namespace HexaEngine.PostFx.BuildIn
 
             lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
             lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
-            compose = device.CreateGraphicsPipeline(new()
+            compose = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 PixelShader = "effects/autoexposure/ps.hlsl",
                 VertexShader = "quad.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
@@ -238,13 +237,13 @@ namespace HexaEngine.PostFx.BuildIn
             nint* composeSRVs = stackalloc nint[] { Input.NativePointer, lumaTex.Value.SRV.NativePointer };
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.SetGraphicsPipeline(compose);
+            context.SetPipelineState(compose);
             context.PSSetShaderResources(0, 2, (void**)composeSRVs);
             context.PSSetSampler(0, linearSampler);
             context.DrawInstanced(4, 1, 0, 0);
             context.PSSetSampler(0, null);
             context.PSSetShaderResources(0, 2, (void**)emptyUAV2s);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

@@ -11,7 +11,7 @@
     public class Grain : PostFxBase
     {
 #nullable disable
-        private ResourceRef<IGraphicsPipeline> pipeline;
+        private IGraphicsPipelineState pipeline;
         private ResourceRef<ConstantBuffer<GrainParams>> paramsBuffer;
         private ResourceRef<ISamplerState> samplerState;
         private float grainIntensity = 0.05f;
@@ -79,13 +79,12 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = creator.CreateConstantBuffer<GrainParams>("GRAIN_CONSTANT_BUFFER", CpuAccessFlags.Write);
-            pipeline = creator.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/grain/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             samplerState = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
         }
@@ -103,9 +102,9 @@
             context.PSSetShaderResource(0, Input);
             context.PSSetConstantBuffer(0, paramsBuffer.Value);
             context.PSSetSampler(0, samplerState.Value);
-            context.SetGraphicsPipeline(pipeline.Value);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);

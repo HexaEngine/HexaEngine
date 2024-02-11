@@ -27,12 +27,13 @@
             instance.EndLoad(shader);
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
+        protected override Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
         {
             (MeshData mesh, MaterialData material, bool debone) = instanceData;
             var shader = new Resources.MaterialShader(device, mesh, material, debone);
-            await shader.InitializeAsync();
+            shader.Initialize();
             instance.EndLoad(shader);
+            return Task.CompletedTask;
         }
 
         protected override void UnloadInstance(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance)

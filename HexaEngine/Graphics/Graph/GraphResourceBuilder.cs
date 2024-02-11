@@ -64,8 +64,8 @@
         private readonly List<ISamplerState> samplerStates = new();
         private readonly List<LazyInitDesc<SamplerStateDescription>> lazySamplerStates = new();
 
-        private readonly List<IGraphicsPipeline> graphicsPipelines = new();
-        private readonly List<LazyInitDesc<GraphicsPipelineDesc>> lazyGraphicsPipelines = new();
+        private readonly List<IGraphicsPipelineState> graphicsPipelineStates = new();
+        private readonly List<LazyInitDesc<GraphicsPipelineStateDescEx>> lazyGraphicsPipelineStates = new();
 
         private readonly List<IComputePipeline> computePipelines = new();
         private readonly List<LazyInitDesc<ComputePipelineDesc>> lazyComputePipelines = new();
@@ -122,9 +122,9 @@
                 lazySamplerStates[i].Construct(device, samplerStates);
             }
 
-            for (int i = 0; i < lazyGraphicsPipelines.Count; i++)
+            for (int i = 0; i < lazyGraphicsPipelineStates.Count; i++)
             {
-                lazyGraphicsPipelines[i].Construct(device, graphicsPipelines);
+                lazyGraphicsPipelineStates[i].Construct(device, graphicsPipelineStates);
             }
 
             for (int i = 0; i < lazyComputePipelines.Count; i++)
@@ -173,8 +173,8 @@
             samplerStates.Clear();
             lazySamplerStates.Clear();
 
-            graphicsPipelines.Clear();
-            lazyGraphicsPipelines.Clear();
+            graphicsPipelineStates.Clear();
+            lazyGraphicsPipelineStates.Clear();
 
             computePipelines.Clear();
             lazyComputePipelines.Clear();
@@ -329,8 +329,6 @@
 
         public IRenderTargetView? Output { get; internal set; }
 
-        public ITexture2D OutputTex { get; internal set; }
-
         public ResourceRef<StructuredUavBuffer<T>> GetStructuredUavBuffer<T>(string name) where T : unmanaged
         {
             return GetOrAddResource<StructuredUavBuffer<T>>(name);
@@ -431,14 +429,14 @@
             return GetOrAddResource<ISamplerState>(name);
         }
 
-        public void UpdateGraphicsPipeline(string name, GraphicsPipelineDesc desc)
+        public void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)
         {
-            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines);
+            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates);
         }
 
-        public ResourceRef<IGraphicsPipeline> GetGraphicsPipeline(string name)
+        public ResourceRef<IGraphicsPipelineState> GetGraphicsPipelineState(string name)
         {
-            return GetOrAddResource<IGraphicsPipeline>(name);
+            return GetOrAddResource<IGraphicsPipelineState>(name);
         }
 
         public void UpdateComputePipeline(string name, ComputePipelineDesc desc)
@@ -518,15 +516,15 @@
             return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, lazyGBuffers, flags);
         }
 
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
             string name = description.GetHashCode().ToString();
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, lazyGraphicsPipelineStates, flags);
         }
 
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipeline(desc), graphicsPipelines, lazyGraphicsPipelines, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, lazyGraphicsPipelineStates, flags);
         }
 
         public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
@@ -606,7 +604,8 @@
         {
             if (TryGetResource<TType>(name, out var resourceRef) && resourceRef.Value != null)
             {
-                throw new InvalidOperationException($"Resource {name} is already created ({resourceRef.Value})");
+                return resourceRef;
+                //throw new InvalidOperationException($"Resource {name} is already created ({resourceRef.Value})");
             }
 
             resourceRef ??= AddResource<TType>(name);

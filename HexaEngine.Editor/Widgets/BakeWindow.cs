@@ -2,8 +2,10 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Components.Renderer;
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Threading;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
     using System.Threading;
@@ -11,7 +13,7 @@
 
     public class BakeWindow : EditorWindow
     {
-        private MeshBaker baker = new();
+        private MeshBaker2 baker;
         private Task? task;
         private CancellationTokenSource cancellationToken = new();
 
@@ -20,7 +22,7 @@
         protected override void InitWindow(IGraphicsDevice device)
         {
             base.InitWindow(device);
-            baker.Initialize(device);
+            baker = new(device);
         }
 
         public override void DrawContent(IGraphicsContext context)
@@ -41,6 +43,24 @@
                 if (ImGui.Button("Bake"))
                 {
                     Bake(context);
+                }
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                ImGui.Image(baker.Texture.SRVArraySlices[i].NativePointer, new(256));
+                if (i < 5)
+                {
+                    ImGui.SameLine();
+                }
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                ImGui.Image(baker.TextureFinal.SRVArraySlices[i].NativePointer, new(256));
+                if (i < 5)
+                {
+                    ImGui.SameLine();
                 }
             }
 
@@ -82,13 +102,15 @@
 
             cancellationToken = new();
 
-            task = Task.Run(async () =>
+            task = Task.Run(() =>
             {
                 foreach (var renderer in renderers.Renderers)
                 {
                     if (renderer is MeshRendererComponent rendererComponent && rendererComponent.ModelInstance != null)
                     {
-                        await baker.BakeAsync(context.Device, context, SceneRenderer.Current, rendererComponent.ModelInstance, rendererComponent, (SkyRendererComponent)sky, cancellationToken.Token);
+                        rendererComponent.GameObject.IsEnabled = false;
+                        baker.Bake(Application.MainWindow.Dispatcher, context, rendererComponent.GameObject.Transform, rendererComponent.ModelInstance, SceneRenderer.Current);
+                        rendererComponent.GameObject.IsEnabled = true;
                     }
                 }
             });

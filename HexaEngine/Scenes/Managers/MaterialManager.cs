@@ -3,21 +3,49 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.UI;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Text;
 
     public class MaterialManager
     {
-        private readonly List<MaterialLibrary> libraries = new();
-        private readonly Dictionary<string, MaterialLibrary> pathToLib = new();
+        private readonly List<MaterialLibrary> libraries = [];
+        private readonly Dictionary<string, MaterialLibrary> pathToLib = [];
+        private readonly Dictionary<MaterialLibrary, string> libToPath = [];
 
-        private readonly List<MaterialData> materials = new();
-        private readonly Dictionary<MaterialData, MaterialLibrary> matToLib = new();
+        private readonly List<MaterialData> materials = [];
+        private readonly Dictionary<MaterialData, MaterialLibrary> matToLib = [];
 
         private readonly object _lock = new();
+
+        public MaterialManager(string? path)
+        {
+            if (path == null)
+            {
+                return;
+            }
+
+            var materialLibPaths = FileSystem.GetFiles("assets/", "*.matlib");
+
+            for (var i = 0; i < materialLibPaths.Length; i++)
+            {
+                var materialLibPath = materialLibPaths[i];
+                MaterialLibrary library = MaterialLibrary.Load(materialLibPath);
+                libraries.Add(library);
+                pathToLib.Add(materialLibPath, library);
+                libToPath.Add(library, materialLibPath);
+                for (var j = 0; j < library.Materials.Count; j++)
+                {
+                    var material = library.Materials[j];
+                    materials.Add(material);
+                    matToLib.Add(material, library);
+                }
+            }
+        }
 
         public IReadOnlyList<MaterialLibrary> Libraries => libraries;
 
@@ -25,7 +53,11 @@
 
         public int Count => materials.Count;
 
+        public object SyncObject => _lock;
+
         public event Action<MaterialData, string, string>? Renamed;
+
+        public static MaterialManager? Current => SceneManager.Current?.MaterialManager;
 
         public MaterialLibrary GetMaterialLibraryForm(MaterialData materialData)
         {
@@ -39,8 +71,8 @@
         {
             lock (_lock)
             {
-                var result = pathToLib.FirstOrDefault(x => x.Value == library);
-                return result.Key;
+                libToPath.TryGetValue(library, out var value);
+                return value;
             }
         }
 
@@ -50,6 +82,7 @@
             {
                 libraries.Clear();
                 pathToLib.Clear();
+                libToPath.Clear();
                 materials.Clear();
                 matToLib.Clear();
             }
@@ -112,7 +145,6 @@
                         var mat = desc;
                         int index = materials.IndexOf(mat);
                         mat.Name = newName;
-                        //ResourceManager.RenameMaterial(oldName, newName);
                         Renamed?.Invoke(mat, oldName, newName);
                         materials[index] = mat;
                         return true;
@@ -171,6 +203,7 @@
 
                 libraries.Add(library);
                 pathToLib.Add(path, library);
+                libToPath.Add(library, path);
 
                 for (int i = 0; i < library.Materials.Count; i++)
                 {
@@ -180,6 +213,39 @@
             }
 
             return library;
+        }
+
+        public void SaveChanges(MaterialData desc)
+        {
+            SaveChanges(GetMaterialLibraryForm(desc));
+        }
+
+        public void SaveChanges(MaterialLibrary library)
+        {
+            lock (_lock)
+            {
+                var path = GetPathToMaterialLibrary(library);
+
+                if (path == null)
+                {
+                    Logger.Error("Failed to save library, Path not found");
+                    MessageBox.Show("Failed to save library", "Path not found");
+                    return;
+                }
+
+                path = FileSystem.GetFullPath(path);
+
+                try
+                {
+                    library.Save(path, Encoding.UTF8);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    Logger.Error($"Failed to save library, {e.Message}");
+                    MessageBox.Show("Failed to save library", e.Message);
+                }
+            }
         }
     }
 }

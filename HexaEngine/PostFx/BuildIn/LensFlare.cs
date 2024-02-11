@@ -9,18 +9,18 @@
 
     public class LensFlare : PostFxBase
     {
-        private IGraphicsPipeline downsamplePipeline;
+        private IGraphicsPipelineState downsamplePipeline;
         private ConstantBuffer<DownsampleParams> downsampleCB;
         private ISamplerState samplerState;
         private ResourceRef<Texture2D> downsampleBuffer;
         private ResourceRef<Texture2D> accumBuffer;
 
-        private IGraphicsPipeline lensPipeline;
+        private IGraphicsPipelineState lensPipeline;
         private ConstantBuffer<LensParams> lensCB;
 
         private GaussianBlur blur;
 
-        private IGraphicsPipeline blendPipeline;
+        private IGraphicsPipelineState blendPipeline;
         private Texture2D lensDirt;
 
         private Vector4 scale = new(0.02f);
@@ -99,37 +99,34 @@
 
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            downsamplePipeline = device.CreateGraphicsPipeline(new()
+            downsamplePipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lensflare/downsample.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             downsampleCB = new(device, CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
 
-            lensPipeline = device.CreateGraphicsPipeline(new()
+            lensPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lensflare/lens.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             lensCB = new(device, CpuAccessFlags.Write);
 
             accumBuffer = creator.CreateBufferHalfRes("LENS_ACCUMULATION_BUFFER");
 
             blur = new(creator, "LENS", false, true);
 
-            blendPipeline = device.CreateGraphicsPipeline(new()
+            blendPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lensflare/blend.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
         public override void Update(IGraphicsContext context)
@@ -141,7 +138,7 @@
         public override void Draw(IGraphicsContext context)
         {
             // downsample and threshold
-            context.SetGraphicsPipeline(downsamplePipeline);
+            context.SetPipelineState(downsamplePipeline);
             context.SetRenderTarget(downsampleBuffer.Value.RTV, null);
             context.SetViewport(downsampleBuffer.Value.Viewport);
             context.PSSetShaderResource(0, Input);
@@ -150,7 +147,7 @@
             context.DrawInstanced(4, 1, 0, 0);
 
             // lens
-            context.SetGraphicsPipeline(lensPipeline);
+            context.SetPipelineState(lensPipeline);
             context.SetRenderTarget(accumBuffer.Value.RTV, null);
             context.SetViewport(accumBuffer.Value.Viewport);
             context.PSSetShaderResource(0, downsampleBuffer.Value.SRV);

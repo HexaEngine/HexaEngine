@@ -36,7 +36,8 @@ FXAA (Fast approximate anti-aliasing)
 SSR (Screen Space Reflections)
 TAA
 Tonemapping
-LUT (Colorgrading)
+Colorgrading
+LUT
 Godrays
 Lens flares
 Volumetric clouds

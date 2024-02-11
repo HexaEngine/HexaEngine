@@ -21,8 +21,8 @@
     public class DecalRenderer : IDisposable
     {
         private readonly Cube cube;
-        private readonly IGraphicsPipeline pipeline;
-        private readonly IGraphicsPipeline pipelineModifyNormals;
+        private readonly IGraphicsPipelineState pipeline;
+        private readonly IGraphicsPipelineState pipelineModifyNormals;
         private readonly ISamplerState linearWrapSampler;
         private readonly ISamplerState pointClampSampler;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
@@ -34,24 +34,22 @@
         public DecalRenderer(IGraphicsDevice device)
         {
             cube = new Cube(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
                 PixelShader = "deferred/decal/ps.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone
-                }
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone
             });
-            pipelineModifyNormals = device.CreateGraphicsPipeline(new()
+            pipelineModifyNormals = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
                 PixelShader = "deferred/decal/ps.hlsl",
-                State = new()
-                {
-                    Rasterizer = RasterizerDescription.CullNone
-                },
                 Macros = [new("DECAL_MODIFY_NORMALS", 1)]
+            }, new()
+            {
+                Rasterizer = RasterizerDescription.CullNone
             });
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
             pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
@@ -75,9 +73,9 @@
             context.PSSetShaderResources(0, 2, (void**)srvs);
             context.PSSetSamplers(0, 2, (void**)sps);
 
-            context.SetGraphicsPipeline(decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline);
+            context.SetPipelineState(decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline);
             cube.DrawAuto(context);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             ZeroMemory(srvs, sizeof(nint) * 2);
             ZeroMemory(cbs, sizeof(nint) * 2);

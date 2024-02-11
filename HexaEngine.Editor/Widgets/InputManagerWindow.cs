@@ -60,7 +60,7 @@
         public InputManagerWindow()
         {
 #if DEBUG
-            IsShown = true;
+            //IsShown = true;
 #endif
         }
 

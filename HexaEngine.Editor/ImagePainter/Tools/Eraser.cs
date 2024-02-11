@@ -10,7 +10,7 @@
     {
         private Vector2 brushSize = Vector2.One;
         private float opacity = 1;
-        private IGraphicsPipeline brushPipeline;
+        private IGraphicsPipelineState brushPipeline;
         private ConstantBuffer<Vector4> opacityBuffer;
 
         public override string Icon => "\xE75C##EraserTool";
@@ -31,18 +31,17 @@
                 BackFace = DepthStencilOperationDescription.DefaultBack
             };
             BlendDescription blendDescription = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.SourceAlpha, Blend.InverseSourceAlpha);
-            brushPipeline = device.CreateGraphicsPipeline(new()
+            brushPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "tools/image/eraser/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    Blend = blendDescription,
-                    BlendFactor = Vector4.Zero,
-                    DepthStencil = depthStencil,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                }
+            }, new GraphicsPipelineStateDesc()
+            {
+                Blend = blendDescription,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = depthStencil,
+                Rasterizer = RasterizerDescription.CullBack,
+                Topology = PrimitiveTopology.TriangleStrip,
             });
             opacityBuffer = new(device, CpuAccessFlags.Write);
         }
@@ -59,9 +58,9 @@
 
             context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetGraphicsPipeline(brushPipeline);
+            context.SetPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetConstantBuffer(1, null);
         }
 
@@ -71,9 +70,9 @@
 
             context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetGraphicsPipeline(brushPipeline);
+            context.SetPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetConstantBuffer(1, null);
         }
 

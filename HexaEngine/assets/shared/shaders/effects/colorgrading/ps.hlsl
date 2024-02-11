@@ -1,7 +1,7 @@
 #include "../../colorUtils.hlsl"
-Texture2D hdrTexture : register(t0);
+Texture2D InputTex : register(t0);
 Texture2D lutTexture : register(t1);
-SamplerState linearClampSampler : register(s0);
+SamplerState LinearClampSampler : register(s0);
 
 #ifndef TONEMAP
 /*
@@ -171,7 +171,7 @@ float3 ChannelMix(float3 color)
 
 float4 main(VSOut vs) : SV_Target
 {
-    float4 color = hdrTexture.Sample(linearClampSampler, vs.Tex);
+    float4 color = InputTex.Sample(LinearClampSampler, vs.Tex);
 
     if (color.a == 0)
         discard;

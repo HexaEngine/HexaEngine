@@ -7,7 +7,7 @@
 
     public class Vignette : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VignetteParams> paramsBuffer;
 
         private ISamplerState samplerState;
@@ -107,20 +107,19 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/vignette/ps.hlsl",
-                State = new()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.One, Blend.DestinationAlpha, BlendOperation.Add, BlendOperation.Add),
-                    Topology = PrimitiveTopology.TriangleStrip,
-                    BlendFactor = default,
-                    SampleMask = int.MaxValue
-                },
                 Macros = macros
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = RasterizerDescription.CullBack,
+                Blend = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.One, Blend.DestinationAlpha, BlendOperation.Add, BlendOperation.Add),
+                Topology = PrimitiveTopology.TriangleStrip,
+                BlendFactor = default,
+                SampleMask = int.MaxValue
             });
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -142,9 +141,9 @@
             context.PSSetShaderResource(0, Input);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, samplerState);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);

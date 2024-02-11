@@ -18,9 +18,6 @@
     {
         public new CameraTransform Transform;
 
-        private static ulong instances;
-        private static ConstantBuffer<Matrix4x4>? psmBuffer;
-
         private float coneAngle;
         private float blend;
         private Matrix4x4 view;
@@ -52,10 +49,7 @@
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
         [JsonIgnore]
-        public override bool HasShadowMap => atlasHandle.IsValid;
-
-        [JsonIgnore]
-        internal static IBuffer PSMBuffer => psmBuffer;
+        public override bool HasShadowMap => atlasHandle?.IsValid ?? false;
 
         public override IShaderResourceView? GetShadowMap()
         {
@@ -64,38 +58,32 @@
 
         public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
-            if (atlasHandle.IsValid)
+            if (HasShadowMap)
             {
                 return;
             }
 
             atlasHandle = atlas.Alloc(ShadowMapSize);
             last = ShadowMapResolution;
-
-            if (Interlocked.Increment(ref instances) == 1)
-            {
-                psmBuffer = new(device, CpuAccessFlags.Write);
-            }
         }
 
         public override void DestroyShadowMap()
         {
-            if (!atlasHandle.IsValid)
+            if (!HasShadowMap)
             {
                 return;
             }
 
             atlasHandle.Dispose();
-
-            if (Interlocked.Decrement(ref instances) == 0)
-            {
-                psmBuffer?.Dispose();
-                psmBuffer = null;
-            }
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
         {
+            if (!HasShadowMap)
+            {
+                return;
+            }
+
             var data = buffer.Local + QueueIndex;
             data->Size = ShadowMapSize;
             data->Softness = 1;
@@ -110,9 +98,9 @@
             views[0] = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<PSMShadowParams> psmBuffer)
         {
-            if (!atlasHandle.IsValid)
+            if (!HasShadowMap)
             {
                 return;
             }
@@ -149,7 +137,7 @@
                 return false;
             }
 
-            cacheHandles.Add(atlas.Cache(ref atlasHandle));
+            cacheHandles.Add(atlas.Cache(atlasHandle));
 
             var size = new Vector2(GraphicsSettings.GetSMSizeSpotlight(resolution));
 

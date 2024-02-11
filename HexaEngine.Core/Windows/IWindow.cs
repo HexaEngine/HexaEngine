@@ -140,6 +140,11 @@
         Rectangle BorderSize { get; }
 
         /// <summary>
+        /// Event triggered when the window is closed.
+        /// </summary>
+        event EventHandler<CloseEventArgs>? Closed;
+
+        /// <summary>
         /// Event triggered when the window is closing.
         /// </summary>
         event EventHandler<CloseEventArgs>? Closing;

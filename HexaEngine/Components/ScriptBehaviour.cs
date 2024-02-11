@@ -117,7 +117,7 @@
         public void Awake()
         {
             CreateInstance();
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
                 return;
             if (instance != null)
             {
@@ -135,7 +135,7 @@
 
         public void Update()
         {
-            if (Application.InDesignMode || instance == null)
+            if (Application.InEditMode || instance == null)
             {
                 return;
             }
@@ -152,7 +152,7 @@
 
         public void FixedUpdate()
         {
-            if (Application.InDesignMode || instance == null)
+            if (Application.InEditMode || instance == null)
             {
                 return;
             }
@@ -169,7 +169,7 @@
 
         public void Destroy()
         {
-            if (Application.InDesignMode || instance == null)
+            if (Application.InEditMode || instance == null)
             {
                 instance = null;
                 return;

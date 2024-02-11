@@ -30,7 +30,7 @@ namespace HexaEngine.Scenes.Managers
 
         public void Update(float delta)
         {
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 return;
             }
@@ -44,7 +44,7 @@ namespace HexaEngine.Scenes.Managers
 
         public void FixedUpdate()
         {
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace HexaEngine.Scenes.Managers
 
         public void Awake(Scene scene)
         {
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 return;
             }
@@ -74,7 +74,7 @@ namespace HexaEngine.Scenes.Managers
 
         public void Destroy()
         {
-            if (Application.InDesignMode)
+            if (Application.InEditMode)
             {
                 return;
             }

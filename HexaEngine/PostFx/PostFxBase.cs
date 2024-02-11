@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
+    using Silk.NET.DirectStorage;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
@@ -15,6 +16,8 @@
     {
         private bool initialized = false;
         private bool enabled = true;
+
+        protected List<IPostFxPass> Passes = new();
 
         /// <summary>
         /// Indicates whether the post-processing effect is dirty and needs an update.
@@ -115,7 +118,13 @@
         }
 
         /// <inheritdoc/>
-        public abstract void Draw(IGraphicsContext context);
+        public virtual void Draw(IGraphicsContext context)
+        {
+            for (int i = 0; i < Passes.Count; i++)
+            {
+                Passes[i].Execute(context);
+            }
+        }
 
         /// <inheritdoc/>
         public virtual void Compose(IGraphicsContext context)
@@ -133,6 +142,10 @@
             Output = view;
             OutputResource = resource;
             Viewport = viewport;
+            for (int i = 0; i < Passes.Count; i++)
+            {
+                Passes[i].SetOutput(view, resource, viewport);
+            }
         }
 
         /// <inheritdoc/>
@@ -140,6 +153,10 @@
         {
             Input = view;
             InputResource = resource;
+            for (int i = 0; i < Passes.Count; i++)
+            {
+                Passes[i].SetInput(view, resource);
+            }
         }
 
         /// <summary>
@@ -196,6 +213,10 @@
         {
             if (initialized)
             {
+                for (int i = 0; i < Passes.Count; i++)
+                {
+                    Passes[i].Dispose();
+                }
                 DisposeCore();
                 initialized = false;
             }

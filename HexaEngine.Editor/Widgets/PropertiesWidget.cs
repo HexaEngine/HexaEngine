@@ -38,7 +38,7 @@
                     return;
                 }
 
-                ImGui.BeginDisabled(!Application.InDesignMode);
+                ImGui.BeginDisabled(!Application.InEditMode);
 
                 if (SelectionCollection.Global.SelectedMultiple && editor.CanEditMultiple)
                 {

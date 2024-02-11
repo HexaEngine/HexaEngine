@@ -88,19 +88,9 @@
         public string PixelShaderEntrypoint = "main";
 
         /// <summary>
-        /// Gets or sets the graphics pipeline state.
-        /// </summary>
-        public GraphicsPipelineState State = GraphicsPipelineState.Default;
-
-        /// <summary>
         /// Gets or sets the macros of the graphics pipeline.
         /// </summary>
         public ShaderMacro[]? Macros;
-
-        /// <summary>
-        /// Gets or sets the input elements of the graphics pipeline.
-        /// </summary>
-        public InputElementDescription[]? InputElements;
 
         /// <inheritdoc/>
         public override readonly bool Equals(object? obj)
@@ -121,9 +111,7 @@
                    GeometryShaderEntrypoint == other.GeometryShaderEntrypoint &&
                    PixelShader == other.PixelShader &&
                    PixelShaderEntrypoint == other.PixelShaderEntrypoint &&
-                   State.Equals(other.State) &&
-                   EqualityComparer<ShaderMacro[]?>.Default.Equals(Macros, other.Macros) &&
-                   EqualityComparer<InputElementDescription[]?>.Default.Equals(InputElements, other.InputElements);
+                   EqualityComparer<ShaderMacro[]?>.Default.Equals(Macros, other.Macros);
         }
 
         /// <inheritdoc/>
@@ -140,9 +128,7 @@
             hash.Add(GeometryShaderEntrypoint);
             hash.Add(PixelShader);
             hash.Add(PixelShaderEntrypoint);
-            hash.Add(State);
             hash.Add(Macros);
-            hash.Add(InputElements);
             return hash.ToHashCode();
         }
 

@@ -10,7 +10,7 @@
     {
         private static IGraphicsDevice device;
         private static IGraphicsContext context;
-        private static IGraphicsPipeline pipeline;
+        private static IGraphicsPipelineState pso;
         private static IBuffer vertexBuffer;
         private static IBuffer indexBuffer;
         private static IBuffer constantBuffer;
@@ -57,19 +57,18 @@
                 AntialiasedLineEnable = true,
             };
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "internal/debugdraw/vs.hlsl",
                 PixelShader = "internal/debugdraw/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.DepthRead,
-                    Blend = BlendDescription.NonPremultiplied,
-                    Rasterizer = rasterDesc,
-                },
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.DepthRead,
+                Blend = BlendDescription.NonPremultiplied,
+                Rasterizer = rasterDesc,
                 InputElements =
                 [
-                    new("POSITION", 0, Format.R32G32B32Float, 0),
+                     new("POSITION", 0, Format.R32G32B32Float, 0),
                     new("TEXCOORD", 0, Format.R32G32Float, 0),
                     new("COLOR", 0, Format.R8G8B8A8UNorm, 0),
                 ]
@@ -189,7 +188,7 @@
                 context.VSSetConstantBuffer(0, constantBuffer);
                 context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-                context.SetGraphicsPipeline(pipeline);
+                context.SetPipelineState(pso);
                 context.VSSetConstantBuffer(0, constantBuffer);
                 context.PSSetSampler(0, fontSampler);
 
@@ -213,7 +212,7 @@
                 }
             }
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetViewport(default);
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);
@@ -233,7 +232,7 @@
             context.VSSetConstantBuffer(0, constantBuffer);
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pso);
             context.VSSetConstantBuffer(0, constantBuffer);
             context.PSSetSampler(0, fontSampler);
         }
@@ -301,7 +300,7 @@
                 }
             }
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.SetViewport(default);
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);
@@ -319,7 +318,7 @@
         {
             if (!disposedValue)
             {
-                pipeline.Dispose();
+                pso.Dispose();
                 constantBuffer.Dispose();
                 vertexBuffer.Dispose();
                 indexBuffer.Dispose();

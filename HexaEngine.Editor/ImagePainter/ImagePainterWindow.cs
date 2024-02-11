@@ -45,7 +45,7 @@
         private ImageSource? source;
         private ImageSourceOverlay? overlay;
 
-        private IGraphicsPipeline copyPipeline;
+        private IGraphicsPipelineState copyPipeline;
 
         private ConstantBuffer<Vector4> colorCB;
 
@@ -109,12 +109,11 @@
             this.device = device;
             samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
-            copyPipeline = device.CreateGraphicsPipeline(new()
+            copyPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             colorCB = new(device, CpuAccessFlags.Write);
 
@@ -355,7 +354,7 @@
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.Viewport);
                 context.PSSetShaderResource(0, source.SRV);
-                context.SetGraphicsPipeline(copyPipeline);
+                context.SetPipelineState(copyPipeline);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
 

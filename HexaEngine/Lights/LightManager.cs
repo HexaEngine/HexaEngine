@@ -9,27 +9,29 @@
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
 
     public partial class LightManager : ISystem
     {
-        private readonly List<Probe> probes = new();
-        private readonly List<Light> lights = new();
-        private readonly List<Light> activeLights = new();
+        private readonly IGraphicsDevice device;
+
+        private readonly List<Probe> probes = [];
+        private readonly List<Light> lights = [];
+        private readonly List<Light> activeLights = [];
 
         private readonly ConcurrentQueue<Probe> probeUpdateQueue = new();
         private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
         public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
 
-        public StructuredUavBuffer<ProbeData> GlobalProbes;
-        public StructuredUavBuffer<LightData> LightBuffer;
-        public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
+        public readonly StructuredUavBuffer<ProbeData> GlobalProbes;
+        public readonly StructuredUavBuffer<LightData> LightBuffer;
+        public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
-        public const int MaxGlobalLightProbes = 1;
-        public const int MaxDirectionalLightSDs = 1;
-
-        public LightManager()
+        public LightManager(IGraphicsDevice device)
         {
+            this.device = device;
+            GlobalProbes = new(device, CpuAccessFlags.Write);
+            LightBuffer = new(device, CpuAccessFlags.Write);
+            ShadowDataBuffer = new(device, CpuAccessFlags.Write);
         }
 
         public static LightManager? Current => SceneManager.Current?.LightManager;
@@ -47,13 +49,6 @@
         public string Name => "Lights";
 
         public SystemFlags Flags { get; } = SystemFlags.None;
-
-        public async Task Initialize(IGraphicsDevice device)
-        {
-            GlobalProbes = new(device, CpuAccessFlags.Write);
-            LightBuffer = new(device, CpuAccessFlags.Write);
-            ShadowDataBuffer = new(device, CpuAccessFlags.Write);
-        }
 
         private void LightTransformed(GameObject gameObject)
         {
@@ -177,7 +172,7 @@
                 }
             }
 
-            UpdateLights(context, camera);
+            UpdateLights(camera);
 
             while (RendererUpdateQueue.TryDequeue(out var renderer))
             {
@@ -211,12 +206,11 @@
             }
         }
 
-        private unsafe void UpdateLights(IGraphicsContext context, Camera camera)
+        private unsafe void UpdateLights(Camera camera)
         {
             GlobalProbes.ResetCounter();
             LightBuffer.ResetCounter();
             ShadowDataBuffer.ResetCounter();
-            uint csmCount = 0;
 
             for (int i = 0; i < probes.Count; i++)
             {
@@ -238,16 +232,11 @@
                     switch (light.LightType)
                     {
                         case LightType.Directional:
-                            if (csmCount == MaxDirectionalLightSDs)
-                            {
-                                continue;
-                            }
                             var dir = (DirectionalLight)light;
                             dir.QueueIndex = ShadowDataBuffer.Count;
                             LightBuffer.Add(new(dir));
                             ShadowDataBuffer.Add(new(dir, dir.ShadowMapSize));
                             dir.UpdateShadowBuffer(ShadowDataBuffer, camera);
-                            csmCount++;
                             break;
 
                         case LightType.Point:
@@ -290,125 +279,11 @@
             }
         }
 
-        public unsafe void BakePass(IGraphicsContext context, IRendererComponent renderer, Camera camera)
-        {
-            if ((renderer.Flags & RendererFlags.Bake) == 0)
-            {
-                return;
-            }
-            if ((renderer.Flags & RendererFlags.Clustered) != 0)
-            {
-                BakeClustered(context, renderer, camera);
-            }
-            else
-            {
-                Bake(context, renderer, camera);
-            }
-        }
-
-        private unsafe void Bake(IGraphicsContext context, IRendererComponent renderer, Camera camera)
-        {
-            /*
-            var lightParams = forwardLightParamsBuffer.Local;
-            lightParams->LightCount = LightBuffer.Count;
-            lightParams->GlobalProbes = GlobalProbes.Count;
-            forwardLightParamsBuffer.Update(context);
-            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
-
-            if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
-            {
-                context.SetRenderTargets(nForwardRtvs, forwardRtvs, null);
-            }
-            else
-            {
-                context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
-            }
-
-            context.SetViewport(ao.Viewport);
-            context.VSSetConstantBuffers(1, 1, &cbs[1]);
-            context.DSSetConstantBuffers(1, 1, &cbs[1]);
-            context.CSSetConstantBuffers(1, 1, &cbs[1]);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(8, nForwardSrvs, forwardSrvs);
-            context.PSSetSamplers(8, nSamplers, smps);
-
-            renderer.Draw(context, RenderPath.Forward);
-
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
-
-            nint* null_srvs = stackalloc nint[(int)nForwardSrvs];
-            context.PSSetShaderResources(8, nForwardSrvs, (void**)null_srvs);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
-            */
-        }
-
-        private unsafe void BakeClustered(IGraphicsContext context, IRendererComponent renderer, Camera camera)
-        {
-            /*
-            var lightParams = forwardLightParamsBuffer.Local;
-            lightParams->LightCount = LightBuffer.Count;
-            lightParams->GlobalProbes = GlobalProbes.Count;
-            forwardLightParamsBuffer.Update(context);
-            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
-
-            if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
-            {
-                context.SetRenderTargets(nForwardRtvs, forwardRtvs, null);
-            }
-            else
-            {
-                context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
-            }
-
-            context.SetViewport(ao.Viewport);
-            context.VSSetConstantBuffers(1, 1, &cbs[1]);
-            context.DSSetConstantBuffers(1, 1, &cbs[1]);
-            context.CSSetConstantBuffers(1, 1, &cbs[1]);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nForwardClusterdSrvs, forwardClusterdSrvs);
-            context.PSSetSamplers(8, nSamplers, smps);
-
-            renderer.Bake(context);
-
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
-
-            nint* null_srvs = stackalloc nint[(int)nForwardClusterdSrvs];
-            context.PSSetShaderResources(8, nForwardClusterdSrvs, (void**)null_srvs);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
-            */
-        }
-
         public unsafe void Dispose()
         {
             GlobalProbes.Dispose();
             LightBuffer.Dispose();
             ShadowDataBuffer.Dispose();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Awake(Scene scene)
-        {
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Update(float dt)
-        {
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void FixedUpdate()
-        {
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Destroy()
-        {
         }
     }
 }

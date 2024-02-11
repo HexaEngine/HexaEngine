@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Collections.Concurrent;
@@ -13,6 +12,10 @@
     /// </summary>
     public static unsafe class Utils
     {
+        private static IAllocationCallbacks allocator = new AllocationCallbacks();
+
+        public static IAllocationCallbacks Allocator { get => allocator; set => allocator = value; }
+
         /// <summary>
         /// Swaps the memory content between two pointers of the specified size.
         /// </summary>
@@ -544,9 +547,17 @@
         /// <param name="data">The data to initialize the allocated memory with.</param>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocT<T>(T data) where T : unmanaged
+        public static T* AllocT<T>(T data
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
+            T* result = (T*)allocator.Alloc(sizeof(T)
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
             *result = data;
             return result;
         }
@@ -557,9 +568,17 @@
         /// <typeparam name="T">The type of the element to allocate.</typeparam>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocT<T>() where T : unmanaged
+        public static T* AllocT<T>(
+#if TRACELEAK
+             [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
+            T* result = (T*)allocator.Alloc(sizeof(T)
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
             *result = new T();
             return result;
         }
@@ -571,9 +590,18 @@
         /// <param name="count">The number of elements to allocate.</param>
         /// <returns>A pointer to the allocated memory for the array.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocT<T>(int count) where T : unmanaged
+        public static T* AllocT<T>(int count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
+            T* result = (T*)allocator.Alloc(sizeof(T) * count
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -583,9 +611,18 @@
         /// <param name="count">The number of elements to allocate.</param>
         /// <returns>A pointer to the allocated memory for the array.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocT<T>(uint count) where T : unmanaged
+        public static T* AllocT<T>(uint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            return (T*)Marshal.AllocHGlobal((int)(sizeof(T) * count));
+            T* result = (T*)allocator.Alloc((nint)(sizeof(T) * count)
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -594,9 +631,18 @@
         /// <param name="count">The number of bytes to allocate.</param>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* Alloc(nint count)
+        public static void* Alloc(nint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.AllocHGlobal(count);
+            void* result = allocator.Alloc(count
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -605,9 +651,18 @@
         /// <param name="count">The number of bytes to allocate.</param>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* Alloc(nuint count)
+        public static void* Alloc(nuint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.AllocHGlobal((nint)count);
+            void* result = allocator.Alloc((nint)count
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -616,9 +671,18 @@
         /// <param name="size">The size, in bytes, to allocate.</param>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* Alloc(int size)
+        public static void* Alloc(int size
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.AllocHGlobal(size);
+            void* result = allocator.Alloc(size
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -627,9 +691,18 @@
         /// <param name="size">The size, in bytes, to allocate.</param>
         /// <returns>A pointer to the allocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* Alloc(uint size)
+        public static void* Alloc(uint size
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.AllocHGlobal((int)size);
+            void* result = allocator.Alloc((nint)size
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -640,9 +713,18 @@
         /// <param name="count">The new number of elements to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* ReAllocT<T>(T* pointer, int count) where T : unmanaged
+        public static T* ReAllocT<T>(T* pointer, int count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
+            T* result = (T*)allocator.ReAlloc(pointer, count * sizeof(T)
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -653,9 +735,18 @@
         /// <param name="count">The new number of elements to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* ReAllocT<T>(T* pointer, uint count) where T : unmanaged
+        public static T* ReAllocT<T>(T* pointer, uint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            return (T*)Marshal.ReAllocHGlobal((nint)pointer, (nint)(count * (uint)sizeof(T)));
+            T* result = (T*)allocator.ReAlloc(pointer, (nint)(count * sizeof(T))
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -666,9 +757,18 @@
         /// <param name="count">The new number of elements to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* ReAllocT<T>(T* pointer, nint count) where T : unmanaged
+        public static T* ReAllocT<T>(T* pointer, nint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
+            T* result = (T*)allocator.ReAlloc(pointer, count * sizeof(T)
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -678,9 +778,18 @@
         /// <param name="count">The new number of bytes to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* ReAlloc(void* pointer, int count)
+        public static void* ReAlloc(void* pointer, int count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
+            void* result = allocator.ReAlloc(pointer, count
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -690,9 +799,18 @@
         /// <param name="count">The new number of bytes to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* ReAlloc(void* pointer, uint count)
+        public static void* ReAlloc(void* pointer, uint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.ReAllocHGlobal((nint)pointer, (nint)count);
+            void* result = allocator.ReAlloc(pointer, (nint)count
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -702,9 +820,18 @@
         /// <param name="count">The new number of bytes to allocate.</param>
         /// <returns>A pointer to the reallocated memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* ReAlloc(void* pointer, nint count)
+        public static void* ReAlloc(void* pointer, nint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
+            void* result = allocator.ReAlloc(pointer, count
+#if TRACELEAK
+                   , $"File: {file}, Line: {line}"
+#endif
+                   );
+            return result;
         }
 
         /// <summary>
@@ -715,9 +842,17 @@
         /// <param name="length">The number of elements in the array.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocCopyT<T>(T* pointer, int length) where T : unmanaged
+        public static T* AllocCopyT<T>(T* pointer, int length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            T* result = AllocT<T>(length);
+            T* result = AllocT<T>(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             MemcpyT(pointer, result, length, length);
             return result;
         }
@@ -730,9 +865,17 @@
         /// <param name="length">The number of elements in the array.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocCopyT<T>(T* pointer, uint length) where T : unmanaged
+        public static T* AllocCopyT<T>(T* pointer, uint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
-            T* result = AllocT<T>(length);
+            T* result = AllocT<T>(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             MemcpyT(pointer, result, length, length);
             return result;
         }
@@ -744,10 +887,18 @@
         /// <param name="source">The source span to copy from.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocCopyT<T>(T[] source) where T : unmanaged
+        public static T* AllocCopyT<T>(T[] source
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
             int length = source.Length;
-            T* result = AllocT<T>(length);
+            T* result = AllocT<T>(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             fixed (T* pointer = source)
             {
                 MemcpyT(pointer, result, length, length);
@@ -763,10 +914,18 @@
         /// <param name="source">The source span to copy from.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocCopyT<T>(Span<T> source) where T : unmanaged
+        public static T* AllocCopyT<T>(Span<T> source
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
             int length = source.Length;
-            T* result = AllocT<T>(length);
+            T* result = AllocT<T>(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             for (int i = 0; i < length; i++)
             {
                 result[i] = source[i];
@@ -782,10 +941,18 @@
         /// <param name="source">The source span to copy from.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* AllocCopyT<T>(ReadOnlySpan<T> source) where T : unmanaged
+        public static T* AllocCopyT<T>(ReadOnlySpan<T> source
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
         {
             int length = source.Length;
-            T* result = AllocT<T>(length);
+            T* result = AllocT<T>(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             for (int i = 0; i < length; i++)
             {
                 result[i] = source[i];
@@ -801,7 +968,33 @@
         /// <param name="length">The number of bytes to allocate and copy.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AllocCopy(void* pointer, int length)
+        public static void* AllocCopy(void* pointer, int length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
+        {
+            void* result = Alloc(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
+            Memcpy(pointer, result, length, length);
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
+        /// </summary>
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of bytes to allocate and copy.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* AllocCopy(void* pointer, uint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
             void* result = Alloc(length);
             Memcpy(pointer, result, length, length);
@@ -815,9 +1008,17 @@
         /// <param name="length">The number of bytes to allocate and copy.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AllocCopy(void* pointer, uint length)
+        public static void* AllocCopy(void* pointer, nint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            void* result = Alloc(length);
+            void* result = Alloc(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             Memcpy(pointer, result, length, length);
             return result;
         }
@@ -829,23 +1030,17 @@
         /// <param name="length">The number of bytes to allocate and copy.</param>
         /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AllocCopy(void* pointer, nint length)
+        public static void* AllocCopy(void* pointer, nuint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            void* result = Alloc(length);
-            Memcpy(pointer, result, length, length);
-            return result;
-        }
-
-        /// <summary>
-        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
-        /// </summary>
-        /// <param name="pointer">A pointer to the source data to be copied.</param>
-        /// <param name="length">The number of bytes to allocate and copy.</param>
-        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AllocCopy(void* pointer, nuint length)
-        {
-            void* result = Alloc(length);
+            void* result = Alloc(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             Memcpy(pointer, result, length, length);
             return result;
         }
@@ -856,9 +1051,18 @@
         /// <param name="length">The number of pointers to allocate.</param>
         /// <returns>A pointer to the newly allocated memory for an array of pointers.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void** AllocArray(uint length)
+        public static void** AllocArray(uint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            return (void**)Marshal.AllocHGlobal((int)(sizeof(nint) * length));
+            void** result = (void**)allocator.Alloc((nint)(length * sizeof(void*))
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
         }
 
         /// <summary>
@@ -867,9 +1071,17 @@
         /// <param name="length">The number of pointers to allocate and set to zero.</param>
         /// <returns>A pointer to the newly allocated memory for an array of pointers with zeroed memory.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void** AllocArrayAndZero(uint length)
+        public static void** AllocArrayAndZero(uint length
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            )
         {
-            var result = AllocArray(length);
+            var result = AllocArray(length
+#if TRACELEAK
+                , file, line
+#endif
+                );
             ZeroMemory(result, (int)(sizeof(nint) * length));
             return result;
         }
@@ -883,7 +1095,7 @@
         public static void Free<T>(T* pointer) where T : unmanaged, IFreeable
         {
             pointer->Release();
-            Marshal.FreeHGlobal((nint)pointer);
+            allocator.Free(pointer);
         }
 
         /// <summary>
@@ -893,7 +1105,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free(void* pointer)
         {
-            Marshal.FreeHGlobal((nint)pointer);
+            allocator.Free(pointer);
         }
 
         /// <summary>
@@ -903,7 +1115,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free(void** pointer)
         {
-            Marshal.FreeHGlobal((nint)pointer);
+            allocator.Free(pointer);
         }
 
         /// <summary>

@@ -148,7 +148,7 @@
 
                 motorTargetVelocity = value;
 
-                if (joint != null && !updating && !Application.InDesignMode)
+                if (joint != null && !updating && !Application.InEditMode)
                 {
                     joint->SetDriveVelocityMut(value, true);
                 }
@@ -305,7 +305,7 @@
             UpdateLimits();
             joint->SetDriveForceLimitMut(motorForceLimit);
 
-            if (!Application.InDesignMode)
+            if (!Application.InEditMode)
             {
                 joint->SetDriveVelocityMut(motorTargetVelocity, true);
             }

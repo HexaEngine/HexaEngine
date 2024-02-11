@@ -35,8 +35,6 @@
 
         public IRenderTargetView? Output => resourceBuilder.Output;
 
-        public ITexture2D OutputTex => resourceBuilder.OutputTex;
-
         public Viewport OutputViewport => resourceBuilder.OutputViewport;
 
         public Viewport Viewport => resourceBuilder.Viewport;
@@ -92,9 +90,9 @@
             return resourceBuilder.GetGBuffer(name);
         }
 
-        public ResourceRef<IGraphicsPipeline> GetGraphicsPipeline(string name)
+        public ResourceRef<IGraphicsPipelineState> GetGraphicsPipelineState(string name)
         {
-            return resourceBuilder.GetGraphicsPipeline(name);
+            return resourceBuilder.GetGraphicsPipelineState(name);
         }
 
         public ResourceRef GetOrAddResource(string name)
@@ -177,9 +175,9 @@
             resourceBuilder.UpdateGBuffer(name, description);
         }
 
-        public void UpdateGraphicsPipeline(string name, GraphicsPipelineDesc desc)
+        public void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)
         {
-            resourceBuilder.UpdateGraphicsPipeline(name, desc);
+            resourceBuilder.UpdateGraphicsPipelineState(name, desc);
         }
 
         public void UpdateSamplerState(string name, SamplerStateDescription desc)
@@ -267,14 +265,14 @@
             return resourceBuilder.CreateGBuffer(name, description, flags);
         }
 
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return resourceBuilder.CreateGraphicsPipeline(description, flags);
+            return resourceBuilder.CreateGraphicsPipelineState(description, flags);
         }
 
-        public ResourceRef<IGraphicsPipeline> CreateGraphicsPipeline(string name, GraphicsPipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return resourceBuilder.CreateGraphicsPipeline(name, description, flags);
+            return resourceBuilder.CreateGraphicsPipelineState(name, description, flags);
         }
 
         ResourceRef<TType> IGraphResourceBuilder.CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, ResourceCreationFlags flags)

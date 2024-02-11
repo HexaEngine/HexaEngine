@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="context">The graphics context.</param>
         /// <param name="pipeline">The graphics pipeline used for drawing.</param>
-        void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline);
+        void DrawAuto(IGraphicsContext context, IGraphicsPipelineState pipeline);
 
         /// <summary>
         /// Draws the primitive automatically using the specified graphics context.

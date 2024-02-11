@@ -75,16 +75,20 @@
     /// </summary>
     public interface IGraphicsContext : IDeviceChild
     {
+        void SetResourceBindingList(IResourceBindingList resourceBindings);
+
+        void UnsetResourceBindingList(IResourceBindingList resourceBindings);
+
         /// <summary>
         /// Gets the graphics device associated with this graphics context.
         /// </summary>
         IGraphicsDevice Device { get; }
 
         /// <summary>
-        /// Sets the active graphics pipeline for rendering.
+        /// Sets the active graphics pipeline state for rendering.
         /// </summary>
-        /// <param name="pipeline">The graphics pipeline to set. Pass null to unset the active pipeline.</param>
-        void SetGraphicsPipeline(IGraphicsPipeline? pipeline);
+        /// <param name="state">The graphics pipeline state to set. Pass null to unset the active pipeline state.</param>
+        void SetPipelineState(IGraphicsPipelineState? state);
 
         /// <summary>
         /// Sets the active compute pipeline for GPU computation.

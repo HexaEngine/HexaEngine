@@ -40,10 +40,14 @@
         public static void Serialize(Scene scene, string path)
         {
             BsonDataWriter writer = new(File.Create(path));
-
-            serializer.Serialize(writer, scene);
-
-            writer.Close();
+            try
+            {
+                serializer.Serialize(writer, scene);
+            }
+            finally
+            {
+                writer.Close();
+            }
 
             if (Application.InEditorMode)
             {
@@ -73,10 +77,18 @@
         {
             BsonDataReader reader = new(File.OpenRead(path));
 
-            Scene? scene = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+            Scene? scene;
+            try
+            {
+                scene = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+            }
+            finally
+            {
+                reader.Close();
+            }
+
             scene.Path = path;
             scene.BuildReferences();
-            reader.Close();
 
             if (Application.InEditorMode)
             {

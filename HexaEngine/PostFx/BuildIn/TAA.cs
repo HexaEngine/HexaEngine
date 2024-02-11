@@ -8,7 +8,7 @@
     public class TAA : PostFxBase
     {
         private PostFxGraphResourceBuilder creator;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ISamplerState sampler;
 
         private ConstantBuffer<TAAParams> paramsBuffer;
@@ -81,13 +81,12 @@
         {
             this.creator = creator;
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/taa/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
@@ -130,11 +129,11 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, sampler);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);

@@ -29,7 +29,7 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            manager.UpdateMaterialShader(ref modelMaterial.Shader);
+            manager.UpdateMaterialShader(modelMaterial.Shader, desc);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -46,10 +46,10 @@
 
         public static void ReloadMaterial(this ResourceManager manager, Material modelMaterial)
         {
-            var desc = modelMaterial.Desc;
+            var desc = modelMaterial.Data;
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            manager.UpdateMaterialShader(ref modelMaterial.Shader);
+            manager.UpdateMaterialShader(modelMaterial.Shader, desc);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -74,7 +74,7 @@
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
 
-            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader);
+            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -91,11 +91,11 @@
 
         public static async Task ReloadMaterialAsync(this ResourceManager manager, Material modelMaterial)
         {
-            var desc = modelMaterial.Desc;
+            var desc = modelMaterial.Data;
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
 
-            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader);
+            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {

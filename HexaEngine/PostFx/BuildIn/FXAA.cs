@@ -13,7 +13,7 @@ namespace HexaEngine.PostFx.BuildIn
     /// </summary>
     public class FXAA : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ISamplerState sampler;
 
         /// <inheritdoc/>
@@ -37,13 +37,12 @@ namespace HexaEngine.PostFx.BuildIn
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = macros
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
@@ -60,9 +59,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.SetViewport(Viewport);
             context.PSSetShaderResource(0, Input);
             context.PSSetSampler(0, sampler);
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
             context.SetRenderTarget(null, null);

@@ -1,9 +1,12 @@
 ﻿namespace HexaEngine.Editor.Tools
 {
+    using HexaEngine.Core.IO;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.TextEditor;
+    using HexaEngine.Editor.Widgets;
+    using HexaEngine.Projects;
     using HexaEngine.Scenes;
     using System.IO;
     using System.Threading.Tasks;
@@ -35,9 +38,9 @@
 
             AddTool(new Tool("Material Editor", ".matlib", path =>
             {
-                if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditorWindow))
+                if (WindowManager.TryGetWindow<MaterialLibraryEditorWindow>(out var materialEditorWindow))
                 {
-                    materialEditorWindow.Open(path);
+                    materialEditorWindow.Open($"assets/{FileSystem.GetRelativePath(path)}");
                     materialEditorWindow.Focus();
                 }
             }));

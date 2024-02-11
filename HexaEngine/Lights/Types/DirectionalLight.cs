@@ -15,9 +15,6 @@
     [EditorGameObject<DirectionalLight>("Directional Light")]
     public class DirectionalLight : Light
     {
-        private static ulong instances;
-        private static ConstantBuffer<Matrix4x4>? csmBuffer;
-
         private DepthStencil? csmDepthBuffer;
         public new CameraTransform Transform = new();
 
@@ -73,9 +70,6 @@
         [JsonIgnore]
         public override bool HasShadowMap => csmDepthBuffer != null;
 
-        [JsonIgnore]
-        public static IBuffer CSMBuffer => csmBuffer;
-
         /// <inheritdoc/>
         public override IShaderResourceView? GetShadowMap()
         {
@@ -91,10 +85,6 @@
             }
 
             csmDepthBuffer = new(device, Format.D32Float, ShadowMapSize, ShadowMapSize, cascadeCount - 1);
-            if (Interlocked.Increment(ref instances) == 1)
-            {
-                csmBuffer = new(device, 8, CpuAccessFlags.Write);
-            }
         }
 
         /// <inheritdoc/>
@@ -107,12 +97,6 @@
 
             csmDepthBuffer?.Dispose();
             csmDepthBuffer = null;
-
-            if (Interlocked.Decrement(ref instances) == 0)
-            {
-                csmBuffer?.Dispose();
-                csmBuffer = null;
-            }
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer, Camera camera)
@@ -125,7 +109,7 @@
             CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra, ShadowMapSize, cascadeCount);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, Camera camera)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmBuffer, Camera camera)
         {
             if (csmDepthBuffer == null)
             {

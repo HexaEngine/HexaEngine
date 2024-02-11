@@ -17,7 +17,6 @@
     /// </summary>
     public class EditorWindow : Window, IRenderWindow
     {
-        protected Frameviewer frameviewer;
         protected ImGuiManager imGuiRenderer;
         protected Task initEditorTask;
         protected bool editorInitialized;
@@ -43,13 +42,17 @@
                 Y = config.Y;
                 Width = config.Width;
                 Height = config.Height;
-                State = config.State;
+                if (config.State != WindowState.Minimized)
+                {
+                    State = config.State;
+                }
+
                 firstTime = false;
             }
             base.OnShown(args);
         }
 
-        protected override void OnClose(CloseEventArgs args)
+        protected override void OnClosed(CloseEventArgs args)
         {
             config.X = X;
             config.Y = Y;
@@ -57,7 +60,7 @@
             config.Height = Height;
             config.State = State;
             config.Save();
-            base.OnClose(args);
+            base.OnClosed(args);
         }
 
 #nullable restore
@@ -65,7 +68,7 @@
         protected override void OnRendererInitialize(IGraphicsDevice device)
         {
             imGuiRenderer = new(this, graphicsDevice, graphicsContext);
-            frameviewer = new();
+
             initEditorTask = Task.Factory.StartNew(() =>
             {
                 Designer.Init(graphicsDevice);
@@ -134,11 +137,11 @@
             var drawing = rendererInitialized;
 
             // Update and draw the frame viewer.
-            frameviewer.SourceViewport = Viewport;
-            frameviewer.Update();
-            frameviewer.Draw();
-            drawing &= frameviewer.IsVisible;
-            windowViewport = Application.InEditorMode ? frameviewer.RenderViewport : Viewport;
+            SceneWindow.SourceViewport = Viewport;
+            SceneWindow.Update();
+            SceneWindow.Draw();
+            drawing &= SceneWindow.IsVisible;
+            windowViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
 
             // Set the camera for DebugDraw based on the current camera's view projection matrix.
 
@@ -158,7 +161,7 @@
 #nullable disable // a few lines above there is a null check.
                 SceneManager.Current.GraphicsUpdate(context);
 #nullable restore
-                sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
+                sceneRenderer.Render(context, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.

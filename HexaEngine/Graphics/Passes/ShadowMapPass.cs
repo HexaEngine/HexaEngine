@@ -3,9 +3,11 @@
     using HexaEngine.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -13,6 +15,10 @@
     public class ShadowMapPass : DrawPass
     {
         private ResourceRef<ShadowAtlas> shadowAtlas;
+
+        private ResourceRefNotNull<ConstantBuffer<PSMShadowParams>> psmBuffer;
+        private ResourceRefNotNull<ConstantBuffer<CSMShadowParams>> csmBuffer;
+        private ResourceRefNotNull<ConstantBuffer<DPSMShadowParams>> osmBuffer;
 
         public ShadowMapPass() : base("ShadowMap")
         {
@@ -22,6 +28,9 @@
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, GraphicsSettings.ShadowAtlasSize, 8));
+            psmBuffer = new(creator.CreateConstantBuffer<PSMShadowParams>("ShadowAtlas.CB.PSM", CpuAccessFlags.Write));
+            csmBuffer = new(creator.CreateConstantBuffer<CSMShadowParams>("ShadowAtlas.CB.CSM", CpuAccessFlags.Write));
+            osmBuffer = new(creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write));
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -52,7 +61,7 @@
                     case LightType.Directional:
                         profiler?.Begin("ShadowMap.UpdateDirectional");
                         var directionalLight = (DirectionalLight)light;
-                        directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, camera);
+                        directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
@@ -63,7 +72,7 @@
                                 {
                                     if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
                                     {
-                                        renderer.DrawShadowMap(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
+                                        renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Cascaded);
                                         break;
                                     }
                                 }
@@ -78,7 +87,7 @@
                         var pointLight = (PointLight)light;
                         for (int i = 0; i < 2; i++)
                         {
-                            pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, i);
+                            pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value, i);
                             for (int j = 0; j < renderers.Count; j++)
                             {
                                 var renderer = renderers[j];
@@ -87,7 +96,7 @@
                                 {
                                     if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
                                     {
-                                        renderer.DrawShadowMap(context, PointLight.OSMBuffer, ShadowType.Omni);
+                                        renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omni);
                                     }
                                 }
                                 profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");
@@ -99,7 +108,7 @@
                     case LightType.Spot:
                         profiler?.Begin("ShadowMap.UpdateSpot");
                         var spotlight = (Spotlight)light;
-                        spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer);
+                        spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
@@ -108,7 +117,7 @@
                             {
                                 if (spotlight.IntersectFrustum(renderer.BoundingBox))
                                 {
-                                    renderer.DrawShadowMap(context, Spotlight.PSMBuffer, ShadowType.Perspective);
+                                    renderer.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
                                 }
                             }
                             profiler?.End($"ShadowMap.UpdateSpot.{renderer.DebugName}");

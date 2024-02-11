@@ -199,7 +199,7 @@
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             closeEventArgs.Handled = false;
-            OnClose(closeEventArgs);
+            OnClosing(closeEventArgs);
         }
 
         ///<summary>
@@ -621,6 +621,11 @@
         public event EventHandler<CloseEventArgs>? Closing;
 
         /// <summary>
+        /// Event triggered when the window is closed.
+        /// </summary>
+        public event EventHandler<CloseEventArgs>? Closed;
+
+        /// <summary>
         /// Event triggered when the window requests to take focus.
         /// </summary>
         public event EventHandler<TakeFocusEventArgs>? TakeFocus;
@@ -786,27 +791,39 @@
         /// Raises the <see cref="Closing"/> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
-        protected virtual void OnClose(CloseEventArgs args)
+        protected virtual void OnClosing(CloseEventArgs args)
         {
             Closing?.Invoke(this, args);
             if (!args.Handled && !destroyed)
             {
-                if (Application.MainWindow == this)
-                {
-                    return;
-                }
-
-                for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
-                {
-                    sdl.FreeCursor(cursors[(int)i]);
-                }
-
-                sdl.DestroyWindow(window);
-                SdlCheckError();
-
-                destroyed = true;
-                created = false;
+                OnClosed(args);
             }
+            else
+            {
+                Application.SuppressQuitApp();
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="Closed"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnClosed(CloseEventArgs args)
+        {
+            for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
+            {
+                sdl.FreeCursor(cursors[(int)i]);
+            }
+            Free(cursors);
+            cursors = null;
+
+            sdl.DestroyWindow(window);
+            SdlCheckError();
+            window = null;
+
+            destroyed = true;
+            created = false;
+            Closed?.Invoke(this, args);
         }
 
         /// <summary>
@@ -1087,10 +1104,10 @@
                     {
                         closeEventArgs.Timestamp = evnt.Timestamp;
                         closeEventArgs.Handled = false;
-                        OnClose(closeEventArgs);
-                        if (!closeEventArgs.Handled)
+                        OnClosing(closeEventArgs);
+                        if (closeEventArgs.Handled)
                         {
-                            Close();
+                            sdl.ShowWindow(window);
                         }
                     }
                     break;

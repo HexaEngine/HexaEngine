@@ -13,17 +13,7 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    [Flags]
-    public enum EditorDrawLightsFlags
-    {
-        None = 0,
-        DrawLights = 1,
-        NoDirectionalLights = 2,
-        NoPointLights = 4,
-        NoSpotLights = 8,
-    }
-
-    public partial class Frameviewer
+    public static class Inspector
     {
         private static bool inspectorEnabled = true;
         private static bool drawGimbal = true;
@@ -47,7 +37,7 @@
 
         public static ImGuizmoMode Mode { get => mode; set => mode = value; }
 
-        public static bool InspectorEnabled { get => inspectorEnabled; set => inspectorEnabled = value; }
+        public static bool Enabled { get => inspectorEnabled; set => inspectorEnabled = value; }
 
         public static bool DrawGimbal { get => drawGimbal; set => drawGimbal = value; }
 
@@ -69,7 +59,7 @@
 
         public static int GridSize { get => gridSize; set => gridSize = value; }
 
-        public static unsafe void InspectorDraw()
+        public static unsafe void Draw()
         {
             if (!inspectorEnabled)
             {
@@ -92,11 +82,11 @@
 
             if (drawGrid)
             {
-                if (CameraManager.Dimension == EditorCameraDimension.Dim3D)
+                if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                 {
                     DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
-                else if (CameraManager.Dimension == EditorCameraDimension.Dim2D)
+                else if (EditorCameraController.Dimension == EditorCameraDimension.Dim2D)
                 {
                     DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
@@ -157,7 +147,7 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    if (!Application.InDesignMode && CameraManager.Current == cam)
+                    if (!Application.InEditMode && CameraManager.Current == cam)
                     {
                         continue;
                     }
@@ -233,7 +223,7 @@
             {
                 Camera? camera = CameraManager.Current;
                 ImGuizmo.Enable(true);
-                ImGuizmo.SetOrthographic(CameraManager.Dimension == EditorCameraDimension.Dim2D);
+                ImGuizmo.SetOrthographic(EditorCameraController.Dimension == EditorCameraDimension.Dim2D);
                 if (camera == null)
                 {
                     return;

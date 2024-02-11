@@ -34,7 +34,7 @@
             LightBuffer.ResetCounter();
             LightBuffer.Clear(context);
             ShadowDataBuffer.ResetCounter();
-            uint globalProbesCount = 0;
+
             uint csmCount = 0;
 
             var probes = lights.Probes;
@@ -60,7 +60,7 @@
                     switch (light.LightType)
                     {
                         case LightType.Directional:
-                            if (csmCount == LightManager.MaxDirectionalLightSDs)
+                            if (csmCount == 1)
                             {
                                 continue;
                             }

@@ -21,6 +21,7 @@
     {
         private readonly Dictionary<string, EditorGameObjectAttribute> cache = new();
         private bool showHidden;
+        private bool focused;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public LayoutWidget()
@@ -94,11 +95,11 @@
             {
                 if (ImGui.MenuItem("\xE71E Focus"))
                 {
-                    CameraManager.Center = element.Transform.GlobalPosition;
+                    EditorCameraController.Center = element.Transform.GlobalPosition;
                 }
                 if (ImGui.MenuItem("\xE71F Defocus"))
                 {
-                    CameraManager.Center = Vector3.Zero;
+                    EditorCameraController.Center = Vector3.Zero;
                 }
 
                 ImGui.Separator();
@@ -145,21 +146,25 @@
             bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
             element.IsEditorOpen = isOpen;
             element.IsEditorVisible = true;
-            if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center != element.Transform.GlobalPosition)
+
+            if (focused)
             {
-                CameraManager.Center = element.Transform.GlobalPosition;
-            }
-            else if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center == element.Transform.GlobalPosition)
-            {
-                CameraManager.Center = Vector3.Zero;
-            }
-            if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
-            {
-                SelectionCollection.Global.PurgeSelection();
-            }
-            if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
-            {
-                SelectionCollection.Global.ClearSelection();
+                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center != element.Transform.GlobalPosition)
+                {
+                    EditorCameraController.Center = element.Transform.GlobalPosition;
+                }
+                else if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center == element.Transform.GlobalPosition)
+                {
+                    EditorCameraController.Center = Vector3.Zero;
+                }
+                if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
+                {
+                    SelectionCollection.Global.PurgeSelection();
+                }
+                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
+                {
+                    SelectionCollection.Global.ClearSelection();
+                }
             }
 
             DisplayNodeContextMenu(element);
@@ -235,6 +240,7 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            focused = ImGui.IsWindowFocused();
             var scene = SceneManager.Current;
 
             if (scene == null)

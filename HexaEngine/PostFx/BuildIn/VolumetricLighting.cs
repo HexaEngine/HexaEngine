@@ -12,12 +12,12 @@
 
     public class VolumetricLighting : PostFxBase
     {
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
 
         private ConstantBuffer<VolumetricLightingConstants> constantBuffer;
         private StructuredBuffer<VolumetricLightData> volumetricLightBuffer;
 
-        private IGraphicsPipeline blurPipeline;
+        private IGraphicsPipelineState blurPipeline;
         private ConstantBuffer<BlurParams> blurParams;
 
         private ISamplerState linearClampSampler;
@@ -184,22 +184,20 @@
                 shaderMacros.Add(new("SAMPLE_COUNT", sampleCount));
             }
 
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/volumetric/ps.hlsl",
-                State = GraphicsPipelineState.DefaultFullscreen,
                 Macros = [.. shaderMacros]
-            });
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             constantBuffer = new(device, CpuAccessFlags.Write);
 
-            blurPipeline = device.CreateGraphicsPipeline(new()
+            blurPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/volumetric/blur.hlsl",
-                State = GraphicsPipelineState.DefaultAdditiveFullscreen,
                 Macros = [.. shaderMacros]
-            });
+            }, GraphicsPipelineStateDesc.DefaultAdditiveFullscreen);
             blurParams = new(device, CpuAccessFlags.Write);
 
             volumetricLightBuffer = new(device, CpuAccessFlags.Write);
@@ -267,11 +265,11 @@
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetSampler(1, shadowSampler);
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetSampler(1, null);
@@ -293,13 +291,13 @@
             context.PSSetConstantBuffer(0, blurParams);
 
             context.PSSetShaderResource(0, depthChain.Value.SRV);
-            (context).PSSetShaderResource(1, buffer.Value);
+            context.PSSetShaderResource(1, buffer.Value);
 
-            context.SetGraphicsPipeline(blurPipeline);
+            context.SetPipelineState(blurPipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetGraphicsPipeline(null);
+            context.SetPipelineState(null);
 
             context.PSSetShaderResource(0, null);
             context.PSSetShaderResource(1, null);

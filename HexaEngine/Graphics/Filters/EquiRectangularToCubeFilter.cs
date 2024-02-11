@@ -26,7 +26,7 @@ namespace HexaEngine.Graphics.Filters
     public class EquiRectangularToCubeFilter : IFilter
     {
         private Cube cube;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ModelViewProj> mvpBuffer;
         private ISamplerState sampler;
 
@@ -45,17 +45,16 @@ namespace HexaEngine.Graphics.Filters
         public EquiRectangularToCubeFilter(IGraphicsDevice device)
         {
             cube = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/equirectangularToCube/vs.hlsl",
                 PixelShader = "filter/equirectangularToCube/ps.hlsl",
-                State = new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullNone,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                }
+            }, new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullNone,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
             });
 
             SetViewPoint(Vector3.Zero);

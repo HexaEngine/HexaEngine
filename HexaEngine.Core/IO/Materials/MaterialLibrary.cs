@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
     using System.IO;
     using System.Text;

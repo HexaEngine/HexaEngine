@@ -4,6 +4,11 @@
     using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
+    public interface IGraphicsDevice1 : IGraphicsDevice
+    {
+        ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
+    }
+
     /// <summary>
     /// Represents a graphics device used for rendering.
     /// </summary>
@@ -35,6 +40,8 @@
         /// <param name="window">The SDL window to associate the swap chain with.</param>
         /// <returns>The created swap chain.</returns>
         ISwapChain CreateSwapChain(SdlWindow window);
+
+        IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline);
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.
@@ -287,6 +294,44 @@
         IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
+        /// Creates a graphics pipeline state object.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline containing shaders.</param>
+        /// <param name="desc">Description of the graphics pipeline state.</param>
+        /// <param name="filename">The file path of the caller (automatically provided).</param>
+        /// <param name="line">The line number of the caller (automatically provided).</param>
+        /// <returns>The created graphics pipeline state object.</returns>
+        IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+
+        /// <summary>
+        /// Creates a graphics pipeline state based on the provided graphics pipeline description and state description.
+        /// </summary>
+        /// <param name="pipelineDesc">The description of the graphics pipeline.</param>
+        /// <param name="desc">The description of the graphics pipeline state.</param>
+        /// <param name="filename">The file path of the caller (automatically provided by the compiler).</param>
+        /// <param name="line">The line number of the caller (automatically provided by the compiler).</param>
+        /// <returns>The created graphics pipeline state.</returns>
+        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDesc pipelineDesc, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            var pipeline = CreateGraphicsPipeline(pipelineDesc, filename, line);
+            var pso = CreateGraphicsPipelineState(pipeline, desc, filename, line);
+            pipeline.Dispose();
+            return pso;
+        }
+
+        /// <summary>
+        /// Creates a graphics pipeline state based on the provided combined description.
+        /// </summary>
+        /// <param name="desc">The combined description of the graphics pipeline and its state.</param>
+        /// <param name="filename">The file path of the caller.</param>
+        /// <param name="line">The line number of the caller.</param>
+        /// <returns>The created graphics pipeline state.</returns>
+        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineStateDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return CreateGraphicsPipelineState(desc.Pipeline, desc.State, filename, line);
+        }
+
+        /// <summary>
         /// Creates a compute pipeline with the specified description.
         /// </summary>
         /// <param name="desc">The description of the compute pipeline.</param>
@@ -296,31 +341,11 @@
         IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
-        /// Asynchronously creates a graphics pipeline with the specified description.
+        /// Creates a fence object.
         /// </summary>
-        /// <param name="desc">The description of the graphics pipeline.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the graphics pipeline.</returns>
-        Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, filename, line));
-        }
-
-        /// <summary>
-        /// Asynchronously creates a compute pipeline with the specified description.
-        /// </summary>
-        /// <param name="desc">The description of the compute pipeline.</param>
-        /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
-        /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
-        /// <returns>A task that represents the asynchronous creation of the compute pipeline.</returns>
-
-        Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            return Task.Factory.StartNew(() => CreateComputePipeline(desc, filename, line));
-        }
-
+        /// <param name="initialValue">The initial value of the fence.</param>
+        /// <param name="flags">Flags to control fence behavior.</param>
+        /// <returns>The created fence object.</returns>
         IFence CreateFence(ulong initialValue, FenceFlags flags);
-        ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
     }
 }

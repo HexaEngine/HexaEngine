@@ -13,6 +13,31 @@
     using static Extensions.SdlErrorHandlingExtensions;
 
     /// <summary>
+    /// Provides data for the EditorPlayStateTransition event.
+    /// </summary>
+    public class EditorPlayStateTransitionEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPlayStateTransitionEventArgs"/> class with the specified new state.
+        /// </summary>
+        /// <param name="newState">The new state of the editor.</param>
+        public EditorPlayStateTransitionEventArgs(EditorPlayState newState)
+        {
+            NewState = newState;
+        }
+
+        /// <summary>
+        /// Gets the new state of the editor.
+        /// </summary>
+        public EditorPlayState NewState { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the play state transition should be canceled.
+        /// </summary>
+        public bool Cancel { get; set; }
+    }
+
+    /// <summary>
     /// Provides functionality for managing and running the application.
     /// </summary>
     public static unsafe class Application
@@ -21,18 +46,20 @@
 
         private static bool initialized = false;
         private static bool exiting = false;
+        private static bool supressQuitApp = false;
         private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
         private static readonly List<IRenderWindow> windows = new();
         private static readonly List<Func<Event, bool>> hooks = new();
 
-        private static bool inDesignMode;
         private static bool inEditorMode;
+        private static EditorPlayState editorPlayState;
 
 #nullable disable
         private static IRenderWindow mainWindow;
         private static IGraphicsDevice graphicsDevice;
         private static IGraphicsContext graphicsContext;
         private static IAudioDevice audioDevice;
+
 #nullable restore
 
         /// <summary>
@@ -95,23 +122,12 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the application is in design mode.
-        /// </summary>
-        public static bool InDesignMode
-        {
-            get => inDesignMode; set
-            {
-                inDesignMode = value;
-                OnDesignModeChanged?.Invoke(value);
-            }
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the application is in editor mode.
         /// </summary>
         public static bool InEditorMode
         {
-            get => inEditorMode; set
+            get => inEditorMode;
+            set
             {
                 inEditorMode = value;
                 OnEditorModeChanged?.Invoke(value);
@@ -119,14 +135,51 @@
         }
 
         /// <summary>
+        /// Gets a value indicating whether the editor is in edit mode.
+        /// </summary>
+        public static bool InEditMode
+        {
+            get => editorPlayState == EditorPlayState.Edit;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the editor is in play mode.
+        /// </summary>
+        public static bool InPlayMode
+        {
+            get => editorPlayState == EditorPlayState.Play;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the editor is in pause mode.
+        /// </summary>
+        public static bool InPauseState
+        {
+            get => editorPlayState == EditorPlayState.Pause;
+        }
+
+        /// <summary>
+        /// Gets or sets the current editor play state.
+        /// </summary>
+        public static EditorPlayState EditorPlayState
+        {
+            get => editorPlayState;
+            set
+            {
+                if (editorPlayState == value)
+                {
+                    return;
+                }
+
+                editorPlayState = value;
+                OnEditorPlayStateChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether graphics debugging is enabled.
         /// </summary>
         public static bool GraphicsDebugging { get; set; }
-
-        /// <summary>
-        /// Occurs when the design mode state of the application changes.
-        /// </summary>
-        public static event Action<bool>? OnDesignModeChanged;
 
         /// <summary>
         /// Occurs when the editor mode state of the application changes.
@@ -137,6 +190,57 @@
         /// Occurs when the application shuts down.
         /// </summary>
         public static event Action? OnApplicationClose;
+
+        /// <summary>
+        /// Represents the method that will handle a transition in the editor play state event.
+        /// </summary>
+        /// <param name="args">The arguments associated with the transition.</param>
+        public delegate void EditorPlayStateTransitionEventHandler(EditorPlayStateTransitionEventArgs args);
+
+        /// <summary>
+        /// Represents the method that will handle a cancellation of the editor play state event.
+        /// </summary>
+        /// <param name="restoreState">The editor play state to restore if the cancellation is handled.</param>
+        public delegate void EditorPlayStateCancelEventHandler(EditorPlayState restoreState);
+
+        /// <summary>
+        /// Represents the method that will handle a change in the editor play state event.
+        /// </summary>
+        /// <param name="newState">The new editor play state.</param>
+        public delegate void EditorPlayStateChangedEventHandler(EditorPlayState newState);
+
+        /// <summary>
+        /// Event triggered when there's a transition in the editor play state.
+        /// </summary>
+        public static event EditorPlayStateTransitionEventHandler? OnEditorPlayStateTransition;
+
+        /// <summary>
+        /// Event triggered when the editor play state cancellation is requested.
+        /// </summary>
+        public static event EditorPlayStateCancelEventHandler? OnEditorPlayStateCancel;
+
+        /// <summary>
+        /// Event triggered when the editor play state changes.
+        /// </summary>
+        public static event EditorPlayStateChangedEventHandler? OnEditorPlayStateChanged;
+
+        /// <summary>
+        /// Notifies subscribers about a transition in the editor play state and returns whether the transition should be canceled.
+        /// </summary>
+        /// <param name="state">The new editor play state.</param>
+        /// <returns><c>true</c> if the transition should be canceled, otherwise <c>false</c>.</returns>
+        public static bool NotifyEditorPlayStateTransition(EditorPlayState state)
+        {
+            EditorPlayStateTransitionEventArgs eventArgs = new(state);
+            OnEditorPlayStateTransition?.Invoke(eventArgs);
+
+            if (eventArgs.Cancel)
+            {
+                OnEditorPlayStateCancel?.Invoke(editorPlayState);
+            }
+
+            return eventArgs.Cancel;
+        }
 
         /// <summary>
         /// Gets the folder path for the specified special folder.
@@ -195,9 +299,17 @@
             Application.mainWindow = mainWindow;
             Process.GetCurrentProcess().PriorityBoostEnabled = true;
             Init();
-            mainWindow.Closing += MainWindowClosing;
+            mainWindow.Closed += MainWindowClosed;
 
             PlatformRun();
+        }
+
+        /// <summary>
+        /// Exits the application.
+        /// </summary>
+        public static void Exit()
+        {
+            exiting = true;
         }
 
         /// <summary>
@@ -250,12 +362,17 @@
             }
         }
 
-        private static void MainWindowClosing(object? sender, CloseEventArgs e)
+        /// <summary>
+        /// Suppresses the quit application action. Will be automatically reset.
+        /// </summary>
+        internal static void SuppressQuitApp()
         {
-            if (!e.Handled)
-            {
-                exiting = true;
-            }
+            supressQuitApp = true;
+        }
+
+        private static void MainWindowClosed(object? sender, CloseEventArgs e)
+        {
+            exiting = true;
         }
 
         /// <summary>
@@ -308,7 +425,11 @@
                     break;
 
                 case EventType.Quit:
-                    exiting = true;
+                    if (!supressQuitApp)
+                    {
+                        exiting = true;
+                    }
+                    supressQuitApp = false;
                     break;
 
                 case EventType.AppTerminating:
@@ -342,10 +463,6 @@
                         if (even.WindowID == mainWindow.WindowID)
                         {
                             ((SdlWindow)mainWindow).ProcessEvent(even);
-                            if ((WindowEventID)evnt.Window.Event == WindowEventID.Close)
-                            {
-                                exiting = true;
-                            }
                         }
                     }
 

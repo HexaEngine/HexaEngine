@@ -7,20 +7,26 @@
     using System;
     using System.Numerics;
 
-    public enum SceneRendererDrawFlags
+    public enum SceneDrawFlags
     {
-        NoPostProcessing
+        None,
+        NoPostProcessing,
+        NoOverlay,
     }
 
     public interface ISceneRenderer : IDisposable
     {
+        SceneDrawFlags DrawFlags { get; set; }
+
         ICPUFlameProfiler Profiler { get; }
 
-        Vector2 Size { get; }
+        Vector2 Size { get; set; }
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);
 
-        void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera camera);
+        void Render(IGraphicsContext context, Viewport viewport, Scene scene, Camera camera);
+
+        void RenderTo(IGraphicsContext context, IRenderTargetView target, Viewport viewport, Scene scene, Camera camera);
 
         void TakeScreenshot(IGraphicsContext context, string path);
 
