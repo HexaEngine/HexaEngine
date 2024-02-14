@@ -63,6 +63,24 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MaterialProperty"/> struct with a float value.
+        /// </summary>
+        /// <param name="name">The name of the material property.</param>
+        /// <param name="type">The type of the material property.</param>
+        /// <param name="endianness">The endianness of the material property data.</param>
+        /// <param name="value">The float value to set for the material property.</param>
+        public MaterialProperty(string name, MaterialPropertyType type, Endianness endianness, float value)
+        {
+            Name = name;
+            Type = type;
+            Length = sizeof(float);
+            Data = new byte[Length];
+            ValueType = MaterialValueType.Float;
+            Endianness = endianness;
+            SetFloat(value);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MaterialProperty"/> struct with a Vector4 value.
         /// </summary>
         /// <param name="name">The name of the material property.</param>
@@ -358,6 +376,22 @@
             }
 
             return new ShaderMacro(Type.ToString(), definition);
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="MaterialProperty"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MaterialProperty"/> instance.</returns>
+        public readonly MaterialProperty Clone()
+        {
+            MaterialProperty property = default;
+            property.Name = (string)Name.Clone();
+            property.Type = Type;
+            property.ValueType = ValueType;
+            property.Endianness = Endianness;
+            property.Length = Length;
+            property.Data = (byte[])Data.Clone();
+            return property;
         }
     }
 }

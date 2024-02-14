@@ -794,7 +794,7 @@
         protected virtual void OnClosing(CloseEventArgs args)
         {
             Closing?.Invoke(this, args);
-            if (!args.Handled && !destroyed)
+            if (!args.Handled)
             {
                 OnClosed(args);
             }
@@ -810,19 +810,8 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnClosed(CloseEventArgs args)
         {
-            for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
-            {
-                sdl.FreeCursor(cursors[(int)i]);
-            }
-            Free(cursors);
-            cursors = null;
+            DestroyWindow();
 
-            sdl.DestroyWindow(window);
-            SdlCheckError();
-            window = null;
-
-            destroyed = true;
-            created = false;
             Closed?.Invoke(this, args);
         }
 
@@ -1264,15 +1253,18 @@
         /// </summary>
         internal void DestroyWindow()
         {
-            if (!destroyed)
+            if (!destroyed && Application.MainWindow != this)
             {
                 for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
                 {
                     sdl.FreeCursor(cursors[(int)i]);
                 }
+                Free(cursors);
+                cursors = null;
 
                 sdl.DestroyWindow(window);
                 SdlCheckError();
+                window = null;
 
                 destroyed = true;
                 created = false;

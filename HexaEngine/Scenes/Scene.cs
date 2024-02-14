@@ -105,9 +105,6 @@
 
         public SceneVariables Variables { get; } = [];
 
-        [JsonIgnore]
-        public Config EditorConfig { get; set; } = new();
-
         public event Action<GameObject>? OnGameObjectAdded;
 
         public event Action<GameObject>? OnGameObjectRemoved;

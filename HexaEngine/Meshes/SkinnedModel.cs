@@ -5,13 +5,14 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
     using System.Threading.Tasks;
 
     public class SkinnedModel : IDisposable
     {
         private readonly ModelFile modelFile;
-        private readonly MaterialLibrary materialLibrary;
+        private readonly MaterialManager materialManager;
 
         private Node[] nodes;
         private Mesh[] meshes;
@@ -31,10 +32,10 @@
         private bool loaded;
         private bool disposedValue;
 
-        public SkinnedModel(ModelFile modelFile, MaterialLibrary materialLibrary)
+        public SkinnedModel(ModelFile modelFile, MaterialManager materialManager)
         {
             this.modelFile = modelFile;
-            this.materialLibrary = materialLibrary;
+            this.materialManager = materialManager;
 
             int nodeCount = 0;
             modelFile.Root.CountNodes(ref nodeCount);
@@ -87,8 +88,6 @@
 
         public ModelFile ModelFile => modelFile;
 
-        public MaterialLibrary MaterialLibrary => materialLibrary;
-
         public Node[] Nodes => nodes;
 
         public PlainNode[] PlainNodes => plainNodes;
@@ -118,7 +117,7 @@
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
                 var data = modelFile.GetMesh(i);
-                Material material = ResourceManager.Shared.LoadMaterial(data, materialLibrary.GetMaterial(data.MaterialName));
+                Material material = ResourceManager.Shared.LoadMaterial(data, materialManager.GetMaterial(data.MaterialId));
                 Mesh mesh = ResourceManager.Shared.LoadMesh(data, false);
 
                 materials[i] = material;
@@ -140,7 +139,7 @@
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
                 var data = modelFile.GetMesh(i);
-                Material material = await ResourceManager.Shared.LoadMaterialAsync(data, materialLibrary.GetMaterial(data.MaterialName));
+                Material material = await ResourceManager.Shared.LoadMaterialAsync(data, materialManager.GetMaterial(data.MaterialId));
                 Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data);
 
                 materials[i] = material;

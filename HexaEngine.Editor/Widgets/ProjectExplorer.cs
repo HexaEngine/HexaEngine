@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Projects;
     using Hexa.NET.ImGui;
+    using HexaEngine.Editor.Projects;
 
     public class ProjectExplorer : EditorWindow
     {
@@ -121,16 +121,6 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
-            HexaProject? project = ProjectManager.Project;
-            if (project == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < project.Items.Count; i++)
-            {
-                DisplayNode(project.Items[i]);
-            }
         }
     }
 }

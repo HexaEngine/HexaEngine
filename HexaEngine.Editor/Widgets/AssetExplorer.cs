@@ -6,13 +6,14 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Projects;
     using HexaEngine.Scenes.Serialization;
     using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Numerics;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Core.Configuration;
+    using HexaEngine.Editor.Projects;
+    using HexaEngine.Core.Assets;
 
     public enum PasteMode
     {
@@ -53,6 +54,7 @@
         private DirectoryInfo? parentDir;
         private readonly RenameFileDialog renameFileDialog = new(false);
         private readonly RenameDirectoryDialog renameDirectoryDialog = new(false);
+        private readonly OpenFileDialog importFileDialog = new();
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         private readonly Stack<string> backHistory = new();
@@ -89,6 +91,7 @@
             DisplayMode = config.GetOrAddValue("Display Mode", AssetExplorerDisplayMode.Pretty);
             IconSize = config.GetOrAddValue("Icon Size", AssetExplorerIconSize.Medium);
             ShowExtensions = config.GetOrAddValue("Show Extensions", false);
+            Flags |= ImGuiWindowFlags.MenuBar;
         }
 
         private void FileSystemChanged(FileSystemEventArgs obj)
@@ -709,6 +712,8 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            DrawMenuBar();
+
             if (currentDir == null)
             {
                 return;
@@ -721,6 +726,13 @@
             if (renameDirectoryDialog.Draw())
             {
                 Refresh();
+            }
+            if (importFileDialog.Draw())
+            {
+                if (importFileDialog.Result == OpenFileResult.Ok)
+                {
+                    SourceAssetsDatabase.ImportFile(importFileDialog.FullPath);
+                }
             }
             if (currentDir.Exists)
             {
@@ -817,6 +829,19 @@
                 }
 
                 ImGui.EndChild();
+            }
+        }
+
+        private void DrawMenuBar()
+        {
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.Button("\xE8B5 Import"))
+                {
+                    importFileDialog.Show();
+                }
+
+                ImGui.EndMenuBar();
             }
         }
     }

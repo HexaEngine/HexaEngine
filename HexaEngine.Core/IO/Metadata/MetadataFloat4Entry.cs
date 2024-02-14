@@ -5,7 +5,6 @@
     using System.Numerics;
     using System.Text;
 
-
     /// <summary>
     /// Represents a metadata entry with a four-dimensional single-precision floating-point vector value.
     /// </summary>
@@ -20,6 +19,12 @@
         /// Gets the type of the metadata entry.
         /// </summary>
         public override MetadataType Type => MetadataType.Float4;
+
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataFloat4Entry() { Value = Value };
+        }
 
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.

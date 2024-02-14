@@ -390,7 +390,7 @@
         /// <param name="dst">The <see cref="Stream"/> to write to.</param>
         /// <param name="encoding">The character encoding to use for writing strings.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
-        public void Write(Stream dst, Encoding encoding, Endianness endianness)
+        public virtual void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteString(Name, encoding, endianness);
 
@@ -415,6 +415,24 @@
             }
 
             Metadata.Write(dst, encoding, endianness);
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="MaterialData"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MaterialData"/> instance.</returns>
+        public MaterialData Clone()
+        {
+            MaterialData materialData = new()
+            {
+                Name = (string)Name.Clone(),
+                Properties = Properties.Select(x => x.Clone()).ToList(),
+                Textures = Textures.Select(x => x.Clone()).ToList(),
+                Shaders = Shaders.Select(x => x.Clone()).ToList(),
+                Metadata = Metadata.Clone(),
+                Flags = Flags
+            };
+            return materialData;
         }
     }
 }

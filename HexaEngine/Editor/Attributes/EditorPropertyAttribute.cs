@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Attributes
 {
+    using HexaEngine.Core.Assets;
     using System;
 
     /// <summary>
@@ -26,6 +27,19 @@
         public EditorPropertyAttribute(string name, EditorPropertyMode mode = EditorPropertyMode.Default)
         {
             Name = name;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name and mode.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="assetType">The asset type.</param>
+        /// <param name="mode">The editor property mode.</param>
+        public EditorPropertyAttribute(string name, AssetType assetType, EditorPropertyMode mode = EditorPropertyMode.Default)
+        {
+            Name = name;
+            AssetType = assetType;
             Mode = mode;
         }
 
@@ -152,6 +166,11 @@
         /// Returns the path relative to this value
         /// </summary>
         public string? RelativeTo { get; }
+
+        /// <summary>
+        /// Returns the asset type.
+        /// </summary>
+        public AssetType AssetType { get; }
     }
 
     /// <summary>

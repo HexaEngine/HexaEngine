@@ -17,8 +17,6 @@
         private bool initialized = false;
         private bool enabled = true;
 
-        protected List<IPostFxPass> Passes = new();
-
         /// <summary>
         /// Indicates whether the post-processing effect is dirty and needs an update.
         /// </summary>
@@ -120,10 +118,6 @@
         /// <inheritdoc/>
         public virtual void Draw(IGraphicsContext context)
         {
-            for (int i = 0; i < Passes.Count; i++)
-            {
-                Passes[i].Execute(context);
-            }
         }
 
         /// <inheritdoc/>
@@ -142,10 +136,6 @@
             Output = view;
             OutputResource = resource;
             Viewport = viewport;
-            for (int i = 0; i < Passes.Count; i++)
-            {
-                Passes[i].SetOutput(view, resource, viewport);
-            }
         }
 
         /// <inheritdoc/>
@@ -153,10 +143,6 @@
         {
             Input = view;
             InputResource = resource;
-            for (int i = 0; i < Passes.Count; i++)
-            {
-                Passes[i].SetInput(view, resource);
-            }
         }
 
         /// <summary>
@@ -213,10 +199,6 @@
         {
             if (initialized)
             {
-                for (int i = 0; i < Passes.Count; i++)
-                {
-                    Passes[i].Dispose();
-                }
                 DisposeCore();
                 initialized = false;
             }

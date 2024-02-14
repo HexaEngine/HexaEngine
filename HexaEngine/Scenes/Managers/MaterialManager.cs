@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
@@ -13,13 +14,8 @@
 
     public class MaterialManager
     {
-        private readonly List<MaterialLibrary> libraries = [];
-        private readonly Dictionary<string, MaterialLibrary> pathToLib = [];
-        private readonly Dictionary<MaterialLibrary, string> libToPath = [];
-
-        private readonly List<MaterialData> materials = [];
-        private readonly Dictionary<MaterialData, MaterialLibrary> matToLib = [];
-
+        private readonly List<MaterialFile> materials = [];
+        private readonly Dictionary<Guid, MaterialFile> guidToMaterial = [];
         private readonly object _lock = new();
 
         public MaterialManager(string? path)
@@ -29,27 +25,28 @@
                 return;
             }
 
-            var materialLibPaths = FileSystem.GetFiles("assets/", "*.matlib");
-
-            for (var i = 0; i < materialLibPaths.Length; i++)
+            foreach (var asset in ArtifactDatabase.GetArtifactsFromType(AssetType.Material))
             {
-                var materialLibPath = materialLibPaths[i];
-                MaterialLibrary library = MaterialLibrary.Load(materialLibPath);
-                libraries.Add(library);
-                pathToLib.Add(materialLibPath, library);
-                libToPath.Add(library, materialLibPath);
-                for (var j = 0; j < library.Materials.Count; j++)
+                Stream? stream = null;
+
+                try
                 {
-                    var material = library.Materials[j];
-                    materials.Add(material);
-                    matToLib.Add(material, library);
+                    stream = asset.OpenRead();
+                    MaterialFile material = MaterialFile.Read(stream);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    Logger.Error($"Failed to load material file, {asset.Path}");
+                }
+                finally
+                {
+                    stream?.Dispose();
                 }
             }
         }
 
-        public IReadOnlyList<MaterialLibrary> Libraries => libraries;
-
-        public IReadOnlyList<MaterialData> Materials => materials;
+        public IReadOnlyList<MaterialFile> Materials => materials;
 
         public int Count => materials.Count;
 
@@ -59,32 +56,12 @@
 
         public static MaterialManager? Current => SceneManager.Current?.MaterialManager;
 
-        public MaterialLibrary GetMaterialLibraryForm(MaterialData materialData)
-        {
-            lock (_lock)
-            {
-                return matToLib[materialData];
-            }
-        }
-
-        public string? GetPathToMaterialLibrary(MaterialLibrary library)
-        {
-            lock (_lock)
-            {
-                libToPath.TryGetValue(library, out var value);
-                return value;
-            }
-        }
-
         public void Clear()
         {
             lock (_lock)
             {
-                libraries.Clear();
-                pathToLib.Clear();
-                libToPath.Clear();
                 materials.Clear();
-                matToLib.Clear();
+                guidToMaterial.Clear();
             }
         }
 
@@ -124,35 +101,12 @@
             return false;
         }
 
-        public bool TryGetMaterial(string name, [NotNullWhen(true)] out MaterialData? material)
+        public bool TryGetMaterialFile(Guid name, [NotNullWhen(true)] out MaterialFile? material)
         {
             lock (_lock)
             {
-                material = materials.FirstOrDefault(x => x.Name == name);
+                return guidToMaterial.TryGetValue(name, out material);
             }
-
-            return material != null;
-        }
-
-        public bool Rename(string oldName, string newName)
-        {
-            lock (_lock)
-            {
-                if (TryGetMaterial(oldName, out MaterialData? desc))
-                {
-                    if (!Exists(newName))
-                    {
-                        var mat = desc;
-                        int index = materials.IndexOf(mat);
-                        mat.Name = newName;
-                        Renamed?.Invoke(mat, oldName, newName);
-                        materials[index] = mat;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         public void Update(MaterialData desc)
@@ -181,71 +135,20 @@
             await ResourceManager.Shared.UpdateMaterialAsync(desc);
         }
 
-        public MaterialLibrary Load(string path)
+        public MaterialData GetMaterial(Guid name)
         {
-            MaterialLibrary? library;
+            if (name == Guid.Empty)
+                return MaterialData.Empty;
+
             lock (_lock)
             {
-                if (pathToLib.TryGetValue(path, out library))
+                if (guidToMaterial.TryGetValue(name, out var material))
                 {
-                    return library;
-                }
-
-                if (FileSystem.Exists(path))
-                {
-                    library = MaterialLibrary.Load(path);
-                }
-                else
-                {
-                    library = MaterialLibrary.Empty;
-                    Logger.Warn($"Warning couldn't find material library {path}");
-                }
-
-                libraries.Add(library);
-                pathToLib.Add(path, library);
-                libToPath.Add(library, path);
-
-                for (int i = 0; i < library.Materials.Count; i++)
-                {
-                    materials.Add(library.Materials[i]);
-                    matToLib.Add(library.Materials[i], library);
+                    return material;
                 }
             }
 
-            return library;
-        }
-
-        public void SaveChanges(MaterialData desc)
-        {
-            SaveChanges(GetMaterialLibraryForm(desc));
-        }
-
-        public void SaveChanges(MaterialLibrary library)
-        {
-            lock (_lock)
-            {
-                var path = GetPathToMaterialLibrary(library);
-
-                if (path == null)
-                {
-                    Logger.Error("Failed to save library, Path not found");
-                    MessageBox.Show("Failed to save library", "Path not found");
-                    return;
-                }
-
-                path = FileSystem.GetFullPath(path);
-
-                try
-                {
-                    library.Save(path, Encoding.UTF8);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                    Logger.Error($"Failed to save library, {e.Message}");
-                    MessageBox.Show("Failed to save library", e.Message);
-                }
-            }
+            return MaterialData.Empty;
         }
     }
 }

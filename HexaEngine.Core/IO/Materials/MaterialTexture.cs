@@ -234,5 +234,24 @@
             if (Type == MaterialTextureType.Diffuse)
                 yield return MaterialTextureType.BaseColor.ToString();
         }
+
+        /// <summary>
+        /// Deep clones a <see cref="MaterialTexture"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MaterialTexture"/> instance.</returns>
+        public readonly MaterialTexture Clone()
+        {
+            MaterialTexture texture = default;
+            texture.Type = Type;
+            texture.File = (string)File.Clone();
+            texture.Blend = Blend;
+            texture.Op = Op;
+            texture.Mapping = Mapping;
+            texture.UVWSrc = UVWSrc;
+            texture.U = U;
+            texture.V = V;
+            texture.Flags = Flags;
+            return texture;
+        }
     }
 }

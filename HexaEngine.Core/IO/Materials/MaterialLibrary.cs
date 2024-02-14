@@ -16,7 +16,6 @@
         /// </summary>
         public static readonly MaterialLibrary Empty = new();
 
-        private MaterialLibraryHeader header;
         private readonly List<MaterialData> materials;
 
         /// <summary>
@@ -24,7 +23,6 @@
         /// </summary>
         public MaterialLibrary()
         {
-            header = default;
             materials = new();
         }
 
@@ -34,14 +32,8 @@
         /// <param name="materials">The list of materials to include in the library.</param>
         public MaterialLibrary(IList<MaterialData> materials)
         {
-            header.MaterialCount = (uint)materials.Count;
             this.materials = new(materials);
         }
-
-        /// <summary>
-        /// Gets the header information of the material library.
-        /// </summary>
-        public MaterialLibraryHeader Header => header;
 
         /// <summary>
         /// Gets the list of materials contained in the library.
@@ -61,6 +53,7 @@
 
             var stream = fs;
 
+            MaterialLibraryHeader header;
             header.Encoding = encoding;
             header.Endianness = endianness;
             header.Compression = compression;
@@ -104,16 +97,17 @@
         {
             MaterialLibrary library = new();
 
-            library.header.Read(fs);
+            MaterialLibraryHeader header = default;
+            header.Read(fs);
 
             var stream = fs;
 
             library.materials.Clear();
-            library.materials.Capacity = (int)library.header.MaterialCount;
+            library.materials.Capacity = (int)header.MaterialCount;
 
-            for (int i = 0; i < library.header.MaterialCount; i++)
+            for (int i = 0; i < header.MaterialCount; i++)
             {
-                library.materials.Add(MaterialData.Read(stream, library.header.Encoding, library.header.Endianness));
+                library.materials.Add(MaterialData.Read(stream, header.Encoding, header.Endianness));
             }
 
             stream.Close();

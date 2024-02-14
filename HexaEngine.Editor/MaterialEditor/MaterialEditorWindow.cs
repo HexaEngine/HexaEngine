@@ -2,13 +2,13 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Metadata;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
@@ -16,8 +16,6 @@
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
     using System.Numerics;
     using System.Reflection;
     using System.Text;
@@ -44,9 +42,11 @@
 
         private readonly List<TextureFileNode> textureFiles = new();
 
-        private MaterialData? material;
+        private AssetRef assetRef;
+        private MaterialFile? material;
         private bool unsavedData;
         private bool unsavedDataDialogIsOpen;
+        private string path;
 
         public MaterialEditorWindow()
         {
@@ -123,7 +123,50 @@
             }
         }
 
-        public MaterialData? Material
+        public AssetRef Material
+        {
+            get => assetRef;
+            set
+            {
+                var metadata = value.GetMetadata();
+                if (metadata == null || metadata.Type != AssetType.Material)
+                {
+                    MaterialFile = null;
+                    return;
+                }
+
+                var sourceMetadata = value.GetSourceMetadata();
+
+                if (sourceMetadata == null)
+                {
+                    MaterialFile = null;
+                    return;
+                }
+
+                var path = sourceMetadata.GetFullPath();
+                FileStream? stream = null;
+                try
+                {
+                    stream = File.OpenRead(path);
+                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    this.path = path;
+                    MaterialFile = materialFile;
+                    assetRef = value;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    Logger.Error($"Failed to load material file, {path}");
+                    MessageBox.Show($"Failed to load material file, {path}", ex.Message);
+                }
+                finally
+                {
+                    stream?.Dispose();
+                }
+            }
+        }
+
+        public MaterialFile? MaterialFile
         {
             get => material;
             set
@@ -167,8 +210,8 @@
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to deserialize splitNode material data: {value.Name}", ex.Message);
-                    Logger.Error($"Failed to deserialize splitNode material data: {value.Name}");
+                    MessageBox.Show($"Failed to deserialize node material data: {value.Name}", ex.Message);
+                    Logger.Error($"Failed to deserialize node material data: {value.Name}");
                     Logger.Log(ex);
 
                     editor = new();
@@ -389,6 +432,11 @@
 
         public void Sort()
         {
+            if (editor == null)
+            {
+                return;
+            }
+
             var groups = NodeEditor.TreeTraversal2(outputNode, true);
             Array.Reverse(groups);
             Vector2 padding = new(10);
@@ -418,7 +466,7 @@
         public void Unload()
         {
             unsavedData = false;
-            Material = null;
+            MaterialFile = null;
         }
 
         public void Save()
@@ -430,13 +478,23 @@
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 InsertProperties(material, editor);
                 InsertTextures(material, editor);
-                MaterialManager.Current?.SaveChanges(material);
+
+                material.Save(path, Encoding.UTF8);
             }
         }
 
         public void CreateNew()
         {
-            material = new();
+            MaterialFile material = new(MaterialData.Empty);
+            material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Mathematics.Endianness.LittleEndian, 0f));
+            material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Mathematics.Endianness.LittleEndian, 0.4f));
+            material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Mathematics.Endianness.LittleEndian, 1f));
+            material.Name = "New Material";
+            MaterialFile = material;
+
+            var metadata = SourceAssetsDatabase.CreateFile(SourceAssetsDatabase.GetFreeName("New Material.material"));
+            path = metadata.GetFullPath();
+            material.Save(path, Encoding.UTF8);
         }
 
         protected override void InitWindow(IGraphicsDevice device)
@@ -447,7 +505,7 @@
 
             if (material != null)
             {
-                Material = material;
+                MaterialFile = material;
             }
 
             intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();

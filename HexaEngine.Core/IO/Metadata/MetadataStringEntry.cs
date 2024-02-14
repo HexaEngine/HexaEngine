@@ -19,6 +19,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.String;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataStringEntry() { Value = (string?)Value?.Clone() };
+        }
+
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.
         /// </summary>

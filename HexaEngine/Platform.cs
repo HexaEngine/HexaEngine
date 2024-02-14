@@ -10,7 +10,6 @@
     using HexaEngine.Jobs;
     using HexaEngine.OpenAL;
     using HexaEngine.OpenGL;
-    using HexaEngine.Projects;
     using HexaEngine.Scripts;
     using HexaEngine.Windows;
 

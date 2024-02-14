@@ -19,6 +19,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.Double;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataDoubleEntry() { Value = Value };
+        }
+
         /// <summary>
         /// Reads the double precision floating-point number entry from the specified stream using the specified encoding and endianness.
         /// </summary>

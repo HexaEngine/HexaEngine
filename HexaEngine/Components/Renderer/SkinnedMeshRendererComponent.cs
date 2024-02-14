@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
@@ -23,7 +23,7 @@
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
     public class SkinnedMeshRendererComponent : BaseRendererComponent
     {
-        private string modelPath = string.Empty;
+        private AssetRef modelAsset;
 
         private ModelManager modelManager;
         private MaterialManager materialManager;
@@ -34,16 +34,20 @@
         {
         }
 
-        [EditorProperty("Model", startingPath: null, ".model")]
-        public string Model
+        [EditorProperty("Model", AssetType.Model)]
+        public AssetRef Model
         {
-            get => modelPath;
+            get => modelAsset;
             set
             {
-                modelPath = value;
+                modelAsset = value;
                 UpdateModel();
             }
         }
+
+        [EditorCategory("Materials")]
+        [EditorProperty("")]
+        public MaterialAssetMappingCollection Materials { get; } = new();
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(SkinnedMeshRenderer);
@@ -186,13 +190,38 @@
                     return;
                 }
 
-                var path = Paths.CurrentAssetsPath + component.modelPath;
-                if (FileSystem.Exists(path))
+                var stream = modelAsset.OpenRead();
+                if (stream != null)
                 {
-                    ModelFile source = component.modelManager.Load(path);
-                    MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
+                    ModelFile modelFile;
+                    try
+                    {
+                        modelFile = ModelFile.Load(stream);
+                    }
+                    finally
+                    {
+                        stream.Dispose();
+                    }
 
-                    component.model = new(source, library);
+                    if (component.Materials.Count == 0)
+                    {
+                        for (int i = 0; i < modelFile.Meshes.Count; i++)
+                        {
+                            var mesh = modelFile.Meshes[i];
+                            var material = mesh.MaterialId;
+                            MaterialAssetMapping mapping = new(mesh, material);
+                            component.Materials.Add(mapping);
+                        }
+                    }
+
+                    for (int i = 0; i < component.Materials.Count; i++)
+                    {
+                        var mapping = component.Materials[i];
+                        var mesh = modelFile.Meshes[i];
+                        mesh.MaterialId = mapping.Material.Guid;
+                    }
+
+                    component.model = new(modelFile, component.materialManager);
                     component.model.LoadAsync().Wait();
 
                     var flags = component.model.ShaderFlags;

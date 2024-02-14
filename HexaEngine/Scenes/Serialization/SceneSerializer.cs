@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Scenes.Serialization
 {
-    using HexaEngine.Core;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Bson;
@@ -48,14 +47,6 @@
             {
                 writer.Close();
             }
-
-            if (Application.InEditorMode)
-            {
-                var dir = Path.GetDirectoryName(path) ?? string.Empty;
-                var fileName = Path.GetFileNameWithoutExtension(path);
-                var editorConfigPath = Path.Combine(dir, fileName + ".meta");
-                scene.EditorConfig.SaveTo(editorConfigPath);
-            }
         }
 
         public static bool TrySerialize(Scene scene, string path, [NotNullWhen(false)] out Exception? exception)
@@ -89,14 +80,6 @@
 
             scene.Path = path;
             scene.BuildReferences();
-
-            if (Application.InEditorMode)
-            {
-                var dir = Path.GetDirectoryName(path) ?? string.Empty;
-                var fileName = Path.GetFileNameWithoutExtension(path);
-                var editorConfigPath = Path.Combine(dir, fileName + ".meta");
-                scene.EditorConfig = Config.LoadFrom(editorConfigPath);
-            }
 
             return scene;
         }

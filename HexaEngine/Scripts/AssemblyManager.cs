@@ -16,6 +16,8 @@
         private static readonly Dictionary<Type, Array> _enumCache = new();
         private static readonly Dictionary<Type, string[]> _enumNameCache = new();
 
+        private static ManualResetEventSlim loadLock = new(false);
+
         static AssemblyManager()
         {
             assemblyLoadContext = new AssemblyLoadContext(nameof(AssemblyManager), true);
@@ -29,6 +31,7 @@
 
         public static Assembly? Load(string path)
         {
+            loadLock.Reset();
             string? folder = Path.GetDirectoryName(path);
             if (folder == null)
             {
@@ -40,14 +43,31 @@
             Assembly assembly;
             if (File.Exists(pdb))
             {
-                using MemoryStream ms = new(File.ReadAllBytes(path));
-                using MemoryStream ms2 = new(File.ReadAllBytes(pdb));
-                assembly = assemblyLoadContext.LoadFromStream(ms, ms2);
+                FileStream fs = File.OpenRead(path);
+                FileStream fsPdb = File.OpenRead(pdb);
+
+                try
+                {
+                    assembly = assemblyLoadContext.LoadFromStream(fs, fsPdb);
+                }
+                finally
+                {
+                    fs.Close();
+                    fsPdb?.Close();
+                }
             }
             else
             {
-                using MemoryStream ms = new(File.ReadAllBytes(path));
-                assembly = assemblyLoadContext.LoadFromStream(ms);
+                FileStream fs = File.OpenRead(path);
+
+                try
+                {
+                    assembly = assemblyLoadContext.LoadFromStream(fs);
+                }
+                finally
+                {
+                    fs.Close();
+                }
             }
 
             assemblies.Add(assembly);
@@ -55,44 +75,21 @@
 
             _typeCache.Clear();
             _typeNameCache.Clear();
+
+            loadLock.Set();
 
             return assembly;
         }
 
-        public static async Task<Assembly?> LoadAsync(string path)
+        public static Task<Assembly?> LoadAsync(string path)
         {
-            string? folder = Path.GetDirectoryName(path);
-            if (folder == null)
-            {
-                return null;
-            }
-
-            string filename = Path.GetFileName(path);
-            string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
-            Assembly assembly;
-            if (File.Exists(pdb))
-            {
-                using MemoryStream ms = new(await File.ReadAllBytesAsync(path));
-                using MemoryStream ms2 = new(await File.ReadAllBytesAsync(pdb));
-                assembly = assemblyLoadContext.LoadFromStream(ms, ms2);
-            }
-            else
-            {
-                using MemoryStream ms = new(await File.ReadAllBytesAsync(path));
-                assembly = assemblyLoadContext.LoadFromStream(ms);
-            }
-
-            assemblies.Add(assembly);
-            AssemblyLoaded?.Invoke(null, assembly);
-
-            _typeCache.Clear();
-            _typeNameCache.Clear();
-
-            return assembly;
+            return Task.Run(() => Load(path));
         }
 
         public static IList<Type> GetAssignableTypes<T>()
         {
+            loadLock.Wait();
+
             if (!_typeCache.TryGetValue(typeof(T), out var result))
             {
                 try
@@ -119,6 +116,8 @@
 
         public static IList<Type> GetAssignableTypes(Type type)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return Array.Empty<Type>();
 
@@ -142,6 +141,8 @@
 
         public static string[] GetAssignableTypeNames(Type type)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return [];
 
@@ -165,6 +166,8 @@
 
         public static Array GetEnumValues(Type type)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return Array.Empty<Type>();
 
@@ -193,6 +196,8 @@
 
         public static string[] GetEnumNames(Type type)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return [];
 
@@ -221,6 +226,8 @@
 
         public static IEnumerable<Type> GetAssignableTypes<T>(Assembly assembly)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return [];
 
@@ -239,6 +246,8 @@
 
         public static IEnumerable<Type> GetAssignableTypes(Assembly assembly, Type type)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return [];
 
@@ -257,6 +266,8 @@
 
         public static Type? GetType(string name)
         {
+            loadLock.Wait();
+
             if (Assemblies.Count == 0)
                 return null;
 
@@ -283,6 +294,8 @@
 
         public static void Unload()
         {
+            loadLock.Reset();
+
             _typeCache.Clear();
             _typeNameCache.Clear();
             _enumCache.Clear();

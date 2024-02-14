@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
@@ -23,7 +24,7 @@
         private Skybox skybox;
 
         private IGraphicsDevice? device;
-        private string environmentPath = string.Empty;
+        private AssetRef environmentPath;
         private SkyType skyType;
 
         public SkyRendererComponent()
@@ -43,8 +44,8 @@
         [EditorProperty<SkyType>("Type")]
         public SkyType SkyType { get => skyType; set => skyType = value; }
 
-        [EditorProperty("Env", startingPath: null)]
-        public string Environment
+        [EditorProperty("Environment", AssetType.TextureCube)]
+        public AssetRef Environment
         {
             get => environmentPath;
             set
@@ -126,9 +127,9 @@
 
                 var device = component.device;
 
-                var path = Paths.CurrentAssetsPath + component.environmentPath;
+                var path = component.environmentPath.GetPath();
 
-                if (FileSystem.Exists(path))
+                if (path != null && File.Exists(path))
                 {
                     component.skybox = new(device);
                     component.skybox.LoadAsync(path).Wait();

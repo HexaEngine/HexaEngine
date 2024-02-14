@@ -3,8 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using Hexa.NET.ImGui;
-    using HexaEngine.Projects;
     using LibGit2Sharp;
+    using HexaEngine.Editor.Projects;
 
     public class GitWidget : EditorWindow
     {
@@ -17,7 +17,7 @@
         {
             if (ProjectVersionControl.Repository == null)
             {
-                if (ProjectManager.Project != null)
+                if (ProjectManager.Loaded)
                 {
                     if (ImGui.Button("Init Git Repo"))
                     {

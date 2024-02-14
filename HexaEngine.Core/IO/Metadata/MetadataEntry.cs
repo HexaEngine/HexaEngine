@@ -99,5 +99,11 @@
         {
             stream.WriteInt32((int)Type, endianness);
         }
+
+        /// <summary>
+        /// Deep clones a <see cref="MetadataEntry"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MetadataEntry"/> instance.</returns>
+        public abstract MetadataEntry Clone();
     }
 }

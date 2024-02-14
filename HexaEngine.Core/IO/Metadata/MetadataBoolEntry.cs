@@ -19,6 +19,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.Bool;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataBoolEntry() { Value = Value };
+        }
+
         /// <summary>
         /// Reads the boolean entry from the specified stream using the specified encoding and endianness.
         /// </summary>

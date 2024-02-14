@@ -8,6 +8,7 @@
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Components.Renderer;
+    using HexaEngine.Core.Assets;
 
     public class MaterialMappingPropertyEditor : IPropertyEditor
     {
@@ -26,7 +27,7 @@
 
         public unsafe bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            if (value is not MaterialMappingCollection mappings)
+            if (value is not MaterialAssetMappingCollection mappings)
             {
                 return false;
             }
@@ -36,70 +37,68 @@
             ImGui.Text(guiName.Name);
             ImGui.TableSetColumnIndex(1);
 
-            bool result = false;
-
-            var materials = MaterialManager.Current.Materials;
-
             for (int i = 0; i < mappings.Count; i++)
             {
                 var mapping = mappings[i];
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text($"{mapping.Mesh.Name}");
+                ImGui.Text($"{mapping.Mesh}");
                 ImGui.TableSetColumnIndex(1);
-                var material = mapping.Material;
+                var val = mapping.Material;
 
-                if (material == null)
+                var meta = val.GetMetadata();
+
+                bool isOpen;
+                if (meta != null)
                 {
-                    if (ImGui.BeginCombo($"{guiName.Id}{mapping.Mesh.Name}", (byte*)null))
-                    {
-                        for (int j = 0; j < materials.Count; j++)
-                        {
-                            var mat = materials[j];
-                            if (ImGui.Selectable(mat.Name, false))
-                            {
-                                value = mat;
-                                result = true;
-                            }
-                        }
-                        ImGui.EndCombo();
-                    }
+                    isOpen = ImGui.BeginCombo($"{guiName.Id}{mapping.Mesh}", meta.Name);
                 }
                 else
                 {
-                    if (ImGui.BeginCombo(guiName.Id, material.Name))
+                    if (val.Guid == Guid.Empty)
                     {
-                        for (int j = 0; j < materials.Count; j++)
-                        {
-                            var mat = materials[j];
-                            var isSelected = mat == material;
-                            if (ImGui.Selectable(mat.Name, isSelected))
-                            {
-                                value = mat;
-                                result = true;
-                            }
-                            if (isSelected)
-                            {
-                                ImGui.SetItemDefaultFocus();
-                            }
-                        }
-                        ImGui.EndCombo();
+                        isOpen = ImGui.BeginCombo($"{guiName.Id}{mapping.Mesh}", (byte*)null);
                     }
+                    else
+                    {
+                        isOpen = ImGui.BeginCombo($"{guiName.Id}{mapping.Mesh}", $"{val.Guid}");
+                    }
+                }
+
+                if (isOpen)
+                {
+                    foreach (var asset in ArtifactDatabase.GetArtifactsFromType(AssetType.Material))
+                    {
+                        var mat = asset;
+                        bool isSelected = val.Guid == asset.Guid;
+                        if (ImGui.Selectable(mat.Name, isSelected))
+                        {
+                            val.Guid = asset.Guid;
+                            mapping.Material = val;
+                            mappings[i] = mapping;
+                        }
+                        if (isSelected)
+                        {
+                            ImGui.SetItemDefaultFocus();
+                        }
+                    }
+
+                    ImGui.EndCombo();
                 }
 
                 ImGui.SameLine();
 
-                if (ImGui.SmallButton($"\xE70F{guiName.Id}{mapping.Mesh.Name}"))
+                if (ImGui.SmallButton($"\xE70F{guiName.Id}{mapping.Mesh}"))
                 {
                     if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditor))
                     {
-                        materialEditor.Material = material;
+                        materialEditor.Material = val;
                         materialEditor.Focus();
                     }
                 }
             }
 
-            return result;
+            return false;
         }
     }
 }

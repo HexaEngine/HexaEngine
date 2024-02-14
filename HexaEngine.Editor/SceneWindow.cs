@@ -7,10 +7,10 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Projects;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;

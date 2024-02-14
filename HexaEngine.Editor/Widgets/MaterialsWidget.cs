@@ -77,7 +77,7 @@
             isActive = false;
             if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
             {
-                manager.Rename(material.Name, name);
+                material.Name = name;
             }
 
             if (ImGui.Button("ObjectAdded Property"))

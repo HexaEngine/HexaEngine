@@ -6,7 +6,6 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
-    using Silk.NET.Assimp;
 
     public class DepthPrePass : RenderPass
     {

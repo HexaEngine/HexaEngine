@@ -19,6 +19,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.UInt64;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataUInt64Entry() { Value = Value };
+        }
+
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.
         /// </summary>

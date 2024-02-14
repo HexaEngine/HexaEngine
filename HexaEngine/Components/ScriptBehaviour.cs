@@ -75,7 +75,7 @@
 
         private static JsonSerializerSettings serializerSettings = new()
         {
-            TypeNameHandling = TypeNameHandling.All,
+            TypeNameHandling = TypeNameHandling.Auto,
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
         };
 

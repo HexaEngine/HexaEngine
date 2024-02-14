@@ -82,6 +82,33 @@
         }
 
         /// <summary>
+        /// Reads a GUID from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The GUID read from the stream.</returns>
+        public static Guid ReadGuid(this Stream stream, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[16];
+            stream.Read(buf);
+            Guid guid = new(buf, endianness == Endianness.BigEndian);
+            return guid;
+        }
+
+        /// <summary>
+        /// Writes a GUID to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="guid">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        public static void WriteGuid(this Stream stream, Guid guid, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[16];
+            guid.TryWriteBytes(buf, endianness == Endianness.BigEndian, out _);
+            stream.Write(buf);
+        }
+
+        /// <summary>
         /// Writes a 16-bit signed integer to the stream using the specified endianness.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>

@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
@@ -17,49 +18,101 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
-    using System;
     using System.Collections;
+    using System.ComponentModel;
     using System.Numerics;
+    using YamlDotNet.Core.Tokens;
 
-    public struct MaterialMapping
+    public class MaterialAssetMappingCollection : ICollection<MaterialAssetMapping>
     {
-        public readonly MeshData Mesh;
-        private MaterialData? material;
-
-        public MaterialData? Material
-        {
-            readonly get => material; set
-            {
-                material = value;
-
-                Mesh.MaterialName = material?.Name ?? string.Empty;
-            }
-        }
-
-        public MaterialMapping(MeshData mesh, MaterialData material)
-        {
-            Mesh = mesh;
-            this.material = material;
-        }
-    }
-
-    public class MaterialMappingCollection : ICollection<MaterialMapping>
-    {
-        private readonly List<MaterialMapping> mappings = [];
+        private readonly List<MaterialAssetMapping> mappings = [];
 
         public int Count => mappings.Count;
 
         public bool IsReadOnly => false;
 
-        public MaterialMapping this[int index]
+        public event Action<MaterialAssetMapping>? OnChanged;
+
+        public MaterialAssetMapping this[int index]
         {
             get => mappings[index];
-            set => mappings[index] = value;
+            set
+            {
+                mappings[index] = value;
+                OnChanged?.Invoke(value);
+            }
         }
 
-        public void Add(MaterialMapping item)
+        public MaterialAssetMapping Find(MeshData mesh)
+        {
+            for (int i = 0; i < mappings.Count; i++)
+            {
+                var mapping = mappings[i];
+                if (mapping.Mesh == mesh.Name)
+                    return mapping;
+            }
+
+            return default;
+        }
+
+        public MaterialAssetMapping Find(AssetRef material)
+        {
+            for (int i = 0; i < mappings.Count; i++)
+            {
+                var mapping = mappings[i];
+                if (mapping.Material == material)
+                    return mapping;
+            }
+
+            return default;
+        }
+
+        public MaterialData GetMaterial(MeshData data)
+        {
+            var mapping = Find(data);
+            if (mapping.Material == AssetRef.Empty)
+            {
+                return MaterialData.Empty;
+            }
+            else
+            {
+                Artifact? artifact = ArtifactDatabase.GetArtifact(mapping.Material);
+                if (artifact == null)
+                {
+                    Logger.Warn($"Failed to load material {mapping.Material}");
+                    return MaterialData.Empty;
+                }
+                if (artifact.Type != AssetType.Material)
+                {
+                    Logger.Warn($"Failed to load material {mapping.Material}, asset was {artifact.Type} but needs to be {AssetType.Material}");
+                    return MaterialData.Empty;
+                }
+
+                Stream? stream = null;
+
+                try
+                {
+                    stream = artifact.OpenRead();
+                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    return materialFile;
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    Logger.Warn($"Failed to load material {mapping.Material}");
+                    return MaterialData.Empty;
+                }
+                finally
+                {
+                    stream?.Dispose();
+                }
+            }
+        }
+
+        public void Add(MaterialAssetMapping item)
         {
             mappings.Add(item);
+            OnChanged?.Invoke(item);
         }
 
         public void Clear()
@@ -67,23 +120,24 @@
             mappings.Clear();
         }
 
-        public bool Contains(MaterialMapping item)
+        public bool Contains(MaterialAssetMapping item)
         {
             return mappings.Contains(item);
         }
 
-        public void CopyTo(MaterialMapping[] array, int arrayIndex)
+        public void CopyTo(MaterialAssetMapping[] array, int arrayIndex)
         {
             mappings.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<MaterialMapping> GetEnumerator()
+        public IEnumerator<MaterialAssetMapping> GetEnumerator()
         {
             return mappings.GetEnumerator();
         }
 
-        public bool Remove(MaterialMapping item)
+        public bool Remove(MaterialAssetMapping item)
         {
+            OnChanged?.Invoke(item);
             return mappings.Remove(item);
         }
 
@@ -93,28 +147,39 @@
         }
     }
 
+    public struct MaterialAssetMapping
+    {
+        public string Mesh;
+        public AssetRef Material;
+
+        public MaterialAssetMapping(MeshData mesh, AssetRef material)
+        {
+            Mesh = mesh.Name;
+            Material = material;
+        }
+    }
+
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
     public class MeshRendererComponent : BaseRendererComponent, ISelectableRayTest
     {
-        private string modelPath = string.Empty;
-
         private ModelManager modelManager;
         private MaterialManager materialManager;
         private MeshRenderer renderer;
         private Model? model;
+        private AssetRef modelAsset;
 
         static MeshRendererComponent()
         {
         }
 
-        [EditorProperty("Model", startingPath: null, ".model")]
-        public string Model
+        [EditorProperty("Model", AssetType.Model)]
+        public AssetRef Model
         {
-            get => modelPath;
+            get => modelAsset;
             set
             {
-                modelPath = value;
+                modelAsset = value;
                 UpdateModel();
             }
         }
@@ -134,9 +199,9 @@
         [JsonIgnore]
         public Model? ModelInstance => model;
 
-        [EditorProperty("Materials")]
-        [JsonIgnore]
-        public MaterialMappingCollection Materials { get; } = new();
+        [EditorCategory("Materials")]
+        [EditorProperty("")]
+        public MaterialAssetMappingCollection Materials { get; } = new();
 
         public override void Load(IGraphicsDevice device)
         {
@@ -223,6 +288,11 @@
             return false;
         }
 
+        private void OnChanged(MaterialAssetMapping obj)
+        {
+            UpdateModel();
+        }
+
         private Job UpdateModel()
         {
             Loaded = false;
@@ -231,14 +301,14 @@
             model = null;
             tmpModel?.Dispose();
 
+            Materials.OnChanged -= OnChanged;
+
             return Job.Run("Model Load Job", this, state =>
             {
                 if (state is not MeshRendererComponent component)
                 {
                     return;
                 }
-
-                component.Materials.Clear();
 
                 if (component.GameObject == null)
                 {
@@ -250,22 +320,35 @@
                     return;
                 }
 
-                var path = Paths.CurrentAssetsPath + component.modelPath;
-                if (FileSystem.Exists(path))
+                var stream = modelAsset.OpenRead();
+                if (stream != null)
                 {
-                    ModelFile source = component.modelManager.Load(path);
-                    MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
-
-                    component.model = new(source, library);
-                    component.model.LoadAsync().Wait();
-
-                    for (int i = 0; i < component.model.Meshes.Length; i++)
+                    ModelFile modelFile;
+                    try
                     {
-                        var mesh = component.model.Meshes[i];
-                        var material = component.model.Materials.FirstOrDefault(x => x.Name == mesh.Data.MaterialName);
-                        MaterialMapping mapping = new(mesh.Data, material?.Data);
-                        component.Materials.Add(mapping);
+                        modelFile = ModelFile.Load(stream);
                     }
+                    finally
+                    {
+                        stream.Close();
+                    }
+
+                    if (component.Materials.Count == 0)
+                    {
+                        component.Materials.Clear();
+                        for (int i = 0; i < modelFile.Meshes.Count; i++)
+                        {
+                            var mesh = modelFile.Meshes[i];
+                            var material = mesh.MaterialId;
+                            MaterialAssetMapping mapping = new(mesh, material);
+                            component.Materials.Add(mapping);
+                        }
+                    }
+
+                    component.Materials.OnChanged += component.OnChanged;
+
+                    component.model = new(modelFile, component.Materials);
+                    component.model.LoadAsync().Wait();
 
                     var flags = component.model.ShaderFlags;
                     component.QueueIndex = (uint)RenderQueueIndex.Geometry;
@@ -284,12 +367,11 @@
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }
+                else
+                {
+                    Logger.Error($"Couldn't load model {modelAsset}");
+                }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
-        }
-
-        public void Hide(Mesh mesh)
-        {
-            throw new NotImplementedException();
         }
     }
 }

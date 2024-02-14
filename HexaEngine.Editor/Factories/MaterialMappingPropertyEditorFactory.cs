@@ -10,7 +10,7 @@
     {
         public bool CanCreate(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return property.CanRead && property.PropertyType == typeof(MaterialMappingCollection);
+            return property.CanRead && property.PropertyType == typeof(MaterialAssetMappingCollection);
         }
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)

@@ -22,9 +22,9 @@
         public string Name;
 
         /// <summary>
-        /// The name of the material associated with the mesh.
+        /// The GUID of the material associated with the mesh.
         /// </summary>
-        public string MaterialName;
+        public Guid MaterialId;
 
         /// <summary>
         /// The number of vertices in the mesh.
@@ -125,10 +125,10 @@
         /// <param name="tangents">The array of 3D tangents associated with each vertex.</param>
         /// <param name="bitangents">The array of 3D bitangents associated with each vertex.</param>
         /// <param name="bones">The array of bone data representing the skeleton structure of the mesh.</param>
-        public MeshData(string name, string materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
+        public MeshData(string name, Guid materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
         {
             Name = name;
-            MaterialName = materialName;
+            MaterialId = materialName;
             Box = box;
             Sphere = sphere;
 
@@ -191,7 +191,7 @@
         {
             MeshData data = new();
             data.Name = stream.ReadString(encoding, endianness) ?? string.Empty;
-            data.MaterialName = stream.ReadString(encoding, endianness) ?? string.Empty;
+            data.MaterialId = stream.ReadGuid(endianness);
             data.VerticesCount = stream.ReadUInt32(endianness);
             data.IndicesCount = stream.ReadUInt32(endianness);
             data.BoneCount = stream.ReadUInt32(endianness);
@@ -275,7 +275,7 @@
         {
             // Write basic information
             stream.WriteString(Name, encoding, endianness);
-            stream.WriteString(MaterialName, encoding, endianness);
+            stream.WriteGuid(MaterialId, endianness);
             stream.WriteUInt32(VerticesCount, endianness);
             stream.WriteUInt32(IndicesCount, endianness);
             stream.WriteUInt32(BoneCount, endianness);

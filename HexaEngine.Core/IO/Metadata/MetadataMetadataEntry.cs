@@ -29,13 +29,21 @@
         }
 
 #nullable disable
+
         /// <summary>
         /// Internal constructor for creating an instance without initializing the metadata value.
         /// </summary>
         internal MetadataMetadataEntry()
         {
         }
+
 #nullable restore
+
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataMetadataEntry() { Value = Value.Clone() };
+        }
 
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.

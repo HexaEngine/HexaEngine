@@ -2,7 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
-    using HexaEngine.Core.Configuration;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Input;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
@@ -11,15 +11,15 @@
 
     public static class EditorCameraController
     {
-        private static ConfigKey? config;
-        private static Camera editorCamera;
+        private static SourceAssetMetadata? config;
+        private static readonly Camera editorCamera;
         private static Vector3 center = default;
         private static EditorCameraMode editorCameraMode = EditorCameraMode.Orbit;
         private static Vector3 orbitPosition = new(10, 0, 0);
         private static bool first = true;
         private static EditorCameraDimension dimension;
         public const float Speed = 10F;
-        public const float AngularSpeed = 20F;
+        public const float AngularSpeed = 1F;
 
         static EditorCameraController()
         {
@@ -34,16 +34,38 @@
             };
 
             SceneManager.SceneChanged += SceneChanged;
+            Application.OnApplicationClose += OnApplicationClose;
+        }
+
+        private static void OnApplicationClose()
+        {
+            config?.Save();
         }
 
         private static void SceneChanged(object? sender, SceneChangedEventArgs e)
         {
+            config?.Save();
+
             if (e.Scene == null)
             {
                 return;
             }
 
-            config = e.Scene.EditorConfig.GetOrCreateKey("EditorCamera");
+            var path = e.Scene.Path;
+
+            if (path == null)
+            {
+                return;
+            }
+
+            SourceAssetMetadata? metadata = SourceAssetMetadata.GetMetadata(path);
+
+            if (metadata == null)
+            {
+                return;
+            }
+
+            config = metadata;
             EditorCameraMode = config.GetOrAddValue("Mode", EditorCameraMode.Orbit);
             Dimension = config.GetOrAddValue("Dimension", EditorCameraDimension.Dim3D);
             editorCamera.Transform.Position = config.GetOrAddValue("Position", Vector3.Zero);
@@ -82,18 +104,19 @@
 
         public static void UpdateEditorCamera()
         {
+            var leftCtrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
             if (dimension == EditorCameraDimension.Dim3D)
             {
                 if (editorCameraMode == EditorCameraMode.Orbit)
                 {
                     Vector2 delta = Vector2.Zero;
-                    if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                    if (ImGui.IsMouseDown(ImGuiMouseButton.Right) && !leftCtrl)
                     {
                         delta = Mouse.Delta;
                     }
 
                     float wheel = 0;
-                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                    if (leftCtrl)
                     {
                         wheel = Mouse.DeltaWheel.Y;
                     }
@@ -123,28 +146,28 @@
                         config?.SetValue("Rotation", editorCamera.Transform.Rotation);
                     }
                 }
-                if (editorCameraMode == EditorCameraMode.Free)
+                if (editorCameraMode == EditorCameraMode.Free && !leftCtrl)
                 {
                     Vector2 delta = Vector2.Zero;
-                    if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                    if (ImGui.IsMouseDown(ImGuiMouseButton.Right))
                     {
                         delta = Mouse.Delta;
                     }
 
                     var position = editorCamera.Transform.Position;
-                    var rotation = editorCamera.Transform.Rotation;
+                    var rotation = editorCamera.Transform.Orientation.ToYawPitchRoll();
 
                     if (delta.X != 0 | delta.Y != 0 || first)
                     {
-                        var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
-                        rotation += re;
-                        if (rotation.Y < 270 & rotation.Y > 180)
+                        var deltaT = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
+                        rotation += deltaT;
+                        if (rotation.Y < 4.7123889804f & rotation.Y > MathUtil.PI)
                         {
-                            rotation = new Vector3(rotation.X, 270f, rotation.Z);
+                            rotation = new Vector3(rotation.X, 4.7123889804f, rotation.Z);
                         }
-                        if (rotation.Y > 90 & rotation.Y < 270)
+                        if (rotation.Y > MathUtil.PIDIV2 & rotation.Y < 4.7123889804f)
                         {
-                            rotation = new Vector3(rotation.X, 90f, rotation.Z);
+                            rotation = new Vector3(rotation.X, MathUtil.PIDIV2, rotation.Z);
                         }
                     }
 
@@ -187,15 +210,15 @@
                     }
 
                     editorCamera.Transform.Position = position;
-                    editorCamera.Transform.Rotation = rotation;
+                    editorCamera.Transform.Orientation = rotation.ToQuaternion();
                     config?.SetValue("Position", position);
                     config?.SetValue("Rotation", rotation);
                 }
             }
-            else if (dimension == EditorCameraDimension.Dim2D)
+            else if (dimension == EditorCameraDimension.Dim2D && !leftCtrl)
             {
                 Vector2 delta = Vector2.Zero;
-                if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                if (ImGui.IsMouseDown(ImGuiMouseButton.Right))
                 {
                     delta = Mouse.Delta;
                 }

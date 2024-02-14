@@ -3,12 +3,8 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
-    using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.TextEditor;
-    using HexaEngine.Editor.Widgets;
-    using HexaEngine.Projects;
     using HexaEngine.Scenes;
-    using System.IO;
     using System.Threading.Tasks;
 
     public static class ToolManager
@@ -27,16 +23,7 @@
                 }
             }));
 
-            AddTool(new Tool("Mesh Editor", ".model", path =>
-            {
-                if (WindowManager.TryGetWindow<MeshEditorWindow>(out var meshEditorWindow))
-                {
-                    meshEditorWindow.Open(path);
-                    meshEditorWindow.Focus();
-                }
-            }));
-
-            AddTool(new Tool("Material Editor", ".matlib", path =>
+            AddTool(new Tool("Material Editor", ".material", path =>
             {
                 if (WindowManager.TryGetWindow<MaterialLibraryEditorWindow>(out var materialEditorWindow))
                 {

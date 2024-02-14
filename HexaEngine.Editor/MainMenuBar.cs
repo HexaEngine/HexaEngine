@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Projects;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
@@ -13,6 +12,7 @@
     using System.Diagnostics;
     using HexaEngine.Core;
     using HexaEngine.Windows;
+    using HexaEngine.Editor.Projects;
 
     public static class MainMenuBar
     {

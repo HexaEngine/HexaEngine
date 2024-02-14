@@ -4,7 +4,6 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
-    using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
@@ -36,7 +35,6 @@
             Register<DebugWindow>();
             Register<ProfilerWindow>();
             Register<Profiler2Window>();
-            Register<MeshEditorWindow>();
             Register<PoseEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();

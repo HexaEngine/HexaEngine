@@ -36,9 +36,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Graphics\Passes\**" />
-	  <EmbeddedResource Remove="Graphics\Passes\**" />
-	  <None Remove="Graphics\Passes\**" />
+		<Compile Remove="Graphics\Passes\**" />
+		<EmbeddedResource Remove="Graphics\Passes\**" />
+		<None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Hardware.Info" Version="100.0.1.1" />
@@ -48,8 +48,10 @@
 		<PackageReference Include="Hexa.NET.ImPlot" Version="1.0.2" />
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.8.0" />
 		<PackageReference Include="Silk.NET.GLFW" Version="2.20.0" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
+		<PackageReference Include="Silk.NET.Assimp" Version="2.20.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.6" />
 		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
@@ -59,6 +61,6 @@
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Legacy\" />
+		<Folder Include="Legacy\" />
 	</ItemGroup>
 </Project>

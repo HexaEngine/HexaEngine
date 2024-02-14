@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
     using HexaEngine.Mathematics;
+    using System;
     using System.IO;
     using System.Text;
 
@@ -76,6 +77,19 @@
             {
                 dst.Write(Bytecode);
             }
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="MaterialShader"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MaterialShader"/> instance.</returns>
+        public MaterialShader Clone()
+        {
+            MaterialShader shader;
+            shader.Type = Type;
+            shader.Source = (string)Source.Clone();
+            shader.Bytecode = [.. Bytecode];
+            return shader;
         }
     }
 }

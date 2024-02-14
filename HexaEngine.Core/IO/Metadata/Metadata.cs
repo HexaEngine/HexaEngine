@@ -4,6 +4,7 @@
     using System.Text;
     using System.Collections.Generic;
     using System.IO;
+    using System;
 
     /// <summary>
     /// Represents metadata associated with an object.
@@ -105,6 +106,19 @@
             entry = new T();
             Properties.Add(key, entry);
             return (T)entry;
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="Metadata"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="Metadata"/> instance.</returns>
+        public Metadata Clone()
+        {
+            Metadata metadata = new()
+            {
+                Properties = Properties.Select(x => new KeyValuePair<string, MetadataEntry>(x.Key, x.Value.Clone())).ToDictionary()
+            };
+            return metadata;
         }
     }
 }

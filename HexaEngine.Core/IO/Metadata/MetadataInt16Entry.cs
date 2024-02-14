@@ -19,6 +19,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.Int16;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataInt16Entry() { Value = Value };
+        }
+
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.
         /// </summary>

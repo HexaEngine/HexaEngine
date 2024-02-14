@@ -460,6 +460,27 @@
         }
 
         /// <summary>
+        /// Calculates the CRC32 hash of the file located at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file for which to calculate the CRC32 hash.</param>
+        /// <returns>The CRC32 hash of the file.</returns>
+        public static uint GetCrc32HashExtern(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return 0;
+            }
+            var stream = File.OpenRead(path);
+            Crc32 crc = new();
+            crc.Append(stream);
+            Span<byte> buffer = stackalloc byte[4];
+            crc.GetCurrentHash(buffer);
+            stream.Close();
+
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        }
+
+        /// <summary>
         /// Calculates the CRC32 hash of the text.
         /// </summary>
         /// <param name="text">The text for which to calculate the CRC32 hash.</param>
@@ -616,12 +637,13 @@
                 // replace '.' with "\."
                 sb.Replace(".", "\\.");
                 // replaces all occurrences of '*' with ".*"
-                sb.Replace("*", ".*");
+                sb.Replace("*", ".*[^\\.]");
                 // replaces all occurrences of '?' with '.*'
                 sb.Replace("?", ".");
                 // add "\b" to the beginning and end of the pattern
                 sb.Insert(0, "\\b");
                 sb.Append("\\b");
+                sb.Append('$');
                 pattern = sb.ToString();
             }
             return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);

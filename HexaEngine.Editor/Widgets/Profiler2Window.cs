@@ -1,9 +1,9 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Editor.Widgets;
+    using HexaEngine.Editor;
     using Microsoft.Diagnostics.Symbols;
     using Microsoft.Diagnostics.Tracing;
     using Microsoft.Diagnostics.Tracing.Etlx;
@@ -34,7 +34,7 @@
             // from https://docs.microsoft.com/en-us/windows/win32/etw/configuring-and-starting-a-systemtraceprovider-session
             uint operation = (uint)EventSecurityOperation.EventSecurityAddDACL;
             uint rights = TRACELOG_GUID_ENABLE;
-            bool allowOrDeny = ("Allow" != null);
+            bool allowOrDeny = "Allow" != null;
             uint result = EventAccessControl(
                 ref kernelProviderGuid,
                 operation,
@@ -79,7 +79,7 @@
             }
 
             // display the SID associated to the given user
-            IntPtr ptrSid;
+            nint ptrSid;
             if (!ConvertSidToStringSid(sid, out ptrSid))
             {
                 err = Marshal.GetLastWin32Error();
@@ -89,7 +89,7 @@
             else
             {
                 string sidString = Marshal.PtrToStringAuto(ptrSid);
-                ProfilingPermission.LocalFree(ptrSid);
+                LocalFree(ptrSid);
                 Console.WriteLine($"Account ({referencedDomainName}){accountName} mapped to {sidString}");
             }
 
@@ -106,7 +106,7 @@
             );
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr LocalFree(IntPtr hMem);
+        private static extern nint LocalFree(nint hMem);
 
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool LookupAccountName(
@@ -121,7 +121,7 @@
         [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool ConvertSidToStringSid(
             [MarshalAs(UnmanagedType.LPArray)] byte[] pSID,
-            out IntPtr ptrSid); // can't be an out string because we need to explicitly call LocalFree on it;
+            out nint ptrSid); // can't be an out string because we need to explicitly call LocalFree on it;
 
         // the marshaller would call CoTaskMemFree in case of a string
 
@@ -262,7 +262,7 @@
                 using TraceLogEventSource source = TraceLog.CreateFromTraceEventSession(_session);
 
                 // CPU sampling kernel events
-                source.Kernel.PerfInfoSample += (SampledProfileTraceData data) =>
+                source.Kernel.PerfInfoSample += (data) =>
                 {
                     if (data.ProcessID != Pid)
                         return;
@@ -425,7 +425,7 @@
             foreach (var nextStackFrame in stack.Stacks.OrderByDescending(s => s.CountAsNode + s.CountAsLeaf))
             {
                 // increment when more than 1 children
-                var childIncrement = (childrenCount == 1) ? increment : increment + 1;
+                var childIncrement = childrenCount == 1 ? increment : increment + 1;
                 RenderStack(nextStackFrame, false, childIncrement);
                 if (increment != childIncrement)
                 {

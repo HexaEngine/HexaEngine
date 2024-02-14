@@ -14,27 +14,27 @@
         /// <summary>
         /// The factor to convert degrees to radians.
         /// </summary>
-        public const double DegToRadFactor = Math.PI / 180;
+        public const double DegToRadFactor = float.Pi / 180;
 
         /// <summary>
         /// The factor to convert radians to degrees.
         /// </summary>
-        public const double RadToDefFactor = 180 / Math.PI;
+        public const double RadToDefFactor = 180 / float.Pi;
 
         /// <summary>
         /// The mathematical constant PI.
         /// </summary>
-        public const float PI = MathF.PI;
+        public const float PI = float.Pi;
 
         /// <summary>
         /// Two times the mathematical constant PI.
         /// </summary>
-        public const float PI2 = 2 * MathF.PI;
+        public const float PI2 = 2 * float.Pi;
 
         /// <summary>
         /// Half of the mathematical constant PI.
         /// </summary>
-        public const float PIDIV2 = MathF.PI / 2;
+        public const float PIDIV2 = float.Pi / 2;
 
         /// <summary>
         /// The square root of 2.

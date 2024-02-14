@@ -20,6 +20,12 @@
         /// </summary>
         public override MetadataType Type => MetadataType.Float2;
 
+        /// <inheritdoc/>
+        public override MetadataEntry Clone()
+        {
+            return new MetadataFloat2Entry() { Value = Value };
+        }
+
         /// <summary>
         /// Reads the metadata entry from the specified stream using the specified encoding and endianness.
         /// </summary>
