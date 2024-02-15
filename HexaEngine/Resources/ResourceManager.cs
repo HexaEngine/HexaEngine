@@ -157,12 +157,12 @@
             return factory != null;
         }
 
-        public T? GetInstance<T>(string name) where T : ResourceInstance
+        public T? GetInstance<T>(Guid id) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {
                 var factory = factories[i];
-                if (factory.GetInstance(name) is T instance)
+                if (factory.GetInstance(id) is T instance)
                 {
                     return instance;
                 }
@@ -171,20 +171,20 @@
             return null;
         }
 
-        public bool TryGetInstance<T>(string name, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
+        public bool TryGetInstance<T>(Guid id, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
         {
-            instance = GetInstance<T>(name);
+            instance = GetInstance<T>(id);
             return instance != null;
         }
 
-        public T? CreateInstance<T, TData>(string name, TData data) where T : ResourceInstance
+        public T? CreateInstance<T, TData>(Guid id, TData data) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {
                 var factory = factories[i];
                 if (factory is IResourceFactory<T, TData> t)
                 {
-                    var instance = t.GetOrCreateInstance(name, data);
+                    var instance = t.GetOrCreateInstance(id, data);
                     instance?.AddRef();
                     return instance;
                 }
@@ -193,20 +193,20 @@
             return null;
         }
 
-        public bool TryCreateInstance<T, TData>(string name, TData data, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
+        public bool TryCreateInstance<T, TData>(Guid id, TData data, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
         {
-            instance = CreateInstance<T, TData>(name, data);
+            instance = CreateInstance<T, TData>(id, data);
             return instance != null;
         }
 
-        public async Task<T?> CreateInstanceAsync<T, TData>(string name, TData data) where T : ResourceInstance
+        public async Task<T?> CreateInstanceAsync<T, TData>(Guid id, TData data) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {
                 var factory = factories[i];
                 if (factory is IResourceFactory<T, TData> t)
                 {
-                    var instance = await t.GetOrCreateInstanceAsync(name, data);
+                    var instance = await t.GetOrCreateInstanceAsync(id, data);
                     instance.AddRef();
                     return instance;
                 }

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Animations;
+    using HexaEngine.Core.IO.Binary.Animations;
     using System.Collections.Generic;
 
     public class AnimationManager

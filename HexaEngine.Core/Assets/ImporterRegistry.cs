@@ -13,6 +13,7 @@ namespace HexaEngine.Core.Assets
         {
             RegisterImporter<TextureImporter>();
             RegisterImporter<ModelImporter>();
+            RegisterImporter<MaterialImporter>();
             RegisterImporter<DummyImporter>();
         }
 

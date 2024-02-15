@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
-    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Binary.Materials;
 
     public class TerrainMaterialResourceFactory : ResourceFactory<TerrainMaterial, MaterialData>
     {
@@ -8,7 +8,7 @@
         {
         }
 
-        protected override TerrainMaterial CreateInstance(ResourceManager manager, string name, MaterialData instanceData)
+        protected override TerrainMaterial CreateInstance(ResourceManager manager, Guid name, MaterialData instanceData)
         {
             return new TerrainMaterial(this, instanceData);
         }

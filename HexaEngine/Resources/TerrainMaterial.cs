@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Binary.Materials;
 
     public unsafe class TerrainMaterial : ResourceInstance
     {
@@ -11,7 +11,7 @@
 
         private bool loaded;
 
-        public TerrainMaterial(IResourceFactory factory, MaterialData desc) : base(factory, desc.Name)
+        public TerrainMaterial(IResourceFactory factory, MaterialData desc) : base(factory, desc.Guid)
         {
             this.desc = desc;
         }
@@ -54,7 +54,7 @@
 
         public override string ToString()
         {
-            return Name;
+            return Id.ToString();
         }
     }
 }

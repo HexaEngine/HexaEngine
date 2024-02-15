@@ -58,7 +58,7 @@
                 return;
             }
 
-            SourceAssetMetadata? metadata = SourceAssetMetadata.GetMetadata(path);
+            SourceAssetMetadata? metadata = SourceAssetsDatabase.GetMetadata(path);
 
             if (metadata == null)
             {

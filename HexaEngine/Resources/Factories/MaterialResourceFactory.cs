@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using System.Threading.Tasks;
 
     public class MaterialResourceFactory : ResourceFactory<Material, (MeshData, MaterialData, bool)>
@@ -10,7 +10,7 @@
         {
         }
 
-        protected override Material CreateInstance(ResourceManager manager, string name, (MeshData, MaterialData, bool) instanceData)
+        protected override Material CreateInstance(ResourceManager manager, Guid id, (MeshData, MaterialData, bool) instanceData)
         {
             return new(this, instanceData.Item2);
         }

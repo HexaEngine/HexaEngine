@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using Hexa.NET.ImGui;
-    using LibGit2Sharp;
     using HexaEngine.Editor.Projects;
+    using LibGit2Sharp;
 
     public class GitWidget : EditorWindow
     {

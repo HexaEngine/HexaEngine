@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
-    using Hexa.NET.ImNodes;
-    using System.Collections.Generic;
-    using System.Numerics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
+    using System.Collections.Generic;
+    using System.Numerics;
 
     // TODO: Fix Widget
 

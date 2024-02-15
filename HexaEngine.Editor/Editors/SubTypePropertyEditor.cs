@@ -1,13 +1,11 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
-    using Hexa.NET.ImGui;
-    using System;
     using System.Reflection;
-    using YamlDotNet.Core.Tokens;
 
     public class SubTypePropertyEditor : IPropertyEditor
     {

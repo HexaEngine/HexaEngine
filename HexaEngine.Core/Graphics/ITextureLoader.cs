@@ -310,6 +310,14 @@
         public IScratchImage Compress(IGraphicsDevice device, Format format, TexCompressFlags flags);
 
         /// <summary>
+        /// Compresses the scratch image to a specified format with compression flags.
+        /// </summary>
+        /// <param name="format">The target format for compression.</param>
+        /// <param name="flags">The compression flags.</param>
+        /// <returns>A new <see cref="IScratchImage"/> containing the compressed image.</returns>
+        public IScratchImage Compress(Format format, TexCompressFlags flags);
+
+        /// <summary>
         /// Converts the scratch image to a specified format with filtering flags.
         /// </summary>
         /// <param name="format">The target format for conversion.</param>

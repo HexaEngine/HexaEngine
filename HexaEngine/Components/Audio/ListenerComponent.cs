@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Components.Audio
 {
     using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 

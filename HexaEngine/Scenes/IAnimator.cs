@@ -1,4 +1,4 @@
-﻿using HexaEngine.Core.IO.Animations;
+﻿using HexaEngine.Core.IO.Binary.Animations;
 
 namespace HexaEngine.Scenes
 {

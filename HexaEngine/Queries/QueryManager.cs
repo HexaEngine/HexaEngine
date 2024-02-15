@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Queries
 {
     using HexaEngine.Collections;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes;
 
     public class QueryManager : ISystem, IDisposable

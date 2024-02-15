@@ -1,22 +1,21 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes.Textures
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
-    using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Core.UI;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using Hexa.NET.ImGui;
-    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Numerics;
 
     public class TextureFileNode : Node, ITextureNode
     {
-        private IGraphicsDevice device;
-        private readonly OpenFileDialog dialog = new();
-        private string path = string.Empty;
+        private IGraphicsDevice device = Application.GraphicsDevice;
+        private AssetRef path = AssetRef.Empty;
         private IShaderResourceView? image;
         private ISamplerState? sampler;
         private bool changed;
@@ -52,7 +51,7 @@
         [JsonIgnore]
         public IGraphicsDevice Device { set => device = value; }
 
-        public string Path
+        public AssetRef Path
         {
             get => path;
             set
@@ -85,9 +84,9 @@
             sampler?.Dispose();
             image?.Dispose();
 
-            var path = Paths.CurrentTexturePath + Path;
+            var path = Path.GetPath();
 
-            if (FileSystem.Exists(path) && device != null)
+            if (File.Exists(path) && device != null)
             {
                 try
                 {
@@ -96,7 +95,7 @@
                         sampler = device.CreateSamplerState(samplerDescription);
                         return;
                     }
-                    var scratchImage = device.TextureLoader.LoadFormAssets(path);
+                    var scratchImage = device.TextureLoader.LoadFormFile(path);
                     scratchImage.Resize(128, 128, 0);
                     var tmp = scratchImage.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
                     scratchImage.Dispose();
@@ -113,14 +112,6 @@
 
         public override void Draw()
         {
-            if (dialog.Draw())
-            {
-                if (dialog.Result == OpenFileResult.Ok)
-                {
-                    Path = System.IO.Path.GetRelativePath("textures", FileSystem.GetRelativePath(dialog.FullPath));
-                    Reload();
-                }
-            }
             base.Draw();
         }
 
@@ -130,17 +121,10 @@
 
             ImGui.PushItemWidth(100);
 
-            if (ImGui.InputText("Path", ref path, 512, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ComboHelper.ComboForAssetRef("Texture", ref path, AssetType.Texture2D))
             {
                 Reload();
                 OnValueChanged();
-            }
-
-            ImGui.SameLine();
-
-            if (ImGui.Button("...##OpenFileButton"))
-            {
-                dialog.Show();
             }
 
             if (!showMore && ImGui.Button("more..."))
@@ -240,7 +224,7 @@
             base.Destroy();
         }
 
-        public static TextureFileNode? FindTextureFileNode(NodeEditor editor, string path)
+        public static TextureFileNode? FindTextureFileNode(NodeEditor editor, Guid path)
         {
             for (int i = 0; i < editor.Nodes.Count; i++)
             {

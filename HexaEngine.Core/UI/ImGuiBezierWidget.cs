@@ -3,8 +3,6 @@
 //
 // Modified and ported by Juna Meinhold :3.
 
-using System.Numerics;
-
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;

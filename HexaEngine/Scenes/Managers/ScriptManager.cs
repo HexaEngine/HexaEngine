@@ -3,7 +3,6 @@
 namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Collections;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
 

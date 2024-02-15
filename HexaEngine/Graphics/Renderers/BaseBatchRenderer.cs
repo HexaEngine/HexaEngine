@@ -4,7 +4,6 @@
     using HexaEngine.Graphics.Batching;
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
-    using System.Numerics;
 
     public abstract class BaseBatchRenderer<T> : IBatchRenderer<T> where T : IBatchInstance
     {

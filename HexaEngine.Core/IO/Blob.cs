@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using System.Runtime.InteropServices;
     using HexaEngine.Core.Graphics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a blob of data that can be manipulated using pointer operations.

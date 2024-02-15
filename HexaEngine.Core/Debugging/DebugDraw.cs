@@ -5,6 +5,7 @@ namespace HexaEngine.Core.Debugging
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
+    using System.Drawing;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -549,6 +550,13 @@ namespace HexaEngine.Core.Debugging
             vertices[2].UV = WhiteUV;
 
             immediateList.RecordCmd(PrimitiveTopology.LineList);
+        }
+
+        private static Quaternion FromTwoVectors(Vector3 from, Vector3 to)
+        {
+            Vector3 axis = Vector3.Cross(from, to);
+            float angle = (float)Math.Acos(Vector3.Dot(from, to) / (from.Length() * to.Length()));
+            return Quaternion.CreateFromAxisAngle(axis, angle);
         }
 
         /// <summary>

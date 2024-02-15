@@ -3,7 +3,7 @@
 namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Terrains;
+    using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Lights;
     using System.Numerics;
     using System.Threading.Tasks;

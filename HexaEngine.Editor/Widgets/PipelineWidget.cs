@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
     using System.Threading.Tasks;
 
     [EditorWindowCategory("Debug")]

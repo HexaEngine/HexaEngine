@@ -40,7 +40,6 @@ namespace HexaEngine.D3D11
                 var macro = macros[i];
                 var pName = macro.Name.ToUTF8Ptr();
                 var pDef = macro.Definition.ToUTF8Ptr();
-                Logger.Info(macro);
                 pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)

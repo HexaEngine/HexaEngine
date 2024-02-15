@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;

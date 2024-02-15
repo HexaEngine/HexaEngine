@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Tools
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.ImagePainter;
-    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class Eraser : Tool

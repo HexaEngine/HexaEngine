@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Core.Scenes
+﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Core.Editor;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -36,7 +35,7 @@
         private object? tag;
 
         [JsonIgnore]
-        public readonly IntPtr Pointer;
+        public readonly nint Pointer;
 
         public GameObject()
         {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Assets;
     using System;
 
     /// <summary>
@@ -92,6 +93,81 @@
             Get(type, out var values, out var names);
             int index = Array.IndexOf(values, value);
             ImGui.Text(names[index]);
+        }
+    }
+
+    /// <summary>
+    /// A helper class for working with ImGui combo boxes.
+    /// </summary>
+    public static class ComboHelper
+    {
+        /// <summary>
+        /// Displays a combo box to select an asset value of a specified asset type.
+        /// </summary>
+        /// <param name="label">The label for the combo box.</param>
+        /// <param name="assetRef">The currently selected asset value (modified by user interaction).</param>
+        /// <param name="type">The asset type to select values from.</param>
+        /// <returns><c>true</c> if the user selects a new value, <c>false</c> otherwise.</returns>
+        public static unsafe bool ComboForAssetRef(string label, ref AssetRef assetRef, AssetType type)
+        {
+            var meta = assetRef.GetMetadata();
+
+            bool isOpen;
+            if (meta != null)
+            {
+                isOpen = ImGui.BeginCombo(label, meta.Name);
+            }
+            else
+            {
+                if (assetRef.Guid == Guid.Empty)
+                {
+                    isOpen = ImGui.BeginCombo(label, (byte*)null);
+                }
+                else
+                {
+                    isOpen = ImGui.BeginCombo(label, $"{assetRef.Guid}");
+                }
+            }
+
+            bool changed = false;
+            if (isOpen)
+            {
+                foreach (var asset in ArtifactDatabase.GetArtifactsFromType(type))
+                {
+                    bool isSelected = assetRef.Guid == asset.Guid;
+                    if (ImGui.Selectable(asset.DisplayName, isSelected))
+                    {
+                        assetRef.Guid = asset.Guid;
+                        changed = true;
+                    }
+
+                    if (isSelected)
+                    {
+                        ImGui.SetItemDefaultFocus();
+                    }
+
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+                    {
+                        SourceAssetMetadata? sourceAssetMetadata = asset?.GetSourceMetadata();
+                        ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                        ImGui.TextUnformatted($"{asset?.Name} -> {sourceAssetMetadata?.FilePath}");
+                        ImGui.PopTextWrapPos();
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                ImGui.EndCombo();
+            }
+            else if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+            {
+                SourceAssetMetadata? sourceAssetMetadata = meta?.GetSourceMetadata();
+                ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                ImGui.TextUnformatted($"{meta?.Name} -> {sourceAssetMetadata?.FilePath}");
+                ImGui.PopTextWrapPos();
+                ImGui.EndTooltip();
+            }
+
+            return changed;
         }
     }
 }

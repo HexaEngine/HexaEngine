@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Generator
 {
     using HexaEngine.Editor.MaterialEditor.Generator.Structs;
-    using Silk.NET.DirectWrite;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
 
     public class VariableTable
     {

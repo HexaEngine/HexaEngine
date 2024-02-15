@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Lights
 {
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Scenes;
     using System.Numerics;
 
     public abstract class Probe : GameObject

@@ -3,11 +3,6 @@
     using HexaEngine.Core.Graphics;
     using Silk.NET.OpenGL;
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.Metrics;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public static class Helper
     {

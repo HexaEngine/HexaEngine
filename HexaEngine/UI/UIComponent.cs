@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.UI
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
 
     public abstract class UIComponent : IRendererComponent
     {

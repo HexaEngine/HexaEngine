@@ -97,7 +97,7 @@
         }
 
         /// <inheritdoc/>
-        public void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount)
+        public void BeginDraw(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount)
         {
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             vertexCount = vertexBuffer.Count;
@@ -107,7 +107,7 @@
         }
 
         /// <inheritdoc/>
-        public void Unbind(IGraphicsContext context)
+        public void EndDraw(IGraphicsContext context)
         {
             context.SetVertexBuffer(null, 0);
             context.SetIndexBuffer(null, 0, 0);

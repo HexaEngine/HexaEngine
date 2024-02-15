@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;

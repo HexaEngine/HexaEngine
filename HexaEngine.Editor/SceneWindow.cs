@@ -5,7 +5,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
@@ -13,7 +12,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System;
     using System.Numerics;
 
     public static class SceneWindow

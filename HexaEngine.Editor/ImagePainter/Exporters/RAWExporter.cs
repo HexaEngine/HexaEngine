@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Textures.Raw;
+    using HexaEngine.Core.IO.Binary.Textures.Raw;
     using HexaEngine.Core.UI;
 
     public class RAWExporter : BaseExporter

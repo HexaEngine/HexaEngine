@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Properties;
-    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class StringPropertyEditor : IPropertyEditor

@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Generator
 {
-    using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Generator.Structs;
     using HexaEngine.Editor.MaterialEditor.Nodes;
+    using HexaEngine.Editor.NodeEditor;
+    using HexaEngine.Editor.NodeEditor.Pins;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;

@@ -2,17 +2,17 @@
 {
     public interface IResourceFactory<T, TData> : IResourceFactory where T : ResourceInstance
     {
-        public IReadOnlyDictionary<string, T> Instances { get; }
+        public IReadOnlyDictionary<Guid, T> Instances { get; }
 
-        new T? GetInstance(string name);
+        new T? GetInstance(Guid id);
 
-        T CreateInstance(string name, TData instanceData);
+        T CreateInstance(Guid id, TData instanceData);
 
-        Task<T> CreateInstanceAsync(string name, TData instanceData);
+        Task<T> CreateInstanceAsync(Guid id, TData instanceData);
 
-        T GetOrCreateInstance(string name, TData instanceData);
+        T GetOrCreateInstance(Guid id, TData instanceData);
 
-        Task<T> GetOrCreateInstanceAsync(string name, TData instanceData);
+        Task<T> GetOrCreateInstanceAsync(Guid id, TData instanceData);
 
         bool DestroyInstance(T? instance);
     }
@@ -29,19 +29,19 @@
 
         public void Cleanup();
 
-        public ResourceInstance? GetInstance(string name);
+        public ResourceInstance? GetInstance(Guid id);
 
-        public ResourceInstance CreateInstance(string name, object? instanceData);
+        public ResourceInstance CreateInstance(Guid id, object? instanceData);
 
-        public Task<ResourceInstance> CreateInstanceAsync(string name, object? instanceData);
+        public Task<ResourceInstance> CreateInstanceAsync(Guid id, object? instanceData);
 
-        public ResourceInstance GetOrCreateInstance(string name, object? instanceData);
+        public ResourceInstance GetOrCreateInstance(Guid id, object? instanceData);
 
-        public Task<ResourceInstance> GetOrCreateInstanceAsync(string name, object? instanceData);
+        public Task<ResourceInstance> GetOrCreateInstanceAsync(Guid id, object? instanceData);
 
-        public bool DestroyInstance(string name)
+        public bool DestroyInstance(Guid id)
         {
-            var instance = GetInstance(name);
+            var instance = GetInstance(id);
             if (instance != null)
             {
                 return DestroyInstance(instance);

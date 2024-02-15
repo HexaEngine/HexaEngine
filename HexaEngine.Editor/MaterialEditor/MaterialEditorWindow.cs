@@ -5,8 +5,8 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Metadata;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.MaterialEditor.Generator;
@@ -315,7 +315,7 @@
             {
                 var texture = material.Textures[i];
 
-                if (string.IsNullOrEmpty(texture.File))
+                if (texture.File == Guid.Empty)
                 {
                     continue;
                 }
@@ -391,7 +391,7 @@
             material.Textures.Clear();
             foreach (var textureNode in editor.GetNodes<TextureFileNode>())
             {
-                if (string.IsNullOrWhiteSpace(textureNode.Path))
+                if (textureNode.Path == Guid.Empty)
                 {
                     continue;
                 }
@@ -406,15 +406,15 @@
 
                 var desc = textureNode.SamplerDescription;
 
-                Core.IO.Materials.MaterialTexture texture;
+                Core.IO.Binary.Materials.MaterialTexture texture;
                 texture.Type = type;
                 texture.File = textureNode.Path;
                 texture.Blend = BlendMode.Default;
                 texture.Op = TextureOp.Add;
                 texture.Mapping = 0;
                 texture.UVWSrc = 0;
-                texture.U = Core.IO.Materials.MaterialTexture.Convert(desc.AddressU);
-                texture.V = Core.IO.Materials.MaterialTexture.Convert(desc.AddressV);
+                texture.U = Core.IO.Binary.Materials.MaterialTexture.Convert(desc.AddressU);
+                texture.V = Core.IO.Binary.Materials.MaterialTexture.Convert(desc.AddressV);
                 texture.Flags = TextureFlags.None;
 
                 int index = material.GetTextureIndex(type);
@@ -485,7 +485,7 @@
 
         public void CreateNew()
         {
-            MaterialFile material = new(MaterialData.Empty);
+            MaterialFile material = new("New Material", Guid.NewGuid(), MaterialData.Empty);
             material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Mathematics.Endianness.LittleEndian, 0f));
             material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Mathematics.Endianness.LittleEndian, 0.4f));
             material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Mathematics.Endianness.LittleEndian, 1f));
@@ -585,7 +585,7 @@
             if (material != null)
             {
                 var name = material.Name;
-                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                if (ImGui.InputText("Name", ref name, 256))
                 {
                     material.Name = name;
                 }

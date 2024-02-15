@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
 
     public class Mesh : ResourceInstance
@@ -18,7 +18,7 @@
         public BoundingSphere BoundingSphere;
         public uint Stride;
 
-        public unsafe Mesh(IResourceFactory factory, IGraphicsDevice device, MeshData data, bool debone = true) : base(factory, data.Name)
+        public unsafe Mesh(IResourceFactory factory, IGraphicsDevice device, MeshData data, bool debone = true) : base(factory, data.Guid)
         {
             name = data.Name;
             Data = data;

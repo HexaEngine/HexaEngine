@@ -26,7 +26,7 @@
         }
 
         [JsonIgnore]
-        internal string MetadataFilePath { get; private set; }
+        internal string MetadataFilePath { get; set; }
 
         public string FilePath { get; internal set; }
 
@@ -36,11 +36,11 @@
 
         public uint CRC32 { get; internal set; }
 
-        public Dictionary<string, object> Additional { get; }
+        public Dictionary<string, object> Additional { get; internal set; }
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
 
-        public static SourceAssetMetadata? GetMetadata(string path)
+        internal static SourceAssetMetadata? GetMetadata(string path)
         {
             string? metafile = GetMetadataFilePath(path);
             if (metafile == null)
@@ -79,7 +79,7 @@
             return metadata;
         }
 
-        public static SourceAssetMetadata? LoadMetadata(string metafile)
+        internal static SourceAssetMetadata? LoadMetadata(string metafile)
         {
             SourceAssetMetadata? metadata = null;
 
@@ -124,7 +124,7 @@
             return Path.Combine(SourceAssetsDatabase.RootFolder, FilePath);
         }
 
-        public void Save(string path)
+        internal void Save(string path)
         {
             try
             {
@@ -163,7 +163,7 @@
             }
         }
 
-        public static SourceAssetMetadata Create(string filename, DateTime lastModified, uint crc32, string outputPath)
+        internal static SourceAssetMetadata Create(string filename, DateTime lastModified, uint crc32, string outputPath)
         {
             SourceAssetMetadata metadata = new(filename, lastModified, crc32);
             metadata.Save(outputPath);

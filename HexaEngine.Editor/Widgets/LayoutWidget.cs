@@ -2,10 +2,8 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

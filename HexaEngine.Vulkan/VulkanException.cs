@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using System;
     using Silk.NET.Vulkan;
+    using System;
 
     public class VulkanException : Exception
     {

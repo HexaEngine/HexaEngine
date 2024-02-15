@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Factories
 {
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Scenes;
     using System.Reflection;
 
     public class GameObjectReferenceEditorFactory : IPropertyEditorFactory

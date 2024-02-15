@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.Graphics.Graph;
-
     public class PostFxComposeNodeBuilder
     {
         private readonly PostFxNode parentNode;

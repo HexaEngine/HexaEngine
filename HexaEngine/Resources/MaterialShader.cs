@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Lights;
     using System.Threading.Tasks;
 

@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;

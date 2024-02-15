@@ -5,7 +5,7 @@
     public abstract class ResourceFactory<T, TData> : IResourceFactory<T, TData>, IResourceFactory where T : ResourceInstance
     {
         protected readonly ResourceManager resourceManager;
-        protected readonly ConcurrentDictionary<string, T> instances = new();
+        protected readonly ConcurrentDictionary<Guid, T> instances = new();
         protected readonly object _lock = new();
         private readonly Type type = typeof(T);
 
@@ -17,7 +17,7 @@
             this.resourceManager = resourceManager;
         }
 
-        public IReadOnlyDictionary<string, T> Instances => instances;
+        public IReadOnlyDictionary<Guid, T> Instances => instances;
 
         public ResourceManager ResourceManager => resourceManager;
 
@@ -33,16 +33,16 @@
             return instance is T;
         }
 
-        ResourceInstance? IResourceFactory.GetInstance(string name)
+        ResourceInstance? IResourceFactory.GetInstance(Guid id)
         {
-            return GetInstance(name);
+            return GetInstance(id);
         }
 
-        public virtual T? GetInstance(string name)
+        public virtual T? GetInstance(Guid id)
         {
             lock (_lock)
             {
-                if (instances.TryGetValue(name, out var instance))
+                if (instances.TryGetValue(id, out var instance))
                 {
                     return instance;
                 }
@@ -51,48 +51,48 @@
             return null;
         }
 
-        ResourceInstance IResourceFactory.CreateInstance(string name, object? instanceData)
+        ResourceInstance IResourceFactory.CreateInstance(Guid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                return ((IResourceFactory<T, TData>)this).CreateInstance(name, data);
+                return ((IResourceFactory<T, TData>)this).CreateInstance(id, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        T IResourceFactory<T, TData>.CreateInstance(string name, TData instanceData)
+        T IResourceFactory<T, TData>.CreateInstance(Guid id, TData instanceData)
         {
             lock (_lock)
             {
-                var instance = CreateInstance(resourceManager, name, instanceData);
+                var instance = CreateInstance(resourceManager, id, instanceData);
                 if (instance == null)
                     return instance;
-                instances.TryAdd(name, instance);
+                instances.TryAdd(id, instance);
                 return instance;
             }
         }
 
-        protected abstract T CreateInstance(ResourceManager manager, string name, TData instanceData);
+        protected abstract T CreateInstance(ResourceManager manager, Guid id, TData instanceData);
 
         protected abstract void LoadInstance(ResourceManager manager, T instance, TData instanceData);
 
-        ResourceInstance IResourceFactory.GetOrCreateInstance(string name, object? instanceData)
+        ResourceInstance IResourceFactory.GetOrCreateInstance(Guid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                return GetOrCreateInstance(name, data);
+                return GetOrCreateInstance(id, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        public T GetOrCreateInstance(string name, TData instanceData)
+        public T GetOrCreateInstance(Guid id, TData instanceData)
         {
             T? instance;
             lock (_lock)
             {
-                instance = GetInstance(name);
+                instance = GetInstance(id);
                 if (instance != null)
                 {
                     if (instance is IWaitResource wait)
@@ -104,10 +104,10 @@
                 }
                 else
                 {
-                    instance = CreateInstance(resourceManager, name, instanceData);
+                    instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
                         return instance;
-                    instances.TryAdd(name, instance);
+                    instances.TryAdd(id, instance);
                 }
             }
 
@@ -118,51 +118,51 @@
 
         protected abstract Task LoadInstanceAsync(ResourceManager manager, T instance, TData instanceData);
 
-        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(string name, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(Guid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                await ((IResourceFactory<T, TData>)this).CreateInstanceAsync(name, data);
+                await ((IResourceFactory<T, TData>)this).CreateInstanceAsync(id, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(string name, TData instanceData)
+        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(Guid id, TData instanceData)
         {
-            var instance = CreateInstance(resourceManager, name, instanceData);
+            var instance = CreateInstance(resourceManager, id, instanceData);
             if (instance == null)
                 return Task.FromResult(instance ?? throw new InvalidDataException());
 
-            var result = instances.TryAdd(name, instance);
+            var result = instances.TryAdd(id, instance);
             if (result)
             {
                 return Task.FromResult(instance);
             }
             else
             {
-                instances.TryGetValue(name, out instance);
+                instances.TryGetValue(id, out instance);
                 return Task.FromResult(instance ?? throw new InvalidDataException());
             }
         }
 
-        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(string name, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(Guid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                await ((IResourceFactory<T, TData>)this).GetOrCreateInstanceAsync(name, data);
+                await ((IResourceFactory<T, TData>)this).GetOrCreateInstanceAsync(id, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(string name, TData instanceData)
+        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(Guid id, TData instanceData)
         {
             T? instance;
             bool doWait = false;
             lock (_lock)
             {
-                instance = GetInstance(name);
+                instance = GetInstance(id);
                 if (instance != null)
                 {
                     if (instance is IWaitResource)
@@ -176,10 +176,10 @@
                 }
                 else
                 {
-                    instance = CreateInstance(resourceManager, name, instanceData);
+                    instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
                         return instance;
-                    var result = instances.TryAdd(name, instance);
+                    var result = instances.TryAdd(id, instance);
                 }
             }
 
@@ -225,7 +225,7 @@
 
             lock (_lock)
             {
-                instances.Remove(instance.Name, out _);
+                instances.Remove(instance.Id, out _);
                 UnloadInstance(resourceManager, instance);
                 instance.Release();
             }
@@ -251,7 +251,7 @@
         {
             foreach (var instance in instances.Values.ToArray())
             {
-                instances.Remove(instance.Name, out _);
+                instances.Remove(instance.Id, out _);
                 UnloadInstance(resourceManager, instance);
                 instance.Release();
             }

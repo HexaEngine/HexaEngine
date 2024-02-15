@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Scenes.Systems
+﻿namespace HexaEngine.Scenes.Systems
 {
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;

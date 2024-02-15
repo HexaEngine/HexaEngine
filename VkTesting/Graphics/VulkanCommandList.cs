@@ -1,6 +1,5 @@
 ﻿namespace VkTesting.Graphics
 {
-    using Silk.NET.Core.Native;
     using Silk.NET.Vulkan;
     using static VkTesting.Graphics.VulkanGraphicsDevice;
 

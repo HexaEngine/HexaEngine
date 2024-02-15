@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Collections;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;

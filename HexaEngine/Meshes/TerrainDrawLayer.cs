@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Meshes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Lights;
     using HexaEngine.Resources;
 

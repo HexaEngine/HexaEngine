@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using HexaEngine.Core.IO.Archives;
+    using HexaEngine.Core.IO.Binary.Archives;
     using System;
     using System.Buffers.Binary;
     using System.Collections.Concurrent;
@@ -10,8 +10,8 @@
     using System.IO.Hashing;
     using System.Linq;
     using System.Runtime.InteropServices;
-    using System.Text.RegularExpressions;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Provides utility methods for interacting with the file system.

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using System.Collections.Generic;
 
     public class ModelManager

@@ -1,12 +1,7 @@
 ﻿namespace HexaEngine.OpenGL
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Shaders;
-    using Silk.NET.OpenGL;
     using System;
-    using System.Buffers.Binary;
-    using Shader = Core.Graphics.Shader;
 
     public unsafe class OpenGLComputePipeline : IComputePipeline
     {

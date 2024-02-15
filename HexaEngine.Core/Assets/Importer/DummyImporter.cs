@@ -9,7 +9,6 @@
             return fileExtension switch
             {
                 ".model" => true,
-                ".material" => true,
                 ".matlib" => true,
                 ".hexlvl" => true,
                 ".cs" => true,
@@ -27,7 +26,6 @@
             AssetType type = extension switch
             {
                 ".model" => AssetType.Model,
-                ".material" => AssetType.Material,
                 ".matlib" => AssetType.MaterialLibrary,
                 ".hexlvl" => AssetType.Scene,
                 ".cs" => AssetType.Script,

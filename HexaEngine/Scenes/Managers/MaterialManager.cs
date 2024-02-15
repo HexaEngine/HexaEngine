@@ -2,15 +2,12 @@
 {
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.UI;
+    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Text;
 
     public class MaterialManager
     {

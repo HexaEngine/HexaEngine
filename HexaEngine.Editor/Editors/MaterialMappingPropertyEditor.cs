@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
-    using HexaEngine.Editor.Properties;
     using Hexa.NET.ImGui;
-    using System.Reflection;
-    using HexaEngine.Scenes.Managers;
-    using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.MaterialEditor;
+    using HexaEngine.Editor.Properties;
+    using System.Reflection;
 
     public class MaterialMappingPropertyEditor : IPropertyEditor
     {
@@ -71,7 +70,7 @@
                     {
                         var mat = asset;
                         bool isSelected = val.Guid == asset.Guid;
-                        if (ImGui.Selectable(mat.Name, isSelected))
+                        if (ImGui.Selectable(mat.DisplayName, isSelected))
                         {
                             val.Guid = asset.Guid;
                             mapping.Material = val;
@@ -81,9 +80,25 @@
                         {
                             ImGui.SetItemDefaultFocus();
                         }
+                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+                        {
+                            SourceAssetMetadata? sourceAssetMetadata = asset?.GetSourceMetadata();
+                            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                            ImGui.TextUnformatted($"{asset?.Name} -> {sourceAssetMetadata?.FilePath}");
+                            ImGui.PopTextWrapPos();
+                            ImGui.EndTooltip();
+                        }
                     }
 
                     ImGui.EndCombo();
+                }
+                else if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+                {
+                    SourceAssetMetadata? sourceAssetMetadata = meta?.GetSourceMetadata();
+                    ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                    ImGui.TextUnformatted($"{meta?.Name} -> {sourceAssetMetadata?.FilePath}");
+                    ImGui.PopTextWrapPos();
+                    ImGui.EndTooltip();
                 }
 
                 ImGui.SameLine();

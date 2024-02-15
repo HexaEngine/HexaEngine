@@ -3,7 +3,6 @@
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;

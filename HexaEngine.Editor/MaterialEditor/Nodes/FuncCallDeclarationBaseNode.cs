@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
+    using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Mathematics;
     using System.Collections.Generic;
 

@@ -5,7 +5,7 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Archives;
+    using HexaEngine.Core.IO.Binary.Archives;
     using HexaEngine.Dotnet;
     using HexaEngine.Scripts;
     using System;

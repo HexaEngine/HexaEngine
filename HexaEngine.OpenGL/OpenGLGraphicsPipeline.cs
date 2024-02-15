@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.OpenGL;
     using System;
-    using System.Runtime.CompilerServices;
 
     public class OpenGLGraphicsPipeline : IGraphicsPipeline
     {

@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.DirectXTex;
     using Silk.NET.Direct3D11;
-    using System;
     using System.Diagnostics;
     using System.IO;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     public unsafe class D3D11TextureLoader : ITextureLoader
     {
@@ -136,10 +135,35 @@
             return new D3DScratchImage(fallback);
         }
 
+        public IScratchImage LoadFormFile(string filename, TextureDimension dimension)
+        {
+            if (!File.Exists(filename))
+            {
+                return InitFallback(dimension);
+            }
+
+            return LoadFormFile(filename);
+        }
+
         public IScratchImage LoadFormFile(string filename)
         {
             ScratchImage image = DirectXTex.CreateScratchImage();
             string extension = Path.GetExtension(filename);
+
+            if (string.IsNullOrWhiteSpace(extension))
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    DirectXTex.LoadFromDDSFile(filename, DDSFlags.None, null, image);
+                }
+                else
+                {
+                    DirectXTex.LoadFromTGAFile(filename, TGAFlags.None, null, image);
+                }
+
+                return new D3DScratchImage(image);
+            }
+
             switch (extension)
             {
                 case ".dds":
@@ -168,6 +192,7 @@
             var data = new byte[stream.Length];
             stream.Read(data, 0, data.Length);
             string extension = Path.GetExtension(filename);
+
             fixed (byte* p = data)
                 switch (extension)
                 {
@@ -443,7 +468,15 @@
 
         public ITexture2D LoadTexture2D(TextureFileDescription desc)
         {
-            var image = LoadFormAssets(desc.Path, desc.Dimension);
+            IScratchImage image;
+            if (Path.IsPathFullyQualified(desc.Path))
+            {
+                image = LoadFormFile(desc.Path, desc.Dimension);
+            }
+            else
+            {
+                image = LoadFormAssets(desc.Path, desc.Dimension);
+            }
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);

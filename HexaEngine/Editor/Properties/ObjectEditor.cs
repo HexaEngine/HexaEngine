@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.Editor.Properties
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
 
     public interface IObjectEditorElement
     {

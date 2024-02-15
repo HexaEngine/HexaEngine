@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
-    using Hexa.NET.ImGui;
     using System.IO;
 
     [EditorWindowCategory("Tools")]

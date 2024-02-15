@@ -1,10 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using System.Collections.Generic;
-    using System.Resources;
 
     public struct ResourceEntry : IEquatable<ResourceEntry>
     {

@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
     using HexaEngine.Weather;
-    using System.Numerics;
 
     [EditorWindowCategory("Debug")]
     public class WeatherWidget : EditorWindow

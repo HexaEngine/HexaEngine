@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
-    using Hexa.NET.ImGui;
     using Newtonsoft.Json;
 
     public abstract class TypedNodeBase : Node, ITypedNode

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Components
 {
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
     [EditorComponent<SphereSelectionComponent>("Sphere Selection", true, true)]

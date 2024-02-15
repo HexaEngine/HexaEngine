@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Animations
 {
     using HexaEngine.Components.Renderer;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using System.Collections.Generic;

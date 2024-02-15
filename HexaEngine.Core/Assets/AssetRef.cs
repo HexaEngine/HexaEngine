@@ -109,5 +109,15 @@
         {
             return !(left == right);
         }
+
+        public static bool operator ==(AssetRef left, Guid right)
+        {
+            return left.Guid == right;
+        }
+
+        public static bool operator !=(AssetRef left, Guid right)
+        {
+            return !(left == right);
+        }
     }
 }

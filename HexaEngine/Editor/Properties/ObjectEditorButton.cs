@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Properties
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
     using System.Reflection;
 
     /// <summary>

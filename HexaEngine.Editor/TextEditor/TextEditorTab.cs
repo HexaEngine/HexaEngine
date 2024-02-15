@@ -1,13 +1,11 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Unsafes;
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Core.Unsafes;
     using System.IO;
     using System.Numerics;
-    using HexaEngine.Core.UI;
-    using HexaEngine.Core.Graphics.Reflection;
-    using YamlDotNet.Core;
 
     public unsafe class TextEditorTab
     {

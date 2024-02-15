@@ -5,7 +5,6 @@
     using HexaEngine.Core.IO;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
-    using System.Diagnostics;
     using System.Numerics;
 
     public unsafe class D3D11GraphicsPipelineState : DisposableBase, IGraphicsPipelineState

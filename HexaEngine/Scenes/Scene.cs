@@ -4,7 +4,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;

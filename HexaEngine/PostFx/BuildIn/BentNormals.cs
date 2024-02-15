@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics.Graph;
     using System;
 
     public class BentNormals : PostFxBase

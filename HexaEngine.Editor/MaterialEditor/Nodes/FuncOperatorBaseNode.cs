@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
+    using Hexa.NET.ImNodes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public abstract class FuncOperatorBaseNode : TypedNodeBase, IFuncOperatorNode

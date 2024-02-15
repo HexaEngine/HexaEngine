@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor;
-    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class Brushes : EditorWindow

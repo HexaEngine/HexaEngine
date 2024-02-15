@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.ImagePainter.Tools;
-    using Hexa.NET.ImGui;
 
     public class Toolbox : EditorWindow
     {

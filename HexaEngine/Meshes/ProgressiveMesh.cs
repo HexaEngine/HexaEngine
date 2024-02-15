@@ -2,7 +2,7 @@
 
 namespace HexaEngine.Meshes
 {
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

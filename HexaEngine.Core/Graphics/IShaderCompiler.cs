@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System.Diagnostics.CodeAnalysis;
     using HexaEngine.Core.IO;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a compiler for shader programs that can compile shader source code into shader objects.

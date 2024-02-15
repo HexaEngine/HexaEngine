@@ -2,7 +2,6 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Scenes;

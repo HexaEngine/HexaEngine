@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Tools
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.ImagePainter;
-    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class Pencil : Tool

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using Hexa.NET.ImGui;
 
     public class TerminalWindow : EditorWindow
     {

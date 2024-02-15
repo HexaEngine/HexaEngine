@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;

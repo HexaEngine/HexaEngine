@@ -1,19 +1,19 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.Icons;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Scenes.Serialization;
-    using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Numerics;
-    using HexaEngine.Editor.Icons;
-    using HexaEngine.Core.Configuration;
-    using HexaEngine.Editor.Projects;
-    using HexaEngine.Core.Assets;
 
     public enum PasteMode
     {
@@ -532,7 +532,7 @@
                     {
                         if (x.Result != MessageBoxResult.Yes)
                             return;
-                        File.Delete((string)c);
+                        SourceAssetsDatabase.Delete((string)c);
                         Refresh();
                     }, MessageBoxType.YesCancel);
                 }

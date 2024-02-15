@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.UI;
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.UI;
     using System;
-    using Silk.NET.OpenAL;
-    using Silk.NET.Vulkan;
 
     public class EditorWindowCategory(string name) : IEquatable<EditorWindowCategory>
     {

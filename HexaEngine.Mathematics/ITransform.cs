@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Mathematics
 {
-    using System;
     using System.Numerics;
 
     /// <summary>

@@ -3,7 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO.Fonts;
+    using HexaEngine.Core.IO.Binary.Fonts;
     using System.Numerics;
 
     public class FontAtlas : IDisposable

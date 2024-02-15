@@ -1,18 +1,18 @@
 ﻿namespace CrashReporter
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.ImGui;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Core.Threading;
 
     public class CrashWindow : SdlWindow, IRenderWindow
     {

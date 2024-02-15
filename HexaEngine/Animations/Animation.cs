@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Animations
 {
-    using HexaEngine.Core.IO.Animations;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Animations;
+    using HexaEngine.Core.IO.Binary.Meshes;
 
     public class Animation
     {

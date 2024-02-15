@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
-    using Hexa.NET.ImGui;
+    using HexaEngine.Editor.Projects;
     using System;
     using System.Threading.Tasks;
-    using HexaEngine.Editor.Projects;
 
     public class PublishProjectWindow : EditorWindow
     {

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.PoseEditor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
 
     [EditorWindowCategory("Tools")]
     public class PoseEditorWindow : EditorWindow

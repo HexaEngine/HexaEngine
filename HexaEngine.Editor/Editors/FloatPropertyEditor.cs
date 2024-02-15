@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
-    using Hexa.NET.ImGui;
-    using System.Reflection;
-    using System.Collections;
     using HexaEngine.Mathematics;
+    using System.Reflection;
 
     public class FloatPropertyEditor : IPropertyEditor
     {

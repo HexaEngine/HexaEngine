@@ -5,14 +5,14 @@
     public class ResourceInstance : IDisposable
     {
         private readonly IResourceFactory factory;
-        private readonly string _name;
+        private readonly Guid _id;
         private bool releasedValue;
         private volatile int instanceCount;
 
-        public ResourceInstance(IResourceFactory factory, string name)
+        public ResourceInstance(IResourceFactory factory, Guid id)
         {
             this.factory = factory;
-            _name = name;
+            _id = id;
             instanceCount = 0;
         }
 
@@ -20,9 +20,11 @@
 
         public bool IsUsed => instanceCount > 0;
 
-        public string Name => _name;
+        public Guid Id => _id;
 
         public IResourceFactory Factory => factory;
+
+        public string? DebugName { get; set; }
 
         public void AddRef()
         {
@@ -72,7 +74,7 @@
         private readonly Func<bool> waitDelegate;
         private T? value;
 
-        public ResourceInstance(IResourceFactory factory, string name) : base(factory, name)
+        public ResourceInstance(IResourceFactory factory, Guid id) : base(factory, id)
         {
             waitDelegate = WaitCondition;
         }

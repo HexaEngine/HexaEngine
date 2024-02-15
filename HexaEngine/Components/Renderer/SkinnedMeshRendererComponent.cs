@@ -1,11 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;

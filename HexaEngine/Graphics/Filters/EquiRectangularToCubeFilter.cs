@@ -5,7 +5,6 @@ namespace HexaEngine.Graphics.Filters
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Graphics.Structs;
     using System;
     using System.Numerics;
 

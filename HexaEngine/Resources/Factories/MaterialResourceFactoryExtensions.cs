@@ -1,18 +1,18 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
 
     public static class MaterialResourceFactoryExtensions
     {
         public static Material LoadMaterial(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
         {
-            return manager.CreateInstance<Material, (MeshData, MaterialData, bool)>(desc.Name, (mesh, desc, debone)) ?? throw new NotSupportedException();
+            return manager.CreateInstance<Material, (MeshData, MaterialData, bool)>(desc.Guid, (mesh, desc, debone)) ?? throw new NotSupportedException();
         }
 
         public static async Task<Material> LoadMaterialAsync(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
         {
-            return await manager.CreateInstanceAsync<Material, (MeshData, MaterialData, bool)>(desc.Name, (mesh, desc, debone)) ?? throw new NotSupportedException();
+            return await manager.CreateInstanceAsync<Material, (MeshData, MaterialData, bool)>(desc.Guid, (mesh, desc, debone)) ?? throw new NotSupportedException();
         }
 
         public static void UpdateMaterial(this ResourceManager manager, MaterialData? desc)
@@ -22,7 +22,7 @@
                 return;
             }
 
-            if (!manager.TryGetInstance(desc.Name, out Material? modelMaterial))
+            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
             {
                 return;
             }
@@ -66,7 +66,7 @@
 
         public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialData desc)
         {
-            if (!manager.TryGetInstance(desc.Name, out Material? modelMaterial))
+            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
             {
                 return;
             }

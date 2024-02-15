@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.PostFx;
     using HexaEngine.Scenes;
 
     public class OverlayPass : RenderPass

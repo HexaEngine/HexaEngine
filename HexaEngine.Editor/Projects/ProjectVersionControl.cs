@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
-    using Hexa.NET.ImGui;
     using HexaEngine.Security;
     using HexaEngine.Security.Credentials;
     using LibGit2Sharp;

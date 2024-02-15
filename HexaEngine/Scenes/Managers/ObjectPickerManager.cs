@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using HexaEngine.Queries.Generic;
+    using HexaEngine.Scenes;
 
     public interface ISelectableRayTest : IComponent
     {

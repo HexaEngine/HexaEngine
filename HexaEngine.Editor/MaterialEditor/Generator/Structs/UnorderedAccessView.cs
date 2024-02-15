@@ -2,7 +2,6 @@
 {
     using HexaEngine.Editor.MaterialEditor.Generator;
     using System.Globalization;
-    using System.Text;
 
     public struct UnorderedAccessView
     {

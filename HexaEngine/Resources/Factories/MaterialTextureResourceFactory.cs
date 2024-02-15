@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System.Threading.Tasks;
 
-    public class MaterialTextureResourceFactory : ResourceFactory<ResourceInstance<MaterialTexture>, Core.IO.Materials.MaterialTexture>
+    public class MaterialTextureResourceFactory : ResourceFactory<ResourceInstance<MaterialTexture>, Core.IO.Binary.Materials.MaterialTexture>
     {
         private readonly IGraphicsDevice device;
 
@@ -13,37 +14,54 @@
             this.device = device;
         }
 
-        protected override ResourceInstance<MaterialTexture> CreateInstance(ResourceManager manager, string name, Core.IO.Materials.MaterialTexture desc)
+        protected override ResourceInstance<MaterialTexture> CreateInstance(ResourceManager manager, Guid id, Core.IO.Binary.Materials.MaterialTexture desc)
         {
-            string fullname = Paths.CurrentTexturePath + desc.File;
-            if (string.IsNullOrWhiteSpace(desc.File))
+            var artifact = ArtifactDatabase.GetArtifact(desc.File);
+
+            if (artifact == null)
             {
                 return null;
             }
 
-            return new(this, fullname);
+            return new(this, desc.File);
         }
 
-        protected override void LoadInstance(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Materials.MaterialTexture desc)
+        protected override void LoadInstance(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             if (instance == null)
             {
                 return;
             }
-            string fullname = Paths.CurrentTexturePath + desc.File;
-            var tex = new Texture2D(device, new TextureFileDescription(fullname));
+
+            var artifact = ArtifactDatabase.GetArtifact(desc.File);
+
+            if (artifact == null)
+            {
+                Logger.Warn($"Failed to load texture, {desc.File}");
+                return;
+            }
+
+            var tex = new Texture2D(device, new TextureFileDescription(artifact.Path));
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
             instance.EndLoad(new(tex, sampler, desc));
         }
 
-        protected override Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Materials.MaterialTexture desc)
+        protected override Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             if (instance == null)
             {
                 return Task.CompletedTask;
             }
-            string fullname = Paths.CurrentTexturePath + desc.File;
-            var tex = new Texture2D(device, new TextureFileDescription(fullname));
+
+            var artifact = ArtifactDatabase.GetArtifact(desc.File);
+
+            if (artifact == null)
+            {
+                Logger.Warn($"Failed to load texture, {desc.File}");
+                return Task.CompletedTask;
+            }
+
+            var tex = new Texture2D(device, new TextureFileDescription(artifact.Path));
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
             instance.EndLoad(new(tex, sampler, desc));
             return Task.CompletedTask;

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Editor.Dialogs;
     using Hexa.NET.ImGui;
-    using System;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Projects;
+    using System;
 
     public class OpenProjectWindow : Modal
     {

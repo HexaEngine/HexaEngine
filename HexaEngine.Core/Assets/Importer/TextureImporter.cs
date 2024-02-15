@@ -106,16 +106,19 @@
             {
                 if (FormatHelper.IsCompressed(settings.Format))
                 {
-                    try
+                    lock (device)
                     {
-                        SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
-                    }
-                    catch (Exception ex)
-                    {
-                        image.Dispose();
-                        Logger.Log(ex);
-                        Logger.Error($"Failed to compress the texture {context.SourcePath}");
-                        return;
+                        try
+                        {
+                            SwapImage(ref image, image.Compress(settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                        }
+                        catch (Exception ex)
+                        {
+                            image.Dispose();
+                            Logger.Log(ex);
+                            Logger.Error($"Failed to compress the texture {context.SourcePath}");
+                            return;
+                        }
                     }
                 }
                 else

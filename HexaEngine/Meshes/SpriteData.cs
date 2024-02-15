@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
     using HexaEngine.Mathematics;
-    using System.Numerics;
 
     public struct SpriteData
     {

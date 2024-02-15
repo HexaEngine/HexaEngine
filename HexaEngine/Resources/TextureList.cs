@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Binary.Materials;
     using System.Collections;
 
     public unsafe class TextureList : IList<MaterialTexture>, IDisposable

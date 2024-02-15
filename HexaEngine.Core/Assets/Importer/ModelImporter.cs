@@ -1,4 +1,8 @@
-﻿namespace HexaEngine.Core.Assets.Importer
+﻿using HexaEngine.Core.IO.Binary.Animations;
+using HexaEngine.Core.IO.Binary.Materials;
+using HexaEngine.Core.IO.Binary.Meshes;
+
+namespace HexaEngine.Core.Assets.Importer
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
@@ -6,9 +10,9 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.IO.Animations;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Animations;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
@@ -19,13 +23,13 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
-    using AnimationData = IO.Animations.AnimationClip;
+    using AnimationData = AnimationClip;
     using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
-    using MaterialProperty = IO.Materials.MaterialProperty;
-    using Node = IO.Meshes.Node;
+    using MaterialProperty = MaterialProperty;
+    using Node = Node;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;
@@ -390,6 +394,7 @@
             try
             {
                 texturePaths = [];
+                Dictionary<(MaterialFile, int), string> texturePathToGuid = new();
                 materials = new MaterialFile[scene->MNumMaterials];
                 materialIds = new Guid[scene->MNumMaterials];
                 for (int i = 0; i < scene->MNumMaterials; i++)
@@ -428,6 +433,22 @@
                             var index = textures.Count;
                             textures.Add(new MaterialTexture() { Type = t });
                             return ref textures.GetInternalArray()[index];
+                        }
+
+                        static int FindOrCreateIdx(List<MaterialTexture> textures, TextureType type)
+                        {
+                            var t = Convert(type);
+                            for (int i = 0; i < textures.Count; i++)
+                            {
+                                var tex = textures[i];
+                                if (tex.Type == t)
+                                {
+                                    return i;
+                                }
+                            }
+                            var index = textures.Count;
+                            textures.Add(new MaterialTexture() { Type = t });
+                            return index;
                         }
 
                         switch (key)
@@ -586,10 +607,11 @@
                                 break;
 
                             case Assimp.MatkeyTextureBase:
-                                var file = FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
-                                if (!texturePaths.Contains(file))
+                                var filePath = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                                texturePathToGuid.Add((material, FindOrCreateIdx(textures, (TextureType)semantic)), filePath);
+                                if (!texturePaths.Contains(filePath))
                                 {
-                                    texturePaths.Add(file);
+                                    texturePaths.Add(filePath);
                                 }
 
                                 break;
@@ -662,13 +684,6 @@
                     material.Properties = properties;
                     material.Textures = textures;
 
-                    for (int j = 0; j < material.Textures.Count; j++)
-                    {
-                        if (material.Textures[j].File == null)
-                        {
-                            material.Textures.MutateItem(j, x => { x.File = string.Empty; return x; });
-                        }
-                    }
                     try
                     {
                         context.EmitArtifact(material.Name, AssetType.Material, out string path);
@@ -835,7 +850,7 @@
                             var bn = msh->MBones[j];
                             nameToNode[bn->MName].Flags |= NodeFlags.Bone;
 
-                            IO.Meshes.VertexWeight[] weights = new IO.Meshes.VertexWeight[bn->MNumWeights];
+                            IO.Binary.Meshes.VertexWeight[] weights = new IO.Binary.Meshes.VertexWeight[bn->MNumWeights];
                             for (int x = 0; x < weights.Length; x++)
                             {
                                 weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
@@ -853,11 +868,11 @@
 
                     if (bones.Length > 0)
                     {
-                        meshes[i] = new MeshData(msh->MName, materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, [.. bones]);
+                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, [.. bones]);
                     }
                     else
                     {
-                        meshes[i] = new MeshData(msh->MName, materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
+                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
                     }
 
                     nameToMesh.Add(msh->MName, meshes[i]);
@@ -976,50 +991,50 @@
             };
         }
 
-        public static IO.Materials.BlendMode Convert(BlendMode mode)
+        public static IO.Binary.Materials.BlendMode Convert(BlendMode mode)
         {
             return mode switch
             {
-                BlendMode.Default => IO.Materials.BlendMode.Default,
-                BlendMode.Additive => IO.Materials.BlendMode.Additive,
+                BlendMode.Default => IO.Binary.Materials.BlendMode.Default,
+                BlendMode.Additive => IO.Binary.Materials.BlendMode.Additive,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static IO.Materials.TextureOp Convert(TextureOp op)
+        public static IO.Binary.Materials.TextureOp Convert(TextureOp op)
         {
             return op switch
             {
-                TextureOp.Multiply => IO.Materials.TextureOp.Multiply,
-                TextureOp.Add => IO.Materials.TextureOp.Add,
-                TextureOp.Subtract => IO.Materials.TextureOp.Subtract,
-                TextureOp.Divide => IO.Materials.TextureOp.Divide,
-                TextureOp.SmoothAdd => IO.Materials.TextureOp.SmoothAdd,
-                TextureOp.SignedAdd => IO.Materials.TextureOp.SignedAdd,
+                TextureOp.Multiply => IO.Binary.Materials.TextureOp.Multiply,
+                TextureOp.Add => IO.Binary.Materials.TextureOp.Add,
+                TextureOp.Subtract => IO.Binary.Materials.TextureOp.Subtract,
+                TextureOp.Divide => IO.Binary.Materials.TextureOp.Divide,
+                TextureOp.SmoothAdd => IO.Binary.Materials.TextureOp.SmoothAdd,
+                TextureOp.SignedAdd => IO.Binary.Materials.TextureOp.SignedAdd,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static IO.Materials.TextureMapMode Convert(TextureMapMode mode)
+        public static IO.Binary.Materials.TextureMapMode Convert(TextureMapMode mode)
         {
             return mode switch
             {
-                TextureMapMode.Wrap => IO.Materials.TextureMapMode.Wrap,
-                TextureMapMode.Clamp => IO.Materials.TextureMapMode.Clamp,
-                TextureMapMode.Decal => IO.Materials.TextureMapMode.Decal,
-                TextureMapMode.Mirror => IO.Materials.TextureMapMode.Mirror,
+                TextureMapMode.Wrap => IO.Binary.Materials.TextureMapMode.Wrap,
+                TextureMapMode.Clamp => IO.Binary.Materials.TextureMapMode.Clamp,
+                TextureMapMode.Decal => IO.Binary.Materials.TextureMapMode.Decal,
+                TextureMapMode.Mirror => IO.Binary.Materials.TextureMapMode.Mirror,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static IO.Materials.TextureFlags Convert(TextureFlags flags)
+        public static IO.Binary.Materials.TextureFlags Convert(TextureFlags flags)
         {
             return flags switch
             {
-                0 => IO.Materials.TextureFlags.None,
-                TextureFlags.Invert => IO.Materials.TextureFlags.Invert,
-                TextureFlags.UseAlpha => IO.Materials.TextureFlags.UseAlpha,
-                TextureFlags.IgnoreAlpha => IO.Materials.TextureFlags.IgnoreAlpha,
+                0 => IO.Binary.Materials.TextureFlags.None,
+                TextureFlags.Invert => IO.Binary.Materials.TextureFlags.Invert,
+                TextureFlags.UseAlpha => IO.Binary.Materials.TextureFlags.UseAlpha,
+                TextureFlags.IgnoreAlpha => IO.Binary.Materials.TextureFlags.IgnoreAlpha,
                 _ => throw new NotImplementedException(),
             };
         }

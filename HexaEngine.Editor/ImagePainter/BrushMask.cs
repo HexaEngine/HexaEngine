@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.ImGui;
-    using System.Numerics;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using System.Numerics;
 
     public class BrushMask : IDisposable
     {

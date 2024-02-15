@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Graphics.Filters
 {
     using HexaEngine.Core.Graphics;

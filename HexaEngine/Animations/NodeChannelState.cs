@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Animations
 {
-    using HexaEngine.Core.IO.Animations;
+    using HexaEngine.Core.IO.Binary.Animations;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

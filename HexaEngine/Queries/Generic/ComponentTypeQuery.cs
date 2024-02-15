@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Queries.Generic
 {
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes;
     using System.Collections;
     using System.Collections.Generic;

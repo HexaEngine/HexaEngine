@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.Mathematics.Sky.HosekWilkie
 {
-    using System;
-    using System.Data;
-    using System.Numerics;
     using HexaEngine.Mathematics.Sky;
+    using System;
+    using System.Numerics;
 
     /// <summary>
     /// Helper class for the Hosek-Wilkie sky model calculations.

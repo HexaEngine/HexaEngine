@@ -1,6 +1,5 @@
 ﻿namespace D3D12Testing.Unsafes
 {
-    using D3D12Testing;
     using HexaEngine.Mathematics;
     using System;
     using System.Buffers.Binary;

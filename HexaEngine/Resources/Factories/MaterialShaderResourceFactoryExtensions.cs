@@ -1,19 +1,19 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
 
     public static class MaterialShaderResourceFactoryExtensions
     {
         public static ResourceInstance<Resources.MaterialShader>? LoadMaterialShader(this ResourceManager manager, MeshData mesh, MaterialData material, bool debone = false)
         {
-            return manager.CreateInstance<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Name, (mesh, material, debone));
+            return manager.CreateInstance<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Guid, (mesh, material, debone));
         }
 
         public static async Task<ResourceInstance<Resources.MaterialShader>?> LoadMaterialShaderAsync(this ResourceManager manager, MeshData mesh, MaterialData material, bool debone = false)
         {
-            return await manager.CreateInstanceAsync<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Name, (mesh, material, debone));
+            return await manager.CreateInstanceAsync<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Guid, (mesh, material, debone));
         }
 
         public static void UpdateMaterialShader(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? shader, MaterialData material)

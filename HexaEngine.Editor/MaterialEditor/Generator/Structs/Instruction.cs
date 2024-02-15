@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Generator.Structs
 {
     using HexaEngine.Editor.MaterialEditor.Generator;
-    using System.Text;
 
     public class Operation
     {

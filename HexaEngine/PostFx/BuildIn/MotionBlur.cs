@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using Silk.NET.Vulkan;
     using System.Numerics;
 
     public class MotionBlur : PostFxBase

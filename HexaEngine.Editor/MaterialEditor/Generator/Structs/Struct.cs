@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Generator.Structs
 {
     using System.Collections.Generic;
-    using System.Text;
 
     public struct Struct
     {

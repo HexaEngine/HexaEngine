@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
@@ -14,7 +12,6 @@
     using HexaEngine.Meshes;
     using HexaEngine.Weather;
     using System;
-    using System.Threading.Tasks;
 
     [EditorCategory("Renderer")]
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]

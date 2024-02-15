@@ -13,7 +13,6 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     internal class VoxelGI
     {

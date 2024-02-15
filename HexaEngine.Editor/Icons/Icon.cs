@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Graphics;
     using System.Numerics;
     using System.Text.RegularExpressions;
 

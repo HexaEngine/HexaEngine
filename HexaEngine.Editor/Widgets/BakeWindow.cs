@@ -5,7 +5,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
     using System.Threading;

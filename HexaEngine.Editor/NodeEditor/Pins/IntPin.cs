@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Pins
 {
-    using HexaEngine.Editor.NodeEditor;
     using Hexa.NET.ImGui;
     using Hexa.NET.ImNodes;
+    using HexaEngine.Editor.NodeEditor;
     using Newtonsoft.Json;
     using System.Diagnostics;
     using System.Globalization;

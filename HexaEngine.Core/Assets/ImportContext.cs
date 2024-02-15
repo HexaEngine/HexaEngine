@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Assets
 {
-    using System.Security.AccessControl;
-
     public class ImportContext
     {
         private readonly SourceAssetMetadata sourceAsset;

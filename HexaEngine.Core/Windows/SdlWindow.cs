@@ -13,8 +13,8 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Key = Input.Key;
     using static Extensions.SdlErrorHandlingExtensions;
+    using Key = Input.Key;
 
     /// <summary>
     /// The main class responsible for managing SDL windows.

@@ -2,7 +2,6 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Graphics.Graph;
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 

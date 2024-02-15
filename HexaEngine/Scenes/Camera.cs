@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Components;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;

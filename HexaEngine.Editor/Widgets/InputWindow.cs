@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImPlot;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
-    using Hexa.NET.ImPlot;
     using System.Numerics;
 
     [EditorWindowCategory("Debug")]

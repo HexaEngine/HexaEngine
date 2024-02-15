@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Components.Physics
 {
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;

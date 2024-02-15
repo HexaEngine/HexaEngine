@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Lights;
 
     public unsafe class Material : ResourceInstance, IDisposable
@@ -14,7 +14,7 @@
 
         private bool loaded;
 
-        public Material(IResourceFactory factory, MaterialData desc) : base(factory, desc.Name)
+        public Material(IResourceFactory factory, MaterialData desc) : base(factory, desc.Guid)
         {
             this.desc = desc;
         }
@@ -233,7 +233,7 @@
 
         public override string ToString()
         {
-            return Name;
+            return $"{Data.Name}##{Id}";
         }
     }
 }

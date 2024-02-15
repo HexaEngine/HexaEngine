@@ -3,7 +3,6 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents an array of render target views.

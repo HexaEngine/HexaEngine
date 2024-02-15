@@ -4,8 +4,6 @@ namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graphics.Effects.Blur;
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public class ASSAO

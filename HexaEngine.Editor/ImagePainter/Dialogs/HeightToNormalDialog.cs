@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
-    using Hexa.NET.ImGui;
 
     internal class HeightToNormalDialog : Modal
     {

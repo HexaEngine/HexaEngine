@@ -2,7 +2,6 @@
 {
     using HexaEngine.Mathematics;
     using MagicPhysX;
-    using Silk.NET.DirectWrite;
     using System.Numerics;
 
     public static class Helper

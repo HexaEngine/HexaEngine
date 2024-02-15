@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
-    using HexaEngine.Editor.NodeEditor;
     using Hexa.NET.ImNodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
 

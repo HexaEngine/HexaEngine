@@ -7,10 +7,10 @@
         public Texture2D Texture;
         public IShaderResourceView ShaderResourceView;
         public ISamplerState Sampler;
-        public Core.IO.Materials.MaterialTexture Desc;
+        public Core.IO.Binary.Materials.MaterialTexture Desc;
         private bool disposedValue;
 
-        public MaterialTexture(Texture2D texture, ISamplerState sampler, Core.IO.Materials.MaterialTexture desc)
+        public MaterialTexture(Texture2D texture, ISamplerState sampler, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             Texture = texture;
             ShaderResourceView = texture.SRV;

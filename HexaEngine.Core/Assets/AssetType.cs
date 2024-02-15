@@ -14,5 +14,6 @@
         Animation,
         Sound,
         Script,
+        Prefab,
     }
 }

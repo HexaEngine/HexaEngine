@@ -3,12 +3,7 @@
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Contexts;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class OpenGLAdapter : IGraphicsAdapter
     {

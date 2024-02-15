@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Collections
 {
     using HexaEngine.Core.Extensions;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes;
     using System;
     using System.Collections;

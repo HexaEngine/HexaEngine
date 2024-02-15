@@ -6,7 +6,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
-    using HexaEngine.PostFx.BuildIn;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostProcessingManager : IDisposable

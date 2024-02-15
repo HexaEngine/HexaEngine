@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Lights.Structs
 {
-    using System.Numerics;
     using HexaEngine.Lights;
+    using System.Numerics;
 
     public struct ProbeData
     {

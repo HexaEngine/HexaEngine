@@ -2,7 +2,6 @@
 {
     using HexaEngine.Mathematics;
     using Silk.NET.SDL;
-    using Silk.NET.Vulkan;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;

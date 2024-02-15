@@ -3,10 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using System;
     using System.Numerics;
 
     public class VelocityBuffer : PostFxBase

@@ -2,7 +2,6 @@
 {
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
     using System.Numerics;
 
     public struct LightData

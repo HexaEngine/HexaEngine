@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Mathematics
 {
-    using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text.Json.Serialization;
@@ -8,7 +7,7 @@
     /// <summary>
     /// <see cref="Transform"/> is used for hierarchical matrix calculation.
     /// </summary>
-    public class Transform : ITransform
+    public class Transform : ITransform, IReadOnlyTransform
     {
         /// <summary>
         /// The initial state of the <see cref="Transform"/>.

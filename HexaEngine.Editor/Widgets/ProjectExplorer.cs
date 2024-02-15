@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using Hexa.NET.ImGui;
     using HexaEngine.Editor.Projects;
 
     public class ProjectExplorer : EditorWindow

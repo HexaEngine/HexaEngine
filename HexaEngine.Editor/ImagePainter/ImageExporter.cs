@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Exporters;
-    using Hexa.NET.ImGui;
     using System;
     using System.Numerics;
 

@@ -3,12 +3,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Numerics;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents a 3D tetrahedron primitive.

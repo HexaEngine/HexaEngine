@@ -1,16 +1,15 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
-    using Hexa.NET.ImGui;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Runtime.CompilerServices;
     using System.Text;
-    using HexaEngine.Core.Configuration;
-    using System.Numerics;
-    using System.Globalization;
 
     public class PreferencesWidget : EditorWindow
     {

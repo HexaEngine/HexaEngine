@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
+    using Hexa.NET.ImNodes;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Mathematics;
-    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Numerics;
 

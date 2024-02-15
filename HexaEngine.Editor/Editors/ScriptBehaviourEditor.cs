@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Components;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Scripts;
-    using Hexa.NET.ImGui;
 
     public class ScriptBehaviourEditor : IObjectEditor
     {

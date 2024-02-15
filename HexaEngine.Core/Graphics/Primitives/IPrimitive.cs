@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Mathematics;
     using System;
 
     /// <summary>
@@ -29,12 +30,14 @@
         /// <param name="vertexCount">Output parameter for the vertex count.</param>
         /// <param name="indexCount">Output parameter for the index count.</param>
         /// <param name="instanceCount">Output parameter for the instance count.</param>
-        void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount);
+        void BeginDraw(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount);
 
         /// <summary>
         /// Unbinds the primitive from the graphics context.
         /// </summary>
         /// <param name="context">The graphics context.</param>
-        void Unbind(IGraphicsContext context);
+        void EndDraw(IGraphicsContext context);
+
+        BoundingBox BoundingBox { get; }
     }
 }

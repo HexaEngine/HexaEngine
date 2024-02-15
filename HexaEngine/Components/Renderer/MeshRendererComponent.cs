@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
@@ -19,9 +17,7 @@
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Collections;
-    using System.ComponentModel;
     using System.Numerics;
-    using YamlDotNet.Core.Tokens;
 
     public class MaterialAssetMappingCollection : ICollection<MaterialAssetMapping>
     {
@@ -144,6 +140,54 @@
         IEnumerator IEnumerable.GetEnumerator()
         {
             return mappings.GetEnumerator();
+        }
+
+        public void Update(ModelFile modelFile)
+        {
+            for (int i = 0; i < mappings.Count; i++)
+            {
+                var mapping = mappings[i];
+                if (!ModelContainsMesh(modelFile, mapping.Mesh))
+                {
+                    mappings.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < modelFile.Meshes.Count; i++)
+            {
+                var mesh = modelFile.Meshes[i];
+                if (!ContainsMesh(mappings, mesh.Name))
+                {
+                    mappings.Add(new(mesh, mesh.MaterialId));
+                }
+            }
+        }
+
+        private static bool ContainsMesh(List<MaterialAssetMapping> assetMappings, string meshName)
+        {
+            for (int i = 0; i < assetMappings.Count; i++)
+            {
+                var mapping = assetMappings[i];
+                if (mapping.Mesh == meshName)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool ModelContainsMesh(ModelFile modelFile, string meshName)
+        {
+            for (int i = 0; i < modelFile.Meshes.Count; i++)
+            {
+                var mesh = modelFile.Meshes[i];
+                if (mesh.Name == meshName)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -333,17 +377,7 @@
                         stream.Close();
                     }
 
-                    if (component.Materials.Count == 0)
-                    {
-                        component.Materials.Clear();
-                        for (int i = 0; i < modelFile.Meshes.Count; i++)
-                        {
-                            var mesh = modelFile.Meshes[i];
-                            var material = mesh.MaterialId;
-                            MaterialAssetMapping mapping = new(mesh, material);
-                            component.Materials.Add(mapping);
-                        }
-                    }
+                    component.Materials.Update(modelFile);
 
                     component.Materials.OnChanged += component.OnChanged;
 

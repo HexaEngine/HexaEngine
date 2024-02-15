@@ -9,7 +9,6 @@
     using Microsoft.Diagnostics.Tracing.Etlx;
     using Microsoft.Diagnostics.Tracing.Parsers;
     using Microsoft.Diagnostics.Tracing.Parsers.Clr;
-    using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
     using Microsoft.Diagnostics.Tracing.Session;
     using System;
     using System.ComponentModel;

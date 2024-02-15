@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Objects
 {
     using HexaEngine.Components.Renderer;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Scenes;
 
     [EditorGameObject<Skybox>("Skybox")]
     public class Skybox : GameObject

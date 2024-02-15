@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class MixerWidget : EditorWindow

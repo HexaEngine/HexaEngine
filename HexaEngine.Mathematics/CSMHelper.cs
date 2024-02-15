@@ -2,8 +2,6 @@
 {
     using System;
     using System.Numerics;
-    using System.Runtime.InteropServices;
-    using static System.Net.Mime.MediaTypeNames;
 
     /// <summary>
     /// Represents an enumeration of modes for splitting cascades in a shadow-casting scene.

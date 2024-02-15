@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.UI;
-    using System.Collections;
     using System.Diagnostics.CodeAnalysis;
 
     public class DrawLayerCollection : List<DrawLayer>

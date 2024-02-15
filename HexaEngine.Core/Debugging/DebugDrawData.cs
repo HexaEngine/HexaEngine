@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Mathematics;

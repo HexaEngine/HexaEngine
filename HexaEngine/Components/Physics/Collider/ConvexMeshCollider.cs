@@ -3,8 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;

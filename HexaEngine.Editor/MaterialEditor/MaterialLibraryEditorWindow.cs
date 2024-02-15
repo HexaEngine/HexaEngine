@@ -1,15 +1,13 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.UI;
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO.Metadata;
-    using System.Text;
+    using HexaEngine.Core.Extensions;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
+    using System.Text;
 
     public class MaterialLibraryEditorWindow : EditorWindow
     {
@@ -253,20 +251,20 @@
 
             if (ImGui.BeginPopup("Add Texture", ImGuiWindowFlags.None))
             {
-                ComboEnumHelper<MaterialTextureType>.Combo("Type", ref newTexType);
-                ImGui.InputText("Path", ref newTexPath, 256);
+                /*  ComboEnumHelper<MaterialTextureType>.Combo("Type", ref newTexType);
+                  ImGui.InputText("Path", ref newTexPath, 256);
 
-                if (ImGui.Button("Cancel"))
-                {
-                    ImGui.CloseCurrentPopup();
-                }
-                ImGui.SameLine();
-                if (ImGui.Button("Add"))
-                {
-                    material.Textures.Add(new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
-                    ImGui.CloseCurrentPopup();
-                    hasChanged = true;
-                }
+                  if (ImGui.Button("Cancel"))
+                  {
+                      ImGui.CloseCurrentPopup();
+                  }
+                  ImGui.SameLine();
+                  if (ImGui.Button("Add"))
+                  {
+                      material.Textures.Add(new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
+                      ImGui.CloseCurrentPopup();
+                      hasChanged = true;
+                  }*/
                 ImGui.EndPopup();
             }
 
@@ -282,13 +280,13 @@
                 }
                 isActive |= ImGui.IsItemActive();
 
-                var file = tex.File;
-                if (ImGui.InputText($"File##{i}", ref file, 1024))
-                {
-                    material.Textures.MutateItem(i, x => { x.File = file; return x; });
-                    hasChanged = true;
-                }
-                isActive |= ImGui.IsItemActive();
+                /*  var file = tex.File;
+                  if (ImGui.InputText($"File##{i}", ref file, 1024))
+                  {
+                      material.Textures.MutateItem(i, x => { x.File = file; return x; });
+                      hasChanged = true;
+                  }
+                  isActive |= ImGui.IsItemActive();*/
 
                 var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
                 if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))

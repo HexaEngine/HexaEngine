@@ -2,7 +2,7 @@
 {
     using CommandLine;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Archives;
+    using HexaEngine.Core.IO.Binary.Archives;
     using System;
     using System.IO;
     using System.IO.Compression;

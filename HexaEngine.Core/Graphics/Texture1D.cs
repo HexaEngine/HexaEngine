@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System;
-    using System.Numerics;
-    using System.Runtime.CompilerServices;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using System;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents a 1D texture that implements various graphics interfaces.

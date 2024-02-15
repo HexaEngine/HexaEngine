@@ -4,7 +4,6 @@
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
@@ -99,8 +98,8 @@
                     Light light = scene.LightManager.Lights[i];
                     if ((drawLights & EditorDrawLightsFlags.NoDirectionalLights) == 0 && light is DirectionalLight directional)
                     {
-                        DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
-                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawRay(light.FullName, light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.FullName, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
 
                         if (drawLightBounds)
                         {
@@ -116,7 +115,7 @@
 
                     if ((drawLights & EditorDrawLightsFlags.NoPointLights) == 0 && light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawQuadBillboard(light.FullName, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
                         DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
 
                         DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);

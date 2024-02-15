@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Mathematics.Sky.Preetham
 {
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Helper class for the Preetham sky model calculations.

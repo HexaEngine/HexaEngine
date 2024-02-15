@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Debugging;

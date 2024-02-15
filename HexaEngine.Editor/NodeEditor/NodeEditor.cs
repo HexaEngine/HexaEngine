@@ -4,7 +4,6 @@
     using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
-    using YamlDotNet.Core.Tokens;
 
     public class NodeEditor
     {

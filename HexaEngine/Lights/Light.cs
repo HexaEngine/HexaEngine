@@ -2,7 +2,6 @@
 {
     using HexaEngine.Components;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;

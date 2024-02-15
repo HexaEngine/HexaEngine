@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
+    using Hexa.NET.ImGui;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
-    using Hexa.NET.ImGui;
     using System.Reflection;
-    using HexaEngine.Core.Assets;
 
     public class AssetRefPropertyEditor : IPropertyEditor
     {
@@ -32,46 +32,10 @@
             ImGui.TableSetColumnIndex(1);
             AssetRef val = (AssetRef)value;
 
-            var meta = val.GetMetadata();
-
-            bool isOpen;
-            if (meta != null)
+            bool changed = ComboHelper.ComboForAssetRef(guiName.Id, ref val, assetType);
+            if (changed)
             {
-                isOpen = ImGui.BeginCombo(guiName.Id, meta.Name);
-            }
-            else
-            {
-                if (val.Guid == Guid.Empty)
-                {
-                    isOpen = ImGui.BeginCombo(guiName.Id, (byte*)null);
-                }
-                else
-                {
-                    isOpen = ImGui.BeginCombo(guiName.Id, $"{val.Guid}");
-                }
-            }
-
-            TooltipHelper.Tooltip($"{meta?.Name}#{val.Guid}");
-
-            bool changed = false;
-            if (isOpen)
-            {
-                foreach (var asset in ArtifactDatabase.GetArtifactsFromType(assetType))
-                {
-                    bool isSelected = val.Guid == asset.Guid;
-                    if (ImGui.Selectable(asset.Name, isSelected))
-                    {
-                        val.Guid = asset.Guid;
-                        value = val;
-                        changed = true;
-                    }
-                    if (isSelected)
-                    {
-                        ImGui.SetItemDefaultFocus();
-                    }
-                }
-
-                ImGui.EndCombo();
+                value = val;
             }
 
             return changed;

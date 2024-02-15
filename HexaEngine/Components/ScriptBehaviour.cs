@@ -3,7 +3,6 @@
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;

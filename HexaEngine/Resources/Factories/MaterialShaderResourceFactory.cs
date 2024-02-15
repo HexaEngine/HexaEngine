@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using System.Threading.Tasks;
 
     public class MaterialShaderResourceFactory : ResourceFactory<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>
@@ -14,9 +14,9 @@
             this.device = device;
         }
 
-        protected override ResourceInstance<Resources.MaterialShader> CreateInstance(ResourceManager manager, string name, (MeshData, MaterialData, bool) instanceData)
+        protected override ResourceInstance<Resources.MaterialShader> CreateInstance(ResourceManager manager, Guid id, (MeshData, MaterialData, bool) instanceData)
         {
-            return new ResourceInstance<Resources.MaterialShader>(this, name);
+            return new ResourceInstance<Resources.MaterialShader>(this, id);
         }
 
         protected override void LoadInstance(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)

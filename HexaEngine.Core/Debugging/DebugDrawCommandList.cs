@@ -4,7 +4,6 @@ namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using System.Numerics;
 
     /// <summary>
     /// Represents a queue of debugging drawing commands for rendering primitives.

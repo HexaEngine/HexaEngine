@@ -1,17 +1,16 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImPlot;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.ImGui;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Systems;
-    using Hexa.NET.ImPlot;
     using System.Diagnostics;
     using System.Numerics;
-    using HexaEngine.Graphics.Renderers;
 
     [EditorWindowCategory("Debug")]
     public class ProfilerWindow : EditorWindow

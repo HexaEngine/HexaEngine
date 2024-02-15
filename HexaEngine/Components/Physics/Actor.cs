@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Components.Physics
 {
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
+    using HexaEngine.Scenes;
     using MagicPhysX;
     using System;
 
