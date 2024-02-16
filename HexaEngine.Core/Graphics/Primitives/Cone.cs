@@ -72,10 +72,8 @@
 
                 Vector3 normal = Vector3.Normalize(Vector3.Cross(tangent, topOffset - pt));
 
-                Vector3 bitangent = Vector3.Cross(normal, tangent);
-
-                vertices[vcounter] = new(sideOffset + topOffset, Vector2.Zero, normal, tangent, bitangent);
-                vertices[vcounter + 1] = new(sideOffset - topOffset, new Vector2(u, 1), normal, tangent, bitangent);
+                vertices[vcounter] = new(sideOffset + topOffset, Vector2.Zero, normal, tangent);
+                vertices[vcounter + 1] = new(sideOffset - topOffset, new Vector2(u, 1), normal, tangent);
                 vcounter += 2;
 
                 indices[icounter] = i * 2;
@@ -136,8 +134,6 @@
                 textureScale *= new Vector3(-1, 1, 1);
             }
 
-            Vector3 bitangent = Vector3.Cross(normal, tangent);
-
             // Create cap vertices.
             for (uint i = 0; i < tessellation; i++)
             {
@@ -147,7 +143,7 @@
 
                 Vector3 textureCoordinate = new Vector3(circleVector.X, circleVector.Z, 0) * textureScale + new Vector3(0.5f);
 
-                vertices[vcounter++] = new(position, textureCoordinate, normal, tangent, bitangent);
+                vertices[vcounter++] = new(position, textureCoordinate, normal, tangent);
             }
         }
     }

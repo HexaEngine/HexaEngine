@@ -3,14 +3,17 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Binary.Terrains;
+    using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Mathematics;
+    using HexaEngine.Mathematics.Noise;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -20,10 +23,13 @@
     public struct CBColorMask
     {
         public Vector4 Mask;
+        public Vector2 Location;
+        public float Range;
+        public float padding;
 
-        public CBColorMask(ChannelMask mask)
+        public CBColorMask(ChannelMask mask, Vector2 location, float range)
         {
-            Mask = default;
+            Mask = new(-1);
             if ((mask & ChannelMask.R) != 0)
             {
                 Mask.X = 1;
@@ -40,6 +46,8 @@
             {
                 Mask.W = 1;
             }
+            Location = location;
+            Range = range;
         }
     }
 
@@ -51,6 +59,7 @@
         private ConstantBuffer<Matrix4x4> WorldBuffer;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private DepthStencil depthStencil;
+        private Texture2D texture;
 
         private IGraphicsPipelineState maskOverlay;
         private IGraphicsPipelineState maskEdit;
@@ -88,6 +97,16 @@
         private bool isActive;
         private bool hasFileSaved;
         private int current;
+        private Vector2 lastMousePosition;
+
+        private int seed = 0;
+        private int octaves = 2;
+        private float persistence = 0.5f;
+        private float amplitude = 16;
+        private float maxHeight = 10;
+        private float minHeight = 0;
+        private Vector2 scale = new(0.001f);
+
         private readonly Queue<StaticTerrainCell> updateQueue = new();
 
         public void Draw(IGraphicsContext context)
@@ -143,6 +162,8 @@
                     BackFace = DepthStencilOperationDescription.DefaultBack
                 };
 
+                texture = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read);
+
                 maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
                     VertexShader = "quad.hlsl",
@@ -151,10 +172,11 @@
                 {
                     DepthStencil = depthStencilD,
                     Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.AlphaBlend,
+                    Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleStrip,
                     InputElements = inputElements
                 });
+
                 maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
 
                 brushBuffer = new(device, CpuAccessFlags.Write);
@@ -169,6 +191,9 @@
             hoversOverTerrain = false;
 
             var ca = CameraManager.Current;
+
+            var mousePosition = Mouse.Position;
+            bool mouseMoved = mousePosition != lastMousePosition;
 
             Vector3 rayDir = Mouse.ScreenToWorld(ca.Transform.Projection, ca.Transform.ViewInv, Application.MainWindow.WindowViewport);
             Vector3 rayPos = ca.Transform.GlobalPosition;
@@ -237,31 +262,14 @@
                         current = -1;
                     }
 
-                    if (layer.Data == null)
+                    var assetRef = layer.Material;
+
+                    if (ComboHelper.ComboForAssetRef("##Mat", ref assetRef, AssetType.Material))
                     {
-                        if (ImGui.Button("Create new"))
+                        layer.Material = assetRef;
+                        for (int i = 0; i < grid.Count; i++)
                         {
-                            layer.Data = new("New Material");
-                        }
-
-                        lock (manager.Materials)
-                        {
-                            ImGui.PushItemWidth(200);
-                            //ComboHelper.ComboForAssetRef("##Mat", ref, AssetType.Material);
-
-                            if (ImGui.BeginCombo("##Materials", string.Empty))
-                            {
-                                for (int i = 0; i < manager.Count; i++)
-                                {
-                                    var material = manager.Materials[i];
-                                    if (ImGui.MenuItem(material.Name))
-                                    {
-                                        current = i;
-                                    }
-                                }
-                                ImGui.EndCombo();
-                            }
-                            ImGui.PopItemWidth();
+                            grid[i].UpdateLayer(layer);
                         }
                     }
                 }
@@ -325,17 +333,6 @@
                     context.VSSetConstantBuffer(1, camera.Value);
                     context.PSSetConstantBuffer(0, brushBuffer);
                     context.PSSetConstantBuffer(1, camera.Value);
-                    if (editMask)
-                    {
-                        var tuple = cell.GetLayerMask(grid.Layers[maskChannel]);
-                        if (tuple != null)
-                        {
-                            context.PSSetShaderResource(0, tuple.Value.Item2.SRV);
-                            context.PSSetSampler(0, maskSampler);
-                            context.SetPipelineState(maskOverlay);
-                            context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
-                        }
-                    }
 
                     if (hoversOverTerrain)
                     {
@@ -349,65 +346,20 @@
                         context.SetPipelineState(brushOverlay);
                         context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
 
-                        if (Mouse.IsDown(MouseButton.Left))
+                        if (Mouse.IsDown(MouseButton.Left) && SceneWindow.IsHovered)
                         {
+                            bool first = !isDown;
                             isDown = true;
                             bool hasAffected = false;
-                            for (int j = 0; j < cell.Terrain.VerticesCount; j++)
-                            {
-                                var vertex = Vector3.Transform(cell.Terrain.Positions[j], cell.Transform);
-                                Vector3 p1 = new(vertex.X, 0, vertex.Z);
-                                Vector3 p2 = new(position.X, 0, position.Z);
-                                Vector3 uv = cell.Terrain.UVs[j];
-                                //
-                                float distance = (p2 - p1).Length();
-                                //
-                                float cosValue = MathF.Cos(MathF.PI / 2 * distance / size);
-                                float temp = strength * MathF.Max(0, cosValue);
-                                //
-                                if (distance <= size)
-                                {
-                                    if (editTerrain)
-                                    {
-                                        if (raise)
-                                        {
-                                            cell.Terrain.Positions[j].Y += temp * Time.Delta;
-                                        }
-                                        else
-                                        {
-                                            cell.Terrain.Positions[j].Y -= temp * Time.Delta;
-                                        }
-                                    }
 
-                                    hasAffected = true;
-                                }
+                            if (editTerrain)
+                            {
+                                hasAffected |= EditTerrain(cell);
                             }
 
                             if (editMask)
                             {
-                                var tuple = cell.GetLayerMask(grid.Layers[maskChannel]);
-                                tuple ??= cell.AddLayer(grid.Layers[maskChannel]);
-                                CBColorMask colorMask = new(tuple.Value.Item1);
-                                colorMask.Mask *= strength * Time.Delta;
-                                maskBuffer.Update(context, colorMask);
-
-                                context.PSSetShaderResource(0, null);
-                                context.PSSetConstantBuffer(0, maskBuffer);
-                                context.SetRenderTarget(tuple.Value.Item2.RTV, depthStencil.DSV);
-                                context.SetPipelineState(maskEdit);
-                                context.SetViewport(tuple.Value.Item2.Viewport);
-
-                                Matrix4x4.Invert(cell.Transform, out var inverse);
-                                var tlSize = tuple.Value.Item2.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
-                                var vpSize = new Vector2(size) * tlSize;
-                                var local = Vector3.Transform(position, inverse);
-                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.Viewport.Size - vpSize / 2f;
-
-                                context.SetViewport(new(pos, vpSize));
-                                context.DrawInstanced(4, 1, 0, 0);
-
-                                hasAffected = true;
-                                isEdited = true;
+                                hasAffected |= EditMask(context, grid, cell);
                             }
 
                             if (editTerrain && hasAffected)
@@ -454,6 +406,117 @@
             while (updateQueue.TryDequeue(out var cell))
             {
                 cell.Terrain.WriteVertexBuffer(context, cell.VertexBuffer);
+            }
+
+            if (ImGui.CollapsingHeader("Procedural"))
+            {
+                ImGui.InputInt("Seed", ref seed);
+                ImGui.InputFloat2("Noise Scale", ref scale);
+                ImGui.InputInt("Octaves", ref octaves);
+                ImGui.InputFloat("Persistence", ref persistence);
+                ImGui.InputFloat("Amplitude", ref amplitude);
+
+                ImGui.InputFloat("Max Height", ref maxHeight);
+                ImGui.InputFloat("Min Height", ref minHeight);
+                if (ImGui.Button("Generate"))
+                {
+                    PerlinNoise noise = new(seed);
+                    for (int i = 0; i < grid.Count; i++)
+                    {
+                        var cell = grid[i];
+                        Generate(noise, cell);
+
+                        cell.Terrain.Recalculate();
+                    }
+                    for (int i = 0; i < grid.Count; i++)
+                    {
+                        var cell = grid[i];
+                        cell.Top?.Terrain.AverageEdge(Edge.ZNeg, cell.Terrain);
+                        cell.Bottom?.Terrain.AverageEdge(Edge.ZPos, cell.Terrain);
+                        cell.Right?.Terrain.AverageEdge(Edge.XNeg, cell.Terrain);
+                        cell.Left?.Terrain.AverageEdge(Edge.XPos, cell.Terrain);
+                        cell.Terrain.WriteVertexBuffer(context, cell.VertexBuffer);
+                    }
+                }
+            }
+
+            lastMousePosition = mousePosition;
+        }
+
+        private bool EditTerrain(StaticTerrainCell cell)
+        {
+            bool hasAffected = false;
+            for (int j = 0; j < cell.Terrain.VerticesCount; j++)
+            {
+                var vertex = Vector3.Transform(cell.Terrain.Positions[j], cell.Transform);
+                Vector3 p1 = new(vertex.X, 0, vertex.Z);
+                Vector3 p2 = new(position.X, 0, position.Z);
+                Vector3 uv = cell.Terrain.UVs[j];
+                //
+                float distance = (p2 - p1).Length();
+                //
+                float cosValue = MathF.Cos(MathF.PI / 2 * distance / size);
+                float temp = strength * MathF.Max(0, cosValue);
+                //
+                if (distance <= size)
+                {
+                    if (editTerrain)
+                    {
+                        if (raise)
+                        {
+                            cell.Terrain.Positions[j].Y += temp * Time.Delta;
+                        }
+                        else
+                        {
+                            cell.Terrain.Positions[j].Y -= temp * Time.Delta;
+                        }
+                    }
+
+                    hasAffected = true;
+                }
+            }
+
+            return hasAffected;
+        }
+
+        private bool EditMask(IGraphicsContext context, StaticTerrainGrid grid, StaticTerrainCell cell)
+        {
+            bool hasAffected;
+            Texture2D? maskTex = cell.GetLayerMask(grid.Layers[maskChannel], out ChannelMask mask);
+            maskTex ??= cell.AddLayer(grid.Layers[maskChannel], out mask);
+
+            context.CopyResource(texture, maskTex);
+
+            context.PSSetShaderResource(0, texture.SRV);
+            context.PSSetSampler(0, maskSampler);
+            context.PSSetConstantBuffer(0, maskBuffer);
+            context.SetRenderTarget(maskTex.RTV, depthStencil.DSV);
+            context.SetViewport(maskTex.Viewport);
+
+            Matrix4x4.Invert(cell.Transform, out var inverse);
+            var tlSize = maskTex.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
+            var local = Vector3.Transform(position, inverse);
+            var pos = new Vector2(local.X, local.Z) / tlSize;
+
+            CBColorMask colorMask = new(mask, pos, size / (maskTex.Viewport.Size.X / cell.BoundingBox.Size.X));
+
+            colorMask.Mask *= strength * Time.Delta;
+            maskBuffer.Update(context, colorMask);
+
+            context.SetPipelineState(maskEdit);
+            context.DrawInstanced(4, 1, 0, 0);
+
+            hasAffected = true;
+            isEdited = true;
+            return hasAffected;
+        }
+
+        private void Generate(PerlinNoise noise, StaticTerrainCell cell)
+        {
+            for (int j = 0; j < cell.Terrain.VerticesCount; j++)
+            {
+                var vertex = Vector3.Transform(cell.Terrain.Positions[j], cell.Transform);
+                cell.Terrain.Positions[j].Y = MathUtil.Lerp(minHeight, maxHeight, noise.OctaveNoise(vertex.X * scale.X, vertex.Z * scale.Y, octaves, persistence, amplitude));
             }
         }
 

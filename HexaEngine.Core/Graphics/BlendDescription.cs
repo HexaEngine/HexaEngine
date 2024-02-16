@@ -124,6 +124,37 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlendDescription"/> struct with the specified source, destination, source alpha, destination alpha, blend operation, and alpha blend operation modes.
+        /// </summary>
+        /// <param name="sourceBlend">The source blend mode.</param>
+        /// <param name="destinationBlend">The destination blend mode.</param>
+        /// <param name="srcBlendAlpha">The source alpha blend mode.</param>
+        /// <param name="destBlendAlpha">The destination alpha blend mode.</param>
+        /// <param name="blendOperation">The blend operation mode.</param>
+        /// <param name="blendOperationAlpha">The alpha blend operation mode.</param>
+        /// <param name="logicOperation">The logic operation.</param>
+        public BlendDescription(Blend sourceBlend, Blend destinationBlend, Blend srcBlendAlpha, Blend destBlendAlpha, BlendOperation blendOperation, BlendOperation blendOperationAlpha, LogicOperation logicOperation)
+            : this()
+        {
+            AlphaToCoverageEnable = false;
+            IndependentBlendEnable = false;
+
+            for (int i = 0; i < SimultaneousRenderTargetCount; i++)
+            {
+                RenderTarget[i].SourceBlend = sourceBlend;
+                RenderTarget[i].DestinationBlend = destinationBlend;
+                RenderTarget[i].BlendOperation = blendOperation;
+                RenderTarget[i].SourceBlendAlpha = srcBlendAlpha;
+                RenderTarget[i].DestinationBlendAlpha = destBlendAlpha;
+                RenderTarget[i].BlendOperationAlpha = blendOperationAlpha;
+                RenderTarget[i].LogicOperation = logicOperation;
+                RenderTarget[i].IsLogicOpEnabled = true;
+                RenderTarget[i].RenderTargetWriteMask = ColorWriteEnable.All;
+                RenderTarget[i].IsBlendEnabled = IsBlendEnabled(ref RenderTarget[i]);
+            }
+        }
+
         private static bool IsBlendEnabled(ref RenderTargetBlendDescription renderTarget)
         {
             return renderTarget.BlendOperationAlpha != BlendOperation.Add

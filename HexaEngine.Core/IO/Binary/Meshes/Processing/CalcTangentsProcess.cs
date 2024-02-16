@@ -6,6 +6,7 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
+    using System.Runtime.Intrinsics.X86;
 
     /// <summary>
     /// Provides methods for calculating tangents and bitangents for a mesh.
@@ -28,13 +29,11 @@
             UnsafeList<bool> vertexDone = new(pMesh.VerticesCount);
 
             pMesh.Tangents = new Vector3[pMesh.VerticesCount];
-            pMesh.Bitangents = new Vector3[pMesh.VerticesCount];
 
             Vector3[] meshPos = pMesh.Positions;
             Vector3[] meshNorm = pMesh.Normals;
             Vector3[] meshTex = pMesh.UVs;
             Vector3[] meshTang = pMesh.Tangents;
-            Vector3[] meshBitang = pMesh.Bitangents;
 
             // calculate the tangent and bitangent for every face
             for (uint a = 0; a < pMesh.IndicesCount / 3; a++)
@@ -103,7 +102,6 @@
 
                     // and write it into the mesh.
                     meshTang[p] = localTangent;
-                    meshBitang[p] = localBitangent;
                 }
             }
 
@@ -127,7 +125,6 @@
                 Vector3 origPos = pMesh.Positions[a];
                 Vector3 origNorm = pMesh.Normals[a];
                 Vector3 origTang = pMesh.Tangents[a];
-                Vector3 origBitang = pMesh.Bitangents[a];
                 closeVertices.Clear();
 
                 // find all vertices close to that position
@@ -146,8 +143,6 @@
                         continue;
                     if (Vector3.Dot(meshTang[(int)idx], origTang) < fLimit)
                         continue;
-                    if (Vector3.Dot(meshBitang[(int)idx], origBitang) < fLimit)
-                        continue;
 
                     // it's similar enough -> add it to the smoothing group
                     closeVertices.Add(idx);
@@ -161,7 +156,6 @@
 
                 {
                     smoothTangent += meshTang[closeVertices[(int)b]];
-                    smoothBitangent += meshBitang[closeVertices[(int)b]];
                 }
 
                 smoothTangent = Vector3.Normalize(smoothTangent);
@@ -171,7 +165,6 @@
                 for (uint b = 0; b < closeVertices.Count; ++b)
                 {
                     meshTang[closeVertices[(int)b]] = smoothTangent;
-                    meshBitang[closeVertices[(int)b]] = smoothBitangent;
                 }
             }
 
@@ -190,9 +183,7 @@
             var nFace = pMesh.IndicesCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
-            Vector3* vertBitangents = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertTangents, 0, (int)pMesh.VerticesCount);
-            Memset(vertBitangents, 0, (int)pMesh.VerticesCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -220,29 +211,22 @@
                     ty = 0.0f;
                 }
 
-                Vector3 tangent, bitangent;
+                Vector3 tangent;
                 tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
                 tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
                 tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
-                bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
-                bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
-                bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
+
                 vertTangents[i0] += tangent;
                 vertTangents[i1] += tangent;
                 vertTangents[i2] += tangent;
-                vertBitangents[i0] += bitangent;
-                vertBitangents[i1] += bitangent;
-                vertBitangents[i2] += bitangent;
             }
 
             for (int i = 0; i < pMesh.VerticesCount; ++i)
             {
                 pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
-                pMesh.Bitangents[i] = Vector3.Normalize(vertBitangents[i]);
             }
 
             Free(vertTangents);
-            Free(vertBitangents);
 
             return true;
         }
@@ -257,9 +241,7 @@
             var nFace = pMesh.IndicesCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
-            Vector3* vertBitangents = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertTangents, 0, (int)pMesh.VerticesCount);
-            Memset(vertBitangents, 0, (int)pMesh.VerticesCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -287,36 +269,28 @@
                     ty = 0.0f;
                 }
 
-                Vector3 tangent, bitangent;
+                Vector3 tangent;
                 tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
                 tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
                 tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
-                bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
-                bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
-                bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
 
                 vertTangents[i0] += tangent;
                 vertTangents[i1] += tangent;
                 vertTangents[i2] += tangent;
-                vertBitangents[i0] += bitangent;
-                vertBitangents[i1] += bitangent;
-                vertBitangents[i2] += bitangent;
             }
 
             for (int i = 0; i < pMesh.VerticesCount; ++i)
             {
                 pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
-                pMesh.Bitangents[i] = Vector3.Normalize(vertBitangents[i]);
             }
 
             Free(vertTangents);
-            Free(vertBitangents);
 
             return true;
         }
 
         /// <summary>
-        /// Check if the given float value is a special floating-point value (NaN or Infinity). 
+        /// Check if the given float value is a special floating-point value (NaN or Infinity).
         /// My mom says I'm special!
         /// </summary>
         /// <param name="x">The float value to check.</param>
@@ -324,6 +298,67 @@
         private static bool IsSpecialFloat(float x)
         {
             return float.IsNaN(x) || float.IsInfinity(x);
+        }
+
+        /// <summary>
+        /// Process the mesh to calculate tangents and bitangents.
+        /// </summary>
+        /// <param name="pMesh">The terrain cell data to process.</param>
+        /// <returns>True if the process is successful, otherwise false.</returns>
+        public static unsafe bool ProcessMesh2Parallel(TerrainCellData pMesh)
+        {
+            var nFace = pMesh.IndicesCount / 3;
+
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
+            Memset(vertTangents, 0, (int)pMesh.VerticesCount);
+
+            Parallel.For(0, nFace, i =>
+            {
+                var i0 = pMesh.Indices[i * 3];
+                var i1 = pMesh.Indices[i * 3 + 1];
+                var i2 = pMesh.Indices[i * 3 + 2];
+
+                var vtxP1 = pMesh.Positions[i0];
+                var vtxP2 = pMesh.Positions[i1];
+                var vtxP3 = pMesh.Positions[i2];
+
+                Vector3 v = vtxP2 - vtxP1;
+                Vector3 w = vtxP3 - vtxP1;
+
+                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
+                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
+
+                float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
+
+                if (sx * ty == sy * tx)
+                {
+                    sx = 0.0f;
+                    sy = 1.0f;
+                    tx = 1.0f;
+                    ty = 0.0f;
+                }
+
+                Vector3 tangent;
+                tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
+                tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
+                tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
+
+                lock (pMesh)
+                {
+                    vertTangents[i0] += tangent;
+                    vertTangents[i1] += tangent;
+                    vertTangents[i2] += tangent;
+                }
+            });
+
+            Parallel.For(0, pMesh.VerticesCount, i =>
+            {
+                pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
+            });
+
+            Free(vertTangents);
+
+            return true;
         }
     }
 }

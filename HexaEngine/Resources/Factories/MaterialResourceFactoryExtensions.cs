@@ -1,18 +1,112 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.IO.Binary.Meshes;
 
     public static class MaterialResourceFactoryExtensions
     {
-        public static Material LoadMaterial(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
+        public static Material LoadMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
         {
-            return manager.CreateInstance<Material, (MeshData, MaterialData, bool)>(desc.Guid, (mesh, desc, debone)) ?? throw new NotSupportedException();
+            return manager.CreateInstance<Material, (MaterialShaderDesc, MaterialData)>(desc.Guid, (shaderDesc, desc)) ?? throw new NotSupportedException();
         }
 
-        public static async Task<Material> LoadMaterialAsync(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
+        public static async Task<Material> LoadMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
         {
-            return await manager.CreateInstanceAsync<Material, (MeshData, MaterialData, bool)>(desc.Guid, (mesh, desc, debone)) ?? throw new NotSupportedException();
+            return await manager.CreateInstanceAsync<Material, (MaterialShaderDesc, MaterialData)>(desc.Guid, (shaderDesc, desc)) ?? throw new NotSupportedException();
+        }
+
+        public static void UpdateMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData? desc)
+        {
+            if (desc == null)
+            {
+                return;
+            }
+
+            if (!manager.TryGetInstance(desc.Guid, out Material? material))
+            {
+                return;
+            }
+
+            material.Update(desc);
+            material.BeginUpdate();
+            manager.UpdateMaterialShader(material.Shader, shaderDesc);
+
+            for (int i = 0; i < material.TextureList.Count; i++)
+            {
+                material.TextureList[i]?.Dispose();
+            }
+            material.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Count; i++)
+            {
+                material.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
+            }
+
+            material.EndUpdate();
+        }
+
+        public static void ReloadMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, Material material)
+        {
+            var desc = material.Data;
+            material.Update(desc);
+            material.BeginUpdate();
+            manager.UpdateMaterialShader(material.Shader, shaderDesc);
+
+            for (int i = 0; i < material.TextureList.Count; i++)
+            {
+                material.TextureList[i]?.Dispose();
+            }
+            material.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Count; i++)
+            {
+                material.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
+            }
+
+            material.EndUpdate();
+        }
+
+        public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
+        {
+            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
+            {
+                return;
+            }
+
+            modelMaterial.Update(desc);
+            modelMaterial.BeginUpdate();
+
+            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, shaderDesc);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                modelMaterial.TextureList[i]?.Dispose();
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Count; i++)
+            {
+                modelMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+        }
+
+        public static async Task ReloadMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, Material material)
+        {
+            var desc = material.Data;
+            material.Update(desc);
+            material.BeginUpdate();
+
+            material.Shader = await manager.UpdateMaterialShaderAsync(material.Shader, shaderDesc);
+
+            for (int i = 0; i < material.TextureList.Count; i++)
+            {
+                material.TextureList[i]?.Dispose();
+            }
+            material.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Count; i++)
+            {
+                material.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
+            }
+
+            material.EndUpdate();
         }
 
         public static void UpdateMaterial(this ResourceManager manager, MaterialData? desc)
@@ -22,92 +116,51 @@
                 return;
             }
 
-            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
+            if (!manager.TryGetInstance(desc.Guid, out Material? material))
             {
                 return;
             }
 
-            modelMaterial.Update(desc);
-            modelMaterial.BeginUpdate();
-            manager.UpdateMaterialShader(modelMaterial.Shader, desc);
+            material.Update(desc);
+            material.BeginUpdate();
+            manager.UpdateMaterialShader(material.Shader, desc);
 
-            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            for (int i = 0; i < material.TextureList.Count; i++)
             {
-                modelMaterial.TextureList[i]?.Dispose();
+                material.TextureList[i]?.Dispose();
             }
-            modelMaterial.TextureList.Clear();
+            material.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Count; i++)
             {
-                modelMaterial.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
+                material.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
             }
 
-            modelMaterial.EndUpdate();
-        }
-
-        public static void ReloadMaterial(this ResourceManager manager, Material modelMaterial)
-        {
-            var desc = modelMaterial.Data;
-            modelMaterial.Update(desc);
-            modelMaterial.BeginUpdate();
-            manager.UpdateMaterialShader(modelMaterial.Shader, desc);
-
-            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
-            {
-                modelMaterial.TextureList[i]?.Dispose();
-            }
-            modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Count; i++)
-            {
-                modelMaterial.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
-            }
-
-            modelMaterial.EndUpdate();
+            material.EndUpdate();
         }
 
         public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialData desc)
         {
-            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
+            if (!manager.TryGetInstance(desc.Guid, out Material? material))
             {
                 return;
             }
 
-            modelMaterial.Update(desc);
-            modelMaterial.BeginUpdate();
+            material.Update(desc);
+            material.BeginUpdate();
 
-            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
+            material.Shader = await manager.UpdateMaterialShaderAsync(material.Shader, desc);
 
-            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            for (int i = 0; i < material.TextureList.Count; i++)
             {
-                modelMaterial.TextureList[i]?.Dispose();
+                material.TextureList[i]?.Dispose();
             }
-            modelMaterial.TextureList.Clear();
+            material.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Count; i++)
             {
-                modelMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
+                material.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
             }
 
-            modelMaterial.EndUpdate();
-        }
-
-        public static async Task ReloadMaterialAsync(this ResourceManager manager, Material modelMaterial)
-        {
-            var desc = modelMaterial.Data;
-            modelMaterial.Update(desc);
-            modelMaterial.BeginUpdate();
-
-            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
-
-            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
-            {
-                modelMaterial.TextureList[i]?.Dispose();
-            }
-            modelMaterial.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Count; i++)
-            {
-                modelMaterial.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
-            }
-
-            modelMaterial.EndUpdate();
+            material.EndUpdate();
         }
     }
 }

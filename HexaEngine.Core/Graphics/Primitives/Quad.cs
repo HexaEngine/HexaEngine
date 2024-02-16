@@ -35,10 +35,10 @@
         {
             vertexBuffer = new(device,
             [
-                new(new(-1 * size, 1 * size, 0), new Vector2(0, 0), new(0, 0, -1), new(1, 0, 0), new(0, 1, 0)),
-                new(new(-1 * size, -1 * size, 0), new Vector2(0, 1), new(0, 0, -1), new(1, 0, 0), new(0, 1, 0)),
-                new(new(1 * size, 1 * size, 0), new Vector2(1, 0), new(0, 0, -1), new(1, 0, 0), new(0, 1, 0)),
-                new(new(1 * size, -1 * size, 0), new Vector2(1, 1), new(0, 0, -1), new(1, 0, 0), new(0, 1, 0))
+                new(new(-1 * size, 1 * size, 0), new Vector2(0, 0), new(0, 0, -1), new(1, 0, 0)),
+                new(new(-1 * size, -1 * size, 0), new Vector2(0, 1), new(0, 0, -1), new(1, 0, 0)),
+                new(new(1 * size, 1 * size, 0), new Vector2(1, 0), new(0, 0, -1), new(1, 0, 0)),
+                new(new(1 * size, -1 * size, 0), new Vector2(1, 1), new(0, 0, -1), new(1, 0, 0))
             ], CpuAccessFlags.None);
 
             indexBuffer = new(device,

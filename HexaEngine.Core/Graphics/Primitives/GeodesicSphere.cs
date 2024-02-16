@@ -181,8 +181,6 @@
                     tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, normal));
                 }
 
-                Vector3 bitangent = Vector3.Cross(normal, tangent);
-
                 // calculate texture coordinates for this vertex
                 float longitude = MathF.Atan2(normal.X, -normal.Z);
                 float latitude = MathF.Acos(normal.Y);
@@ -191,7 +189,7 @@
                 float v = latitude / MathUtil.PI;
 
                 Vector3 uv = new(1 - u, v, 0);
-                vertices.PushBack(new(pos, uv, normal, tangent, bitangent));
+                vertices.PushBack(new(pos, uv, normal, tangent));
             }
 
             vertexPositions.Release();

@@ -122,7 +122,6 @@ GeometryData main(PixelInput input)
     float4 baseColor = BaseColor;
     float3 normal = normalize(input.normal);
     float3 tangent = normalize(input.tangent);
-    float3 bitangent = normalize(input.bitangent);
 
     float3 emissive = Emissive;
     float opacity = 1;
@@ -140,7 +139,7 @@ GeometryData main(PixelInput input)
         discard;
 
 #if HasNormalTex
-    normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent, bitangent);
+    normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent);
 #endif
 
 #if HasRoughnessTex

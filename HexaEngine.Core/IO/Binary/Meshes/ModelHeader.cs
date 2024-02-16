@@ -18,12 +18,12 @@
         /// <summary>
         /// Current version of the model file format.
         /// </summary>
-        public static readonly Version Version = 9;
+        public static readonly Version Version = 10;
 
         /// <summary>
         /// Minimum supported version of the model file format.
         /// </summary>
-        public static readonly Version MinVersion = 9;
+        public static readonly Version MinVersion = 10;
 
         /// <summary>
         /// Endianness of the data in the file.

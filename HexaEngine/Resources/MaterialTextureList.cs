@@ -10,7 +10,8 @@
         private readonly List<ResourceInstance<MaterialTexture>?> textures = [];
         private uint capacity;
         private uint count;
-        private uint startSlot;
+        private uint startTextureSlot;
+        private uint startSamplerSlot;
 
         public MaterialTextureList()
         {
@@ -27,7 +28,9 @@
 
         public int Count => textures.Count;
 
-        public uint StartSlot => startSlot;
+        public uint StartTextureSlot { get => startTextureSlot; set => startTextureSlot = value; }
+
+        public uint StartSamplerSlot { get => startSamplerSlot; set => startSamplerSlot = value; }
 
         public uint SlotCount => count;
 
@@ -79,7 +82,6 @@
 
             textures.Sort(TextureIndexSorter.Instance);
 
-            startSlot = 0;
             count = 0;
 
             for (int i = 0; i < textures.Count; i++)
@@ -100,8 +102,15 @@
 
         public void Bind(IGraphicsContext context)
         {
-            context.PSSetShaderResources(0, count, shaderResourceViews);
-            context.PSSetSamplers(0, count, samplers);
+            context.PSSetShaderResources(startTextureSlot, count, shaderResourceViews);
+            context.PSSetSamplers(startSamplerSlot, count, samplers);
+        }
+
+        public void Unbind(IGraphicsContext context)
+        {
+            nint* empty = stackalloc nint[(int)count];
+            context.PSSetShaderResources(startTextureSlot, count, (void**)empty);
+            context.PSSetSamplers(startSamplerSlot, count, (void**)empty);
         }
 
         public bool Contains(ResourceInstance<MaterialTexture>? texture)
@@ -203,7 +212,6 @@
 
         public void Clear()
         {
-            startSlot = 0;
             count = 0;
             textures.Clear();
         }

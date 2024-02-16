@@ -92,11 +92,6 @@
         public Vector3[] Tangents;
 
         /// <summary>
-        /// The array of 3D bitangents associated with each vertex.
-        /// </summary>
-        public Vector3[] Bitangents;
-
-        /// <summary>
         /// The array of bone data representing the skeleton structure of the mesh.
         /// </summary>
         public BoneData[]? Bones;
@@ -129,9 +124,8 @@
         /// <param name="uvs">The array of 3D texture coordinates (UVs) of each vertex.</param>
         /// <param name="normals">The array of 3D normals associated with each vertex.</param>
         /// <param name="tangents">The array of 3D tangents associated with each vertex.</param>
-        /// <param name="bitangents">The array of 3D bitangents associated with each vertex.</param>
         /// <param name="bones">The array of bone data representing the skeleton structure of the mesh.</param>
-        public MeshData(string name, Guid guid, Guid materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
+        public MeshData(string name, Guid guid, Guid materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, BoneData[]? bones)
         {
             Name = name;
             Guid = guid;
@@ -173,12 +167,6 @@
             if (tangents != null)
             {
                 Flags |= VertexFlags.Tangents;
-            }
-
-            Bitangents = bitangents ?? [];
-            if (bitangents != null)
-            {
-                Flags |= VertexFlags.Bitangents;
             }
 
             Bones = bones;
@@ -253,14 +241,6 @@
                     data.Tangents[i] = stream.ReadVector3(endianness);
                 }
             }
-            if ((data.Flags & VertexFlags.Bitangents) != 0)
-            {
-                data.Bitangents = new Vector3[data.VerticesCount];
-                for (ulong i = 0; i < data.VerticesCount; i++)
-                {
-                    data.Bitangents[i] = stream.ReadVector3(endianness);
-                }
-            }
             if ((data.Flags & VertexFlags.Skinned) != 0)
             {
                 data.Bones = new BoneData[data.BoneCount];
@@ -332,13 +312,6 @@
                 for (ulong i = 0; i < VerticesCount; i++)
                 {
                     stream.WriteVector3(Tangents[i], endianness);
-                }
-            }
-            if ((Flags & VertexFlags.Bitangents) != 0)
-            {
-                for (ulong i = 0; i < VerticesCount; i++)
-                {
-                    stream.WriteVector3(Bitangents[i], endianness);
                 }
             }
 #nullable disable
@@ -416,11 +389,6 @@
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & VertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
-                }
-
                 vertices[i] = vertex;
             }
 
@@ -464,11 +432,6 @@
                 if ((Flags & VertexFlags.Tangents) != 0)
                 {
                     vertex.Tangent = Tangents[i];
-                }
-
-                if ((Flags & VertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
                 }
 
                 if ((Flags & VertexFlags.Skinned) != 0)
@@ -516,11 +479,6 @@
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & VertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
-                }
-
                 vb[i] = vertex;
             }
 
@@ -557,11 +515,6 @@
                 if ((Flags & VertexFlags.Tangents) != 0)
                 {
                     vertex.Tangent = Tangents[i];
-                }
-
-                if ((Flags & VertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
                 }
 
                 if ((Flags & VertexFlags.Skinned) != 0)
@@ -751,7 +704,6 @@
             new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
             new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
             new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
-            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
         };
 
         /// <summary>
@@ -763,9 +715,8 @@
             new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
             new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
             new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
-            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
-            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32UInt, 60, 0),
-            new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 76, 0),
+            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32UInt, 48, 0),
+            new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 64, 0),
         };
 
         /// <summary>

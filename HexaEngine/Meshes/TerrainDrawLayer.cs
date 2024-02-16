@@ -1,9 +1,14 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Components.Renderer;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Lights;
+    using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
+    using System.Numerics;
+    using MaterialShader = Resources.MaterialShader;
 
     public enum ChannelMask
     {
@@ -17,15 +22,13 @@
 
     public class TerrainMaterialBundle
     {
-        public TerrainShader Shader;
+        public Guid Id = Guid.NewGuid();
+        public MaterialShader Shader;
+        public MaterialTextureList TextureList = [];
 
-        public TerrainMaterialBundle(IGraphicsDevice device)
-        {
-            Shader = new(device, Array.Empty<ShaderMacro>(), false);
-            Shader.Initialize();
-        }
+        private readonly StaticTerrainLayer?[] terrainLayers;
 
-        public void Update(IGraphicsDevice device, StaticTerrainLayer?[] terrainLayers)
+        public TerrainMaterialBundle(StaticTerrainLayer?[] terrainLayers)
         {
             List<ShaderMacro> layerMacros = new();
             for (int i = 0; i < terrainLayers.Length; i++)
@@ -33,43 +36,287 @@
                 var layer = terrainLayers[i];
                 if (layer == null || layer.Data == null) continue;
 
-                var macros = layer.Data.GetShaderMacros();
+                var material = layer.Data;
+
+                var macros = material.GetShaderMacros();
                 for (int j = 0; j < macros.Length; j++)
                 {
                     macros[j].Name += i;
                 }
 
                 layerMacros.AddRange(macros);
+
+                for (int j = 0; j < material.Textures.Count; j++)
+                {
+                    var textureDesc = material.Textures[j];
+                    var texture = ResourceManager.Shared.LoadTexture(textureDesc);
+                    TextureList.Add(texture);
+                }
             }
 
+            TextureList.StartTextureSlot = 12;
+            TextureList.StartSamplerSlot = 4;
+            TextureList.Update();
+
+            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, layerMacros.ToArray(), false);
+
             Shader?.Dispose();
-            Shader = new(device, layerMacros.ToArray(), false);
-            Shader.Initialize();
+            Shader = ResourceManager.Shared.LoadMaterialShader(shaderDesc) ?? throw new NotSupportedException();
+            this.terrainLayers = terrainLayers;
         }
 
-        public bool Bind(IGraphicsContext context)
+        public void Update()
         {
+            for (int i = 0; i < TextureList.Count; i++)
+            {
+                TextureList[i]?.Dispose();
+            }
+            TextureList.Clear();
+
+            List<ShaderMacro> layerMacros = new();
+            for (int i = 0; i < terrainLayers.Length; i++)
+            {
+                var layer = terrainLayers[i];
+                if (layer == null || layer.Data == null) continue;
+
+                var material = layer.Data;
+                var macros = material.GetShaderMacros();
+
+                for (int j = 0; j < macros.Length; j++)
+                {
+                    macros[j].Name += i;
+                }
+
+                layerMacros.AddRange(macros);
+
+                for (int j = 0; j < material.Textures.Count; j++)
+                {
+                    var textureDesc = material.Textures[j];
+                    var texture = ResourceManager.Shared.LoadTexture(textureDesc);
+                    TextureList.Add(texture);
+                }
+            }
+
+            TextureList.StartTextureSlot = 12;
+            TextureList.StartSamplerSlot = 4;
+            TextureList.Update();
+
+            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, layerMacros.ToArray(), false);
+            ResourceManager.Shared.UpdateMaterialShader(Shader, shaderDesc);
+        }
+
+        public void Setup()
+        {
+        }
+
+        private static MaterialShaderPassDesc[] GetMaterialShaderPasses(bool alphaBlend)
+        {
+            List<MaterialShaderPassDesc> passes = [];
+
+            //flags = 0;
+            var elements = TerrainCellData.InputElements;
+
+            ShaderMacro[] macros = [new("CLUSTERED_FORWARD", "1")];
+
+            bool twoSided = false;
+
+            bool blendFunc = alphaBlend;
+
+            RasterizerDescription rasterizer = RasterizerDescription.CullBack;
+            if (twoSided)
+            {
+                rasterizer = RasterizerDescription.CullNone;
+            }
+
+            BlendDescription blend = BlendDescription.Opaque;
+            if (blendFunc)
+            {
+                blend = BlendDescription.AlphaBlend;
+            }
+
+            GraphicsPipelineDesc pipelineDescForward = new()
+            {
+                VertexShader = $"forward/terrain/vs.hlsl",
+                PixelShader = $"forward/terrain/ps.hlsl",
+                Macros = macros,
+            };
+
+            GraphicsPipelineStateDesc pipelineStateDescForward = new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = rasterizer,
+                Blend = blend,
+                Topology = PrimitiveTopology.TriangleList,
+                BlendFactor = Vector4.One,
+            };
+
+            GraphicsPipelineDesc pipelineDescDeferred = new()
+            {
+                VertexShader = $"deferred/terrain/vs.hlsl",
+                PixelShader = $"deferred/terrain/ps.hlsl",
+                Macros = macros,
+            };
+
+            GraphicsPipelineStateDesc pipelineStateDescDeferred = new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = rasterizer,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+            };
+
+            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward));
+            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred));
+
+            pipelineDescDeferred.VertexShader = "forward/terrain/depthVS.hlsl";
+            pipelineDescDeferred.PixelShader = "forward/terrain/depthPS.hlsl";
+
+            passes.Add(new("DepthOnly", pipelineDescDeferred, pipelineStateDescDeferred));
+
+            GraphicsPipelineDesc csmPipelineDesc = new()
+            {
+                VertexShader = "forward/terrain/csm/vs.hlsl",
+                GeometryShader = "forward/terrain/csm/gs.hlsl",
+                Macros = macros,
+            };
+
+            GraphicsPipelineStateDesc csmPipelineStateDesc = new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullNone,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+            };
+
+            GraphicsPipelineDesc osmPipelineDesc = new()
+            {
+                VertexShader = "forward/terrain/osm/vs.hlsl",
+                PixelShader = "forward/terrain/osm/ps.hlsl",
+                Macros = macros,
+            };
+
+            GraphicsPipelineStateDesc osmPipelineStateDesc = new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullNone,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+            };
+
+            GraphicsPipelineDesc psmPipelineDesc = new()
+            {
+                VertexShader = "forward/terrain/psm/vs.hlsl",
+                Macros = macros,
+            };
+
+            GraphicsPipelineStateDesc psmPipelineStateDesc = new()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullFront,
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+                InputElements = elements,
+            };
+
+            passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc));
+            passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc));
+            passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc));
+
+            //flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.DepthTest;
+
+            return [.. passes];
+        }
+
+        private static MaterialShaderDesc GetMaterialShaderDesc(Guid id, ShaderMacro[] macros, bool alphaBlend)
+        {
+            var passes = GetMaterialShaderPasses(alphaBlend);
+            return new(id, [.. macros], TerrainCellData.InputElements, passes);
+        }
+
+        public bool BeginDraw(IGraphicsContext context, string passName)
+        {
+            var pass = Shader.Find(passName);
+            if (pass == null)
+            {
+                return false;
+            }
+
+            if (!pass.BeginDraw(context))
+            {
+                return false;
+            }
+
+            TextureList.Bind(context);
+
             return true;
         }
 
-        public void Unbind(IGraphicsContext context)
+        public void EndDraw(IGraphicsContext context)
         {
+            TextureList.Unbind(context);
+            context.SetPipelineState(null);
+        }
+
+        public void DrawIndexedInstanced(IGraphicsContext context, string pass, uint indexCount, uint instanceCount, uint indexOffset = 0, int vertexOffset = 0, uint instanceOffset = 0)
+        {
+            if (!BeginDraw(context, pass))
+            {
+                return;
+            }
+            context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
+            EndDraw(context);
+        }
+
+        public void DrawInstanced(IGraphicsContext context, string pass, uint vertexCount, uint instanceCount, uint vertexOffset = 0, uint instanceOffset = 0)
+        {
+            if (!BeginDraw(context, pass))
+            {
+                return;
+            }
+            context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
+            EndDraw(context);
         }
     }
 
     public class TerrainDrawLayer
     {
-        public UavTexture2D Mask;
+        public Texture2D Mask;
         public TerrainMaterialBundle Material;
         public ChannelMask UsedChannels;
         public StaticTerrainLayer?[] TerrainLayers = new StaticTerrainLayer[4];
         public ISamplerState MaskSampler;
 
-        public TerrainDrawLayer(IGraphicsDevice device)
+        public unsafe TerrainDrawLayer(IGraphicsDevice device, bool isDefault = false)
         {
-            Material = new(device);
-            Mask = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, true, true);
+            if (isDefault)
+            {
+                var data = AllocT<ulong>(1024 * 1024);
+                for (int i = 0; i < 1024 * 1024; i++)
+                {
+                    data[i] = EncodePixel(1, 0, 0, 0);
+                }
+                Texture2DDescription desc = new(Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, GpuAccessFlags.All);
+                Mask = new(device, desc, new SubresourceData(data, sizeof(ulong) * 1024));
+                Free(data);
+            }
+            else
+            {
+                Mask = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.All);
+            }
+
+            Material = new(TerrainLayers);
+
             MaskSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+        }
+
+        public static ulong EncodePixel(float r, float g, float b, float a)
+        {
+            ulong encodedPixel = 0;
+            encodedPixel |= (ulong)(r * 65535.0f);
+            encodedPixel |= (ulong)(g * 65535.0f) << 16;
+            encodedPixel |= (ulong)(b * 65535.0f) << 32;
+            encodedPixel |= (ulong)(a * 65535.0f) << 48;
+            return encodedPixel;
         }
 
         public ChannelMask GetChannelMask(StaticTerrainLayer layer)
@@ -77,7 +324,7 @@
             return GetChannelMask(Array.IndexOf(TerrainLayers, layer));
         }
 
-        public UavTexture2D GetMask() => Mask;
+        public Texture2D GetMask() => Mask;
 
         public static ChannelMask GetChannelMask(int layer)
         {
@@ -142,138 +389,14 @@
 
         public void UpdateLayerMaterials(IGraphicsDevice device)
         {
-            Material.Update(device, TerrainLayers);
-        }
-
-        public bool BeginDrawForward(IGraphicsContext context)
-        {
-            if (!Material.Shader.BeginDrawForward(context))
-            {
-                return false;
-            }
-            if (!Material.Bind(context))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(19, Mask.SRV);
-
-            return true;
-        }
-
-        public bool BeginDrawForward(IGraphicsContext context, IBuffer camera)
-        {
-            if (!Material.Shader.BeginDrawForward(context, camera))
-            {
-                return false;
-            }
-            if (!Material.Bind(context))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(19, Mask.SRV);
-
-            return true;
-        }
-
-        public void EndDrawForward(IGraphicsContext context)
-        {
-            Material.Shader.EndDrawForward(context);
-            Material.Unbind(context);
-            context.PSSetShaderResource(19, null);
-        }
-
-        public bool BeginDrawDeferred(IGraphicsContext context)
-        {
-            if (!Material.Shader.BeginDrawDeferred(context))
-            {
-                return false;
-            }
-            if (!Material.Bind(context))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(19, Mask.SRV);
-
-            return true;
-        }
-
-        public bool BeginDrawDeferred(IGraphicsContext context, IBuffer camera)
-        {
-            if (!Material.Shader.BeginDrawDeferred(context, camera))
-            {
-                return false;
-            }
-            if (!Material.Bind(context))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(19, Mask.SRV);
-
-            return true;
-        }
-
-        public void EndDrawDeferred(IGraphicsContext context)
-        {
-            Material.Shader.EndDrawDeferred(context);
-            Material.Unbind(context);
-            context.PSSetShaderResource(19, null);
-        }
-
-        public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
-        {
-            if (!Material.Shader.BeginDrawDepth(context, camera))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(0, Mask.SRV);
-            context.PSSetSampler(0, MaskSampler);
-
-            return true;
-        }
-
-        public bool BeginDrawDepth(IGraphicsContext context)
-        {
-            if (!Material.Shader.BeginDrawDepth(context))
-            {
-                return false;
-            }
-
-            context.PSSetShaderResource(0, Mask.SRV);
-            context.PSSetSampler(0, MaskSampler);
-
-            return true;
-        }
-
-        public void EndDrawDepth(IGraphicsContext context)
-        {
-            Material.Shader.EndDrawDepth(context);
-            context.PSSetShaderResource(0, null);
-            context.PSSetSampler(0, null);
-        }
-
-        public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
-        {
-            if (!Material.Shader.BeginDrawShadow(context, light, type))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public void EndDrawShadow(IGraphicsContext context)
-        {
-            Material.Shader.EndDrawShadow(context);
+            Material.Update();
         }
     }
 
     public class StaticTerrainLayer
     {
+        private AssetRef material;
+
         public StaticTerrainLayer(string name)
         {
             Name = name;
@@ -282,5 +405,15 @@
         public string Name { get; set; }
 
         public MaterialData? Data { get; set; }
+
+        public AssetRef Material
+        {
+            get => material;
+            set
+            {
+                Data = BaseRendererComponent.GetMaterial(value);
+                material = value;
+            }
+        }
     }
 }

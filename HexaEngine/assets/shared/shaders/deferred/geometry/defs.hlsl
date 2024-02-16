@@ -31,7 +31,6 @@ struct VertexInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 
 #if VtxSkinned
     int4 boneIds : BLENDINDICES;
@@ -45,7 +44,6 @@ struct HullInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 #if VtxSkinned
     int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -59,7 +57,6 @@ struct DomainInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 #if VtxSkinned
     int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -75,7 +72,6 @@ struct PixelInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 };
 
 struct PatchTess

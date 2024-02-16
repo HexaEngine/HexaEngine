@@ -137,8 +137,6 @@
                     tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, normal));
                 }
 
-                Vector3 bitangent = Vector3.Cross(normal, tangent);
-
                 uint vbase = vcounter;
                 indices[icounter] = vbase;
                 indices[icounter + 1] = vbase + 1;
@@ -153,11 +151,11 @@
                 indices[icounter + 8] = vbase + 4;
                 icounter += 9;
 
-                vertices[vcounter + 0] = new(verts[v0] * size, textureCoordinates[textureIndex[t][0]], normal, tangent, bitangent);
-                vertices[vcounter + 1] = new(verts[v1] * size, textureCoordinates[textureIndex[t][0]], normal, tangent, bitangent);
-                vertices[vcounter + 2] = new(verts[v2] * size, textureCoordinates[textureIndex[t][0]], normal, tangent, bitangent);
-                vertices[vcounter + 3] = new(verts[v3] * size, textureCoordinates[textureIndex[t][0]], normal, tangent, bitangent);
-                vertices[vcounter + 4] = new(verts[v4] * size, textureCoordinates[textureIndex[t][0]], normal, tangent, bitangent);
+                vertices[vcounter + 0] = new(verts[v0] * size, textureCoordinates[textureIndex[t][0]], normal, tangent);
+                vertices[vcounter + 1] = new(verts[v1] * size, textureCoordinates[textureIndex[t][0]], normal, tangent);
+                vertices[vcounter + 2] = new(verts[v2] * size, textureCoordinates[textureIndex[t][0]], normal, tangent);
+                vertices[vcounter + 3] = new(verts[v3] * size, textureCoordinates[textureIndex[t][0]], normal, tangent);
+                vertices[vcounter + 4] = new(verts[v4] * size, textureCoordinates[textureIndex[t][0]], normal, tangent);
                 vcounter += 5;
             }
 

@@ -29,17 +29,19 @@
             {
                 VertexBuffer = data.CreateSkinnedVertexBuffer(device);
                 Stride = (uint)sizeof(SkinnedMeshVertex);
+                InputElements = MeshData.SkinnedInputElements;
             }
             else
             {
                 VertexBuffer = data.CreateVertexBuffer(device);
                 Stride = (uint)sizeof(MeshVertex);
+                InputElements = MeshData.InputElements;
             }
             IndexCount = data.IndicesCount;
             VertexCount = data.VerticesCount;
         }
 
-        public InputElementDescription[] InputElements => MeshData.InputElements;
+        public InputElementDescription[] InputElements { get; }
 
         public void BeginDraw(IGraphicsContext context)
         {

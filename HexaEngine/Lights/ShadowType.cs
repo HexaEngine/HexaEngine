@@ -3,7 +3,7 @@
     public enum ShadowType
     {
         Perspective,
-        Cascaded,
-        Omni,
+        Directional,
+        Omnidirectional,
     }
 }

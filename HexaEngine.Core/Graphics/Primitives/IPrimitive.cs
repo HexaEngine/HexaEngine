@@ -37,7 +37,5 @@
         /// </summary>
         /// <param name="context">The graphics context.</param>
         void EndDraw(IGraphicsContext context);
-
-        BoundingBox BoundingBox { get; }
     }
 }

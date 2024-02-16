@@ -1,24 +1,23 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.IO.Binary.Meshes;
     using System.Threading.Tasks;
 
-    public class MaterialResourceFactory : ResourceFactory<Material, (MeshData, MaterialData, bool)>
+    public class MaterialResourceFactory : ResourceFactory<Material, (MaterialShaderDesc, MaterialData)>
     {
         public MaterialResourceFactory(ResourceManager resourceManager) : base(resourceManager)
         {
         }
 
-        protected override Material CreateInstance(ResourceManager manager, Guid id, (MeshData, MaterialData, bool) instanceData)
+        protected override Material CreateInstance(ResourceManager manager, Guid id, (MaterialShaderDesc, MaterialData) instanceData)
         {
             return new(this, instanceData.Item2);
         }
 
-        protected override void LoadInstance(ResourceManager manager, Material instance, (MeshData, MaterialData, bool) instanceData)
+        protected override void LoadInstance(ResourceManager manager, Material instance, (MaterialShaderDesc, MaterialData) instanceData)
         {
-            (MeshData mesh, MaterialData desc, bool debone) = instanceData;
-            instance.Shader = manager.LoadMaterialShader(mesh, desc, debone);
+            (MaterialShaderDesc shaderDesc, MaterialData desc) = instanceData;
+            instance.Shader = manager.LoadMaterialShader(shaderDesc);
             for (int i = 0; i < desc.Textures.Count; i++)
             {
                 var tex = desc.Textures[i];
@@ -32,10 +31,10 @@
             instance.EndUpdate();
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager manager, Material instance, (MeshData, MaterialData, bool) instanceData)
+        protected override async Task LoadInstanceAsync(ResourceManager manager, Material instance, (MaterialShaderDesc, MaterialData) instanceData)
         {
-            (MeshData mesh, MaterialData desc, bool debone) = instanceData;
-            instance.Shader = await manager.LoadMaterialShaderAsync(mesh, desc, debone);
+            (MaterialShaderDesc shaderDesc, MaterialData desc) = instanceData;
+            instance.Shader = await manager.LoadMaterialShaderAsync(shaderDesc);
             for (int i = 0; i < desc.Textures.Count; i++)
             {
                 var tex = desc.Textures[i];

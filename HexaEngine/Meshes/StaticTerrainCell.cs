@@ -5,6 +5,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Mathematics;
+    using HexaEngine.Objects;
     using System.Numerics;
 
     public class StaticTerrainCell : IDisposable
@@ -51,38 +52,47 @@
 
         public uint IndexCount => IndexBuffer.Count;
 
-        public (ChannelMask, UavTexture2D)? GetLayerMask(StaticTerrainLayer terrainLayer)
+        public Texture2D? GetLayerMask(StaticTerrainLayer terrainLayer, out ChannelMask mask)
         {
             for (int i = 0; i < layers.Count; i++)
             {
                 var layer = layers[i];
-                var mask = layer.GetChannelMask(terrainLayer);
+                mask = layer.GetChannelMask(terrainLayer);
                 if (mask != ChannelMask.None)
                 {
-                    return (mask, layer.GetMask());
+                    return layer.GetMask();
                 }
             }
 
+            mask = default;
             return null;
         }
 
-        public (ChannelMask, UavTexture2D) AddLayer(StaticTerrainLayer terrainLayer)
+        public Texture2D AddLayer(StaticTerrainLayer terrainLayer)
+        {
+            return AddLayer(terrainLayer, out _);
+        }
+
+        public Texture2D AddLayer(StaticTerrainLayer terrainLayer, out ChannelMask mask)
         {
             for (int i = 0; i < layers.Count; i++)
             {
                 var layer = layers[i];
                 if (layer.AddLayer(terrainLayer))
                 {
-                    var mask = layer.GetChannelMask(terrainLayer);
-                    return (mask, layer.GetMask());
+                    mask = layer.GetChannelMask(terrainLayer);
+                    return layer.GetMask();
                 }
             }
 
-            TerrainDrawLayer drawLayer = new(device);
+            TerrainDrawLayer drawLayer = new(device, terrainLayer.Name == "Default");
             drawLayer.AddLayer(terrainLayer);
             layers.Add(drawLayer);
 
-            return (ChannelMask.R, drawLayer.GetMask());
+            UpdateLayer(terrainLayer);
+
+            mask = ChannelMask.R;
+            return drawLayer.GetMask();
         }
 
         public void RemoveLayer(StaticTerrainLayer terrainLayer)

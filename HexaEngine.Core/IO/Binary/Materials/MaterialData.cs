@@ -43,6 +43,11 @@
         public List<MaterialShader> Shaders;
 
         /// <summary>
+        /// Gets or sets the list of material shader passes.
+        /// </summary>
+        public List<MaterialShaderPass> Passes;
+
+        /// <summary>
         /// Gets or sets the metadata associated with the material.
         /// </summary>
         public Metadata Metadata;
@@ -60,6 +65,7 @@
             Properties = [];
             Textures = [];
             Shaders = [];
+            Passes = [];
             Metadata = new();
         }
 
@@ -74,6 +80,7 @@
             Properties = [];
             Textures = [];
             Shaders = [];
+            Passes = [];
             Metadata = metadata ?? new();
         }
 
@@ -84,13 +91,15 @@
         /// <param name="properties">The list of material properties.</param>
         /// <param name="textures">The list of material textures.</param>
         /// <param name="shaders">The list of material shaders.</param>
+        /// <param name="passes">The list of material shader passes.</param>
         /// <param name="metadata">The optional metadata associated with the material. If not provided, an empty metadata instance is used.</param>
-        public MaterialData(string name, List<MaterialProperty> properties, List<MaterialTexture> textures, List<MaterialShader> shaders, Metadata? metadata = null)
+        public MaterialData(string name, List<MaterialProperty> properties, List<MaterialTexture> textures, List<MaterialShader> shaders, List<MaterialShaderPass> passes, Metadata? metadata = null)
         {
             Name = name;
             Properties = new(properties);
             Textures = new(textures);
             Shaders = new(shaders);
+            Passes = new(passes);
             Metadata = metadata ?? new();
         }
 
@@ -385,6 +394,13 @@
                 material.Shaders.Add(MaterialShader.Read(src, encoding, endianness));
             }
 
+            var passCount = src.ReadInt32(endianness);
+            material.Passes.Capacity = passCount;
+            for (int i = 0; i < passCount; i++)
+            {
+                material.Passes.Add(MaterialShaderPass.Read(src, encoding, endianness));
+            }
+
             material.Metadata = Metadata.ReadFrom(src, encoding, endianness);
 
             return material;
@@ -421,6 +437,12 @@
                 Shaders[i].Write(dst, encoding, endianness);
             }
 
+            dst.WriteInt32(Passes.Count, endianness);
+            for (int i = 0; i < Passes.Count; i++)
+            {
+                Passes[i].Write(dst, encoding, endianness);
+            }
+
             Metadata.Write(dst, encoding, endianness);
         }
 
@@ -436,9 +458,11 @@
                 Properties = Properties.Select(x => x.Clone()).ToList(),
                 Textures = Textures.Select(x => x.Clone()).ToList(),
                 Shaders = Shaders.Select(x => x.Clone()).ToList(),
+                Passes = Passes.Select(x => x.Clone()).ToList(),
                 Metadata = Metadata.Clone(),
                 Flags = Flags
             };
+
             return materialData;
         }
     }

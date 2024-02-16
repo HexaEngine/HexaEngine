@@ -22,7 +22,6 @@ PixelInput main(VertexInput input)
     output.ctex = input.pos.xz / TILESIZE;
     output.normal = mul(input.normal, (float3x3) world);
     output.tangent = mul(input.tangent, (float3x3) world);
-    output.bitangent = mul(input.bitangent, (float3x3) world);
 
     return output;
 }

@@ -10,9 +10,6 @@
 #ifndef VtxTangent
 #define VtxTangent 1
 #endif
-#ifndef VtxBitangent
-#define VtxBitangent 1
-#endif
 
 struct VertexInput
 {
@@ -28,9 +25,7 @@ struct VertexInput
 #if VtxTangent
     float3 tangent : TANGENT;
 #endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
-#endif
+
 };
 
 struct PixelInput
@@ -48,9 +43,6 @@ struct PixelInput
 #endif
 #if VtxTangent
     float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
 #endif
 
 #if VtxPosition

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents a geometric <see cref="Triangle"/> defined by three points in 3D space.
@@ -34,6 +35,17 @@
             Point1 = vertex1;
             Point2 = vertex2;
             Point3 = vertex3;
+        }
+
+        /// <summary>
+        /// Gets or sets the vertices of the Triangle
+        /// </summary>
+        /// <param name="index">0 to 2 is valid.</param>
+        /// <returns>The vertex of the triangle</returns>
+        public unsafe Vector3 this[int index]
+        {
+            get => ((Vector3*)Unsafe.AsPointer(ref this))[index];
+            set => ((Vector3*)Unsafe.AsPointer(ref this))[index] = value;
         }
 
         /// <summary>

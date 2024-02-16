@@ -25,7 +25,6 @@
             bool hasUVs = (data.Flags & VertexFlags.UVs) != 0;
             bool hasNormals = (data.Flags & VertexFlags.Normals) != 0;
             bool hasTangents = (data.Flags & VertexFlags.Tangents) != 0;
-            bool hasBitangents = (data.Flags & VertexFlags.Bitangents) != 0;
             bool hasColors = (data.Flags & VertexFlags.Colors) != 0;
 
             // Initialize arrays for new vertex attributes based on the presence of these attributes
@@ -33,7 +32,6 @@
             Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;
             Vector3[] normals = hasNormals ? new Vector3[newVertexCount] : null;
             Vector3[] tangents = hasTangents ? new Vector3[newVertexCount] : null;
-            Vector3[] bitangents = hasBitangents ? new Vector3[newVertexCount] : null;
             Vector4[] colors = hasColors ? new Vector4[newVertexCount] : null;
 
             // Initialize an array for new indices
@@ -94,16 +92,6 @@
                     tangents[v + 5] = uvw2.X * tangent0 + uvw2.Y * tangent1 + uvw2.Z * tangent2;
                 }
 
-                if (hasBitangents)
-                {
-                    Vector3 bitangent0 = bitangents[v] = data.Bitangents[i0];
-                    Vector3 bitangent1 = bitangents[v + 1] = data.Bitangents[i1];
-                    Vector3 bitangent2 = bitangents[v + 2] = data.Bitangents[i2];
-                    bitangents[v + 3] = uvw0.X * bitangent0 + uvw0.Y * bitangent1 + uvw0.Z * bitangent2;
-                    bitangents[v + 4] = uvw1.X * bitangent0 + uvw1.Y * bitangent1 + uvw1.Z * bitangent2;
-                    bitangents[v + 5] = uvw2.X * bitangent0 + uvw2.Y * bitangent1 + uvw2.Z * bitangent2;
-                }
-
                 if (hasColors)
                 {
                     Vector4 bitangent0 = colors[v] = data.Colors[i0];
@@ -135,7 +123,6 @@
             data.UVs = uvs;
             data.Normals = normals;
             data.Tangents = tangents;
-            data.Bitangents = bitangents;
             data.Colors = colors;
 
             data.Indices = indices;
@@ -161,14 +148,12 @@
             bool hasUVs = (terrain.Flags & TerrainVertexFlags.UVs) != 0;
             bool hasNormals = (terrain.Flags & TerrainVertexFlags.Normals) != 0;
             bool hasTangents = (terrain.Flags & TerrainVertexFlags.Tangents) != 0;
-            bool hasBitangents = (terrain.Flags & TerrainVertexFlags.Bitangents) != 0;
 
             // Initialize arrays for new vertex attributes based on the presence of these attributes
             Vector3[] positions = new Vector3[newVertexCount];
             Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;
             Vector3[] normals = hasNormals ? new Vector3[newVertexCount] : null;
             Vector3[] tangents = hasTangents ? new Vector3[newVertexCount] : null;
-            Vector3[] bitangents = hasBitangents ? new Vector3[newVertexCount] : null;
 
             // Initialize an array for new indices
             uint newIndexCount = faces * 12;
@@ -228,16 +213,6 @@
                     tangents[v + 5] = uvw2.X * tangent0 + uvw2.Y * tangent1 + uvw2.Z * tangent2;
                 }
 
-                if (hasBitangents)
-                {
-                    Vector3 bitangent0 = bitangents[v] = terrain.Bitangents[i0];
-                    Vector3 bitangent1 = bitangents[v + 1] = terrain.Bitangents[i1];
-                    Vector3 bitangent2 = bitangents[v + 2] = terrain.Bitangents[i2];
-                    bitangents[v + 3] = uvw0.X * bitangent0 + uvw0.Y * bitangent1 + uvw0.Z * bitangent2;
-                    bitangents[v + 4] = uvw1.X * bitangent0 + uvw1.Y * bitangent1 + uvw1.Z * bitangent2;
-                    bitangents[v + 5] = uvw2.X * bitangent0 + uvw2.Y * bitangent1 + uvw2.Z * bitangent2;
-                }
-
                 indices[k++] = v;
                 indices[k++] = v + 3;
                 indices[k++] = v + 5;
@@ -259,7 +234,6 @@
             terrain.UVs = uvs;
             terrain.Normals = normals;
             terrain.Tangents = tangents;
-            terrain.Bitangents = bitangents;
 
             terrain.Indices = indices;
 

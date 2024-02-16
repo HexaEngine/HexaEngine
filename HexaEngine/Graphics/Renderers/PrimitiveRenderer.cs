@@ -61,7 +61,7 @@
             transformBuffer.Add(Matrix4x4.Transpose(transform));
             transformOffsetBuffer.Add(0);
 
-            boundingBox = BoundingBox.Transform(primitive.BoundingBox, transform);
+            boundingBox = BoundingBox.Transform(BoundingBox.Empty, transform);
 
             transformOffsetBuffer.Update(context);
             transformBuffer.Update(context);
@@ -83,7 +83,7 @@
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawDeferred(context, indexCount, 1);
+            material.DrawIndexedInstanced(context, "Deferred", indexCount, 1);
             primitive.EndDraw(context);
 
             context.VSSetConstantBuffer(0, null);
@@ -101,7 +101,7 @@
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawForward(context, indexCount, 1);
+            material.DrawIndexedInstanced(context, "Forward", indexCount, 1);
             primitive.EndDraw(context);
 
             context.VSSetConstantBuffer(0, null);
@@ -119,7 +119,7 @@
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawDepth(context, indexCount, 1);
+            material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
             primitive.EndDraw(context);
 
             context.VSSetConstantBuffer(0, null);
@@ -137,7 +137,7 @@
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawDepth(context, indexCount, 1);
+            material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
             primitive.EndDraw(context);
 
             context.VSSetConstantBuffer(0, null);
@@ -153,11 +153,15 @@
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(0, light);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawShadow(context, light, type, indexCount, 1);
+            material.DrawIndexedInstanced(context, type.ToString(), indexCount, 1);
             primitive.EndDraw(context);
 
+            context.VSSetConstantBuffer(1, null);
+            context.GSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetShaderResource(1, null);

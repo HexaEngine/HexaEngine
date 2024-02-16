@@ -29,7 +29,7 @@
         public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
 
         [JsonIgnore]
-        public override BoundingBox BoundingBox { get => BoundingBox.Transform(primitive?.BoundingBox ?? BoundingBox.Empty, GameObject?.Transform ?? Matrix4x4.Identity); }
+        public override BoundingBox BoundingBox { get => BoundingBox.Transform(BoundingBox.Empty, GameObject?.Transform ?? Matrix4x4.Identity); }
 
         [JsonIgnore]
         public Matrix4x4 Transform => GameObject?.Transform ?? Matrix4x4.Identity;

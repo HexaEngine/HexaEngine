@@ -73,9 +73,7 @@
                     normal = Vector3.TransformNormal(normal, transform);
                     tangent = Vector3.TransformNormal(tangent, transform);
 
-                    Vector3 bitangent = Vector3.Cross(normal, tangent);
-
-                    vertices[vcounter++] = new(position, new Vector3(u, v, 0), normal, tangent, bitangent);
+                    vertices[vcounter++] = new(position, new Vector3(u, v, 0), normal, tangent);
 
                     // And create indices for two triangles.
                     uint nextI = (i + 1) % stride;

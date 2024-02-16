@@ -4,7 +4,6 @@ struct VertexInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 };
 
 struct PixelInput
@@ -15,5 +14,4 @@ struct PixelInput
     float2 ctex : TEXCOORD1;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 };

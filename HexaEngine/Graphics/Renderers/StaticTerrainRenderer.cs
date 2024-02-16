@@ -5,6 +5,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using System.Numerics;
+    using System.Reflection.Emit;
 
     public class StaticTerrainRenderer : IDisposable
     {
@@ -66,14 +67,15 @@
                 cell.Bind(context);
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
-                    var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawForward(context))
-                        continue;
-                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
-                    layer.EndDrawForward(context);
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterialBundle material = layer.Material;
+
+                    context.PSSetShaderResource(11, layer.Mask.SRV);
+                    material.DrawIndexedInstanced(context, "Forward", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
+            context.PSSetShaderResource(11, null);
         }
 
         public void DrawDeferred(IGraphicsContext context)
@@ -99,14 +101,15 @@
                 cell.Bind(context);
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
-                    var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawDeferred(context))
-                        continue;
-                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
-                    layer.EndDrawDeferred(context);
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterialBundle material = layer.Material;
+
+                    context.PSSetShaderResource(11, layer.Mask.SRV);
+                    material.DrawIndexedInstanced(context, "Deferred", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
+            context.PSSetShaderResource(11, null);
         }
 
         public void DrawDepth(IGraphicsContext context)
@@ -130,20 +133,25 @@
                 cell.Bind(context);
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
-                    var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawDepth(context))
-                        continue;
-                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
-                    layer.EndDrawDepth(context);
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterialBundle material = layer.Material;
+
+                    context.PSSetSampler(0, layer.MaskSampler);
+                    context.PSSetShaderResource(0, layer.Mask.SRV);
+                    material.DrawIndexedInstanced(context, "DepthOnly", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
+            context.PSSetShaderResource(0, null);
+            context.PSSetSampler(0, null);
         }
 
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!initialized)
                 return;
+
+            context.VSSetConstantBuffer(1, light);
             for (int i = 0; i < grid.Count; i++)
             {
                 var cell = grid[i];
@@ -162,14 +170,15 @@
                 cell.Bind(context);
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
-                    var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawShadow(context, light, type))
-                        continue;
-                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
-                    layer.EndDrawShadow(context);
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterialBundle material = layer.Material;
+
+                    material.DrawIndexedInstanced(context, type.ToString(), cell.IndexCount, 1, 0, 0, 0);
+                    break;
                 }
                 cell.Unbind(context);
             }
+            context.VSSetConstantBuffer(1, null);
         }
 
         protected virtual void Dispose(bool disposing)

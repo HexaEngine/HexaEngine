@@ -6,6 +6,12 @@
     {
         private readonly List<StaticTerrainCell> cells = new();
         private readonly List<StaticTerrainLayer> layers = new();
+        private readonly StaticTerrainLayer def = new("Default");
+
+        public StaticTerrainGrid()
+        {
+            layers.Add(def);
+        }
 
         public StaticTerrainCell this[int index]
         {
@@ -19,6 +25,7 @@
 
         public void Add(StaticTerrainCell cell)
         {
+            cell.AddLayer(def, out _);
             cells.Add(cell);
             FindNeighbors(cell);
         }

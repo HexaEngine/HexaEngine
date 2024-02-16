@@ -832,7 +832,6 @@ namespace HexaEngine.Core.Assets.Importer
                     Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
                     Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
                     Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
-                    Vector3[]? bitangents = ToManaged(msh->MBitangents, msh->MNumVertices);
 
                     BoundingBox box = default;
                     BoundingSphere sphere = default;
@@ -868,11 +867,11 @@ namespace HexaEngine.Core.Assets.Importer
 
                     if (bones.Length > 0)
                     {
-                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, [.. bones]);
+                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, [.. bones]);
                     }
                     else
                     {
-                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
+                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, null);
                     }
 
                     nameToMesh.Add(msh->MName, meshes[i]);

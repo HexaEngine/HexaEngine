@@ -1,21 +1,19 @@
 struct VertexInput
 {
-	float3 pos : POSITION;
-	float3 tex : TEXCOORD;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float3 bitangent : BINORMAL;
+    float3 pos : POSITION;
+    float3 tex : TEXCOORD;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
 };
 
 struct PixelInput
 {
-	float4 position : SV_POSITION;
-	float3 pos : POSITION;
-	float3 tex : TEXCOORD0;
-	float2 ctex : TEXCOORD1;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float3 bitangent : BINORMAL;
+    float4 position : SV_POSITION;
+    float3 pos : POSITION;
+    float3 tex : TEXCOORD0;
+    float2 ctex : TEXCOORD1;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
 
 #if HasBakedLightMap
 	float3 H0 : H0;
@@ -35,11 +33,6 @@ struct HullInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
-#if VtxSkinned
-    int4 boneIds : BLENDINDICES;
-    float4 weights : BLENDWEIGHT;
-#endif
     float TessFactor : TESS;
 };
 
@@ -49,11 +42,6 @@ struct DomainInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
-#if VtxSkinned
-    int4 boneIds : BLENDINDICES;
-    float4 weights : BLENDWEIGHT;
-#endif
 };
 
 struct PatchTess

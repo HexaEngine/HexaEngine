@@ -24,7 +24,7 @@ struct VertexInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    
+
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;

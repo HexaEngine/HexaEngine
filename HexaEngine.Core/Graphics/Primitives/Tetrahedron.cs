@@ -79,17 +79,15 @@
                     tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, normal));
                 }
 
-                Vector3 bitangent = Vector3.Cross(normal, tangent);
-
                 uint vbase = vcounter;
                 indices[icounter] = vbase;
                 indices[icounter + 1] = vbase + 1;
                 indices[icounter + 2] = vbase + 2;
                 icounter += 3;
 
-                vertices[vcounter] = new(verts[v0] * size, Vector2.Zero, normal, tangent, bitangent);
-                vertices[vcounter + 1] = new(verts[v1] * size, Vector2.UnitX, normal, tangent, bitangent);
-                vertices[vcounter + 2] = new(verts[v2] * size, Vector2.UnitY, normal, tangent, bitangent);
+                vertices[vcounter] = new(verts[v0] * size, Vector2.Zero, normal, tangent);
+                vertices[vcounter + 1] = new(verts[v1] * size, Vector2.UnitX, normal, tangent);
+                vertices[vcounter + 2] = new(verts[v2] * size, Vector2.UnitY, normal, tangent);
                 vcounter += 3;
             }
 

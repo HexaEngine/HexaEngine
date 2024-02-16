@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
@@ -24,7 +25,7 @@
         private PlainNode[] plainNodes;
         private PlainNode[] bones;
 
-        private MaterialShaderFlags shaderFlags;
+        private ModelMaterialShaderFlags shaderFlags;
 
         private BoundingBox boundingBox;
 
@@ -107,7 +108,7 @@
 
         public PlainNode[] Bones => bones;
 
-        public MaterialShaderFlags ShaderFlags => shaderFlags;
+        public ModelMaterialShaderFlags ShaderFlags => shaderFlags;
 
         public BoundingBox BoundingBox => boundingBox;
 
@@ -115,19 +116,16 @@
         {
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
-                var data = modelFile.GetMesh(i);
-                Material material = ResourceManager.Shared.LoadMaterial(data, materialManager.GetMaterial(data.MaterialId));
-                Mesh mesh = ResourceManager.Shared.LoadMesh(data, false);
+                MeshData meshDesc = modelFile.GetMesh(i);
+                Mesh mesh = ResourceManager.Shared.LoadMesh(meshDesc, false);
+                MaterialData materialDesc = materialManager.GetMaterial(meshDesc.MaterialId);
+                MaterialShaderDesc shaderDesc = Model.GetMaterialShaderDesc(mesh, materialDesc, false, out var flags);
+                Material material = ResourceManager.Shared.LoadMaterial(shaderDesc, materialDesc);
 
                 materials[i] = material;
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
-            }
-
-            shaderFlags = MaterialShaderFlags.None;
-            for (int i = 0; i < materials.Length; i++)
-            {
-                shaderFlags |= materials[i].Shader.Value.Flags;
+                shaderFlags |= flags;
             }
 
             loaded = true;
@@ -137,19 +135,16 @@
         {
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
-                var data = modelFile.GetMesh(i);
-                Material material = await ResourceManager.Shared.LoadMaterialAsync(data, materialManager.GetMaterial(data.MaterialId));
-                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data);
+                MeshData meshDesc = modelFile.GetMesh(i);
+                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(meshDesc);
+                MaterialData materialDesc = materialManager.GetMaterial(meshDesc.MaterialId);
+                MaterialShaderDesc shaderDesc = Model.GetMaterialShaderDesc(mesh, materialDesc, false, out var flags);
+                Material material = await ResourceManager.Shared.LoadMaterialAsync(shaderDesc, materialDesc);
 
                 materials[i] = material;
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
-            }
-
-            shaderFlags = MaterialShaderFlags.None;
-            for (int i = 0; i < materials.Length; i++)
-            {
-                shaderFlags |= materials[i].Shader.Value.Flags;
+                shaderFlags |= flags;
             }
 
             loaded = true;
@@ -157,7 +152,7 @@
 
         public void Unload()
         {
-            shaderFlags = MaterialShaderFlags.None;
+            shaderFlags = ModelMaterialShaderFlags.None;
             for (int i = 0; i < meshes.Length; i++)
             {
                 meshes[i].Dispose();

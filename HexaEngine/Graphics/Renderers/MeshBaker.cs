@@ -444,7 +444,6 @@
                 Vector3 position = mesh.Data.Positions[i];
                 Vector3 normal = mesh.Data.Normals[i];
                 Vector3 tangent = mesh.Data.Tangents[i];
-                Vector3 binormal = mesh.Data.Bitangents[i];
 
                 // Transform the positions + tangent frame to world space
                 Vector3 positionWS = Vector3.Transform(position, meshRenderer.Transform);
@@ -454,7 +453,7 @@
                 Vector3 tangentWS = Vector3.TransformNormal(tangent, meshRenderer.Transform);
                 tangentWS = Vector3.Normalize(tangentWS);
 
-                Vector3 binormalWS = Vector3.TransformNormal(binormal, meshRenderer.Transform);
+                Vector3 binormalWS = Vector3.Cross(normalWS, tangentWS);
                 binormalWS = Vector3.Normalize(binormalWS);
 
                 Vertex vertex;
@@ -551,7 +550,6 @@
                 Vector3 position = mesh.Data.Positions[i];
                 Vector3 normal = mesh.Data.Normals[i];
                 Vector3 tangent = mesh.Data.Tangents[i];
-                Vector3 binormal = mesh.Data.Bitangents[i];
 
                 // Transform the positions + tangent frame to world space
                 Vector3 positionWS = Vector3.Transform(position, meshRenderer.Transform);
@@ -561,7 +559,7 @@
                 Vector3 tangentWS = Vector3.TransformNormal(tangent, meshRenderer.Transform);
                 tangentWS = Vector3.Normalize(tangentWS);
 
-                Vector3 binormalWS = Vector3.TransformNormal(binormal, meshRenderer.Transform);
+                Vector3 binormalWS = Vector3.Cross(normal, tangent);
                 binormalWS = Vector3.Normalize(binormalWS);
 
                 Vertex vertex;

@@ -32,11 +32,5 @@
         /// Indicates the presence of tangent vectors in the vertex data.
         /// </summary>
         Tangents = 16,
-
-        /// <summary>
-        /// Indicates the presence of bitangent vectors in the vertex data.
-        /// </summary>
-        Bitangents = 32,
     }
-
 }

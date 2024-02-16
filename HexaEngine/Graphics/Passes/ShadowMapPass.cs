@@ -72,7 +72,7 @@
                                 {
                                     if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
                                     {
-                                        renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Cascaded);
+                                        renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
                                         break;
                                     }
                                 }
@@ -96,7 +96,7 @@
                                 {
                                     if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
                                     {
-                                        renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omni);
+                                        renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
                                     }
                                 }
                                 profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");

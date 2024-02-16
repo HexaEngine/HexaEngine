@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
     using HexaEngine.Mathematics;
     using System.IO;
@@ -59,6 +60,10 @@
         /// </summary>
         public BoundingSphere Sphere;
 
+        public uint ActualHeight { get; }
+
+        public uint ActualWidth { get; }
+
         /// <summary>
         /// Gets or sets the flags associated with the terrain cell vertices.
         /// </summary>
@@ -89,15 +94,12 @@
         /// </summary>
         public Vector3[] Tangents;
 
-        /// <summary>
-        /// Gets or sets an array of bitangents for the terrain cell vertices.
-        /// </summary>
-        public Vector3[] Bitangents;
-
 #nullable disable
+
         private TerrainCellData()
         {
         }
+
 #nullable restore
 
         /// <summary>
@@ -108,7 +110,7 @@
         /// <param name="height">The height of the terrain.</param>
         /// <param name="tessellationFactor">The factor by which to tessellate the terrain (default is 1).</param>
         /// <param name="lodLevel">The level of detail for the terrain (default is 0).</param>
-        public TerrainCellData(HeightMap heightMap, uint width, uint height, float tessellationFactor = 1, uint lodLevel = 0)
+        public TerrainCellData(HeightMap heightMap, uint width, uint height, float tessellationFactor = 5, uint lodLevel = 0)
         {
             Name = string.Empty;
             Materials = [];
@@ -128,14 +130,14 @@
             UVs = new Vector3[VerticesCount];
             Normals = new Vector3[VerticesCount];
             Tangents = new Vector3[VerticesCount];
-            Bitangents = new Vector3[VerticesCount];
 
             int k = 0;
             int texUIndex = 0;
             int texVIndex = 0;
 
-            float scaleFactorW = width / heightMap.Width;
-            float scaleFactorH = height / heightMap.Height;
+            float scaleFactorW = width / heightMap.Width / tessellationFactor;
+            float scaleFactorH = height / heightMap.Height / tessellationFactor;
+
             float targetScaleFactor = 1 / tessellationFactor;
 
             for (uint targetX = 0; targetX < actualHeight; ++targetX)
@@ -165,33 +167,38 @@
             Box = BoundingBoxHelper.Compute(Positions);
             Sphere = BoundingSphere.CreateFromBoundingBox(Box);
 
+            ActualHeight = actualHeight;
+            ActualWidth = actualWidth;
+
+            Vector3 uvScale = new Vector3(scaleFactorW, scaleFactorH, 0) * 0.1f;
+
             for (uint i = 0; i < actualHeight - 1; i++)
             {
                 for (uint j = 0; j < actualWidth - 1; j++)
                 {
                     // Bottom left of quad
                     Indices[k] = i * actualWidth + j;
-                    UVs[i * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 1.0f, 0);
+                    UVs[i * actualWidth + j] = new Vector3(texUIndex, (texVIndex + 1.0f), 0) * uvScale;
 
                     // Top left of quad
                     Indices[k + 1] = (i + 1) * actualWidth + j;
-                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
+                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex, texVIndex, 0) * uvScale;
 
                     // Bottom right of quad
                     Indices[k + 2] = i * actualWidth + j + 1;
-                    UVs[i * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
+                    UVs[i * actualWidth + j + 1] = new Vector3((texUIndex + 1.0f), (texVIndex + 1.0f), 0) * uvScale;
 
                     // Top left of quad
                     Indices[k + 3] = (i + 1) * actualWidth + j;
-                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
+                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex, texVIndex, 0) * uvScale;
 
                     // Top right of quad
                     Indices[k + 4] = (i + 1) * actualWidth + j + 1;
-                    UVs[(i + 1) * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 0.0f, 0);
+                    UVs[(i + 1) * actualWidth + j + 1] = new Vector3((texUIndex + 1.0f), texVIndex, 0) * uvScale;
 
                     // Bottom right of quad
                     Indices[k + 5] = i * actualWidth + j + 1;
-                    UVs[i * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
+                    UVs[i * actualWidth + j + 1] = new Vector3((texUIndex + 1.0f), (texVIndex + 1.0f), 0) * uvScale;
 
                     k += 6; // next quad
 
@@ -206,9 +213,9 @@
             GenVertexNormalsProcess.GenMeshVertexNormals2(this);
 
             Flags |= TerrainVertexFlags.Normals;
-            CalcTangentsProcess.ProcessMesh2(this);
+            CalcTangentsProcess.ProcessMesh2Parallel(this);
 
-            Flags |= TerrainVertexFlags.Tangents | TerrainVertexFlags.Bitangents;
+            Flags |= TerrainVertexFlags.Tangents;
         }
 
         /// <summary>
@@ -275,14 +282,6 @@
                     data.Tangents[i] = src.ReadVector3(endianness);
                 }
             }
-            if ((data.Flags & TerrainVertexFlags.Bitangents) != 0)
-            {
-                data.Bitangents = new Vector3[data.VerticesCount];
-                for (ulong i = 0; i < data.VerticesCount; i++)
-                {
-                    data.Bitangents[i] = src.ReadVector3(endianness);
-                }
-            }
 
             return data;
         }
@@ -339,13 +338,6 @@
                 for (ulong i = 0; i < VerticesCount; i++)
                 {
                     dst.WriteVector3(Tangents[i], endianness);
-                }
-            }
-            if ((Flags & TerrainVertexFlags.Bitangents) != 0)
-            {
-                for (ulong i = 0; i < VerticesCount; i++)
-                {
-                    dst.WriteVector3(Bitangents[i], endianness);
                 }
             }
         }
@@ -414,11 +406,6 @@
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & TerrainVertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
-                }
-
                 vertices[i] = vertex;
             }
 
@@ -459,11 +446,6 @@
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & TerrainVertexFlags.Bitangents) != 0)
-                {
-                    vertex.Bitangent = Bitangents[i];
-                }
-
                 vb[i] = vertex;
             }
 
@@ -479,7 +461,6 @@
             new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0),
             new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0),
             new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0),
         };
 
         /// <summary>
@@ -590,7 +571,6 @@
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
-                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
                 }
             }
             if (edge == Edge.ZNeg)
@@ -602,7 +582,6 @@
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
-                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
                 }
             }
             if (edge == Edge.XPos)
@@ -614,7 +593,6 @@
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
-                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
                 }
             }
             if (edge == Edge.XNeg)
@@ -626,9 +604,18 @@
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
-                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
                 }
             }
+        }
+
+        public Face GetFaceAtIndex(uint index)
+        {
+            var i = index * 3;
+            var idx1 = Indices[i];
+            var idx2 = Indices[i + 1];
+            var idx3 = Indices[i + 2];
+
+            return new(idx1, idx2, idx3);
         }
     }
 }

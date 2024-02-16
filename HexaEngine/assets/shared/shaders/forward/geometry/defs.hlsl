@@ -32,7 +32,6 @@ struct VertexInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
@@ -46,7 +45,6 @@ struct HullInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
@@ -61,7 +59,6 @@ struct DomainInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
@@ -76,7 +73,6 @@ struct PixelInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BINORMAL;
 
 #if HasBakedLightMap || BAKE_PASS
     float3 H0 : H0;

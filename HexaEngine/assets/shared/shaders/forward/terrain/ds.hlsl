@@ -28,26 +28,25 @@ float3 ReconstructNormal(float2 tex)
 [domain("tri")]
 PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const OutputPatch<DomainInput, 3> tri)
 {
-	PixelInput output;
+    PixelInput output;
 
 	// Interpolate patch attributes to generated vertices.
     output.position = float4(bary.x * tri[0].position + bary.y * tri[1].position + bary.z * tri[2].position, 1);
-	output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
-    
+    output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
+
     output.normal = ReconstructNormal(output.tex.xy);
 
     const float3 rightVec = float3(1.0, 0.0, 0.0);
     float3 N = output.normal;
     float3 T = cross(rightVec, N);
     float3 B = cross(T, N);
-	
+
     output.position.y += heightTexture.SampleLevel(heightTextureSampler, output.tex.xy, 0).r;
 
-	output.position = mul(output.position, viewProj);
+    output.position = mul(output.position, viewProj);
 
-    output.normal = mul(output.normal, (float3x4)world);
-    output.tangent = mul(T, (float3x4)world);
-    output.bitangent = mul(B, (float3x4)world);
+    output.normal = mul(output.normal, (float3x4) world);
+    output.tangent = mul(T, (float3x4) world);
 
-	return output;
+    return output;
 }

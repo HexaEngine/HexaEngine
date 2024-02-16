@@ -140,7 +140,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDeferred(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "Deferred", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -170,7 +170,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawForward(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "Forward", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -200,7 +200,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -230,7 +230,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -247,6 +247,8 @@
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(0, light);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -260,10 +262,12 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawShadow(context, light, type, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
+            context.VSSetConstantBuffer(1, null);
+            context.GSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetShaderResource(1, null);
@@ -290,7 +294,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.Bake(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "Bake", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 

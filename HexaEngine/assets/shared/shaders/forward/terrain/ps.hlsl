@@ -1,7 +1,7 @@
 #include "defs.hlsl"
 #include "../../light.hlsl"
 #include "../../camera.hlsl"
-#include "../../shadow.hlsl"
+#include "../../shadowCommon.hlsl"
 #include "../../weather.hlsl"
 #include "../../gbuffer.hlsl"
 
@@ -191,71 +191,174 @@
 #define HasAmbientOcclusionRoughnessMetalnessTex3 0
 #endif
 
-#if HasBaseColorTex0 | HasBaseColorTex1 | HasBaseColorTex2 | HasBaseColorTex3
-Texture2DArray baseColorTexture : register(t0);
-SamplerState baseColorTextureSampler : register(s0);
-#endif
-#if HasNormalTex0 | HasNormalTex1 | HasNormalTex2 | HasNormalTex3
-Texture2DArray normalTexture : register(t1);
-SamplerState normalTextureSampler : register(s1);
-#endif
-#if HasRoughnessTex0 | HasRoughnessTex1 | HasRoughnessTex2 | HasRoughnessTex3
-Texture2DArray roughnessTexture : register(t2);
-SamplerState roughnessTextureSampler : register(s2);
-#endif
-#if HasMetalnessTex0 | HasMetalnessTex1 | HasMetalnessTex2 | HasMetalnessTex3
-Texture2DArray metalnessTexture : register(t3);
-SamplerState metalnessTextureSampler : register(s3);
-#endif
-#if HasEmissiveTex0 | HasEmissiveTex1 | HasEmissiveTex2 | HasEmissiveTex3
-Texture2DArray emissiveTexture : register(t4);
-SamplerState emissiveTextureSampler : register(s4);
-#endif
-#if HasAmbientOcclusionTex0 | HasAmbientOcclusionTex1 | HasAmbientOcclusionTex2 | HasAmbientOcclusionTex3
-Texture2DArray ambientOcclusionTexture : register(t5);
-SamplerState ambientOcclusionTextureSampler : register(s5);
-#endif
-#if HasRoughnessMetalnessTex0 | HasRoughnessMetalnessTex1 | HasRoughnessMetalnessTex2 | HasRoughnessMetalnessTex3
-Texture2DArray roughnessMetalnessTexture : register(t6);
-SamplerState roughnessMetalnessTextureSampler : register(s6);
-#endif
-#if HasAmbientOcclusionRoughnessMetalnessTex0 | HasAmbientOcclusionRoughnessMetalnessTex1 | HasAmbientOcclusionRoughnessMetalnessTex2 | HasAmbientOcclusionRoughnessMetalnessTex3
-Texture2DArray ambientOcclusionRoughnessMetalnessTexture : register(t7);
-SamplerState ambientOcclusionRoughnessMetalnessSampler : register(s7);
-#endif
+SamplerState linearClampSampler : register(s0);
+SamplerState linearWrapSampler : register(s1);
+SamplerState pointClampSampler : register(s2);
+SamplerComparisonState shadowSampler : register(s3);
 
-Texture2D ssao : register(t8);
-Texture2D brdfLUT : register(t9);
+Texture2D ssao : register(t0);
+Texture2D brdfLUT : register(t1);
 
-StructuredBuffer<GlobalProbe> globalProbes : register(t10);
-StructuredBuffer<Light> lights : register(t11);
-StructuredBuffer<ShadowData> shadowData : register(t12);
+StructuredBuffer<GlobalProbe> globalProbes : register(t2);
+StructuredBuffer<Light> lights : register(t3);
+StructuredBuffer<ShadowData> shadowData : register(t4);
 
 #if !CLUSTERED_FORWARD
-Texture2D depthAtlas : register(t13);
-Texture2DArray depthCSM : register(t14);
+Texture2D depthAtlas : register(t5);
+Texture2DArray depthCSM : register(t6);
 
-TextureCube globalDiffuse : register(t15);
-TextureCube globalSpecular : register(t16);
-Texture2D maskTex : register(t17);
+TextureCube globalDiffuse : register(t7);
+TextureCube globalSpecular : register(t8);
 #endif
 
 #if CLUSTERED_FORWARD
-StructuredBuffer<uint> lightIndexList : register(t13); //MAX_CLUSTER_LIGHTS * 16^3
-StructuredBuffer<LightGrid> lightGrid : register(t14); //16^3
+StructuredBuffer<uint> lightIndexList : register(t5); //MAX_CLUSTER_LIGHTS * 16^3
+StructuredBuffer<LightGrid> lightGrid : register(t6); //16^3
 
-Texture2D depthAtlas : register(t15);
-Texture2DArray depthCSM : register(t16);
+Texture2D depthAtlas : register(t7);
+Texture2DArray depthCSM : register(t8);
 
-TextureCube globalDiffuse : register(t17);
-TextureCube globalSpecular : register(t18);
-Texture2D maskTex : register(t19);
+TextureCube globalDiffuse : register(t9);
+TextureCube globalSpecular : register(t10);
 #endif
 
-SamplerState linearClampSampler : register(s8);
-SamplerState linearWrapSampler : register(s9);
-SamplerState pointClampSampler : register(s10);
-SamplerComparisonState shadowSampler : register(s11);
+Texture2D maskTex : register(t11);
+
+#if HasBaseColorTex0
+Texture2D baseColorTexture0;
+SamplerState baseColorTextureSampler0;
+#endif
+#if HasBaseColorTex1
+Texture2D baseColorTexture1;
+SamplerState baseColorTextureSampler1;
+#endif
+#if HasBaseColorTex2
+Texture2D baseColorTexture2;
+SamplerState baseColorTextureSampler2;
+#endif
+#if HasBaseColorTex3
+Texture2D baseColorTexture3;
+SamplerState baseColorTextureSampler3;
+#endif
+
+#if HasNormalTex0
+Texture2D normalTexture0;
+SamplerState normalTextureSampler0;
+#endif
+#if HasNormalTex1
+Texture2D normalTexture1;
+SamplerState normalTextureSampler1;
+#endif
+#if HasNormalTex2
+Texture2D normalTexture2;
+SamplerState normalTextureSampler2;
+#endif
+#if HasNormalTex3
+Texture2D normalTexture3;
+SamplerState normalTextureSampler3;
+#endif
+
+#if HasRoughnessTex0
+Texture2D roughnessTexture0;
+SamplerState roughnessTextureSampler0;
+#endif
+#if HasRoughnessTex1
+Texture2D roughnessTexture1;
+SamplerState roughnessTextureSampler1;
+#endif
+#if HasRoughnessTex2
+Texture2D roughnessTexture2;
+SamplerState roughnessTextureSampler2;
+#endif
+#if HasRoughnessTex3
+Texture2D roughnessTexture3;
+SamplerState roughnessTextureSampler3;
+#endif
+
+#if HasMetalnessTex0
+Texture2D metalnessTexture0;
+SamplerState metalnessTextureSampler0;
+#endif
+#if HasMetalnessTex1
+Texture2D metalnessTexture1;
+SamplerState metalnessTextureSampler1;
+#endif
+#if HasMetalnessTex2
+Texture2D metalnessTexture2;
+SamplerState metalnessTextureSampler2;
+#endif
+#if HasMetalnessTex3
+Texture2D metalnessTexture3;
+SamplerState metalnessTextureSampler3;
+#endif
+
+#if HasEmissiveTex0
+Texture2D emissiveTexture0;
+SamplerState emissiveTextureSampler0;
+#endif
+#if HasEmissiveTex1
+Texture2D emissiveTexture1;
+SamplerState emissiveTextureSampler1;
+#endif
+#if HasEmissiveTex2
+Texture2D emissiveTexture2;
+SamplerState emissiveTextureSampler2;
+#endif
+#if HasEmissiveTex3
+Texture2D emissiveTexture3;
+SamplerState emissiveTextureSampler3;
+#endif
+
+#if HasAmbientOcclusionTex0
+Texture2D ambientOcclusionTexture0;
+SamplerState ambientOcclusionTextureSampler0;
+#endif
+#if HasAmbientOcclusionTex1
+Texture2D ambientOcclusionTexture1;
+SamplerState ambientOcclusionTextureSampler1;
+#endif
+#if HasAmbientOcclusionTex2
+Texture2D ambientOcclusionTexture2;
+SamplerState ambientOcclusionTextureSampler2;
+#endif
+#if HasAmbientOcclusionTex3
+Texture2D ambientOcclusionTexture3;
+SamplerState ambientOcclusionTextureSampler3;
+#endif
+
+#if HasRoughnessMetalnessTex0
+Texture2D roughnessMetalnessTexture0;
+SamplerState roughnessMetalnessTextureSampler0;
+#endif
+#if HasRoughnessMetalnessTex1
+Texture2D roughnessMetalnessTexture1;
+SamplerState roughnessMetalnessTextureSampler1;
+#endif
+#if HasRoughnessMetalnessTex2
+Texture2D roughnessMetalnessTexture2;
+SamplerState roughnessMetalnessTextureSampler2;
+#endif
+#if HasRoughnessMetalnessTex3
+Texture2D roughnessMetalnessTexture3;
+SamplerState roughnessMetalnessTextureSampler3;
+#endif
+
+#if HasAmbientOcclusionRoughnessMetalnessTex0
+Texture2D ambientOcclusionRoughnessMetalnessTexture0;
+SamplerState ambientOcclusionRoughnessMetalnessSampler0;
+#endif
+#if HasAmbientOcclusionRoughnessMetalnessTex1
+Texture2D ambientOcclusionRoughnessMetalnessTexture1;
+SamplerState ambientOcclusionRoughnessMetalnessSampler1;
+#endif
+#if HasAmbientOcclusionRoughnessMetalnessTex2
+Texture2D ambientOcclusionRoughnessMetalnessTexture2;
+SamplerState ambientOcclusionRoughnessMetalnessSampler2;
+#endif
+#if HasAmbientOcclusionRoughnessMetalnessTex3
+Texture2D ambientOcclusionRoughnessMetalnessTexture3;
+SamplerState ambientOcclusionRoughnessMetalnessSampler3;
+#endif
 
 #if !CLUSTERED_FORWARD
 cbuffer constants : register(b0)
@@ -300,105 +403,6 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
-float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
-{
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
-
-#if HARD_SHADOWS_SPOTLIGHTS
-    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
-#else
-    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
-#endif
-}
-
-// array of offset direction for sampling
-static const float3 gridSamplingDisk[20] =
-{
-    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
-	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
-	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
-	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
-};
-
-int CubeFaceFromDirection(float3 direction)
-{
-    float3 absDirection = abs(direction);
-    int faceIndex = 0;
-
-    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
-    {
-        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
-    }
-    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
-    {
-        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
-    }
-    else
-    {
-        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
-    }
-
-    return faceIndex;
-}
-
-#define HARD_SHADOWS_POINTLIGHTS 1
-float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
-{
-    float3 light_to_pixelWS = position - light.position.xyz;
-    float depthValue = length(light_to_pixelWS) / light.range;
-
-    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
-    uvd.z = depthValue;
-
-#if HARD_SHADOWS_POINTLIGHTS
-    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
-#else
-    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
-#endif
-}
-
-float ShadowFactorDirectionalLight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
-{
-    float3 uvd = GetShadowUVD(position, data.views[0]);
-
-#if HARD_SHADOWS_DIRECTIONAL
-    return CalcShadowFactor_Basic(state, depthTex, uvd);
-#else
-    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, data.size, 1);
-#endif
-}
-
-float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4x4 camView, float3 position, Texture2DArray depthTex, SamplerComparisonState state)
-{
-    float cascadePlaneDistances[8] = (float[8]) data.cascades;
-    float farPlane = camFar;
-
-	// select cascade layer
-    float4 fragPosViewSpace = mul(float4(position, 1.0), camView);
-    float depthValue = abs(fragPosViewSpace.z);
-    float cascadePlaneDistance;
-    uint layer = data.cascadeCount;
-    for (uint i = 0; i < data.cascadeCount; ++i)
-    {
-        if (depthValue < cascadePlaneDistances[i])
-        {
-            cascadePlaneDistance = cascadePlaneDistances[i];
-            layer = i;
-            break;
-        }
-    }
-
-    float3 uvd = GetShadowUVD(position, data.views[layer]);
-
-#if HARD_SHADOWS_DIRECTIONAL_CASCADED
-    return CSMCalcShadowFactor_Basic(state, depthTex, layer, uvd, data.size, data.softness);
-#else
-    return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
-#endif
-}
-
 float3 GetHBasisIrradiance(in float3 n, in float3 H0, in float3 H1, in float3 H2, in float3 H3)
 {
     float3 color = 0.0f;
@@ -437,7 +441,6 @@ Pixel main(PixelInput input)
     float3 normal3 = normal;
 
     float3 tangent = normalize(input.tangent);
-    float3 bitangent = normalize(input.bitangent);
 
     float3 emissive0 = Emissive0;
     float3 emissive1 = Emissive1;
@@ -458,128 +461,128 @@ Pixel main(PixelInput input)
     float metalness3 = Metalness3;
 
 #if HasBaseColorTex0
-    float4 color0 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 0));
+    float4 color0 = baseColorTexture0.Sample(baseColorTextureSampler0, float2(input.tex.xy));
     baseColor0 = color0.rgb * color0.a;
 #endif
 #if HasBaseColorTex1
-    float4 color1 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 1));
+    float4 color1 = baseColorTexture1.Sample(baseColorTextureSampler1, float2(input.tex.xy));
     baseColor1 = color1.rgb * color1.a;
 #endif
 #if HasBaseColorTex2
-    float4 color2 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 2));
+    float4 color2 = baseColorTexture2.Sample(baseColorTextureSampler2, float2(input.tex.xy));
     baseColor2 = color2.rgb * color2.a;
 #endif
 #if HasBaseColorTex3
-    float4 color3 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 3));
+    float4 color3 = baseColorTexture3.Sample(baseColorTextureSampler3, float2(input.tex.xy));
     baseColor3 = color3.rgb * color3.a;
 #endif
 
 #if HasNormalTex0
-    normal0 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 0)).rgb, normal, tangent, bitangent);
+    normal0 = NormalSampleToWorldSpace(normalTexture0.Sample(normalTextureSampler0, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex1
-    normal1 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 1)).rgb, normal, tangent, bitangent);
+    normal1 = NormalSampleToWorldSpace(normalTexture1.Sample(normalTextureSampler1, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex2
-    normal2 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 2)).rgb, normal, tangent, bitangent);
+    normal2 = NormalSampleToWorldSpace(normalTexture2.Sample(normalTextureSampler2, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex3
-    normal3 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 3)).rgb, normal, tangent, bitangent);
+    normal3 = NormalSampleToWorldSpace(normalTexture3.Sample(normalTextureSampler3, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 
 #if HasRoughnessTex0
-    roughness0 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 0)).r;
+    roughness0 = roughnessTexture0.Sample(roughnessTextureSampler0, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex1
-    roughness1 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 1)).r;
+    roughness1 = roughnessTexture1.Sample(roughnessTextureSampler1, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex2
-    roughness2 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 2)).r;
+    roughness2 = roughnessTexture2.Sample(roughnessTextureSampler2, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex3
-    roughness3 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 3)).r;
+    roughness3 = roughnessTexture3.Sample(roughnessTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasMetalnessTex0
-    metalness0 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 0)).r;
+    metalness0 = metalnessTexture0.Sample(metalnessTextureSampler0, float2(input.tex.xy)).r;
 #endif
 #if HasMetalnessTex1
-    metalness1 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 1)).r;
+    metalness1 = metalnessTexture1.Sample(metalnessTextureSampler1, float2(input.tex.xy)).r;
 #endif
 #if HasMetalnessTex2
-    metalness2 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 2)).r;
+    metalness2 = metalnessTexture2.Sample(metalnessTextureSampler2, float2(input.tex.xy)).r;
 #endif
 #if HasMetalnessTex3
-    metalness3 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 3)).r;
+    metalness3 = metalnessTexture3.Sample(metalnessTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasEmissiveTex0
-    emissive0 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 0)).rgb;
+    emissive0 = emissiveTexture0.Sample(emissiveTextureSampler0, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex1
-    emissive1 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 1)).rgb;
+    emissive1 = emissiveTexture1.Sample(emissiveTextureSampler1, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex2
-    emissive2 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 2)).rgb;
+    emissive2 = emissiveTexture2.Sample(emissiveTextureSampler2, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex3
-    emissive3 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 3)).rgb;
+    emissive3 = emissiveTexture3.Sample(emissiveTextureSampler3, float2(input.tex.xy)).rgb;
 #endif
 
 #if HasAmbientOcclusionTex0
-    ao0 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 0)).r;
+    ao0 = ambientOcclusionTexture0.Sample(ambientOcclusionTextureSampler0, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex1
-    ao1 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 1)).r;
+    ao1 = ambientOcclusionTexture1.Sample(ambientOcclusionTextureSampler1, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex2
-    ao2 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 2)).r;
+    ao2 = ambientOcclusionTexture2.Sample(ambientOcclusionTextureSampler2, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex3
-    ao3 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 3)).r;
+    ao3 = ambientOcclusionTexture3.Sample(ambientOcclusionTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasRoughnessMetalnessTex0
-    float2 rm0 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 0)).gb;
+    float2 rm0 = roughnessMetalnessTexture0.Sample(roughnessMetalnessTextureSampler0, float2(input.tex.xy)).gb;
     roughness0 = rm0.x;
     metalness0 = rm0.y;
 #endif
 #if HasRoughnessMetalnessTex1
-    float2 rm1 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 1)).gb;
+    float2 rm1 = roughnessMetalnessTexture1.Sample(roughnessMetalnessTextureSampler1, float2(input.tex.xy)).gb;
     roughness1 = rm1.x;
     metalness1 = rm1.y;
 #endif
 #if HasRoughnessMetalnessTex2
-    float2 rm2 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 2)).gb;
+    float2 rm2 = roughnessMetalnessTexture2.Sample(roughnessMetalnessTextureSampler2, float2(input.tex.xy)).gb;
     roughness2 = rm2.x;
     metalness2 = rm2.y;
 #endif
 #if HasRoughnessMetalnessTex3
-    float2 rm3 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 3)).gb;
+    float2 rm3 = roughnessMetalnessTexture3.Sample(roughnessMetalnessTextureSampler3, float2(input.tex.xy)).gb;
     roughness3 = rm3.x;
     metalness3 = rm3.y;
 #endif
 
 #if HasAmbientOcclusionRoughnessMetalnessTex0
-    float3 orm0 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 0)).rgb;
+    float3 orm0 = ambientOcclusionRoughnessMetalnessTexture0.Sample(ambientOcclusionRoughnessMetalnessSampler0, float2(input.tex.xy)).rgb;
     ao0 = orm0.r;
     roughness0 = orm0.g;
     metalness0 = orm0.b;
 #endif
 #if HasAmbientOcclusionRoughnessMetalnessTex1
-    float3 orm1 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 1)).rgb;
+    float3 orm1 = ambientOcclusionRoughnessMetalnessTexture1.Sample(ambientOcclusionRoughnessMetalnessSampler1, float2(input.tex.xy)).rgb;
     ao1 = orm1.r;
     roughness1 = orm1.g;
     metalness1 = orm1.b;
 #endif
 #if HasAmbientOcclusionRoughnessMetalnessTex2
-    float3 orm2 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 2)).rgb;
+    float3 orm2 = ambientOcclusionRoughnessMetalnessTexture2.Sample(ambientOcclusionRoughnessMetalnessSampler2, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
     metalness2 = orm2.b;
 #endif
 #if HasAmbientOcclusionRoughnessMetalnessTex3
-    float3 orm3 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 3)).rgb;
+    float3 orm3 = ambientOcclusionRoughnessMetalnessTexture3.Sample(ambientOcclusionRoughnessMetalnessSampler3, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
     metalness2 = orm2.b;
@@ -656,39 +659,39 @@ Pixel main(PixelInput input)
 #else
         Light light = lights[i];
 #endif
-
+        [branch]
         switch (light.type)
         {
             case POINT_LIGHT:
-                L += PointLightBRDF(light, position, F0, V, N, baseColor.rgb, roughness, metallic);
+                L += PointLightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
                 break;
             case SPOT_LIGHT:
-                L += SpotlightBRDF(light, position, F0, V, N, baseColor.rgb, roughness, metallic);
+                L += SpotlightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
                 break;
             case DIRECTIONAL_LIGHT:
-                L += DirectionalLightBRDF(light, F0, V, N, baseColor.rgb, roughness, metallic);
+                L += DirectionalLightBRDF(light, F0, V, N, baseColor, roughness, metallic);
                 break;
         }
 
         float shadowFactor = 1;
 
-        if (light.castsShadows)
+        bool castsShadows = GetBit(light.castsShadows, 0);
+        bool contactShadows = GetBit(light.castsShadows, 1);
+
+        [branch]
+        if (castsShadows)
         {
-#if CLUSTERED_FORWARD
-            ShadowData data = shadowData[lightIndex];
-#else
-            ShadowData data = shadowData[i];
-#endif
+            ShadowData data = shadowData[light.shadowMapIndex];
             switch (light.type)
             {
                 case POINT_LIGHT:
-                    shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                    shadowFactor = ShadowFactorPointLight(shadowSampler, depthAtlas, light, data, position, N);
                     break;
                 case SPOT_LIGHT:
-                    shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);
+                    shadowFactor = ShadowFactorSpotlight(shadowSampler, depthAtlas, light, data, position, N);
                     break;
                 case DIRECTIONAL_LIGHT:
-                    shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
+                    shadowFactor = ShadowFactorDirectionalLightCascaded(shadowSampler, depthCSM, light, data, position, N);
                     break;
             }
         }

@@ -20,6 +20,11 @@
 
         private BoundingBox boundingBox;
 
+        public TerrainRendererComponent()
+        {
+            QueueIndex = (uint)RenderQueueIndex.Transparency;
+        }
+
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(StaticTerrainRenderer);
 
@@ -37,6 +42,7 @@
             heightMap = new(32, 32);
             heightMap.GenerateEmpty();
             grid.Add(new(device, heightMap, true));
+
             renderer = new(device);
             renderer.Initialize(grid);
         }

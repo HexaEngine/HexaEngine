@@ -387,12 +387,12 @@
                     var flags = component.model.ShaderFlags;
                     component.QueueIndex = (uint)RenderQueueIndex.Geometry;
 
-                    if (flags.HasFlag(MaterialShaderFlags.AlphaTest))
+                    if (flags.HasFlag(ModelMaterialShaderFlags.AlphaTest))
                     {
                         component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
                     }
 
-                    if (flags.HasFlag(MaterialShaderFlags.Transparent))
+                    if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))
                     {
                         component.QueueIndex = (uint)RenderQueueIndex.Transparency;
                     }

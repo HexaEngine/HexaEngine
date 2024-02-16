@@ -30,11 +30,6 @@
         public Vector3 Tangent;
 
         /// <summary>
-        /// The bitangent vector of the vertex.
-        /// </summary>
-        public Vector3 Bitangent;
-
-        /// <summary>
         /// The array of bone IDs influencing the vertex.
         /// </summary>
         public Point4 BoneIds;
@@ -92,20 +87,19 @@
             return Position.Equals(other.Position) &&
                    UV.Equals(other.UV) &&
                    Normal.Equals(other.Normal) &&
-                   Tangent.Equals(other.Tangent) &&
-                   Bitangent.Equals(other.Bitangent);
+                   Tangent.Equals(other.Tangent);
         }
 
         /// <inheritdoc/>
         public override readonly int GetHashCode()
         {
-            return HashCode.Combine(Position, UV, Normal, Tangent, Bitangent);
+            return HashCode.Combine(Position, UV, Normal, Tangent);
         }
 
         /// <inheritdoc/>
         public override readonly string? ToString()
         {
-            return $"<Pos: {Position},UV: {UV},N: {Normal},T: {Tangent},B: {Bitangent}, BoneIds: {BoneIds}, Weights: {Weights}>";
+            return $"<Pos: {Position},UV: {UV},N: {Normal},T: {Tangent}, BoneIds: {BoneIds}, Weights: {Weights}>";
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes.Processing
 {
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.IO.Binary.Terrains;
     using System.Numerics;
 
     /// <summary>
@@ -29,6 +30,21 @@
         /// <param name="mesh">The mesh data.</param>
         /// <returns>The computed position epsilon.</returns>
         public static float ComputePositionEpsilon(MeshData mesh)
+        {
+            float epsilon = 1e-4f;
+
+            // Calculate the position bounds so we have a reliable epsilon to check position differences against
+            Vector3 minVec = default, maxVec = default;
+            ArrayBounds(mesh.Positions, ref minVec, ref maxVec);
+            return (maxVec - minVec).Length() * epsilon;
+        }
+
+        /// <summary>
+        /// Computes the position epsilon for the given mesh data.
+        /// </summary>
+        /// <param name="mesh">The mesh data.</param>
+        /// <returns>The computed position epsilon.</returns>
+        public static float ComputePositionEpsilon(TerrainCellData mesh)
         {
             float epsilon = 1e-4f;
 

@@ -2,46 +2,68 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.IO.Binary.Meshes;
 
     public static class MaterialShaderResourceFactoryExtensions
     {
-        public static ResourceInstance<Resources.MaterialShader>? LoadMaterialShader(this ResourceManager manager, MeshData mesh, MaterialData material, bool debone = false)
+        public static Resources.MaterialShader? LoadMaterialShader(this ResourceManager manager, MaterialShaderDesc desc)
         {
-            return manager.CreateInstance<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Guid, (mesh, material, debone));
+            return manager.CreateInstance<Resources.MaterialShader, MaterialShaderDesc>(desc.MaterialId, desc);
         }
 
-        public static async Task<ResourceInstance<Resources.MaterialShader>?> LoadMaterialShaderAsync(this ResourceManager manager, MeshData mesh, MaterialData material, bool debone = false)
+        public static async Task<Resources.MaterialShader?> LoadMaterialShaderAsync(this ResourceManager manager, MaterialShaderDesc desc)
         {
-            return await manager.CreateInstanceAsync<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>(material.Guid, (mesh, material, debone));
+            return await manager.CreateInstanceAsync<Resources.MaterialShader, MaterialShaderDesc>(desc.MaterialId, desc);
         }
 
-        public static void UpdateMaterialShader(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? shader, MaterialData material)
+        public static void UpdateMaterialShader(this ResourceManager manager, Resources.MaterialShader? shader, MaterialShaderDesc desc)
         {
-            if (shader == null || shader.Value == null)
+            if (shader == null)
             {
                 return;
             }
 
-            shader.Value.Update(material);
-            shader.Value.Reload();
+            shader.Update(desc);
+            shader.Reload();
         }
 
-        public static async Task<ResourceInstance<Resources.MaterialShader>?> UpdateMaterialShaderAsync(this ResourceManager manager, ResourceInstance<Resources.MaterialShader>? shader, MaterialData material)
+        public static void UpdateMaterialShader(this ResourceManager manager, Resources.MaterialShader? shader, MaterialData desc)
         {
-            if (shader == null || shader.Value == null)
+            if (shader == null)
+            {
+                return;
+            }
+
+            shader.Update(desc.GetShaderMacros());
+            shader.Reload();
+        }
+
+        public static async Task<Resources.MaterialShader?> UpdateMaterialShaderAsync(this ResourceManager manager, Resources.MaterialShader? shader, MaterialShaderDesc desc)
+        {
+            if (shader == null)
             {
                 return null;
             }
 
-            shader.Value.Update(material);
-            await shader.Value.ReloadAsync();
+            shader.Update(desc);
+            await shader.ReloadAsync();
+            return shader;
+        }
+
+        public static async Task<Resources.MaterialShader?> UpdateMaterialShaderAsync(this ResourceManager manager, Resources.MaterialShader? shader, MaterialData material)
+        {
+            if (shader == null)
+            {
+                return null;
+            }
+
+            shader.Update(material.GetShaderMacros());
+            await shader.ReloadAsync();
             return shader;
         }
 
         public static void RecompileShaders(this ResourceManager manager)
         {
-            var factory = manager.GetFactoryByResourceType<ResourceInstance<Resources.MaterialShader>, (MeshData, MaterialData, bool)>();
+            var factory = manager.GetFactoryByResourceType<Resources.MaterialShader, MaterialShaderDesc>();
             if (factory == null)
             {
                 return;
@@ -50,7 +72,7 @@
             Logger.Info("recompiling material shaders ...");
             foreach (var shader in factory.Instances)
             {
-                shader.Value?.Value?.Recompile();
+                shader.Value?.Recompile();
             }
             Logger.Info("recompiling material shaders ...  done!");
         }

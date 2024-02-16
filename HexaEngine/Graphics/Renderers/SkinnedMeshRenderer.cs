@@ -209,7 +209,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawForward(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "Forward", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
@@ -248,7 +248,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDeferred(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "Deferred", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
@@ -287,7 +287,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
@@ -313,6 +313,8 @@
             context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
             context.VSSetShaderResource(2, boneTransformBuffer.SRV);
             context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(0, light);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -326,13 +328,15 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawShadow(context, light, type, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
                     boneOffset++;
             }
 
+            context.VSSetConstantBuffer(1, null);
+            context.GSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetShaderResource(1, null);

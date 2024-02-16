@@ -23,7 +23,6 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
     output.tex = input.tex;
     output.normal = mul(input.normal, (float3x3) mat);
     output.tangent = mul(input.tangent, (float3x3) mat);
-    output.bitangent = mul(input.bitangent, (float3x3) mat);
 
     output.TessFactor = TessellationFactor;
 	return output;
@@ -41,7 +40,6 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
     float4 totalPosition = 0;
     float3 totalNormal = 0;
     float3 totalTangent = 0;
-    float3 totalBitangent = 0;
 
     uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
     for (int i = 0; i < MaxBoneInfluence; i++)
@@ -54,7 +52,6 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
             totalPosition = float4(input.pos, 1.0f);
             totalNormal = input.normal;
             totalTangent = input.tangent;
-            totalBitangent = input.bitangent;
             break;
         }
 
@@ -66,9 +63,6 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
         float3 localTangent = mul(input.tangent, (float3x3) boneMatrices[input.boneIds[i] + boneMatrixOffset]);
         totalTangent += localTangent * input.weights[i];
-
-        float3 localBitangent = mul(input.bitangent, (float3x3) boneMatrices[input.boneIds[i] + boneMatrixOffset]);
-        totalBitangent += localBitangent * input.weights[i];
     }
 
     PixelInput output;
@@ -80,7 +74,6 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
     output.tex = input.tex;
     output.normal = mul(totalNormal, (float3x3) mat);
     output.tangent = mul(totalTangent, (float3x3) mat);
-    output.bitangent = mul(totalBitangent, (float3x3) mat);
     output.position = mul(output.position, viewProj);
 
     return output;
@@ -101,7 +94,6 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
     output.tex = input.tex;
     output.normal = mul(input.normal, (float3x3) mat);
     output.tangent = mul(input.tangent, (float3x3) mat);
-    output.bitangent = mul(input.bitangent, (float3x3) mat);
     output.position = mul(output.position, viewProj);
 
 #if HasBakedLightMap || BAKE_PASS

@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Noise;
     using System;
+    using System.Reflection;
     using System.Text;
 
     /// <summary>
@@ -28,17 +29,19 @@
         private float[] data;
 
 #nullable disable
+
         private HeightMap()
         {
         }
+
 #nullable restore
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width, height, and data.
         /// </summary>
-        /// <param filename="width">The width of the height map.</param>
-        /// <param filename="height">The height of the height map.</param>
-        /// <param filename="data">The data of the height map.</param>
+        /// <param name="width">The width of the height map.</param>
+        /// <param name="height">The height of the height map.</param>
+        /// <param name="data">The data of the height map.</param>
         public HeightMap(uint width, uint height, float[] data)
         {
             this.width = width;
@@ -49,8 +52,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width and height.
         /// </summary>
-        /// <param filename="width">The width of the height map.</param>
-        /// <param filename="height">The height of the height map.</param>
+        /// <param name="width">The width of the height map.</param>
+        /// <param name="height">The height of the height map.</param>
         public HeightMap(uint width = 32, uint height = 32)
         {
             this.width = width;
@@ -61,20 +64,9 @@
         /// <summary>
         /// Gets or sets the height map data at the specified index.
         /// </summary>
-        /// <param filename="index">The index of the height map data.</param>
+        /// <param name="index">The index of the height map data.</param>
         /// <returns>The height map data at the specified index.</returns>
         public float this[uint index]
-        {
-            get => data[index];
-            set => data[index] = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the height map data at the specified index.
-        /// </summary>
-        /// <param filename="index">The index of the height map data.</param>
-        /// <returns>The height map data at the specified index.</returns>
-        public float this[int index]
         {
             get => data[index];
             set => data[index] = value;
@@ -246,14 +238,9 @@
             height = src.ReadUInt32(endianness);
             data = new float[width * height];
 
-            for (uint i = 0; i < height; i++)
+            for (uint i = 0; i < data.Length; i++)
             {
-                for (uint j = 0; j < width; j++)
-                {
-                    uint index = height * j + i;
-
-                    data[index] = src.ReadFloat(endianness);
-                }
+                data[i] = src.ReadFloat(endianness);
             }
         }
 
@@ -268,13 +255,9 @@
             dst.WriteUInt32(width, endianness);
             dst.WriteUInt32(height, endianness);
 
-            for (uint i = 0; i < height; i++)
+            for (uint i = 0; i < data.Length; i++)
             {
-                for (uint j = 0; j < width; j++)
-                {
-                    uint index = height * j + i;
-                    dst.WriteFloat(data[index], endianness);
-                }
+                dst.WriteFloat(data[i], endianness);
             }
         }
 
@@ -282,40 +265,19 @@
         /// Creates a <see cref="Texture2D"/> from the height map.
         /// </summary>
         /// <param name="device">The graphics device.</param>
-        /// <param name="accessFlags">The CPU access flags.</param>
-        /// <param name="uav">Indicates whether to create an unordered access view.</param>
-        /// <param name="immutable">Indicates whether the texture is immutable.</param>
+        /// <param name="gpuAccessFlags">The GPU access flags.</param>
+        /// <param name="cpuAccessFlags">The CPU access flags.</param>
         /// <returns>The created height map texture.</returns>
-        public unsafe Texture2D CreateHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None, bool uav = false, bool immutable = true)
+        public unsafe Texture2D CreateHeightMap(IGraphicsDevice device, GpuAccessFlags gpuAccessFlags, CpuAccessFlags cpuAccessFlags)
         {
-            Half* pixel = AllocT<Half>(data.Length);
+            Texture2DDescription desc = new(Format.R32Float, (int)width, (int)height, 1, 1, gpuAccessFlags, cpuAccessFlags);
 
-            for (int i = 0; i < data.Length; i++)
+            Texture2D heightMap;
+            fixed (float* pData = data)
             {
-                pixel[i] = (Half)data[i];
-            }
-
-            Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, immutable ? Usage.Immutable : Usage.Default, accessFlags);
-            if ((accessFlags & CpuAccessFlags.Write) != 0)
-            {
-                desc.Usage = Usage.Dynamic;
-            }
-            if ((accessFlags & CpuAccessFlags.Read) != 0)
-            {
-                desc.Usage = Usage.Staging;
-            }
-            if (accessFlags != CpuAccessFlags.None && uav)
-            {
-                throw new ArgumentException("Cannot access from cpu and uav at the same time");
-            }
-            if (uav)
-            {
-                desc.Usage = Usage.Default;
-                desc.BindFlags |= BindFlags.UnorderedAccess;
+                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(float))));
             }
 
-            Texture2D heightMap = new(device, desc, new SubresourceData(pixel, (int)(width * sizeof(Half))));
-            Free(pixel);
             return heightMap;
         }
 
@@ -327,17 +289,13 @@
         /// <returns>The created staging height map texture.</returns>
         public unsafe Texture2D CreateStagingHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            Half* pixel = AllocT<Half>(data.Length);
-
-            for (int i = 0; i < data.Length; i++)
+            Texture2DDescription desc = new(Format.R32Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, accessFlags);
+            Texture2D heightMap;
+            fixed (float* pData = data)
             {
-                pixel[i] = (Half)data[i];
+                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(float))));
             }
 
-            Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, accessFlags);
-
-            Texture2D heightMap = new(device, desc, new SubresourceData(pixel, (int)(width * sizeof(Half))));
-            Free(pixel);
             return heightMap;
         }
 
@@ -350,10 +308,10 @@
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Write) != 0)
             {
-                var pixel = (Half*)texture.Local;
+                var pixel = (float*)texture.Local;
                 for (int i = 0; i < data.Length; i++)
                 {
-                    pixel[i] = (Half)data[i];
+                    pixel[i] = data[i];
                 }
                 texture.Write(context);
             }
@@ -375,24 +333,24 @@
             if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)
             {
                 texture.Read(context);
-                var pixel = (Half*)texture.Local;
+                var pixel = (float*)texture.Local;
                 for (int i = 0; i < data.Length; i++)
                 {
-                    data[i] = (float)pixel[i];
+                    data[i] = pixel[i];
                 }
             }
             else
             {
-                Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read);
+                Texture2DDescription desc = new(Format.R32Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read);
                 Texture2D staging = new(context.Device, desc);
 
                 texture.CopyTo(context, staging);
 
                 staging.Read(context);
-                var pixel = (Half*)texture.Local;
+                var pixel = (float*)texture.Local;
                 for (int i = 0; i < data.Length; i++)
                 {
-                    data[i] = (float)pixel[i];
+                    data[i] = pixel[i];
                 }
                 staging.Dispose();
             }

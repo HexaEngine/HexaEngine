@@ -40,12 +40,12 @@
         private const uint nForwardRTVs = 3;
 
         private unsafe void** forwardSRVs;
-        private const uint nForwardSRVs = 8 + 9;
+        private const uint nForwardSRVs = 8;
         private const uint nForwardIndirectSRVsBase = 8 + 7;
 
         private unsafe void** forwardClusteredSRVs;
         private const uint nForwardClusteredSRVs = 8 + 11;
-        private const uint nForwardClusteredIndirectSRVsBase = 8 + 9;
+        private const uint nForwardClusteredIndirectSRVsBase = 8;
 
         public LightForwardPass(Windows.RendererFlags flags) : base("LightForward")
         {
@@ -113,18 +113,18 @@
             smps[2] = (void*)pointClampSampler.Value.NativePointer;
             smps[3] = (void*)shadowSampler.Value.NativePointer;
 
-            forwardSRVs[8] = forwardClusteredSRVs[8] = (void*)AOBuffer.Value.SRV.NativePointer;
+            forwardSRVs[0] = forwardClusteredSRVs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
 
-            forwardSRVs[9] = forwardClusteredSRVs[9] = (void*)brdfLUT.Value.SRV.NativePointer;
-            forwardSRVs[10] = (void*)globalProbes.SRV.NativePointer;
+            forwardSRVs[1] = forwardClusteredSRVs[1] = (void*)brdfLUT.Value.SRV.NativePointer;
+            forwardSRVs[2] = (void*)globalProbes.SRV.NativePointer;
 
-            forwardSRVs[11] = forwardClusteredSRVs[11] = (void*)lights.LightBuffer.SRV.NativePointer;
-            forwardSRVs[12] = forwardClusteredSRVs[12] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
+            forwardSRVs[3] = forwardClusteredSRVs[3] = (void*)lights.LightBuffer.SRV.NativePointer;
+            forwardSRVs[4] = forwardClusteredSRVs[4] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
 
-            forwardClusteredSRVs[13] = (void*)lightIndexList.Value.SRV.NativePointer;
-            forwardClusteredSRVs[14] = (void*)lightGridBuffer.Value.SRV.NativePointer;
+            forwardClusteredSRVs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
+            forwardClusteredSRVs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
 
-            forwardSRVs[13] = forwardClusteredSRVs[15] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            forwardSRVs[5] = forwardClusteredSRVs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
 
             forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
@@ -204,8 +204,8 @@
             context.GSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(8, nForwardSRVs, forwardSRVs);
-            context.PSSetSamplers(8, nSamplers, smps);
+            context.PSSetShaderResources(0, nForwardSRVs, forwardSRVs);
+            context.PSSetSamplers(0, nSamplers, smps);
         }
 
         private unsafe void ForwardEnd(IGraphicsContext context)
@@ -238,16 +238,16 @@
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(0, nForwardClusteredSRVs, forwardClusteredSRVs);
-            context.PSSetSamplers(8, nSamplers, smps);
+            context.PSSetSamplers(0, nSamplers, smps);
         }
 
         private unsafe void ClusteredForwardEnd(IGraphicsContext context)
         {
             nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
+            context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
 
             nint* null_srvs = stackalloc nint[(int)nForwardClusteredSRVs];
-            context.PSSetShaderResources(8, nForwardClusteredSRVs, (void**)null_srvs);
+            context.PSSetShaderResources(0, nForwardClusteredSRVs, (void**)null_srvs);
 
             nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
             context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);

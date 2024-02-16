@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
+    using System.Reflection;
 
     /// <summary>
     /// Provides methods for generating vertex normals for a mesh.
@@ -71,7 +72,10 @@
                     for (uint a = 0; a < verticesFound.Count; ++a)
                     {
                         Vector3 v = pMesh.Normals[verticesFound[(int)a]];
-                        if (!float.IsNaN(v.X)) pcNor += v;
+                        if (!float.IsNaN(v.X))
+                        {
+                            pcNor += v;
+                        }
                     }
                     pcNor = Vector3.Normalize(pcNor);
 
@@ -189,59 +193,104 @@
         /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool GenMeshVertexNormals2(TerrainCellData pMesh)
         {
-            Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
-            Memset(vertNormals, 0, (int)pMesh.VerticesCount);
-            uint nFaces = pMesh.IndicesCount / 3;
+            //GenerateNormalsTerrain(pMesh.Positions, out pMesh.Normals, (int)pMesh.ActualWidth, (int)pMesh.ActualHeight);
 
-            for (int face = 0; face < nFaces; ++face)
+            //Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
+            //Memset(vertNormals, 0, (int)nFaces);
+
+            var m_terrainHeight = (int)pMesh.ActualHeight;
+            var m_terrainWidth = (int)pMesh.ActualWidth;
+
+            int i, j, index1, index2, index3, index, count;
+            Vector3 vertex1, vertex2, vertex3, vector1, vector2, sum;
+
+            Vector3[] normals = new Vector3[pMesh.VerticesCount];
+            for (j = 0; j < m_terrainHeight - 1; j++)
             {
-                uint i0 = pMesh.Indices[face * 3];
-                uint i1 = pMesh.Indices[face * 3 + 1];
-                uint i2 = pMesh.Indices[face * 3 + 2];
-
-                Vector3 p0 = pMesh.Positions[i0];
-                Vector3 p1 = pMesh.Positions[i1];
-                Vector3 p2 = pMesh.Positions[i2];
-
-                Vector3 u = p1 - p0;
-                Vector3 v = p2 - p0;
-
-                Vector3 faceNormal = Vector3.Normalize(Vector3.Cross(u, v));
-
-                if (float.IsNaN(faceNormal.X))
+                for (i = 0; i < m_terrainWidth - 1; i++)
                 {
-                    continue;
+                    index1 = j * m_terrainHeight + i;
+                    index2 = j * m_terrainHeight + i + 1;
+                    index3 = (j + 1) * m_terrainHeight + i;
+
+                    // Get three vertices from the face.
+                    vertex1 = pMesh.Positions[index1];
+                    vertex2 = pMesh.Positions[index2];
+                    vertex3 = pMesh.Positions[index3];
+
+                    // Calculate the two vectors for this face.
+                    vector1 = vertex1 - vertex3;
+
+                    vector2 = vertex3 - vertex2;
+
+                    index = j * (m_terrainHeight - 1) + i;
+
+                    // Calculate the cross product of those two vectors to get the un-normalized value for this face normal.
+                    normals[index] = Vector3.Cross(vector1, vector2);
                 }
-
-                Vector3 a = Vector3.Normalize(u);
-                Vector3 b = Vector3.Normalize(v);
-                float w0 = Vector3.Dot(a, b);
-                w0 = Math.Clamp(w0, -1, 1);
-                w0 = MathF.Acos(w0);
-
-                Vector3 c = Vector3.Normalize(p2 - p1);
-                Vector3 d = Vector3.Normalize(p0 - p1);
-                float w1 = Vector3.Dot(c, d);
-                w1 = Math.Clamp(w1, -1, 1);
-                w1 = MathF.Acos(w1);
-
-                Vector3 e = Vector3.Normalize(p0 - p2);
-                Vector3 f = Vector3.Normalize(p1 - p2);
-                float w2 = Vector3.Dot(e, f);
-                w2 = Math.Clamp(w2, -1, 1);
-                w2 = MathF.Acos(w2);
-
-                vertNormals[i0] = faceNormal * w0 + vertNormals[i0];
-                vertNormals[i1] = faceNormal * w1 + vertNormals[i1];
-                vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
             }
 
-            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            for (j = 0; j < m_terrainHeight; j++)
             {
-                pMesh.Normals[i] = Vector3.Normalize(vertNormals[i]);
+                for (i = 0; i < m_terrainWidth; i++)
+                {
+                    // Initialize the sum.
+                    sum = Vector3.Zero;
+
+                    // Initialize the count.
+                    count = 0;
+
+                    // Bottom left face.
+                    if (i - 1 >= 0 && j - 1 >= 0)
+                    {
+                        index = (j - 1) * (m_terrainHeight - 1) + (i - 1);
+
+                        sum += normals[index];
+                        count++;
+                    }
+
+                    // Bottom right face.
+                    if (i < m_terrainWidth - 1 && j - 1 >= 0)
+                    {
+                        index = (j - 1) * (m_terrainHeight - 1) + i;
+
+                        sum += normals[index];
+                        count++;
+                    }
+
+                    // Upper left face.
+                    if (i - 1 >= 0 && j < m_terrainHeight - 1)
+                    {
+                        index = j * (m_terrainHeight - 1) + (i - 1);
+
+                        sum += normals[index];
+                        count++;
+                    }
+
+                    // Upper right face.
+                    if (i < m_terrainWidth - 1 && j < m_terrainHeight - 1)
+                    {
+                        index = j * (m_terrainHeight - 1) + i;
+
+                        sum += normals[index];
+                        count++;
+                    }
+
+                    // Take the average of the faces touching this vertex.
+                    sum /= count;
+
+                    // Calculate the length of this normal.
+                    sum = Vector3.Normalize(sum);
+
+                    // Get an index to the vertex location in the height map array.
+                    index = j * m_terrainHeight + i;
+
+                    // Normalize the final shared normal for this vertex and store it in the height map array.
+                    pMesh.Normals[index] = sum;
+                }
             }
 
-            Free(vertNormals);
+            //Free(vertNormals);
 
             return true;
         }

@@ -37,13 +37,8 @@
         Tangents = 32,
 
         /// <summary>
-        /// Indicates the presence of vertex bitangents.
-        /// </summary>
-        Bitangents = 64,
-
-        /// <summary>
         /// Indicates that the vertex is part of a skinned mesh.
         /// </summary>
-        Skinned = 128,
+        Skinned = 64,
     }
 }

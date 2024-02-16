@@ -241,7 +241,7 @@ float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light li
 
     //calculate bias (based on slope)
     //float bias = max(data.slopeBias * (1.0 - dot(N, L)), data.bias);
-    const float bias = 0.0005f;
+    const float bias = 0.005f;
 
     const float near = 0.001;
     const float far = light.range;
@@ -536,7 +536,7 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 
 float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
 {
-    const float bias = 0.0005f;
+    const float bias = 0.005f;
 
     const float near = 0.001;
     const float far = light.range;
@@ -607,7 +607,7 @@ float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas
 
 float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
 {
-    const float bias = 0.0005f;
+    const float bias = 0.005f;
 
     const float near = 0.001;
     const float far = light.range;

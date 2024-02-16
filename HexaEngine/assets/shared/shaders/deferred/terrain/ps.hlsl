@@ -295,7 +295,7 @@ GeometryData main(PixelInput input)
     float metalness1 = Metalness1;
     float metalness2 = Metalness2;
     float metalness3 = Metalness3;
-    
+
 #if VtxUV
 #if HasBaseColorTex0
     float4 color0 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 0));
@@ -313,38 +313,22 @@ GeometryData main(PixelInput input)
     float4 color3 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 3));
     baseColor3 = color3.rgb * color3.a;
 #endif
-    
+
 #if VtxTangent
 #if HasNormalTex0
-#if VtxBitangent
-    normal0 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 0)).rgb, normal, tangent, bitangent);
-#else
 	normal0 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 0)).rgb, normal, tangent);
 #endif
-#endif
 #if HasNormalTex1
-#if VtxBitangent
-    normal1 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 1)).rgb, normal, tangent, bitangent);
-#else
 	normal1 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 1)).rgb, normal, tangent);
 #endif
-#endif
 #if HasNormalTex2
-#if VtxBitangent
-    normal2 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 2)).rgb, normal, tangent, bitangent);
-#else
 	normal2 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 2)).rgb, normal, tangent);
 #endif
-#endif
 #if HasNormalTex3
-#if VtxBitangent
-    normal3 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 3)).rgb, normal, tangent, bitangent);
-#else
 	normal3 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 3)).rgb, normal, tangent);
 #endif
 #endif
-#endif
-	
+
 #if HasRoughnessTex0
     roughness0 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 0)).r;
 #endif
@@ -357,7 +341,7 @@ GeometryData main(PixelInput input)
 #if HasRoughnessTex3
     roughness3 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 3)).r;
 #endif
-	
+
 #if HasMetalnessTex0
     metalness0 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 0)).r;
 #endif
@@ -370,7 +354,7 @@ GeometryData main(PixelInput input)
 #if HasMetalnessTex3
     metalness3 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 3)).r;
 #endif
-    
+
 #if HasEmissiveTex0
     emissive0 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 0)).rgb;
 #endif
@@ -383,7 +367,7 @@ GeometryData main(PixelInput input)
 #if HasEmissiveTex3
     emissive3 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 3)).rgb;
 #endif
-	
+
 #if HasAmbientOcclusionTex0
     ao0 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 0)).r;
 #endif
@@ -396,7 +380,7 @@ GeometryData main(PixelInput input)
 #if HasAmbientOcclusionTex3
     ao3 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 3)).r;
 #endif
-    
+
 #if HasRoughnessMetalnessTex0
     float2 rm0 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 0)).gb;
     roughness0 = rm0.x;
@@ -417,7 +401,7 @@ GeometryData main(PixelInput input)
     roughness3 = rm3.x;
     metalness3 = rm3.y;
 #endif
-    
+
 #if HasAmbientOcclusionRoughnessMetalnessTex0
     float3 orm0 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 0)).rgb;
     ao0 = orm0.r;
@@ -442,50 +426,50 @@ GeometryData main(PixelInput input)
     roughness2 = orm2.g;
     metalness2 = orm2.b;
 #endif
-    
+
 #endif
 
-	float4 mask = maskTex.Sample(state, input.ctex).xyzw;
+    float4 mask = maskTex.Sample(state, input.ctex).xyzw;
 
     float opacity = mask.x + mask.y + mask.z + mask.w;
-    
+
     int matID = -1;
-    
+
     float3 baseColor = 0;
     baseColor = lerp(baseColor, baseColor0, mask.x);
     baseColor = lerp(baseColor, baseColor1, mask.y);
     baseColor = lerp(baseColor, baseColor2, mask.z);
     baseColor = lerp(baseColor, baseColor3, mask.w);
-    
+
     normal = 0;
     normal = lerp(normal, normal0, mask.x);
     normal = lerp(normal, normal1, mask.y);
     normal = lerp(normal, normal2, mask.z);
     normal = lerp(normal, normal3, mask.w);
-    
+
     float roughness = 0;
     roughness = lerp(roughness, roughness0, mask.x);
     roughness = lerp(roughness, roughness1, mask.y);
     roughness = lerp(roughness, roughness2, mask.z);
     roughness = lerp(roughness, roughness3, mask.w);
-    
+
     float metallic = 0;
     metallic = lerp(metallic, metalness0, mask.x);
     metallic = lerp(metallic, metalness1, mask.y);
     metallic = lerp(metallic, metalness2, mask.z);
     metallic = lerp(metallic, metalness3, mask.w);
-    
+
     float ao = 0;
     ao = lerp(ao, ao0, mask.x);
     ao = lerp(ao, ao1, mask.y);
     ao = lerp(ao, ao2, mask.z);
     ao = lerp(ao, ao3, mask.w);
-    
+
     float3 emissive = 0;
     emissive = lerp(emissive, emissive0, mask.x);
     emissive = lerp(emissive, emissive1, mask.y);
     emissive = lerp(emissive, emissive2, mask.z);
     emissive = lerp(emissive, emissive3, mask.w);
-    
+
     return PackGeometryData(matID, baseColor, normal, roughness, metallic, 0, ao, 0, emissive, 1);
 }

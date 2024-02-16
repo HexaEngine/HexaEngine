@@ -53,69 +53,69 @@
 #define HasAmbientOcclusionRoughnessMetallicTex 0
 #endif
 
-#if HasBaseColorTex
-Texture2D baseColorTexture : register(t0);
-SamplerState baseColorTextureSampler : register(s0);
-#endif
-#if HasNormalTex
-Texture2D normalTexture : register(t1);
-SamplerState normalTextureSampler : register(s1);
-#endif
-#if HasRoughnessTex
-Texture2D roughnessTexture : register(t2);
-SamplerState roughnessTextureSampler : register(s2);
-#endif
-#if HasMetallicTex
-Texture2D metallicTexture : register(t3);
-SamplerState metallicTextureSampler : register(s3);
-#endif
-#if HasEmissiveTex
-Texture2D emissiveTexture : register(t4);
-SamplerState emissiveTextureSampler : register(s4);
-#endif
-#if HasAmbientOcclusionTex
-Texture2D ambientOcclusionTexture : register(t5);
-SamplerState ambientOcclusionTextureSampler : register(s5);
-#endif
-#if HasRoughnessMetallicTex
-Texture2D roughnessMetallicTexture : register(t6);
-SamplerState roughnessMetallicTextureSampler : register(s6);
-#endif
-#if HasAmbientOcclusionRoughnessMetallicTex
-Texture2D ambientOcclusionRoughnessMetallicTexture : register(t7);
-SamplerState ambientOcclusionRoughnessMetallicSampler : register(s7);
-#endif
+SamplerState linearClampSampler : register(s0);
+SamplerState linearWrapSampler : register(s1);
+SamplerState pointClampSampler : register(s2);
+SamplerComparisonState shadowSampler : register(s3);
 
-Texture2D ssao : register(t8);
-Texture2D brdfLUT : register(t9);
+Texture2D ssao : register(t0);
+Texture2D brdfLUT : register(t1);
 
-StructuredBuffer<GlobalProbe> globalProbes : register(t10);
-StructuredBuffer<Light> lights : register(t11);
-StructuredBuffer<ShadowData> shadowData : register(t12);
+StructuredBuffer<GlobalProbe> globalProbes : register(t2);
+StructuredBuffer<Light> lights : register(t3);
+StructuredBuffer<ShadowData> shadowData : register(t4);
 
 #if !CLUSTERED_FORWARD
-Texture2D depthAtlas : register(t13);
-Texture2DArray depthCSM : register(t14);
+Texture2D depthAtlas : register(t5);
+Texture2DArray depthCSM : register(t6);
 
-TextureCube globalDiffuse : register(t15);
-TextureCube globalSpecular : register(t16);
+TextureCube globalDiffuse : register(t7);
+TextureCube globalSpecular : register(t8);
 #endif
 
 #if CLUSTERED_FORWARD
-StructuredBuffer<uint> lightIndexList : register(t13); //MAX_CLUSTER_LIGHTS * 16^3
-StructuredBuffer<LightGrid> lightGrid : register(t14); //16^3
+StructuredBuffer<uint> lightIndexList : register(t5); //MAX_CLUSTER_LIGHTS * 16^3
+StructuredBuffer<LightGrid> lightGrid : register(t6); //16^3
 
-Texture2D depthAtlas : register(t15);
-Texture2DArray depthCSM : register(t16);
+Texture2D depthAtlas : register(t7);
+Texture2DArray depthCSM : register(t8);
 
-TextureCube globalDiffuse : register(t17);
-TextureCube globalSpecular : register(t18);
+TextureCube globalDiffuse : register(t9);
+TextureCube globalSpecular : register(t10);
 #endif
 
-SamplerState linearClampSampler : register(s8);
-SamplerState linearWrapSampler : register(s9);
-SamplerState pointClampSampler : register(s10);
-SamplerComparisonState shadowSampler : register(s11);
+#if HasBaseColorTex
+Texture2D baseColorTexture;
+SamplerState baseColorTextureSampler;
+#endif
+#if HasNormalTex
+Texture2D normalTexture;
+SamplerState normalTextureSampler;
+#endif
+#if HasRoughnessTex
+Texture2D roughnessTexture;
+SamplerState roughnessTextureSampler;
+#endif
+#if HasMetallicTex
+Texture2D metallicTexture;
+SamplerState metallicTextureSampler;
+#endif
+#if HasEmissiveTex
+Texture2D emissiveTexture;
+SamplerState emissiveTextureSampler;
+#endif
+#if HasAmbientOcclusionTex
+Texture2D ambientOcclusionTexture;
+SamplerState ambientOcclusionTextureSampler;
+#endif
+#if HasRoughnessMetallicTex
+Texture2D roughnessMetallicTexture;
+SamplerState roughnessMetallicTextureSampler;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex
+Texture2D ambientOcclusionRoughnessMetallicTexture;
+SamplerState ambientOcclusionRoughnessMetallicSampler;
+#endif
 
 #if !CLUSTERED_FORWARD
 cbuffer constants : register(b0)
@@ -270,7 +270,6 @@ Pixel main(PixelInput input
     float4 baseColor = BaseColor;
     float3 normal = normalize(input.normal);
     float3 tangent = normalize(input.tangent);
-    float3 bitangent = normalize(input.bitangent);
 
     float opacity = 1;
 
@@ -285,7 +284,7 @@ Pixel main(PixelInput input
 #endif
 
 #if HasNormalTex
-	normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2)input.tex).rgb, normal, tangent, bitangent);
+	normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2)input.tex).rgb, normal, tangent);
 #endif
 
 #if HasRoughnessTex

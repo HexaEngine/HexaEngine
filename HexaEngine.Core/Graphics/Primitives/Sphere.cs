@@ -20,7 +20,6 @@
         {
         }
 
-
         /// <summary>
         /// Initializes the sphere mesh by creating vertex and index buffers.
         /// </summary>
@@ -83,11 +82,9 @@
                         tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, normal));
                     }
 
-                    Vector3 bitangent = Vector3.Cross(normal, tangent);
-
                     Vector2 textureCoordinate = new(u, v);
 
-                    vertices[vcounter++] = new(normal * radius, textureCoordinate, normal, tangent, bitangent);
+                    vertices[vcounter++] = new(normal * radius, textureCoordinate, normal, tangent);
                 }
             }
 
