@@ -2,10 +2,12 @@
 {
     public class Artifact
     {
+        private string name;
+
         public Artifact(string name, Guid sourceGuid, Guid guid, AssetType type, string path)
         {
             DisplayName = $"{name}##{guid}";
-            Name = name;
+            this.name = name;
             SourceGuid = sourceGuid;
             Guid = guid;
             Type = type;
@@ -13,9 +15,10 @@
         }
 
         [JsonIgnore]
-        public string DisplayName { get; }
+        public string DisplayName { get; private set; }
 
-        public string Name { get; }
+        public string Name
+        { get => name; set { name = value; DisplayName = $"{name}##{Guid}"; } }
 
         public Guid SourceGuid { get; }
 

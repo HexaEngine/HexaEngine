@@ -1,46 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Binary.Materials;
     using System.Threading.Tasks;
-
-    public struct MaterialShaderPassDesc
-    {
-        public string Name;
-        public GraphicsPipelineDesc Pipeline;
-        public GraphicsPipelineStateDesc State;
-
-        public MaterialShaderPassDesc(string name, GraphicsPipelineDesc pipeline, GraphicsPipelineStateDesc state)
-        {
-            Name = name;
-            Pipeline = pipeline;
-            State = state;
-        }
-    }
-
-    public struct MaterialShaderDesc
-    {
-        public Guid MaterialId;
-        public InputElementDescription[] InputElements;
-        public ShaderMacro[] Macros;
-        public MaterialShaderPassDesc[] Passes;
-
-        public MaterialShaderDesc(MaterialData data, InputElementDescription[] inputElements, params MaterialShaderPassDesc[] passes)
-        {
-            MaterialId = data.Guid;
-            InputElements = inputElements;
-            Macros = data.GetShaderMacros();
-            Passes = passes;
-        }
-
-        public MaterialShaderDesc(Guid materialId, ShaderMacro[] macros, InputElementDescription[] inputElements, params MaterialShaderPassDesc[] passes)
-        {
-            MaterialId = materialId;
-            InputElements = inputElements;
-            Macros = macros;
-            Passes = passes;
-        }
-    }
 
     public class MaterialShader : ResourceInstance, IDisposable
     {
@@ -49,7 +10,6 @@
         private readonly Dictionary<string, MaterialShaderPass> nameToPass = [];
         private MaterialShaderDesc desc;
         private volatile bool initialized;
-        private bool disposedValue;
 
         public MaterialShader(IResourceFactory factory, IGraphicsDevice device, MaterialShaderDesc desc) : base(factory, desc.MaterialId)
         {
@@ -76,16 +36,22 @@
                 passes.Add(pass);
                 nameToPass.Add(pass.Name, pass);
             }
+            initialized = true;
         }
 
         public MaterialShaderPass? Find(string name)
         {
+            if (!initialized)
+                return null;
             nameToPass.TryGetValue(name, out var pass);
             return pass;
         }
 
         public int IndexOf(string name)
         {
+            if (!initialized)
+                return -1;
+
             for (int i = 0; i < passes.Count; i++)
             {
                 if (passes[i].Name == name)
@@ -108,30 +74,18 @@
 
         public void Reload()
         {
-            initialized = false;
-            for (int i = 0; i < passes.Count; i++)
-            {
-                passes[i].Dispose();
-            }
-            passes.Clear();
-            nameToPass.Clear();
+            ReleaseResources();
             Compile();
         }
 
         public Task ReloadAsync()
         {
-            initialized = false;
-            for (int i = 0; i < passes.Count; i++)
-            {
-                passes[i].Dispose();
-            }
-            passes.Clear();
-            nameToPass.Clear();
+            ReleaseResources();
             Compile();
             return Task.CompletedTask;
         }
 
-        public void Recompile()
+        protected override void ReleaseResources()
         {
             initialized = false;
             for (int i = 0; i < passes.Count; i++)
@@ -139,34 +93,6 @@
                 passes[i].Dispose();
             }
             passes.Clear();
-            nameToPass.Clear();
-            Compile();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                for (int i = 0; i < passes.Count; i++)
-                {
-                    passes[i].Dispose();
-                }
-                passes.Clear();
-                disposedValue = true;
-            }
-        }
-
-        ~MaterialShader()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

@@ -257,5 +257,34 @@
         {
             GetOrCreateKey(key, value);
         }
+
+        public void Update()
+        {
+            SourceAssetsDatabase.Update(this);
+        }
+
+        public Task UpdateAsync()
+        {
+            return SourceAssetsDatabase.UpdateAsync(this);
+        }
+
+        public void Delete()
+        {
+            SourceAssetsDatabase.Delete(FilePath);
+        }
+
+        public void Rename(string newName)
+        {
+            var extension = Path.GetExtension(FilePath);
+            var dir = Path.GetDirectoryName(FilePath);
+
+            if (dir == null)
+            {
+                return;
+            }
+
+            var newPath = Path.Combine(dir, $"{newName}{extension}");
+            SourceAssetsDatabase.Move(FilePath, newPath);
+        }
     }
 }

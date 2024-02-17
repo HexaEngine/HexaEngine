@@ -72,7 +72,7 @@
             Logger.Info("recompiling material shaders ...");
             foreach (var shader in factory.Instances)
             {
-                shader.Value?.Recompile();
+                shader.Value?.Reload();
             }
             Logger.Info("recompiling material shaders ...  done!");
         }

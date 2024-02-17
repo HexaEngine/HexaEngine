@@ -45,6 +45,7 @@
         private AssetRef assetRef;
         private MaterialFile? material;
         private bool unsavedData;
+        private bool nameChanged;
         private bool unsavedDataDialogIsOpen;
         private string path;
 
@@ -465,22 +466,33 @@
 
         public void Unload()
         {
+            nameChanged = false;
             unsavedData = false;
             MaterialFile = null;
         }
 
         public void Save()
         {
-            unsavedData = false;
-
             if (material != null && editor != null)
             {
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 InsertProperties(material, editor);
                 InsertTextures(material, editor);
 
-                material.Save(path, Encoding.UTF8);
+                var metadata = assetRef.GetSourceMetadata();
+                if (metadata != null)
+                {
+                    material.Save(metadata.GetFullPath(), Encoding.UTF8);
+                    assetRef.GetSourceMetadata()?.Update();
+                    if (nameChanged)
+                    {
+                        metadata.Rename(material.Name);
+                    }
+                }
             }
+
+            unsavedData = false;
+            nameChanged = false;
         }
 
         public void CreateNew()
@@ -495,6 +507,8 @@
             var metadata = SourceAssetsDatabase.CreateFile(SourceAssetsDatabase.GetFreeName("New Material.material"));
             path = metadata.GetFullPath();
             material.Save(path, Encoding.UTF8);
+            var artifact = ArtifactDatabase.GetArtifactsForSource(metadata.Guid).First();
+            assetRef = artifact.Guid;
         }
 
         protected override void InitWindow(IGraphicsDevice device)
@@ -588,6 +602,13 @@
                 if (ImGui.InputText("Name", ref name, 256))
                 {
                     material.Name = name;
+                    var meta = assetRef.GetMetadata();
+                    if (meta != null)
+                    {
+                        meta.Name = name;
+                    }
+                    unsavedData = true;
+                    nameChanged = true;
                 }
 
                 var flags = (int)material.Flags;

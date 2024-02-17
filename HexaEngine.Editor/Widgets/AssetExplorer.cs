@@ -96,6 +96,10 @@
 
         private void FileSystemChanged(FileSystemEventArgs obj)
         {
+            if (obj.ChangeType == FileSystemChangeTypes.Changed)
+            {
+                return;
+            }
             Refresh();
         }
 

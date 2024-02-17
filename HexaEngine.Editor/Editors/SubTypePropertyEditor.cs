@@ -54,9 +54,9 @@
                 DisplayEnabled(value);
                 ImGui.TableSetColumnIndex(0);
                 objectEditor.Instance = value;
-                objectEditor.Draw(context);
+                var result = objectEditor.Draw(context);
                 ImGui.TreePop();
-                return false;
+                return result;
             }
             DisplayEnabled(value);
             return false;

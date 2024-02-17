@@ -146,9 +146,9 @@
             {
                 Color();
                 ImGui.TableSetColumnIndex(0);
-                Draw(context, instance);
+                var result = Draw(context, instance);
                 ImGui.TreePop();
-                return false;
+                return result;
             }
             Color();
 
@@ -160,20 +160,22 @@
         /// </summary>
         /// <param name="context">The graphics context used for drawing.</param>
         /// <param name="instance">The instance of the object containing the category.</param>
-        private void Draw(IGraphicsContext context, object instance)
+        private bool Draw(IGraphicsContext context, object instance)
         {
+            bool changed = false;
             for (int i = 0; i < elements.Count; i++)
             {
-                elements[i].Draw(context, instance);
+                changed |= elements[i].Draw(context, instance);
             }
 
             for (int i = 0; i < childCategories.Count; i++)
             {
                 var category = childCategories[i];
 #nullable disable
-                category.Draw(context, instance, ref instance);
+                changed |= category.Draw(context, instance, ref instance);
 #nullable restore
             }
+            return changed;
         }
 
         /// <summary>

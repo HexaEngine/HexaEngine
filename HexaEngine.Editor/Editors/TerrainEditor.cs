@@ -109,84 +109,17 @@
 
         private readonly Queue<StaticTerrainCell> updateQueue = new();
 
-        public void Draw(IGraphicsContext context)
+        public bool Draw(IGraphicsContext context)
         {
             if (Instance is not TerrainRendererComponent component)
             {
-                return;
+                return false;
             }
+            bool changed = false;
 
             var grid = component.Grid;
 
-            if (!init)
-            {
-                var device = context.Device;
-                var inputElements = TerrainCellData.InputElements;
-
-                depthStencil = new(device, Format.D32Float, 1024, 1024);
-
-                brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
-                {
-                    VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
-                    PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
-                }, new()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                    InputElements = inputElements
-                });
-
-                maskOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
-                {
-                    VertexShader = "tools/terrain/overlay/mask/vs.hlsl",
-                    PixelShader = "tools/terrain/overlay/mask/ps.hlsl",
-                }, new()
-                {
-                    DepthStencil = DepthStencilDescription.None,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleList,
-                    InputElements = inputElements
-                });
-                DepthStencilDescription depthStencilD = new()
-                {
-                    DepthEnable = true,
-                    DepthWriteMask = DepthWriteMask.All,
-                    DepthFunc = ComparisonFunction.Less,
-                    StencilEnable = false,
-                    StencilReadMask = 255,
-                    StencilWriteMask = 255,
-                    FrontFace = DepthStencilOperationDescription.DefaultFront,
-                    BackFace = DepthStencilOperationDescription.DefaultBack
-                };
-
-                texture = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read);
-
-                maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
-                {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "tools/terrain/edit/mask/ps.hlsl",
-                }, new()
-                {
-                    DepthStencil = depthStencilD,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                    InputElements = inputElements
-                });
-
-                maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-
-                brushBuffer = new(device, CpuAccessFlags.Write);
-                WorldBuffer = new(device, CpuAccessFlags.Write);
-
-                camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
-                maskBuffer = new(device, CpuAccessFlags.Write);
-
-                init = true;
-            }
+            Init(context);
 
             hoversOverTerrain = false;
 
@@ -246,21 +179,6 @@
                     }
 
                     ImGui.SeparatorText("Material");
-
-                    var scene = SceneManager.Current;
-
-                    if (scene is null)
-                    {
-                        current = -1;
-                        return;
-                    }
-
-                    var manager = scene.MaterialManager;
-
-                    if (manager.Count == 0)
-                    {
-                        current = -1;
-                    }
 
                     var assetRef = layer.Material;
 
@@ -441,6 +359,81 @@
             }
 
             lastMousePosition = mousePosition;
+
+            return changed;
+        }
+
+        private void Init(IGraphicsContext context)
+        {
+            if (!init)
+            {
+                var device = context.Device;
+                var inputElements = TerrainCellData.InputElements;
+
+                depthStencil = new(device, Format.D32Float, 1024, 1024);
+
+                brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+                {
+                    VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
+                    PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
+                }, new()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                    InputElements = inputElements
+                });
+
+                maskOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+                {
+                    VertexShader = "tools/terrain/overlay/mask/vs.hlsl",
+                    PixelShader = "tools/terrain/overlay/mask/ps.hlsl",
+                }, new()
+                {
+                    DepthStencil = DepthStencilDescription.None,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                    InputElements = inputElements
+                });
+                DepthStencilDescription depthStencilD = new()
+                {
+                    DepthEnable = true,
+                    DepthWriteMask = DepthWriteMask.All,
+                    DepthFunc = ComparisonFunction.Less,
+                    StencilEnable = false,
+                    StencilReadMask = 255,
+                    StencilWriteMask = 255,
+                    FrontFace = DepthStencilOperationDescription.DefaultFront,
+                    BackFace = DepthStencilOperationDescription.DefaultBack
+                };
+
+                texture = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read);
+
+                maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+                {
+                    VertexShader = "quad.hlsl",
+                    PixelShader = "tools/terrain/edit/mask/ps.hlsl",
+                }, new()
+                {
+                    DepthStencil = depthStencilD,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleStrip,
+                    InputElements = inputElements
+                });
+
+                maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
+
+                brushBuffer = new(device, CpuAccessFlags.Write);
+                WorldBuffer = new(device, CpuAccessFlags.Write);
+
+                camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
+                maskBuffer = new(device, CpuAccessFlags.Write);
+
+                init = true;
+            }
         }
 
         private bool EditTerrain(StaticTerrainCell cell)

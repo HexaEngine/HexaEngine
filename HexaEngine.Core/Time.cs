@@ -54,7 +54,7 @@
         public static float GameTime { get => gameTime; set => gameTime = value % 24; }
 
         /// <summary>
-        /// Gets or sets the game time scale, 1s realtime multiplied by scale.
+        /// Gets or sets the game time scale, 1s real-time multiplied by scale.
         /// </summary>
         public static float GameTimeScale { get => gameTimeScale; set => gameTimeScale = value; }
 
@@ -100,7 +100,9 @@
 
             if (deltaTime == 0 || deltaTime < 0)
             {
-                throw new InvalidOperationException("Delta time cannot be 0 or less than 0");
+                // To prevent problems set the delta to the minimum time possible.
+                delta = 1 / sdl.GetPerformanceFrequency();
+                return;
             }
 
             gameTime += (float)(deltaTime * gameTimeScale) / 60 / 60;
@@ -132,7 +134,7 @@
 
             if (deltaTime == 0 || deltaTime < 0)
             {
-                throw new InvalidOperationException("Delta time cannot be 0 or less than 0");
+                return;
             }
 
             while (fixedTime >= FixedDelta)

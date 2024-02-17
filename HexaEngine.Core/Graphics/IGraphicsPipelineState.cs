@@ -48,8 +48,13 @@
         bool IsValid { get; }
 
         /// <summary>
+        /// Gets a value indicating whether the graphics pipeline is disposed.
+        /// </summary>
+        bool IsDisposed { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the graphics pipeline is ready for use, taking both initialization and validity into account.
         /// </summary>
-        bool IsReady => IsInitialized && IsValid;
+        bool IsReady => IsInitialized && IsValid && !IsDisposed;
     }
 }

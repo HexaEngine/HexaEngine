@@ -38,14 +38,16 @@
         /// Draws the button in the object editor.
         /// </summary>
         /// <param name="instance">The instance of the object associated with the button.</param>
-        public void Draw(object instance)
+        public bool Draw(object instance)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
             if (ImGui.Button(guiName.UniqueName))
             {
                 info.Invoke(instance, null);
+                return true;
             }
+            return false;
         }
     }
 }

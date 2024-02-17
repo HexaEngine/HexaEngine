@@ -28,11 +28,11 @@
         {
         }
 
-        public void Draw(IGraphicsContext context)
+        public bool Draw(IGraphicsContext context)
         {
             if (Instance is not ScriptBehaviour component)
             {
-                return;
+                return false;
             }
 
             var types = AssemblyManager.GetAssignableTypes(typeof(IScriptBehaviour));
@@ -40,8 +40,10 @@
 
             if (types.Count == 0)
             {
-                return;
+                return false;
             }
+
+            bool changed = false;
 
             var type = component.ScriptType != null ? AssemblyManager.GetType(component.ScriptType) : null;
 
@@ -54,6 +56,7 @@
                 component.ScriptType = types[index].FullName;
                 editor = null;
                 type = types[index];
+                changed = true;
             }
 
             if (editor == null && type != null)
@@ -70,8 +73,10 @@
             if (editor != null && editor.Instance != null && !editor.IsEmpty)
             {
                 ImGui.Separator();
-                editor.Draw(context);
+                changed |= editor.Draw(context);
             }
+
+            return changed;
         }
     }
 }

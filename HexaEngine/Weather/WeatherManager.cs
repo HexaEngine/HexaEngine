@@ -300,6 +300,7 @@
             }
 
             CBWeather weather = default;
+            weather.LightDir = new(0, 1, 0, 1);
             hasSun = false;
             for (int i = 0; i < manager.ActiveCount; i++)
             {

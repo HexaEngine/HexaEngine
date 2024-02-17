@@ -12,6 +12,7 @@
         private static string rootAssetsFolder;
         private static string cacheRootFolder;
         private static string cacheFolder;
+        private static FileSystemWatcher? watcher;
         private static readonly List<SourceAssetMetadata> sourceAssets = [];
         private static readonly ManualResetEventSlim initLock = new(false);
 
@@ -26,6 +27,12 @@
             Directory.CreateDirectory(cacheFolder);
 
             ArtifactDatabase.Init(path);
+
+            watcher = new(path);
+            watcher.Changed += WatcherChanged;
+            watcher.EnableRaisingEvents = true;
+            watcher.IncludeSubdirectories = true;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.Security;
 
             foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
             {
@@ -81,6 +88,27 @@
             initLock.Set();
         }
 
+        private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
+        {
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    break;
+
+                case WatcherChangeTypes.Deleted:
+                    break;
+
+                case WatcherChangeTypes.Changed:
+                    break;
+
+                case WatcherChangeTypes.Renamed:
+                    break;
+
+                case WatcherChangeTypes.All:
+                    break;
+            }
+        }
+
         private static void UpdateFile(string file, SourceAssetMetadata asset)
         {
             var crc = FileSystem.GetCrc32HashExtern(file);
@@ -118,6 +146,12 @@
             initLock.Reset();
             ArtifactDatabase.Clear();
             sourceAssets.Clear();
+            if (watcher != null)
+            {
+                watcher.Changed -= WatcherChanged;
+                watcher.Dispose();
+                watcher = null;
+            }
         }
 
         public static string RootFolder => rootFolder;
@@ -340,6 +374,68 @@
             var metadata = AddFile(path, metadataFile);
 
             return metadata;
+        }
+
+        public static void Update(string path)
+        {
+            SourceAssetMetadata? metadata;
+
+            string fileToUpdate;
+
+            if (path.StartsWith(rootFolder))
+            {
+                fileToUpdate = path;
+                string relative = Path.GetRelativePath(rootFolder, path);
+                metadata = GetMetadata(relative);
+            }
+            else
+            {
+                fileToUpdate = Path.Combine(rootFolder, path);
+                metadata = GetMetadata(path);
+            }
+
+            if (metadata == null)
+            {
+                throw new MetadataNotFoundException(path);
+            }
+
+            UpdateFile(fileToUpdate, metadata);
+        }
+
+        public static Task UpdateAsync(string path)
+        {
+            SourceAssetMetadata? metadata;
+
+            string fileToUpdate;
+
+            if (path.StartsWith(rootFolder))
+            {
+                fileToUpdate = path;
+                string relative = Path.GetRelativePath(rootFolder, path);
+                metadata = GetMetadata(relative);
+            }
+            else
+            {
+                fileToUpdate = Path.Combine(rootFolder, path);
+                metadata = GetMetadata(path);
+            }
+
+            if (metadata == null)
+            {
+                throw new MetadataNotFoundException(path);
+            }
+
+            return UpdateFileAsync(fileToUpdate, metadata);
+        }
+
+        public static void Update(SourceAssetMetadata metadata)
+        {
+            UpdateFile(Path.Combine(rootFolder, metadata.FilePath), metadata);
+        }
+
+        public static Task UpdateAsync(SourceAssetMetadata metadata)
+        {
+            return UpdateFileAsync(Path.Combine(rootFolder, metadata.FilePath), metadata);
         }
 
         public static string GetFreeName(string filename)

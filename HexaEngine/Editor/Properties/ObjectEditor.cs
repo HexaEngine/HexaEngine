@@ -34,7 +34,7 @@
 
         public bool UpdateVisibility(object instance);
 
-        public void Draw(IGraphicsContext context, object instance);
+        public bool Draw(IGraphicsContext context, object instance);
     }
 
     public class PropertyEditorObjectEditorElement : IObjectEditorElement
@@ -75,11 +75,11 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, object instance)
+        public bool Draw(IGraphicsContext context, object instance)
         {
             if (!isVisible)
             {
-                return;
+                return false;
             }
 
             var value = propertyEditor.Property.GetValue(instance);
@@ -87,21 +87,23 @@
 
             if (ConditionMode == EditorPropertyConditionMode.None || ConditionMode == EditorPropertyConditionMode.Visible)
             {
-                DrawEditor(context, instance, value, oldValue);
-                return;
+                return DrawEditor(context, instance, value, oldValue);
             }
 
             ImGui.BeginDisabled(!conditionState);
-            DrawEditor(context, instance, value, oldValue);
+            var result = DrawEditor(context, instance, value, oldValue);
             ImGui.EndDisabled();
+            return result;
         }
 
-        private void DrawEditor(IGraphicsContext context, object instance, object? value, object? oldValue)
+        private bool DrawEditor(IGraphicsContext context, object instance, object? value, object? oldValue)
         {
             if (propertyEditor.Draw(context, instance, ref value))
             {
                 History.Default.Do($"Set Value ({propertyEditor.Name})", (instance, propertyEditor.Property), oldValue, value, DoAction, UndoAction);
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -161,22 +163,22 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, object instance)
+        public bool Draw(IGraphicsContext context, object instance)
         {
             if (!isVisible)
             {
-                return;
+                return false;
             }
 
             if (Condition == null || ConditionMode == EditorPropertyConditionMode.None)
             {
-                objectEditorButton.Draw(instance);
-                return;
+                return objectEditorButton.Draw(instance);
             }
 
             ImGui.BeginDisabled(!conditionState);
-            objectEditorButton.Draw(instance);
+            var result = objectEditorButton.Draw(instance);
             ImGui.EndDisabled();
+            return result;
         }
     }
 
@@ -414,11 +416,11 @@
         /// Draws the object editor within the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context used for drawing.</param>
-        public void Draw(IGraphicsContext context)
+        public bool Draw(IGraphicsContext context)
         {
             if (instance == null)
             {
-                return;
+                return false;
             }
 
             if (!NoTable)
@@ -433,9 +435,11 @@
                 elements[i].UpdateVisibility(instance);
             }
 
+            bool changed = false;
+
             for (int i = 0; i < elements.Count; i++)
             {
-                elements[i].Draw(context, instance);
+                changed |= elements[i].Draw(context, instance);
             }
 
             object? nullObj = null;
@@ -444,13 +448,15 @@
             {
                 var category = categories[i];
 
-                category.Draw(context, instance, ref nullObj);
+                changed |= category.Draw(context, instance, ref nullObj);
             }
 
             if (!NoTable)
             {
                 ImGui.EndTable();
             }
+
+            return changed;
         }
 
         /// <summary>

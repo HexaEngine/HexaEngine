@@ -7,7 +7,7 @@
         private readonly IResourceFactory factory;
         private readonly Guid _id;
         private bool releasedValue;
-        private volatile int instanceCount;
+        private long instanceCount;
 
         public ResourceInstance(IResourceFactory factory, Guid id)
         {
@@ -16,9 +16,9 @@
             instanceCount = 0;
         }
 
-        public int InstanceCount => instanceCount;
+        public long InstanceCount => Interlocked.Read(ref instanceCount);
 
-        public bool IsUsed => instanceCount > 0;
+        public bool IsUsed => Interlocked.Read(ref instanceCount) > 0;
 
         public Guid Id => _id;
 

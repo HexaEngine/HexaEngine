@@ -192,8 +192,9 @@
             ImGui.PopID();
         }
 
-        private void DrawComponents(IGraphicsContext context, GameObject element, Scene scene)
+        private bool DrawComponents(IGraphicsContext context, GameObject element, Scene scene)
         {
+            bool changed = false;
             for (int i = 0; i < element.Components.Count; i++)
             {
                 var component = element.Components[i];
@@ -219,7 +220,7 @@
 
                 if (ImGui.CollapsingHeader(name, flags))
                 {
-                    editor?.Draw(context);
+                    changed |= editor.Draw(context);
                 }
 
                 DrawContextMenuComponent(name, scene, element, component);
@@ -231,10 +232,12 @@
                 if (i < element.Components.Count - 1)
                     ImGui.Separator();
             }
+            return changed;
         }
 
-        private static void DrawObjectEditor(IGraphicsContext context, GameObject element, Type type)
+        private static bool DrawObjectEditor(IGraphicsContext context, GameObject element, Type type)
         {
+            bool changed = false;
             var transform = element.Transform;
             if (ImGui.CollapsingHeader(nameof(Transform), ImGuiTreeNodeFlags.DefaultOpen))
             {
@@ -262,6 +265,7 @@
                     }
 
                     History.Default.Do("Lock/Unlock Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                    changed = true;
                 }
 
                 if (ImGui.BeginPopupContextItem("##LockPosition"))
@@ -269,16 +273,19 @@
                     if (ImGui.CheckboxFlags("\xE72E Axis-X Position", ref flags, (int)TransformFlags.LockPositionX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Y Position", ref flags, (int)TransformFlags.LockPositionY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Z Position", ref flags, (int)TransformFlags.LockPositionZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     ImGui.EndPopup();
@@ -293,6 +300,7 @@
                     if (ImGui.InputFloat3("##Position", ref val))
                     {
                         History.Default.Do("Set Position", transform, oldVal, val, SetPosition, RestorePosition);
+                        changed = true;
                     }
                 }
 
@@ -313,6 +321,7 @@
                     }
 
                     History.Default.Do("Lock/Unlock Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                    changed = true;
                 }
 
                 if (ImGui.BeginPopupContextItem("##LockRotation"))
@@ -320,16 +329,19 @@
                     if (ImGui.CheckboxFlags("\xE72E Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Y Rotation", ref flags, (int)TransformFlags.LockRotationY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Z Rotation", ref flags, (int)TransformFlags.LockRotationZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     ImGui.EndPopup();
@@ -343,6 +355,7 @@
                     if (ImGui.InputFloat3("##Rotation", ref val))
                     {
                         History.Default.Do("Set Rotation", transform, oldVal, val, SetRotation, RestoreRotation);
+                        changed = true;
                     }
                 }
 
@@ -363,6 +376,7 @@
                     }
 
                     History.Default.Do("Lock/Unlock Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                    changed = true;
                 }
 
                 if (ImGui.BeginPopupContextItem("##LockScale"))
@@ -370,16 +384,19 @@
                     if (ImGui.CheckboxFlags("\xE72E Axis-X Scale", ref flags, (int)TransformFlags.LockScaleX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Y Scale", ref flags, (int)TransformFlags.LockScaleY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     if (ImGui.CheckboxFlags("\xE72E Axis-Z Scale", ref flags, (int)TransformFlags.LockScaleZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                        changed = true;
                     }
 
                     ImGui.EndPopup();
@@ -393,6 +410,7 @@
                     if (ImGui.InputFloat3("##Scale", ref val))
                     {
                         History.Default.Do("Set Scale", transform, oldVal, val, SetScale, RestoreScale);
+                        changed = true;
                     }
                 }
 
@@ -404,8 +422,10 @@
 
             if (!editor.IsEmpty)
             {
-                editor.Draw(context);
+                changed |= editor.Draw(context);
             }
+
+            return changed;
         }
 
         private void PopulateTypeCache(Type type)

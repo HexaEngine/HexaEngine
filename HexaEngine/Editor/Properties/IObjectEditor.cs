@@ -42,6 +42,6 @@
         /// Draws the object editor within the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context used for drawing.</param>
-        void Draw(IGraphicsContext context);
+        bool Draw(IGraphicsContext context);
     }
 }

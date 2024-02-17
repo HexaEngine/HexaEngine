@@ -44,14 +44,12 @@
             drawTypes = model.DrawTypes;
             meshes = model.Meshes;
             materials = model.Materials;
-
             initialized = true;
         }
 
         public void Uninitialize()
         {
             initialized = false;
-
             globals = null;
             locals = null;
             plainNodes = null;
