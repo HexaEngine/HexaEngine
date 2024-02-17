@@ -22,7 +22,7 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Physics Engine (multiple usable collider types are already implemented)
 - Plugin System
 - Audio System (Wav-file support)
-- Culling (Frustum and Occlusion) (doesn't work/integrated properly)
+- Culling (Frustum and Occlusion)
 
 # Volumetrc Lightning
 ![image](https://github.com/HexaEngine/HexaEngine/assets/46632782/731a1c0b-6b97-4824-b0d9-fc71fe87c96d)
