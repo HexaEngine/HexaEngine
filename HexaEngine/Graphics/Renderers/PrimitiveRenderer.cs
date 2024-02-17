@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
@@ -67,7 +68,7 @@
             transformBuffer.Update(context);
         }
 
-        public void VisibilityTest(IGraphicsContext context, Camera camera)
+        public void VisibilityTest(CullingContext context)
         {
             if (!initialized)
                 return;

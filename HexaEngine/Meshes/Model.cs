@@ -10,6 +10,40 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
+    public struct MeshDrawType
+    {
+        public uint MeshId;
+        public uint TypeId;
+        public uint DrawIndirectOffset;
+        public MeshDrawInstance[] Instances;
+
+        public MeshDrawType(uint meshId, uint typeId, MeshDrawInstance[] instances)
+        {
+            MeshId = meshId;
+            TypeId = typeId;
+            Instances = instances;
+        }
+    }
+
+    public struct MeshDrawInstance
+    {
+        public int NodeId;
+        public Matrix4x4 Transform;
+        public BoundingBox BoundingBox;
+
+        public MeshDrawInstance(int nodeId)
+        {
+            NodeId = nodeId;
+        }
+
+        public MeshDrawInstance(int nodeId, Matrix4x4 transform, BoundingBox boundingBox)
+        {
+            NodeId = nodeId;
+            Transform = transform;
+            BoundingBox = boundingBox;
+        }
+    }
+
     public class Model : IDisposable
     {
         private readonly ModelFile modelFile;
@@ -19,6 +53,7 @@
         private readonly Mesh[] meshes;
         private readonly Material[] materials;
         private readonly int[][] drawables;
+        private readonly MeshDrawType[] drawTypes;
         private readonly Matrix4x4[] locals;
         private readonly Matrix4x4[] globals;
         private readonly PlainNode[] plainNodes;
@@ -51,21 +86,28 @@
             materials = new Material[modelFile.Header.MeshCount];
             meshes = new Mesh[modelFile.Header.MeshCount];
             drawables = new int[modelFile.Header.MeshCount][];
+            drawTypes = new MeshDrawType[modelFile.Header.MeshCount];
 
             List<int> meshInstances = new();
+            List<MeshDrawInstance> meshDrawInstances = new();
             for (uint i = 0; i < modelFile.Header.MeshCount; i++)
             {
+                var mesh = modelFile.Meshes[(int)i];
                 for (int j = 0; j < nodeCount; j++)
                 {
                     var node = nodes[j];
                     if (node.Meshes.Contains(i))
                     {
                         meshInstances.Add(j);
+                        meshDrawInstances.Add(new(j));
                     }
                 }
 
-                drawables[i] = meshInstances.ToArray();
+                drawTypes[i] = new(i, i, [.. meshDrawInstances]);
+
+                drawables[i] = [.. meshInstances];
                 meshInstances.Clear();
+                meshDrawInstances.Clear();
             }
 
             this.modelFile = modelFile;
@@ -83,6 +125,8 @@
         public Material[] Materials => materials;
 
         public int[][] Drawables => drawables;
+
+        public MeshDrawType[] DrawTypes => drawTypes;
 
         public Matrix4x4[] Locals => locals;
 

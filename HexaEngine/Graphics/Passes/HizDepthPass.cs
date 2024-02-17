@@ -36,7 +36,7 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen));
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
-            samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
+            samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
             chain = creator.CreateDepthMipChain("HiZBuffer", new((int)creator.Viewport.Width, (int)creator.Viewport.Height, 1, Math.Min(TextureHelper.ComputeMipLevels((int)creator.Viewport.Width, (int)creator.Viewport.Height), 8), Format.R32Float));
         }
 

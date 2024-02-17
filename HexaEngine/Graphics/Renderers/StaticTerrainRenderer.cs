@@ -5,7 +5,6 @@
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using System.Numerics;
-    using System.Reflection.Emit;
 
     public class StaticTerrainRenderer : IDisposable
     {
@@ -39,6 +38,7 @@
         {
             if (!initialized)
                 return;
+
             for (int i = 0; i < grid.Count; i++)
             {
                 grid[i].Transform = transform * Matrix4x4.CreateTranslation(grid[i].Offset);

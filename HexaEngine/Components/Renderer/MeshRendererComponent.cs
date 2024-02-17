@@ -285,6 +285,7 @@
 
         public override void VisibilityTest(CullingContext context)
         {
+            renderer.VisibilityTest(context);
         }
 
         public override void Draw(IGraphicsContext context, RenderPath path)

@@ -37,7 +37,7 @@ namespace HexaEngine.Core.Assets.Importer
 
     public class ModelImporterSettings
     {
-        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData;
+        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData | PostProcessSteps.FindDegenerates | PostProcessSteps.FindInstances | PostProcessSteps.ImproveCacheLocality;
 
         public TexPostProcessSteps TexPostProcessSteps = TexPostProcessSteps.None;
 

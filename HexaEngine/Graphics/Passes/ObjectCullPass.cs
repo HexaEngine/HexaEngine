@@ -2,13 +2,17 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Meshes;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
 
     public class ObjectCullPass : ComputePass
     {
         private bool isEnabled;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<DepthMipChain> chain;
 
         public ObjectCullPass() : base("ObjectCull")
@@ -20,23 +24,18 @@
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             chain = creator.GetDepthMipChain("HiZBuffer");
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            if (!isEnabled)
-                return;
+            var camera = CameraManager.Culling;
+            var manager = CullingManager.Current;
+            var cull = manager.Context;
 
-            var current = SceneManager.Current;
-            if (current == null)
-            {
-                return;
-            }
-
-            var renderers = current.RenderManager;
-
-            renderers.VisibilityTest(context, creator.Viewport, chain.Value.SRV, RenderQueueIndex.Geometry);
+            manager.UpdateCamera(context, camera, creator.Viewport);
+            manager.ExecuteCulling(context, camera, cull.Count, cull.TypeCount, chain.Value);
         }
     }
 }

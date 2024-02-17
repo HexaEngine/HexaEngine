@@ -129,18 +129,6 @@
             }
         }
 
-        public void VisibilityTest(IGraphicsContext context, Viewport viewport, IShaderResourceView depthMip, RenderQueueIndex index)
-        {
-            culling.UpdateCamera(context, viewport);
-            switch (index)
-            {
-                case RenderQueueIndex.Geometry:
-                    VisibilityTestList(culling.Context, geometryQueue);
-                    break;
-            }
-            culling.DoCulling(context, depthMip);
-        }
-
         public void DrawDepth(IGraphicsContext context, RenderQueueIndex index)
         {
             if ((index & RenderQueueIndex.Background) != 0)
@@ -328,6 +316,18 @@
             }
 
             return overlayQueue.Remove(renderer);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ExecuteGroupVisibilityTest(IReadOnlyList<IRendererComponent> renderers, CullingContext context, ICPUProfiler? profiler, string groupDebugName)
+        {
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                profiler?.Begin($"{groupDebugName}.{renderer.DebugName}");
+                renderer.VisibilityTest(context);
+                profiler?.End($"{groupDebugName}.{renderer.DebugName}");
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

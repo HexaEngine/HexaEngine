@@ -85,6 +85,16 @@
             EndDraw(context);
         }
 
+        public void DrawIndexedInstancedIndirect(IGraphicsContext context, string pass, IBuffer drawArgs, uint offset)
+        {
+            if (!BeginDraw(context, pass))
+            {
+                return;
+            }
+            context.DrawIndexedInstancedIndirect(drawArgs, offset);
+            EndDraw(context);
+        }
+
         public void DrawInstanced(IGraphicsContext context, string pass, uint vertexCount, uint instanceCount, uint vertexOffset = 0, uint instanceOffset = 0)
         {
             if (!BeginDraw(context, pass))

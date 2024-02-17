@@ -2312,5 +2312,34 @@
         {
             return vec.X == vec.Y && vec.X == vec.Z && vec.X == vec.W;
         }
+
+        /// <summary>
+        /// Gets the row of a <see cref="Matrix4x4"/>.
+        /// </summary>
+        /// <param name="matrix">The <see cref="Matrix4x4"/>.</param>
+        /// <param name="index">The row index.</param>
+        /// <returns>The row.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 GetRow(this Matrix4x4 matrix, int index)
+        {
+            Vector4 row;
+            row.X = matrix[index, 0];
+            row.Y = matrix[index, 1];
+            row.Z = matrix[index, 2];
+            row.W = matrix[index, 3];
+            return row;
+        }
+
+        /// <summary>
+        /// Normalizes a plane vector.
+        /// </summary>
+        /// <param name="plane">The plane vector to normalize.</param>
+        /// <returns>The normalized plane vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 NormalizePlane(Vector4 plane)
+        {
+            float length = (float)Math.Sqrt(plane.X * plane.X + plane.Y * plane.Y + plane.Z * plane.Z);
+            return new Vector4(plane.X / length, plane.Y / length, plane.Z / length, plane.W / length);
+        }
     }
 }

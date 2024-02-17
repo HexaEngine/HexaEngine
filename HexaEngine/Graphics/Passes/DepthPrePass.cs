@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
@@ -33,6 +34,20 @@
 
             var renderers = current.RenderManager;
 
+            var culling = CullingManager.Current;
+
+            culling.Context.Reset();
+
+            profiler?.Begin("VisibilityTest.Geometry");
+            RenderManager.ExecuteGroupVisibilityTest(renderers.GeometryQueue, CullingManager.Current.Context, profiler, "Geometry");
+            profiler?.End("VisibilityTest.Geometry");
+
+            profiler?.Begin("VisibilityTest.AlphaTest");
+            RenderManager.ExecuteGroupVisibilityTest(renderers.AlphaTestQueue, CullingManager.Current.Context, profiler, "AlphaTest");
+            profiler?.End("VisibilityTest.AlphaTest");
+
+            culling.Context.Flush(context);
+
             var depthStencilBuffer = depthStencil.Value;
             context.ClearDepthStencilView(depthStencilBuffer.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.SetRenderTarget(null, depthStencilBuffer.DSV);
@@ -50,17 +65,6 @@
             profiler?.Begin("PrePass.AlphaTest");
             RenderManager.ExecuteGroupDepth(renderers.AlphaTestQueue, context, profiler, "AlphaTest");
             profiler?.End("PrePass.AlphaTest");
-
-            profiler?.Begin("PrePass.Transparency");
-            var transparency = renderers.TransparencyQueue;
-            for (int i = 0; i < transparency.Count; i++)
-            {
-                var renderer = transparency[i];
-                profiler?.Begin($"PrePass.{renderer.DebugName}");
-                renderer.DrawDepth(context);
-                profiler?.End($"PrePass.{renderer.DebugName}");
-            }
-            profiler?.End("PrePass.Transparency");
 
             context.ClearState();
         }

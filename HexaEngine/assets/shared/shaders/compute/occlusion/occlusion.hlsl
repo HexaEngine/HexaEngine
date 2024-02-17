@@ -37,7 +37,7 @@ bool projectSphere(float3 c, float r, float znear, float P00, float P11, out flo
     float maxy = (vy * c.y + cr.z) / (vy * c.z - cr.y);
 
     aabb = float4(minx * P00, miny * P11, maxx * P00, maxy * P11);
-    aabb = aabb.xwzy * float4(0.5f, -0.5f, 0.5f, -0.5f) + 0.5f; // clip space -> uv space
+    aabb = aabb.xwzy * float4(0.5f, -0.5f, 0.5f, -0.5f) + float4(0.5f, 0.5f, 0.5f, 0.5f); // clip space -> uv space
 
     return true;
 }
@@ -71,16 +71,17 @@ struct DrawIndexedInstancedIndirectArgs
     uint StartInstanceLocation;
 };
 
-cbuffer Params
+cbuffer CullingParams : register(b0)
 {
     uint NoofInstances;
     uint NoofPropTypes;
     bool FrustumCulling;
     bool OcclusionCulling;
     uint MaxMipLevel;
-    float2 RTSize;
-    float frustum[4];
-    float2 Padding;
+    float P00;
+    float P11;
+    float padding;
+    float4 frustum;
 };
 
 Texture2D inputRT : register(t0);
@@ -106,7 +107,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
     Sphere boundingSphere = data.boundingSphere;
     Box boundingBox = data.boundingBox;
 
-    float3 center = mul(float4(boundingSphere.center, 1), data.world);
+    float3 center = mul(mul(float4(boundingSphere.center, 1), data.world), view);
     float radius = boundingSphere.radius * length(extract_scale(data.world));
 
     // the left/top/right/bottom plane culling utilizes frustum symmetry to cull against two planes at the same time
@@ -119,21 +120,6 @@ void main(uint3 threadID : SV_DispatchThreadID)
 
     if (visible && OcclusionCulling)
     {
-        float4 aabb;
-        if (projectSphere(center, radius, camNear, 0, 0, aabb))
-        {
-            float width = (aabb.z - aabb.x) * RTSize.x;
-            float height = (aabb.w - aabb.y) * RTSize.y;
-
-            float level = floor(log2(max(width, height)));
-
-			// Sampler is set up to do min reduction, so this computes the minimum depth of a 2x2 texel quad
-            float depth = inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level).x;
-            float depthSphere = camNear / (center.z - radius);
-
-            visible = visible && depthSphere > depth;
-        }
-
         float3 bboxMin = mul(float4(boundingBox.min, 1), data.world);
         float3 bboxMax = mul(float4(boundingBox.max, 1), data.world);
         float3 boxSize = bboxMax - bboxMin;
@@ -177,12 +163,12 @@ void main(uint3 threadID : SV_DispatchThreadID)
         float4 boxUVs = float4(minXY, maxXY);
 
 	    // Calculate hi-Z buffer mip
-        float2 size = (maxXY - minXY) * RTSize.xy;
+        float2 size = (maxXY - minXY) * screenDim.xy;
         float mip = floor(log2(max(size.x, size.y)));
 
 	    // Texel footprint for the lower (finer-grained) level
         float level_lower = max(mip - 1, 0);
-        float2 scale = exp2(-level_lower) * RTSize.xy;
+        float2 scale = exp2(-level_lower) * screenDim.xy;
         float2 a = floor(boxUVs.xy * scale);
         float2 b = ceil(boxUVs.zw * scale);
         float2 dims = b - a;

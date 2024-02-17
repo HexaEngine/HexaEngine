@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Culling
 {
+    using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
@@ -13,7 +15,7 @@
     {
 #nullable disable
         private readonly IGraphicsDevice device;
-        private CullingFlags cullingFlags;
+        private CullingFlags cullingFlags = CullingFlags.All;
 
         private IComputePipeline occlusion;
 
@@ -65,8 +67,10 @@
             occlusionUavs[2] = (void*)swapBuffer.UAV.NativePointer;
             occlusionSrvs = AllocArray(2);
             occlusionSrvs[1] = (void*)instanceDataBuffer.SRV.NativePointer;
-            context = new(typeDataBuffer, instanceDataBuffer);
+            context = new(instanceOffsetsNoCull, instanceDataNoCull, instanceOffsets, instanceDataOutBuffer, typeDataBuffer, instanceDataBuffer, swapBuffer, drawIndirectArgs);
         }
+
+        public static CullingManager Current { get; internal set; } = new(Application.GraphicsDevice);
 
         public CullingContext Context => context;
 
@@ -88,57 +92,34 @@
 
         public DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
 
-        public void UpdateCamera(IGraphicsContext context, Viewport viewport)
+        public void UpdateCamera(IGraphicsContext context, Camera camera, Viewport viewport)
         {
-            if (CameraManager.Culling == null)
-            {
-                return;
-            }
-
-            occlusionCameraBuffer.Update(context, new(CameraManager.Culling, new(viewport.Width, viewport.Height)));
+            occlusionCameraBuffer.Update(context, new(camera, new(viewport.Width, viewport.Height)));
         }
 
-        public void DoFrustumCulling(IGraphicsContext context, BoundingFrustum frustum, out int count)
-        {
-            count = 0;
-            /*
-            instanceDataBuffer.ResetCounter();
-            instanceDataNoCull.ResetCounter();
-            instanceOffsetsNoCull.ResetCounter();
-            swapBuffer.Clear();
-
-            uint offset = 0;
-            for (int i = 0; i < manager.TypeCount; i++)
-            {
-                var type = manager.Types[i];
-                type.UpdateInstanceBuffer((uint)i, instanceDataNoCull, instanceDataBuffer, swapBuffer, frustum, (cullingFlags & CullingFlags.Frustum) != 0);
-                instanceOffsetsNoCull.ObjectAdded(offset);
-                offset += (uint)type.Count;
-            }
-
-            swapBuffer.Update(context);
-
-            drawIndirectArgs.Capacity = instanceOffsets.Capacity = swapBuffer.Capacity;
-            instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
-            instanceDataBuffer.Update(context);
-            count = (int)instanceDataBuffer.Count;
-            */
-        }
-
-        public unsafe void DoOcclusionCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
+        public unsafe void ExecuteCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
         {
             if (instanceCount == 0)
             {
                 return;
             }
 
+            Matrix4x4 projection = camera.Transform.Projection;
+
+            Matrix4x4 projectionT = Matrix4x4.Transpose(projection);
+
+            Vector4 frustumX = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(0)); // x + w < 0
+            Vector4 frustumY = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(1)); // y + w < 0
+
             occlusionParamBuffer[0] = new()
             {
-                ActivateCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
+                OcclusionCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
+                FrustumCulling = (cullingFlags & CullingFlags.Frustum) != 0 ? 1 : 0,
                 NumberOfInstances = (uint)instanceCount,
                 NumberOfPropTypes = (uint)typeCount,
                 MaxMipLevel = (uint)mipChain.MipLevels,
-                RTSize = new(mipChain.Width, mipChain.Height),
+
+                Frustum = new(frustumX.X, frustumX.Z, frustumY.Y, frustumY.Z),
                 P00 = camera.Transform.Projection.M11,
                 P11 = camera.Transform.Projection.M22,
             };
@@ -153,21 +134,24 @@
 
             uint* initialCount = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1) };
             context.CSSetShaderResources(0, 2, occlusionSrvs);
-            context.CSSetUnorderedAccessViews(0, occlusionUavs, initialCount);
+            context.CSSetUnorderedAccessViews(3, occlusionUavs, initialCount);
             context.CSSetSampler(0, sampler);
             context.CSSetConstantBuffers(0, 2, occlusionCbs);
             occlusion.Dispatch(context, (uint)instanceCount / 1024 + 1, 1, 1);
             context.ClearState();
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
-            swapBuffer.Read(context);
             /*
+            swapBuffer.Read(context);
+
             uint drawCalls = 0;
+            uint drawInstanceCount = 0;
             uint vertexCount = 0;
 
-            for (int i = 0; i < manager.TypeCount; i++)
+            for (int i = 0; i < this.context.TypeCount; i++)
             {
                 vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
+                drawInstanceCount += swapBuffer[i].InstanceCount;
                 drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
             }
 
@@ -182,21 +166,14 @@
                 0 => ' ',
                 1 => 'K',
                 _ => 'M',
-            };*/
-        }
+            };
 
-        public void DoCulling(IGraphicsContext context, IShaderResourceView mipChain)
-        {
-            /*
-            var camera = CameraManager.Culling;
+            ImGui.Text($"Draw Calls: {drawCalls}, Instances: {drawInstanceCount}, Vertices: {vertexCount}{suffix}");
 
-            if (camera == null)
-            {
-                return;
-            }
-
-            DoFrustumCulling(context, camera.Transform.Frustum, out var count);
-            DoOcclusionCulling(context, camera, count, mipChain);
+            var flags = (int)cullingFlags;
+            ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
+            ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
+            cullingFlags = (CullingFlags)flags;
             */
         }
 

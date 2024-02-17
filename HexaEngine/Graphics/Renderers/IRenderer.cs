@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -21,6 +22,6 @@
 
         void Update(IGraphicsContext context, Matrix4x4 transform);
 
-        void VisibilityTest(IGraphicsContext context, Camera camera);
+        void VisibilityTest(CullingContext context);
     }
 }

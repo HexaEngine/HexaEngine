@@ -8,5 +8,6 @@
         None = 0,
         Frustum = 1,
         Occlusion = 2,
+        All = Frustum | Occlusion
     }
 }
