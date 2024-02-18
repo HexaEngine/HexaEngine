@@ -78,6 +78,22 @@
             }
         }
 
+        public static Artifact? GetArtifactForSource(Guid guid)
+        {
+            initLock.Wait();
+            lock (_lock)
+            {
+                foreach (Artifact artifact in artifacts)
+                {
+                    if (artifact.SourceGuid == guid)
+                    {
+                        return artifact;
+                    }
+                }
+            }
+            return null;
+        }
+
         public static IEnumerable<Artifact> GetArtifactsFromType(AssetType type)
         {
             initLock.Wait();

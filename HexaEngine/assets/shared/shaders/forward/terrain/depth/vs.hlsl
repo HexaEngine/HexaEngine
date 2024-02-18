@@ -1,18 +1,4 @@
-#include "../../camera.hlsl"
-
-struct VertexInput
-{
-    float3 pos : POSITION;
-    float3 tex : TEXCOORD;
-    float3 normal : NORMAL;
-    float3 tangent : TANGENT;
-};
-
-struct PixelInput
-{
-    float4 position : SV_POSITION;
-    float2 ctex : TEXCOORD1;
-};
+#include "defs.hlsl"
 
 #ifndef TILESIZE
 #define TILESIZE float2(32, 32)
@@ -22,9 +8,19 @@ cbuffer WorldBuffer
 {
     float4x4 world;
 };
+#if TESSELLATION
 
-Texture2D<float> Heightmap;
+HullInput main(VertexInput input)
+{
+    HullInput output;
 
+    output.position = mul(float4(input.pos, 1), world).xyz;
+    output.tex = input.tex;
+    output.TessFactor = ComputeTessFactor(output.position);
+
+    return output;
+}
+#else
 PixelInput main(VertexInput input)
 {
     PixelInput output;
@@ -35,3 +31,4 @@ PixelInput main(VertexInput input)
 
     return output;
 }
+#endif

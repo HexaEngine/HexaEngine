@@ -40,12 +40,7 @@
         private const uint nForwardRTVs = 3;
 
         private unsafe void** forwardSRVs;
-        private const uint nForwardSRVs = 8;
-        private const uint nForwardIndirectSRVsBase = 8 + 7;
-
-        private unsafe void** forwardClusteredSRVs;
-        private const uint nForwardClusteredSRVs = 8 + 11;
-        private const uint nForwardClusteredIndirectSRVsBase = 8;
+        private const uint nForwardSRVs = 8 + 11;
 
         public LightForwardPass(Windows.RendererFlags flags) : base("LightForward")
         {
@@ -56,8 +51,7 @@
             AddReadDependency(new("ShadowAtlas"));
         }
 
-        private readonly bool forceForward = true;
-        private readonly bool clustered = true;
+        private readonly bool forceForward = false;
 
         public override unsafe void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
@@ -87,7 +81,6 @@
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             forwardSRVs = AllocArrayAndZero(nForwardSRVs);
-            forwardClusteredSRVs = AllocArrayAndZero(nForwardClusteredSRVs);
 
             forwardRTVs = AllocArrayAndZero(nForwardRTVs);
         }
@@ -113,18 +106,14 @@
             smps[2] = (void*)pointClampSampler.Value.NativePointer;
             smps[3] = (void*)shadowSampler.Value.NativePointer;
 
-            forwardSRVs[0] = forwardClusteredSRVs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
+            forwardSRVs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
+            forwardSRVs[1] = (void*)brdfLUT.Value.SRV.NativePointer;
 
-            forwardSRVs[1] = forwardClusteredSRVs[1] = (void*)brdfLUT.Value.SRV.NativePointer;
-            forwardSRVs[2] = (void*)globalProbes.SRV.NativePointer;
-
-            forwardSRVs[3] = forwardClusteredSRVs[3] = (void*)lights.LightBuffer.SRV.NativePointer;
-            forwardSRVs[4] = forwardClusteredSRVs[4] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
-
-            forwardClusteredSRVs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
-            forwardClusteredSRVs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
-
-            forwardSRVs[5] = forwardClusteredSRVs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            forwardSRVs[3] = (void*)lights.LightBuffer.SRV.NativePointer;
+            forwardSRVs[4] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
+            forwardSRVs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
+            forwardSRVs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
+            forwardSRVs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
 
             forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
@@ -136,14 +125,23 @@
 
             profiler?.Begin("LightForward.Begin");
 
-            if (clustered)
-            {
-                ClusteredForwardBegin(context, creator, lights);
-            }
-            else
-            {
-                ForwardBegin(context, creator, lights);
-            }
+            var cam = CameraManager.Current;
+            var lightParamsBuffer = this.lightParamsBuffer.Value;
+            var lightParams = lightParamsBuffer.Local;
+            lightParams->LightCount = lights.LightBuffer.Count;
+            lightParams->GlobalProbes = lights.GlobalProbes.Count;
+            lightParamsBuffer.Update(context);
+            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
+            cbs[1] = (void*)camera.Value.NativePointer;
+            cbs[2] = (void*)weather.Value.NativePointer;
+
+            context.SetViewport(creator.Viewport);
+            context.VSSetConstantBuffers(1, 1, &cbs[1]);
+            context.DSSetConstantBuffers(1, 1, &cbs[1]);
+            context.CSSetConstantBuffers(1, 1, &cbs[1]);
+            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
+            context.PSSetShaderResources(0, nForwardSRVs, forwardSRVs);
+            context.PSSetSamplers(0, nSamplers, smps);
 
             profiler?.End("LightForward.Begin");
 
@@ -172,85 +170,19 @@
 
             profiler?.Begin("LightForward.End");
 
-            if (clustered)
-            {
-                ClusteredForwardEnd(context);
-            }
-            else
-            {
-                ForwardEnd(context);
-            }
+            nint* null_samplers = stackalloc nint[(int)nSamplers];
+            context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
+
+            nint* null_srvs = stackalloc nint[(int)nForwardSRVs];
+            context.PSSetShaderResources(0, nForwardSRVs, (void**)null_srvs);
+
+            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
 
             void* null_rtvs = stackalloc nint[(int)nForwardRTVs];
             context.SetRenderTargets(nForwardRTVs, (void**)null_rtvs, null);
 
             profiler?.End("LightForward.End");
-        }
-
-        private unsafe void ForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
-        {
-            var lightParamsBuffer = this.lightParamsBuffer.Value;
-            var lightParams = lightParamsBuffer.Local;
-            lightParams->LightCount = lights.LightBuffer.Count;
-            lightParams->GlobalProbes = lights.GlobalProbes.Count;
-            lightParamsBuffer.Update(context);
-            cbs[0] = (void*)lightParamsBuffer.NativePointer;
-            cbs[1] = (void*)camera.Value.NativePointer;
-            cbs[2] = (void*)weather.Value.NativePointer;
-
-            context.SetViewport(creator.Viewport);
-            context.VSSetConstantBuffers(1, 1, &cbs[1]);
-            context.DSSetConstantBuffers(1, 1, &cbs[1]);
-            context.GSSetConstantBuffers(1, 1, &cbs[1]);
-            context.CSSetConstantBuffers(1, 1, &cbs[1]);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nForwardSRVs, forwardSRVs);
-            context.PSSetSamplers(0, nSamplers, smps);
-        }
-
-        private unsafe void ForwardEnd(IGraphicsContext context)
-        {
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
-
-            nint* null_srvs = stackalloc nint[(int)nForwardSRVs];
-            context.PSSetShaderResources(8, nForwardSRVs, (void**)null_srvs);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
-        }
-
-        private unsafe void ClusteredForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
-        {
-            var cam = CameraManager.Current;
-            var lightParamsBuffer = this.lightParamsBuffer.Value;
-            var lightParams = lightParamsBuffer.Local;
-            lightParams->LightCount = lights.LightBuffer.Count;
-            lightParams->GlobalProbes = lights.GlobalProbes.Count;
-            lightParamsBuffer.Update(context);
-            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
-            cbs[1] = (void*)camera.Value.NativePointer;
-            cbs[2] = null;
-
-            context.SetViewport(creator.Viewport);
-            context.VSSetConstantBuffers(1, 1, &cbs[1]);
-            context.DSSetConstantBuffers(1, 1, &cbs[1]);
-            context.CSSetConstantBuffers(1, 1, &cbs[1]);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nForwardClusteredSRVs, forwardClusteredSRVs);
-            context.PSSetSamplers(0, nSamplers, smps);
-        }
-
-        private unsafe void ClusteredForwardEnd(IGraphicsContext context)
-        {
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
-
-            nint* null_srvs = stackalloc nint[(int)nForwardClusteredSRVs];
-            context.PSSetShaderResources(0, nForwardClusteredSRVs, (void**)null_srvs);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
         }
     }
 }

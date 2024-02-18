@@ -1,12 +1,7 @@
+#include "defs.hlsl"
+
 Texture2D maskTex : register(t0);
-
 SamplerState linearClampSampler : register(s0);
-
-struct PixelInput
-{
-    float4 position : SV_POSITION;
-    float2 ctex : TEXCOORD1;
-};
 
 void main(PixelInput input)
 {

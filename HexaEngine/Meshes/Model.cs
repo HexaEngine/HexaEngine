@@ -178,7 +178,7 @@
             loaded = true;
         }
 
-        private static void Setup(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc)
+        private static void Setup(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation)
         {
             flags = ModelMaterialShaderFlags.DepthTest | ModelMaterialShaderFlags.Deferred | ModelMaterialShaderFlags.Shadow | ModelMaterialShaderFlags.Bake;
             macros = [];
@@ -189,6 +189,14 @@
                 flags &= ~ModelMaterialShaderFlags.Bake;
                 macros = [.. macros, new ShaderMacro("VtxSkinned", "1")];
                 shadowMacros = [.. shadowMacros, new ShaderMacro("VtxSkinned", "1")];
+            }
+
+            tessellation = false;
+            if (material.HasTexture(MaterialTextureType.Displacement))
+            {
+                flags |= ModelMaterialShaderFlags.Tessellation;
+                macros = [.. macros, new("Tessellation", "1")];
+                tessellation = true;
             }
 
             matflags = material.Flags;
@@ -241,7 +249,7 @@
 
         private static List<MaterialShaderPassDesc> GetMaterialShaderPasses(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
-            Setup(mesh, material, debone, out flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc);
+            Setup(mesh, material, debone, out flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation);
 
             List<MaterialShaderPassDesc> passes = new();
 
@@ -261,7 +269,7 @@
             {
                 VertexShader = $"forward/geometry/vs.hlsl",
                 PixelShader = $"forward/geometry/ps.hlsl",
-                Macros = [.. macros, new("CLUSTERED_FORWARD", 1)]
+                Macros = macros
             };
 
             GraphicsPipelineStateDesc pipelineStateDescForward = new()
@@ -301,30 +309,14 @@
                 Topology = PrimitiveTopology.TriangleList,
             };
 
-            GraphicsPipelineDesc pipelineDescBake = new()
+            if (tessellation)
             {
-                VertexShader = $"forward/geometry/vs.hlsl",
-                PixelShader = $"forward/geometry/ps.hlsl",
-                Macros = [.. macros, new("CLUSTERED_FORWARD", 1), new("BAKE_PASS", 1)]
-            };
-
-            GraphicsPipelineStateDesc pipelineStateDescBake = new()
-            {
-                DepthStencil = DepthStencilDescription.DepthReadEquals,
-                Rasterizer = rasterizer,
-                Blend = blend,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-
-            if ((matflags & MaterialFlags.Tessellation) != 0)
-            {
-                flags |= ModelMaterialShaderFlags.Tessellation;
-                Array.Resize(ref macros, macros.Length + 1);
-                macros[^1] = new("Tessellation", "1");
                 pipelineDescForward.HullShader = $"forward/geometry/hs.hlsl";
                 pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
+
                 pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
                 pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
+
                 pipelineDescDepthOnly.HullShader = $"deferred/geometry/hs.hlsl";
                 pipelineDescDepthOnly.DomainShader = $"deferred/geometry/ds.hlsl";
 
@@ -405,19 +397,6 @@
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
-
-                if ((matflags & MaterialFlags.Tessellation) != 0)
-                {
-                    csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
-                    csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
-                    csmPipelineStateDesc.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    osmPipelineDesc.HullShader = "forward/geometry/dpsm/hs.hlsl";
-                    osmPipelineDesc.DomainShader = "forward/geometry/dpsm/ds.hlsl";
-                    osmPipelineStateDesc.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
-                    psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
-                    psmPipelineStateDesc.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                }
 
                 passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc));
                 passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc));

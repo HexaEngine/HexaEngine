@@ -170,7 +170,7 @@
             ActualHeight = actualHeight;
             ActualWidth = actualWidth;
 
-            Vector3 uvScale = new Vector3(scaleFactorW, scaleFactorH, 0) * 0.1f;
+            Vector3 uvScale = new(1 / tessellationFactor, 1 / tessellationFactor, 0);
 
             for (uint i = 0; i < actualHeight - 1; i++)
             {

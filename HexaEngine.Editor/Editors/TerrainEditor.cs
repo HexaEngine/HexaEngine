@@ -9,6 +9,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
@@ -188,6 +189,17 @@
                         for (int i = 0; i < grid.Count; i++)
                         {
                             grid[i].UpdateLayer(layer);
+                        }
+                    }
+
+                    ImGui.SameLine();
+
+                    if (ImGui.SmallButton($"\xE70F"))
+                    {
+                        if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditor))
+                        {
+                            materialEditor.Material = assetRef;
+                            materialEditor.Focus();
                         }
                     }
                 }

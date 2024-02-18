@@ -175,10 +175,6 @@
         public readonly ShaderMacro AsShaderMacro()
         {
             var type = Type;
-            if (type == MaterialTextureType.Diffuse)
-            {
-                type = MaterialTextureType.BaseColor;
-            }
 
             return new($"Has{type}Tex", (File != Guid.Empty).ToHLSL());
         }

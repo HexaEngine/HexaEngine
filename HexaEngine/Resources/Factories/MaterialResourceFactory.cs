@@ -24,7 +24,15 @@
 
                 if (FilterTextureForPBRCookTorrance(tex.Type, desc.Textures))
                 {
-                    instance.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
+                    var texture = manager.LoadTexture(desc.Textures[i]);
+                    if (tex.Type == MaterialTextureType.Displacement)
+                    {
+                        instance.TextureListDS.Add(texture);
+                    }
+                    else
+                    {
+                        instance.TextureList.Add(texture);
+                    }
                 }
             }
 
@@ -41,7 +49,15 @@
 
                 if (FilterTextureForPBRCookTorrance(tex.Type, desc.Textures))
                 {
-                    instance.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
+                    var texture = await manager.LoadTextureAsync(desc.Textures[i]);
+                    if (tex.Type == MaterialTextureType.Displacement)
+                    {
+                        instance.TextureListDS.Add(texture);
+                    }
+                    else
+                    {
+                        instance.TextureList.Add(texture);
+                    }
                 }
             }
 
@@ -59,6 +75,7 @@
                 MaterialTextureType.AmbientOcclusion => true,
                 MaterialTextureType.RoughnessMetallic => true,
                 MaterialTextureType.AmbientOcclusionRoughnessMetallic => true,
+                MaterialTextureType.Displacement => true,
                 _ => false,
             }))
             {

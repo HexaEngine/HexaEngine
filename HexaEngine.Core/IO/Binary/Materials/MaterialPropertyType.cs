@@ -6,6 +6,11 @@
     public enum MaterialPropertyType
     {
         /// <summary>
+        /// Unknown property type.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// Diffuse color property.
         /// </summary>
         ColorDiffuse,
@@ -186,8 +191,8 @@
         IOR,
 
         /// <summary>
-        /// Unknown property type.
+        /// Displacement strength property.
         /// </summary>
-        Unknown
+        DisplacementStrength,
     }
 }

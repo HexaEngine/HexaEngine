@@ -26,6 +26,10 @@
 
         private void Compile()
         {
+            if (initialized)
+            {
+                return;
+            }
             ShaderMacro[] globalMacros = desc.Macros;
             for (int i = 0; i < desc.Passes.Length; i++)
             {
@@ -93,6 +97,7 @@
                 passes[i].Dispose();
             }
             passes.Clear();
+            nameToPass.Clear();
         }
     }
 }

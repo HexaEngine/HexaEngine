@@ -23,7 +23,10 @@
     [EditorWindowCategory("Tools")]
     public class MaterialEditorWindow : EditorWindow
     {
+        private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
+
+        private string Version = "1.0.0.0";
 
         private IGraphicsDevice device;
 
@@ -191,11 +194,12 @@
                     return;
                 }
 
+                var version = value.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value;
                 var json = value.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value;
 
                 try
                 {
-                    if (string.IsNullOrEmpty(json))
+                    if (string.IsNullOrEmpty(json) || version != Version)
                     {
                         editor = new();
                         geometryNode = new(editor.GetUniqueId(), false, false);
@@ -475,6 +479,7 @@
         {
             if (material != null && editor != null)
             {
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value = Version;
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 InsertProperties(material, editor);
                 InsertTextures(material, editor);
@@ -507,8 +512,8 @@
             var metadata = SourceAssetsDatabase.CreateFile(SourceAssetsDatabase.GetFreeName("New Material.material"));
             path = metadata.GetFullPath();
             material.Save(path, Encoding.UTF8);
-            var artifact = ArtifactDatabase.GetArtifactsForSource(metadata.Guid).First();
-            assetRef = artifact.Guid;
+            var artifact = ArtifactDatabase.GetArtifactForSource(metadata.Guid);
+            assetRef = artifact?.Guid ?? Guid.Empty;
         }
 
         protected override void InitWindow(IGraphicsDevice device)

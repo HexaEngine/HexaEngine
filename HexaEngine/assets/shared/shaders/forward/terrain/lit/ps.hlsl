@@ -1,13 +1,6 @@
 #include "defs.hlsl"
-#include "../../light.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadowCommon.hlsl"
-#include "../../weather.hlsl"
-#include "../../gbuffer.hlsl"
-
-#if CLUSTERED_FORWARD
-#include "../../cluster.hlsl"
-#endif
+#include "../../../commonShading.hlsl"
+#include "../../../gbuffer.hlsl"
 
 #ifndef BaseColor0
 #define BaseColor0 float3(0.8,0.8,0.8)
@@ -35,17 +28,17 @@
 #define Roughness3 0.8
 #endif
 
-#ifndef Metalness0
-#define Metalness0 0
+#ifndef Metallic0
+#define Metallic0 0
 #endif
-#ifndef Metalness1
-#define Metalness1 0
+#ifndef Metallic1
+#define Metallic1 0
 #endif
-#ifndef Metalness2
-#define Metalness2 0
+#ifndef Metallic2
+#define Metallic2 0
 #endif
-#ifndef Metalness3
-#define Metalness3 0
+#ifndef Metallic3
+#define Metallic3 0
 #endif
 
 #ifndef Ao0
@@ -113,17 +106,17 @@
 #define HasDisplacementTex3 0
 #endif
 
-#ifndef HasMetalnessTex0
-#define HasMetalnessTex0 0
+#ifndef HasMetallicTex0
+#define HasMetallicTex0 0
 #endif
-#ifndef HasMetalnessTex1
-#define HasMetalnessTex1 0
+#ifndef HasMetallicTex1
+#define HasMetallicTex1 0
 #endif
-#ifndef HasMetalnessTex2
-#define HasMetalnessTex2 0
+#ifndef HasMetallicTex2
+#define HasMetallicTex2 0
 #endif
-#ifndef HasMetalnessTex3
-#define HasMetalnessTex3 0
+#ifndef HasMetallicTex3
+#define HasMetallicTex3 0
 #endif
 
 #ifndef HasRoughnessTex0
@@ -165,61 +158,30 @@
 #define HasAmbientOcclusionTex3 0
 #endif
 
-#ifndef HasRoughnessMetalnessTex0
-#define HasRoughnessMetalnessTex0 0
+#ifndef HasRoughnessMetallicTex0
+#define HasRoughnessMetallicTex0 0
 #endif
-#ifndef HasRoughnessMetalnessTex1
-#define HasRoughnessMetalnessTex1 0
+#ifndef HasRoughnessMetallicTex1
+#define HasRoughnessMetallicTex1 0
 #endif
-#ifndef HasRoughnessMetalnessTex2
-#define HasRoughnessMetalnessTex2 0
+#ifndef HasRoughnessMetallicTex2
+#define HasRoughnessMetallicTex2 0
 #endif
-#ifndef HasRoughnessMetalnessTex3
-#define HasRoughnessMetalnessTex3 0
-#endif
-
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex0
-#define HasAmbientOcclusionRoughnessMetalnessTex0 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex1
-#define HasAmbientOcclusionRoughnessMetalnessTex1 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex2
-#define HasAmbientOcclusionRoughnessMetalnessTex2 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex3
-#define HasAmbientOcclusionRoughnessMetalnessTex3 0
+#ifndef HasRoughnessMetallicTex3
+#define HasRoughnessMetallicTex3 0
 #endif
 
-SamplerState linearClampSampler : register(s0);
-SamplerState linearWrapSampler : register(s1);
-SamplerState pointClampSampler : register(s2);
-SamplerComparisonState shadowSampler : register(s3);
-
-Texture2D ssao : register(t0);
-Texture2D brdfLUT : register(t1);
-
-StructuredBuffer<GlobalProbe> globalProbes : register(t2);
-StructuredBuffer<Light> lights : register(t3);
-StructuredBuffer<ShadowData> shadowData : register(t4);
-
-#if !CLUSTERED_FORWARD
-Texture2D depthAtlas : register(t5);
-Texture2DArray depthCSM : register(t6);
-
-TextureCube globalDiffuse : register(t7);
-TextureCube globalSpecular : register(t8);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex0
+#define HasAmbientOcclusionRoughnessMetallicTex0 0
 #endif
-
-#if CLUSTERED_FORWARD
-StructuredBuffer<uint> lightIndexList : register(t5); //MAX_CLUSTER_LIGHTS * 16^3
-StructuredBuffer<LightGrid> lightGrid : register(t6); //16^3
-
-Texture2D depthAtlas : register(t7);
-Texture2DArray depthCSM : register(t8);
-
-TextureCube globalDiffuse : register(t9);
-TextureCube globalSpecular : register(t10);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex1
+#define HasAmbientOcclusionRoughnessMetallicTex1 0
+#endif
+#ifndef HasAmbientOcclusionRoughnessMetallicTex2
+#define HasAmbientOcclusionRoughnessMetallicTex2 0
+#endif
+#ifndef HasAmbientOcclusionRoughnessMetallicTex3
+#define HasAmbientOcclusionRoughnessMetallicTex3 0
 #endif
 
 Texture2D maskTex : register(t11);
@@ -275,21 +237,21 @@ Texture2D roughnessTexture3;
 SamplerState roughnessTextureSampler3;
 #endif
 
-#if HasMetalnessTex0
-Texture2D metalnessTexture0;
-SamplerState metalnessTextureSampler0;
+#if HasMetallicTex0
+Texture2D metallicTexture0;
+SamplerState metallicTextureSampler0;
 #endif
-#if HasMetalnessTex1
-Texture2D metalnessTexture1;
-SamplerState metalnessTextureSampler1;
+#if HasMetallicTex1
+Texture2D metallicTexture1;
+SamplerState metallicTextureSampler1;
 #endif
-#if HasMetalnessTex2
-Texture2D metalnessTexture2;
-SamplerState metalnessTextureSampler2;
+#if HasMetallicTex2
+Texture2D metallicTexture2;
+SamplerState metallicTextureSampler2;
 #endif
-#if HasMetalnessTex3
-Texture2D metalnessTexture3;
-SamplerState metalnessTextureSampler3;
+#if HasMetallicTex3
+Texture2D metallicTexture3;
+SamplerState metallicTextureSampler3;
 #endif
 
 #if HasEmissiveTex0
@@ -326,45 +288,38 @@ Texture2D ambientOcclusionTexture3;
 SamplerState ambientOcclusionTextureSampler3;
 #endif
 
-#if HasRoughnessMetalnessTex0
-Texture2D roughnessMetalnessTexture0;
-SamplerState roughnessMetalnessTextureSampler0;
+#if HasRoughnessMetallicTex0
+Texture2D roughnessMetallicTexture0;
+SamplerState roughnessMetallicTextureSampler0;
 #endif
-#if HasRoughnessMetalnessTex1
-Texture2D roughnessMetalnessTexture1;
-SamplerState roughnessMetalnessTextureSampler1;
+#if HasRoughnessMetallicTex1
+Texture2D roughnessMetallicTexture1;
+SamplerState roughnessMetallicTextureSampler1;
 #endif
-#if HasRoughnessMetalnessTex2
-Texture2D roughnessMetalnessTexture2;
-SamplerState roughnessMetalnessTextureSampler2;
+#if HasRoughnessMetallicTex2
+Texture2D roughnessMetallicTexture2;
+SamplerState roughnessMetallicTextureSampler2;
 #endif
-#if HasRoughnessMetalnessTex3
-Texture2D roughnessMetalnessTexture3;
-SamplerState roughnessMetalnessTextureSampler3;
-#endif
-
-#if HasAmbientOcclusionRoughnessMetalnessTex0
-Texture2D ambientOcclusionRoughnessMetalnessTexture0;
-SamplerState ambientOcclusionRoughnessMetalnessSampler0;
-#endif
-#if HasAmbientOcclusionRoughnessMetalnessTex1
-Texture2D ambientOcclusionRoughnessMetalnessTexture1;
-SamplerState ambientOcclusionRoughnessMetalnessSampler1;
-#endif
-#if HasAmbientOcclusionRoughnessMetalnessTex2
-Texture2D ambientOcclusionRoughnessMetalnessTexture2;
-SamplerState ambientOcclusionRoughnessMetalnessSampler2;
-#endif
-#if HasAmbientOcclusionRoughnessMetalnessTex3
-Texture2D ambientOcclusionRoughnessMetalnessTexture3;
-SamplerState ambientOcclusionRoughnessMetalnessSampler3;
+#if HasRoughnessMetallicTex3
+Texture2D roughnessMetallicTexture3;
+SamplerState roughnessMetallicTextureSampler3;
 #endif
 
-#if !CLUSTERED_FORWARD
-cbuffer constants : register(b0)
-{
-    uint cLightCount;
-};
+#if HasAmbientOcclusionRoughnessMetallicTex0
+Texture2D ambientOcclusionRoughnessMetallicTexture0;
+SamplerState ambientOcclusionRoughnessMetallicSampler0;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex1
+Texture2D ambientOcclusionRoughnessMetallicTexture1;
+SamplerState ambientOcclusionRoughnessMetallicSampler1;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex2
+Texture2D ambientOcclusionRoughnessMetallicTexture2;
+SamplerState ambientOcclusionRoughnessMetallicSampler2;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex3
+Texture2D ambientOcclusionRoughnessMetallicTexture3;
+SamplerState ambientOcclusionRoughnessMetallicSampler3;
 #endif
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)
@@ -455,10 +410,10 @@ Pixel main(PixelInput input)
     float roughness1 = Roughness1;
     float roughness2 = Roughness2;
     float roughness3 = Roughness3;
-    float metalness0 = Metalness0;
-    float metalness1 = Metalness1;
-    float metalness2 = Metalness2;
-    float metalness3 = Metalness3;
+    float metallic0 = Metallic0;
+    float metallic1 = Metallic1;
+    float metallic2 = Metallic2;
+    float metallic3 = Metallic3;
 
 #if HasBaseColorTex0
     float4 color0 = baseColorTexture0.Sample(baseColorTextureSampler0, float2(input.tex.xy));
@@ -503,17 +458,17 @@ Pixel main(PixelInput input)
     roughness3 = roughnessTexture3.Sample(roughnessTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
-#if HasMetalnessTex0
-    metalness0 = metalnessTexture0.Sample(metalnessTextureSampler0, float2(input.tex.xy)).r;
+#if HasMetallicTex0
+    metallic0 = metallicTexture0.Sample(metallicTextureSampler0, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex1
-    metalness1 = metalnessTexture1.Sample(metalnessTextureSampler1, float2(input.tex.xy)).r;
+#if HasMetallicTex1
+    metallic1 = metallicTexture1.Sample(metallicTextureSampler1, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex2
-    metalness2 = metalnessTexture2.Sample(metalnessTextureSampler2, float2(input.tex.xy)).r;
+#if HasMetallicTex2
+    metallic2 = metallicTexture2.Sample(metallicTextureSampler2, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex3
-    metalness3 = metalnessTexture3.Sample(metalnessTextureSampler3, float2(input.tex.xy)).r;
+#if HasMetallicTex3
+    metallic3 = metallicTexture3.Sample(metallicTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasEmissiveTex0
@@ -542,50 +497,50 @@ Pixel main(PixelInput input)
     ao3 = ambientOcclusionTexture3.Sample(ambientOcclusionTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
-#if HasRoughnessMetalnessTex0
-    float2 rm0 = roughnessMetalnessTexture0.Sample(roughnessMetalnessTextureSampler0, float2(input.tex.xy)).gb;
+#if HasRoughnessMetallicTex0
+    float2 rm0 = roughnessMetallicTexture0.Sample(roughnessMetallicTextureSampler0, float2(input.tex.xy)).gb;
     roughness0 = rm0.x;
-    metalness0 = rm0.y;
+    metallic0 = rm0.y;
 #endif
-#if HasRoughnessMetalnessTex1
-    float2 rm1 = roughnessMetalnessTexture1.Sample(roughnessMetalnessTextureSampler1, float2(input.tex.xy)).gb;
+#if HasRoughnessMetallicTex1
+    float2 rm1 = roughnessMetallicTexture1.Sample(roughnessMetallicTextureSampler1, float2(input.tex.xy)).gb;
     roughness1 = rm1.x;
-    metalness1 = rm1.y;
+    metallic1 = rm1.y;
 #endif
-#if HasRoughnessMetalnessTex2
-    float2 rm2 = roughnessMetalnessTexture2.Sample(roughnessMetalnessTextureSampler2, float2(input.tex.xy)).gb;
+#if HasRoughnessMetallicTex2
+    float2 rm2 = roughnessMetallicTexture2.Sample(roughnessMetallicTextureSampler2, float2(input.tex.xy)).gb;
     roughness2 = rm2.x;
-    metalness2 = rm2.y;
+    metallic2 = rm2.y;
 #endif
-#if HasRoughnessMetalnessTex3
-    float2 rm3 = roughnessMetalnessTexture3.Sample(roughnessMetalnessTextureSampler3, float2(input.tex.xy)).gb;
+#if HasRoughnessMetallicTex3
+    float2 rm3 = roughnessMetallicTexture3.Sample(roughnessMetallicTextureSampler3, float2(input.tex.xy)).gb;
     roughness3 = rm3.x;
-    metalness3 = rm3.y;
+    metallic3 = rm3.y;
 #endif
 
-#if HasAmbientOcclusionRoughnessMetalnessTex0
-    float3 orm0 = ambientOcclusionRoughnessMetalnessTexture0.Sample(ambientOcclusionRoughnessMetalnessSampler0, float2(input.tex.xy)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex0
+    float3 orm0 = ambientOcclusionRoughnessMetallicTexture0.Sample(ambientOcclusionRoughnessMetallicSampler0, float2(input.tex.xy)).rgb;
     ao0 = orm0.r;
     roughness0 = orm0.g;
-    metalness0 = orm0.b;
+    metallic0 = orm0.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex1
-    float3 orm1 = ambientOcclusionRoughnessMetalnessTexture1.Sample(ambientOcclusionRoughnessMetalnessSampler1, float2(input.tex.xy)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex1
+    float3 orm1 = ambientOcclusionRoughnessMetallicTexture1.Sample(ambientOcclusionRoughnessMetallicSampler1, float2(input.tex.xy)).rgb;
     ao1 = orm1.r;
     roughness1 = orm1.g;
-    metalness1 = orm1.b;
+    metallic1 = orm1.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex2
-    float3 orm2 = ambientOcclusionRoughnessMetalnessTexture2.Sample(ambientOcclusionRoughnessMetalnessSampler2, float2(input.tex.xy)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex2
+    float3 orm2 = ambientOcclusionRoughnessMetallicTexture2.Sample(ambientOcclusionRoughnessMetallicSampler2, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
-    metalness2 = orm2.b;
+    metallic2 = orm2.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex3
-    float3 orm3 = ambientOcclusionRoughnessMetalnessTexture3.Sample(ambientOcclusionRoughnessMetalnessSampler3, float2(input.tex.xy)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex3
+    float3 orm3 = ambientOcclusionRoughnessMetallicTexture3.Sample(ambientOcclusionRoughnessMetallicSampler3, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
-    metalness2 = orm2.b;
+    metallic2 = orm2.b;
 #endif
 
     float4 mask = maskTex.Sample(linearClampSampler, input.ctex).xyzw;
@@ -595,40 +550,40 @@ Pixel main(PixelInput input)
     int matID = -1;
 
     float3 baseColor = 0;
-    baseColor = lerp(baseColor, baseColor0, mask.x);
-    baseColor = lerp(baseColor, baseColor1, mask.y);
-    baseColor = lerp(baseColor, baseColor2, mask.z);
-    baseColor = lerp(baseColor, baseColor3, mask.w);
+    baseColor = Mask(baseColor, baseColor0, mask.x);
+    baseColor = Mask(baseColor, baseColor1, mask.y);
+    baseColor = Mask(baseColor, baseColor2, mask.z);
+    baseColor = Mask(baseColor, baseColor3, mask.w);
 
     normal = 0;
-    normal = lerp(normal, normal0, mask.x);
-    normal = lerp(normal, normal1, mask.y);
-    normal = lerp(normal, normal2, mask.z);
-    normal = lerp(normal, normal3, mask.w);
+    normal = Mask(normal, normal0, mask.x);
+    normal = Mask(normal, normal1, mask.y);
+    normal = Mask(normal, normal2, mask.z);
+    normal = Mask(normal, normal3, mask.w);
 
     float roughness = 0;
-    roughness = lerp(roughness, roughness0, mask.x);
-    roughness = lerp(roughness, roughness1, mask.y);
-    roughness = lerp(roughness, roughness2, mask.z);
-    roughness = lerp(roughness, roughness3, mask.w);
+    roughness = Mask(roughness, roughness0, mask.x);
+    roughness = Mask(roughness, roughness1, mask.y);
+    roughness = Mask(roughness, roughness2, mask.z);
+    roughness = Mask(roughness, roughness3, mask.w);
 
     float metallic = 0;
-    metallic = lerp(metallic, metalness0, mask.x);
-    metallic = lerp(metallic, metalness1, mask.y);
-    metallic = lerp(metallic, metalness2, mask.z);
-    metallic = lerp(metallic, metalness3, mask.w);
+    metallic = Mask(metallic, metallic0, mask.x);
+    metallic = Mask(metallic, metallic1, mask.y);
+    metallic = Mask(metallic, metallic2, mask.z);
+    metallic = Mask(metallic, metallic3, mask.w);
 
     float ao = 0;
-    ao = lerp(ao, ao0, mask.x);
-    ao = lerp(ao, ao1, mask.y);
-    ao = lerp(ao, ao2, mask.z);
-    ao = lerp(ao, ao3, mask.w);
+    ao = Mask(ao, ao0, mask.x);
+    ao = Mask(ao, ao1, mask.y);
+    ao = Mask(ao, ao2, mask.z);
+    ao = Mask(ao, ao3, mask.w);
 
     float3 emissive = 0;
-    emissive = lerp(emissive, emissive0, mask.x);
-    emissive = lerp(emissive, emissive1, mask.y);
-    emissive = lerp(emissive, emissive2, mask.z);
-    emissive = lerp(emissive, emissive3, mask.w);
+    emissive = Mask(emissive, emissive0, mask.x);
+    emissive = Mask(emissive, emissive1, mask.y);
+    emissive = Mask(emissive, emissive2, mask.z);
+    emissive = Mask(emissive, emissive3, mask.w);
 
     if (opacity < 0.1f)
         discard;
@@ -638,85 +593,14 @@ Pixel main(PixelInput input)
 
     float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor.rgb, metallic);
 
-    float3 Lo = float3(0, 0, 0);
+    float2 screenUV = GetScreenUV(input.position);
 
-#if CLUSTERED_FORWARD
-    uint tileIndex = GetClusterIndex(input.position.z / input.position.w, camNear, camFar, screenDim, float4(position, 1));
-
-    uint lightCount = lightGrid[tileIndex].lightCount;
-    uint lightOffset = lightGrid[tileIndex].lightOffset;
-#else
-    uint lightCount = cLightCount;
-#endif
-
-    [loop]
-    for (uint i = 0; i < lightCount; i++)
-    {
-        float3 L = 0;
-#if CLUSTERED_FORWARD
-        uint lightIndex = lightIndexList[lightOffset + i];
-        Light light = lights[lightIndex];
-#else
-        Light light = lights[i];
-#endif
-        [branch]
-        switch (light.type)
-        {
-            case POINT_LIGHT:
-                L += PointLightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
-                break;
-            case SPOT_LIGHT:
-                L += SpotlightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
-                break;
-            case DIRECTIONAL_LIGHT:
-                L += DirectionalLightBRDF(light, F0, V, N, baseColor, roughness, metallic);
-                break;
-        }
-
-        float shadowFactor = 1;
-
-        bool castsShadows = GetBit(light.castsShadows, 0);
-        bool contactShadows = GetBit(light.castsShadows, 1);
-
-        [branch]
-        if (castsShadows)
-        {
-            ShadowData data = shadowData[light.shadowMapIndex];
-            switch (light.type)
-            {
-                case POINT_LIGHT:
-                    shadowFactor = ShadowFactorPointLight(shadowSampler, depthAtlas, light, data, position, N);
-                    break;
-                case SPOT_LIGHT:
-                    shadowFactor = ShadowFactorSpotlight(shadowSampler, depthAtlas, light, data, position, N);
-                    break;
-                case DIRECTIONAL_LIGHT:
-                    shadowFactor = ShadowFactorDirectionalLightCascaded(shadowSampler, depthCSM, light, data, position, N);
-                    break;
-            }
-        }
-
-        Lo += L * shadowFactor;
-    }
-
-    float3 ambient = baseColor * ambient_color.rgb;
-
-    ambient = (ambient + BRDF_IBL(linearWrapSampler, globalDiffuse, globalSpecular, brdfLUT, F0, N, V, baseColor.xyz, roughness)) * ao;
-    ambient += emissive;
-
-#if HasBakedLightMap
-    ambient += GetHBasisIrradiance(normal, input.H0, input.H1, input.H2, input.H3) / 3.14159f;
-#endif
+    float3 Lo = ComputeDirectLightning(input.position.z / input.position.w, position, V, N, baseColor, F0, roughness, metallic);
+    float3 ambient = ComputeIndirectLightning(screenUV, V, N, baseColor, F0, roughness, metallic, ao, emissive);
 
     Pixel output;
     output.Color = float4(ambient + Lo * ao, opacity);
     output.Normal = float4(PackNormal(N), opacity);
-
-#if BAKE_FORWARD
-	// For baking we render without backface culling, so that we still get occlusions inside meshes that
-	// don't have full modeled interiors. If it is a backface triangle, we output pure black.
-    output.Color = input.IsFrontFace ? output.Color : 0.0f;
-#endif
 
     return output;
 }

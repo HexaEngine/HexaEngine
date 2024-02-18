@@ -1,6 +1,9 @@
 #include "defs.hlsl"
 #include "../../gbuffer.hlsl"
 
+SamplerState maskSamplerState;
+Texture2D maskTex;
+
 #ifndef BaseColor0
 #define BaseColor0 float3(0.8,0.8,0.8)
 #endif
@@ -27,17 +30,17 @@
 #define Roughness3 0.8
 #endif
 
-#ifndef Metalness0
-#define Metalness0 0
+#ifndef Metallic0
+#define Metallic0 0
 #endif
-#ifndef Metalness1
-#define Metalness1 0
+#ifndef Metallic1
+#define Metallic1 0
 #endif
-#ifndef Metalness2
-#define Metalness2 0
+#ifndef Metallic2
+#define Metallic2 0
 #endif
-#ifndef Metalness3
-#define Metalness3 0
+#ifndef Metallic3
+#define Metallic3 0
 #endif
 
 #ifndef Ao0
@@ -105,17 +108,17 @@
 #define HasDisplacementTex3 0
 #endif
 
-#ifndef HasMetalnessTex0
-#define HasMetalnessTex0 0
+#ifndef HasMetallicTex0
+#define HasMetallicTex0 0
 #endif
-#ifndef HasMetalnessTex1
-#define HasMetalnessTex1 0
+#ifndef HasMetallicTex1
+#define HasMetallicTex1 0
 #endif
-#ifndef HasMetalnessTex2
-#define HasMetalnessTex2 0
+#ifndef HasMetallicTex2
+#define HasMetallicTex2 0
 #endif
-#ifndef HasMetalnessTex3
-#define HasMetalnessTex3 0
+#ifndef HasMetallicTex3
+#define HasMetallicTex3 0
 #endif
 
 #ifndef HasRoughnessTex0
@@ -157,63 +160,166 @@
 #define HasAmbientOcclusionTex3 0
 #endif
 
-#ifndef HasRoughnessMetalnessTex0
-#define HasRoughnessMetalnessTex0 0
+#ifndef HasRoughnessMetallicTex0
+#define HasRoughnessMetallicTex0 0
 #endif
-#ifndef HasRoughnessMetalnessTex1
-#define HasRoughnessMetalnessTex1 0
+#ifndef HasRoughnessMetallicTex1
+#define HasRoughnessMetallicTex1 0
 #endif
-#ifndef HasRoughnessMetalnessTex2
-#define HasRoughnessMetalnessTex2 0
+#ifndef HasRoughnessMetallicTex2
+#define HasRoughnessMetallicTex2 0
 #endif
-#ifndef HasRoughnessMetalnessTex3
-#define HasRoughnessMetalnessTex3 0
-#endif
-
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex0
-#define HasAmbientOcclusionRoughnessMetalnessTex0 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex1
-#define HasAmbientOcclusionRoughnessMetalnessTex1 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex2
-#define HasAmbientOcclusionRoughnessMetalnessTex2 0
-#endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex3
-#define HasAmbientOcclusionRoughnessMetalnessTex3 0
+#ifndef HasRoughnessMetallicTex3
+#define HasRoughnessMetallicTex3 0
 #endif
 
-#if HasBaseColorTex0 | HasBaseColorTex1 | HasBaseColorTex2 | HasBaseColorTex3
-Texture2DArray baseColorTexture : register(t0);
-SamplerState baseColorTextureSampler : register(s0);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex0
+#define HasAmbientOcclusionRoughnessMetallicTex0 0
 #endif
-#if HasNormalTex0 | HasNormalTex1 | HasNormalTex2 | HasNormalTex3
-Texture2DArray normalTexture : register(t1);
-SamplerState normalTextureSampler : register(s1);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex1
+#define HasAmbientOcclusionRoughnessMetallicTex1 0
 #endif
-#if HasRoughnessTex0 | HasRoughnessTex1 | HasRoughnessTex2 | HasRoughnessTex3
-Texture2DArray roughnessTexture : register(t2);
-SamplerState roughnessTextureSampler : register(s2);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex2
+#define HasAmbientOcclusionRoughnessMetallicTex2 0
 #endif
-#if HasMetalnessTex0 | HasMetalnessTex1 | HasMetalnessTex2 | HasMetalnessTex3
-Texture2DArray metalnessTexture : register(t3);
-SamplerState metalnessTextureSampler : register(s3);
+#ifndef HasAmbientOcclusionRoughnessMetallicTex3
+#define HasAmbientOcclusionRoughnessMetallicTex3 0
 #endif
-#if HasEmissiveTex0 | HasEmissiveTex1 | HasEmissiveTex2 | HasEmissiveTex3
-Texture2DArray emissiveTexture : register(t4);
-SamplerState emissiveTextureSampler : register(s4);
+
+#if HasBaseColorTex0
+Texture2D baseColorTexture0;
+SamplerState baseColorTextureSampler0;
 #endif
-#if HasAmbientOcclusionTex0 | HasAmbientOcclusionTex1 | HasAmbientOcclusionTex2 | HasAmbientOcclusionTex3
-Texture2DArray ambientOcclusionTexture : register(t5);
-SamplerState ambientOcclusionTextureSampler : register(s5);
+#if HasBaseColorTex1
+Texture2D baseColorTexture1;
+SamplerState baseColorTextureSampler1;
 #endif
-#if HasRoughnessMetalnessTex0 | HasRoughnessMetalnessTex1 | HasRoughnessMetalnessTex2 | HasRoughnessMetalnessTex3
-Texture2DArray roughnessMetalnessTexture : register(t6);
-SamplerState roughnessMetalnessTextureSampler : register(s6);
+#if HasBaseColorTex2
+Texture2D baseColorTexture2;
+SamplerState baseColorTextureSampler2;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex0 | HasAmbientOcclusionRoughnessMetalnessTex1 | HasAmbientOcclusionRoughnessMetalnessTex2 | HasAmbientOcclusionRoughnessMetalnessTex3
-Texture2DArray ambientOcclusionRoughnessMetalnessTexture : register(t7);
-SamplerState ambientOcclusionRoughnessMetalnessSampler : register(s7);
+#if HasBaseColorTex3
+Texture2D baseColorTexture3;
+SamplerState baseColorTextureSampler3;
+#endif
+
+#if HasNormalTex0
+Texture2D normalTexture0;
+SamplerState normalTextureSampler0;
+#endif
+#if HasNormalTex1
+Texture2D normalTexture1;
+SamplerState normalTextureSampler1;
+#endif
+#if HasNormalTex2
+Texture2D normalTexture2;
+SamplerState normalTextureSampler2;
+#endif
+#if HasNormalTex3
+Texture2D normalTexture3;
+SamplerState normalTextureSampler3;
+#endif
+
+#if HasRoughnessTex0
+Texture2D roughnessTexture0;
+SamplerState roughnessTextureSampler0;
+#endif
+#if HasRoughnessTex1
+Texture2D roughnessTexture1;
+SamplerState roughnessTextureSampler1;
+#endif
+#if HasRoughnessTex2
+Texture2D roughnessTexture2;
+SamplerState roughnessTextureSampler2;
+#endif
+#if HasRoughnessTex3
+Texture2D roughnessTexture3;
+SamplerState roughnessTextureSampler3;
+#endif
+
+#if HasMetallicTex0
+Texture2D metallicTexture0;
+SamplerState metallicTextureSampler0;
+#endif
+#if HasMetallicTex1
+Texture2D metallicTexture1;
+SamplerState metallicTextureSampler1;
+#endif
+#if HasMetallicTex2
+Texture2D metallicTexture2;
+SamplerState metallicTextureSampler2;
+#endif
+#if HasMetallicTex3
+Texture2D metallicTexture3;
+SamplerState metallicTextureSampler3;
+#endif
+
+#if HasEmissiveTex0
+Texture2D emissiveTexture0;
+SamplerState emissiveTextureSampler0;
+#endif
+#if HasEmissiveTex1
+Texture2D emissiveTexture1;
+SamplerState emissiveTextureSampler1;
+#endif
+#if HasEmissiveTex2
+Texture2D emissiveTexture2;
+SamplerState emissiveTextureSampler2;
+#endif
+#if HasEmissiveTex3
+Texture2D emissiveTexture3;
+SamplerState emissiveTextureSampler3;
+#endif
+
+#if HasAmbientOcclusionTex0
+Texture2D ambientOcclusionTexture0;
+SamplerState ambientOcclusionTextureSampler0;
+#endif
+#if HasAmbientOcclusionTex1
+Texture2D ambientOcclusionTexture1;
+SamplerState ambientOcclusionTextureSampler1;
+#endif
+#if HasAmbientOcclusionTex2
+Texture2D ambientOcclusionTexture2;
+SamplerState ambientOcclusionTextureSampler2;
+#endif
+#if HasAmbientOcclusionTex3
+Texture2D ambientOcclusionTexture3;
+SamplerState ambientOcclusionTextureSampler3;
+#endif
+
+#if HasRoughnessMetallicTex0
+Texture2D roughnessMetallicTexture0;
+SamplerState roughnessMetallicTextureSampler0;
+#endif
+#if HasRoughnessMetallicTex1
+Texture2D roughnessMetallicTexture1;
+SamplerState roughnessMetallicTextureSampler1;
+#endif
+#if HasRoughnessMetallicTex2
+Texture2D roughnessMetallicTexture2;
+SamplerState roughnessMetallicTextureSampler2;
+#endif
+#if HasRoughnessMetallicTex3
+Texture2D roughnessMetallicTexture3;
+SamplerState roughnessMetallicTextureSampler3;
+#endif
+
+#if HasAmbientOcclusionRoughnessMetallicTex0
+Texture2D ambientOcclusionRoughnessMetallicTexture0;
+SamplerState ambientOcclusionRoughnessMetallicSampler0;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex1
+Texture2D ambientOcclusionRoughnessMetallicTexture1;
+SamplerState ambientOcclusionRoughnessMetallicSampler1;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex2
+Texture2D ambientOcclusionRoughnessMetallicTexture2;
+SamplerState ambientOcclusionRoughnessMetallicSampler2;
+#endif
+#if HasAmbientOcclusionRoughnessMetallicTex3
+Texture2D ambientOcclusionRoughnessMetallicTexture3;
+SamplerState ambientOcclusionRoughnessMetallicSampler3;
 #endif
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)
@@ -252,9 +358,6 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
-SamplerState state;
-Texture2D maskTex;
-
 GeometryData main(PixelInput input)
 {
     float3 baseColor0 = BaseColor0;
@@ -262,22 +365,14 @@ GeometryData main(PixelInput input)
     float3 baseColor2 = BaseColor2;
     float3 baseColor3 = BaseColor3;
 
-#if VtxPosition
-    float3 pos = (float3) input.pos;
-#endif
-#if VtxNormal
     float3 normal = normalize(input.normal);
     float3 normal0 = normal;
     float3 normal1 = normal;
     float3 normal2 = normal;
     float3 normal3 = normal;
-#endif
-#if VtxTangent
+
     float3 tangent = normalize(input.tangent);
-#endif
-#if VtxBitangent
-    float3 bitangent = normalize(input.bitangent);
-#endif
+
     float3 emissive0 = Emissive0;
     float3 emissive1 = Emissive1;
     float3 emissive2 = Emissive2;
@@ -291,145 +386,140 @@ GeometryData main(PixelInput input)
     float roughness1 = Roughness1;
     float roughness2 = Roughness2;
     float roughness3 = Roughness3;
-    float metalness0 = Metalness0;
-    float metalness1 = Metalness1;
-    float metalness2 = Metalness2;
-    float metalness3 = Metalness3;
+    float metallic0 = Metallic0;
+    float metallic1 = Metallic1;
+    float metallic2 = Metallic2;
+    float metallic3 = Metallic3;
 
-#if VtxUV
 #if HasBaseColorTex0
-    float4 color0 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 0));
+    float4 color0 = baseColorTexture0.Sample(baseColorTextureSampler0, float2(input.tex.xy));
     baseColor0 = color0.rgb * color0.a;
 #endif
 #if HasBaseColorTex1
-    float4 color1 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 1));
+    float4 color1 = baseColorTexture1.Sample(baseColorTextureSampler1, float2(input.tex.xy));
     baseColor1 = color1.rgb * color1.a;
 #endif
 #if HasBaseColorTex2
-    float4 color2 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 2));
+    float4 color2 = baseColorTexture2.Sample(baseColorTextureSampler2, float2(input.tex.xy));
     baseColor2 = color2.rgb * color2.a;
 #endif
 #if HasBaseColorTex3
-    float4 color3 = baseColorTexture.Sample(baseColorTextureSampler, float3(input.tex.xy, 3));
+    float4 color3 = baseColorTexture3.Sample(baseColorTextureSampler3, float2(input.tex.xy));
     baseColor3 = color3.rgb * color3.a;
 #endif
 
-#if VtxTangent
 #if HasNormalTex0
-	normal0 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 0)).rgb, normal, tangent);
+    normal0 = NormalSampleToWorldSpace(normalTexture0.Sample(normalTextureSampler0, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex1
-	normal1 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 1)).rgb, normal, tangent);
+    normal1 = NormalSampleToWorldSpace(normalTexture1.Sample(normalTextureSampler1, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex2
-	normal2 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 2)).rgb, normal, tangent);
+    normal2 = NormalSampleToWorldSpace(normalTexture2.Sample(normalTextureSampler2, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 #if HasNormalTex3
-	normal3 = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, float3(input.tex.xy, 3)).rgb, normal, tangent);
-#endif
+    normal3 = NormalSampleToWorldSpace(normalTexture3.Sample(normalTextureSampler3, float2(input.tex.xy)).rgb, normal, tangent);
 #endif
 
 #if HasRoughnessTex0
-    roughness0 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 0)).r;
+    roughness0 = roughnessTexture0.Sample(roughnessTextureSampler0, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex1
-    roughness1 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 1)).r;
+    roughness1 = roughnessTexture1.Sample(roughnessTextureSampler1, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex2
-    roughness2 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 2)).r;
+    roughness2 = roughnessTexture2.Sample(roughnessTextureSampler2, float2(input.tex.xy)).r;
 #endif
 #if HasRoughnessTex3
-    roughness3 = roughnessTexture.Sample(roughnessTextureSampler, float3(input.tex.xy, 3)).r;
+    roughness3 = roughnessTexture3.Sample(roughnessTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
-#if HasMetalnessTex0
-    metalness0 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 0)).r;
+#if HasMetallicTex0
+    metallic0 = metallicTexture0.Sample(metallicTextureSampler0, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex1
-    metalness1 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 1)).r;
+#if HasMetallicTex1
+    metallic1 = metallicTexture1.Sample(metallicTextureSampler1, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex2
-    metalness2 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 2)).r;
+#if HasMetallicTex2
+    metallic2 = metallicTexture2.Sample(metallicTextureSampler2, float2(input.tex.xy)).r;
 #endif
-#if HasMetalnessTex3
-    metalness3 = metalnessTexture.Sample(metalnessTextureSampler, float3(input.tex.xy, 3)).r;
+#if HasMetallicTex3
+    metallic3 = metallicTexture3.Sample(metallicTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasEmissiveTex0
-    emissive0 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 0)).rgb;
+    emissive0 = emissiveTexture0.Sample(emissiveTextureSampler0, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex1
-    emissive1 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 1)).rgb;
+    emissive1 = emissiveTexture1.Sample(emissiveTextureSampler1, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex2
-    emissive2 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 2)).rgb;
+    emissive2 = emissiveTexture2.Sample(emissiveTextureSampler2, float2(input.tex.xy)).rgb;
 #endif
 #if HasEmissiveTex3
-    emissive3 = emissiveTexture.Sample(emissiveTextureSampler, float3(input.tex.xy, 3)).rgb;
+    emissive3 = emissiveTexture3.Sample(emissiveTextureSampler3, float2(input.tex.xy)).rgb;
 #endif
 
 #if HasAmbientOcclusionTex0
-    ao0 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 0)).r;
+    ao0 = ambientOcclusionTexture0.Sample(ambientOcclusionTextureSampler0, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex1
-    ao1 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 1)).r;
+    ao1 = ambientOcclusionTexture1.Sample(ambientOcclusionTextureSampler1, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex2
-    ao2 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 2)).r;
+    ao2 = ambientOcclusionTexture2.Sample(ambientOcclusionTextureSampler2, float2(input.tex.xy)).r;
 #endif
 #if HasAmbientOcclusionTex3
-    ao3 = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, float3(input.tex.xy, 3)).r;
+    ao3 = ambientOcclusionTexture3.Sample(ambientOcclusionTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
-#if HasRoughnessMetalnessTex0
-    float2 rm0 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 0)).gb;
+#if HasRoughnessMetallicTex0
+    float2 rm0 = roughnessMetallicTexture0.Sample(roughnessMetallicTextureSampler0, float2(input.tex.xy)).gb;
     roughness0 = rm0.x;
-    metalness0 = rm0.y;
+    metallic0 = rm0.y;
 #endif
-#if HasRoughnessMetalnessTex1
-    float2 rm1 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 1)).gb;
+#if HasRoughnessMetallicTex1
+    float2 rm1 = roughnessMetallicTexture1.Sample(roughnessMetallicTextureSampler1, float2(input.tex.xy)).gb;
     roughness1 = rm1.x;
-    metalness1 = rm1.y;
+    metallic1 = rm1.y;
 #endif
-#if HasRoughnessMetalnessTex2
-    float2 rm2 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 2)).gb;
+#if HasRoughnessMetallicTex2
+    float2 rm2 = roughnessMetallicTexture2.Sample(roughnessMetallicTextureSampler2, float2(input.tex.xy)).gb;
     roughness2 = rm2.x;
-    metalness2 = rm2.y;
+    metallic2 = rm2.y;
 #endif
-#if HasRoughnessMetalnessTex3
-    float2 rm3 = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, float3(input.tex.xy, 3)).gb;
+#if HasRoughnessMetallicTex3
+    float2 rm3 = roughnessMetallicTexture3.Sample(roughnessMetallicTextureSampler3, float2(input.tex.xy)).gb;
     roughness3 = rm3.x;
-    metalness3 = rm3.y;
+    metallic3 = rm3.y;
 #endif
 
-#if HasAmbientOcclusionRoughnessMetalnessTex0
-    float3 orm0 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 0)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex0
+    float3 orm0 = ambientOcclusionRoughnessMetallicTexture0.Sample(ambientOcclusionRoughnessMetallicSampler0, float2(input.tex.xy)).rgb;
     ao0 = orm0.r;
     roughness0 = orm0.g;
-    metalness0 = orm0.b;
+    metallic0 = orm0.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex1
-    float3 orm1 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 1)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex1
+    float3 orm1 = ambientOcclusionRoughnessMetallicTexture1.Sample(ambientOcclusionRoughnessMetallicSampler1, float2(input.tex.xy)).rgb;
     ao1 = orm1.r;
     roughness1 = orm1.g;
-    metalness1 = orm1.b;
+    metallic1 = orm1.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex2
-    float3 orm2 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 2)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex2
+    float3 orm2 = ambientOcclusionRoughnessMetallicTexture2.Sample(ambientOcclusionRoughnessMetallicSampler2, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
-    metalness2 = orm2.b;
+    metallic2 = orm2.b;
 #endif
-#if HasAmbientOcclusionRoughnessMetalnessTex3
-    float3 orm3 = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, float3(input.tex.xy, 3)).rgb;
+#if HasAmbientOcclusionRoughnessMetallicTex3
+    float3 orm3 = ambientOcclusionRoughnessMetallicTexture3.Sample(ambientOcclusionRoughnessMetallicSampler3, float2(input.tex.xy)).rgb;
     ao2 = orm2.r;
     roughness2 = orm2.g;
-    metalness2 = orm2.b;
+    metallic2 = orm2.b;
 #endif
 
-#endif
-
-    float4 mask = maskTex.Sample(state, input.ctex).xyzw;
+    float4 mask = maskTex.Sample(maskSamplerState, input.ctex).xyzw;
 
     float opacity = mask.x + mask.y + mask.z + mask.w;
 
@@ -454,10 +544,10 @@ GeometryData main(PixelInput input)
     roughness = lerp(roughness, roughness3, mask.w);
 
     float metallic = 0;
-    metallic = lerp(metallic, metalness0, mask.x);
-    metallic = lerp(metallic, metalness1, mask.y);
-    metallic = lerp(metallic, metalness2, mask.z);
-    metallic = lerp(metallic, metalness3, mask.w);
+    metallic = lerp(metallic, metallic0, mask.x);
+    metallic = lerp(metallic, metallic1, mask.y);
+    metallic = lerp(metallic, metallic2, mask.z);
+    metallic = lerp(metallic, metallic3, mask.w);
 
     float ao = 0;
     ao = lerp(ao, ao0, mask.x);

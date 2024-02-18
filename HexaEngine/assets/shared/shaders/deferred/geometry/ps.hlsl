@@ -1,5 +1,4 @@
 #include "defs.hlsl"
-#include "../../gbuffer.hlsl"
 
 #ifndef BaseColor
 #define BaseColor float4(0.8,0.8,0.8,1)

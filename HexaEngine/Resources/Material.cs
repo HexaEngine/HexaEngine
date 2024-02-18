@@ -9,10 +9,11 @@
 
         public MaterialShader Shader;
         public MaterialTextureList TextureList = [];
+        public MaterialTextureList TextureListDS = [];
 
         private readonly Dictionary<string, int> nameToPassIndex = [];
 
-        private bool loaded;
+        private volatile bool loaded;
 
         public Material(IResourceFactory factory, MaterialData desc) : base(factory, desc.Guid)
         {
@@ -23,6 +24,11 @@
 
         public bool BeginDraw(IGraphicsContext context, string passName)
         {
+            if (!loaded)
+            {
+                return false;
+            }
+
             var pass = Shader.Find(passName);
             if (pass == null)
             {
@@ -34,14 +40,16 @@
                 return false;
             }
 
-            TextureList.Bind(context);
+            TextureList.BindPS(context);
+            TextureListDS.BindDS(context);
 
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            TextureList.Unbind(context);
+            TextureList.UnbindPS(context);
+            TextureListDS.UnbindDS(context);
             context.SetPipelineState(null);
         }
 
@@ -59,6 +67,7 @@
         public void EndUpdate()
         {
 #nullable disable
+            TextureListDS.Update();
             TextureList.Update();
             loaded = true;
 #nullable enable

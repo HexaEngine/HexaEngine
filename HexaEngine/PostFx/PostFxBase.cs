@@ -14,7 +14,7 @@
     public abstract class PostFxBase : IPostFx
     {
         private bool initialized = false;
-        private bool enabled = true;
+        private bool enabled = false;
 
         /// <summary>
         /// Indicates whether the post-processing effect is dirty and needs an update.

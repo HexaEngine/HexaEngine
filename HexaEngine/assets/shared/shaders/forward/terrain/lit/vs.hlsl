@@ -1,5 +1,4 @@
 #include "defs.hlsl"
-#include "../../camera.hlsl"
 
 #ifndef TILESIZE
 #define TILESIZE float2(32, 32)
@@ -10,8 +9,21 @@ cbuffer WorldBuffer
     float4x4 world;
 };
 
-Texture2D<float> Heightmap;
+#if TESSELLATION
 
+HullInput main(VertexInput input)
+{
+    HullInput output;
+
+    output.position = mul(float4(input.pos, 1), world).xyz;
+    output.tex = input.tex;
+    output.normal = mul(input.normal, (float3x3) world);
+    output.tangent = mul(input.tangent, (float3x3) world);
+    output.TessFactor = ComputeTessFactor(output.position);
+
+    return output;
+}
+#else
 PixelInput main(VertexInput input)
 {
     PixelInput output;
@@ -26,3 +38,4 @@ PixelInput main(VertexInput input)
 
     return output;
 }
+#endif

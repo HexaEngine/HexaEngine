@@ -71,11 +71,15 @@
                     TerrainMaterialBundle material = layer.Material;
 
                     context.PSSetShaderResource(11, layer.Mask.SRV);
+                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "Forward", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
             context.PSSetShaderResource(11, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
         }
 
         public void DrawDeferred(IGraphicsContext context)
@@ -105,11 +109,15 @@
                     TerrainMaterialBundle material = layer.Material;
 
                     context.PSSetShaderResource(11, layer.Mask.SRV);
+                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "Deferred", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
             context.PSSetShaderResource(11, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
         }
 
         public void DrawDepth(IGraphicsContext context)
@@ -138,12 +146,16 @@
 
                     context.PSSetSampler(0, layer.MaskSampler);
                     context.PSSetShaderResource(0, layer.Mask.SRV);
+                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "DepthOnly", cell.IndexCount, 1, 0, 0, 0);
                 }
                 cell.Unbind(context);
             }
             context.PSSetShaderResource(0, null);
             context.PSSetSampler(0, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
         }
 
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)

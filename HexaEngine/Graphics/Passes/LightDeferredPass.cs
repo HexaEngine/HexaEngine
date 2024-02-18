@@ -8,7 +8,6 @@ namespace HexaEngine.Graphics.Passes
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
 
@@ -37,21 +36,11 @@ namespace HexaEngine.Graphics.Passes
         private unsafe void** smps;
         private const uint nSamplers = 4;
 
-        private ResourceRef<IGraphicsPipelineState> deferredIndirect;
-        private unsafe void** indirectSrvs;
-        private const uint nIndirectSrvsBase = 11;
-        private const uint nIndirectSrvs = 13;
-
         private ResourceRef<IGraphicsPipelineState> deferred;
         private unsafe void** deferredSrvs;
-        private const uint nDeferredSrvs = 10;
-
-        private ResourceRef<IGraphicsPipelineState> deferredClusterd;
-        private unsafe void** deferredClusterdSrvs;
-        private const uint nDeferredClusterdSrvs = 12;
+        private const uint nDeferredSrvs = 16;
 
         private readonly bool forceForward = true;
-        private readonly bool clustered = true;
 
         public LightDeferredPass(Windows.RendererFlags flags) : base("LightDeferred")
         {
@@ -91,19 +80,7 @@ namespace HexaEngine.Graphics.Passes
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
-            indirectSrvs = AllocArrayAndZero(nIndirectSrvs);
             deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
-            deferredClusterdSrvs = AllocArrayAndZero(nDeferredClusterdSrvs);
-
-            deferredIndirect = creator.CreateGraphicsPipelineState(new()
-            {
-                Pipeline = new()
-                {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "deferred/brdf/indirect.hlsl",
-                },
-                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
-            });
 
             deferred = creator.CreateGraphicsPipelineState(new()
             {
@@ -113,17 +90,6 @@ namespace HexaEngine.Graphics.Passes
                     PixelShader = "deferred/brdf/light.hlsl",
                 },
                 State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
-            });
-
-            deferredClusterd = creator.CreateGraphicsPipelineState(new()
-            {
-                Pipeline = new()
-                {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "deferred/brdf/light.hlsl",
-                    Macros = [new("CLUSTERED_DEFERRED", 1)]
-                },
-                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen,
             });
         }
 
@@ -142,14 +108,26 @@ namespace HexaEngine.Graphics.Passes
             var lights = current.LightManager;
             var globalProbes = lights.GlobalProbes;
 
-            var gbuffer = this.gbuffer.Value;
+            deferredSrvs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
+            deferredSrvs[1] = (void*)brdfLUT.Value.SRV.NativePointer;
+            deferredSrvs[2] = (void*)globalProbes.SRV.NativePointer;
+            deferredSrvs[3] = (void*)lights.LightBuffer.SRV.NativePointer;
+            deferredSrvs[4] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
+            deferredSrvs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
+            deferredSrvs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
+            deferredSrvs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            deferredSrvs[8] = null; // IBL global diffuse
+            deferredSrvs[10] = null; // IBL global specular
+            const int deferredBaseIndex = 11;
+            GBuffer gbuffer = this.gbuffer.Value;
             for (int i = 0; i < 4; i++)
             {
                 if (i < gbuffer.Count)
                 {
-                    deferredSrvs[i] = indirectSrvs[i] = deferredClusterdSrvs[i] = (void*)gbuffer.SRVs[i]?.NativePointer;
+                    deferredSrvs[i + deferredBaseIndex] = (void*)gbuffer.SRVs[i]?.NativePointer;
                 }
             }
+            deferredSrvs[deferredBaseIndex + 4] = (void*)depthStencil.Value.SRV.NativePointer;
 
             cbs[1] = (void*)camera.Value.NativePointer;
             cbs[2] = (void*)weather.Value.NativePointer;
@@ -158,24 +136,6 @@ namespace HexaEngine.Graphics.Passes
             smps[1] = (void*)linearWrapSampler.Value.NativePointer;
             smps[2] = (void*)pointClampSampler.Value.NativePointer;
             smps[3] = (void*)shadowSampler.Value.NativePointer;
-
-            deferredSrvs[4] = indirectSrvs[4] = deferredClusterdSrvs[4] = (void*)depthStencil.Value.SRV.NativePointer;
-            indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)AOBuffer.Value.SRV.NativePointer;
-            indirectSrvs[9] = (void*)brdfLUT.Value.SRV.NativePointer;
-            indirectSrvs[10] = (void*)globalProbes.SRV.NativePointer;
-
-            deferredSrvs[6] = deferredClusterdSrvs[6] = (void*)lights.LightBuffer.SRV.NativePointer;
-            deferredSrvs[7] = deferredClusterdSrvs[7] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
-
-            deferredClusterdSrvs[8] = (void*)lightIndexList.Value.SRV.NativePointer;
-            deferredClusterdSrvs[9] = (void*)lightGridBuffer.Value.SRV.NativePointer;
-
-            deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)shadowAtlas.Value.SRV.NativePointer;
-            var dir = lights.Active.FirstOrDefault(x => x is DirectionalLight && x.ShadowMapEnable);
-            if (dir != null)
-            {
-                deferredClusterdSrvs[11] = deferredSrvs[9] = (void*)((DirectionalLight)dir).GetShadowMap().NativePointer;
-            }
 
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);
@@ -198,48 +158,11 @@ namespace HexaEngine.Graphics.Passes
 
             context.SetRenderTarget(lightBuffer.Value.RTV, null);
 
-            // Indirect light pass
             var probeParamsBuffer = this.probeParamsBuffer.Value;
             var probeParams = probeParamsBuffer.Local;
             probeParams->GlobalProbes = globalProbes.Count;
             probeParamsBuffer.Update(context);
             cbs[0] = (void*)probeParamsBuffer.Buffer?.NativePointer;
-
-            context.PSSetSamplers(0, nSamplers, smps);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nIndirectSrvs, indirectSrvs);
-
-            context.SetPipelineState(deferredIndirect.Value);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-
-            nint* null_samplers = stackalloc nint[4];
-            context.PSSetSamplers(0, 4, (void**)null_samplers);
-
-            nint* null_cbs = stackalloc nint[3];
-            context.PSSetConstantBuffers(0, 3, (void**)null_cbs);
-
-            nint* null_srvs = stackalloc nint[(int)nIndirectSrvs];
-            context.PSSetShaderResources(0, nIndirectSrvs, (void**)null_srvs);
-
-            if (clustered)
-            {
-                DeferredClustered(context, creator);
-            }
-            else
-            {
-                Deferred(context, creator, lights);
-            }
-        }
-
-        private unsafe void Deferred(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
-        {
-            // Direct light pass
-            var lightParamsBuffer = this.lightParamsBuffer.Value;
-            var lightParams = lightParamsBuffer.Local;
-            lightParams->LightCount = lights.LightBuffer.Count;
-            lightParamsBuffer.Update(context);
-            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
             context.PSSetSamplers(0, nSamplers, smps);
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
@@ -257,27 +180,6 @@ namespace HexaEngine.Graphics.Passes
 
             nint* null_srvs = stackalloc nint[(int)nDeferredSrvs];
             context.PSSetShaderResources(0, nDeferredSrvs, (void**)null_srvs);
-        }
-
-        private unsafe void DeferredClustered(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            // Direct clustered light pass
-            context.PSSetSamplers(0, nSamplers, smps);
-            context.PSSetConstantBuffers(1, 1, &cbs[1]);
-            context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
-
-            context.SetPipelineState(deferredClusterd.Value);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
-
-            nint* null_srvs = stackalloc nint[(int)nDeferredClusterdSrvs];
-            context.PSSetShaderResources(0, nDeferredClusterdSrvs, (void**)null_srvs);
         }
     }
 }

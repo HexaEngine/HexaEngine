@@ -1,3 +1,8 @@
+#ifndef INCLUDE_H_DEFS
+#define INCLUDE_H_DEFS
+
+#include "../common.hlsl"
+
 struct VertexInput
 {
     float3 pos : POSITION;
@@ -14,17 +19,12 @@ struct PixelInput
     float2 ctex : TEXCOORD1;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+};
 
-#if HasBakedLightMap
-	float3 H0 : H0;
-	float3 H1 : H1;
-	float3 H2 : H2;
-	float3 H3 : H3;
-#endif
-
-#if BAKE_FORWARD
-	bool IsFrontFace : SV_IsFrontFace;
-#endif
+struct PatchTess
+{
+    float EdgeTess[3] : SV_TessFactor;
+    float InsideTess : SV_InsideTessFactor;
 };
 
 struct HullInput
@@ -33,7 +33,7 @@ struct HullInput
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float TessFactor : TESS;
+    float TessFactor : TESSFACTOR;
 };
 
 struct DomainInput
@@ -44,8 +44,4 @@ struct DomainInput
     float3 tangent : TANGENT;
 };
 
-struct PatchTess
-{
-    float EdgeTess[3] : SV_TessFactor;
-    float InsideTess : SV_InsideTessFactor;
-};
+#endif

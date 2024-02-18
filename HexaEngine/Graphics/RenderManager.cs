@@ -12,50 +12,6 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public class BatchManager
-    {
-    }
-
-    public class RendererInstance
-    {
-        public readonly IRenderer Renderer;
-        public readonly IRendererComponent Component;
-        public readonly bool IsBatched;
-
-        public RendererInstance(IRenderer renderer, IRendererComponent component, bool isBatched)
-        {
-            Renderer = renderer;
-            Component = component;
-            IsBatched = isBatched;
-        }
-    }
-
-    public class RendererManager
-    {
-        private readonly List<IRenderer> renderers = [];
-        private readonly Dictionary<Type, IRenderer> typeToRenderer = [];
-
-        public void Register(IRenderer renderer, Type component)
-        {
-        }
-
-        public void Register<TComponent>(IRenderer renderer) where TComponent : IRendererComponent
-        {
-        }
-    }
-
-    public class RenderQueue
-    {
-        private readonly RenderQueueIndex queueIndex;
-
-        public RenderQueue(RenderQueueIndex queueIndex)
-        {
-            this.queueIndex = queueIndex;
-        }
-
-        public RenderQueueIndex QueueIndex => queueIndex;
-    }
-
     public class RenderManager : ISystem
     {
         private readonly IGraphicsDevice device;

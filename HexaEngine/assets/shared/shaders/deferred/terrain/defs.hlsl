@@ -1,15 +1,4 @@
-#ifndef VtxPosition
-#define VtxPosition 1
-#endif
-#ifndef VtxUV
-#define VtxUV 1
-#endif
-#ifndef VtxNormal
-#define VtxNormal 1
-#endif
-#ifndef VtxTangent
-#define VtxTangent 1
-#endif
+#include "common.hlsl"
 
 struct VertexInput
 {
@@ -21,9 +10,32 @@ struct VertexInput
 
 struct PixelInput
 {
-    float4 pos : SV_POSITION;
+    float4 position : SV_POSITION;
     float3 tex : TEXCOORD0;
     float2 ctex : TEXCOORD1;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+};
+
+struct PatchTess
+{
+    float EdgeTess[3] : SV_TessFactor;
+    float InsideTess : SV_InsideTessFactor;
+};
+
+struct HullInput
+{
+    float3 position : POSITION;
+    float3 tex : TEXCOORD;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float TessFactor : TESSFACTOR;
+};
+
+struct DomainInput
+{
+    float3 position : POSITION;
+    float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
 };
