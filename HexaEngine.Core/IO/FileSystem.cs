@@ -552,13 +552,13 @@
 
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
-                var fs = File.OpenRead(value);
+                var fs = File.Open(value, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 return new(fs, 0, fs.Length);
             }
             else if (File.Exists(path))
             {
-                var fs = File.OpenRead(path);
+                var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 return new(fs, 0, fs.Length);
             }

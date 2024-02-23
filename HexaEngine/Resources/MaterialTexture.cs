@@ -2,43 +2,35 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public class MaterialTexture : IDisposable
+    public class MaterialTexture : ResourceInstance
     {
         public Texture2D Texture;
         public IShaderResourceView ShaderResourceView;
         public ISamplerState Sampler;
         public Core.IO.Binary.Materials.MaterialTexture Desc;
-        private bool disposedValue;
+        private volatile bool initialized = false;
 
-        public MaterialTexture(Texture2D texture, ISamplerState sampler, Core.IO.Binary.Materials.MaterialTexture desc)
+        public MaterialTexture(IResourceFactory factory, ResourceGuid id, Core.IO.Binary.Materials.MaterialTexture desc) : base(factory, id)
+        {
+            Desc = desc;
+        }
+
+        public bool Initialized => initialized;
+
+        public void Initialize(Texture2D texture, ISamplerState sampler)
         {
             Texture = texture;
             ShaderResourceView = texture.SRV;
             Sampler = sampler;
-            Desc = desc;
+            initialized = true;
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void ReleaseResources()
         {
-            if (!disposedValue)
-            {
-                Texture.Dispose();
-                ShaderResourceView?.Dispose();
-                Sampler?.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~MaterialTexture()
-        {
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            initialized = false;
+            Texture.Dispose();
+            ShaderResourceView?.Dispose();
+            Sampler?.Dispose();
         }
     }
 }

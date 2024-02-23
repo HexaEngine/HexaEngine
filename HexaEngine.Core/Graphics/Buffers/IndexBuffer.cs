@@ -7,7 +7,7 @@
     /// Represents an index buffer in graphics programming with support for different index types (uint or ushort).
     /// </summary>
     /// <typeparam name="T">The type of indices in the buffer (must be unmanaged and either uint or ushort).</typeparam>
-    public unsafe class IndexBuffer<T> : IIndexBuffer<T>, IBuffer where T : unmanaged
+    public unsafe class IndexBuffer<T> : IIndexBuffer<T>, IIndexBuffer, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 8;
 
@@ -17,7 +17,8 @@
         private IBuffer buffer;
         private BufferDescription description;
 
-        private Format format;
+        private readonly Format format;
+        private readonly IndexFormat indexFormat;
 
         private T* items;
         private uint count;
@@ -37,8 +38,18 @@
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
+            if (typeof(T) == typeof(uint))
+            {
+                indexFormat = IndexFormat.UInt32;
+            }
+            else if (typeof(T) == typeof(ushort))
+            {
+                indexFormat = IndexFormat.UInt16;
+            }
+            else
+            {
                 throw new("Index buffers can only be type of uint or ushort");
+            }
 
             this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -61,7 +72,7 @@
                 throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
             }
 
-            format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
+            format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
             buffer = device.CreateBuffer(description);
             buffer.DebugName = dbgName;
@@ -79,8 +90,18 @@
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, T[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
+            if (typeof(T) == typeof(uint))
+            {
+                indexFormat = IndexFormat.UInt32;
+            }
+            else if (typeof(T) == typeof(ushort))
+            {
+                indexFormat = IndexFormat.UInt16;
+            }
+            else
+            {
                 throw new("Index buffers can only be type of uint or ushort");
+            }
 
             this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -108,7 +129,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
+            format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
             items = AllocCopyT(indices);
             buffer = device.CreateBuffer(items, capacity, description);
@@ -128,8 +149,18 @@
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, T* indices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
+            if (typeof(T) == typeof(uint))
+            {
+                indexFormat = IndexFormat.UInt32;
+            }
+            else if (typeof(T) == typeof(ushort))
+            {
+                indexFormat = IndexFormat.UInt16;
+            }
+            else
+            {
                 throw new("Index buffers can only be type of uint or ushort");
+            }
 
             this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -154,7 +185,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
+            format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
             items = AllocCopyT(indices, count);
             buffer = device.CreateBuffer(items, capacity, description);
@@ -173,8 +204,18 @@
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
         public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
+            if (typeof(T) == typeof(uint))
+            {
+                indexFormat = IndexFormat.UInt32;
+            }
+            else if (typeof(T) == typeof(ushort))
+            {
+                indexFormat = IndexFormat.UInt16;
+            }
+            else
+            {
                 throw new("Index buffers can only be type of uint or ushort");
+            }
 
             this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -195,7 +236,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
+            format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
             items = AllocT<T>(capacity);
             ZeroMemoryT(items, capacity);
@@ -253,6 +294,11 @@
         }
 
         /// <summary>
+        /// Gets the index buffer format.
+        /// </summary>
+        public IndexFormat Format => indexFormat;
+
+        /// <summary>
         /// Gets the description of the buffer.
         /// </summary>
         public BufferDescription Description => buffer.Description;
@@ -287,7 +333,7 @@
         /// </summary>
         /// <param name="index">The index of the value to get or set.</param>
         /// <returns>The value at the specified index.</returns>
-        public T this[int index]
+        public T this[uint index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => items[index];
@@ -440,7 +486,7 @@
         /// <param name="context">The graphics context to unbind the index buffer from.</param>
         public void Unbind(IGraphicsContext context)
         {
-            context.SetIndexBuffer(null, Format.Unknown, 0);
+            context.SetIndexBuffer(null, Graphics.Format.Unknown, 0);
         }
 
         /// <summary>

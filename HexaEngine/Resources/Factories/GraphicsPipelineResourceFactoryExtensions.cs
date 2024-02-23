@@ -4,12 +4,12 @@
 
     public static class GraphicsPipelineResourceFactoryExtensions
     {
-        public static ResourceInstance<IGraphicsPipeline>? LoadPipeline(this ResourceManager manager, Guid name, GraphicsPipelineDesc desc)
+        public static ResourceInstance<IGraphicsPipeline>? LoadPipeline(this ResourceManager manager, ResourceGuid name, GraphicsPipelineDesc desc)
         {
             return manager.CreateInstance<ResourceInstance<IGraphicsPipeline>, GraphicsPipelineDesc>(name, desc);
         }
 
-        public static async Task<ResourceInstance<IGraphicsPipeline>?> LoadPipelineAsync(this ResourceManager manager, Guid name, GraphicsPipelineDesc desc)
+        public static async Task<ResourceInstance<IGraphicsPipeline>?> LoadPipelineAsync(this ResourceManager manager, ResourceGuid name, GraphicsPipelineDesc desc)
         {
             return await manager.CreateInstanceAsync<ResourceInstance<IGraphicsPipeline>, GraphicsPipelineDesc>(name, desc);
         }

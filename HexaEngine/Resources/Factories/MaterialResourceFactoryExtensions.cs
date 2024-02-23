@@ -4,24 +4,24 @@
 
     public static class MaterialResourceFactoryExtensions
     {
-        public static Material LoadMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
+        public static Material LoadMaterial<T>(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
         {
-            return manager.CreateInstance<Material, (MaterialShaderDesc, MaterialData)>(desc.Guid, (shaderDesc, desc)) ?? throw new NotSupportedException();
+            return manager.CreateInstance<Material, (MaterialShaderDesc, MaterialData)>(ResourceTypeRegistry.GetGuid<T>(desc.Guid), (shaderDesc, desc)) ?? throw new NotSupportedException();
         }
 
-        public static async Task<Material> LoadMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
+        public static async Task<Material> LoadMaterialAsync<T>(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
         {
-            return await manager.CreateInstanceAsync<Material, (MaterialShaderDesc, MaterialData)>(desc.Guid, (shaderDesc, desc)) ?? throw new NotSupportedException();
+            return await manager.CreateInstanceAsync<Material, (MaterialShaderDesc, MaterialData)>(ResourceTypeRegistry.GetGuid<T>(desc.Guid), (shaderDesc, desc)) ?? throw new NotSupportedException();
         }
 
-        public static void UpdateMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData? desc)
+        public static void UpdateMaterial<T>(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData? desc)
         {
             if (desc == null)
             {
                 return;
             }
 
-            if (!manager.TryGetInstance(desc.Guid, out Material? material))
+            if (!manager.TryGetInstance(ResourceTypeRegistry.GetGuid<T>(desc.Guid), out Material? material))
             {
                 return;
             }
@@ -43,29 +43,9 @@
             material.EndUpdate();
         }
 
-        public static void ReloadMaterial(this ResourceManager manager, MaterialShaderDesc shaderDesc, Material material)
+        public static async Task UpdateMaterialAsync<T>(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
         {
-            var desc = material.Data;
-            material.Update(desc);
-            material.BeginUpdate();
-            manager.UpdateMaterialShader(material.Shader, shaderDesc);
-
-            for (int i = 0; i < material.TextureList.Count; i++)
-            {
-                material.TextureList[i]?.Dispose();
-            }
-            material.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Count; i++)
-            {
-                material.TextureList.Add(manager.LoadTexture(desc.Textures[i]));
-            }
-
-            material.EndUpdate();
-        }
-
-        public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, MaterialData desc)
-        {
-            if (!manager.TryGetInstance(desc.Guid, out Material? modelMaterial))
+            if (!manager.TryGetInstance(ResourceTypeRegistry.GetGuid<T>(desc.Guid), out Material? modelMaterial))
             {
                 return;
             }
@@ -88,35 +68,14 @@
             modelMaterial.EndUpdate();
         }
 
-        public static async Task ReloadMaterialAsync(this ResourceManager manager, MaterialShaderDesc shaderDesc, Material material)
-        {
-            var desc = material.Data;
-            material.Update(desc);
-            material.BeginUpdate();
-
-            material.Shader = await manager.UpdateMaterialShaderAsync(material.Shader, shaderDesc);
-
-            for (int i = 0; i < material.TextureList.Count; i++)
-            {
-                material.TextureList[i]?.Dispose();
-            }
-            material.TextureList.Clear();
-            for (int i = 0; i < desc.Textures.Count; i++)
-            {
-                material.TextureList.Add(await manager.LoadTextureAsync(desc.Textures[i]));
-            }
-
-            material.EndUpdate();
-        }
-
-        public static void UpdateMaterial(this ResourceManager manager, MaterialData? desc)
+        public static void UpdateMaterial<T>(this ResourceManager manager, MaterialData? desc)
         {
             if (desc == null)
             {
                 return;
             }
 
-            if (!manager.TryGetInstance(desc.Guid, out Material? material))
+            if (!manager.TryGetInstance(ResourceTypeRegistry.GetGuid<T>(desc.Guid), out Material? material))
             {
                 return;
             }
@@ -138,9 +97,9 @@
             material.EndUpdate();
         }
 
-        public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialData desc)
+        public static async Task UpdateMaterialAsync<T>(this ResourceManager manager, MaterialData desc)
         {
-            if (!manager.TryGetInstance(desc.Guid, out Material? material))
+            if (!manager.TryGetInstance(ResourceTypeRegistry.GetGuid<T>(desc.Guid), out Material? material))
             {
                 return;
             }

@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Jobs
 {
+    using HexaEngine.Core.Debugging;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
     using System.Threading;
 
     public class JobScheduler
@@ -195,6 +197,7 @@
             {
                 job.Exception = ex;
                 job.state = JobState.Faulted;
+                Logger.Log(ex);
             }
 
             job.SignalCompletion();
@@ -250,6 +253,12 @@
                     {
                         job.Exception = ex;
                         job.state = JobState.Faulted;
+                        Logger.Log(ex);
+
+                        if (Debugger.IsAttached)
+                        {
+                            throw;
+                        }
                     }
 
                     job.SignalCompletion();

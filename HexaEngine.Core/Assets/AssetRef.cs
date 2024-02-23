@@ -30,6 +30,22 @@
             return FileSystem.OpenRead(path);
         }
 
+        public readonly ReusableFileStream? OpenReadReusable()
+        {
+            var metadata = GetMetadata();
+            if (metadata == null)
+            {
+                return null;
+            }
+
+            var path = metadata.Path;
+            if (path == null)
+            {
+                return null;
+            }
+            return new ReusableFileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+
         public readonly byte[]? GetBytes()
         {
             var path = GetPath();
@@ -90,6 +106,11 @@
             return HashCode.Combine(Guid);
         }
 
+        public readonly bool Exists()
+        {
+            return ArtifactDatabase.Exists(Guid);
+        }
+
         public static implicit operator Guid(AssetRef assetRef)
         {
             return assetRef.Guid;
@@ -116,6 +137,16 @@
         }
 
         public static bool operator !=(AssetRef left, Guid right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(Guid left, AssetRef right)
+        {
+            return left == right.Guid;
+        }
+
+        public static bool operator !=(Guid left, AssetRef right)
         {
             return !(left == right);
         }

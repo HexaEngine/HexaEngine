@@ -168,9 +168,9 @@
                 var mesh = meshes[i];
                 if (mesh == null)
                     continue;
-                for (int j = 0; j < mesh.Data.BoneCount; j++)
+                for (int j = 0; j < ((MeshData)mesh.Data).BoneCount; j++)
                 {
-                    var bone = mesh.Data.Bones[j];
+                    var bone = ((MeshData)mesh.Data).Bones[j];
 
                     var id = GetBoneIdByName(bone.Name);
                     boneTransformBuffer.Add(Matrix4x4.Transpose(bone.Offset * boneGlobals[id]));
@@ -212,7 +212,7 @@
                 material.DrawIndexedInstanced(context, "Forward", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
-                if (mesh.Data.BoneCount > 0)
+                if (((MeshData)mesh.Data).BoneCount > 0)
                     boneOffset++;
             }
 
@@ -251,7 +251,7 @@
                 material.DrawIndexedInstanced(context, "Deferred", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
-                if (mesh.Data.BoneCount > 0)
+                if (((MeshData)mesh.Data).BoneCount > 0)
                     boneOffset++;
             }
 
@@ -290,7 +290,7 @@
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
-                if (mesh.Data.BoneCount > 0)
+                if (((MeshData)mesh.Data).BoneCount > 0)
                     boneOffset++;
             }
 
@@ -331,7 +331,7 @@
                 material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
-                if (mesh.Data.BoneCount > 0)
+                if (((MeshData)mesh.Data).BoneCount > 0)
                     boneOffset++;
             }
 

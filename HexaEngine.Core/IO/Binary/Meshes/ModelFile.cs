@@ -2,10 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
-    using K4os.Compression.LZ4;
-    using K4os.Compression.LZ4.Streams;
     using System.IO;
-    using System.IO.Compression;
     using System.Numerics;
     using System.Text;
 
@@ -79,25 +76,13 @@
             header.Compression = compression;
             header.Write(fs);
 
-            var stream = fs;
-            if (compression == Compression.Deflate)
-            {
-                stream = new DeflateStream(fs, CompressionLevel.SmallestSize, true);
-            }
-
-            if (compression == Compression.LZ4)
-            {
-                stream = LZ4Stream.Encode(fs, LZ4Level.L12_MAX, 0, true);
-            }
+            root.Write(fs, header.Encoding, header.Endianness);
 
             for (int i = 0; i < (int)header.MeshCount; i++)
             {
-                meshes[i].Write(stream, header.Encoding, header.Endianness);
+                meshes[i].Write(fs, header.Encoding, header.Endianness, compression);
             }
 
-            root.Write(stream, header.Encoding, header.Endianness);
-
-            stream.Close();
             fs.Close();
         }
 
@@ -105,55 +90,44 @@
         /// Loads a model file from the specified path.
         /// </summary>
         /// <param name="path">The path from which the model file will be loaded.</param>
+        /// <param name="loadMode"></param>
+        /// <param name="stream"></param>
         /// <returns>The loaded model file.</returns>
-        public static ModelFile Load(string path)
+        public static ModelFile Load(string path, MeshLoadMode loadMode)
         {
-            return Load(FileSystem.OpenRead(path));
-        }
-
-        /// <summary>
-        /// Loads a model file from the specified path.
-        /// </summary>
-        /// <param name="path">The path from which the model file will be loaded.</param>
-        /// <returns>The loaded model file.</returns>
-        public static ModelFile LoadExternal(string path)
-        {
-            return Load(File.OpenRead(path));
+            using var fs = File.OpenRead(path);
+            try
+            {
+                return Load(fs, loadMode);
+            }
+            finally
+            {
+                fs.Dispose();
+            }
         }
 
         /// <summary>
         /// Loads a model file from the specified stream.
         /// </summary>
         /// <param name="fs">The stream from which the model file will be loaded.</param>
+        /// <param name="loadMode"></param>
+        /// <param name="stream"></param>
         /// <returns>The loaded model file.</returns>
-        public static ModelFile Load(Stream fs)
+        public static ModelFile Load(Stream fs, MeshLoadMode loadMode)
         {
             ModelFile model = new();
+
             model.header.Read(fs);
 
             model.meshes.Clear();
             model.meshes.Capacity = (int)model.header.MeshCount;
 
-            var stream = fs;
-            if (model.header.Compression == Compression.Deflate)
-            {
-                stream = new DeflateStream(fs, CompressionMode.Decompress, true);
-            }
-
-            if (model.header.Compression == Compression.LZ4)
-            {
-                stream = LZ4Stream.Decode(fs, 0, true);
-            }
+            model.root = Node.ReadFrom(fs, model.Header.Encoding, model.header.Endianness);
 
             for (int i = 0; i < (int)model.header.MeshCount; i++)
             {
-                model.meshes.Add(MeshData.Read(stream, model.Header.Encoding, model.header.Endianness));
+                model.meshes.Add(MeshData.Read(fs, model.Header.Encoding, model.header.Endianness, model.header.Compression, loadMode));
             }
-
-            model.root = Node.ReadFrom(stream, model.Header.Encoding, model.header.Endianness);
-
-            stream.Close();
-            fs.Close();
 
             return model;
         }
@@ -166,46 +140,6 @@
         public MeshData GetMesh(int index)
         {
             return meshes[index];
-        }
-
-        /// <summary>
-        /// Gets the points (positions) of a mesh in the model at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the mesh in the model.</param>
-        /// <returns>The array of points representing the positions in the mesh.</returns>
-        public Vector3[] GetPoints(int index)
-        {
-            var data = GetMesh(index);
-            Vector3[] points = new Vector3[data.Indices.Length];
-            for (int i = 0; i < data.Indices.Length; i++)
-            {
-                points[i] = data.Positions[data.Indices[i]];
-            }
-            return points;
-        }
-
-        /// <summary>
-        /// Gets all points (positions) from all meshes in the model.
-        /// </summary>
-        /// <returns>The array of points representing positions from all meshes in the model.</returns>
-        public Vector3[] GetAllPoints()
-        {
-            ulong count = 0;
-            for (int i = 0; i < (int)header.MeshCount; i++)
-            {
-                count += GetMesh(i).IndicesCount;
-            }
-            Vector3[] points = new Vector3[count];
-            ulong m = 0;
-            for (int i = 0; i < (int)header.MeshCount; i++)
-            {
-                var data = GetMesh(i);
-                for (int j = 0; j < data.Indices.Length; j++)
-                {
-                    points[m++] = data.Positions[data.Indices[j]];
-                }
-            }
-            return points;
         }
 
         /// <summary>

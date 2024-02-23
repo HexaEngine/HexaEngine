@@ -9,6 +9,7 @@
     using HexaEngine.Editor.Factories;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
     using System.Diagnostics;
@@ -32,6 +33,7 @@
             ObjectEditorFactory.AddFactory(new BoolPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new FloatPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new IntPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new StringPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new TypePropertyFactory());
             ObjectEditorFactory.AddFactory(new Vector2PropertyEditorFactory());
@@ -43,7 +45,7 @@
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
 
             ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
-            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainEditor());
+            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
         }
 
         public static void Dispose()

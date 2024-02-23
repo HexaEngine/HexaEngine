@@ -33,6 +33,7 @@
             for (int i = 0; i < artifacts.Count; i++)
             {
                 var artifact = artifacts[i];
+
                 if (!importedSourceAssets.Contains(artifact.SourceGuid))
                 {
                     importedSourceAssets.Add(artifact.SourceGuid);
@@ -61,6 +62,22 @@
             {
                 return importedSourceAssets.Contains(source);
             }
+        }
+
+        public static bool Exists(Guid guid)
+        {
+            initLock.Wait();
+            lock (_lock)
+            {
+                foreach (Artifact artifact in artifacts)
+                {
+                    if (artifact.Guid == guid)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public static IEnumerable<Artifact> GetArtifactsForSource(Guid guid)

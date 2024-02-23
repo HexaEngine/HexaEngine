@@ -773,15 +773,6 @@
 		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\defs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\quad.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
@@ -464,6 +466,47 @@
             };
 
             return materialData;
+        }
+
+        public static MaterialData GetMaterial(AssetRef assetRef)
+        {
+            if (assetRef == AssetRef.Empty)
+            {
+                return Empty;
+            }
+            else
+            {
+                Artifact? artifact = ArtifactDatabase.GetArtifact(assetRef);
+                if (artifact == null)
+                {
+                    Logger.Warn($"Failed to load material {assetRef}");
+                    return Empty;
+                }
+                if (artifact.Type != AssetType.Material)
+                {
+                    Logger.Warn($"Failed to load material {assetRef}, asset was {artifact.Type} but needs to be {AssetType.Material}");
+                    return Empty;
+                }
+
+                Stream? stream = null;
+
+                try
+                {
+                    stream = artifact.OpenRead();
+                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    return materialFile;
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    Logger.Warn($"Failed to load material {assetRef}");
+                    return Empty;
+                }
+                finally
+                {
+                    stream?.Dispose();
+                }
+            }
         }
     }
 }

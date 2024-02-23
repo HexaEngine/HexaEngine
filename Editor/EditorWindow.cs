@@ -42,10 +42,6 @@
                 Y = config.Y;
                 Width = config.Width;
                 Height = config.Height;
-                if (config.State != WindowState.Minimized)
-                {
-                    State = config.State;
-                }
 
                 firstTime = false;
             }

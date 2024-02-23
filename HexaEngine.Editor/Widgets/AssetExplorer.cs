@@ -735,7 +735,7 @@
             {
                 if (importFileDialog.Result == OpenFileResult.Ok)
                 {
-                    SourceAssetsDatabase.ImportFile(importFileDialog.FullPath);
+                    _ = SourceAssetsDatabase.ImportFileAsync(importFileDialog.FullPath);
                 }
             }
             if (currentDir.Exists)

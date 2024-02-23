@@ -16,7 +16,7 @@
         /// <summary>
         /// The texture coordinates of the vertex.
         /// </summary>
-        public Vector3 UV;
+        public Vector2 UV;
 
         /// <summary>
         /// The normal vector of the vertex.
@@ -38,21 +38,6 @@
         public TerrainVertex(Vector3 position, Vector2 texture, Vector3 normal, Vector3 tangent)
         {
             Position = position;
-            UV = new Vector3(texture, 0);
-            Normal = normal;
-            Tangent = tangent;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TerrainVertex"/> struct with the specified position, texture coordinates, normal, tangent, and bitangent.
-        /// </summary>
-        /// <param name="position">The position of the vertex.</param>
-        /// <param name="texture">The texture coordinates of the vertex.</param>
-        /// <param name="normal">The normal vector of the vertex.</param>
-        /// <param name="tangent">The tangent vector of the vertex.</param>
-        public TerrainVertex(Vector3 position, Vector3 texture, Vector3 normal, Vector3 tangent)
-        {
-            Position = position;
             UV = texture;
             Normal = normal;
             Tangent = tangent;
@@ -64,7 +49,7 @@
         /// <returns>A new <see cref="TerrainVertex"/> with inverted texture coordinates.</returns>
         public readonly TerrainVertex InvertTex()
         {
-            return new TerrainVertex(Position, new Vector3(Math.Abs(UV.X - 1), Math.Abs(UV.Y - 1), UV.Z), Normal, Tangent);
+            return new TerrainVertex(Position, new Vector2(Math.Abs(UV.X - 1), Math.Abs(UV.Y - 1)), Normal, Tangent);
         }
 
         /// <summary>

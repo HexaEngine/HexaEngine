@@ -2,90 +2,68 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
-    using K4os.Compression.LZ4;
-    using K4os.Compression.LZ4.Streams;
-    using System.IO.Compression;
+    using System.IO;
     using System.Text;
 
     /// <summary>
-    /// Represents a terrain file containing information about terrain data, including a height map and level-of-detail (LOD) data.
+    /// Represents a terrain file containing data about cells, layers, and layer groups.
     /// </summary>
     public class TerrainFile
     {
-        private TerrainHeader header;
-        private readonly HeightMap heightMap;
-        private readonly List<TerrainCellData> lods;
+        private readonly List<TerrainCellData> cells;
+        private readonly List<TerrainLayer> layers;
+        private readonly List<TerrainLayerGroup> layerGroups;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerrainFile"/> class with default values.
         /// </summary>
         public TerrainFile()
         {
-            header = default;
-            heightMap = new();
-            lods = new();
+            cells = new();
+            layers = new();
+            layerGroups = new();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerrainFile"/> class with specified parameters.
         /// </summary>
-        /// <param name="materialLibrary">The material library associated with the terrain.</param>
-        /// <param name="x">The X-coordinate of the terrain.</param>
-        /// <param name="y">The Y-coordinate of the terrain.</param>
-        /// <param name="heightMap">The height map of the terrain.</param>
-        public TerrainFile(string materialLibrary, int x, int y, HeightMap heightMap)
+        /// <param name="cells">The list of cells data for the terrain.</param>
+        /// <param name="layers">The list of layers for the terrain.</param>
+        /// <param name="layerGroups">The list of layer groups for the terrain.</param>
+        public TerrainFile(IEnumerable<TerrainCellData> cells, IEnumerable<TerrainLayer> layers, IEnumerable<TerrainLayerGroup> layerGroups)
         {
-            header = default;
-            header.MaterialLibrary = materialLibrary;
-            header.X = x;
-            header.Y = y;
-            this.heightMap = heightMap;
-            lods = new();
+            this.cells = new(cells);
+            this.layers = new(layers);
+            this.layerGroups = new(layerGroups);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerrainFile"/> class with specified parameters.
         /// </summary>
-        /// <param name="materialLibrary">The material library associated with the terrain.</param>
-        /// <param name="x">The X-coordinate of the terrain.</param>
-        /// <param name="y">The Y-coordinate of the terrain.</param>
-        /// <param name="heightMap">The height map of the terrain.</param>
-        /// <param name="lods">The list of level-of-detail (LOD) data for the terrain.</param>
-        public TerrainFile(string materialLibrary, int x, int y, HeightMap heightMap, IList<TerrainCellData> lods)
+        /// <param name="cells">The list of cells data for the terrain.</param>
+        /// <param name="layers">The list of layers for the terrain.</param>
+        /// <param name="layerGroups">The list of layer groups for the terrain.</param>
+        public TerrainFile(List<TerrainCellData> cells, List<TerrainLayer> layers, List<TerrainLayerGroup> layerGroups)
         {
-            header = default;
-            header.MaterialLibrary = materialLibrary;
-            header.X = x;
-            header.Y = y;
-            header.LODLevels = (uint)lods.Count;
-            this.heightMap = heightMap;
-            this.lods = new(lods);
+            this.cells = cells;
+            this.layers = layers;
+            this.layerGroups = layerGroups;
         }
 
         /// <summary>
-        /// Gets or sets the material library associated with the terrain.
+        /// Gets the list of cells for the terrain.
         /// </summary>
-        public string MaterialLibrary { get => header.MaterialLibrary; set => header.MaterialLibrary = value; }
+        public List<TerrainCellData> Cells => cells;
 
         /// <summary>
-        /// Gets or sets the X-coordinate of the terrain.
+        /// Gets the list of layers for the terrain.
         /// </summary>
-        public int X { get => header.X; set => header.X = value; }
+        public List<TerrainLayer> Layers => layers;
 
         /// <summary>
-        /// Gets or sets the Y-coordinate of the terrain.
+        /// Gets the list of layer groups for the terrain.
         /// </summary>
-        public int Y { get => header.Y; set => header.Y = value; }
-
-        /// <summary>
-        /// Gets the height map of the terrain.
-        /// </summary>
-        public HeightMap HeightMap => heightMap;
-
-        /// <summary>
-        /// Gets the list of level-of-detail (LOD) data for the terrain.
-        /// </summary>
-        public List<TerrainCellData> LODs => lods;
+        public List<TerrainLayerGroup> LayerGroups => layerGroups;
 
         /// <summary>
         /// Saves the terrain data to a file.
@@ -97,89 +75,81 @@
         public void Save(string path, Encoding encoding, Endianness endianness, Compression compression)
         {
             Stream fs = File.Create(path);
+            try
+            {
+                Save(fs, encoding, endianness, compression);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
 
+        /// <summary>
+        /// Saves the terrain data to a stream.
+        /// </summary>
+        /// <param name="stream">The stream where the terrain data will be saved.</param>
+        /// <param name="encoding">The encoding used for the file.</param>
+        /// <param name="endianness">The endianness used for binary data.</param>
+        /// <param name="compression">The compression method used for the file.</param>
+        public void Save(Stream stream, Encoding encoding, Endianness endianness, Compression compression)
+        {
+            TerrainHeader header = default;
             header.Encoding = encoding;
             header.Endianness = endianness;
             header.Compression = compression;
-            header.LODLevels = (uint)lods.Count;
-            header.Write(fs);
+            header.Layers = layers.Count;
+            header.LayerGroups = layerGroups.Count;
+            header.Cells = cells.Count;
+            header.Write(stream);
 
-            var stream = fs;
-            if (compression == Compression.Deflate)
+            for (int i = 0; i < layers.Count; i++)
             {
-                stream = new DeflateStream(fs, CompressionLevel.SmallestSize, true);
+                layers[i].Write(stream, encoding, endianness);
             }
 
-            if (compression == Compression.LZ4)
+            for (int i = 0; i < layerGroups.Count; i++)
             {
-                stream = LZ4Stream.Encode(fs, LZ4Level.L12_MAX, 0, true);
+                layerGroups[i].Write(stream, endianness, compression, layers);
             }
 
-            heightMap.Write(stream, encoding, endianness);
-
-            for (int i = 0; i < lods.Count; i++)
+            for (int i = 0; i < cells.Count; i++)
             {
-                lods[i].Write(stream, encoding, endianness);
+                cells[i].Write(stream, compression, endianness, layerGroups);
             }
-
-            stream.Close();
-            fs.Close();
-        }
-
-        /// <summary>
-        /// Loads terrain data from a file.
-        /// </summary>
-        /// <param name="path">The path of the file containing terrain data.</param>
-        /// <returns>A <see cref="TerrainFile"/> object representing the loaded terrain data.</returns>
-        public static TerrainFile Load(string path)
-        {
-            return Load(FileSystem.OpenRead(path));
-        }
-
-        /// <summary>
-        /// Loads terrain data from an external stream.
-        /// </summary>
-        /// <param name="path">The path of the file containing terrain data.</param>
-        /// <returns>A <see cref="TerrainFile"/> object representing the loaded terrain data.</returns>
-        public static TerrainFile LoadExternal(string path)
-        {
-            return Load(File.OpenRead(path));
         }
 
         /// <summary>
         /// Loads terrain data from a stream.
         /// </summary>
-        /// <param name="fs">The stream containing terrain data.</param>
+        /// <param name="stream">The stream containing terrain data.</param>
+        /// <param name="mode">The mode to use for loading terrain data.</param>
         /// <returns>A <see cref="TerrainFile"/> object representing the loaded terrain data.</returns>
-        public static TerrainFile Load(Stream fs)
+        public static TerrainFile Load(Stream stream, TerrainLoadMode mode)
         {
-            TerrainFile terrain = new();
+            TerrainHeader header = default;
+            header.Read(stream);
 
-            terrain.header.Read(fs);
-            var header = terrain.header;
+            List<TerrainLayer> layers = new(header.Layers);
+            List<TerrainLayerGroup> layerGroups = new(header.LayerGroups);
+            List<TerrainCellData> cells = new(header.Cells);
 
-            terrain.lods.Clear();
-            terrain.lods.Capacity = (int)header.LODLevels;
-
-            var stream = fs;
-            if (header.Compression == Compression.Deflate)
+            for (int i = 0; i < header.Layers; i++)
             {
-                stream = new DeflateStream(fs, CompressionMode.Decompress, true);
+                layers.Add(TerrainLayer.Read(stream, header.Encoding, header.Endianness));
             }
 
-            if (header.Compression == Compression.LZ4)
+            for (int i = 0; i < header.LayerGroups; i++)
             {
-                stream = LZ4Stream.Decode(fs, 0, true);
+                layerGroups.Add(TerrainLayerGroup.Read(stream, header.Endianness, header.Compression, layers));
             }
 
-            terrain.heightMap.Read(stream, header.Encoding, header.Endianness);
-
-            for (int i = 0; i < (int)header.LODLevels; i++)
+            for (int i = 0; i < header.Cells; i++)
             {
-                terrain.lods.Add(TerrainCellData.Read(stream, header.Encoding, header.Endianness));
+                cells.Add(TerrainCellData.Read(stream, header.Compression, header.Endianness, mode, layerGroups));
             }
 
-            return terrain;
+            return new TerrainFile(cells, layers, layerGroups);
         }
     }
 }

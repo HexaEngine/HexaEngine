@@ -545,7 +545,10 @@ Pixel main(PixelInput input)
 
     float4 mask = maskTex.Sample(linearClampSampler, input.ctex).xyzw;
 
-    float opacity = mask.x + mask.y + mask.z + mask.w;
+    float opacity = saturate(mask.x + mask.y + mask.z + mask.w);
+
+    if (opacity < 0.1f)
+        discard;
 
     int matID = -1;
 
@@ -584,9 +587,6 @@ Pixel main(PixelInput input)
     emissive = Mask(emissive, emissive1, mask.y);
     emissive = Mask(emissive, emissive2, mask.z);
     emissive = Mask(emissive, emissive3, mask.w);
-
-    if (opacity < 0.1f)
-        discard;
 
     float3 N = normalize(normal);
     float3 V = normalize(GetCameraPos() - position);

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Components.Renderer;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
@@ -11,8 +12,9 @@
 
     public class SkinnedModel : IDisposable
     {
+        private readonly Stream stream;
         private readonly ModelFile modelFile;
-        private readonly MaterialManager materialManager;
+        private readonly MaterialAssetMappingCollection materialAssets;
 
         private Node[] nodes;
         private Mesh[] meshes;
@@ -32,10 +34,12 @@
         private bool loaded;
         private bool disposedValue;
 
-        public SkinnedModel(ModelFile modelFile, MaterialManager materialManager)
+        public SkinnedModel(Stream stream, MaterialAssetMappingCollection materialAssets)
         {
-            this.modelFile = modelFile;
-            this.materialManager = materialManager;
+            this.stream = stream;
+            this.materialAssets = materialAssets;
+            modelFile = ModelFile.Load(stream, MeshLoadMode.Streaming);
+            materialAssets.Update(modelFile);
 
             int nodeCount = 0;
             modelFile.Root.CountNodes(ref nodeCount);
@@ -116,11 +120,12 @@
         {
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
-                MeshData meshDesc = modelFile.GetMesh(i);
-                Mesh mesh = ResourceManager.Shared.LoadMesh(meshDesc, false);
-                MaterialData materialDesc = materialManager.GetMaterial(meshDesc.MaterialId);
+                MeshData meshData = modelFile.GetMesh(i);
+                MeshLODData lod = meshData.LoadLODData(0, stream);
+                Mesh mesh = ResourceManager.Shared.LoadMesh(meshData, lod);
+                MaterialData materialDesc = materialAssets.GetMaterial(meshData.Name);
                 MaterialShaderDesc shaderDesc = Model.GetMaterialShaderDesc(mesh, materialDesc, false, out var flags);
-                Material material = ResourceManager.Shared.LoadMaterial(shaderDesc, materialDesc);
+                Material material = ResourceManager.Shared.LoadMaterial<SkinnedModel>(shaderDesc, materialDesc);
 
                 materials[i] = material;
                 meshes[i] = mesh;
@@ -135,11 +140,12 @@
         {
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
-                MeshData meshDesc = modelFile.GetMesh(i);
-                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(meshDesc);
-                MaterialData materialDesc = materialManager.GetMaterial(meshDesc.MaterialId);
+                MeshData meshData = modelFile.GetMesh(i);
+                MeshLODData lod = meshData.LoadLODData(0, stream);
+                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(meshData, lod);
+                MaterialData materialDesc = materialAssets.GetMaterial(meshData.Name);
                 MaterialShaderDesc shaderDesc = Model.GetMaterialShaderDesc(mesh, materialDesc, false, out var flags);
-                Material material = await ResourceManager.Shared.LoadMaterialAsync(shaderDesc, materialDesc);
+                Material material = await ResourceManager.Shared.LoadMaterialAsync<SkinnedModel>(shaderDesc, materialDesc);
 
                 materials[i] = material;
                 meshes[i] = mesh;

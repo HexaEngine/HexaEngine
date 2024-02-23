@@ -27,7 +27,7 @@
             {
                 if (!pathToMeshes.TryGetValue(path, out var value))
                 {
-                    value = ModelFile.Load(path);
+                    value = ModelFile.Load(path, MeshLoadMode.Immediate);
                     pathToMeshes.Add(path, value);
                     meshes.Add(value);
                 }

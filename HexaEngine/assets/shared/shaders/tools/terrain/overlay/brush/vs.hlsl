@@ -16,6 +16,7 @@ PixelInput main(VertexInput input)
 
     output.position = mul(float4(input.pos, 1), world).xyzw;
     output.pos = output.position.xyz;
+
     output.tex = input.tex;
     output.ctex = input.pos.xz / TILESIZE;
 

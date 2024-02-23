@@ -13,17 +13,17 @@
         /// <summary>
         /// Magic number to identify the file format.
         /// </summary>
-        public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x4d, 0x65, 0x73, 0x68, 0x00 };
+        public static readonly byte[] MagicNumber = [0x54, 0x72, 0x61, 0x6e, 0x73, 0x4d, 0x65, 0x73, 0x68, 0x00];
 
         /// <summary>
         /// Current version of the model file format.
         /// </summary>
-        public static readonly Version Version = 10;
+        public static readonly Version Version = 11;
 
         /// <summary>
         /// Minimum supported version of the model file format.
         /// </summary>
-        public static readonly Version MinVersion = 10;
+        public static readonly Version MinVersion = 11;
 
         /// <summary>
         /// Endianness of the data in the file.

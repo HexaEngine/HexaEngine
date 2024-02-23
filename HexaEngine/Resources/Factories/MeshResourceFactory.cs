@@ -4,7 +4,7 @@
     using HexaEngine.Core.IO.Binary.Meshes;
     using System.Threading.Tasks;
 
-    public class MeshResourceFactory : ResourceFactory<Mesh, (MeshData, bool)>
+    public class MeshResourceFactory : ResourceFactory<Mesh, MeshDesc>
     {
         private readonly IGraphicsDevice device;
 
@@ -13,16 +13,16 @@
             this.device = device;
         }
 
-        protected override Mesh CreateInstance(ResourceManager manager, Guid name, (MeshData, bool) instanceData)
+        protected override Mesh CreateInstance(ResourceManager manager, ResourceGuid name, MeshDesc desc)
         {
-            return new(this, device, instanceData.Item1, instanceData.Item2);
+            return new(this, name, device, desc);
         }
 
-        protected override void LoadInstance(ResourceManager manager, Mesh instance, (MeshData, bool) instanceData)
+        protected override void LoadInstance(ResourceManager manager, Mesh instance, MeshDesc desc)
         {
         }
 
-        protected override Task LoadInstanceAsync(ResourceManager manager, Mesh instance, (MeshData, bool) instanceData)
+        protected override Task LoadInstanceAsync(ResourceManager manager, Mesh instance, MeshDesc desc)
         {
             return Task.CompletedTask;
         }

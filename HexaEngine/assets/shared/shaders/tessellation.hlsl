@@ -16,7 +16,7 @@
 
 #include "camera.hlsl"
 
-float3 ComputeDisplacement(Texture2D tex, SamplerState samplerState, float strength, in float3 position, in float3 uv, in float3 normal)
+float3 ComputeDisplacement(Texture2D tex, SamplerState samplerState, float strength, in float3 position, in float2 uv, in float3 normal)
 {
     float displacementValue = tex.SampleLevel(samplerState, uv.xy, 0).r * strength;
     position -= displacementValue * normal;

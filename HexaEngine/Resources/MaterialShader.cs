@@ -11,7 +11,7 @@
         private MaterialShaderDesc desc;
         private volatile bool initialized;
 
-        public MaterialShader(IResourceFactory factory, IGraphicsDevice device, MaterialShaderDesc desc) : base(factory, desc.MaterialId)
+        public MaterialShader(IResourceFactory factory, IGraphicsDevice device, MaterialShaderDesc desc, ResourceGuid id) : base(factory, id)
         {
             this.device = device;
             this.desc = desc;

@@ -3,6 +3,7 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System;
@@ -116,7 +117,7 @@
                 }
             }
 
-            ResourceManager.Shared.UpdateMaterial(desc);
+            ResourceManager.Shared.UpdateMaterial<Model>(desc);
         }
 
         public async Task UpdateAsync(MaterialData desc)
@@ -129,7 +130,7 @@
                 }
             }
 
-            await ResourceManager.Shared.UpdateMaterialAsync(desc);
+            await ResourceManager.Shared.UpdateMaterialAsync<Model>(desc);
         }
 
         public MaterialData GetMaterial(Guid name)

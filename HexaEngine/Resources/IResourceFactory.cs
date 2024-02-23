@@ -2,17 +2,17 @@
 {
     public interface IResourceFactory<T, TData> : IResourceFactory where T : ResourceInstance
     {
-        public IReadOnlyDictionary<Guid, T> Instances { get; }
+        public IReadOnlyDictionary<ResourceGuid, T> Instances { get; }
 
-        new T? GetInstance(Guid id);
+        new T? GetInstance(ResourceGuid id);
 
-        T CreateInstance(Guid id, TData instanceData);
+        T CreateInstance(ResourceGuid id, TData instanceData);
 
-        Task<T> CreateInstanceAsync(Guid id, TData instanceData);
+        Task<T> CreateInstanceAsync(ResourceGuid id, TData instanceData);
 
-        T GetOrCreateInstance(Guid id, TData instanceData);
+        T GetOrCreateInstance(ResourceGuid id, TData instanceData);
 
-        Task<T> GetOrCreateInstanceAsync(Guid id, TData instanceData);
+        Task<T> GetOrCreateInstanceAsync(ResourceGuid id, TData instanceData);
 
         bool DestroyInstance(T? instance);
     }
@@ -29,17 +29,17 @@
 
         public void Cleanup();
 
-        public ResourceInstance? GetInstance(Guid id);
+        public ResourceInstance? GetInstance(ResourceGuid id);
 
-        public ResourceInstance CreateInstance(Guid id, object? instanceData);
+        public ResourceInstance CreateInstance(ResourceGuid id, object? instanceData);
 
-        public Task<ResourceInstance> CreateInstanceAsync(Guid id, object? instanceData);
+        public Task<ResourceInstance> CreateInstanceAsync(ResourceGuid id, object? instanceData);
 
-        public ResourceInstance GetOrCreateInstance(Guid id, object? instanceData);
+        public ResourceInstance GetOrCreateInstance(ResourceGuid id, object? instanceData);
 
-        public Task<ResourceInstance> GetOrCreateInstanceAsync(Guid id, object? instanceData);
+        public Task<ResourceInstance> GetOrCreateInstanceAsync(ResourceGuid id, object? instanceData);
 
-        public bool DestroyInstance(Guid id)
+        public bool DestroyInstance(ResourceGuid id)
         {
             var instance = GetInstance(id);
             if (instance != null)

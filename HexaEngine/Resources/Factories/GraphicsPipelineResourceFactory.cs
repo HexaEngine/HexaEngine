@@ -11,7 +11,7 @@
             this.device = device;
         }
 
-        protected override ResourceInstance<IGraphicsPipeline> CreateInstance(ResourceManager manager, Guid name, GraphicsPipelineDesc insdesctanceData)
+        protected override ResourceInstance<IGraphicsPipeline> CreateInstance(ResourceManager manager, ResourceGuid name, GraphicsPipelineDesc insdesctanceData)
         {
             return new ResourceInstance<IGraphicsPipeline>(this, name);
         }

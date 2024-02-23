@@ -15,7 +15,7 @@
 
         private volatile bool loaded;
 
-        public Material(IResourceFactory factory, MaterialData desc) : base(factory, desc.Guid)
+        public Material(IResourceFactory factory, MaterialData desc, ResourceGuid id) : base(factory, id)
         {
             this.desc = desc;
         }

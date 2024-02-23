@@ -5,11 +5,11 @@
     public class ResourceInstance : IDisposable
     {
         private readonly IResourceFactory factory;
-        private readonly Guid _id;
+        private readonly ResourceGuid _id;
         private bool releasedValue;
         private long instanceCount;
 
-        public ResourceInstance(IResourceFactory factory, Guid id)
+        public ResourceInstance(IResourceFactory factory, ResourceGuid id)
         {
             this.factory = factory;
             _id = id;
@@ -20,7 +20,7 @@
 
         public bool IsUsed => Interlocked.Read(ref instanceCount) > 0;
 
-        public Guid Id => _id;
+        public ResourceGuid Id => _id;
 
         public IResourceFactory Factory => factory;
 
@@ -74,7 +74,7 @@
         private readonly Func<bool> waitDelegate;
         private T? value;
 
-        public ResourceInstance(IResourceFactory factory, Guid id) : base(factory, id)
+        public ResourceInstance(IResourceFactory factory, ResourceGuid id) : base(factory, id)
         {
             waitDelegate = WaitCondition;
         }

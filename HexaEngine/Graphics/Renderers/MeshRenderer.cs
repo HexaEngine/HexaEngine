@@ -114,12 +114,12 @@
 
         public void DrawDeferred(IGraphicsContext context)
         {
-            if (!initialized)
+            if (!initialized || drawIndirectArgs == null)
                 return;
 
             context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            context.VSSetShaderResource(0, transformBuffer?.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -148,8 +148,8 @@
                 return;
 
             context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            context.VSSetShaderResource(0, transformBuffer?.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -178,8 +178,8 @@
                 return;
 
             context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
+            context.VSSetShaderResource(0, transformNoBuffer?.SRV);
+            context.VSSetShaderResource(1, transformNoOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -208,8 +208,8 @@
                 return;
 
             context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
+            context.VSSetShaderResource(0, transformNoBuffer?.SRV);
+            context.VSSetShaderResource(1, transformNoOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {

@@ -66,6 +66,13 @@
             {
                 WriteLine($"HexaEngine: v{Assembly.GetExecutingAssembly().GetName().Version}");
             });
+            RegisterCommand("gc", _ =>
+            {
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForFullGCComplete();
+                GC.RefreshMemoryLimit();
+            });
             RegisterCommand("qqq", _ =>
             {
                 throw new Exception("Command qqq was triggered!");

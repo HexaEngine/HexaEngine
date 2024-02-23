@@ -4,10 +4,10 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using System.Collections;
 
-    public unsafe class MaterialTextureList : IList<ResourceInstance<MaterialTexture>?>, IDisposable
+    public unsafe class MaterialTextureList : IList<MaterialTexture?>, IDisposable
     {
         private const uint DefaultCapacity = 4;
-        private readonly List<ResourceInstance<MaterialTexture>?> textures = [];
+        private readonly List<MaterialTexture?> textures = [];
         private uint capacity;
         private uint count;
         private uint startTextureSlot;
@@ -38,9 +38,9 @@
 
         public void** Samplers => samplers;
 
-        public bool IsReadOnly => ((ICollection<ResourceInstance<MaterialTexture>>)textures).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<MaterialTexture>)textures).IsReadOnly;
 
-        public ResourceInstance<MaterialTexture>? this[int index]
+        public MaterialTexture? this[int index]
         {
             get => textures[index];
             set => textures[index] = value;
@@ -65,12 +65,12 @@
             }
         }
 
-        public void Add(ResourceInstance<MaterialTexture>? texture)
+        public void Add(MaterialTexture? texture)
         {
             textures.Add(texture);
         }
 
-        public void Remove(ResourceInstance<MaterialTexture> texture)
+        public void Remove(MaterialTexture texture)
         {
             textures.Remove(texture);
         }
@@ -88,14 +88,14 @@
             {
                 var texture = textures[i];
 
-                if (texture == null || texture.Value == null)
+                if (texture == null || !texture.Initialized)
                 {
                     continue;
                 }
 
                 EnsureCapacity(count + 1);
-                shaderResourceViews[count] = (void*)texture.Value.ShaderResourceView.NativePointer;
-                samplers[count] = (void*)texture.Value.Sampler.NativePointer;
+                shaderResourceViews[count] = (void*)texture.ShaderResourceView.NativePointer;
+                samplers[count] = (void*)texture.Sampler.NativePointer;
                 count++;
             }
         }
@@ -175,24 +175,24 @@
             context.VSSetSamplers(startSamplerSlot, count, (void**)empty);
         }
 
-        public bool Contains(ResourceInstance<MaterialTexture>? texture)
+        public bool Contains(MaterialTexture? texture)
         {
             return textures.Contains(texture);
         }
 
-        public class TextureIndexSorter : IComparer<ResourceInstance<MaterialTexture>?>
+        public class TextureIndexSorter : IComparer<MaterialTexture?>
         {
             public static readonly TextureIndexSorter Instance = new();
 
-            public int Compare(ResourceInstance<MaterialTexture>? x, ResourceInstance<MaterialTexture>? y)
+            public int Compare(MaterialTexture? x, MaterialTexture? y)
             {
-                if (x == null || y == null || x.Value == null || y.Value == null)
+                if (x == null || y == null || !x.Initialized || !y.Initialized)
                 {
                     return 0;
                 }
 
-                var xPriority = GetPriorityFor(x.Value.Desc.Type);
-                var yPriority = GetPriorityFor(y.Value.Desc.Type);
+                var xPriority = GetPriorityFor(x.Desc.Type);
+                var yPriority = GetPriorityFor(y.Desc.Type);
 
                 return xPriority.CompareTo(yPriority);
             }
@@ -256,12 +256,12 @@
             GC.SuppressFinalize(this);
         }
 
-        public int IndexOf(ResourceInstance<MaterialTexture>? item)
+        public int IndexOf(MaterialTexture? item)
         {
             return textures.IndexOf(item);
         }
 
-        public void Insert(int index, ResourceInstance<MaterialTexture>? item)
+        public void Insert(int index, MaterialTexture? item)
         {
             textures.Insert(index, item);
         }
@@ -278,17 +278,17 @@
             textures.Clear();
         }
 
-        public void CopyTo(ResourceInstance<MaterialTexture>?[] array, int arrayIndex)
+        public void CopyTo(MaterialTexture?[] array, int arrayIndex)
         {
             textures.CopyTo(array, arrayIndex);
         }
 
-        bool ICollection<ResourceInstance<MaterialTexture>?>.Remove(ResourceInstance<MaterialTexture>? item)
+        bool ICollection<MaterialTexture?>.Remove(MaterialTexture? item)
         {
             return textures.Remove(item);
         }
 
-        public IEnumerator<ResourceInstance<MaterialTexture>?> GetEnumerator()
+        public IEnumerator<MaterialTexture?> GetEnumerator()
         {
             return textures.GetEnumerator();
         }

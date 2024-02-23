@@ -9,15 +9,15 @@
         {
         }
 
-        protected override Material CreateInstance(ResourceManager manager, Guid id, (MaterialShaderDesc, MaterialData) instanceData)
+        protected override Material CreateInstance(ResourceManager manager, ResourceGuid id, (MaterialShaderDesc, MaterialData) instanceData)
         {
-            return new(this, instanceData.Item2);
+            return new(this, instanceData.Item2, id);
         }
 
         protected override void LoadInstance(ResourceManager manager, Material instance, (MaterialShaderDesc, MaterialData) instanceData)
         {
             (MaterialShaderDesc shaderDesc, MaterialData desc) = instanceData;
-            instance.Shader = manager.LoadMaterialShader(shaderDesc);
+            instance.Shader = manager.LoadMaterialShader(instance.Id.UsageType, shaderDesc);
             for (int i = 0; i < desc.Textures.Count; i++)
             {
                 var tex = desc.Textures[i];
@@ -42,7 +42,7 @@
         protected override async Task LoadInstanceAsync(ResourceManager manager, Material instance, (MaterialShaderDesc, MaterialData) instanceData)
         {
             (MaterialShaderDesc shaderDesc, MaterialData desc) = instanceData;
-            instance.Shader = await manager.LoadMaterialShaderAsync(shaderDesc);
+            instance.Shader = await manager.LoadMaterialShaderAsync(instance.Id.UsageType, shaderDesc);
             for (int i = 0; i < desc.Textures.Count; i++)
             {
                 var tex = desc.Textures[i];

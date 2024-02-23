@@ -261,6 +261,13 @@
         /// <returns>A <see cref="Vector2"/> with each component equal to the respective <see cref="UPoint2"/> component as a float value.</returns>
         public static implicit operator Vector2(UPoint2 point) => new() { X = point.X, Y = point.Y };
 
+        /// <summary>
+        /// Explicitly converts a <see cref="UPoint2"/> to a <see cref="Point2"/>.
+        /// </summary>
+        /// <param name="point">The <see cref="UPoint2"/> to convert to a <see cref="Point2"/>.</param>
+        /// <returns>A <see cref="Point2"/> with each component equal to the respective <see cref="UPoint2"/> component as a float value.</returns>
+        public static explicit operator Point2(UPoint2 point) => new Point2((int)point.X, (int)point.Y);
+
         /// <summary>Returns the string representation of the current instance using default formatting.</summary>
         /// <returns>The string representation of the current instance.</returns>
         /// <remarks>This method returns a string in which each element of the vector is formatted using the "G" (general) format string and the formatting conventions of the current thread culture. The "&lt;" and "&gt;" characters are used to begin and end the string, and the current culture's <see cref="System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>

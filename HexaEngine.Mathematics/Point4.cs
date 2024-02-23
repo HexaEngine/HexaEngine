@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.Mathematics
 {
     using System;
+    using System.Buffers.Binary;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.Intrinsics;
 
     /// <summary>
     /// Represents a 4D signed integer point in space.
@@ -350,6 +352,60 @@
             string separator = NumberFormatInfo.GetInstance(formatProvider).NumberGroupSeparator;
 
             return $"<{X.ToString(format, formatProvider)}{separator} {Y.ToString(format, formatProvider)}{separator} {Z.ToString(format, formatProvider)}{separator} {W.ToString(format, formatProvider)}>";
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Point4"/> from a <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The source <see cref="Stream"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        /// <returns>The read <see cref="Point4"/>.</returns>
+        public static Point4 Read(Stream stream, Endianness endianness)
+        {
+            Span<byte> src = stackalloc byte[16];
+            stream.Read(src);
+            Point4 point;
+            if (endianness == Endianness.LittleEndian)
+            {
+                point.X = BinaryPrimitives.ReadInt32LittleEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32LittleEndian(src[4..]);
+                point.Z = BinaryPrimitives.ReadInt32LittleEndian(src[8..]);
+                point.W = BinaryPrimitives.ReadInt32LittleEndian(src[12..]);
+            }
+            else
+            {
+                point.X = BinaryPrimitives.ReadInt32BigEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32BigEndian(src[4..]);
+                point.Z = BinaryPrimitives.ReadInt32BigEndian(src[8..]);
+                point.W = BinaryPrimitives.ReadInt32BigEndian(src[12..]);
+            }
+            return point;
+        }
+
+        /// <summary>
+        /// Writes a <see cref="Point4"/> to a <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The destination <see cref="Stream"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        public readonly void Write(Stream stream, Endianness endianness)
+        {
+            Span<byte> dst = stackalloc byte[16];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteInt32LittleEndian(dst, X);
+                BinaryPrimitives.WriteInt32LittleEndian(dst[4..], Y);
+                BinaryPrimitives.WriteInt32LittleEndian(dst[8..], Z);
+                BinaryPrimitives.WriteInt32LittleEndian(dst[12..], W);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt32BigEndian(dst, X);
+                BinaryPrimitives.WriteInt32BigEndian(dst[4..], Y);
+                BinaryPrimitives.WriteInt32BigEndian(dst[8..], Z);
+                BinaryPrimitives.WriteInt32BigEndian(dst[12..], W);
+            }
+
+            stream.Write(dst);
         }
     }
 }

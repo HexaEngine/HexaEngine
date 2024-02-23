@@ -12,15 +12,14 @@
             this.device = device;
         }
 
-        protected override MaterialShader CreateInstance(ResourceManager manager, Guid id, MaterialShaderDesc instanceData)
+        protected override MaterialShader CreateInstance(ResourceManager manager, ResourceGuid id, MaterialShaderDesc instanceData)
         {
-            return new MaterialShader(this, device, instanceData);
+            return new MaterialShader(this, device, instanceData, id);
         }
 
         protected override void LoadInstance(ResourceManager manager, MaterialShader instance, MaterialShaderDesc instanceData)
         {
             instance.Initialize();
-            ;
         }
 
         protected override Task LoadInstanceAsync(ResourceManager manager, MaterialShader instance, MaterialShaderDesc instanceData)

@@ -130,7 +130,6 @@
                 descriptors.AddSingleton<IResourceFactory, MaterialShaderResourceFactory>();
                 descriptors.AddSingleton<IResourceFactory, MaterialTextureResourceFactory>();
                 descriptors.AddSingleton<IResourceFactory, MeshResourceFactory>();
-                descriptors.AddSingleton<IResourceFactory, TerrainMaterialResourceFactory>();
 
                 ResourceManager.Shared = new("Shared", graphicsDevice, audioDevice, descriptors);
                 PipelineManager.Initialize(graphicsDevice);

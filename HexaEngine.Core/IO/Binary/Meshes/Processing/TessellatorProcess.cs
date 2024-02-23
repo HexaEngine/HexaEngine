@@ -14,18 +14,18 @@
         /// Tessellates the given mesh data by subdividing each triangle into six smaller triangles.
         /// </summary>
         /// <param name="data">The mesh data to tessellate.</param>
-        public static void Tessellate(MeshData data)
+        public static void Tessellate(MeshLODData data, VertexFlags flags)
         {
 #nullable disable
             // Calculate the number of faces and new vertex count
-            uint faces = data.IndicesCount / 3;
+            uint faces = data.IndexCount / 3;
             uint newVertexCount = faces * 6;
 
             // Check which vertex attributes are present in the input mesh data
-            bool hasUVs = (data.Flags & VertexFlags.UVs) != 0;
-            bool hasNormals = (data.Flags & VertexFlags.Normals) != 0;
-            bool hasTangents = (data.Flags & VertexFlags.Tangents) != 0;
-            bool hasColors = (data.Flags & VertexFlags.Colors) != 0;
+            bool hasUVs = (flags & VertexFlags.UVs) != 0;
+            bool hasNormals = (flags & VertexFlags.Normals) != 0;
+            bool hasTangents = (flags & VertexFlags.Tangents) != 0;
+            bool hasColors = (flags & VertexFlags.Colors) != 0;
 
             // Initialize arrays for new vertex attributes based on the presence of these attributes
             Vector3[] positions = new Vector3[newVertexCount];
@@ -127,9 +127,9 @@
 
             data.Indices = indices;
 
-            data.VerticesCount = newVertexCount;
+            data.VertexCount = newVertexCount;
 
-            data.IndicesCount = newIndexCount;
+            data.IndexCount = newIndexCount;
 #nullable restore
         }
 
@@ -137,23 +137,18 @@
         /// Tessellates the given terrain cell data by subdividing each triangle into six smaller triangles.
         /// </summary>
         /// <param name="terrain">The terrain cell data to tessellate.</param>
-        public static void Tessellate(TerrainCellData terrain)
+        public static void Tessellate(TerrainCellLODData terrain)
         {
 #nullable disable
             // Calculate the number of faces and new vertex count
-            uint faces = terrain.IndicesCount / 3;
+            uint faces = terrain.IndexCount / 3;
             uint newVertexCount = faces * 6;
-
-            // Check which vertex attributes are present in the input terrain cell data
-            bool hasUVs = (terrain.Flags & TerrainVertexFlags.UVs) != 0;
-            bool hasNormals = (terrain.Flags & TerrainVertexFlags.Normals) != 0;
-            bool hasTangents = (terrain.Flags & TerrainVertexFlags.Tangents) != 0;
 
             // Initialize arrays for new vertex attributes based on the presence of these attributes
             Vector3[] positions = new Vector3[newVertexCount];
-            Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;
-            Vector3[] normals = hasNormals ? new Vector3[newVertexCount] : null;
-            Vector3[] tangents = hasTangents ? new Vector3[newVertexCount] : null;
+            Vector2[] uvs = new Vector2[newVertexCount];
+            Vector3[] normals = new Vector3[newVertexCount];
+            Vector3[] tangents = new Vector3[newVertexCount];
 
             // Initialize an array for new indices
             uint newIndexCount = faces * 12;
@@ -183,17 +178,15 @@
                 positions[v + 4] = uvw1.X * pos0 + uvw1.Y * pos1 + uvw1.Z * pos2;
                 positions[v + 5] = uvw2.X * pos0 + uvw2.Y * pos1 + uvw2.Z * pos2;
 
-                if (hasUVs)
                 {
-                    Vector3 uv0 = uvs[v] = terrain.UVs[i0];
-                    Vector3 uv1 = uvs[v + 1] = terrain.UVs[i1];
-                    Vector3 uv2 = uvs[v + 2] = terrain.UVs[i2];
+                    Vector2 uv0 = uvs[v] = terrain.UVs[i0];
+                    Vector2 uv1 = uvs[v + 1] = terrain.UVs[i1];
+                    Vector2 uv2 = uvs[v + 2] = terrain.UVs[i2];
                     uvs[v + 3] = uvw0.X * uv0 + uvw0.Y * uv1 + uvw0.Z * uv2;
                     uvs[v + 4] = uvw1.X * uv0 + uvw1.Y * uv1 + uvw1.Z * uv2;
                     uvs[v + 5] = uvw2.X * uv0 + uvw2.Y * uv1 + uvw2.Z * uv2;
                 }
 
-                if (hasNormals)
                 {
                     Vector3 normal0 = normals[v] = terrain.Normals[i0];
                     Vector3 normal1 = normals[v + 1] = terrain.Normals[i1];
@@ -203,7 +196,6 @@
                     normals[v + 5] = uvw2.X * normal0 + uvw2.Y * normal1 + uvw2.Z * normal2;
                 }
 
-                if (hasTangents)
                 {
                     Vector3 tangent0 = tangents[v] = terrain.Tangents[i0];
                     Vector3 tangent1 = tangents[v + 1] = terrain.Tangents[i1];
@@ -237,9 +229,9 @@
 
             terrain.Indices = indices;
 
-            terrain.VerticesCount = newVertexCount;
+            terrain.VertexCount = newVertexCount;
 
-            terrain.IndicesCount = newIndexCount;
+            terrain.IndexCount = newIndexCount;
 #nullable restore
         }
     }

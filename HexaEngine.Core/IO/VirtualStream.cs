@@ -20,7 +20,7 @@
         /// <param name="baseStream">The base stream.</param>
         /// <param name="start">The start position within the base stream.</param>
         /// <param name="length">The length of the virtual stream.</param>
-        /// <param name="leaveOpen">A _value indicating whether the base stream should be left open after disposing the virtual stream.</param>
+        /// <param name="leaveOpen">A value indicating whether the base stream should be left open after disposing the virtual stream.</param>
         public VirtualStream(Stream baseStream, long start, long length, bool leaveOpen = false)
         {
             _baseStream = baseStream;
@@ -30,17 +30,17 @@
         }
 
         /// <summary>
-        /// Gets a _value indicating whether the stream supports reading.
+        /// Gets a value indicating whether the stream supports reading.
         /// </summary>
         public override bool CanRead => _baseStream.CanRead;
 
         /// <summary>
-        /// Gets a _value indicating whether the stream supports seeking.
+        /// Gets a value indicating whether the stream supports seeking.
         /// </summary>
         public override bool CanSeek => _baseStream.CanSeek;
 
         /// <summary>
-        /// Gets a _value indicating whether the stream supports writing.
+        /// Gets a value indicating whether the stream supports writing.
         /// </summary>
         public override bool CanWrite => false;
 
@@ -117,7 +117,7 @@
                 throw new ArgumentException(null, nameof(buffer));
             }
 
-            if (_baseStream.CanSeek && _start != 0)
+            if (_baseStream.CanSeek)
             {
                 _baseStream.Position = _start + Position;
             }
@@ -218,6 +218,7 @@
             semaphore.Wait();
             return new LockBlock(semaphore);
         }
+
         /// <summary>
         /// Tries to begin a lock on the stream.
         /// </summary>

@@ -3,7 +3,6 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
@@ -13,205 +12,23 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
-    using System.Collections;
+    using System.Collections.Generic;
     using System.Numerics;
-
-    public class MaterialAssetMappingCollection : ICollection<MaterialAssetMapping>
-    {
-        private readonly List<MaterialAssetMapping> mappings = [];
-
-        public int Count => mappings.Count;
-
-        public bool IsReadOnly => false;
-
-        public event Action<MaterialAssetMapping>? OnChanged;
-
-        public MaterialAssetMapping this[int index]
-        {
-            get => mappings[index];
-            set
-            {
-                mappings[index] = value;
-                OnChanged?.Invoke(value);
-            }
-        }
-
-        public MaterialAssetMapping Find(MeshData mesh)
-        {
-            for (int i = 0; i < mappings.Count; i++)
-            {
-                var mapping = mappings[i];
-                if (mapping.Mesh == mesh.Name)
-                    return mapping;
-            }
-
-            return default;
-        }
-
-        public MaterialAssetMapping Find(AssetRef material)
-        {
-            for (int i = 0; i < mappings.Count; i++)
-            {
-                var mapping = mappings[i];
-                if (mapping.Material == material)
-                    return mapping;
-            }
-
-            return default;
-        }
-
-        public MaterialData GetMaterial(MeshData data)
-        {
-            var mapping = Find(data);
-            if (mapping.Material == AssetRef.Empty)
-            {
-                return MaterialData.Empty;
-            }
-            else
-            {
-                Artifact? artifact = ArtifactDatabase.GetArtifact(mapping.Material);
-                if (artifact == null)
-                {
-                    Logger.Warn($"Failed to load material {mapping.Material}");
-                    return MaterialData.Empty;
-                }
-                if (artifact.Type != AssetType.Material)
-                {
-                    Logger.Warn($"Failed to load material {mapping.Material}, asset was {artifact.Type} but needs to be {AssetType.Material}");
-                    return MaterialData.Empty;
-                }
-
-                Stream? stream = null;
-
-                try
-                {
-                    stream = artifact.OpenRead();
-                    MaterialFile materialFile = MaterialFile.Read(stream);
-                    return materialFile;
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                    Logger.Warn($"Failed to load material {mapping.Material}");
-                    return MaterialData.Empty;
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
-            }
-        }
-
-        public void Add(MaterialAssetMapping item)
-        {
-            mappings.Add(item);
-            OnChanged?.Invoke(item);
-        }
-
-        public void Clear()
-        {
-            mappings.Clear();
-        }
-
-        public bool Contains(MaterialAssetMapping item)
-        {
-            return mappings.Contains(item);
-        }
-
-        public void CopyTo(MaterialAssetMapping[] array, int arrayIndex)
-        {
-            mappings.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<MaterialAssetMapping> GetEnumerator()
-        {
-            return mappings.GetEnumerator();
-        }
-
-        public bool Remove(MaterialAssetMapping item)
-        {
-            OnChanged?.Invoke(item);
-            return mappings.Remove(item);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return mappings.GetEnumerator();
-        }
-
-        public void Update(ModelFile modelFile)
-        {
-            for (int i = 0; i < mappings.Count; i++)
-            {
-                var mapping = mappings[i];
-                if (!ModelContainsMesh(modelFile, mapping.Mesh))
-                {
-                    mappings.RemoveAt(i);
-                    i--;
-                }
-            }
-
-            for (int i = 0; i < modelFile.Meshes.Count; i++)
-            {
-                var mesh = modelFile.Meshes[i];
-                if (!ContainsMesh(mappings, mesh.Name))
-                {
-                    mappings.Add(new(mesh, mesh.MaterialId));
-                }
-            }
-        }
-
-        private static bool ContainsMesh(List<MaterialAssetMapping> assetMappings, string meshName)
-        {
-            for (int i = 0; i < assetMappings.Count; i++)
-            {
-                var mapping = assetMappings[i];
-                if (mapping.Mesh == meshName)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private static bool ModelContainsMesh(ModelFile modelFile, string meshName)
-        {
-            for (int i = 0; i < modelFile.Meshes.Count; i++)
-            {
-                var mesh = modelFile.Meshes[i];
-                if (mesh.Name == meshName)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public struct MaterialAssetMapping
-    {
-        public string Mesh;
-        public AssetRef Material;
-
-        public MaterialAssetMapping(MeshData mesh, AssetRef material)
-        {
-            Mesh = mesh.Name;
-            Material = material;
-        }
-    }
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
-    public class MeshRendererComponent : BaseRendererComponent, ISelectableRayTest
+    public class MeshRendererComponent : BaseRendererComponent, ILODRendererComponent, ISelectableRayTest
     {
         private ModelManager modelManager;
         private MaterialManager materialManager;
         private MeshRenderer renderer;
         private Model? model;
         private AssetRef modelAsset;
+        private int maxLODLevel;
+        private int minLODLevel;
+        private int currentLODLevel;
 
         static MeshRendererComponent()
         {
@@ -246,6 +63,41 @@
         [EditorCategory("Materials")]
         [EditorProperty("")]
         public MaterialAssetMappingCollection Materials { get; } = new();
+
+        [JsonIgnore]
+        public int LODLevel => currentLODLevel;
+
+        [EditorCategory("LOD")]
+        [EditorProperty("Max Level")]
+        public int MaxLODLevel
+        {
+            get => maxLODLevel;
+            set
+            {
+                if (model != null)
+                {
+                    value = MathUtil.Clamp(value, 0, model.LODLevels - 1);
+                }
+
+                maxLODLevel = value;
+            }
+        }
+
+        [EditorCategory("LOD")]
+        [EditorProperty("Min Level")]
+        public int MinLODLevel
+        {
+            get => minLODLevel;
+            set
+            {
+                if (model != null)
+                {
+                    value = MathUtil.Clamp(value, 0, model.LODLevels - 1);
+                }
+
+                minLODLevel = value;
+            }
+        }
 
         public override void Load(IGraphicsDevice device)
         {
@@ -322,7 +174,7 @@
             for (int i = 0; i < model.Meshes.Length; i++)
             {
                 var mesh = model.Meshes[i];
-                var result = mesh.Data.Intersect(objectSpaceRay);
+                var result = ((MeshLODData)mesh.LODData).Intersect(objectSpaceRay);
                 if (result != null)
                 {
                     depth = result.Value;
@@ -333,20 +185,18 @@
             return false;
         }
 
-        private void OnChanged(MaterialAssetMapping obj)
+        private void OnChanged(MaterialAssetMapping mapping)
         {
-            UpdateModel();
+            UpdateMaterial(mapping);
         }
 
-        private Job UpdateModel()
+        public Job UpdateModel()
         {
             Loaded = false;
             renderer?.Uninitialize();
             var tmpModel = model;
             model = null;
             tmpModel?.Dispose();
-
-            Materials.OnChanged -= OnChanged;
 
             return Job.Run("Model Load Job", this, state =>
             {
@@ -365,24 +215,14 @@
                     return;
                 }
 
-                var stream = modelAsset.OpenRead();
+                var stream = modelAsset.OpenReadReusable();
                 if (stream != null)
                 {
-                    ModelFile modelFile;
-                    try
-                    {
-                        modelFile = ModelFile.Load(stream);
-                    }
-                    finally
-                    {
-                        stream.Close();
-                    }
-
-                    component.Materials.Update(modelFile);
-
+                    component.Materials.OnChanged -= component.OnChanged;
+                    component.model = new(stream, component.Materials);
+                    component.maxLODLevel = MathUtil.Clamp(component.maxLODLevel, 0, component.model.LODLevels - 1);
+                    component.minLODLevel = MathUtil.Clamp(component.minLODLevel, 0, component.model.LODLevels - 1);
                     component.Materials.OnChanged += component.OnChanged;
-
-                    component.model = new(modelFile, component.Materials);
                     component.model.LoadAsync().Wait();
 
                     var flags = component.model.ShaderFlags;
@@ -407,6 +247,91 @@
                     Logger.Error($"Couldn't load model {modelAsset}");
                 }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
+        }
+
+        public Job UpdateMaterial(MaterialAssetMapping mapping)
+        {
+            return Job.Run("Model Material Load Job", (this, mapping), state =>
+            {
+                if (state is not (MeshRendererComponent component, MaterialAssetMapping mapping))
+                {
+                    return;
+                }
+
+                if (component.GameObject == null)
+                {
+                    return;
+                }
+
+                if (component.model == null)
+                {
+                    return;
+                }
+
+                component.model.ReloadMaterial(mapping);
+
+                var flags = component.model.ShaderFlags;
+                component.QueueIndex = (uint)RenderQueueIndex.Geometry;
+
+                if (flags.HasFlag(ModelMaterialShaderFlags.AlphaTest))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
+                }
+
+                if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.Transparency;
+                }
+                component.GameObject.SendUpdateTransformed();
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
+        }
+
+        public Job UpdateMaterials()
+        {
+            return Job.Run("Model Material Load Job", this, state =>
+            {
+                if (state is not MeshRendererComponent component)
+                {
+                    return;
+                }
+
+                if (component.GameObject == null)
+                {
+                    return;
+                }
+
+                if (component.model == null)
+                {
+                    return;
+                }
+
+                component.model.ReloadMaterials();
+
+                var flags = component.model.ShaderFlags;
+                component.QueueIndex = (uint)RenderQueueIndex.Geometry;
+
+                if (flags.HasFlag(ModelMaterialShaderFlags.AlphaTest))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
+                }
+
+                if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.Transparency;
+                }
+                component.GameObject.SendUpdateTransformed();
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
+        }
+
+        public float Distance(Vector3 position)
+        {
+            return Vector3.Distance(position, GameObject.Transform.GlobalPosition);
+        }
+
+        public void SetLODLevel(int level)
+        {
+            currentLODLevel = level;
+            model?.SetLOD(level);
         }
     }
 }

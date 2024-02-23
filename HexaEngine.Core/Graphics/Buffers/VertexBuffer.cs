@@ -8,7 +8,7 @@
     /// Represents a generic vertex buffer for graphics rendering.
     /// </summary>
     /// <typeparam name="T">The type of elements in the buffer, must be unmanaged.</typeparam>
-    public unsafe class VertexBuffer<T> : IBuffer, IVertexBuffer<T> where T : unmanaged
+    public unsafe class VertexBuffer<T> : IVertexBuffer<T>, IVertexBuffer, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 8;
 

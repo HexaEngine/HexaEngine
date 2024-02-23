@@ -15,5 +15,6 @@
         Sound,
         Script,
         Prefab,
+        Terrain,
     }
 }

@@ -5,7 +5,7 @@
     public abstract class ResourceFactory<T, TData> : IResourceFactory<T, TData>, IResourceFactory where T : ResourceInstance
     {
         protected readonly ResourceManager resourceManager;
-        protected readonly ConcurrentDictionary<Guid, T> instances = new();
+        protected readonly ConcurrentDictionary<ResourceGuid, T> instances = new();
         protected readonly object _lock = new();
         private readonly Type type = typeof(T);
 
@@ -17,7 +17,7 @@
             this.resourceManager = resourceManager;
         }
 
-        public IReadOnlyDictionary<Guid, T> Instances => instances;
+        public IReadOnlyDictionary<ResourceGuid, T> Instances => instances;
 
         public ResourceManager ResourceManager => resourceManager;
 
@@ -33,12 +33,12 @@
             return instance is T;
         }
 
-        ResourceInstance? IResourceFactory.GetInstance(Guid id)
+        ResourceInstance? IResourceFactory.GetInstance(ResourceGuid id)
         {
             return GetInstance(id);
         }
 
-        public virtual T? GetInstance(Guid id)
+        public virtual T? GetInstance(ResourceGuid id)
         {
             lock (_lock)
             {
@@ -51,7 +51,7 @@
             return null;
         }
 
-        ResourceInstance IResourceFactory.CreateInstance(Guid id, object? instanceData)
+        ResourceInstance IResourceFactory.CreateInstance(ResourceGuid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
@@ -61,7 +61,7 @@
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        T IResourceFactory<T, TData>.CreateInstance(Guid id, TData instanceData)
+        T IResourceFactory<T, TData>.CreateInstance(ResourceGuid id, TData instanceData)
         {
             lock (_lock)
             {
@@ -73,11 +73,11 @@
             }
         }
 
-        protected abstract T CreateInstance(ResourceManager manager, Guid id, TData instanceData);
+        protected abstract T CreateInstance(ResourceManager manager, ResourceGuid id, TData instanceData);
 
         protected abstract void LoadInstance(ResourceManager manager, T instance, TData instanceData);
 
-        ResourceInstance IResourceFactory.GetOrCreateInstance(Guid id, object? instanceData)
+        ResourceInstance IResourceFactory.GetOrCreateInstance(ResourceGuid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
@@ -87,7 +87,7 @@
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        public T GetOrCreateInstance(Guid id, TData instanceData)
+        public T GetOrCreateInstance(ResourceGuid id, TData instanceData)
         {
             T? instance;
             lock (_lock)
@@ -118,7 +118,7 @@
 
         protected abstract Task LoadInstanceAsync(ResourceManager manager, T instance, TData instanceData);
 
-        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(Guid id, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(ResourceGuid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
@@ -128,7 +128,7 @@
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(Guid id, TData instanceData)
+        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(ResourceGuid id, TData instanceData)
         {
             var instance = CreateInstance(resourceManager, id, instanceData);
             if (instance == null)
@@ -146,7 +146,7 @@
             }
         }
 
-        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(Guid id, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(ResourceGuid id, object? instanceData)
         {
             if (instanceData is TData data)
             {
@@ -156,7 +156,7 @@
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(Guid id, TData instanceData)
+        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(ResourceGuid id, TData instanceData)
         {
             T? instance;
             bool doWait = false;

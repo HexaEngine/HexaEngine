@@ -10,7 +10,7 @@
         internal Job? parent;
 
         internal readonly Action<object?> action;
-        internal readonly object? stateObject;
+        internal object? stateObject;
 
         private bool disposedValue;
 
@@ -150,6 +150,17 @@
             {
                 job.Wait();
             }
+        }
+
+        public void Reset()
+        {
+            state = JobState.NotCreated;
+        }
+
+        public void Reset(object? stateObject)
+        {
+            this.stateObject = stateObject;
+            state = JobState.NotCreated;
         }
 
         protected virtual void Dispose(bool disposing)

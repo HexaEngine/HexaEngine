@@ -14,6 +14,7 @@
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
     using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
     using HexaEngine.Editor.NodeEditor;
+    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System.Numerics;
@@ -821,7 +822,7 @@
             InsertTextures(material, editor);
 
             ResourceManager.Shared.BeginNoGCRegion();
-            ResourceManager.Shared.UpdateMaterial(material);
+            ResourceManager.Shared.UpdateMaterial<Model>(material);
             ResourceManager.Shared.EndNoGCRegion();
 
             Directory.CreateDirectory("generated/" + "shaders/");

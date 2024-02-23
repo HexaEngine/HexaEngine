@@ -1,52 +1,79 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
 
     public class Mesh : ResourceInstance
     {
-        private readonly string name;
-        private bool disposedValue;
-        public readonly MeshData Data;
-        public IBuffer? VertexBuffer;
-        public IBuffer? IndexBuffer;
-        public uint VertexCount;
-        public uint IndexCount;
-        public BoundingBox BoundingBox;
-        public BoundingSphere BoundingSphere;
-        public uint Stride;
+        private readonly IMeshData data;
+        private readonly ILODData lodData;
+        private readonly IVertexBuffer vertexBuffer;
+        private readonly IIndexBuffer indexBuffer;
+        private readonly uint vertexCount;
+        private readonly uint indexCount;
+        private readonly BoundingBox boundingBox;
+        private readonly BoundingSphere boundingSphere;
+        private readonly uint stride;
+        private readonly Format indexFormat;
 
-        public unsafe Mesh(IResourceFactory factory, IGraphicsDevice device, MeshData data, bool debone = true) : base(factory, data.Guid)
+        public Mesh(IResourceFactory factory, ResourceGuid id, IGraphicsDevice device, MeshDesc desc) : base(factory, id)
         {
-            name = data.Name;
-            Data = data;
-            BoundingBox = data.Box;
-            BoundingSphere = data.Sphere;
-            IndexBuffer = data.CreateIndexBuffer(device);
-            if (!debone && (data.Flags & VertexFlags.Skinned) != 0)
+            data = desc.MeshData;
+            lodData = desc.LODData;
+            boundingBox = lodData.Box;
+            boundingSphere = lodData.Sphere;
+            indexBuffer = lodData.CreateIndexBuffer(device, desc.IndexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
+            vertexBuffer = lodData.CreateVertexBuffer(device, desc.VertexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
+            stride = vertexBuffer.Stride;
+            indexCount = lodData.IndexCount;
+            vertexCount = lodData.VertexCount;
+            indexFormat = indexBuffer.Format switch
             {
-                VertexBuffer = data.CreateSkinnedVertexBuffer(device);
-                Stride = (uint)sizeof(SkinnedMeshVertex);
-                InputElements = MeshData.SkinnedInputElements;
-            }
-            else
-            {
-                VertexBuffer = data.CreateVertexBuffer(device);
-                Stride = (uint)sizeof(MeshVertex);
-                InputElements = MeshData.InputElements;
-            }
-            IndexCount = data.IndicesCount;
-            VertexCount = data.VerticesCount;
+                IndexFormat.UInt16 => Format.R16UInt,
+                IndexFormat.UInt32 => Format.R32UInt,
+                _ => Format.Unknown
+            };
         }
 
-        public InputElementDescription[] InputElements { get; }
+        public IMeshData Data => data;
+
+        public ILODData LODData => lodData;
+
+        public IVertexBuffer VertexBuffer => vertexBuffer;
+
+        public IIndexBuffer IndexBuffer => indexBuffer;
+
+        public uint VertexCount => vertexCount;
+
+        public uint IndexCount => indexCount;
+
+        public BoundingBox BoundingBox => boundingBox;
+
+        public BoundingSphere BoundingSphere => boundingSphere;
+
+        public uint VertexStride => vertexBuffer?.Stride ?? unchecked((uint)-1);
+
+        public uint IndexStride => (indexBuffer?.Format ?? IndexFormat.Unknown) switch
+        {
+            IndexFormat.UInt16 => sizeof(ushort),
+            IndexFormat.UInt32 => sizeof(uint),
+            _ => unchecked((uint)-1)
+        };
+
+        public InputElementDescription[] InputElements => data.InputElements;
 
         public void BeginDraw(IGraphicsContext context)
         {
-            context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);
-            context.SetVertexBuffer(VertexBuffer, Stride);
+            context.SetIndexBuffer(indexBuffer, indexFormat, 0);
+            context.SetVertexBuffer(vertexBuffer, stride);
+        }
+
+        public void BeginDraw(IGraphicsContext context, int indexBufferOffset)
+        {
+            context.SetIndexBuffer(indexBuffer, indexFormat, indexBufferOffset);
+            context.SetVertexBuffer(vertexBuffer, stride);
         }
 
         public void EndDraw(IGraphicsContext context)
@@ -57,13 +84,13 @@
 
         protected override void ReleaseResources()
         {
-            VertexBuffer?.Dispose();
-            IndexBuffer?.Dispose();
+            vertexBuffer?.Dispose();
+            indexBuffer?.Dispose();
         }
 
         public override string ToString()
         {
-            return name;
+            return $"{Id}, {data.Name}";
         }
     }
 }

@@ -41,6 +41,7 @@
 		<None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="geometry3Sharp" Version="1.0.0" />
 		<PackageReference Include="Hardware.Info" Version="100.0.1.1" />
 		<PackageReference Include="Hexa.NET.ImGui" Version="1.0.2" />
 		<PackageReference Include="Hexa.NET.ImGuizmo" Version="1.0.2" />

@@ -15,6 +15,7 @@ namespace HexaEngine.Core.Assets
             RegisterImporter<ModelImporter>();
             RegisterImporter<MaterialImporter>();
             RegisterImporter<DummyImporter>();
+            RegisterImporter<TerrainImporter>();
         }
 
         public static void RegisterImporter(IAssetImporter importer)

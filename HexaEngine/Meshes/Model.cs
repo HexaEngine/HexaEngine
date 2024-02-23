@@ -2,62 +2,30 @@
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Jobs;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public struct MeshDrawType
-    {
-        public uint MeshId;
-        public uint TypeId;
-        public uint DrawIndirectOffset;
-        public MeshDrawInstance[] Instances;
-
-        public MeshDrawType(uint meshId, uint typeId, MeshDrawInstance[] instances)
-        {
-            MeshId = meshId;
-            TypeId = typeId;
-            Instances = instances;
-        }
-    }
-
-    public struct MeshDrawInstance
-    {
-        public int NodeId;
-        public Matrix4x4 Transform;
-        public BoundingBox BoundingBox;
-
-        public MeshDrawInstance(int nodeId)
-        {
-            NodeId = nodeId;
-        }
-
-        public MeshDrawInstance(int nodeId, Matrix4x4 transform, BoundingBox boundingBox)
-        {
-            NodeId = nodeId;
-            Transform = transform;
-            BoundingBox = boundingBox;
-        }
-    }
-
     public class Model : IDisposable
     {
+        private readonly ReusableFileStream stream;
         private readonly ModelFile modelFile;
         private readonly MaterialAssetMappingCollection materialAssets;
 
         private readonly Node[] nodes;
         private readonly Mesh[] meshes;
         private readonly Material[] materials;
-        private readonly int[][] drawables;
         private readonly MeshDrawType[] drawTypes;
         private readonly Matrix4x4[] locals;
         private readonly Matrix4x4[] globals;
         private readonly PlainNode[] plainNodes;
-
+        private readonly int lodLevels;
         private BoundingBox boundingBox;
 
         private ModelMaterialShaderFlags shaderFlags;
@@ -66,8 +34,16 @@
 
         private bool disposedValue;
 
-        public Model(ModelFile modelFile, MaterialAssetMappingCollection materialAssets)
+        public Model(ReusableFileStream stream, MaterialAssetMappingCollection materialAssets)
         {
+            this.stream = stream;
+            this.materialAssets = materialAssets;
+
+            modelFile = ModelFile.Load(stream, MeshLoadMode.Streaming);
+            materialAssets.Update(modelFile);
+
+            lodLevels = 5;
+
             int nodeCount = 0;
             modelFile.Root.CountNodes(ref nodeCount);
             nodes = new Node[nodeCount];
@@ -85,33 +61,24 @@
 
             materials = new Material[modelFile.Header.MeshCount];
             meshes = new Mesh[modelFile.Header.MeshCount];
-            drawables = new int[modelFile.Header.MeshCount][];
             drawTypes = new MeshDrawType[modelFile.Header.MeshCount];
 
-            List<int> meshInstances = new();
             List<MeshDrawInstance> meshDrawInstances = new();
             for (uint i = 0; i < modelFile.Header.MeshCount; i++)
             {
-                var mesh = modelFile.Meshes[(int)i];
+                MeshData mesh = modelFile.Meshes[(int)i];
                 for (int j = 0; j < nodeCount; j++)
                 {
-                    var node = nodes[j];
+                    Node node = nodes[j];
                     if (node.Meshes.Contains(i))
                     {
-                        meshInstances.Add(j);
                         meshDrawInstances.Add(new(j));
                     }
                 }
 
                 drawTypes[i] = new(i, i, [.. meshDrawInstances]);
-
-                drawables[i] = [.. meshInstances];
-                meshInstances.Clear();
                 meshDrawInstances.Clear();
             }
-
-            this.modelFile = modelFile;
-            this.materialAssets = materialAssets;
         }
 
         public ModelFile ModelFile => modelFile;
@@ -124,8 +91,6 @@
 
         public Material[] Materials => materials;
 
-        public int[][] Drawables => drawables;
-
         public MeshDrawType[] DrawTypes => drawTypes;
 
         public Matrix4x4[] Locals => locals;
@@ -136,23 +101,140 @@
 
         public ModelMaterialShaderFlags ShaderFlags => shaderFlags;
 
+        public int LODLevels => lodLevels;
+
         public bool Loaded => loaded;
+
+        public void ReloadMaterials()
+        {
+            if (meshes == null)
+            {
+                return;
+            }
+            shaderFlags = 0;
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                Mesh mesh = meshes[i];
+
+                if (mesh == null)
+                {
+                    continue;
+                }
+
+                Material material = materials[i];
+                var tmp = material;
+                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name);
+                MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
+                material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
+                materials[i] = material;
+                tmp.Dispose();
+                shaderFlags |= flags;
+            }
+        }
+
+        public void ReloadMaterial(MaterialAssetMapping mapping)
+        {
+            if (meshes == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                Mesh mesh = meshes[i];
+
+                if (mesh == null || mesh.Data.Name != mapping.Mesh)
+                {
+                    continue;
+                }
+
+                Material material = materials[i];
+
+                if (material.Data.Guid == mapping.Material)
+                {
+                    continue;
+                }
+
+                var tmp = material;
+                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name);
+                MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
+                material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
+                materials[i] = material;
+                tmp.Dispose();
+                shaderFlags |= flags;
+            }
+        }
+
+        public void SetLOD(int level)
+        {
+            if (!stream.CanReOpen)
+            {
+                return;
+            }
+
+            Job.Run("LOD-Streaming Job", this, state =>
+            {
+                if (state is not Model model)
+                {
+                    return;
+                }
+
+                var stream = model.stream;
+                lock (stream)
+                {
+                    stream.ReOpen();
+                    BoundingBox boundingBox = BoundingBox.Empty;
+                    for (int i = 0; i < model.modelFile.Meshes.Count; i++)
+                    {
+                        Mesh mesh = model.meshes[i];
+                        var tmp = mesh;
+                        MeshData data = model.modelFile.GetMesh(i);
+                        MeshLODData lod = data.LoadLODData(level, stream);
+
+                        mesh = ResourceManager.Shared.LoadMesh(data, lod);
+                        model.meshes[i] = mesh;
+                        tmp.Dispose();
+                        model.boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
+                    }
+                    model.boundingBox = boundingBox;
+                    stream.Close();
+                }
+            }, ComputeLODJobPriority(level));
+        }
+
+        public JobPriority ComputeLODJobPriority(int level)
+        {
+            float s = level / (float)lodLevels;
+            s = MathUtil.Clamp01(1 - s);
+            return (JobPriority)(int)MathUtil.Lerp((float)JobPriority.Low, (float)JobPriority.Highest, s);
+        }
 
         public void Load()
         {
-            for (int i = 0; i < modelFile.Meshes.Count; i++)
+            if (!stream.CanReOpen)
             {
-                var data = modelFile.GetMesh(i);
+                return;
+            }
 
-                Mesh mesh = ResourceManager.Shared.LoadMesh(data, true);
-                MaterialData materialDesc = materialAssets.GetMaterial(data);
-                MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out var flags);
-                Material material = ResourceManager.Shared.LoadMaterial(shaderDesc, materialAssets.GetMaterial(data));
+            lock (stream)
+            {
+                stream.ReOpen();
+                for (int i = 0; i < modelFile.Meshes.Count; i++)
+                {
+                    MeshData data = modelFile.GetMesh(i);
+                    MeshLODData lod = data.LoadLODData(0, stream);
 
-                materials[i] = material;
-                meshes[i] = mesh;
-                boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
-                shaderFlags |= flags;
+                    Mesh mesh = ResourceManager.Shared.LoadMesh(data, lod);
+                    MaterialData materialDesc = materialAssets.GetMaterial(data.Name);
+                    MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
+                    Material material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
+
+                    materials[i] = material;
+                    meshes[i] = mesh;
+                    boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
+                    shaderFlags |= flags;
+                }
+                stream.Close();
             }
 
             loaded = true;
@@ -160,20 +242,28 @@
 
         public async Task LoadAsync()
         {
+            if (!stream.CanReOpen)
+            {
+                return;
+            }
+
+            stream.ReOpen();
             for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
-                var data = modelFile.GetMesh(i);
+                MeshData data = modelFile.GetMesh(i);
+                MeshLODData lod = data.LoadLODData(0, stream);
 
-                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data, true);
-                MaterialData materialDesc = materialAssets.GetMaterial(data);
-                MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out var flags);
-                Material material = await ResourceManager.Shared.LoadMaterialAsync(shaderDesc, materialDesc);
+                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data, lod);
+                MaterialData materialDesc = materialAssets.GetMaterial(data.Name);
+                MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
+                Material material = await ResourceManager.Shared.LoadMaterialAsync<Model>(shaderDesc, materialDesc);
 
                 materials[i] = material;
                 meshes[i] = mesh;
                 boundingBox = BoundingBox.CreateMerged(boundingBox, mesh.BoundingBox);
                 shaderFlags |= flags;
             }
+            stream.Close();
 
             loaded = true;
         }
@@ -202,7 +292,7 @@
             matflags = material.Flags;
             custom = material.HasShader(MaterialShaderType.VertexShaderFile) && material.HasShader(MaterialShaderType.PixelShaderFile);
             twoSided = false;
-            if (material.TryGetProperty(MaterialPropertyType.TwoSided, out var twosidedProp))
+            if (material.TryGetProperty(MaterialPropertyType.TwoSided, out MaterialProperty twosidedProp))
             {
                 twoSided = twosidedProp.AsBool();
                 if (twoSided)
@@ -219,7 +309,7 @@
             }
 
             blendFunc = false;
-            if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out var blendFuncProp))
+            if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out MaterialProperty blendFuncProp))
             {
                 blendFunc = blendFuncProp.AsBool();
                 if (blendFunc)
@@ -408,17 +498,26 @@
 
         public static MaterialShaderDesc GetMaterialShaderDesc(Mesh mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
-            var passes = GetMaterialShaderPasses(mesh.Data, material, debone, out flags);
+            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses(((MeshData)mesh.Data), material, debone, out flags);
             return new(material, mesh.InputElements, [.. passes]);
         }
 
         public void Unload()
         {
             shaderFlags = ModelMaterialShaderFlags.None;
-            for (int i = 0; i < meshes.Length; i++)
+            if (meshes != null)
             {
-                meshes[i].Dispose();
-                materials[i].Dispose();
+                for (int i = 0; i < meshes.Length; i++)
+                {
+                    meshes[i]?.Dispose();
+                }
+            }
+            if (materials != null)
+            {
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    materials[i]?.Dispose();
+                }
             }
 
             loaded = false;
@@ -443,7 +542,7 @@
                 return -1;
             for (int i = 0; i < plainNodes.Length; i++)
             {
-                var node = plainNodes[i];
+                PlainNode node = plainNodes[i];
                 if (node.Name == name)
                     return node.Id;
             }
@@ -455,6 +554,7 @@
             if (!disposedValue)
             {
                 Unload();
+                stream.Dispose();
                 disposedValue = true;
             }
         }

@@ -22,13 +22,13 @@
         /// </summary>
         /// <param name="pMesh">The mesh data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool GenMeshVertexNormals(MeshData pMesh)
+        public static unsafe bool GenMeshVertexNormals(MeshLODData pMesh)
         {
             // Allocate the array to hold the output normals
-            pMesh.Normals = new Vector3[pMesh.VerticesCount];
+            pMesh.Normals = new Vector3[pMesh.VertexCount];
 
             // Compute per-face normals but store them per-vertex
-            for (uint a = 0; a < pMesh.IndicesCount / 3; a++)
+            for (uint a = 0; a < pMesh.IndexCount / 3; a++)
             {
                 Face face = pMesh.GetFaceAtIndex(a);
 
@@ -50,15 +50,15 @@
             float posEpsilon = ProcessingHelper.ComputePositionEpsilon(pMesh);
 
             List<uint> verticesFound = new();
-            Vector3[] pcNew = new Vector3[pMesh.VerticesCount];
+            Vector3[] pcNew = new Vector3[pMesh.VertexCount];
 
             if (ConfigMaxAngle >= 175f.ToRad())
             {
                 // There is no angle limit. Thus all vertices with positions close
                 // to each other will receive the same vertex normal. This allows us
                 // to optimize the whole algorithm a little bit ...
-                bool[] abHad = new bool[pMesh.VerticesCount];
-                for (uint i = 0; i < pMesh.VerticesCount; ++i)
+                bool[] abHad = new bool[pMesh.VertexCount];
+                for (uint i = 0; i < pMesh.VertexCount; ++i)
                 {
                     if (abHad[(int)i])
                     {
@@ -93,7 +93,7 @@
             else
             {
                 float fLimit = MathF.Cos(ConfigMaxAngle);
-                for (uint i = 0; i < pMesh.VerticesCount; ++i)
+                for (uint i = 0; i < pMesh.VertexCount; ++i)
                 {
                     // Get all vertices that share this one ...
                     vertexFinder.FindPositions(pMesh.Positions[i], posEpsilon, verticesFound);
@@ -127,11 +127,11 @@
         /// </summary>
         /// <param name="pMesh">The mesh data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool GenMeshVertexNormals2(MeshData pMesh)
+        public static unsafe bool GenMeshVertexNormals2(MeshLODData pMesh)
         {
-            Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
-            Memset(vertNormals, 0, (int)pMesh.VerticesCount);
-            uint nFaces = pMesh.IndicesCount / 3;
+            Vector3* vertNormals = AllocT<Vector3>(pMesh.VertexCount);
+            Memset(vertNormals, 0, (int)pMesh.VertexCount);
+            uint nFaces = pMesh.IndexCount / 3;
 
             for (int face = 0; face < nFaces; ++face)
             {
@@ -176,7 +176,7 @@
                 vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
             }
 
-            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            for (int i = 0; i < pMesh.VertexCount; ++i)
             {
                 pMesh.Normals[i] = Vector3.Normalize(vertNormals[i]);
             }
@@ -191,20 +191,17 @@
         /// </summary>
         /// <param name="pMesh">The terrain cell data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool GenMeshVertexNormals2(TerrainCellData pMesh)
+        public static unsafe bool GenMeshVertexNormals2(TerrainCellLODData pMesh)
         {
-            //GenerateNormalsTerrain(pMesh.Positions, out pMesh.Normals, (int)pMesh.ActualWidth, (int)pMesh.ActualHeight);
+            Vector3* normals = AllocT<Vector3>(pMesh.VertexCount);
+            Memset(normals, 0, (int)pMesh.VertexCount);
 
-            //Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
-            //Memset(vertNormals, 0, (int)nFaces);
-
-            var m_terrainHeight = (int)pMesh.ActualHeight;
-            var m_terrainWidth = (int)pMesh.ActualWidth;
+            var m_terrainHeight = (int)pMesh.Rows;
+            var m_terrainWidth = (int)pMesh.Columns;
 
             int i, j, index1, index2, index3, index, count;
             Vector3 vertex1, vertex2, vertex3, vector1, vector2, sum;
 
-            Vector3[] normals = new Vector3[pMesh.VerticesCount];
             for (j = 0; j < m_terrainHeight - 1; j++)
             {
                 for (i = 0; i < m_terrainWidth - 1; i++)
@@ -290,7 +287,7 @@
                 }
             }
 
-            //Free(vertNormals);
+            Free(normals);
 
             return true;
         }

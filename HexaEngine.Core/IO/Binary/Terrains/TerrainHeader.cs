@@ -39,24 +39,19 @@
         public Compression Compression;
 
         /// <summary>
-        /// The material library associated with the terrain.
+        /// The number of layers in the terrain.
         /// </summary>
-        public string MaterialLibrary;
+        public int Layers;
 
         /// <summary>
-        /// The X-coordinate of the terrain.
+        /// The number of layer groups in the terrain.
         /// </summary>
-        public int X;
+        public int LayerGroups;
 
         /// <summary>
-        /// The Y-coordinate of the terrain.
+        /// The number of cells in the terrain.
         /// </summary>
-        public int Y;
-
-        /// <summary>
-        /// The number of level-of-detail (LOD) levels in the terrain.
-        /// </summary>
-        public uint LODLevels;
+        public int Cells;
 
         /// <summary>
         /// The position in the file where the content starts.
@@ -82,10 +77,9 @@
 
             Encoding = Encoding.GetEncoding(stream.ReadInt32(Endianness));
             Compression = (Compression)stream.ReadInt32(Endianness);
-            MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
-            X = stream.ReadInt32(Endianness);
-            Y = stream.ReadInt32(Endianness);
-            LODLevels = stream.ReadUInt32(Endianness);
+            Layers = stream.ReadInt32(Endianness);
+            LayerGroups = stream.ReadInt32(Endianness);
+            Cells = stream.ReadInt32(Endianness);
             ContentStart = (ulong)stream.Position;
         }
 
@@ -93,17 +87,16 @@
         /// Writes the header information to the specified stream.
         /// </summary>
         /// <param name="stream">The stream to which the header information will be written.</param>
-        public void Write(Stream stream)
+        public readonly void Write(Stream stream)
         {
             stream.Write(MagicNumber);
             stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
             stream.WriteInt32(Encoding.CodePage, Endianness);
             stream.WriteInt32((int)Compression, Endianness);
-            stream.WriteString(MaterialLibrary, Encoding, Endianness);
-            stream.WriteInt32(X, Endianness);
-            stream.WriteInt32(Y, Endianness);
-            stream.WriteUInt32(LODLevels, Endianness);
+            stream.WriteInt32(Layers, Endianness);
+            stream.WriteInt32(LayerGroups, Endianness);
+            stream.WriteInt32(Cells, Endianness);
         }
     }
 }

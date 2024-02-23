@@ -859,5 +859,631 @@
 
             return quaternion;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayFloat(this Stream stream, float[] array, Endianness endianness)
+        {
+            int stride = sizeof(float);
+            fixed (float* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayFloat(this Stream stream, float[] array, Endianness endianness)
+        {
+            int stride = sizeof(float);
+            fixed (float* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayVector2(this Stream stream, Vector2[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector2);
+            fixed (Vector2* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayVector2(this Stream stream, Vector2[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector2);
+            fixed (Vector2* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayVector3(this Stream stream, Vector3[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector3);
+            fixed (Vector3* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayVector3(this Stream stream, Vector3[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector3);
+            fixed (Vector3* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayVector4(this Stream stream, Vector4[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector4);
+            fixed (Vector4* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayVector4(this Stream stream, Vector4[] array, Endianness endianness)
+        {
+            int stride = sizeof(Vector4);
+            fixed (Vector4* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayDouble(this Stream stream, double[] array, Endianness endianness)
+        {
+            int stride = sizeof(double);
+            fixed (double* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayDouble(this Stream stream, double[] array, Endianness endianness)
+        {
+            int stride = sizeof(double);
+            fixed (double* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayUInt16(this Stream stream, ushort[] array, Endianness endianness)
+        {
+            int stride = sizeof(ushort);
+            fixed (ushort* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayUInt16(this Stream stream, ushort[] array, Endianness endianness)
+        {
+            int stride = sizeof(ushort);
+            fixed (ushort* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayInt16(this Stream stream, short[] array, Endianness endianness)
+        {
+            int stride = sizeof(short);
+            fixed (short* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayInt16(this Stream stream, short[] array, Endianness endianness)
+        {
+            int stride = sizeof(short);
+            fixed (short* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayUInt32(this Stream stream, uint[] array, Endianness endianness)
+        {
+            int stride = sizeof(uint);
+            fixed (uint* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayUInt32(this Stream stream, uint[] array, Endianness endianness)
+        {
+            int stride = sizeof(uint);
+            fixed (uint* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayInt32(this Stream stream, int[] array, Endianness endianness)
+        {
+            int stride = sizeof(int);
+            fixed (int* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayInt32(this Stream stream, int[] array, Endianness endianness)
+        {
+            int stride = sizeof(int);
+            fixed (int* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayUInt64(this Stream stream, ulong[] array, Endianness endianness)
+        {
+            int stride = sizeof(ulong);
+            fixed (ulong* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayUInt64(this Stream stream, ulong[] array, Endianness endianness)
+        {
+            int stride = sizeof(ulong);
+            fixed (ulong* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReadArrayInt64(this Stream stream, long[] array, Endianness endianness)
+        {
+            int stride = sizeof(long);
+            fixed (long* p = array)
+            {
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Read(bytes);
+
+                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteArrayInt64(this Stream stream, long[] array, Endianness endianness)
+        {
+            int stride = sizeof(long);
+            fixed (long* p = array)
+            {
+                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+
+                Span<byte> bytes = new(p, array.Length * stride);
+                stream.Write(bytes);
+
+                if (reverse)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        ReverseEndianness(p[i], &p[i]);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(ushort target, ushort* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            *output = (ushort)((byte0 << 8) | byte1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(short target, short* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            *output = (short)((byte0 << 8) | byte1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(uint target, uint* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            byte byte2 = (byte)(target >> 16);
+            byte byte3 = (byte)(target >> 24);
+            *output = (uint)((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(int target, int* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            byte byte2 = (byte)(target >> 16);
+            byte byte3 = (byte)(target >> 24);
+            *output = (byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(ulong target, ulong* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            byte byte2 = (byte)(target >> 16);
+            byte byte3 = (byte)(target >> 24);
+            byte byte4 = (byte)(target >> 32);
+            byte byte5 = (byte)(target >> 40);
+            byte byte6 = (byte)(target >> 48);
+            byte byte7 = (byte)(target >> 56);
+            *output = (ulong)((byte0 << 56) | (byte1 << 48) | (byte2 << 40) | (byte3 << 32) | (byte4 << 24) | (byte5 << 16) | (byte6 << 8) | byte7);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(long target, long* output)
+        {
+            byte byte0 = (byte)(target >> 0);
+            byte byte1 = (byte)(target >> 8);
+            byte byte2 = (byte)(target >> 16);
+            byte byte3 = (byte)(target >> 24);
+            byte byte4 = (byte)(target >> 32);
+            byte byte5 = (byte)(target >> 40);
+            byte byte6 = (byte)(target >> 48);
+            byte byte7 = (byte)(target >> 56);
+            *output = (byte0 << 56) | (byte1 << 48) | (byte2 << 40) | (byte3 << 32) | (byte4 << 24) | (byte5 << 16) | (byte6 << 8) | byte7;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(float target, float* output)
+        {
+            uint uTarget = *(uint*)&target;
+            uint reversedValue;
+            ReverseEndianness(uTarget, &reversedValue);
+            *output = *(float*)&reversedValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(double target, double* output)
+        {
+            ulong uTarget = *(ulong*)&target;
+            ulong reversedValue;
+            ReverseEndianness(uTarget, &reversedValue);
+            *output = *(double*)&reversedValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(Vector2 target, Vector2* output)
+        {
+            ReverseEndianness(target.X, &target.X);
+            ReverseEndianness(target.Y, &target.Y);
+            *output = target;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(Vector3 target, Vector3* output)
+        {
+            ReverseEndianness(target.X, &target.X);
+            ReverseEndianness(target.Y, &target.Y);
+            ReverseEndianness(target.Z, &target.Z);
+            *output = target;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseEndianness(Vector4 target, Vector4* output)
+        {
+            ReverseEndianness(target.X, &target.X);
+            ReverseEndianness(target.Y, &target.Y);
+            ReverseEndianness(target.Z, &target.Z);
+            ReverseEndianness(target.W, &target.W);
+            *output = target;
+        }
     }
 }

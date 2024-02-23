@@ -60,6 +60,36 @@
             return 0.5f * cross.Length();
         }
 
+        /// <summary>
+        /// Calculates the area of a triangle.
+        /// </summary>
+        /// <param name="p0">The first point.</param>
+        /// <param name="p1">The second point.</param>
+        /// <param name="p2">The third point.</param>
+        /// <returns>The triangle area.</returns>
+        public static float Area(Vector3 p0, Vector3 p1, Vector3 p2)
+        {
+            var ab = p1 - p0;
+            var ac = p2 - p0;
+            var cross = Vector3.Cross(ab, ac);
+            return 0.5f * cross.Length();
+        }
+
+        /// <summary>
+        /// Calculates the area of a triangle.
+        /// </summary>
+        /// <param name="p0">The first point.</param>
+        /// <param name="p1">The second point.</param>
+        /// <param name="p2">The third point.</param>
+        /// <returns>The triangle area.</returns>
+        public static double Area(Vector3D p0, Vector3D p1, Vector3D p2)
+        {
+            var ab = p1 - p0;
+            var ac = p2 - p0;
+            var cross = Vector3D.Cross(ab, ac);
+            return 0.5 * cross.Length();
+        }
+
         /// <inheritdoc/>
         public override readonly bool Equals(object? obj)
         {

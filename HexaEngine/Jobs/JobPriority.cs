@@ -2,9 +2,11 @@
 {
     public enum JobPriority
     {
-        Normal = 0,
-        AboveNormal = 1,
-        High = 2,
-        Highest = 3,
+        Low = 0,
+        BelowNormal = 1,
+        Normal = 2,
+        AboveNormal = 3,
+        High = 4,
+        Highest = 5,
     }
 }

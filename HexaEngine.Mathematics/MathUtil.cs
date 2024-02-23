@@ -2341,5 +2341,10 @@
             float length = (float)Math.Sqrt(plane.X * plane.X + plane.Y * plane.Y + plane.Z * plane.Z);
             return new Vector4(plane.X / length, plane.Y / length, plane.Z / length, plane.W / length);
         }
+
+        public static int RoundToInt(float v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

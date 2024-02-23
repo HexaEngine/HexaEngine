@@ -9,10 +9,13 @@ namespace HexaEngine.Core.Assets.Importer
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Animations;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.IO.Binary.Meshes.Processing;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
@@ -153,6 +156,8 @@ namespace HexaEngine.Core.Assets.Importer
             {
                 assimp.ReleaseImport(scene);
             }
+
+            Logger.Info("Import Done!");
         }
 
         public unsafe bool Load(TargetPlatform targetPlatform, ImportContext context, ModelImporterSettings settings, AssimpScene** outScene)
@@ -179,7 +184,7 @@ namespace HexaEngine.Core.Assets.Importer
                 return false;
             }
 
-            if (!LoadSceneGraph(scene, out var root, out var nameToNode))
+            if (!LoadSceneGraph(scene, out var root, out var nameToNode, out var pToNode))
             {
                 return false;
             }
@@ -195,7 +200,7 @@ namespace HexaEngine.Core.Assets.Importer
                 }
             }
 
-            if (!LoadMeshes(modelName, scene, context, root, nameToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
+            if (!LoadMeshes(modelName, scene, context, root, pToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
             {
                 return false;
             }
@@ -806,7 +811,7 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, Node root, Dictionary<string, Node> nameToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             try
             {
@@ -840,22 +845,22 @@ namespace HexaEngine.Core.Assets.Importer
                         box = BoundingBoxHelper.Compute(positions);
                         sphere = BoundingSphere.CreateFromBoundingBox(box);
                     }
-
-                    BoneData[] bones = new BoneData[msh->MNumBones];
+                    BoneData[]? bones = null;
                     if (msh->MNumBones > 0)
                     {
+                        bones = new BoneData[msh->MNumBones];
                         for (int j = 0; j < bones.Length; j++)
                         {
-                            var bn = msh->MBones[j];
-                            nameToNode[bn->MName].Flags |= NodeFlags.Bone;
+                            Bone* bn = msh->MBones[j];
+                            pToNode[bn->MNode].Flags |= NodeFlags.Bone;
 
-                            IO.Binary.Meshes.VertexWeight[] weights = new IO.Binary.Meshes.VertexWeight[bn->MNumWeights];
-                            for (int x = 0; x < weights.Length; x++)
+                            IO.Binary.Meshes.VertexWeight[] w = new IO.Binary.Meshes.VertexWeight[bn->MNumWeights];
+                            for (int x = 0; x < w.Length; x++)
                             {
-                                weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
+                                w[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
                             }
 
-                            bones[j] = new BoneData(bn->MName, weights, Matrix4x4.Transpose(bn->MOffsetMatrix));
+                            bones[j] = new BoneData(bn->MName, w, Matrix4x4.Transpose(bn->MOffsetMatrix));
                         }
                     }
 
@@ -865,16 +870,53 @@ namespace HexaEngine.Core.Assets.Importer
                         materialId = materialIds[(int)msh->MMaterialIndex];
                     }
 
-                    if (bones.Length > 0)
+                    string name = msh->MName;
+
+                    string orgName = name;
+                    int xName = 1;
+                    while (nameToMesh.ContainsKey(name))
                     {
-                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, [.. bones]);
-                    }
-                    else
-                    {
-                        meshes[i] = new MeshData(msh->MName, Guid.NewGuid(), materialId, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, null);
+                        name = $"{orgName}.{xName}";
+                        xName++;
                     }
 
-                    nameToMesh.Add(msh->MName, meshes[i]);
+                    VertexFlags flags = VertexFlags.Positions;
+                    if (colors != null) flags |= VertexFlags.Colors;
+                    if (uvs != null) flags |= VertexFlags.UVs;
+                    if (normals != null) flags |= VertexFlags.Normals;
+                    if (tangents != null) flags |= VertexFlags.Tangents;
+                    if (bones != null) flags |= VertexFlags.Skinned;
+
+                    MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, bones);
+
+                    BoneWeight[]? weights = null;
+                    if (bones != null)
+                    {
+                        weights = new BoneWeight[msh->MNumVertices];
+                        for (int j = 0; j < msh->MNumVertices; j++)
+                        {
+                            weights[j] = new(mesh.GatherBoneData(j));
+                        }
+                    }
+
+                    MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, uvs, normals, tangents, weights);
+                    mesh.LODs.Add(data);
+
+                    Parallel.For(0, 4, j =>
+                    {
+                        int lod = (int)Math.Pow(2, j);
+                        Logger.Info($"Generating LOD: {lod}, {mesh.Name}");
+                        var lodLower = SimplifyProcess.Simplify(data, j);
+                        lodLower.LODLevel = (uint)lod;
+                        lock (mesh.LODs)
+                        {
+                            mesh.LODs.Add(lodLower);
+                        }
+                    });
+
+                    mesh.LODs.Sort(MeshLODLevelComparer.Instance);
+
+                    nameToMesh.Add(name, meshes[i]);
                     pToMesh.Add(msh, meshes[i]);
                 }
 
@@ -884,7 +926,7 @@ namespace HexaEngine.Core.Assets.Importer
                     {
                         ModelFile modelFile = new(string.Empty, meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
-                        modelFile.Save(path, Encoding.UTF8);
+                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.None);
                     }
                     catch (Exception ex)
                     {
@@ -906,16 +948,18 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe bool LoadSceneGraph(AssimpScene* scene, [MaybeNullWhen(false)] out Node root, [MaybeNullWhen(false)] out Dictionary<string, Node> nameToNode)
+        private unsafe bool LoadSceneGraph(AssimpScene* scene, [MaybeNullWhen(false)] out Node root, [MaybeNullWhen(false)] out Dictionary<string, Node> nameToNode, [MaybeNullWhen(false)] out Dictionary<Pointer<AssimpNode>, Node> pToNode)
         {
             try
             {
                 List<Node> nodes = [];
+                pToNode = [];
                 nameToNode = [];
-                root = WalkNode(nameToNode, scene->MRootNode, null);
+                root = WalkNode(nameToNode, pToNode, scene->MRootNode, null);
             }
             catch (Exception ex)
             {
+                pToNode = null;
                 nameToNode = null;
                 root = null;
                 Logger.Log(ex);
@@ -925,9 +969,10 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe Node WalkNode(Dictionary<string, Node> nameToNode, AssimpNode* node, Node parent)
+        private unsafe Node WalkNode(Dictionary<string, Node> nameToNode, Dictionary<Pointer<AssimpNode>, Node> pToNode, AssimpNode* node, Node parent)
         {
             string name = node->MName;
+
             Matrix4x4 transform = Matrix4x4.Transpose(node->MTransformation);
 
             Node sceneNode = new(name, transform, node->MNumMeshes == 0 ? NodeFlags.None : NodeFlags.Drawable, parent, new([]));
@@ -939,11 +984,22 @@ namespace HexaEngine.Core.Assets.Importer
 
             for (int i = 0; i < node->MNumChildren; i++)
             {
-                var child = WalkNode(nameToNode, node->MChildren[i], sceneNode);
+                var child = WalkNode(nameToNode, pToNode, node->MChildren[i], sceneNode);
                 sceneNode.Children.Add(child);
             }
 
+            string orgName = name;
+            int x = 1;
+            while (nameToNode.ContainsKey(name))
+            {
+                name = $"{orgName}.{x}";
+                x++;
+            }
+
+            sceneNode.Name = name;
+
             nameToNode.Add(name, sceneNode);
+            pToNode.Add(node, sceneNode);
 
             return sceneNode;
         }

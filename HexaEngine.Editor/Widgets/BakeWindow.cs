@@ -62,16 +62,6 @@
                     ImGui.SameLine();
                 }
             }
-
-            var stats = MeshBaker.Statistics;
-
-            if (stats.Running)
-            {
-                ImGui.Text($"Baking Radiosity");
-                ImGui.Text($"Bounce {stats.CurrentBounce} of {stats.BounceCount}");
-                ImGui.Text($"Mesh {stats.CurrentMesh} of {stats.MeshCount}");
-                ImGui.Text($"Vertex {stats.CurrentVertex} of {stats.VertexCount}");
-            }
         }
 
         public void Bake(IGraphicsContext context)

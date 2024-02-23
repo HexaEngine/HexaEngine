@@ -5,14 +5,17 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Noise;
     using System;
-    using System.Reflection;
-    using System.Text;
+    using System.Globalization;
+    using System.Numerics;
 
     /// <summary>
     /// Represents a height map used for terrain generation.
     /// </summary>
     public class HeightMap
     {
+        private long streamPosition = -1;
+        private Compression compression;
+
         /// <summary>
         /// The width of the height map.
         /// </summary>
@@ -54,7 +57,7 @@
         /// </summary>
         /// <param name="width">The width of the height map.</param>
         /// <param name="height">The height of the height map.</param>
-        public HeightMap(uint width = 32, uint height = 32)
+        public HeightMap(uint width = 160, uint height = 160)
         {
             this.width = width;
             this.height = height;
@@ -93,6 +96,8 @@
         /// Gets the height of the height map.
         /// </summary>
         public uint Height => height;
+
+        public Vector2 Size => new(width, height);
 
         /// <summary>
         /// Generates an empty height map.
@@ -216,13 +221,14 @@
         /// Reads a <see cref="HeightMap"/> from a stream.
         /// </summary>
         /// <param name="src">The source stream.</param>
-        /// <param name="encoding">The encoding used for reading.</param>
         /// <param name="endianness">The endianness used for reading.</param>
+        /// <param name="compression"></param>
+        /// <param name="mode"></param>
         /// <returns>The read height map.</returns>
-        public static HeightMap ReadFrom(Stream src, Encoding encoding, Endianness endianness)
+        public static HeightMap ReadFrom(Stream src, Endianness endianness, Compression compression, TerrainLoadMode mode)
         {
             HeightMap heightMap = new();
-            heightMap.Read(src, encoding, endianness);
+            heightMap.Read(src, endianness, compression, mode);
             return heightMap;
         }
 
@@ -230,35 +236,67 @@
         /// Reads the height map data from a stream.
         /// </summary>
         /// <param name="src">The source stream.</param>
-        /// <param name="encoding">The encoding used for reading.</param>
         /// <param name="endianness">The endianness used for reading.</param>
-        public void Read(Stream src, Encoding encoding, Endianness endianness)
+        /// <param name="compression"></param>
+        /// <param name="mode"></param>
+        public void Read(Stream src, Endianness endianness, Compression compression, TerrainLoadMode mode)
         {
+            this.compression = compression;
             width = src.ReadUInt32(endianness);
             height = src.ReadUInt32(endianness);
-            data = new float[width * height];
+            uint size = src.ReadUInt32(endianness);
+            streamPosition = src.Position;
 
-            for (uint i = 0; i < data.Length; i++)
+            if (mode == TerrainLoadMode.Immediate)
             {
-                data[i] = src.ReadFloat(endianness);
+                LoadHeightMapData(src, endianness);
+            }
+
+            src.Position = streamPosition + size;
+        }
+
+        public void LoadHeightMapData(Stream stream, Endianness endianness)
+        {
+            stream.Position = streamPosition;
+
+            var decompressor = stream.CreateDecompressionStream(compression, out var isCompressed);
+
+            data = new float[width * height];
+            decompressor.ReadArrayFloat(data, endianness);
+
+            if (isCompressed)
+            {
+                decompressor.Dispose();
             }
         }
 
         /// <summary>
         /// Writes the height map data to a stream.
         /// </summary>
-        /// <param name="dst">The destination stream.</param>
-        /// <param name="encoding">The encoding used for writing.</param>
+        /// <param name="stream">The destination stream.</param>
         /// <param name="endianness">The endianness used for writing.</param>
-        public void Write(Stream dst, Encoding encoding, Endianness endianness)
+        /// <param name="compression"></param>
+        public void Write(Stream stream, Endianness endianness, Compression compression)
         {
-            dst.WriteUInt32(width, endianness);
-            dst.WriteUInt32(height, endianness);
+            stream.WriteUInt32(width, endianness);
+            stream.WriteUInt32(height, endianness);
+            long basePosition = stream.Position;
+            stream.Position += 4;
 
-            for (uint i = 0; i < data.Length; i++)
+            var compressor = stream.CreateCompressionStream(compression, out var isCompressed);
+
+            compressor.WriteArrayFloat(data, endianness);
+
+            if (isCompressed)
             {
-                dst.WriteFloat(data[i], endianness);
+                compressor.Dispose();
             }
+
+            long endPos = stream.Position;
+            uint size = (uint)(endPos - (basePosition + 4));
+            stream.Position = basePosition;
+            stream.WriteUInt32(size, endianness);
+            stream.Position = endPos;
         }
 
         /// <summary>

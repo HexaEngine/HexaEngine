@@ -71,7 +71,7 @@
             for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
+                coords[i] = new Vector4(vp.X + 2, vp.Y + 2, vp.Width - 2, vp.Height - 2) * texel;
             }
 
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
@@ -97,7 +97,7 @@
             for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
+                coords[i] = new Vector4(vp.X + 2, vp.Y + 2, vp.Width - 2, vp.Height - 2) * texel;
             }
 
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);

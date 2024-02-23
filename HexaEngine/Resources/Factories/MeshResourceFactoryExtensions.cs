@@ -5,14 +5,24 @@
 
     public static class MeshResourceFactoryExtensions
     {
-        public static Mesh LoadMesh(this ResourceManager manager, MeshData data, bool debone = false)
+        public static Mesh LoadMesh(this ResourceManager manager, IMeshData data, ILODData lodData)
         {
-            return manager.CreateInstance<Mesh, (MeshData, bool)>(data.Guid, (data, debone)) ?? throw new NotSupportedException("The factory was not found");
+            return LoadMesh(manager, new MeshDesc(data, lodData));
         }
 
-        public static async Task<Mesh> LoadMeshAsync(this ResourceManager manager, MeshData mesh, bool debone = false)
+        public static Task<Mesh> LoadMeshAsync(this ResourceManager manager, IMeshData mesh, ILODData lodData)
         {
-            return await Task.Factory.StartNew(() => manager.LoadMesh(mesh, debone));
+            return LoadMeshAsync(manager, new MeshDesc(mesh, lodData));
+        }
+
+        public static Mesh LoadMesh(this ResourceManager manager, MeshDesc desc)
+        {
+            return manager.CreateInstance<Mesh, MeshDesc>(new(desc.MeshData.Guid, (int)desc.LODData.LODLevel), desc) ?? throw new NotSupportedException("The factory was not found");
+        }
+
+        public static async Task<Mesh> LoadMeshAsync(this ResourceManager manager, MeshDesc desc)
+        {
+            return await Task.Factory.StartNew(() => manager.LoadMesh(desc));
         }
     }
 }

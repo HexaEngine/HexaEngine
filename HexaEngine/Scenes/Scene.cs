@@ -134,6 +134,7 @@
             systems.Add(renderManager);
             systems.Add(weatherManager);
             systems.Add(objectPickerManager);
+            systems.Add(new LODSystem());
 
             semaphore.Wait();
 
@@ -172,6 +173,7 @@
             systems.Add(renderManager);
             systems.Add(weatherManager);
             systems.Add(objectPickerManager);
+            systems.Add(new LODSystem());
 
             await semaphore.WaitAsync();
 

@@ -157,7 +157,7 @@
             return factory != null;
         }
 
-        public T? GetInstance<T>(Guid id) where T : ResourceInstance
+        public T? GetInstance<T>(ResourceGuid id) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {
@@ -171,13 +171,13 @@
             return null;
         }
 
-        public bool TryGetInstance<T>(Guid id, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
+        public bool TryGetInstance<T>(ResourceGuid id, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
         {
             instance = GetInstance<T>(id);
             return instance != null;
         }
 
-        public T? CreateInstance<T, TData>(Guid id, TData data) where T : ResourceInstance
+        public T? CreateInstance<T, TData>(ResourceGuid id, TData data) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {
@@ -193,13 +193,13 @@
             return null;
         }
 
-        public bool TryCreateInstance<T, TData>(Guid id, TData data, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
+        public bool TryCreateInstance<T, TData>(ResourceGuid id, TData data, [NotNullWhen(true)] out T? instance) where T : ResourceInstance
         {
             instance = CreateInstance<T, TData>(id, data);
             return instance != null;
         }
 
-        public async Task<T?> CreateInstanceAsync<T, TData>(Guid id, TData data) where T : ResourceInstance
+        public async Task<T?> CreateInstanceAsync<T, TData>(ResourceGuid id, TData data) where T : ResourceInstance
         {
             for (int i = 0; i < factories.Count; i++)
             {

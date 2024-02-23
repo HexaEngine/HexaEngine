@@ -26,6 +26,7 @@
         private MaterialManager materialManager;
         private SkinnedMeshRenderer renderer;
         private SkinnedModel? model;
+        private readonly MaterialAssetMappingCollection materials = new();
 
         static SkinnedMeshRendererComponent()
         {
@@ -44,7 +45,7 @@
 
         [EditorCategory("Materials")]
         [EditorProperty("")]
-        public MaterialAssetMappingCollection Materials { get; } = new();
+        public MaterialAssetMappingCollection Materials => materials;
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(SkinnedMeshRenderer);
@@ -162,6 +163,11 @@
             throw new NotImplementedException();
         }
 
+        private void OnChanged(MaterialAssetMapping mapping)
+        {
+            UpdateModel();
+        }
+
         private Job UpdateModel()
         {
             Loaded = false;
@@ -190,35 +196,9 @@
                 var stream = modelAsset.OpenRead();
                 if (stream != null)
                 {
-                    ModelFile modelFile;
-                    try
-                    {
-                        modelFile = ModelFile.Load(stream);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
-                    }
-
-                    if (component.Materials.Count == 0)
-                    {
-                        for (int i = 0; i < modelFile.Meshes.Count; i++)
-                        {
-                            var mesh = modelFile.Meshes[i];
-                            var material = mesh.MaterialId;
-                            MaterialAssetMapping mapping = new(mesh, material);
-                            component.Materials.Add(mapping);
-                        }
-                    }
-
-                    for (int i = 0; i < component.Materials.Count; i++)
-                    {
-                        var mapping = component.Materials[i];
-                        var mesh = modelFile.Meshes[i];
-                        mesh.MaterialId = mapping.Material.Guid;
-                    }
-
-                    component.model = new(modelFile, component.materialManager);
+                    component.Materials.OnChanged -= component.OnChanged;
+                    component.model = new(stream, component.materials);
+                    component.Materials.OnChanged += component.OnChanged;
                     component.model.LoadAsync().Wait();
 
                     var flags = component.model.ShaderFlags;

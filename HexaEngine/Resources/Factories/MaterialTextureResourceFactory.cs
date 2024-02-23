@@ -5,7 +5,7 @@
     using HexaEngine.Core.Graphics;
     using System.Threading.Tasks;
 
-    public class MaterialTextureResourceFactory : ResourceFactory<ResourceInstance<MaterialTexture>, Core.IO.Binary.Materials.MaterialTexture>
+    public class MaterialTextureResourceFactory : ResourceFactory<MaterialTexture, Core.IO.Binary.Materials.MaterialTexture>
     {
         private readonly IGraphicsDevice device;
 
@@ -14,7 +14,7 @@
             this.device = device;
         }
 
-        protected override ResourceInstance<MaterialTexture> CreateInstance(ResourceManager manager, Guid id, Core.IO.Binary.Materials.MaterialTexture desc)
+        protected override MaterialTexture CreateInstance(ResourceManager manager, ResourceGuid id, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             var artifact = ArtifactDatabase.GetArtifact(desc.File);
 
@@ -23,10 +23,10 @@
                 return null;
             }
 
-            return new(this, desc.File);
+            return new(this, id, desc);
         }
 
-        protected override void LoadInstance(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Binary.Materials.MaterialTexture desc)
+        protected override void LoadInstance(ResourceManager manager, MaterialTexture instance, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             if (instance == null)
             {
@@ -43,10 +43,10 @@
 
             var tex = new Texture2D(device, new TextureFileDescription(artifact.Path));
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
-            instance.EndLoad(new(tex, sampler, desc));
+            instance.Initialize(tex, sampler);
         }
 
-        protected override Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<MaterialTexture> instance, Core.IO.Binary.Materials.MaterialTexture desc)
+        protected override Task LoadInstanceAsync(ResourceManager manager, MaterialTexture instance, Core.IO.Binary.Materials.MaterialTexture desc)
         {
             if (instance == null)
             {
@@ -63,11 +63,11 @@
 
             var tex = new Texture2D(device, new TextureFileDescription(artifact.Path));
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
-            instance.EndLoad(new(tex, sampler, desc));
+            instance.Initialize(tex, sampler);
             return Task.CompletedTask;
         }
 
-        protected override void UnloadInstance(ResourceManager manager, ResourceInstance<MaterialTexture> instance)
+        protected override void UnloadInstance(ResourceManager manager, MaterialTexture instance)
         {
         }
     }

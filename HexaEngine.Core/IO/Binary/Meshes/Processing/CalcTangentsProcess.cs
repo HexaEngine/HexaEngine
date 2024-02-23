@@ -6,7 +6,6 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
-    using System.Runtime.Intrinsics.X86;
 
     /// <summary>
     /// Provides methods for calculating tangents and bitangents for a mesh.
@@ -23,12 +22,12 @@
         /// </summary>
         /// <param name="pMesh">The mesh data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool ProcessMesh(MeshData pMesh)
+        public static unsafe bool ProcessMesh(MeshLODData pMesh)
         {
             const float angleEpsilon = 0.9999f;
-            UnsafeList<bool> vertexDone = new(pMesh.VerticesCount);
+            UnsafeList<bool> vertexDone = new(pMesh.VertexCount);
 
-            pMesh.Tangents = new Vector3[pMesh.VerticesCount];
+            pMesh.Tangents = new Vector3[pMesh.VertexCount];
 
             Vector3[] meshPos = pMesh.Positions;
             Vector3[] meshNorm = pMesh.Normals;
@@ -36,7 +35,7 @@
             Vector3[] meshTang = pMesh.Tangents;
 
             // calculate the tangent and bitangent for every face
-            for (uint a = 0; a < pMesh.IndicesCount / 3; a++)
+            for (uint a = 0; a < pMesh.IndexCount / 3; a++)
             {
                 Face face = pMesh.GetFaceAtIndex(a);
 
@@ -93,11 +92,6 @@
                             localTangent = Vector3.Cross(meshNorm[p], localBitangent);
                             localTangent = Vector3.Normalize(localTangent);
                         }
-                        else
-                        {
-                            localBitangent = Vector3.Cross(localTangent, meshNorm[p]);
-                            localBitangent = Vector3.Normalize(localBitangent);
-                        }
                     }
 
                     // and write it into the mesh.
@@ -117,7 +111,7 @@
 
             // in the second pass we now smooth out all tangents and bitangents at the same local position
             // if they are not too far off.
-            for (uint a = 0; a < pMesh.VerticesCount; a++)
+            for (uint a = 0; a < pMesh.VertexCount; a++)
             {
                 if (vertexDone[a])
                     continue;
@@ -150,7 +144,7 @@
                 }
 
                 // smooth the tangents and bitangents of all vertices that were found to be close enough
-                Vector3 smoothTangent = default, smoothBitangent = default;
+                Vector3 smoothTangent = default;
 
                 for (uint b = 0; b < closeVertices.Count; ++b)
 
@@ -159,7 +153,6 @@
                 }
 
                 smoothTangent = Vector3.Normalize(smoothTangent);
-                smoothBitangent = Vector3.Normalize(smoothBitangent);
 
                 // and write it back into all affected tangents
                 for (uint b = 0; b < closeVertices.Count; ++b)
@@ -178,12 +171,12 @@
         /// </summary>
         /// <param name="pMesh">The mesh data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool ProcessMesh2(MeshData pMesh)
+        public static unsafe bool ProcessMesh2(MeshLODData pMesh)
         {
-            var nFace = pMesh.IndicesCount / 3;
+            var nFace = pMesh.IndexCount / 3;
 
-            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
-            Memset(vertTangents, 0, (int)pMesh.VerticesCount);
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
+            Memset(vertTangents, 0, (int)pMesh.VertexCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -221,7 +214,7 @@
                 vertTangents[i2] += tangent;
             }
 
-            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            for (int i = 0; i < pMesh.VertexCount; ++i)
             {
                 pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
             }
@@ -236,12 +229,12 @@
         /// </summary>
         /// <param name="pMesh">The terrain cell data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool ProcessMesh2(TerrainCellData pMesh)
+        public static unsafe bool ProcessMesh2(TerrainCellLODData pMesh)
         {
-            var nFace = pMesh.IndicesCount / 3;
+            var nFace = pMesh.IndexCount / 3;
 
-            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
-            Memset(vertTangents, 0, (int)pMesh.VerticesCount);
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
+            Memset(vertTangents, 0, (int)pMesh.VertexCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -279,7 +272,7 @@
                 vertTangents[i2] += tangent;
             }
 
-            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            for (int i = 0; i < pMesh.VertexCount; ++i)
             {
                 pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
             }
@@ -305,12 +298,12 @@
         /// </summary>
         /// <param name="pMesh">The terrain cell data to process.</param>
         /// <returns>True if the process is successful, otherwise false.</returns>
-        public static unsafe bool ProcessMesh2Parallel(TerrainCellData pMesh)
+        public static unsafe bool ProcessMesh2Parallel(TerrainCellLODData pMesh)
         {
-            var nFace = pMesh.IndicesCount / 3;
+            var nFace = pMesh.IndexCount / 3;
 
-            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
-            Memset(vertTangents, 0, (int)pMesh.VerticesCount);
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
+            Memset(vertTangents, 0, (int)pMesh.VertexCount);
 
             Parallel.For(0, nFace, i =>
             {
@@ -351,7 +344,7 @@
                 }
             });
 
-            Parallel.For(0, pMesh.VerticesCount, i =>
+            Parallel.For(0, pMesh.VertexCount, i =>
             {
                 pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
             });

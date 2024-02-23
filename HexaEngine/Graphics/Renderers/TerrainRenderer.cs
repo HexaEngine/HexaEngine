@@ -6,21 +6,23 @@
     using HexaEngine.Meshes;
     using System.Numerics;
 
-    public class StaticTerrainRenderer : IDisposable
+    public class TerrainRenderer : IDisposable
     {
         private readonly ConstantBuffer<Matrix4x4> worldBuffer;
+        private readonly ISamplerState linearClampSampler;
 
-        private StaticTerrainGrid? grid;
+        private TerrainGrid? grid;
 
         private bool initialized;
         private bool disposedValue;
 
-        public StaticTerrainRenderer(IGraphicsDevice device)
+        public TerrainRenderer(IGraphicsDevice device)
         {
             worldBuffer = new(device, CpuAccessFlags.Write);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
-        public void Initialize(StaticTerrainGrid grid)
+        public void Initialize(TerrainGrid grid)
         {
             this.grid = grid;
 
@@ -41,7 +43,10 @@
 
             for (int i = 0; i < grid.Count; i++)
             {
-                grid[i].Transform = transform * Matrix4x4.CreateTranslation(grid[i].Offset);
+                Matrix4x4 global = transform * Matrix4x4.CreateTranslation(grid[i].Offset);
+                Matrix4x4.Invert(global, out var globalInverse);
+                grid[i].Transform = global;
+                grid[i].TransformInv = globalInverse;
             }
         }
 
@@ -68,10 +73,10 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterialBundle material = layer.Material;
+                    TerrainMaterial material = layer.Material;
 
                     context.PSSetShaderResource(11, layer.Mask.SRV);
-                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetSampler(0, linearClampSampler);
                     context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "Forward", cell.IndexCount, 1, 0, 0, 0);
                 }
@@ -106,10 +111,10 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterialBundle material = layer.Material;
+                    TerrainMaterial material = layer.Material;
 
                     context.PSSetShaderResource(11, layer.Mask.SRV);
-                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetSampler(0, linearClampSampler);
                     context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "Deferred", cell.IndexCount, 1, 0, 0, 0);
                 }
@@ -142,11 +147,11 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterialBundle material = layer.Material;
+                    TerrainMaterial material = layer.Material;
 
-                    context.PSSetSampler(0, layer.MaskSampler);
+                    context.PSSetSampler(0, linearClampSampler);
                     context.PSSetShaderResource(0, layer.Mask.SRV);
-                    context.DSSetSampler(0, layer.MaskSampler);
+                    context.DSSetSampler(0, linearClampSampler);
                     context.DSSetShaderResource(0, layer.Mask.SRV);
                     material.DrawIndexedInstanced(context, "DepthOnly", cell.IndexCount, 1, 0, 0, 0);
                 }
@@ -183,7 +188,7 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterialBundle material = layer.Material;
+                    TerrainMaterial material = layer.Material;
 
                     material.DrawIndexedInstanced(context, type.ToString(), cell.IndexCount, 1, 0, 0, 0);
                     break;
@@ -198,11 +203,12 @@
             if (!disposedValue)
             {
                 worldBuffer?.Dispose();
+                linearClampSampler?.Dispose();
                 disposedValue = true;
             }
         }
 
-        ~StaticTerrainRenderer()
+        ~TerrainRenderer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

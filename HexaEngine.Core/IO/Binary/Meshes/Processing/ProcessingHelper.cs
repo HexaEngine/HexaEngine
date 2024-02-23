@@ -29,7 +29,7 @@
         /// </summary>
         /// <param name="mesh">The mesh data.</param>
         /// <returns>The computed position epsilon.</returns>
-        public static float ComputePositionEpsilon(MeshData mesh)
+        public static float ComputePositionEpsilon(MeshLODData mesh)
         {
             float epsilon = 1e-4f;
 
@@ -44,7 +44,7 @@
         /// </summary>
         /// <param name="mesh">The mesh data.</param>
         /// <returns>The computed position epsilon.</returns>
-        public static float ComputePositionEpsilon(TerrainCellData mesh)
+        public static float ComputePositionEpsilon(TerrainCellLODData mesh)
         {
             float epsilon = 1e-4f;
 

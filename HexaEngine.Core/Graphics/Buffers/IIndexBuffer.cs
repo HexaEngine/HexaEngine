@@ -16,6 +16,11 @@
         uint Count { get; }
 
         /// <summary>
+        /// Gets the index buffer format.
+        /// </summary>
+        IndexFormat Format { get; }
+
+        /// <summary>
         /// Binds the index buffer to the graphics context.
         /// </summary>
         /// <param name="context">The graphics context to which the buffer will be bound.</param>
@@ -86,7 +91,7 @@
         /// Gets or sets the index at the specified index in the buffer.
         /// </summary>
         /// <param name="index">The index of the element to get or set.</param>
-        T this[int index] { get; set; }
+        T this[uint index] { get; set; }
 
         /// <summary>
         /// Adds multiple indices to the buffer.

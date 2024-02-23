@@ -2,7 +2,10 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using System.Buffers.Binary;
+    using System.IO;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a layer mask used for terrain rendering.
@@ -11,7 +14,8 @@
     {
         private uint width;
         private uint height;
-        private ushort[] data;
+        private ulong[] data;
+        private long streamPosition;
 
 #nullable disable
 
@@ -27,7 +31,7 @@
         /// <param name="width">The width of the layer mask.</param>
         /// <param name="height">The height of the layer mask.</param>
         /// <param name="data">The data of the layer mask.</param>
-        public LayerMask(uint width, uint height, ushort[] data)
+        public LayerMask(uint width, uint height, ulong[] data)
         {
             this.width = width;
             this.height = height;
@@ -43,7 +47,7 @@
         {
             this.width = width;
             this.height = height;
-            data = new ushort[width * height * 4];
+            data = new ulong[width * height];
         }
 
         /// <summary>
@@ -55,22 +59,11 @@
         {
             get
             {
-                var idx = index * 4;
-                fixed (ushort* pData = data)
-                {
-                    return new Vector4(pData[idx], pData[idx + 1], pData[idx + 2], pData[idx + 3]) / 65535.0f;
-                }
+                return DecodePixel(data[index]);
             }
             set
             {
-                var idx = index * 4;
-                fixed (ushort* pData = data)
-                {
-                    pData[idx] = (ushort)(value.X * 65535.0f);
-                    pData[idx + 1] = (ushort)(value.Y * 65535.0f);
-                    pData[idx + 2] = (ushort)(value.Z * 65535.0f);
-                    pData[idx + 3] = (ushort)(value.W * 65535.0f);
-                }
+                data[index] = EncodePixel(value);
             }
         }
 
@@ -84,22 +77,11 @@
         {
             get
             {
-                var idx = GetIndexFor(x, y);
-                fixed (ushort* pData = data)
-                {
-                    return new Vector4(pData[idx], pData[idx + 1], pData[idx + 2], pData[idx + 3]) / 65535.0f;
-                }
+                return DecodePixel(data[GetIndexFor(x, y)]);
             }
             set
             {
-                var idx = GetIndexFor(x, y);
-                fixed (ushort* pData = data)
-                {
-                    pData[idx] = (ushort)(value.X * 65535.0f);
-                    pData[idx + 1] = (ushort)(value.Y * 65535.0f);
-                    pData[idx + 2] = (ushort)(value.Z * 65535.0f);
-                    pData[idx + 3] = (ushort)(value.W * 65535.0f);
-                }
+                data[GetIndexFor(x, y)] = EncodePixel(value);
             }
         }
 
@@ -113,6 +95,30 @@
         /// </summary>
         public uint Height => height;
 
+        public void Set(uint index, ulong value)
+        {
+            data[index] = value;
+        }
+
+        public static ulong EncodePixel(Vector4 pixel)
+        {
+            ulong encodedPixel = 0;
+            encodedPixel |= (ulong)(pixel.X * 65535.0f);
+            encodedPixel |= (ulong)(pixel.Y * 65535.0f) << 16;
+            encodedPixel |= (ulong)(pixel.Z * 65535.0f) << 32;
+            encodedPixel |= (ulong)(pixel.W * 65535.0f) << 48;
+            return encodedPixel;
+        }
+
+        public static Vector4 DecodePixel(ulong encodedPixel)
+        {
+            ushort r = (ushort)encodedPixel;
+            ushort g = (ushort)(encodedPixel >> 16);
+            ushort b = (ushort)(encodedPixel >> 32);
+            ushort a = (ushort)(encodedPixel >> 48);
+            return new Vector4(r, g, b, a) / 65535.0f;
+        }
+
         /// <summary>
         /// Gets the index for the specified coordinates in the terrain.
         /// </summary>
@@ -121,7 +127,7 @@
         /// <returns>The index.</returns>
         public uint GetIndexFor(uint x, uint y)
         {
-            return y * width + x * 4;
+            return y * width + x;
         }
 
         /// <summary>
@@ -129,45 +135,68 @@
         /// </summary>
         /// <param name="src">The source stream.</param>
         /// <param name="endianness">The endianness used for reading.</param>
+        /// <param name="compression"></param>
         /// <returns>The read height map.</returns>
-        public static LayerMask ReadFrom(Stream src, Endianness endianness)
+        public static LayerMask ReadFrom(Stream src, Endianness endianness, Compression compression)
         {
             LayerMask layerMask = new();
-            layerMask.Read(src, endianness);
+            layerMask.Read(src, endianness, compression);
             return layerMask;
         }
 
         /// <summary>
         /// Reads the layer mask data from a stream.
         /// </summary>
-        /// <param name="src">The source stream.</param>
+        /// <param name="stream">The source stream.</param>
         /// <param name="endianness">The endianness used for reading.</param>
-        public void Read(Stream src, Endianness endianness)
+        /// <param name="compression"></param>
+        public void Read(Stream stream, Endianness endianness, Compression compression)
         {
-            width = src.ReadUInt32(endianness);
-            height = src.ReadUInt32(endianness);
-            data = new ushort[width * height * 4];
+            width = stream.ReadUInt32(endianness);
+            height = stream.ReadUInt32(endianness);
+            uint size = stream.ReadUInt32(endianness);
+            streamPosition = stream.Position;
 
-            for (uint i = 0; i < data.Length; i++)
+            var decompressor = stream.CreateDecompressionStream(compression, out var isCompressed);
+
+            data = new ulong[width * height];
+            decompressor.ReadArrayUInt64(data, endianness);
+
+            if (isCompressed)
             {
-                data[i] = src.ReadUInt16(endianness);
+                decompressor.Dispose();
             }
+
+            stream.Position = streamPosition + size;
         }
 
         /// <summary>
         /// Writes the layer mask data to a stream.
         /// </summary>
-        /// <param name="dst">The destination stream.</param>
+        /// <param name="stream">The destination stream.</param>
         /// <param name="endianness">The endianness used for writing.</param>
-        public void Write(Stream dst, Endianness endianness)
+        /// <param name="compression"></param>
+        public void Write(Stream stream, Endianness endianness, Compression compression)
         {
-            dst.WriteUInt32(width, endianness);
-            dst.WriteUInt32(height, endianness);
+            stream.WriteUInt32(width, endianness);
+            stream.WriteUInt32(height, endianness);
+            long basePosition = stream.Position;
+            stream.Position += 4;
 
-            for (uint i = 0; i < data.Length; i++)
+            var compressor = stream.CreateCompressionStream(compression, out var isCompressed);
+
+            compressor.WriteArrayUInt64(data, endianness);
+
+            if (isCompressed)
             {
-                dst.WriteUInt16(data[i], endianness);
+                compressor.Dispose();
             }
+
+            long endPos = stream.Position;
+            uint size = (uint)(endPos - (basePosition + 4));
+            stream.Position = basePosition;
+            stream.WriteUInt32(size, endianness);
+            stream.Position = endPos;
         }
 
         /// <summary>
@@ -178,12 +207,12 @@
         /// <param name="cpuAccessFlags">The CPU access flags.</param>
         public unsafe Texture2D CreateLayerMask(IGraphicsDevice device, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None)
         {
-            Texture2DDescription desc = new(Format.R16G16B16A16Float, (int)width, (int)height, 1, 1, gpuAccessFlags, cpuAccessFlags);
+            Texture2DDescription desc = new(Format.R16G16B16A16UNorm, (int)width, (int)height, 1, 1, gpuAccessFlags, cpuAccessFlags);
             Texture2D layerMask;
 
-            fixed (ushort* pData = data)
+            fixed (ulong* pData = data)
             {
-                layerMask = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(ushort) * 4)));
+                layerMask = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
             }
 
             return layerMask;
@@ -197,11 +226,11 @@
         /// <returns>The created staging layer mask texture.</returns>
         public unsafe Texture2D CreateStagingLayerMask(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            Texture2DDescription desc = new(Format.R16G16B16A16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, accessFlags);
+            Texture2DDescription desc = new(Format.R16G16B16A16UNorm, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, accessFlags);
             Texture2D heightMap;
-            fixed (ushort* pData = data)
+            fixed (ulong* pData = data)
             {
-                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(float) * 4)));
+                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
             }
 
             return heightMap;
@@ -238,11 +267,11 @@
         /// <param name="texture">The source texture.</param>
         public unsafe void ReadLayerMask(IGraphicsContext context, Texture2D texture)
         {
-            data = new ushort[texture.Width * texture.Height * 4];
+            data = new ulong[texture.Width * texture.Height];
             if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)
             {
                 texture.Read(context);
-                var pixel = (ushort*)texture.Local;
+                var pixel = (ulong*)texture.Local;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];
@@ -250,13 +279,12 @@
             }
             else
             {
-                Texture2DDescription desc = new(Format.R16G16B16A16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read);
-                Texture2D staging = new(context.Device, desc);
+                Texture2D staging = new(context.Device, Format.R16G16B16A16UNorm, (int)width, (int)height, 1, 1, CpuAccessFlags.Read, GpuAccessFlags.None);
 
                 texture.CopyTo(context, staging);
 
                 staging.Read(context);
-                var pixel = (ushort*)texture.Local;
+                var pixel = (ulong*)staging.Local;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];

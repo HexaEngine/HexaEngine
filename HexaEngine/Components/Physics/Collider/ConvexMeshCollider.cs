@@ -68,11 +68,11 @@
             {
                 var mesh = model.Meshes[(int)i];
                 var key = $"{path}+{mesh.Name}+ConvexCook";
-                CookMesh(physics, key, mesh, bypassCache);
+                CookMesh(physics, key, mesh.LODs[0], bypassCache);
             }
         }
 
-        public void CookMesh(PxPhysics* physics, string key, MeshData data, bool bypassCache)
+        public void CookMesh(PxPhysics* physics, string key, MeshLODData data, bool bypassCache)
         {
             bool ownsBuffer = true;
 

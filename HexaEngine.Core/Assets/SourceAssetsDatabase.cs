@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
+    using Silk.NET.SDL;
     using System;
     using System.IO;
 
@@ -83,9 +84,10 @@
                 }
             }
 
-            Task.WaitAll([.. tasks]);
-
-            initLock.Set();
+            Task.WhenAll(tasks).ContinueWith(x =>
+            {
+                initLock.Set();
+            });
         }
 
         private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
@@ -139,6 +141,21 @@
         {
             var extension = Path.GetExtension(span);
             return extension == ".meta";
+        }
+
+        public static bool Exists(Guid guid)
+        {
+            initLock.Wait();
+            lock (_lock)
+            {
+                for (int i = 0; i < sourceAssets.Count; i++)
+                {
+                    var asset = sourceAssets[i];
+                    if (asset.Guid == guid)
+                        return true;
+                }
+            }
+            return false;
         }
 
         public static void Clear()
@@ -461,6 +478,11 @@
                     }
                 }
             }
+        }
+
+        public static string GetFullPath(string filename)
+        {
+            return Path.Combine(rootAssetsFolder, filename);
         }
 
         public static void Move(string path, string newPath)

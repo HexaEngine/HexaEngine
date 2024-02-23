@@ -1,32 +1,47 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using System.Text;
 
     [EditorCategory("Renderer")]
-    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
+    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, false)]
     public class TerrainRendererComponent : BaseRendererComponent
     {
-        private StaticTerrainRenderer renderer;
-        private readonly StaticTerrainGrid grid = new();
-        private HeightMap heightMap;
-
+        private TerrainRenderer renderer;
+        private TerrainGrid? terrain;
         private BoundingBox boundingBox;
+        private AssetRef terrainAsset;
 
         public TerrainRendererComponent()
         {
             QueueIndex = (uint)RenderQueueIndex.Transparency;
         }
 
+        [EditorProperty("Terrain File", AssetType.Terrain)]
+        public AssetRef TerrainAsset
+        {
+            get => terrainAsset;
+            set
+            {
+                terrainAsset = value;
+                UpdateTerrain();
+            }
+        }
+
         [JsonIgnore]
-        public override string DebugName { get; protected set; } = nameof(StaticTerrainRenderer);
+        public override string DebugName { get; protected set; } = nameof(TerrainRenderer);
 
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
@@ -35,25 +50,38 @@
         public override BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, GameObject.Transform); }
 
         [JsonIgnore]
-        public StaticTerrainGrid Grid => grid;
+        public TerrainGrid? Terrain => terrain;
+
+        public void CreateNew()
+        {
+            var name = SourceAssetsDatabase.GetFreeName("Terrain.terrain");
+
+            TerrainFile terrain = new();
+            TerrainCellData cell = new(default);
+            cell.GenerateLOD();
+            terrain.Cells.Add(cell);
+            terrain.Save(SourceAssetsDatabase.GetFullPath(name), Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
+
+            var meta = SourceAssetsDatabase.CreateFile(name);
+            var artifact = ArtifactDatabase.GetArtifact(meta.Guid);
+            terrainAsset = artifact?.Guid ?? Guid.Empty;
+            UpdateTerrain();
+        }
+
+        private static bool AssetExists(TerrainRendererComponent terrain)
+        {
+            return terrain.terrainAsset.Exists();
+        }
 
         public override void Load(IGraphicsDevice device)
         {
-            heightMap = new(32, 32);
-            heightMap.GenerateEmpty();
-            grid.Add(new(device, heightMap, true));
-
             renderer = new(device);
-            renderer.Initialize(grid);
+            UpdateTerrain();
         }
 
         public override void Unload()
         {
-            for (int i = 0; i < grid.Count; i++)
-            {
-                grid[i].Dispose();
-            }
-            grid.Clear();
+            terrain?.Dispose();
             renderer.Dispose();
         }
 
@@ -91,6 +119,47 @@
 
         public override void VisibilityTest(CullingContext context)
         {
+        }
+
+        private Job UpdateTerrain()
+        {
+            Loaded = false;
+            renderer?.Uninitialize();
+            var tmpTerrain = terrain;
+            terrain = null;
+            tmpTerrain?.Dispose();
+
+            return Job.Run("Terrain Load Job", this, state =>
+            {
+                if (state is not TerrainRendererComponent component)
+                {
+                    return;
+                }
+
+                if (component.GameObject == null)
+                {
+                    return;
+                }
+
+                if (component.terrainAsset.Guid == Guid.Empty)
+                {
+                    return;
+                }
+
+                var stream = component.terrainAsset.OpenReadReusable();
+                if (stream != null)
+                {
+                    component.terrain = new(stream, true);
+
+                    component.renderer.Initialize(component.terrain);
+                    component.Loaded = true;
+                    component.GameObject.SendUpdateTransformed();
+                }
+                else
+                {
+                    Logger.Error($"Couldn't load terrain {terrainAsset}");
+                }
+            });
         }
     }
 }

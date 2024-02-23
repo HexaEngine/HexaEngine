@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Mathematics
 {
     using System;
+    using System.Buffers.Binary;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -292,6 +294,52 @@
             string separator = NumberFormatInfo.GetInstance(formatProvider).NumberGroupSeparator;
 
             return $"<{X.ToString(format, formatProvider)}{separator} {Y.ToString(format, formatProvider)}>";
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Point2"/> from a <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The source <see cref="Stream"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        /// <returns>The read <see cref="Point2"/>.</returns>
+        public static Point2 Read(Stream stream, Endianness endianness)
+        {
+            Span<byte> src = stackalloc byte[8];
+            stream.Read(src);
+            Point2 point;
+            if (endianness == Endianness.LittleEndian)
+            {
+                point.X = BinaryPrimitives.ReadInt32LittleEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32LittleEndian(src[4..]);
+            }
+            else
+            {
+                point.X = BinaryPrimitives.ReadInt32BigEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32BigEndian(src[4..]);
+            }
+            return point;
+        }
+
+        /// <summary>
+        /// Writes a <see cref="Point2"/> to a <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The destination <see cref="Stream"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        public readonly void Write(Stream stream, Endianness endianness)
+        {
+            Span<byte> dst = stackalloc byte[8];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteInt32LittleEndian(dst, X);
+                BinaryPrimitives.WriteInt32LittleEndian(dst[4..], Y);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt32BigEndian(dst, X);
+                BinaryPrimitives.WriteInt32BigEndian(dst[4..], Y);
+            }
+
+            stream.Write(dst);
         }
     }
 }
