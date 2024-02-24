@@ -193,49 +193,48 @@
         /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool GenMeshVertexNormals2(TerrainCellLODData pMesh)
         {
-            Vector3* normals = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(normals, 0, (int)pMesh.VertexCount);
+            Vector3* normals = AllocT<Vector3>(pMesh.FaceCount);
+            Memset(normals, 0, (int)pMesh.FaceCount);
 
             var m_terrainHeight = (int)pMesh.Rows;
             var m_terrainWidth = (int)pMesh.Columns;
 
-            int i, j, index1, index2, index3, index, count;
-            Vector3 vertex1, vertex2, vertex3, vector1, vector2, sum;
-
-            for (j = 0; j < m_terrainHeight - 1; j++)
+            Parallel.For(0, m_terrainHeight - 1, j =>
             {
-                for (i = 0; i < m_terrainWidth - 1; i++)
+                for (int i = 0; i < m_terrainWidth - 1; i++)
                 {
-                    index1 = j * m_terrainHeight + i;
-                    index2 = j * m_terrainHeight + i + 1;
-                    index3 = (j + 1) * m_terrainHeight + i;
+                    int index1 = j * m_terrainHeight + i;
+                    int index2 = j * m_terrainHeight + i + 1;
+                    int index3 = (j + 1) * m_terrainHeight + i;
 
                     // Get three vertices from the face.
-                    vertex1 = pMesh.Positions[index1];
-                    vertex2 = pMesh.Positions[index2];
-                    vertex3 = pMesh.Positions[index3];
+                    Vector3 vertex1 = pMesh.Positions[index1];
+                    Vector3 vertex2 = pMesh.Positions[index2];
+                    Vector3 vertex3 = pMesh.Positions[index3];
 
                     // Calculate the two vectors for this face.
-                    vector1 = vertex1 - vertex3;
+                    Vector3 vector1 = vertex1 - vertex3;
 
-                    vector2 = vertex3 - vertex2;
+                    Vector3 vector2 = vertex3 - vertex2;
 
-                    index = j * (m_terrainHeight - 1) + i;
+                    int index = j * (m_terrainHeight - 1) + i;
 
                     // Calculate the cross product of those two vectors to get the un-normalized value for this face normal.
                     normals[index] = Vector3.Cross(vector1, vector2);
                 }
-            }
+            });
 
-            for (j = 0; j < m_terrainHeight; j++)
+            Parallel.For(0, m_terrainHeight, j =>
             {
-                for (i = 0; i < m_terrainWidth; i++)
+                for (int i = 0; i < m_terrainWidth; i++)
                 {
                     // Initialize the sum.
-                    sum = Vector3.Zero;
+                    Vector3 sum = Vector3.Zero;
 
                     // Initialize the count.
-                    count = 0;
+                    int count = 0;
+
+                    int index;
 
                     // Bottom left face.
                     if (i - 1 >= 0 && j - 1 >= 0)
@@ -285,7 +284,7 @@
                     // Normalize the final shared normal for this vertex and store it in the height map array.
                     pMesh.Normals[index] = sum;
                 }
-            }
+            });
 
             Free(normals);
 

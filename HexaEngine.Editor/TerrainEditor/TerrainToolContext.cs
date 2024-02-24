@@ -14,6 +14,8 @@
 
         public Vector3 UV { get; set; }
 
+        public TerrainGrid Grid { get; set; }
+
         public TerrainCell Cell { get; set; }
 
         public Matrix4x4 Transform => Cell.Transform;

@@ -14,7 +14,7 @@ SamplerState linearWrapSampler : register(s1);
 SamplerState pointClampSampler : register(s2);
 SamplerComparisonState shadowSampler : register(s3);
 
-Texture2D ssao : register(t0);
+Texture2D<float> ssao : register(t0);
 Texture2D brdfLUT : register(t1);
 
 StructuredBuffer<GlobalProbe> globalProbes : register(t2);
@@ -24,7 +24,7 @@ StructuredBuffer<ShadowData> shadowData : register(t4);
 StructuredBuffer<uint> lightIndexList : register(t5); //MAX_CLUSTER_LIGHTS * 16^3
 StructuredBuffer<LightGrid> lightGrid : register(t6); //16^3
 
-Texture2D depthAtlas : register(t7);
+Texture2D<float> depthAtlas : register(t7);
 Texture2DArray depthCSM : register(t8);
 
 TextureCube globalDiffuse : register(t9);

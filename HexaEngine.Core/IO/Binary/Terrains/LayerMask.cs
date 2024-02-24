@@ -16,6 +16,8 @@
         private uint height;
         private ulong[] data;
         private long streamPosition;
+        private Endianness endianness;
+        private Compression compression;
 
 #nullable disable
 
@@ -136,11 +138,12 @@
         /// <param name="src">The source stream.</param>
         /// <param name="endianness">The endianness used for reading.</param>
         /// <param name="compression"></param>
+        /// <param name="mode"></param>
         /// <returns>The read height map.</returns>
-        public static LayerMask ReadFrom(Stream src, Endianness endianness, Compression compression)
+        public static LayerMask ReadFrom(Stream src, Endianness endianness, Compression compression, TerrainLoadMode mode)
         {
             LayerMask layerMask = new();
-            layerMask.Read(src, endianness, compression);
+            layerMask.Read(src, endianness, compression, mode);
             return layerMask;
         }
 
@@ -150,12 +153,30 @@
         /// <param name="stream">The source stream.</param>
         /// <param name="endianness">The endianness used for reading.</param>
         /// <param name="compression"></param>
-        public void Read(Stream stream, Endianness endianness, Compression compression)
+        /// <param name="mode"></param>
+        public void Read(Stream stream, Endianness endianness, Compression compression, TerrainLoadMode mode)
         {
+            this.endianness = endianness;
+            this.compression = compression;
             width = stream.ReadUInt32(endianness);
             height = stream.ReadUInt32(endianness);
             uint size = stream.ReadUInt32(endianness);
             streamPosition = stream.Position;
+
+            if (mode == TerrainLoadMode.Immediate)
+            {
+                ReadMaskData(stream);
+            }
+
+            stream.Position = streamPosition + size;
+        }
+
+        public void ReadMaskData(Stream stream)
+        {
+            if (data != null)
+            {
+                return;
+            }
 
             var decompressor = stream.CreateDecompressionStream(compression, out var isCompressed);
 
@@ -166,8 +187,6 @@
             {
                 decompressor.Dispose();
             }
-
-            stream.Position = streamPosition + size;
         }
 
         /// <summary>

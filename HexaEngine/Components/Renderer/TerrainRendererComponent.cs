@@ -13,15 +13,15 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Scenes.Managers;
     using System.Text;
 
     [EditorCategory("Renderer")]
     [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, false)]
-    public class TerrainRendererComponent : BaseRendererComponent
+    public class TerrainRendererComponent : BaseRendererComponent, ISelectableRayTest
     {
         private TerrainRenderer renderer;
         private TerrainGrid? terrain;
-        private BoundingBox boundingBox;
         private AssetRef terrainAsset;
 
         public TerrainRendererComponent()
@@ -47,7 +47,7 @@
         public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
 
         [JsonIgnore]
-        public override BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, GameObject.Transform); }
+        public override BoundingBox BoundingBox { get => BoundingBox.Transform(terrain?.BoundingBox ?? BoundingBox.Empty, GameObject.Transform); }
 
         [JsonIgnore]
         public TerrainGrid? Terrain => terrain;
@@ -159,7 +159,34 @@
                 {
                     Logger.Error($"Couldn't load terrain {terrainAsset}");
                 }
-            });
+            }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
+        }
+
+        public bool SelectRayTest(Ray ray, ref float depth)
+        {
+            if (terrain == null)
+            {
+                return false;
+            }
+
+            if (!BoundingBox.Intersects(ray).HasValue)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < terrain.Count; i++)
+            {
+                var cell = terrain[i];
+                Ray cellSpaceRay = Ray.Transform(ray, cell.TransformInv);
+                var result = cell.LODData.Intersect(cellSpaceRay);
+                if (result != null)
+                {
+                    depth = result.Value;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

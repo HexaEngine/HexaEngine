@@ -5,24 +5,24 @@
 
     public static class MaterialShaderResourceFactoryExtensions
     {
-        public static Resources.MaterialShader? LoadMaterialShader<T>(this ResourceManager manager, MaterialShaderDesc desc)
+        public static Resources.MaterialShader LoadMaterialShader<T>(this ResourceManager manager, MaterialShaderDesc desc)
         {
-            return manager.CreateInstance<Resources.MaterialShader, MaterialShaderDesc>(ResourceTypeRegistry.GetGuid<T>(desc.MaterialId), desc);
+            return manager.CreateInstance<Resources.MaterialShader, MaterialShaderDesc>(ResourceTypeRegistry.GetGuid<T>(desc.MaterialId), desc) ?? throw new NotSupportedException();
         }
 
-        public static Resources.MaterialShader? LoadMaterialShader(this ResourceManager manager, int type, MaterialShaderDesc desc)
+        public static Resources.MaterialShader LoadMaterialShader(this ResourceManager manager, int type, MaterialShaderDesc desc)
         {
-            return manager.CreateInstance<Resources.MaterialShader, MaterialShaderDesc>(new(desc.MaterialId, type), desc);
+            return manager.CreateInstance<Resources.MaterialShader, MaterialShaderDesc>(new(desc.MaterialId, type), desc) ?? throw new NotSupportedException();
         }
 
-        public static async Task<Resources.MaterialShader?> LoadMaterialShaderAsync<T>(this ResourceManager manager, MaterialShaderDesc desc)
+        public static async Task<Resources.MaterialShader> LoadMaterialShaderAsync<T>(this ResourceManager manager, MaterialShaderDesc desc)
         {
-            return await manager.CreateInstanceAsync<Resources.MaterialShader, MaterialShaderDesc>(ResourceTypeRegistry.GetGuid<T>(desc.MaterialId), desc);
+            return await manager.CreateInstanceAsync<Resources.MaterialShader, MaterialShaderDesc>(ResourceTypeRegistry.GetGuid<T>(desc.MaterialId), desc) ?? throw new NotSupportedException();
         }
 
-        public static async Task<Resources.MaterialShader?> LoadMaterialShaderAsync(this ResourceManager manager, int type, MaterialShaderDesc desc)
+        public static async Task<Resources.MaterialShader> LoadMaterialShaderAsync(this ResourceManager manager, int type, MaterialShaderDesc desc)
         {
-            return await manager.CreateInstanceAsync<Resources.MaterialShader, MaterialShaderDesc>(new(desc.MaterialId, type), desc);
+            return await manager.CreateInstanceAsync<Resources.MaterialShader, MaterialShaderDesc>(new(desc.MaterialId, type), desc) ?? throw new NotSupportedException();
         }
 
         public static void UpdateMaterialShader(this ResourceManager manager, Resources.MaterialShader? shader, MaterialShaderDesc desc)

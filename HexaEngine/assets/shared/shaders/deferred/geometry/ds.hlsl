@@ -24,7 +24,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
     output.tangent = bary.x * tri[0].tangent + bary.y * tri[1].tangent + bary.z * tri[2].tangent;
 
 #if HasDisplacementTex
-    output.position.xyz = ComputeDisplacement(displacementTexture, displacementTextureSampler, DisplacementStrength, output.position.xyz, output.tex, output.normal);
+    output.position.xyz = ComputeDisplacement(displacementTexture, displacementTextureSampler, DisplacementStrength, output.position.xyz, output.tex.xy, output.normal);
 #endif
 
     output.position = mul(output.position, viewProj);

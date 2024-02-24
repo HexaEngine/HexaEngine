@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.TerrainEditor;
     using System.Numerics;
 
@@ -15,13 +16,14 @@
         public float TargetHeight { get => targetHeight; set => targetHeight = value; }
         public override string Name { get; } = "Flatten";
 
-        public override void DrawSettings()
+        public override bool DrawSettings(TerrainToolContext toolContext)
         {
             ImGui.Checkbox("Auto Height", ref autoHeight);
             if (!autoHeight)
             {
                 ImGui.InputFloat("Target Height", ref targetHeight);
             }
+            return false;
         }
 
         public override void OnMouseDown(Vector3 position)
@@ -29,17 +31,17 @@
             autoHeightValue = position.Y;
         }
 
-        public override bool Modify(TerrainToolContext context)
+        public override bool Modify(IGraphicsContext context, TerrainToolContext toolContext)
         {
             bool hasAffected = false;
-            for (int j = 0; j < context.VertexCount; j++)
+            for (int j = 0; j < toolContext.VertexCount; j++)
             {
-                if (!context.TestVertex(this, j, out var vertex, out float distance))
+                if (!toolContext.TestVertex(this, j, out var vertex, out float distance))
                 {
                     continue;
                 }
 
-                uint index = context.GetHeightMapIndex(vertex, out var heightMap);
+                uint index = toolContext.GetHeightMapIndex(vertex, out var heightMap);
 
                 float edgeFade = ComputeEdgeFade(distance);
                 float value = edgeFade * autoHeightValue;

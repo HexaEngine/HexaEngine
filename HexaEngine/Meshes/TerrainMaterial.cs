@@ -11,7 +11,7 @@
     public class TerrainMaterial
     {
         public Guid Id;
-        private readonly MaterialShader shader;
+        private MaterialShader shader;
         private readonly MaterialTextureList textureListPS = [];
         private readonly MaterialTextureList textureListDS = [];
         private readonly TerrainLayerGroup group;
@@ -82,9 +82,7 @@
             textureListDS.Update();
 
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], false, hasDisplacement);
-
-            shader?.Dispose();
-            shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc) ?? throw new NotSupportedException();
+            shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc);
         }
 
         public void Update()
@@ -95,12 +93,21 @@
             }
             textureListPS.Clear();
 
+            for (int i = 0; i < textureListDS.Count; i++)
+            {
+                textureListDS[i]?.Dispose();
+            }
+            textureListDS.Clear();
+
+            Guid guid = Guid.Empty;
             bool hasDisplacement = false;
             List<ShaderMacro> layerMacros = [];
             for (int i = 0; i < group.Count; i++)
             {
                 var layer = group[i];
                 if (layer == null || layer.Data == null) continue;
+
+                guid = Combine(guid, layer.Material.Guid);
 
                 var material = layer.Data;
                 var macros = material.GetShaderMacros();
@@ -135,8 +142,19 @@
             textureListDS.StartSamplerSlot = 1;
             textureListDS.Update();
 
-            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], false, hasDisplacement);
-            ResourceManager.Shared.UpdateMaterialShader(shader, shaderDesc);
+            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(guid, [.. layerMacros], false, hasDisplacement);
+
+            if (Id != guid)
+            {
+                var tmp = shader;
+                Volatile.Write(ref shader, ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc));
+                tmp.Dispose();
+            }
+            else
+            {
+                ResourceManager.Shared.UpdateMaterialShader(shader, shaderDesc);
+            }
+            Id = guid;
         }
 
         public void Setup()
@@ -356,6 +374,16 @@
 
         public void Dispose()
         {
+            for (int i = 0; i < textureListPS.Count; i++)
+            {
+                textureListPS[i]?.Dispose();
+            }
+
+            for (int i = 0; i < textureListDS.Count; i++)
+            {
+                textureListDS[i]?.Dispose();
+            }
+
             shader.Dispose();
             textureListPS.Dispose();
             textureListDS.Dispose();

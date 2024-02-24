@@ -150,9 +150,10 @@
         /// <param name="stream">The stream to read from.</param>
         /// <param name="endianness">The endianness used for binary data.</param>
         /// <param name="compression"></param>
+        /// <param name="mode"></param>
         /// <param name="layers">The list of terrain layers used for indexing.</param>
         /// <returns>A new instance of <see cref="TerrainLayerGroup"/> containing the read data.</returns>
-        public static TerrainLayerGroup Read(Stream stream, Endianness endianness, Compression compression, List<TerrainLayer> layers)
+        public static TerrainLayerGroup Read(Stream stream, Endianness endianness, Compression compression, TerrainLoadMode mode, List<TerrainLayer> layers)
         {
             var layersInGroup = new TerrainLayer[MaxLayers];
             var layerCount = stream.ReadInt32(endianness);
@@ -165,7 +166,7 @@
                 }
                 layersInGroup[i] = layers[idx];
             }
-            LayerMask layerMask = LayerMask.ReadFrom(stream, endianness, compression);
+            LayerMask layerMask = LayerMask.ReadFrom(stream, endianness, compression, mode);
             return new TerrainLayerGroup(layersInGroup, layerCount, layerMask);
         }
     }

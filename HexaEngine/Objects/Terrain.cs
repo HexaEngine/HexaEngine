@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Objects
 {
+    using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -10,6 +11,7 @@
         public Terrain()
         {
             AddComponent(new TerrainRendererComponent());
+            AddComponent(new TerrainCollider());
         }
 
         [JsonConstructor]

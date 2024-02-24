@@ -169,6 +169,7 @@
                 return;
 
             context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(0, light);
             for (int i = 0; i < grid.Count; i++)
             {
                 var cell = grid[i];
@@ -195,6 +196,7 @@
                 }
                 cell.Unbind(context);
             }
+            context.GSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(1, null);
         }
 

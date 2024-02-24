@@ -212,10 +212,10 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a bounding frustum in the specified color.
         /// </summary>
-        /// <param name="id">A unique identifier for the frustum draw command.</param>
         /// <param name="frustum">The bounding frustum to be drawn.</param>
         /// <param name="col">The color of the frustum.</param>
-        public static void DrawFrustum(string id, BoundingFrustum frustum, Vector4 col)
+        ///
+        public static void DrawFrustum(BoundingFrustum frustum, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -250,10 +250,10 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a bounding box in the specified color.
         /// </summary>
-        /// <param name="id">A unique identifier for the box draw command.</param>
         /// <param name="box">The bounding box to be drawn.</param>
         /// <param name="col">The color of the box.</param>
-        public static void DrawBoundingBox(string id, BoundingBox box, Vector4 col)
+        ///
+        public static void DrawBoundingBox(BoundingBox box, Vector4 col)
         {
             const uint vertexCount = 8;
             uint color = ColorConvertFloat4ToU32(col);
@@ -494,10 +494,10 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a bounding sphere in the specified color.
         /// </summary>
-        /// <param name="id">A unique identifier for the sphere draw command.</param>
         /// <param name="sphere">The bounding sphere to be drawn.</param>
         /// <param name="col">The color of the sphere.</param>
-        public static void DrawBoundingSphere(string id, BoundingSphere sphere, Vector4 col)
+        ///
+        public static void DrawBoundingSphere(BoundingSphere sphere, Vector4 col)
         {
             DrawPreComputed(PrimitiveTopology.LineList, spherePositions, sphereIndices, Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center), col);
         }
@@ -505,12 +505,12 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a ray starting from a specified origin and extending in a given direction.
         /// </summary>
-        /// <param name="id">A unique identifier for the ray draw command.</param>
         /// <param name="origin">The starting point of the ray.</param>
         /// <param name="direction">The direction in which the ray extends.</param>
         /// <param name="normalize">True if the direction vector should be normalized; otherwise, false.</param>
         /// <param name="col">The color of the ray.</param>
-        public static void DrawRay(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
+        ///
+        public static void DrawRay(Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -562,12 +562,12 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a line from a specified origin in the given direction.
         /// </summary>
-        /// <param name="id">A unique identifier for the line draw command.</param>
         /// <param name="origin">The starting point of the line.</param>
         /// <param name="direction">The direction in which the line extends.</param>
         /// <param name="normalize">True if the direction vector should be normalized; otherwise, false.</param>
         /// <param name="col">The color of the line.</param>
-        public static void DrawLine(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
+        ///
+        public static void DrawLine(Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -598,11 +598,11 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a line between a specified origin and destination points.
         /// </summary>
-        /// <param name="id">A unique identifier for the line draw command.</param>
         /// <param name="origin">The starting point of the line.</param>
         /// <param name="destination">The ending point of the line.</param>
         /// <param name="col">The color of the line.</param>
-        public static void DrawLine(string id, Vector3 origin, Vector3 destination, Vector4 col)
+        ///
+        public static void DrawLine(Vector3 origin, Vector3 destination, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -620,13 +620,13 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a ring in 3D space at a specified position and orientation.
         /// </summary>
-        /// <param name="id">A unique identifier for the ring draw command.</param>
         /// <param name="origin">The center point of the ring.</param>
         /// <param name="orientation">The orientation (rotation) of the ring.</param>
         /// <param name="majorAxis">The major axis of the ring.</param>
         /// <param name="minorAxis">The minor axis of the ring.</param>
         /// <param name="col">The color of the ring.</param>
-        public static void DrawRing(string id, Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
+        ///
+        public static void DrawRing(Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
@@ -672,12 +672,12 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a ring in 3D space at a specified position with given major and minor axes.
         /// </summary>
-        /// <param name="id">A unique identifier for the ring draw command.</param>
         /// <param name="origin">The center point of the ring.</param>
         /// <param name="majorAxis">The major axis of the ring.</param>
         /// <param name="minorAxis">The minor axis of the ring.</param>
         /// <param name="col">The color of the ring.</param>
-        public static void DrawRing(string id, Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
+        ///
+        public static void DrawRing(Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
@@ -723,11 +723,11 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a ring in 3D space at a specified position with given major and minor axes.
         /// </summary>
-        /// <param name="id">A unique identifier for the ring draw command.</param>
         /// <param name="origin">The center point of the ring.</param>
         /// <param name="ellipse">The major axis and minor axis of the ring.</param>
         /// <param name="col">The color of the ring.</param>
-        public static void DrawRing(string id, Vector3 origin, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
+        ///
+        public static void DrawRing(Vector3 origin, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
@@ -776,14 +776,14 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Draws a ring-shaped billboard in 3D space.
         /// </summary>
-        /// <param name="id">Identifier for the billboard.</param>
         /// <param name="origin">The center of the ring.</param>
         /// <param name="camPos">Camera position in world space.</param>
         /// <param name="camUp">Camera up vector.</param>
         /// <param name="camForward">Camera forward vector.</param>
         /// <param name="ellipse">Tuple containing major and minor axes of the ellipse defining the ring.</param>
         /// <param name="col">Color of the ring.</param>
-        public static void DrawRingBillboard(string id, Vector3 origin, Vector3 camPos, Vector3 camUp, Vector3 camForward, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
+        ///
+        public static void DrawRingBillboard(Vector3 origin, Vector3 camPos, Vector3 camUp, Vector3 camForward, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
@@ -848,14 +848,14 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 3D box at a specified position with the given orientation and dimensions.
         /// </summary>
-        /// <param name="id">A unique identifier for the box draw command.</param>
         /// <param name="origin">The center point of the box.</param>
         /// <param name="orientation">The orientation (rotation) of the box.</param>
         /// <param name="width">The width of the box.</param>
         /// <param name="height">The height of the box.</param>
         /// <param name="depth">The depth of the box.</param>
         /// <param name="col">The color of the box.</param>
-        public static void DrawBox(string id, Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 col)
+        ///
+        public static void DrawBox(Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 col)
         {
             DrawPreComputed(PrimitiveTopology.LineList, boxPositions, boxIndices, Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
@@ -863,12 +863,12 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 3D sphere at a specified position with the given orientation and radius.
         /// </summary>
-        /// <param name="id">A unique identifier for the sphere draw command.</param>
         /// <param name="origin">The center point of the sphere.</param>
         /// <param name="orientation">The orientation (rotation) of the sphere.</param>
         /// <param name="radius">The radius of the sphere.</param>
         /// <param name="col">The color of the sphere.</param>
-        public static void DrawSphere(string id, Vector3 origin, Quaternion orientation, float radius, Vector4 col)
+        ///
+        public static void DrawSphere(Vector3 origin, Quaternion orientation, float radius, Vector4 col)
         {
             DrawPreComputed(PrimitiveTopology.LineList, spherePositions, sphereIndices, Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
@@ -1144,13 +1144,13 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 3D capsule at a specified position with the given orientation, radius, and length.
         /// </summary>
-        /// <param name="id">A unique identifier for the capsule draw command.</param>
         /// <param name="origin">The center point of the capsule.</param>
         /// <param name="orientation">The orientation (rotation) of the capsule.</param>
         /// <param name="radius">The radius of the capsule.</param>
         /// <param name="length">The length of the capsule (excluding the two hemispheres).</param>
         /// <param name="col">The color of the capsule.</param>
-        public static void DrawCapsule(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
+        ///
+        public static void DrawCapsule(Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
         {
             DrawPreComputed(PrimitiveTopology.LineList, capsulePositions, capsuleIndices, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
@@ -1304,13 +1304,13 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 3D cylinder at a specified position with the given orientation, radius, and length.
         /// </summary>
-        /// <param name="id">A unique identifier for the cylinder draw command.</param>
         /// <param name="origin">The center point of the cylinder.</param>
         /// <param name="orientation">The orientation (rotation) of the cylinder.</param>
         /// <param name="radius">The radius of the cylinder.</param>
         /// <param name="length">The length of the cylinder.</param>
         /// <param name="col">The color of the cylinder.</param>
-        public static void DrawCylinder(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
+        ///
+        public static void DrawCylinder(Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
         {
             DrawPreComputed(PrimitiveTopology.LineList, cylinderPositions, cylinderIndices, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), col);
         }
@@ -1318,14 +1318,14 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 3D triangle with the specified vertices, position, orientation, and color.
         /// </summary>
-        /// <param name="id">A unique identifier for the triangle draw command.</param>
         /// <param name="origin">The position of the triangle's local origin.</param>
         /// <param name="orientation">The orientation (rotation) of the triangle.</param>
         /// <param name="a">The first vertex of the triangle.</param>
         /// <param name="b">The second vertex of the triangle.</param>
         /// <param name="c">The third vertex of the triangle.</param>
         /// <param name="col">The color of the triangle.</param>
-        public static void DrawTriangle(string id, Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 col)
+        ///
+        public static void DrawTriangle(Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -1345,7 +1345,6 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a textured quad.
         /// </summary>
-        /// <param name="id">The identifier for the quad.</param>
         /// <param name="origin">The origin of the quad.</param>
         /// <param name="orientation">The orientation of the quad.</param>
         /// <param name="scale">The scale of the quad.</param>
@@ -1353,7 +1352,8 @@ new Vector3(+1, +1, +1),
         /// <param name="uv1">The UV coordinates of the top-right corner of the quad.</param>
         /// <param name="col">The color of the quad.</param>
         /// <param name="texId">The texture ID of the quad.</param>
-        public static void DrawQuad(string id, Vector3 origin, Quaternion orientation, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
+        ///
+        public static void DrawQuad(Vector3 origin, Quaternion orientation, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -1380,7 +1380,6 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a textured quad billboard in 3D space.
         /// </summary>
-        /// <param name="id">Identifier for the billboard.</param>
         /// <param name="origin">The center point of the billboard in world space.</param>
         /// <param name="camOrigin">The origin of the camera in world space.</param>
         /// <param name="camUp">The up vector of the camera in world space.</param>
@@ -1390,7 +1389,8 @@ new Vector3(+1, +1, +1),
         /// <param name="uv1">The UV coordinate for the top-right corner of the texture.</param>
         /// <param name="col">The color of the billboard.</param>
         /// <param name="texId">The identifier of the texture to be applied to the billboard.</param>
-        public static void DrawQuadBillboard(string id, Vector3 origin, Vector3 camOrigin, Vector3 camUp, Vector3 camForward, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
+        ///
+        public static void DrawQuadBillboard(Vector3 origin, Vector3 camOrigin, Vector3 camUp, Vector3 camForward, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
         {
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -1419,11 +1419,11 @@ new Vector3(+1, +1, +1),
         /// <summary>
         /// Draws a 2D grid in 3D space defined by the provided transformation matrix.
         /// </summary>
-        /// <param name="id">A unique identifier for the grid draw command.</param>
         /// <param name="matrix">The transformation matrix defining the orientation and position of the grid.</param>
         /// <param name="size">The size of the grid (half-extent in each dimension).</param>
         /// <param name="col">The color of the grid lines.</param>
-        public static void DrawGrid(string id, Matrix4x4 matrix, int size, Vector4 col)
+        ///
+        public static void DrawGrid(Matrix4x4 matrix, int size, Vector4 col)
         {
             uint vertexCount = 2u * (uint)size * 2u + 4;
             uint color = ColorConvertFloat4ToU32(col);

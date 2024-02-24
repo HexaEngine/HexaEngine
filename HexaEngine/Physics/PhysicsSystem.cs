@@ -49,6 +49,15 @@
 
             foundation = NativeMethods.phys_PxCreateFoundation(versionNumber, (PxAllocatorCallback*)allocator, (PxErrorCallback*)errorCallback);
 
+            // create pvd
+            var pvd = NativeMethods.phys_PxCreatePvd(foundation);
+
+            fixed (byte* bytePointer = "127.0.0.1"u8.ToArray())
+            {
+                var transport = NativeMethods.phys_PxDefaultPvdSocketTransportCreate(bytePointer, 5425, 10);
+                pvd->ConnectMut(transport, PxPvdInstrumentationFlags.All);
+            }
+
             if (foundation == null)
             {
                 Logger.Error("Failed to create PxFoundation", true);
@@ -56,7 +65,9 @@
 
             tolerancesScale = new PxTolerancesScale { length = 1, speed = 10 };
             var scale = tolerancesScale;
-            physics = NativeMethods.phys_PxCreatePhysics(versionNumber, foundation, &scale, true, null, null);
+            physics = NativeMethods.phys_PxCreatePhysics(versionNumber, foundation, &scale, true, pvd, null);
+
+            NativeMethods.phys_PxInitExtensions(physics, pvd);
 
             if (physics == null)
             {
@@ -93,6 +104,14 @@
             if (pxScene == null)
             {
                 Logger.Error("Failed to create PxScene", true);
+            }
+
+            var pvdClient = pxScene->GetScenePvdClientMut();
+            if (pvdClient != null)
+            {
+                pvdClient->SetScenePvdFlagMut(PxPvdSceneFlag.TransmitConstraints, true);
+                pvdClient->SetScenePvdFlagMut(PxPvdSceneFlag.TransmitContacts, true);
+                pvdClient->SetScenePvdFlagMut(PxPvdSceneFlag.TransmitScenequeries, true);
             }
 
             eventCallbacks = new(this);

@@ -40,7 +40,7 @@ SamplerState linear_clamp_sampler : register(s0);
 SamplerComparisonState shadow_sampler : register(s1);
 
 Texture2D<float> depthTx : register(t0);
-Texture2D shadowAtlas : register(t1);
+Texture2D<float> shadowAtlas : register(t1);
 Texture2DArray cascadeShadowMaps : register(t2);
 
 StructuredBuffer<VolumetricLight> lights : register(t3);
@@ -75,7 +75,7 @@ float MieScattering(float3 V, float3 L)
     float cosTheta = dot(V, L);
     float gSquared = mieG * mieG;
     float part1 = (1.0 - gSquared) * (1.0 + cosTheta * cosTheta);
-    float part2 = pow(1.0 + gSquared - 2.0 * mieG * cosTheta, 1.5);
+    float part2 = pow(abs(1.0 + gSquared - 2.0 * mieG * cosTheta), 1.5);
     return mieCoefficient * part1 / (4.0 * PI * part2);
 }
 

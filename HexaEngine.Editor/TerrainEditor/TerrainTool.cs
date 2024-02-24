@@ -1,16 +1,19 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System.Numerics;
 
-    public abstract class TerrainTool
+    public abstract class TerrainTool : IDisposable
     {
-        private float size = 2;
-        private float strength = 10;
-        private float blendStart = 0;
-        private float blendEnd = 1;
-        private float edgeFadeStart = 0;
-        private float edgeFadeEnd = 2;
+        protected float size = 2;
+        protected float strength = 10;
+        protected float blendStart = 0;
+        protected float blendEnd = 1;
+        protected float edgeFadeStart = 0;
+        protected float edgeFadeEnd = 2;
+        private bool disposedValue;
+        private bool isInitialized;
 
         public float Strength
         {
@@ -49,17 +52,63 @@
 
         public abstract string Name { get; }
 
-        public abstract bool Modify(TerrainToolContext context);
+        public virtual void Initialize(IGraphicsDevice device)
+        {
+            if (isInitialized)
+            {
+                return;
+            }
+
+            if (disposedValue)
+            {
+                disposedValue = false;
+                GC.ReRegisterForFinalize(this);
+            }
+
+            InitializeTool(device);
+
+            isInitialized = true;
+        }
+
+        protected virtual void InitializeTool(IGraphicsDevice device)
+        {
+        }
+
+        public abstract bool Modify(IGraphicsContext context, TerrainToolContext toolContext);
 
         public virtual void OnMouseDown(Vector3 position)
         {
         }
 
-        public abstract void DrawSettings();
+        public abstract bool DrawSettings(TerrainToolContext toolContext);
 
         public float ComputeEdgeFade(float distance)
         {
             return MathUtil.Clamp01((edgeFadeEnd - distance) / (edgeFadeEnd - edgeFadeStart));
+        }
+
+        protected virtual void DisposeCore()
+        {
+        }
+
+        private void DisposeInternal()
+        {
+            if (!disposedValue)
+            {
+                DisposeCore();
+                disposedValue = true;
+            }
+        }
+
+        ~TerrainTool()
+        {
+            DisposeInternal();
+        }
+
+        public void Dispose()
+        {
+            DisposeInternal();
+            GC.SuppressFinalize(this);
         }
     }
 }

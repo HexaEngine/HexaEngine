@@ -83,11 +83,11 @@
             {
                 if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                 {
-                    DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid(Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
                 else if (EditorCameraController.Dimension == EditorCameraDimension.Dim2D)
                 {
-                    DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid(MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
                 }
             }
 
@@ -98,8 +98,8 @@
                     Light light = scene.LightManager.Lights[i];
                     if ((drawLights & EditorDrawLightsFlags.NoDirectionalLights) == 0 && light is DirectionalLight directional)
                     {
-                        DebugDraw.DrawRay(light.FullName, light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
-                        DebugDraw.DrawQuadBillboard(light.FullName, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
 
                         if (drawLightBounds)
                         {
@@ -107,35 +107,35 @@
                             {
                                 for (int ji = 0; ji < 8; ji++)
                                 {
-                                    DebugDraw.DrawFrustum($"{light}{scene.Cameras[j]}{ji}", directional.ShadowFrustra[ji], Vector4.One);
+                                    DebugDraw.DrawFrustum(directional.ShadowFrustra[ji], Vector4.One);
                                 }
                             }
                         }
                     }
 
-                    if ((drawLights & EditorDrawLightsFlags.NoPointLights) == 0 && light is Spotlight spotlight)
+                    if ((drawLights & EditorDrawLightsFlags.NoSpotLights) == 0 && light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawQuadBillboard(light.FullName, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
-                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
 
-                        DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
-                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetConeEllipse(spotlight.Range), Vector4.One);
-                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetInnerConeEllipse(spotlight.Range), Vector4.One);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetConeEllipse(spotlight.Range), Vector4.One);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetInnerConeEllipse(spotlight.Range), Vector4.One);
 
                         if (drawLightBounds)
                         {
-                            DebugDraw.DrawFrustum(light.Name + "Bounds", spotlight.ShadowFrustum, Vector4.One);
+                            DebugDraw.DrawFrustum(spotlight.ShadowFrustum, Vector4.One);
                         }
                     }
 
-                    if ((drawLights & EditorDrawLightsFlags.NoSpotLights) == 0 && light is PointLight pointLight)
+                    if ((drawLights & EditorDrawLightsFlags.NoPointLights) == 0 && light is PointLight pointLight)
                     {
-                        DebugDraw.DrawQuadBillboard(light.Name, light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
-                        DebugDraw.DrawRingBillboard(light.Name + "0", light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, (new(0, 0.5f, 0), new(0.5f, 0, 0)), Vector4.One);
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawRingBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, (new(0, 0.5f, 0), new(0.5f, 0, 0)), Vector4.One);
 
                         if (drawLightBounds)
                         {
-                            DebugDraw.DrawBoundingBox(light.Name + "Bounds", pointLight.ShadowBox, Vector4.One);
+                            DebugDraw.DrawBoundingBox(pointLight.ShadowBox, Vector4.One);
                         }
                     }
                 }
@@ -150,8 +150,8 @@
                     {
                         continue;
                     }
-                    DebugDraw.DrawQuadBillboard(cam.Name, cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Camera"));
-                    DebugDraw.DrawFrustum(cam.Name, cam.Transform.NormalizedFrustum, Vector4.One);
+                    DebugDraw.DrawQuadBillboard(cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Camera"));
+                    DebugDraw.DrawFrustum(cam.Transform.NormalizedFrustum, Vector4.One);
                 }
             }
 
@@ -202,15 +202,15 @@
 
                         if (component is BoxCollider box)
                         {
-                            DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                            DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
                         }
                         if (component is SphereCollider sphere)
                         {
-                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                            DebugDraw.DrawSphere(transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
                         }
                         if (component is CapsuleCollider capsule)
                         {
-                            DebugDraw.DrawCapsule(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                            DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length * 2, Vector4.One);
                         }
                     }
                 }

@@ -26,7 +26,7 @@
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
             var viewport = creator.Viewport;
-            postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height);
+            postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, PostProcessingFlags.HDR | PostProcessingFlags.ForceDynamic);
             postProcessingManager.Add<VelocityBuffer>();
             postProcessingManager.Add<SSAO>();
             postProcessingManager.Add<HBAO>();

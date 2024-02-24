@@ -34,8 +34,8 @@ void main(uint3 groupId : SV_GroupID,
     float3 max_point_vs = GetPositionVS((groupId.xy + 1) * tileSizePx, 1.0f);
     float3 min_point_vs = GetPositionVS(groupId.xy * tileSizePx, 1.0f);
 
-    float cluster_near = -camNear * pow(camFar / camNear, groupId.z / float(CLUSTERS_Z));
-    float cluster_far = -camNear * pow(camFar / camNear, (groupId.z + 1) / float(CLUSTERS_Z));
+    float cluster_near = -camNear * pow(abs(camFar / camNear), groupId.z / float(CLUSTERS_Z));
+    float cluster_far = -camNear * pow(abs(camFar / camNear), (groupId.z + 1) / float(CLUSTERS_Z));
 
     float3 minPointNear = IntersectionZPlane(min_point_vs, cluster_near);
     float3 minPointFar = IntersectionZPlane(min_point_vs, cluster_far);

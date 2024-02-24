@@ -6,11 +6,31 @@
 
     public struct CSMShadowParams
     {
-        public Matrix4x4 View;
+        public Matrix4x4 View0;
+        public Matrix4x4 View1;
+        public Matrix4x4 View2;
+        public Matrix4x4 View3;
+        public Matrix4x4 View4;
+        public Matrix4x4 View5;
+        public Matrix4x4 View6;
+        public Matrix4x4 View7;
 
-        public CSMShadowParams(Matrix4x4 view)
+        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7)
         {
-            View = view;
+            View0 = view0;
+            View1 = view1;
+            View2 = view2;
+            View3 = view3;
+            View4 = view4;
+            View5 = view5;
+            View6 = view6;
+            View7 = view7;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe Matrix4x4* GetViews(CSMShadowParams* data)
+        {
+            return (Matrix4x4*)data;
         }
     }
 
@@ -65,7 +85,7 @@
         public float Cascade7;
         public float Size;
         public float Softness;
-        public float CascadeCount;
+        public uint CascadeCount;
 
         public Vector4 AtlasCoord0;
         public Vector4 AtlasCoord1;
@@ -104,7 +124,7 @@
             View0 = light.Transform.View;
             Size = size;
             Softness = 1;
-            CascadeCount = light.CascadeCount;
+            CascadeCount = (uint)light.CascadeCount;
             NormalBias = light.ShadowMapNormalBias;
             SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
         }

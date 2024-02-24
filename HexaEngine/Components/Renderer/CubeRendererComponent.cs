@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Jobs;
 
     public class CubeRendererComponent : PrimitiveRenderComponent
@@ -25,7 +26,7 @@
                 cube?.Dispose();
                 cube = new(device);
 
-                var materialData = GetMaterial(component.materialAsset);
+                var materialData = MaterialData.GetMaterial(component.materialAsset);
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }

@@ -300,56 +300,114 @@
         /// <returns>True if the process is successful, otherwise false.</returns>
         public static unsafe bool ProcessMesh2Parallel(TerrainCellLODData pMesh)
         {
-            var nFace = pMesh.IndexCount / 3;
+            Vector3* tangents = AllocT<Vector3>(pMesh.FaceCount);
+            Memset(tangents, 0, (int)pMesh.FaceCount);
 
-            Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertTangents, 0, (int)pMesh.VertexCount);
+            var m_terrainHeight = (int)pMesh.Rows;
+            var m_terrainWidth = (int)pMesh.Columns;
 
-            Parallel.For(0, nFace, i =>
+            Parallel.For(0, m_terrainHeight - 1, j =>
             {
-                var i0 = pMesh.Indices[i * 3];
-                var i1 = pMesh.Indices[i * 3 + 1];
-                var i2 = pMesh.Indices[i * 3 + 2];
-
-                var vtxP1 = pMesh.Positions[i0];
-                var vtxP2 = pMesh.Positions[i1];
-                var vtxP3 = pMesh.Positions[i2];
-
-                Vector3 v = vtxP2 - vtxP1;
-                Vector3 w = vtxP3 - vtxP1;
-
-                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
-                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
-
-                float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
-
-                if (sx * ty == sy * tx)
+                for (int i = 0; i < m_terrainWidth - 1; i++)
                 {
-                    sx = 0.0f;
-                    sy = 1.0f;
-                    tx = 1.0f;
-                    ty = 0.0f;
-                }
+                    int i0 = j * m_terrainHeight + i;
+                    int i1 = j * m_terrainHeight + i + 1;
+                    int i2 = (j + 1) * m_terrainHeight + i;
 
-                Vector3 tangent;
-                tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
-                tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
-                tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
+                    var vtxP1 = pMesh.Positions[i0];
+                    var vtxP2 = pMesh.Positions[i1];
+                    var vtxP3 = pMesh.Positions[i2];
 
-                lock (pMesh)
-                {
-                    vertTangents[i0] += tangent;
-                    vertTangents[i1] += tangent;
-                    vertTangents[i2] += tangent;
+                    Vector3 v = vtxP2 - vtxP1;
+                    Vector3 w = vtxP3 - vtxP1;
+
+                    float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
+                    float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
+
+                    float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
+
+                    if (sx * ty == sy * tx)
+                    {
+                        sx = 0.0f;
+                        sy = 1.0f;
+                        tx = 1.0f;
+                        ty = 0.0f;
+                    }
+
+                    Vector3 tangent;
+                    tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
+                    tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
+                    tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
+
+                    int index = j * (m_terrainHeight - 1) + i;
+
+                    tangents[index] = tangent;
                 }
             });
 
-            Parallel.For(0, pMesh.VertexCount, i =>
+            Parallel.For(0, m_terrainHeight, j =>
             {
-                pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
+                for (int i = 0; i < m_terrainWidth; i++)
+                {
+                    // Initialize the sum.
+                    Vector3 sum = Vector3.Zero;
+
+                    // Initialize the count.
+                    int count = 0;
+
+                    int index;
+
+                    // Bottom left face.
+                    if (i - 1 >= 0 && j - 1 >= 0)
+                    {
+                        index = (j - 1) * (m_terrainHeight - 1) + (i - 1);
+
+                        sum += tangents[index];
+                        count++;
+                    }
+
+                    // Bottom right face.
+                    if (i < m_terrainWidth - 1 && j - 1 >= 0)
+                    {
+                        index = (j - 1) * (m_terrainHeight - 1) + i;
+
+                        sum += tangents[index];
+                        count++;
+                    }
+
+                    // Upper left face.
+                    if (i - 1 >= 0 && j < m_terrainHeight - 1)
+                    {
+                        index = j * (m_terrainHeight - 1) + (i - 1);
+
+                        sum += tangents[index];
+                        count++;
+                    }
+
+                    // Upper right face.
+                    if (i < m_terrainWidth - 1 && j < m_terrainHeight - 1)
+                    {
+                        index = j * (m_terrainHeight - 1) + i;
+
+                        sum += tangents[index];
+                        count++;
+                    }
+
+                    // Take the average of the faces touching this vertex.
+                    sum /= count;
+
+                    // Calculate the length of this tangent.
+                    sum = Vector3.Normalize(sum);
+
+                    // Get an index to the vertex location in the height map array.
+                    index = j * m_terrainHeight + i;
+
+                    // Normalize the final shared tangent for this vertex and store it in the height map array.
+                    pMesh.Tangents[index] = sum;
+                }
             });
 
-            Free(vertTangents);
+            Free(tangents);
 
             return true;
         }

@@ -18,7 +18,7 @@
 #define HARD_SHADOWS_SPOTLIGHTS 0
 #endif
 
-float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float N)
+float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -56,7 +56,7 @@ float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D shado
 #endif
 }
 
-float ShadowFactorDirectionalLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float N)
+float ShadowFactorDirectionalLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -158,7 +158,7 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 #endif
 }
 
-float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorPointLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
 {
     float3 lightDirection = position - light.position.xyz;
     float3 L = normalize(lightDirection);
@@ -234,7 +234,7 @@ float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas
     }
 }
 
-float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorPointLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
 {
     float3 lightDirection = position - light.position.xyz;
     float3 L = normalize(lightDirection);
@@ -315,7 +315,7 @@ float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light li
     }
 }
 
-float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -355,7 +355,7 @@ float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas,
 #endif
 }
 
-float ShadowFactorSpotlight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position, float N)
+float ShadowFactorSpotlight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -398,7 +398,7 @@ float ShadowFactorSpotlight(SamplerState state, Texture2D shadowAtlas, Light lig
 #endif
 }
 
-float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D shadowAtlas, ShadowData data, float3 position)
+float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -434,7 +434,7 @@ float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D shado
 #endif
 }
 
-float ShadowFactorDirectionalLight(SamplerState state, Texture2D shadowAtlas, ShadowData data, float3 position)
+float ShadowFactorDirectionalLight(SamplerState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -534,7 +534,7 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 #endif
 }
 
-float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
+float ShadowFactorPointLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position)
 {
     const float bias = 0.005f;
 
@@ -605,7 +605,7 @@ float ShadowFactorPointLight(SamplerComparisonState state, Texture2D shadowAtlas
     }
 }
 
-float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light light, ShadowData data, float3 position)
+float ShadowFactorPointLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position)
 {
     const float bias = 0.005f;
 
@@ -681,7 +681,7 @@ float ShadowFactorPointLight(SamplerState state, Texture2D shadowAtlas, Light li
     }
 }
 
-float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas, ShadowData data, float3 position)
+float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
@@ -716,7 +716,7 @@ float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D shadowAtlas,
 #endif
 }
 
-float ShadowFactorSpotlight(SamplerState state, Texture2D shadowAtlas, ShadowData data, float3 position)
+float ShadowFactorSpotlight(SamplerState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 

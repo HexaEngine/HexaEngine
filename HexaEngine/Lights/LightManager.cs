@@ -196,7 +196,7 @@
                 var light = activeLights[i];
                 if (light.ShadowMapEnable && !light.InUpdateQueue)
                 {
-                    if (light.ShadowMapUpdateMode == ShadowUpdateMode.EveryFrame | light.UpdateShadowMapSize(camera, shadowAtlas))
+                    if (light is DirectionalLight || light.ShadowMapUpdateMode == ShadowUpdateMode.EveryFrame | light.UpdateShadowMapSize(camera, shadowAtlas))
                     {
                         light.InUpdateQueue = true;
                         UpdateShadowLightQueue.Enqueue(light);

@@ -6,6 +6,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -114,6 +115,14 @@
             forwardSRVs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
             forwardSRVs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
             forwardSRVs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            for (int i = 0; i < lights.ActiveCount; i++)
+            {
+                var light = lights.Active[i];
+                if (light is DirectionalLight directional && directional.ShadowMapEnable)
+                {
+                    forwardSRVs[8] = (void*)(light.GetShadowMap()?.NativePointer ?? 0);
+                }
+            }
 
             forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];

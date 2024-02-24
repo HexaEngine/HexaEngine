@@ -37,7 +37,7 @@ float4 main(const VertexOut input) : SV_TARGET
 
     for (int i = 0; i < 4; i++)
     {
-        float3 downscaledColor = volumetricLightTex.Load(int3(downscaledCoordinates + offsets[i], 0));
+        float3 downscaledColor = volumetricLightTex.Load(int3(downscaledCoordinates + offsets[i], 0)).rgb;
 
         float downscaledDepth = depthTex.Load(int3(downscaledCoordinates + offsets[i], 1));
 

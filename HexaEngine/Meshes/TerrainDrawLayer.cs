@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
 
     public class TerrainDrawLayer
@@ -10,7 +11,7 @@
         private readonly TerrainMaterial material;
         private readonly TerrainLayerGroup group;
 
-        public unsafe TerrainDrawLayer(TerrainLayerGroup group, bool isDynamic, bool isDefault = false)
+        public unsafe TerrainDrawLayer(TerrainLayerGroup group, ReusableFileStream stream, bool isDynamic, bool isDefault = false)
         {
             this.group = group;
             IGraphicsDevice device = Application.GraphicsDevice;
@@ -22,6 +23,7 @@
                 }
             }
 
+            group.Mask.ReadMaskData(stream);
             mask = group.Mask.CreateLayerMask(device, isDynamic ? GpuAccessFlags.RW : GpuAccessFlags.Read); ;
             material = new(group);
         }
@@ -66,7 +68,7 @@
             return group.Contains(layer);
         }
 
-        public void UpdateLayerMaterials()
+        public void UpdateLayer()
         {
             material.Update();
         }

@@ -23,6 +23,7 @@ DomainInput main(InputPatch<HullInput, 3> patch, uint pointId : SV_OutputControl
 
     output.position = patch[pointId].position;
     output.tex = patch[pointId].tex;
+    output.ctex = patch[pointId].ctex;
     output.normal = patch[pointId].normal;
     output.tangent = patch[pointId].tangent;
 

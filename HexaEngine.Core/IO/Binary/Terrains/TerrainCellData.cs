@@ -90,12 +90,12 @@
         /// Reads terrain cell data from a stream using the specified encoding and endianness.
         /// </summary>
         /// <param name="stream">The source stream to read from.</param>
-        /// <param name="compression"></param>
         /// <param name="endianness">The endianness to use for reading binary data.</param>
+        /// <param name="compression"></param>
         /// <param name="mode"></param>
         /// <param name="groups"></param>
         /// <returns>A <see cref="TerrainCellData"/> instance populated with data from the stream.</returns>
-        public static TerrainCellData Read(Stream stream, Compression compression, Endianness endianness, TerrainLoadMode mode, List<TerrainLayerGroup> groups)
+        public static TerrainCellData Read(Stream stream, Endianness endianness, Compression compression, TerrainLoadMode mode, List<TerrainLayerGroup> groups)
         {
             Point2 position = Point2.Read(stream, endianness);
             Guid guid = stream.ReadGuid(endianness);
@@ -149,10 +149,10 @@
         /// Writes the terrain cell data to a stream using the specified encoding and endianness.
         /// </summary>
         /// <param name="stream">The destination stream to write to.</param>
-        /// <param name="compression"></param>
         /// <param name="endianness">The endianness to use for writing binary data.</param>
+        /// <param name="compression"></param>
         /// <param name="groups"></param>
-        public void Write(Stream stream, Compression compression, Endianness endianness, List<TerrainLayerGroup> groups)
+        public void Write(Stream stream, Endianness endianness, Compression compression, List<TerrainLayerGroup> groups)
         {
             position.Write(stream, endianness);
             stream.WriteGuid(guid, endianness);

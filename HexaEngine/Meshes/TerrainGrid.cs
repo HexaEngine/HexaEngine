@@ -5,6 +5,8 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Mathematics;
+    using Silk.NET.Assimp;
+    using System.Numerics;
 
     public class TerrainGrid
     {
@@ -13,6 +15,8 @@
         private readonly TerrainLayer defaultLayer;
         private readonly ReusableFileStream stream;
         private readonly bool isDynamic;
+
+        private BoundingBox boundingBox;
 
         public TerrainGrid(ReusableFileStream stream, bool isDynamic)
         {
@@ -31,6 +35,9 @@
 
             this.stream = stream;
             this.isDynamic = isDynamic;
+
+            FindNeighbors();
+            GenerateBoundingBox();
         }
 
         public TerrainCell this[int index]
@@ -44,6 +51,8 @@
         public List<TerrainLayer> Layers => terrain.Layers;
 
         public TerrainFile TerrainData => terrain;
+
+        public BoundingBox BoundingBox => boundingBox;
 
         public bool LayerExists(string name)
         {
@@ -143,6 +152,7 @@
             cells.Add(cell);
             terrain.Cells.Add(cell.CellData);
             FindNeighbors(cell);
+            GenerateBoundingBox();
         }
 
         public void Remove(TerrainCell cell)
@@ -200,6 +210,26 @@
                 cells[i].AverageEdges();
                 cells[i].UpdateVertexBuffer(context);
             }
+
+            GenerateBoundingBox();
+        }
+
+        public void GenerateBoundingBox()
+        {
+            BoundingBox boundingBox = BoundingBox.Empty;
+
+            for (int i = 0; i < cells.Count; i++)
+            {
+                var cell = cells[i];
+
+                var local = cell.BoundingBox;
+                var offset = cell.Offset;
+                var min = local.Min + offset;
+                var max = local.Max + offset;
+                boundingBox.Min = Vector3.Min(boundingBox.Min, min);
+                boundingBox.Max = Vector3.Max(boundingBox.Max, max);
+            }
+            this.boundingBox = boundingBox;
         }
 
         public void Dispose()

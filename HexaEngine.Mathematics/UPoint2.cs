@@ -21,7 +21,7 @@
         /// </summary>
         public uint Y;
 
-        internal int Count = 2;
+        internal const int Count = 2;
 
         /// <summary>
         /// Gets a <see cref="UPoint2"/> instance with all elements set to zero.

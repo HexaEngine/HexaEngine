@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Mathematics;
@@ -14,17 +15,18 @@
 
         public override string Name { get; } = "Smooth";
 
-        public override void DrawSettings()
+        public override bool DrawSettings(TerrainToolContext toolContext)
         {
             ImGui.InputInt("Smooth Radius", ref radius);
+            return false;
         }
 
-        public override bool Modify(TerrainToolContext context)
+        public override bool Modify(IGraphicsContext context, TerrainToolContext toolContext)
         {
             bool hasAffected = false;
-            for (int j = 0; j < context.VertexCount; j++)
+            for (int j = 0; j < toolContext.VertexCount; j++)
             {
-                if (!context.TestVertex(this, j, out var vertex, out var distance))
+                if (!toolContext.TestVertex(this, j, out var vertex, out var distance))
                 {
                     continue;
                 }
@@ -32,7 +34,7 @@
                 float edgeFade = ComputeEdgeFade(distance);
                 float value = Strength * edgeFade * Time.Delta;
 
-                UPoint2 point = context.GetHeightMapPosition(vertex, out var heightMap);
+                UPoint2 point = toolContext.GetHeightMapPosition(vertex, out var heightMap);
                 uint index = heightMap.GetIndexFor(point.X, point.Y);
 
                 // Get average height of neighboring vertices

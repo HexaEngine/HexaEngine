@@ -8,6 +8,15 @@
     using System.IO;
     using System.Numerics;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using System.Diagnostics;
+
+    public struct GenerationStats
+    {
+        public double TimeTotal;
+        public double TimePositions;
+        public double TimeNormals;
+        public double TimeTangents;
+    }
 
     /// <summary>
     /// Represents the data associated with a terrain cell at a specific level of detail (LOD).
@@ -43,6 +52,11 @@
         /// Gets or sets the number of indices in the terrain cell.
         /// </summary>
         public uint IndexCount { get => indexCount; set => indexCount = value; }
+
+        /// <summary>
+        /// Gets the number of faces.
+        /// </summary>
+        public uint FaceCount => indexCount / 3;
 
         /// <summary>
         /// Gets or sets the width (units) of the terrain cell.
@@ -234,6 +248,56 @@
         }
 
         /// <summary>
+        /// Calculates the intersection between the ray and the triangle mesh, returning the distance to the intersection point.
+        /// </summary>
+        /// <param name="ray">The ray to perform the intersection test with.</param>
+        /// <returns>
+        /// The distance along the ray to the intersection point. Returns <c>null</c> if there is no intersection with the mesh.
+        /// </returns>
+        public float? Intersect(Ray ray)
+        {
+            // Check if the ray intersects the bounding box of the triangle mesh.
+            if (!box.Intersects(ray).HasValue)
+            {
+                // No intersection with the bounding box, so no intersection with the mesh.
+                return null;
+            }
+
+            // Initialize a vector representing the minimum intersection point.
+            Vector3 minPos = new(float.MaxValue);
+
+            // Iterate through each triangle in the mesh.
+            for (uint i = 0; i < indexCount / 3; i++)
+            {
+                // Get the vertices of the current triangle.
+                var pos0 = positions[indices[i * 3]];
+                var pos1 = positions[indices[i * 3 + 1]];
+                var pos2 = positions[indices[i * 3 + 2]];
+
+                // Check if the ray intersects the current triangle.
+                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle))
+                {
+                    // No intersection with this triangle, continue to the next one.
+                    continue;
+                }
+
+                // Check if the intersection point is closer than the current minimum.
+                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z)
+                {
+                    // The intersection point is not closer, continue to the next triangle.
+                    continue;
+                }
+
+                minPos = pointInTriangle;
+
+                // Return the distance from the ray origin to the intersection point.
+                return (float)(ray.Position - minPos).Length();
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Performs a ray intersection test with the terrain.
         /// </summary>
         /// <param name="ray">The ray to test.</param>
@@ -254,37 +318,6 @@
                 Vector3 pos2 = positions[indices[i * 3 + 2]];
 
                 if (ray.Intersects(pos0, pos1, pos2, out pointInTerrain))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Performs a ray intersection test with the transformed terrain.
-        /// </summary>
-        /// <param name="ray">The ray to test.</param>
-        /// <param name="transform">The transformation matrix to apply to the terrain.</param>
-        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
-        /// <returns><c>true</c> if the ray intersects the transformed terrain; otherwise, <c>false</c>.</returns>
-        public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
-        {
-            pointInTerrain = default;
-
-            if (!BoundingBox.Transform(box, transform).Intersects(ray).HasValue)
-            {
-                return false;
-            }
-
-            for (uint i = 0; i < indexCount / 3; i++)
-            {
-                Vector3 pos0 = positions[indices[i * 3]];
-                Vector3 pos1 = Positions[indices[i * 3 + 1]];
-                Vector3 pos2 = positions[indices[i * 3 + 2]];
-
-                if (ray.Intersects(Vector3.Transform(pos0, transform), Vector3.Transform(pos1, transform), Vector3.Transform(pos2, transform), out pointInTerrain))
                 {
                     return true;
                 }
@@ -542,8 +575,6 @@
 
             box = new(min, max);
             sphere = BoundingSphere.CreateFromBoundingBox(box);
-
-            GenerateIndicesAndUVs();
 
             GenVertexNormalsProcess.GenMeshVertexNormals2(this);
             CalcTangentsProcess.ProcessMesh2Parallel(this);

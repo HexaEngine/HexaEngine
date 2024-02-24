@@ -21,22 +21,22 @@ float4 main(VertexOut input) : SV_TARGET
         float volumetricStrength = lights[i].volumetricStrength;
         ShadowData shadow;
 
+        [branch]
         if (currentLight.castsShadows)
         {
             shadow = shadowData[currentLight.shadowMapIndex];
-        }
 
-        [branch]
-        switch (currentLight.type)
-        {
-            case POINT_LIGHT:
-                color += PointLightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
-                break;
-            case SPOT_LIGHT:
-                color += SpotlightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
-                break;
-            case DIRECTIONAL_LIGHT:
-                color += DirectionalLightCascadedVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
+            [branch]
+            switch (currentLight.type)
+            {
+                case POINT_LIGHT:
+                    color += PointLightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
+                    break;
+                case SPOT_LIGHT:
+                    color += SpotlightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    color += DirectionalLightCascadedVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
                /* [branch]
                 if (currentLight.cascadedShadows)
                 {
@@ -46,8 +46,9 @@ float4 main(VertexOut input) : SV_TARGET
                 {
                     color += DirectionalLightVolumetric3(input.pos, input.tex, position, V, currentLight, shadow, volumetricStrength);
                 }*/
-                break;
+                    break;
 
+            }
         }
 
     }

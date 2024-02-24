@@ -72,7 +72,7 @@ float3 DirectionalLightCascadedVolumetric3(float4 screenCoords, float2 texCoords
     float ditherValue = dither(screenCoords.xy);
     x += deltaStep * ditherValue;
 
-    float3 L = normalize(-light.direction);
+    float3 L = normalize(-light.direction.xyz);
 
     float result = 0.0;
     for (int i = 0; i < SAMPLE_COUNT; ++i)

@@ -41,7 +41,7 @@ struct ShadowData
     float4 cascades[2];
     float size;
     float softness;
-    float cascadeCount;
+    uint cascadeCount;
     float4 regions[8];
     float bias;
     float slopeBias;
@@ -243,7 +243,7 @@ float3 BRDF_IBL(
 
 float3 DirectionalLightBRDF(Light light, float3 F0, float3 V, float3 N, float3 baseColor, float roughness, float metallic)
 {
-    float3 L = normalize(-light.direction);
+    float3 L = normalize(-light.direction.xyz);
     float3 radiance = light.color.rgb;
 
     return BRDF(radiance, L, F0, V, N, baseColor, roughness, metallic);
@@ -267,19 +267,22 @@ float3 SpotlightBRDF(Light light, float3 position, float3 F0, float3 V, float3 N
     float3 L = normalize(LN);
 
     float theta = dot(L, normalize(-light.direction.xyz));
-    if (theta > light.outerCosine)
+    if (theta <= light.outerCosine)
     {
-        float distance = length(LN);
-        float epsilon = light.innerCosine - light.outerCosine;
-        float falloff = 1;
-        if (epsilon != 0)
-            falloff = smoothstep(0.0, 1.0, (theta - light.innerCosine) / epsilon);
-        float attenuation = Attenuation(distance, light.range);
-        float3 radiance = light.color.rgb * attenuation * falloff;
-        return BRDF(radiance, L, F0, V, N, baseColor, roughness, metallic);
+        return 0; // Der Spotlichtstrahl liegt außerhalb des äußeren Kegels, daher wird keine Beleuchtung berechnet
     }
 
-    return 0;
+    float distance = length(LN);
+    float epsilon = light.innerCosine - light.outerCosine;
+    float falloff = 1;
+    if (epsilon != 0)
+    {
+        falloff = smoothstep(0.0, 1.0, (theta - light.innerCosine) / epsilon);
+    }
+
+    float attenuation = Attenuation(distance, light.range);
+    float3 radiance = light.color.rgb * attenuation * falloff;
+    return BRDF(radiance, L, F0, V, N, baseColor, roughness, metallic);
 }
 
 #endif

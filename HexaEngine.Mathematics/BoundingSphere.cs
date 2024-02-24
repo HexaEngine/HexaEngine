@@ -15,8 +15,15 @@
         /// </summary>
         public static readonly BoundingSphere Empty = new();
 
-        private Vector3 _center;
-        private float _radius;
+        /// <summary>
+        /// The center point of the sphere.
+        /// </summary>
+        public Vector3 Center;
+
+        /// <summary>
+        /// The radius of the sphere.
+        /// </summary>
+        public float Radius;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingSphere"/> struct.
@@ -25,30 +32,8 @@
         /// <param name="radius">The radius of the sphere.</param>
         public BoundingSphere(Vector3 center, float radius)
         {
-            _center = center;
-            _radius = radius;
-        }
-
-        /// <summary>
-        /// The center point of the sphere.
-        /// </summary>
-        public Vector3 Center
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _center;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => _center = value;
-        }
-
-        /// <summary>
-        /// The radious of the sphere.
-        /// </summary>
-        public float Radius
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _radius;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => _radius = value;
+            Center = center;
+            Radius = radius;
         }
 
         /// <summary>
@@ -87,8 +72,8 @@
         {
             Unsafe.SkipInit(out BoundingSphere result);
 
-            result._center = Vector3.Lerp(box.Min, box.Max, 0.5f);
-            result._radius = Vector3.Distance(box.Min, box.Max) * 0.5f;
+            result.Center = Vector3.Lerp(box.Min, box.Max, 0.5f);
+            result.Radius = Vector3.Distance(box.Min, box.Max) * 0.5f;
             return result;
         }
 
@@ -331,8 +316,8 @@
         /// <param name="endianness">The endianness to use for writing the data.</param>
         public void Write(Stream stream, Endianness endianness)
         {
-            stream.WriteVector3(_center, endianness);
-            stream.WriteFloat(_radius, endianness);
+            stream.WriteVector3(Center, endianness);
+            stream.WriteFloat(Radius, endianness);
         }
     }
 }

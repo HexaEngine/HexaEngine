@@ -27,8 +27,15 @@
         /// </summary>
         public const int CornerCount = 8;
 
-        private Vector3 _min;
-        private Vector3 _max;
+        /// <summary>
+        /// The minimum point of the box.
+        /// </summary>
+        public Vector3 Min;
+
+        /// <summary>
+        /// The maximum point of the box.
+        /// </summary>
+        public Vector3 Max;
 
         /// <summary>
         /// A <see cref="BoundingBox"/> which represents an empty space.
@@ -42,8 +49,8 @@
         /// <param name="max">The maximum vertex of the bounding box.</param>
         public BoundingBox(Vector3 min, Vector3 max)
         {
-            _min = min;
-            _max = max;
+            Min = min;
+            Max = max;
         }
 
         /// <summary>
@@ -52,8 +59,8 @@
         /// <param name="sphere">The <see cref="BoundingSphere"/> to initialize from.</param>
         public BoundingBox(in BoundingSphere sphere)
         {
-            _min = new Vector3(sphere.Center.X - sphere.Radius, sphere.Center.Y - sphere.Radius, sphere.Center.Z - sphere.Radius);
-            _max = new Vector3(sphere.Center.X + sphere.Radius, sphere.Center.Y + sphere.Radius, sphere.Center.Z + sphere.Radius);
+            Min = new Vector3(sphere.Center.X - sphere.Radius, sphere.Center.Y - sphere.Radius, sphere.Center.Z - sphere.Radius);
+            Max = new Vector3(sphere.Center.X + sphere.Radius, sphere.Center.Y + sphere.Radius, sphere.Center.Z + sphere.Radius);
         }
 
         /// <summary>
@@ -64,8 +71,8 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Initialize(Vector3 min, Vector3 max)
         {
-            _min = min;
-            _max = max;
+            Min = min;
+            Max = max;
         }
 
         /// <summary>
@@ -75,58 +82,24 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Initialize(BoundingBox box)
         {
-            _min = box._min;
-            _max = box._max;
-        }
-
-        /// <summary>
-        /// The minimum point of the box.
-        /// </summary>
-        public Vector3 Min
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            readonly get
-            {
-                return _min;
-            }
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                _max = value;
-            }
-        }
-
-        /// <summary>
-        /// The maximum point of the box.
-        /// </summary>
-        public Vector3 Max
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            readonly get
-            {
-                return _max;
-            }
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                _max = value;
-            }
+            Min = box.Min;
+            Max = box.Max;
         }
 
         /// <summary>
         /// Gets the center of this bounding box.
         /// </summary>
-        public readonly Vector3 Center => (_min + _max) / 2;
+        public readonly Vector3 Center => (Min + Max) / 2;
 
         /// <summary>
         /// Gets the extent of this bounding box.
         /// </summary>
-        public readonly Vector3 Extent => (_max - _min) / 2;
+        public readonly Vector3 Extent => (Max - Min) / 2;
 
         /// <summary>
         /// Gets size of this bounding box.
         /// </summary>
-        public readonly Vector3 Size => _max - _min;
+        public readonly Vector3 Size => Max - Min;
 
         /// <summary>
         /// Gets or sets the width of the bounding box.
@@ -573,7 +546,7 @@
         /// <inheritdoc/>
         public override readonly int GetHashCode()
         {
-            return HashCode.Combine(_min, _max);
+            return HashCode.Combine(Min, Max);
         }
 
         /// <inheritdoc />
@@ -585,7 +558,7 @@
         /// <inheritdoc />
         public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
-            return $"{nameof(BoundingBox)} {{ {nameof(Min)} = {_min.ToString(format, formatProvider)}, {nameof(Max)} = {_max.ToString(format, formatProvider)} }}";
+            return $"{nameof(BoundingBox)} {{ {nameof(Min)} = {Min.ToString(format, formatProvider)}, {nameof(Max)} = {Max.ToString(format, formatProvider)} }}";
         }
 
         /// <summary>

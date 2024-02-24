@@ -926,7 +926,7 @@ namespace HexaEngine.Core.Assets.Importer
                     {
                         ModelFile modelFile = new(string.Empty, meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
-                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.None);
+                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
                     }
                     catch (Exception ex)
                     {

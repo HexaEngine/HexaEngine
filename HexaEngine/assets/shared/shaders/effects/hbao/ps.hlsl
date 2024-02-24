@@ -64,7 +64,7 @@ float ComputeCoarseAO(float2 UV, float radius_in_pixels, float3 rand, float3 pos
     const float theta = 2.0 * PI / NUM_SAMPLING_DIRECTIONS;
     float AO = 0;
 
-    for (float direction_index = 0; direction_index < NUM_SAMPLING_DIRECTIONS; ++direction_index)
+    for (uint direction_index = 0; direction_index < NUM_SAMPLING_DIRECTIONS; ++direction_index)
     {
         float angle = theta * direction_index;
 
@@ -74,7 +74,7 @@ float ComputeCoarseAO(float2 UV, float radius_in_pixels, float3 rand, float3 pos
         // Jitter starting sample within the first step
         float ray_t = (rand.z * step_size_in_pixels + 1.0);
 
-        for (float step_index = 0; step_index < NUM_SAMPLING_STEPS; ++step_index)
+        for (uint step_index = 0; step_index < NUM_SAMPLING_STEPS; ++step_index)
         {
             float2 SnappedUV = round(ray_t * direction) / screenDim + UV;
 

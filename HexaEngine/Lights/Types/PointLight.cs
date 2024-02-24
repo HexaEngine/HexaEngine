@@ -16,6 +16,12 @@
     {
         private ShadowAtlasRangeHandle atlasHandle;
 
+        public PointLight()
+        {
+            ShadowMapNormalBias = 0;
+            ShadowMapSlopeScaleDepthBias = 0;
+        }
+
         [JsonIgnore]
         public override int ShadowMapSize => GraphicsSettings.GetSMSizePointLight(ShadowMapResolution);
 
@@ -71,7 +77,7 @@
             for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X + 2, vp.Y + 2, vp.Width - 2, vp.Height - 2) * texel;
+                coords[i] = new Vector4(vp.X + 0, vp.Y + 0, vp.Width - 0, vp.Height - 0) * texel;
             }
 
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);

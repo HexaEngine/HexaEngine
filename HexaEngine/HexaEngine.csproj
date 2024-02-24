@@ -752,25 +752,22 @@
 		<None Update="assets\shared\shaders\tools\mesh\basic\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\edit\brush\defs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\mask\remap.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\mask\occupation.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\mask\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\edit\brush\ps.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\overlay\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\edit\brush\vs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\overlay\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\edit\mask\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\defs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\vs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\overlay\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\quad.hlsl">

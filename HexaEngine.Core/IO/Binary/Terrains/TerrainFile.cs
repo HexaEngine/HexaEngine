@@ -115,7 +115,7 @@
 
             for (int i = 0; i < cells.Count; i++)
             {
-                cells[i].Write(stream, compression, endianness, layerGroups);
+                cells[i].Write(stream, endianness, compression, layerGroups);
             }
         }
 
@@ -141,12 +141,12 @@
 
             for (int i = 0; i < header.LayerGroups; i++)
             {
-                layerGroups.Add(TerrainLayerGroup.Read(stream, header.Endianness, header.Compression, layers));
+                layerGroups.Add(TerrainLayerGroup.Read(stream, header.Endianness, header.Compression, mode, layers));
             }
 
             for (int i = 0; i < header.Cells; i++)
             {
-                cells.Add(TerrainCellData.Read(stream, header.Compression, header.Endianness, mode, layerGroups));
+                cells.Add(TerrainCellData.Read(stream, header.Endianness, header.Compression, mode, layerGroups));
             }
 
             return new TerrainFile(cells, layers, layerGroups);

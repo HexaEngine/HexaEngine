@@ -62,7 +62,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
     PixelInput output;
 
     output.position = float4(bary.x * tri[0].position + bary.y * tri[1].position + bary.z * tri[2].position, 1);
-    output.ctex = output.position.xz / TILESIZE;
+    output.ctex = bary.x * tri[0].ctex + bary.y * tri[1].ctex + bary.z * tri[2].ctex;
     output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
     output.normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
     output.tangent = bary.x * tri[0].tangent + bary.y * tri[1].tangent + bary.z * tri[2].tangent;

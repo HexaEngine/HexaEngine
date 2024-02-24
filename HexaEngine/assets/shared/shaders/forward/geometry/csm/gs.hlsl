@@ -4,7 +4,7 @@
 #define MAX_CASCADED_NUM 8
 #endif
 
-cbuffer LIGHT_VIEW_PROJECTION : register(b1)
+cbuffer LIGHT_VIEW_PROJECTION : register(b0)
 {
     float4x4 g_lightSpace[MAX_CASCADED_NUM];
 };

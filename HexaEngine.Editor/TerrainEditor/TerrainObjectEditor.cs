@@ -13,8 +13,6 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
-    using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
@@ -25,36 +23,42 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Diagnostics;
+    using System.Drawing;
     using System.Numerics;
     using System.Text;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public class TerrainObjectEditor : IObjectEditor
     {
         private IGraphicsPipelineState brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
-        private ConstantBuffer<CBColorMask> maskBuffer;
-        private ConstantBuffer<Matrix4x4> WorldBuffer;
+        private ConstantBuffer<Matrix4x4> worldBuffer;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private DepthStencil depthStencil;
-        private Texture2D texture;
 
-        private readonly List<TerrainTool> tools = new();
+        private readonly List<TerrainTool> tools = [];
         private TerrainTool? activeTool;
-        private TerrainToolContext toolContext = new();
-
-        private IGraphicsPipelineState maskEdit;
-        private ISamplerState maskSampler;
+        private readonly TerrainToolContext toolContext = new();
 
         private bool isDown;
         private bool isEdited;
 
         private bool init;
 
+        private bool editTerrain = false;
+
+        private bool hoversOverTerrain;
+        private Vector3 position;
+        private Vector3 uv;
+        private bool hasChanged;
+        private Vector2 lastMousePosition;
+        private readonly Queue<TerrainCell> updateQueue = new();
+
         public TerrainObjectEditor()
         {
             tools.Add(new RaiseLowerTool());
             tools.Add(new SmoothTool());
             tools.Add(new FlattenTool());
+            tools.Add(new LayerPaintTool());
             toolContext.Shape = new CircleToolShape();
         }
 
@@ -69,35 +73,6 @@ namespace HexaEngine.Editor.TerrainEditor
         public bool IsHidden => false;
 
         public bool NoTable { get; set; }
-
-        private bool editTerrain = false;
-        private float size = 2f;
-        private float strength = 10;
-        private float edgeStart = 0;
-        private float edgeEnd = 1;
-        private bool raise = true;
-
-        private bool editMask = false;
-        private int maskChannel = 0;
-
-        private bool hoversOverTerrain;
-        private Vector3 position;
-        private Vector3 uv;
-        private bool hasChanged;
-        private bool isActive;
-        private bool hasFileSaved;
-        private int current;
-        private Vector2 lastMousePosition;
-
-        private int seed = 0;
-        private int octaves = 2;
-        private float persistence = 0.5f;
-        private float amplitude = 16;
-        private float maxHeight = 10;
-        private float minHeight = 0;
-        private Vector2 scale = new(0.001f);
-
-        private readonly Queue<TerrainCell> updateQueue = new();
 
         public bool Draw(IGraphicsContext context)
         {
@@ -140,8 +115,6 @@ namespace HexaEngine.Editor.TerrainEditor
             hoversOverTerrain = false;
 
             var mousePosition = Mouse.Position;
-            bool mouseMoved = mousePosition != lastMousePosition;
-
             Vector3 rayDir = Mouse.ScreenToWorld(camera.Transform.Projection, camera.Transform.ViewInv, Application.MainWindow.WindowViewport);
             Vector3 rayPos = camera.Transform.GlobalPosition;
             Ray ray = new(rayPos, Vector3.Normalize(rayDir));
@@ -149,20 +122,50 @@ namespace HexaEngine.Editor.TerrainEditor
             for (int i = 0; i < terrain.Count; i++)
             {
                 var cell = terrain[i];
-                if (cell.IntersectRay(ray, cell.Transform, out var pointInTerrain))
+                var localRay = Ray.Transform(ray, cell.TransformInv);
+                if (cell.IntersectRay(localRay, out var pointInTerrain))
                 {
+                    pointInTerrain = Vector3.Transform(pointInTerrain, cell.Transform);
                     toolContext.Position = position = pointInTerrain;
                     toolContext.UV = uv = position / cell.BoundingBox.Size;
                     hoversOverTerrain = true;
                 }
             }
 
+            toolContext.Grid = terrain;
+
             ToolsMenu();
-
-            LayersMenu(terrain);
-
             CellsMenu(terrain);
+            DrawEdit(context, component, terrain);
 
+            if (updateQueue.Count > 0)
+            {
+                terrain.GenerateBoundingBox();
+                component.GameObject.SendUpdateTransformed();
+            }
+
+            while (updateQueue.TryDequeue(out var cell))
+            {
+                cell.UpdateVertexBuffer(context);
+            }
+
+            lastMousePosition = mousePosition;
+
+            if (ImGui.Button("Regenerate All"))
+            {
+                terrain.RegenerateAll(context);
+            }
+
+            if (ImGui.Button("Save"))
+            {
+                Save(context, component, terrain);
+            }
+
+            return changed;
+        }
+
+        private void DrawEdit(IGraphicsContext context, TerrainRendererComponent component, TerrainGrid terrain)
+        {
             var shape = toolContext.Shape;
             for (int i = 0; i < terrain.Count; i++)
             {
@@ -182,36 +185,18 @@ namespace HexaEngine.Editor.TerrainEditor
 
                 unsafe
                 {
-                    *WorldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
-                    WorldBuffer.Update(context);
+                    *worldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
+                    worldBuffer.Update(context);
                 }
-                if (editTerrain || editMask)
+                if (editTerrain)
                 {
                     if (hoversOverTerrain)
                     {
-                        var swapChain = Application.MainWindow.SwapChain;
+                        int activeLOD = cell.CurrentLODLevel;
 
-                        CBBrush brush = new(position, activeTool.Size, activeTool.BlendStart, activeTool.BlendEnd);
-                        brushBuffer.Update(context, brush);
+                        DrawBrushOverlay(context, cell);
 
-                        cell.Bind(context);
-                        context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
-                        context.SetViewport(Application.MainWindow.WindowViewport);
-                        context.VSSetConstantBuffer(0, WorldBuffer);
-                        context.VSSetConstantBuffer(1, this.camera.Value);
-                        context.PSSetConstantBuffer(0, brushBuffer);
-                        context.PSSetConstantBuffer(1, this.camera.Value);
-                        context.SetPipelineState(brushOverlay);
-
-                        context.DrawIndexedInstanced(cell.Mesh.IndexCount, 1, 0, 0, 0);
-
-                        context.SetRenderTarget(null, null);
-                        context.SetViewport(default);
-                        context.VSSetConstantBuffer(0, null);
-                        context.VSSetConstantBuffer(1, null);
-                        context.PSSetConstantBuffer(0, null);
-                        context.PSSetConstantBuffer(1, null);
-                        context.SetPipelineState(null);
+                        bool wasDown = false;
 
                         if (Mouse.IsDown(MouseButton.Left) && SceneWindow.IsHovered)
                         {
@@ -226,19 +211,13 @@ namespace HexaEngine.Editor.TerrainEditor
 
                             if (editTerrain)
                             {
-                                hasAffected |= activeTool.Modify(toolContext);
-                                hasChanged = true;
-                            }
-
-                            if (editMask)
-                            {
-                                hasAffected |= EditMask(context, terrain, cell);
+                                hasAffected |= activeTool.Modify(context, toolContext);
                                 hasChanged = true;
                             }
 
                             if (editTerrain && hasAffected)
                             {
-                                cell.Generate();
+                                cell.GenerateLevel(activeLOD);
 
                                 if (!updateQueue.Contains(cell))
                                 {
@@ -262,36 +241,57 @@ namespace HexaEngine.Editor.TerrainEditor
                                 }
                             }
                         }
+                        else
+                        {
+                            wasDown = true;
+                            isDown = false;
+                        }
 
-                        isDown = false;
+                        if (wasDown)
+                        {
+                            GenerateInactiveLOD(cell, activeLOD);
+                        }
                     }
                 }
             }
+        }
 
-            if (!isDown && isEdited)
+        private void DrawBrushOverlay(IGraphicsContext context, TerrainCell cell)
+        {
+            var swapChain = Application.MainWindow.SwapChain;
+            CBBrush brush = new(position, activeTool.Size, activeTool.BlendStart, activeTool.BlendEnd);
+            brushBuffer.Update(context, brush);
+
+            cell.Bind(context);
+            context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
+            context.SetViewport(Application.MainWindow.WindowViewport);
+            context.VSSetConstantBuffer(0, worldBuffer);
+            context.VSSetConstantBuffer(1, camera.Value);
+            context.PSSetConstantBuffer(0, brushBuffer);
+            context.PSSetConstantBuffer(1, camera.Value);
+            context.SetPipelineState(brushOverlay);
+
+            context.DrawIndexedInstanced(cell.Mesh.IndexCount, 1, 0, 0, 0);
+
+            context.SetRenderTarget(null, null);
+            context.SetViewport(default);
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetConstantBuffer(1, null);
+            context.PSSetConstantBuffer(0, null);
+            context.PSSetConstantBuffer(1, null);
+            context.SetPipelineState(null);
+        }
+
+        private static void GenerateInactiveLOD(TerrainCell cell, int activeLevel)
+        {
+            for (int i = 0; i < cell.LODLevels; i++)
             {
-                context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.All, 1, 0);
-                isEdited = false;
+                if (activeLevel == i)
+                {
+                    continue;
+                }
+                cell.GenerateLevel(i);
             }
-
-            while (updateQueue.TryDequeue(out var cell))
-            {
-                cell.UpdateVertexBuffer(context);
-            }
-
-            lastMousePosition = mousePosition;
-
-            if (ImGui.Button("Regenerate All"))
-            {
-                terrain.RegenerateAll(context);
-            }
-
-            if (ImGui.Button("Save"))
-            {
-                Save(context, component, terrain);
-            }
-
-            return changed;
         }
 
         private void ToolsMenu()
@@ -338,21 +338,70 @@ namespace HexaEngine.Editor.TerrainEditor
                     activeTool.BlendEnd = blendEnd;
                 }
 
-                activeTool.DrawSettings();
+                activeTool.DrawSettings(toolContext);
+            }
+        }
+
+        private static void DrawCellOverlay(TerrainCell cell)
+        {
+            if (ImGui.IsItemHovered())
+            {
+                DebugDraw.DrawBox(cell.Offset + new Vector3(16, 0, 16), Quaternion.Identity, 16, 1, 16, Colors.Yellow);
             }
         }
 
         private void CellsMenu(TerrainGrid grid)
         {
-            if (ImGui.CollapsingHeader("Cells"))
+            if (ImGui.CollapsingHeader("Info"))
             {
                 for (int i = 0; i < grid.Count; i++)
                 {
                     var cell = grid[i];
-
-                    if (ImGui.TreeNode($"{cell.ID}"))
+                    if (ImGui.TreeNodeEx($"{cell.ID}"))
                     {
-                        if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
+                        DrawCellOverlay(cell);
+                        for (int j = 0; j < cell.DrawLayers.Count; j++)
+                        {
+                            var drawLayer = cell.DrawLayers[j];
+                            for (var k = 0; k < drawLayer.LayerCount; k++)
+                            {
+                                var layer = drawLayer.LayerGroup[k];
+                                ImGui.TreeNodeEx($"{layer.Name}", ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.NoTreePushOnOpen);
+                            }
+                        }
+                        ImGui.TreePop();
+                    }
+                    else
+                    {
+                        DrawCellOverlay(cell);
+                    }
+                }
+            }
+
+            if (ImGui.CollapsingHeader("Cells"))
+            {
+                if (!ImGui.BeginTable("##T", 2, ImGuiTableFlags.SizingFixedFit))
+                {
+                    return;
+                }
+
+                ImGui.TableSetupColumn("");
+                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+                for (int i = 0; i < grid.Count; i++)
+                {
+                    var cell = grid[i];
+
+                    if (cell.Right != null && cell.Top != null)
+                    {
+                        continue;
+                    }
+
+                    ImGui.TableNextRow();
+
+                    if (cell.Right == null)
+                    {
+                        ImGui.TableSetColumnIndex(0);
+                        if (ImGui.Button($"{cell.ID} Add Tile X+"))
                         {
                             TerrainCell terrainCell = grid.CreateCell(cell.ID + new Point2(1, 0));
                             grid.Add(terrainCell);
@@ -360,12 +409,16 @@ namespace HexaEngine.Editor.TerrainEditor
                             hasChanged = true;
                         }
 
-                        if (cell.Top == null && cell.Right == null)
+                        if (ImGui.IsItemHovered())
                         {
-                            ImGui.SameLine();
+                            DebugDraw.DrawBox(cell.Offset + new Vector3(48, 0, 16), Quaternion.Identity, 16, 1, 16, Colors.Yellow);
                         }
+                    }
 
-                        if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
+                    if (cell.Top == null)
+                    {
+                        ImGui.TableSetColumnIndex(1);
+                        if (ImGui.Button($"{cell.ID} Add Tile Z+"))
                         {
                             TerrainCell terrainCell = grid.CreateCell(cell.ID + new Point2(0, 1));
                             grid.Add(terrainCell);
@@ -373,68 +426,13 @@ namespace HexaEngine.Editor.TerrainEditor
                             hasChanged = true;
                         }
 
-                        ImGui.TreePop();
-                    }
-                }
-            }
-        }
-
-        private void LayersMenu(TerrainGrid grid)
-        {
-            if (ImGui.CollapsingHeader("Layers"))
-            {
-                if (ImGui.Button("Add Layer"))
-                {
-                    grid.Layers.Add(new("New Layer"));
-                    hasChanged = true;
-                }
-                ImGui.Checkbox("Edit Mask", ref editMask);
-                ImGui.BeginListBox("##LayerBox");
-                for (int i = 0; i < grid.Layers.Count; i++)
-                {
-                    var layer = grid.Layers[i];
-                    if (ImGui.MenuItem(layer.Name, i == maskChannel))
-                    {
-                        maskChannel = i;
-                    }
-                }
-                ImGui.EndListBox();
-
-                if (maskChannel > -1 && maskChannel < grid.Layers.Count)
-                {
-                    var layer = grid.Layers[maskChannel];
-                    var name = layer.Name;
-                    if (ImGui.InputText("Name", ref name, 256))
-                    {
-                        layer.Name = name;
-                        hasChanged = true;
-                    }
-
-                    ImGui.SeparatorText("Material");
-
-                    var assetRef = layer.Material;
-
-                    if (ComboHelper.ComboForAssetRef("##Mat", ref assetRef, AssetType.Material))
-                    {
-                        layer.Material = assetRef;
-                        for (int i = 0; i < grid.Count; i++)
+                        if (ImGui.IsItemHovered())
                         {
-                            grid[i].UpdateLayer(layer);
-                        }
-                        hasChanged = true;
-                    }
-
-                    ImGui.SameLine();
-
-                    if (ImGui.SmallButton($"\xE70F"))
-                    {
-                        if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditor))
-                        {
-                            materialEditor.Material = assetRef;
-                            materialEditor.Focus();
+                            DebugDraw.DrawBox(cell.Offset + new Vector3(16, 0, 48), Quaternion.Identity, 16, 1, 16, Colors.Yellow);
                         }
                     }
                 }
+                ImGui.EndTable();
             }
         }
 
@@ -491,12 +489,10 @@ namespace HexaEngine.Editor.TerrainEditor
                 var device = context.Device;
                 var inputElements = TerrainCellData.InputElements;
 
-                depthStencil = new(device, Format.D32Float, 1024, 1024);
-
                 brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
-                    VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
-                    PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
+                    VertexShader = "tools/terrain/overlay/vs.hlsl",
+                    PixelShader = "tools/terrain/overlay/ps.hlsl",
                 }, new()
                 {
                     DepthStencil = DepthStencilDescription.None,
@@ -506,152 +502,29 @@ namespace HexaEngine.Editor.TerrainEditor
                     InputElements = inputElements
                 });
 
-                DepthStencilDescription depthStencilD = new()
-                {
-                    DepthEnable = true,
-                    DepthWriteMask = DepthWriteMask.All,
-                    DepthFunc = ComparisonFunction.Less,
-                    StencilEnable = false,
-                    StencilReadMask = 255,
-                    StencilWriteMask = 255,
-                    FrontFace = DepthStencilOperationDescription.DefaultFront,
-                    BackFace = DepthStencilOperationDescription.DefaultBack
-                };
-
-                texture = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read);
-
-                maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
-                {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "tools/terrain/edit/mask/ps.hlsl",
-                }, new()
-                {
-                    DepthStencil = depthStencilD,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.TriangleStrip,
-                    InputElements = inputElements
-                });
-
-                maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-
                 brushBuffer = new(device, CpuAccessFlags.Write);
-                WorldBuffer = new(device, CpuAccessFlags.Write);
+                worldBuffer = new(device, CpuAccessFlags.Write);
 
                 camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
-                maskBuffer = new(device, CpuAccessFlags.Write);
+
+                for (int i = 0; i < tools.Count; i++)
+                {
+                    tools[i].Initialize(device);
+                }
 
                 init = true;
             }
         }
 
-        private bool EditTerrain(TerrainCell cell, CBBrush brush)
-        {
-            bool hasAffected = false;
-            for (int j = 0; j < cell.Mesh.VertexCount; j++)
-            {
-                var vertex = cell.LODData.Positions[j];
-                var vertexWS = Vector3.Transform(vertex, cell.Transform);
-                Vector3 p1 = new(vertexWS.X, 0, vertexWS.Z);
-                Vector3 p2 = new(position.X, 0, position.Z);
-
-                float distance = Vector3.Distance(p2, p1);
-
-                if (distance > size)
-                {
-                    continue;
-                }
-
-                float edgeFade = brush.ComputeEdgeFade(distance);
-                float value = strength * edgeFade * Time.Delta;
-
-                var heightMap = cell.CellData.HeightMap;
-                Vector2 cTex = new Vector2(vertex.X, vertex.Z) / new Vector2(32);
-                Vector2 pos = cTex * heightMap.Size;
-
-                uint index = heightMap.GetIndexFor((uint)pos.X, (uint)pos.Y);
-
-                if (raise)
-                {
-                    heightMap[index] += value;
-                }
-                else
-                {
-                    heightMap[index] -= value;
-                }
-
-                hasAffected = true;
-            }
-
-            return hasAffected;
-        }
-
-        private bool EditMask(IGraphicsContext context, TerrainGrid grid, TerrainCell cell)
-        {
-            Viewport vp = texture.Viewport;
-
-            Vector3 local = Vector3.Transform(position, cell.TransformInv);
-            Vector2 pos = new Vector2(local.X, local.Z) / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
-
-            BoundingSphere sphere = new(new Vector3(pos.X, 0, pos.Y) * cell.BoundingBox.Size, size);
-
-            ImGui.Text($"{cell.ID}, {pos}");
-
-            if (!cell.BoundingBox.Intersects(sphere))
-            {
-                return false;
-            }
-
-            bool hasAffected;
-            Texture2D? maskTex = cell.GetLayerMask(grid.Layers[maskChannel], out ChannelMask mask);
-            maskTex ??= cell.AddLayer(grid.Layers[maskChannel], out mask);
-
-            ImGui.Text($"{cell.ID}, {mask}");
-
-            float sizeFactor = vp.Size.X / cell.BoundingBox.Size.X;
-
-            CBBrush brush = new(new(pos.X, 0, pos.Y), size / sizeFactor, edgeStart, edgeEnd);
-
-            brushBuffer.Update(context, brush);
-
-            CBColorMask colorMask = new(mask);
-
-            colorMask.Mask *= strength * Time.Delta;
-            maskBuffer.Update(context, colorMask);
-
-            context.CopyResource(texture, maskTex);
-
-            context.PSSetShaderResource(0, texture.SRV);
-            context.PSSetSampler(0, maskSampler);
-            context.PSSetConstantBuffer(0, brushBuffer);
-            context.PSSetConstantBuffer(1, maskBuffer);
-            context.SetRenderTarget(maskTex.RTV, depthStencil.DSV);
-            context.SetViewport(vp);
-
-            context.SetPipelineState(maskEdit);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-
-            context.SetViewport(default);
-            context.SetRenderTarget(null, null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetConstantBuffer(1, null);
-
-            hasAffected = true;
-            isEdited = true;
-            return hasAffected;
-        }
-
         public void Dispose()
         {
+            for (int i = 0; i < tools.Count; i++)
+            {
+                tools[i].Dispose();
+            }
             brushOverlay.Dispose();
             brushBuffer.Dispose();
-            WorldBuffer.Dispose();
-            maskSampler.Dispose();
-            maskEdit.Dispose();
-            maskBuffer.Dispose();
+            worldBuffer.Dispose();
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.TerrainEditor;
 
     public class RaiseLowerTool : TerrainTool
@@ -12,17 +13,18 @@
 
         public override string Name { get; } = "Raise/Lower";
 
-        public override void DrawSettings()
+        public override bool DrawSettings(TerrainToolContext toolContext)
         {
             ImGui.Checkbox("Raise", ref raise);
+            return false;
         }
 
-        public override bool Modify(TerrainToolContext context)
+        public override bool Modify(IGraphicsContext context, TerrainToolContext toolContext)
         {
             bool hasAffected = false;
-            for (int j = 0; j < context.VertexCount; j++)
+            for (int j = 0; j < toolContext.VertexCount; j++)
             {
-                if (!context.TestVertex(this, j, out var vertex, out var distance))
+                if (!toolContext.TestVertex(this, j, out var vertex, out var distance))
                 {
                     continue;
                 }
@@ -30,7 +32,7 @@
                 float edgeFade = ComputeEdgeFade(distance);
                 float value = Strength * edgeFade * Time.Delta;
 
-                uint index = context.GetHeightMapIndex(vertex, out var heightMap);
+                uint index = toolContext.GetHeightMapIndex(vertex, out var heightMap);
 
                 if (raise)
                 {

@@ -26,18 +26,18 @@
             layerCount = description.Layers;
             allocator = new(new(size), layerCount);
             cache = new(new(size), layerCount);
-            texture = new(device, description.Format, description.Size, description.Size, filename: filename, lineNumber: lineNumber);
+            texture = new(device, description.Format, description.Size, description.Size, description.ArraySize, filename: filename, lineNumber: lineNumber);
             texture.DebugName = dbgName;
         }
 
-        public ShadowAtlas(IGraphicsDevice device, int size = 8192, int layerCount = 8, Format format = Format.D32Float, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public ShadowAtlas(IGraphicsDevice device, int size = 8192, int layerCount = 8, int arraySize = 1, Format format = Format.D32Float, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"ShadowAtlas: {Path.GetFileName(filename)}, Line: {lineNumber}";
             this.size = size;
             this.layerCount = layerCount;
             allocator = new(new(size), layerCount);
             cache = new(new(size), layerCount);
-            texture = new(device, format, size, size);
+            texture = new(device, format, size, size, arraySize);
         }
 
         public IDepthStencilView DSV => texture.DSV;

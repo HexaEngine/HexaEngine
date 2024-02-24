@@ -17,6 +17,7 @@ HullInput main(VertexInput input)
 
     output.position = mul(float4(input.pos, 1), world).xyz;
     output.tex = input.tex;
+    output.ctex = input.pos.xz / TILESIZE;
     output.normal = mul(input.normal, (float3x3) world);
     output.tangent = mul(input.tangent, (float3x3) world);
     output.TessFactor = ComputeTessFactor(output.position);

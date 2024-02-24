@@ -10,8 +10,12 @@
     {
         public override bool TestCell(TerrainToolContext context, TerrainTool tool, TerrainCell cell)
         {
+            BoundingBox global = BoundingBox.Transform(cell.BoundingBox, cell.Transform);
+            // we ignore the y axis.
+            global.Max.Y = float.MaxValue;
+            global.Min.Y = float.MinValue;
             BoundingSphere sphere = new(context.Position, tool.Size);
-            return cell.BoundingBox.Intersects(sphere);
+            return global.Intersects(sphere);
         }
 
         public override bool TestVertex(TerrainToolContext context, TerrainTool tool, TerrainVertex vertex, out float distance)

@@ -142,46 +142,5 @@
                 Bake(context);
             }
         }
-
-        public static MaterialData GetMaterial(AssetRef assetRef)
-        {
-            if (assetRef == AssetRef.Empty)
-            {
-                return MaterialData.Empty;
-            }
-            else
-            {
-                Artifact? artifact = ArtifactDatabase.GetArtifact(assetRef);
-                if (artifact == null)
-                {
-                    Logger.Warn($"Failed to load material {assetRef}");
-                    return MaterialData.Empty;
-                }
-                if (artifact.Type != AssetType.Material)
-                {
-                    Logger.Warn($"Failed to load material {assetRef}, asset was {artifact.Type} but needs to be {AssetType.Material}");
-                    return MaterialData.Empty;
-                }
-
-                Stream? stream = null;
-
-                try
-                {
-                    stream = artifact.OpenRead();
-                    MaterialFile materialFile = MaterialFile.Read(stream);
-                    return materialFile;
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                    Logger.Warn($"Failed to load material {assetRef}");
-                    return MaterialData.Empty;
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
-            }
-        }
     }
 }

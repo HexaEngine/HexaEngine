@@ -164,8 +164,8 @@
             float r = MathF.Tan((coneAngle / 2).ToRad()) * z;
             Vector3 major = new(r, 0, 0);
             Vector3 minor = new(0, r, 0);
-            major = Vector3.Transform(major, Transform.Orientation);
-            minor = Vector3.Transform(minor, Transform.Orientation);
+            major = Vector3.Transform(major, Transform.GlobalOrientation);
+            minor = Vector3.Transform(minor, Transform.GlobalOrientation);
             return (major, minor);
         }
 
@@ -179,8 +179,8 @@
             float r = MathF.Tan((MathUtil.Lerp(0, coneAngle, 1 - blend) / 2).ToRad()) * z;
             Vector3 major = new(r, 0, 0);
             Vector3 minor = new(0, r, 0);
-            major = Vector3.Transform(major, Transform.Orientation);
-            minor = Vector3.Transform(minor, Transform.Orientation);
+            major = Vector3.Transform(major, Transform.GlobalOrientation);
+            minor = Vector3.Transform(minor, Transform.GlobalOrientation);
             return (major, minor);
         }
 

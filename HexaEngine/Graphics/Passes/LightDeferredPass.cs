@@ -8,6 +8,7 @@ namespace HexaEngine.Graphics.Passes
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
 
@@ -116,7 +117,16 @@ namespace HexaEngine.Graphics.Passes
             deferredSrvs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
             deferredSrvs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
             deferredSrvs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
-            deferredSrvs[8] = null; // IBL global diffuse
+            for (int i = 0; i < lights.ActiveCount; i++)
+            {
+                var light = lights.Active[i];
+                if (light is DirectionalLight directional && directional.ShadowMapEnable)
+                {
+                    deferredSrvs[8] = (void*)(light.GetShadowMap()?.NativePointer ?? 0);
+                }
+            }
+
+            deferredSrvs[9] = null; // IBL global diffuse
             deferredSrvs[10] = null; // IBL global specular
             const int deferredBaseIndex = 11;
             GBuffer gbuffer = this.gbuffer.Value;

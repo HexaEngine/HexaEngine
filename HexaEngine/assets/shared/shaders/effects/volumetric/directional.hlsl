@@ -70,7 +70,7 @@ float3 DirectionalLightVolumetric3(float4 screenCoords, float2 texCoords, float3
     float3 fragToCamNorm = normalize(GetCameraPos() - position);
     float3 x = GetCameraPos();
 
-    float3 L = normalize(-light.direction);
+    float3 L = normalize(-light.direction.xyz);
 
     float ditherValue = dither(screenCoords.xy);
     x += deltaStep * ditherValue;

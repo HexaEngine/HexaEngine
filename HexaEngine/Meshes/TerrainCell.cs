@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
+    using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
@@ -21,6 +22,7 @@
         private readonly ReusableFileStream stream;
         private TerrainCellLODData lodData;
         private Mesh mesh;
+        private int currentLODLevel = 0;
 
         public BoundingBox BoundingBox;
         public Point2 ID;
@@ -51,7 +53,7 @@
 
             for (int i = 0; i < cellData.LayerGroups.Count; i++)
             {
-                drawLayers.Add(new(cellData.LayerGroups[i], isDynamic));
+                drawLayers.Add(new(cellData.LayerGroups[i], stream, isDynamic));
             }
 
             BoundingBox = mesh.BoundingBox;
@@ -68,6 +70,10 @@
         public TerrainCellData CellData => cellData;
 
         public TerrainCellLODData LODData => lodData;
+
+        public int CurrentLODLevel => currentLODLevel;
+
+        public int LODLevels => lodLevels;
 
         public void SetLOD(int level)
         {
@@ -96,6 +102,7 @@
 
                     cell.BoundingBox = lodData.Box;
                     stream.Close();
+                    cell.currentLODLevel = level;
                 }
             }, ComputeLODJobPriority(level));
         }
@@ -107,7 +114,7 @@
             return (JobPriority)(int)MathUtil.Lerp((float)JobPriority.Low, (float)JobPriority.Highest, s);
         }
 
-        public Texture2D? GetLayerMask(TerrainLayer terrainLayer, out ChannelMask mask)
+        public TerrainDrawLayer? GetLayerMask(TerrainLayer terrainLayer, out ChannelMask mask)
         {
             for (int i = 0; i < drawLayers.Count; i++)
             {
@@ -115,7 +122,7 @@
                 mask = layer.GetChannelMask(terrainLayer);
                 if (mask != ChannelMask.None)
                 {
-                    return layer.Mask;
+                    return layer;
                 }
             }
 
@@ -141,29 +148,29 @@
             return TryAddLayer(layer, out _, out _);
         }
 
-        public bool TryAddLayer(TerrainLayer layer, out Texture2D? mask)
+        public bool TryAddLayer(TerrainLayer layer, out TerrainDrawLayer? drawLayer)
         {
-            return TryAddLayer(layer, out mask, out _);
+            return TryAddLayer(layer, out drawLayer, out _);
         }
 
-        public bool TryAddLayer(TerrainLayer layer, out Texture2D? mask, out ChannelMask channelMask)
+        public bool TryAddLayer(TerrainLayer layer, out TerrainDrawLayer? drawLayer, out ChannelMask channelMask)
         {
-            mask = GetLayerMask(layer, out channelMask);
-            if (mask != null)
+            drawLayer = GetLayerMask(layer, out channelMask);
+            if (drawLayer != null)
             {
                 return false;
             }
 
-            mask = AddLayer(layer, out channelMask);
+            drawLayer = AddLayer(layer, out channelMask);
             return true;
         }
 
-        public Texture2D AddLayer(TerrainLayer terrainLayer)
+        public TerrainDrawLayer AddLayer(TerrainLayer terrainLayer)
         {
             return AddLayer(terrainLayer, out _);
         }
 
-        public Texture2D AddLayer(TerrainLayer terrainLayer, out ChannelMask mask)
+        public TerrainDrawLayer AddLayer(TerrainLayer terrainLayer, out ChannelMask mask)
         {
             if (ContainsLayer(terrainLayer))
                 throw new Exception();
@@ -174,7 +181,7 @@
                 if (layer.AddLayer(terrainLayer))
                 {
                     mask = layer.GetChannelMask(terrainLayer);
-                    return layer.Mask;
+                    return layer;
                 }
             }
 
@@ -183,14 +190,14 @@
             cellData.LayerGroups.Add(group);
             terrain.LayerGroups.Add(group);
 
-            TerrainDrawLayer drawLayer = new(group, isDynamic, terrainLayer.Name == "Default");
+            TerrainDrawLayer drawLayer = new(group, stream, isDynamic, terrainLayer.Name == "Default");
             drawLayer.AddLayer(terrainLayer);
             drawLayers.Add(drawLayer);
 
             UpdateLayer(terrainLayer);
 
             mask = ChannelMask.R;
-            return drawLayer.Mask;
+            return drawLayer;
         }
 
         public void RemoveLayer(TerrainLayer terrainLayer)
@@ -205,6 +212,18 @@
             }
         }
 
+        public bool RemoveDrawLayer(TerrainDrawLayer drawLayer)
+        {
+            if (drawLayers.Remove(drawLayer))
+            {
+                cellData.LayerGroups.Remove(drawLayer.LayerGroup);
+                terrain.LayerGroups.Remove(drawLayer.LayerGroup);
+                drawLayer.Dispose();
+                return true;
+            }
+            return false;
+        }
+
         public void UpdateLayer(TerrainLayer terrainLayer)
         {
             for (int i = 0; i < drawLayers.Count; i++)
@@ -213,7 +232,7 @@
                 if (layer.ContainsLayer(terrainLayer))
                 {
                     // return after update because a layer can only be in one draw layer
-                    layer.UpdateLayerMaterials();
+                    layer.UpdateLayer();
                     return;
                 }
             }
@@ -256,9 +275,9 @@
             GC.SuppressFinalize(this);
         }
 
-        public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
+        public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)
         {
-            return lodData.IntersectRay(ray, transform, out pointInTerrain);
+            return lodData.IntersectRay(ray, out pointInTerrain);
         }
 
         public void GenerateLOD()
@@ -298,6 +317,15 @@
                 Right?.cellData.AverageEdgeLevel(i, Edge.XNeg, cellData);
                 Left?.cellData.AverageEdgeLevel(i, Edge.XPos, cellData);
             });
+        }
+
+        public void GenerateLevel(int i)
+        {
+            cellData.GenerateLODLevel(i);
+            Top?.cellData.AverageEdgeLevel(i, Edge.ZNeg, cellData);
+            Bottom?.cellData.AverageEdgeLevel(i, Edge.ZPos, cellData);
+            Right?.cellData.AverageEdgeLevel(i, Edge.XNeg, cellData);
+            Left?.cellData.AverageEdgeLevel(i, Edge.XPos, cellData);
         }
 
         public void UpdateVertexBuffer(IGraphicsContext context)
