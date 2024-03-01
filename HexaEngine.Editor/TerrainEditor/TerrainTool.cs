@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using HexaEngine.Mathematics.Noise;
     using System.Numerics;
 
     public abstract class TerrainTool : IDisposable
@@ -14,6 +16,7 @@
         protected float edgeFadeEnd = 2;
         private bool disposedValue;
         private bool isInitialized;
+        private EdgeFadeMode edgeFadeMode;
 
         public float Strength
         {
@@ -52,6 +55,8 @@
 
         public abstract string Name { get; }
 
+        public EdgeFadeMode EdgeFadeMode { get => edgeFadeMode; set => edgeFadeMode = value; }
+
         public virtual void Initialize(IGraphicsDevice device)
         {
             if (isInitialized)
@@ -80,11 +85,45 @@
         {
         }
 
+        public virtual void OnMouseMove(Vector3 position)
+        {
+        }
+
         public abstract bool DrawSettings(TerrainToolContext toolContext);
 
         public float ComputeEdgeFade(float distance)
         {
-            return MathUtil.Clamp01((edgeFadeEnd - distance) / (edgeFadeEnd - edgeFadeStart));
+            switch (edgeFadeMode)
+            {
+                case EdgeFadeMode.None:
+                    return 1;
+
+                case EdgeFadeMode.Linear:
+                    return MathUtil.Clamp01((edgeFadeEnd - distance) / (edgeFadeEnd - edgeFadeStart));
+
+                case EdgeFadeMode.Square:
+                    return MathUtil.Clamp01(1 - (distance * distance) / (edgeFadeEnd * edgeFadeEnd));
+
+                case EdgeFadeMode.Exponential:
+                    {
+                        float t = MathUtil.Clamp01((distance - edgeFadeStart) / (edgeFadeEnd - edgeFadeStart));
+                        return MathUtil.Clamp01(1 - t);
+                    }
+                case EdgeFadeMode.Cos:
+                    {
+                        float t = MathUtil.Clamp01((distance - edgeFadeStart) / (edgeFadeEnd - edgeFadeStart));
+                        return MathUtil.Clamp01((float)Math.Cos(Math.PI / 2 * t));
+                    }
+
+                case EdgeFadeMode.SmoothStep:
+                    {
+                        float t = MathUtil.Clamp01((edgeFadeEnd - distance) / (edgeFadeEnd - edgeFadeStart));
+                        return t * t * (3 - 2 * t);
+                    }
+
+                default:
+                    return 0;
+            }
         }
 
         protected virtual void DisposeCore()

@@ -84,6 +84,16 @@
             throw new NotImplementedException();
         }
 
+        public IScratchImage LoadFromMemory(TexFileFormat format, Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe IScratchImage LoadFromMemory(TexFileFormat format, byte* data, nuint length)
+        {
+            throw new NotImplementedException();
+        }
+
         public ITexture1D LoadTexture1D(TextureFileDescription desc)
         {
             throw new NotImplementedException();

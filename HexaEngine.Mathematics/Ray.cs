@@ -279,7 +279,7 @@
         /// <returns>A new <see cref="Ray"/> resulting from applying the transformation to the input <see cref="Ray"/>.</returns>
         public static Ray Transform(Ray ray, Matrix4x4 transform)
         {
-            Ray result = new(Vector3.Transform(ray.Position, transform), Vector3.TransformNormal(ray.Direction, transform));
+            Ray result = new(Vector3.Transform(ray.Position, transform), Vector3.Normalize(Vector3.TransformNormal(ray.Direction, transform)));
             return result;
         }
     }

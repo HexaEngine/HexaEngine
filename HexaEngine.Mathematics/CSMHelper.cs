@@ -138,7 +138,7 @@
 
                 // Calculate center of the shadow volume and convert it to texel coords.
                 Matrix4x4 shadowMatrix = lightView * lightProjection;
-                Vector4 shadowOrigin = Vector4.Transform(new Vector4(0, 0, 0, 1), shadowMatrix);
+                Vector4 shadowOrigin = Vector4.Transform(Vector4.UnitW, shadowMatrix);
                 shadowOrigin *= smSize / 2.0f;
 
                 // round texel coords for texel snapping and convert back to world space coords.

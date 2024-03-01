@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Lights.Structs
 {
     using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -14,8 +15,10 @@
         public Matrix4x4 View5;
         public Matrix4x4 View6;
         public Matrix4x4 View7;
+        public uint CascadeCount;
+        public UPoint3 Padding;
 
-        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7)
+        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7, uint cascadesCount)
         {
             View0 = view0;
             View1 = view1;
@@ -25,6 +28,13 @@
             View5 = view5;
             View6 = view6;
             View7 = view7;
+            CascadeCount = cascadesCount;
+        }
+
+        public unsafe Matrix4x4 this[uint index]
+        {
+            get => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index];
+            set => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index] = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

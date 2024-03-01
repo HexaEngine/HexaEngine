@@ -42,6 +42,24 @@
             }
         }
 
+        public void EmitArtifact(string name, Guid guid, AssetType type, out string path)
+        {
+            Artifact? last = lastArtifacts.FirstOrDefault(x => x.Name == name);
+
+            if (last != null)
+            {
+                toRemove.Remove(last.Guid);
+                path = last.Path;
+            }
+            else
+            {
+                string outputPath = Path.Combine(ArtifactDatabase.CacheFolder, guid.ToString());
+                Artifact artifact = new(name, sourceAsset.Guid, guid, type, outputPath);
+                ArtifactDatabase.AddArtifact(artifact);
+                path = outputPath;
+            }
+        }
+
         public void EmitArtifact(string name, AssetType type, out FileStream stream)
         {
             EmitArtifact(name, type, out string path);

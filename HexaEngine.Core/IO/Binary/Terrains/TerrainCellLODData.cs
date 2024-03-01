@@ -327,6 +327,42 @@
         }
 
         /// <summary>
+        /// Performs a ray intersection test with the terrain.
+        /// </summary>
+        /// <param name="ray">The ray to test.</param>
+        /// <param name="transform"></param>
+        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
+        /// <returns><c>true</c> if the ray intersects the terrain; otherwise, <c>false</c>.</returns>
+        public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
+        {
+            pointInTerrain = default;
+            BoundingBox box = BoundingBox.Transform(this.box, transform);
+
+            if (!box.Intersects(ray).HasValue)
+            {
+                return false;
+            }
+
+            for (uint i = 0; i < indexCount / 3; i++)
+            {
+                Vector3 pos0 = positions[indices[i * 3]];
+                Vector3 pos1 = positions[indices[i * 3 + 1]];
+                Vector3 pos2 = positions[indices[i * 3 + 2]];
+
+                pos0 = Vector3.Transform(pos0, transform);
+                pos1 = Vector3.Transform(pos1, transform);
+                pos2 = Vector3.Transform(pos2, transform);
+
+                if (ray.Intersects(pos0, pos1, pos2, out pointInTerrain))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets the index for the specified coordinates in the terrain.
         /// </summary>
         /// <param name="x">The x-coordinate.</param>

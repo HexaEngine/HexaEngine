@@ -280,6 +280,11 @@
             return lodData.IntersectRay(ray, out pointInTerrain);
         }
 
+        public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
+        {
+            return lodData.IntersectRay(ray, transform, out pointInTerrain);
+        }
+
         public void GenerateLOD()
         {
             Parallel.For(0, 4, i =>

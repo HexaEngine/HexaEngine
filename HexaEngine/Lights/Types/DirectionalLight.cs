@@ -121,7 +121,14 @@
             float* cascades = ShadowData.GetCascades(data);
 
             var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra, ShadowMapSize, cascadeCount);
-            context.Write(csmBuffer.Buffer, mtxs, sizeof(Matrix4x4) * cascadeCount);
+            CSMShadowParams shadowParams = default;
+            for (uint i = 0; i < cascadeCount - 1; i++)
+            {
+                shadowParams[i] = mtxs[i];
+            }
+            shadowParams.CascadeCount = (uint)(cascadeCount - 1);
+
+            context.Write(csmBuffer.Buffer, shadowParams);
 
             context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, csmDepthBuffer.DSV);

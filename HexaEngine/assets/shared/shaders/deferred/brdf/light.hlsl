@@ -12,21 +12,23 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-float4 main(VSOut pixel) : SV_TARGET
+float4 main(VSOut pin) : SV_TARGET
 {
-    float depth = Depth.Sample(linearWrapSampler, pixel.Tex);
-    float3 position = GetPositionWS(pixel.Tex, depth);
+    float depth = Depth.Sample(linearWrapSampler, pin.Tex);
+    if (depth == 1)
+        discard;
+    float3 position = GetPositionWS(pin.Tex, depth);
     GeometryAttributes attrs;
-    ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, linearWrapSampler, attrs);
+    ExtractGeometryData(pin.Tex, GBufferA, GBufferB, GBufferC, GBufferD, linearWrapSampler, attrs);
 
     float3 N = normalize(attrs.normal);
     float3 VN = camPos - position;
     float3 V = normalize(VN);
 
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), attrs.baseColor, attrs.metallic);
+    PixelParams pixel = ComputeSurfaceProps(position, V, N, attrs.baseColor, attrs.roughness, attrs.metallic, attrs.reflectance);
 
-    float3 direct = ComputeDirectLightning(depth, position, V, N, attrs.baseColor, F0, attrs.roughness, attrs.metallic);
-    float3 ambient = ComputeIndirectLightning(pixel.Tex, V, N, attrs.baseColor, F0, attrs.roughness, attrs.metallic, attrs.ao, attrs.emission);
+    float3 direct = ComputeDirectLightning(depth, pixel);
+    float3 ambient = ComputeIndirectLightning(pin.Tex, pixel, attrs.ao, attrs.emission);
 
     return float4(ambient + direct, 1);
 }

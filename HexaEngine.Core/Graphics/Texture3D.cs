@@ -113,6 +113,7 @@
         }
 
 #nullable disable
+
         /// <summary>
         /// Asynchronously loads a <see cref="Texture3D"/> from assets and returns it.
         /// </summary>
@@ -128,6 +129,7 @@
                 return new Texture3D(data.device, FileSystem.GetAsset(Paths.CurrentTexturePath + data.path), data.generateMips);
             }, (device, path, generateMips));
         }
+
 #nullable restore
 
         private void OnContentChanged(Asset asset)
@@ -297,7 +299,7 @@
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                srv = device.CreateShaderResourceView(texture);
+                srv = device.CreateShaderResourceView(texture, new(ShaderResourceViewDimension.Texture3D));
                 srv.DebugName = dbgName + ".SRV";
             }
 
@@ -306,7 +308,6 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
-
         }
 
 #nullable restore
@@ -507,7 +508,6 @@
                 uav = device.CreateUnorderedAccessView(texture, new(texture, UnorderedAccessViewDimension.Texture3D));
                 uav.DebugName = dbgName + ".UAV";
             }
-
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {

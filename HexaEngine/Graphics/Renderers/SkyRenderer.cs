@@ -99,7 +99,7 @@
                 return;
             }
 
-            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far - 1) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
+            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
         }
 
         public void Draw(IGraphicsContext context, SkyType type)
@@ -139,7 +139,7 @@
                     context.VSSetConstantBuffer(0, worldBuffer);
                     context.PSSetShaderResource(0, environment?.SRV);
                     context.PSSetSampler(0, samplerState);
-                    cube.DrawAuto(context, preethamSky);
+                    cube.DrawAuto(context, skybox);
                     break;
             }
         }

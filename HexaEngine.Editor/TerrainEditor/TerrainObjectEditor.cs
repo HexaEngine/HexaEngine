@@ -13,6 +13,7 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
@@ -59,6 +60,7 @@ namespace HexaEngine.Editor.TerrainEditor
             tools.Add(new SmoothTool());
             tools.Add(new FlattenTool());
             tools.Add(new LayerPaintTool());
+            tools.Add(new NoiseTool());
             toolContext.Shape = new CircleToolShape();
         }
 
@@ -114,21 +116,24 @@ namespace HexaEngine.Editor.TerrainEditor
 
             hoversOverTerrain = false;
 
-            var mousePosition = Mouse.Position;
-            Vector3 rayDir = Mouse.ScreenToWorld(camera.Transform.Projection, camera.Transform.ViewInv, Application.MainWindow.WindowViewport);
-            Vector3 rayPos = camera.Transform.GlobalPosition;
-            Ray ray = new(rayPos, Vector3.Normalize(rayDir));
-            toolContext.Ray = ray;
-            for (int i = 0; i < terrain.Count; i++)
+            Vector2 mousePosition = Mouse.Position;
+            if (editTerrain)
             {
-                var cell = terrain[i];
-                var localRay = Ray.Transform(ray, cell.TransformInv);
-                if (cell.IntersectRay(localRay, out var pointInTerrain))
+                Vector3 rayDir = Mouse.ScreenToWorld(camera.Transform.Projection, camera.Transform.ViewInv, Application.MainWindow.WindowViewport);
+                Vector3 rayPos = camera.Transform.GlobalPosition;
+                Ray ray = new(rayPos, Vector3.Normalize(rayDir));
+                toolContext.Ray = ray;
+                for (int i = 0; i < terrain.Count; i++)
                 {
-                    pointInTerrain = Vector3.Transform(pointInTerrain, cell.Transform);
-                    toolContext.Position = position = pointInTerrain;
-                    toolContext.UV = uv = position / cell.BoundingBox.Size;
-                    hoversOverTerrain = true;
+                    var cell = terrain[i];
+                    var localRay = Ray.Transform(ray, cell.TransformInv);
+                    if (cell.IntersectRay(localRay, out var pointInTerrain))
+                    {
+                        pointInTerrain = Vector3.Transform(pointInTerrain, cell.Transform);
+                        toolContext.Position = position = pointInTerrain;
+                        toolContext.UV = uv = position / cell.BoundingBox.Size;
+                        hoversOverTerrain = true;
+                    }
                 }
             }
 
@@ -209,6 +214,8 @@ namespace HexaEngine.Editor.TerrainEditor
                                 activeTool.OnMouseDown(position);
                             }
 
+                            activeTool.OnMouseMove(position);
+
                             if (editTerrain)
                             {
                                 hasAffected |= activeTool.Modify(context, toolContext);
@@ -243,8 +250,11 @@ namespace HexaEngine.Editor.TerrainEditor
                         }
                         else
                         {
-                            wasDown = true;
-                            isDown = false;
+                            if (isDown)
+                            {
+                                wasDown = true;
+                                isDown = false;
+                            }
                         }
 
                         if (wasDown)
@@ -314,6 +324,12 @@ namespace HexaEngine.Editor.TerrainEditor
 
             if (activeTool != null)
             {
+                EdgeFadeMode edgeFadeMode = activeTool.EdgeFadeMode;
+                if (ComboEnumHelper<EdgeFadeMode>.Combo("Fade Mode", ref edgeFadeMode))
+                {
+                    activeTool.EdgeFadeMode = edgeFadeMode;
+                }
+
                 float size = activeTool.Size;
                 if (ImGui.InputFloat("Size", ref size))
                 {

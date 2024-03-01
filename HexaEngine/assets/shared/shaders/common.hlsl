@@ -1,6 +1,13 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
+inline bool GetBit(int value, int bit)
+{
+    int mask = 1 << bit;
+    value &= mask;
+    return value != 0;
+}
+
 bool IsSaturated(float value)
 {
     return value == saturate(value);

@@ -30,8 +30,7 @@ bool LightIntersectsCluster(SharedLight light, Cluster cluster)
     if (light.type == DIRECTIONAL_LIGHT)
         return true;
 
-    float3 closest = max(cluster.minPoint.xyz, min(light.pos, cluster.maxPoint.xyz));
-
+    float3 closest = clamp(light.pos, cluster.minPoint.xyz, cluster.maxPoint.xyz);
     float3 dist = closest - light.pos;
     return dot(dist, dist) <= (light.range * light.range);
 }

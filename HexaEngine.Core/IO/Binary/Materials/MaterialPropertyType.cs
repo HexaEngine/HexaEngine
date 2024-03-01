@@ -183,7 +183,7 @@
         /// <summary>
         /// Reflectivity property.
         /// </summary>
-        Reflectivity,
+        Reflectance,
 
         /// <summary>
         /// Index of refraction property.

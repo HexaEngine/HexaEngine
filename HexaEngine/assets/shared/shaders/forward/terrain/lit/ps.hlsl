@@ -41,6 +41,19 @@
 #define Metallic3 0
 #endif
 
+#ifndef Reflectance0
+#define Reflectance0 0.5
+#endif
+#ifndef Reflectance1
+#define Reflectance1 0.5
+#endif
+#ifndef Reflectance2
+#define Reflectance2 0.5
+#endif
+#ifndef Reflectance3
+#define Reflectance3 0.5
+#endif
+
 #ifndef Ao0
 #define Ao0 1
 #endif
@@ -93,17 +106,17 @@
 #define HasNormalTex3 0
 #endif
 
-#ifndef HasDisplacementTex0
-#define HasDisplacementTex0 0
+#ifndef HasRoughnessTex0
+#define HasRoughnessTex0 0
 #endif
-#ifndef HasDisplacementTex1
-#define HasDisplacementTex1 0
+#ifndef HasRoughnessTex1
+#define HasRoughnessTex1 0
 #endif
-#ifndef HasDisplacementTex2
-#define HasDisplacementTex2 0
+#ifndef HasRoughnessTex2
+#define HasRoughnessTex2 0
 #endif
-#ifndef HasDisplacementTex3
-#define HasDisplacementTex3 0
+#ifndef HasRoughnessTex3
+#define HasRoughnessTex3 0
 #endif
 
 #ifndef HasMetallicTex0
@@ -119,17 +132,17 @@
 #define HasMetallicTex3 0
 #endif
 
-#ifndef HasRoughnessTex0
-#define HasRoughnessTex0 0
+#ifndef HasReflectanceTex0
+#define HasReflectanceTex0 0
 #endif
-#ifndef HasRoughnessTex1
-#define HasRoughnessTex1 0
+#ifndef HasReflectanceTex1
+#define HasReflectanceTex1 0
 #endif
-#ifndef HasRoughnessTex2
-#define HasRoughnessTex2 0
+#ifndef HasReflectanceTex2
+#define HasReflectanceTex2 0
 #endif
-#ifndef HasRoughnessTex3
-#define HasRoughnessTex3 0
+#ifndef HasReflectanceTex3
+#define HasReflectanceTex3 0
 #endif
 
 #ifndef HasEmissiveTex0
@@ -254,6 +267,23 @@ Texture2D metallicTexture3;
 SamplerState metallicTextureSampler3;
 #endif
 
+#if HasReflectanceTex0
+Texture2D reflectanceTexture0;
+SamplerState reflectanceTextureSampler0;
+#endif
+#if HasReflectanceTex1
+Texture2D reflectanceTexture1;
+SamplerState reflectanceTextureSampler1;
+#endif
+#if HasReflectanceTex2
+Texture2D reflectanceTexture2;
+SamplerState reflectanceTextureSampler2;
+#endif
+#if HasReflectanceTex3
+Texture2D reflectanceTexture3;
+SamplerState reflectanceTextureSampler3;
+#endif
+
 #if HasEmissiveTex0
 Texture2D emissiveTexture0;
 SamplerState emissiveTextureSampler0;
@@ -373,13 +403,13 @@ float3 GetHBasisIrradiance(in float3 n, in float3 H0, in float3 H1, in float3 H2
     return color;
 }
 
-struct Pixel
+struct PixelOutput
 {
     float4 Color : SV_Target0;
     float4 Normal : SV_Target1;
 };
 
-Pixel main(PixelInput input)
+PixelOutput main(PixelInput input)
 {
     float3 position = input.pos;
     float3 baseColor0 = BaseColor0;
@@ -414,6 +444,10 @@ Pixel main(PixelInput input)
     float metallic1 = Metallic1;
     float metallic2 = Metallic2;
     float metallic3 = Metallic3;
+    float reflectance0 = Reflectance0;
+    float reflectance1 = Reflectance1;
+    float reflectance2 = Reflectance2;
+    float reflectance3 = Reflectance3;
 
 #if HasBaseColorTex0
     float4 color0 = baseColorTexture0.Sample(baseColorTextureSampler0, float2(input.tex.xy));
@@ -469,6 +503,19 @@ Pixel main(PixelInput input)
 #endif
 #if HasMetallicTex3
     metallic3 = metallicTexture3.Sample(metallicTextureSampler3, float2(input.tex.xy)).r;
+#endif
+
+#if HasReflectanceTex0
+    reflectance0 = reflectanceTexture0.Sample(reflectanceTextureSampler0, float2(input.tex.xy)).r;
+#endif
+#if HasReflectanceTex1
+    reflectance1 = reflectanceTexture1.Sample(reflectanceTextureSampler1, float2(input.tex.xy)).r;
+#endif
+#if HasReflectanceTex2
+    reflectance2 = reflectanceTexture2.Sample(reflectanceTextureSampler2, float2(input.tex.xy)).r;
+#endif
+#if HasReflectanceTex3
+    reflectance3 = reflectanceTexture3.Sample(reflectanceTextureSampler3, float2(input.tex.xy)).r;
 #endif
 
 #if HasEmissiveTex0
@@ -576,6 +623,12 @@ Pixel main(PixelInput input)
     metallic = Mask(metallic, metallic2, mask.z);
     metallic = Mask(metallic, metallic3, mask.w);
 
+    float reflectance = 0;
+    reflectance = Mask(reflectance, reflectance0, mask.x);
+    reflectance = Mask(reflectance, reflectance1, mask.y);
+    reflectance = Mask(reflectance, reflectance2, mask.z);
+    reflectance = Mask(reflectance, reflectance3, mask.w);
+
     float ao = 0;
     ao = Mask(ao, ao0, mask.x);
     ao = Mask(ao, ao1, mask.y);
@@ -591,14 +644,14 @@ Pixel main(PixelInput input)
     float3 N = normalize(normal);
     float3 V = normalize(GetCameraPos() - position);
 
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor.rgb, metallic);
+    PixelParams pixel = ComputeSurfaceProps(position, V, N, baseColor, roughness, metallic, reflectance);
 
     float2 screenUV = GetScreenUV(input.position);
 
-    float3 Lo = ComputeDirectLightning(input.position.z / input.position.w, position, V, N, baseColor, F0, roughness, metallic);
-    float3 ambient = ComputeIndirectLightning(screenUV, V, N, baseColor, F0, roughness, metallic, ao, emissive);
+    float3 Lo = ComputeDirectLightning(input.position.z / input.position.w, pixel);
+    float3 ambient = ComputeIndirectLightning(screenUV, pixel, ao, emissive);
 
-    Pixel output;
+    PixelOutput output;
     output.Color = float4(ambient + Lo * ao, opacity);
     output.Normal = float4(PackNormal(N), opacity);
 

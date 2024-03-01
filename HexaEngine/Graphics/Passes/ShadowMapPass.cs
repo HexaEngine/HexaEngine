@@ -59,75 +59,90 @@
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        profiler?.Begin("ShadowMap.UpdateDirectional");
-                        var directionalLight = (DirectionalLight)light;
-                        directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
-                        for (int i = 0; i < renderers.Count; i++)
-                        {
-                            var renderer = renderers[i];
-                            profiler?.Begin($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
-                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                            {
-                                for (int j = 0; j < directionalLight.ShadowFrustra.Length; j++)
-                                {
-                                    if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
-                                    {
-                                        renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
-                                        break;
-                                    }
-                                }
-                            }
-                            profiler?.End($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
-                        }
-                        profiler?.End("ShadowMap.UpdateDirectional");
+                        DoDirectional(context, profiler, camera, renderers, lights, light);
                         break;
 
                     case LightType.Point:
-                        profiler?.Begin("ShadowMap.UpdatePoint");
-                        var pointLight = (PointLight)light;
-                        for (int i = 0; i < 2; i++)
-                        {
-                            pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value, i);
-                            for (int j = 0; j < renderers.Count; j++)
-                            {
-                                var renderer = renderers[j];
-                                profiler?.Begin($"ShadowMap.UpdatePoint.{renderer.DebugName}");
-                                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                                {
-                                    if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
-                                    {
-                                        renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
-                                    }
-                                }
-                                profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");
-                            }
-                        }
-                        profiler?.End("ShadowMap.UpdatePoint");
+                        DoPoint(context, profiler, renderers, lights, light);
                         break;
 
                     case LightType.Spot:
-                        profiler?.Begin("ShadowMap.UpdateSpot");
-                        var spotlight = (Spotlight)light;
-                        spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value);
-                        for (int i = 0; i < renderers.Count; i++)
-                        {
-                            var renderer = renderers[i];
-                            profiler?.Begin($"ShadowMap.UpdateSpot.{renderer.DebugName}");
-                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                            {
-                                if (spotlight.IntersectFrustum(renderer.BoundingBox))
-                                {
-                                    renderer.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
-                                }
-                            }
-                            profiler?.End($"ShadowMap.UpdateSpot.{renderer.DebugName}");
-                        }
-                        profiler?.End("ShadowMap.UpdateSpot");
+                        DoSpot(context, profiler, renderers, lights, light);
                         break;
                 }
                 light.InUpdateQueue = false;
             }
             profiler?.End("ShadowMap.UpdateAtlas");
+        }
+
+        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        {
+            profiler?.Begin("ShadowMap.UpdateSpot");
+            var spotlight = (Spotlight)light;
+            spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value);
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                profiler?.Begin($"ShadowMap.UpdateSpot.{renderer.DebugName}");
+                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                {
+                    if (spotlight.IntersectFrustum(renderer.BoundingBox))
+                    {
+                        renderer.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
+                    }
+                }
+                profiler?.End($"ShadowMap.UpdateSpot.{renderer.DebugName}");
+            }
+            profiler?.End("ShadowMap.UpdateSpot");
+        }
+
+        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        {
+            profiler?.Begin("ShadowMap.UpdatePoint");
+            var pointLight = (PointLight)light;
+            for (int i = 0; i < 2; i++)
+            {
+                pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value, i);
+                for (int j = 0; j < renderers.Count; j++)
+                {
+                    var renderer = renderers[j];
+                    profiler?.Begin($"ShadowMap.UpdatePoint.{renderer.DebugName}");
+                    if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                    {
+                        if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
+                        {
+                            renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
+                        }
+                    }
+                    profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");
+                }
+            }
+            profiler?.End("ShadowMap.UpdatePoint");
+        }
+
+        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        {
+            profiler?.Begin("ShadowMap.UpdateDirectional");
+            var directionalLight = (DirectionalLight)light;
+            directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var renderer = renderers[i];
+                profiler?.Begin($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
+                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                {
+                    for (int j = 0; j < directionalLight.ShadowFrustra.Length; j++)
+                    {
+                        if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
+                        {
+                            renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
+                            break;
+                        }
+                    }
+                }
+                profiler?.End($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
+            }
+            profiler?.End("ShadowMap.UpdateDirectional");
         }
     }
 }

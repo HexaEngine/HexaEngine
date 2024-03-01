@@ -13,11 +13,11 @@ struct VSOut
 #endif
 
 #ifndef MULTISCATTER
-#define MULTISCATTER 0
+#define MULTISCATTER 1
 #endif
 
 #ifndef CLOTH
-#define CLOTH 0
+#define CLOTH 1
 #endif
 
 #define F_PI 3.14159265359

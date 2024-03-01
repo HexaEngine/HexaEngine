@@ -289,28 +289,96 @@
 
         private static void InsertProperties(MaterialData material, NodeEditor editor)
         {
-            for (int i = 0; i < material.Properties.Count; i++)
+            var outputNode = editor.GetNode<BRDFShadingModelNode>();
+            for (int i = 0; i < outputNode.Pins.Count; i++)
             {
-                var property = material.Properties[i];
+                var pin = outputNode.Pins[i];
 
-                foreach (var pin in PropertyPin.FindPropertyPins(editor, property.Name))
+                if (pin.Kind != PinKind.Input || pin is not PropertyPin propertyPin)
                 {
-                    if (property.ValueType == MaterialValueType.Float)
+                    continue;
+                }
+
+                if (!Enum.TryParse<MaterialPropertyType>(propertyPin.PropertyName, true, out var type))
+                    continue;
+
+                var idx = material.GetPropertyIndex(type);
+                MaterialProperty property;
+
+                if (idx == -1)
+                {
+                    MaterialValueType valueType = type switch
                     {
-                        property.SetFloat(pin.ValueX);
-                    }
-                    if (property.ValueType == MaterialValueType.Float2)
+                        MaterialPropertyType.Unknown => MaterialValueType.Unknown,
+                        MaterialPropertyType.ColorDiffuse => MaterialValueType.Float4,
+                        MaterialPropertyType.ColorAmbient => MaterialValueType.Float4,
+                        MaterialPropertyType.ColorSpecular => MaterialValueType.Float4,
+                        MaterialPropertyType.ColorTransparent => MaterialValueType.Float4,
+                        MaterialPropertyType.ColorReflective => MaterialValueType.Float4,
+                        MaterialPropertyType.BaseColor => MaterialValueType.Float4,
+                        MaterialPropertyType.Opacity => MaterialValueType.Float,
+                        MaterialPropertyType.Specular => MaterialValueType.Float,
+                        MaterialPropertyType.SpecularTint => MaterialValueType.Float,
+                        MaterialPropertyType.Glossiness => MaterialValueType.Float,
+                        MaterialPropertyType.AmbientOcclusion => MaterialValueType.Float,
+                        MaterialPropertyType.Metallic => MaterialValueType.Float,
+                        MaterialPropertyType.Roughness => MaterialValueType.Float,
+                        MaterialPropertyType.Cleancoat => MaterialValueType.Float,
+                        MaterialPropertyType.CleancoatGloss => MaterialValueType.Float,
+                        MaterialPropertyType.Sheen => MaterialValueType.Float,
+                        MaterialPropertyType.SheenTint => MaterialValueType.Float,
+                        MaterialPropertyType.Anisotropy => MaterialValueType.Float,
+                        MaterialPropertyType.Subsurface => MaterialValueType.Float,
+                        MaterialPropertyType.SubsurfaceColor => MaterialValueType.Float3,
+                        MaterialPropertyType.Transmission => MaterialValueType.Float3,
+                        MaterialPropertyType.Emissive => MaterialValueType.Float3,
+                        MaterialPropertyType.EmissiveIntensity => MaterialValueType.Float,
+                        MaterialPropertyType.VolumeThickness => MaterialValueType.Float,
+                        MaterialPropertyType.VolumeAttenuationDistance => MaterialValueType.Float,
+                        MaterialPropertyType.VolumeAttenuationColor => MaterialValueType.Float4,
+                        MaterialPropertyType.TwoSided => MaterialValueType.Bool,
+                        MaterialPropertyType.ShadingMode => MaterialValueType.Int32,
+                        MaterialPropertyType.EnableWireframe => MaterialValueType.Bool,
+                        MaterialPropertyType.BlendFunc => MaterialValueType.Int32,
+                        MaterialPropertyType.Transparency => MaterialValueType.Float,
+                        MaterialPropertyType.BumpScaling => MaterialValueType.Float,
+                        MaterialPropertyType.Shininess => MaterialValueType.Float,
+                        MaterialPropertyType.ShininessStrength => MaterialValueType.Float,
+                        MaterialPropertyType.Reflectance => MaterialValueType.Float,
+                        MaterialPropertyType.IOR => MaterialValueType.Float,
+                        MaterialPropertyType.DisplacementStrength => MaterialValueType.Float,
+                        _ => MaterialValueType.Unknown,
+                    };
+
+                    if (valueType == MaterialValueType.Unknown)
                     {
-                        property.SetFloat2(pin.Vector2);
+                        Logger.Warn("Unknown property type");
+                        continue;
                     }
-                    if (property.ValueType == MaterialValueType.Float3)
-                    {
-                        property.SetFloat3(pin.Vector3);
-                    }
-                    if (property.ValueType == MaterialValueType.Float4)
-                    {
-                        property.SetFloat4(pin.Vector4);
-                    }
+
+                    property = new(type.ToString(), type, valueType, Mathematics.Endianness.LittleEndian);
+                    material.Properties.Add(property);
+                }
+                else
+                {
+                    property = material.Properties[idx];
+                }
+
+                if (property.ValueType == MaterialValueType.Float)
+                {
+                    property.SetFloat(propertyPin.ValueX);
+                }
+                if (property.ValueType == MaterialValueType.Float2)
+                {
+                    property.SetFloat2(propertyPin.Vector2);
+                }
+                if (property.ValueType == MaterialValueType.Float3)
+                {
+                    property.SetFloat3(propertyPin.Vector3);
+                }
+                if (property.ValueType == MaterialValueType.Float4)
+                {
+                    property.SetFloat4(propertyPin.Vector4);
                 }
             }
         }

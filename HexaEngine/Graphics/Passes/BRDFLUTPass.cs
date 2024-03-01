@@ -6,6 +6,9 @@
 
     public class BRDFLUTPass : RenderPass
     {
+        private ResourceRef<Texture2D> lut;
+        private ResourceRef<IGraphicsPipelineState> lutPass;
+
         public BRDFLUTPass() : base("BRDFLUT", RenderPassType.OneHit)
         {
             AddWriteDependency(new("BRDFLUT"));
@@ -13,11 +16,26 @@
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            creator.CreateTexture2D("BRDFLUT", new(Format.R16G16B16A16Float, 128, 128, 1, 1, GpuAccessFlags.RW));
+            lut = creator.CreateTexture2D("BRDFLUT", new(Format.R16G16B16A16Float, 128, 128, 1, 1, GpuAccessFlags.RW));
+            lutPass = creator.CreateGraphicsPipelineState(new()
+            {
+                Pipeline = new()
+                {
+                    PixelShader = "effects/dfg/ps.hlsl",
+                    VertexShader = "quad.hlsl",
+                },
+                State = GraphicsPipelineStateDesc.DefaultFullscreen,
+            });
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
+            context.SetRenderTarget(lut.Value?.RTV, null);
+            context.SetPipelineState(lutPass.Value);
+            context.SetViewport(new(128, 128));
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetPipelineState(null);
+            context.SetRenderTarget(null, null);
         }
     }
 }

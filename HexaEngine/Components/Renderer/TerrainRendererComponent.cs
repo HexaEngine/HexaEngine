@@ -17,7 +17,7 @@
     using System.Text;
 
     [EditorCategory("Renderer")]
-    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, false)]
+    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
     public class TerrainRendererComponent : BaseRendererComponent, ISelectableRayTest
     {
         private TerrainRenderer renderer;

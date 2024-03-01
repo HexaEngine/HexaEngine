@@ -216,6 +216,61 @@
             return new D3DScratchImage(image);
         }
 
+        public IScratchImage LoadFromMemory(Core.Graphics.Textures.TexFileFormat format, Stream stream)
+        {
+            ScratchImage image = DirectXTex.CreateScratchImage();
+            var data = new byte[stream.Length];
+            stream.Read(data, 0, data.Length);
+
+            fixed (byte* p = data)
+                switch (format)
+                {
+                    case Core.Graphics.Textures.TexFileFormat.DDS:
+                        DirectXTex.LoadFromDDSMemory(p, (nuint)data.Length, DDSFlags.None, null, image);
+                        break;
+
+                    case Core.Graphics.Textures.TexFileFormat.TGA:
+                        DirectXTex.LoadFromTGAMemory(p, (nuint)data.Length, TGAFlags.None, null, image);
+                        break;
+
+                    case Core.Graphics.Textures.TexFileFormat.HDR:
+                        DirectXTex.LoadFromHDRMemory(p, (nuint)data.Length, null, image);
+                        break;
+
+                    default:
+                        DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default);
+                        break;
+                };
+
+            return new D3DScratchImage(image);
+        }
+
+        public IScratchImage LoadFromMemory(Core.Graphics.Textures.TexFileFormat format, byte* data, nuint length)
+        {
+            ScratchImage image = DirectXTex.CreateScratchImage();
+
+            switch (format)
+            {
+                case Core.Graphics.Textures.TexFileFormat.DDS:
+                    DirectXTex.LoadFromDDSMemory(data, length, DDSFlags.None, null, image);
+                    break;
+
+                case Core.Graphics.Textures.TexFileFormat.TGA:
+                    DirectXTex.LoadFromTGAMemory(data, length, TGAFlags.None, null, image);
+                    break;
+
+                case Core.Graphics.Textures.TexFileFormat.HDR:
+                    DirectXTex.LoadFromHDRMemory(data, length, null, image);
+                    break;
+
+                default:
+                    DirectXTex.LoadFromWICMemory(data, length, WICFlags.None, null, image, default);
+                    break;
+            };
+
+            return new D3DScratchImage(image);
+        }
+
         public IScratchImage Initialize(Core.Graphics.Textures.TexMetadata metadata, Core.Graphics.Textures.CPFlags flags)
         {
             ScratchImage image = DirectXTex.CreateScratchImage();

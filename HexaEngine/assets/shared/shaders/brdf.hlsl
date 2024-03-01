@@ -198,7 +198,7 @@ float3 fresnel(const float3 f0, float LoH)
 #if SHADING_QUALITY == SHADING_QUALITY_LOW
     return F_Schlick(f0, LoH); // f90 = 1.0
 #else
-    float f90 = saturate(dot(f0, float3(50.0 * 0.33)));
+    float f90 = saturate(dot(f0, (50.0 * 0.33)));
     return F_Schlick(f0, f90, LoH);
 #endif
 #endif

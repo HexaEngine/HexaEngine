@@ -16,7 +16,7 @@
         private readonly string cacheFile;
         private readonly string indexFile;
 
-        private readonly List<PersistentCacheEntry> entries = new();
+        private readonly List<PersistentCacheEntry> entries = [];
         private readonly SemaphoreSlim writeSemaphore = new(1);
         private readonly ManualResetEventSlim writeLock = new(true);
         private readonly SemaphoreSlim readSemaphore = new(MaxConcurrentReader);
@@ -106,11 +106,13 @@
             {
                 Thread.Yield();
             }
+            Thread.MemoryBarrier();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EndWrite()
         {
+            Thread.MemoryBarrier();
             writeLock.Set();
             writeSemaphore.Release();
         }
@@ -120,6 +122,7 @@
         {
             writeLock.Wait();
             readSemaphore.Wait();
+            Thread.MemoryBarrier();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -444,6 +447,7 @@
         /// </summary>
         public void Save()
         {
+            BeginRead();
             for (int i = 0; i < entries.Count; i++)
             {
                 var entry = entries[i];
@@ -454,6 +458,8 @@
                 }
                 entry.ReleaseLock();
             }
+            EndRead();
+
             WriteIndexFile();
             cacheStream.Flush();
         }

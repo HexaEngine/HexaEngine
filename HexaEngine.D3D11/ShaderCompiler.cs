@@ -1,4 +1,4 @@
-﻿#define SHADER_FORCE_OPTIMIZE
+﻿//#define SHADER_FORCE_OPTIMIZE
 
 namespace HexaEngine.D3D11
 {
@@ -26,7 +26,7 @@ namespace HexaEngine.D3D11
             error = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
 #if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
-            flags |= ShaderFlags.Debug | ShaderFlags.SkipOptimization | ShaderFlags.DebugNameForSource;
+            flags |= ShaderFlags.Debug | ShaderFlags.DebugNameForSource;
 #else
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
@@ -40,6 +40,7 @@ namespace HexaEngine.D3D11
                 var macro = macros[i];
                 var pName = macro.Name.ToUTF8Ptr();
                 var pDef = macro.Definition.ToUTF8Ptr();
+                Logger.Info(macro);
                 pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)

@@ -69,6 +69,23 @@
         IScratchImage LoadFromMemory(string filename, Stream stream);
 
         /// <summary>
+        /// Loads a scratch image from memory stream.
+        /// </summary>
+        /// <param name="format">The format of the image.</param>
+        /// <param name="stream">A <see cref="Stream"/> containing the image data.</param>
+        /// <returns>An <see cref="IScratchImage"/> representing the loaded image.</returns>
+        IScratchImage LoadFromMemory(TexFileFormat format, Stream stream);
+
+        /// <summary>
+        /// Loads a scratch image from memory stream.
+        /// </summary>
+        /// <param name="format">The format of the image.</param>
+        /// <param name="data">A pointer containing the image data.</param>
+        /// <param name="length">The pointer length.</param>
+        /// <returns>An <see cref="IScratchImage"/> representing the loaded image.</returns>
+        unsafe IScratchImage LoadFromMemory(TexFileFormat format, byte* data, nuint length);
+
+        /// <summary>
         /// Loads a 1D texture from a file using specified description.
         /// </summary>
         ITexture1D LoadTexture1D(TextureFileDescription desc);

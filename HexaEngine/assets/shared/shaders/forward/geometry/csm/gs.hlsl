@@ -4,21 +4,24 @@
 #define MAX_CASCADED_NUM 8
 #endif
 
-cbuffer LIGHT_VIEW_PROJECTION : register(b0)
+cbuffer CSMLightViewBuffer : register(b0)
 {
-    float4x4 g_lightSpace[MAX_CASCADED_NUM];
+    float4x4 views[MAX_CASCADED_NUM];
+    uint cascadeCount;
 };
 
 [maxvertexcount(3 * MAX_CASCADED_NUM)]
 void main(triangle GeometryInput input[3], inout TriangleStream<PixelInput> triStream)
 {
-    PixelInput output = (PixelInput) 0;
+    PixelInput output;
 
-    for (int i = 0; i < MAX_CASCADED_NUM; ++i)
+    [unroll(MAX_CASCADED_NUM)]
+    for (uint i = 0; i < cascadeCount; i++)
     {
-        for (int j = 0; j < 3; ++j)
+        [unroll(3)]
+        for (uint j = 0; j < 3; j++)
         {
-            output.position = mul(float4(input[j].pos, 1), g_lightSpace[i]);
+            output.position = mul(float4(input[j].pos, 1), views[i]);
             output.rtvIndex = i;
             triStream.Append(output);
         }

@@ -33,6 +33,7 @@
             postProcessingManager.Add<VolumetricClouds>();
             postProcessingManager.Add<SSR>();
             postProcessingManager.Add<SSGI>();
+            postProcessingManager.Add<Fog>();
             postProcessingManager.Add<VolumetricLighting>();
             postProcessingManager.Add<MotionBlur>();
             postProcessingManager.Add<DepthOfField>();

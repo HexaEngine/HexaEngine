@@ -257,6 +257,39 @@
         }
 
         /// <summary>
+        /// Retrieves the eight corners of the bounding box.
+        /// </summary>
+        /// <returns>An pointer of points representing the eight corners of the bounding box.</returns>
+        public readonly unsafe void GetCorners(Vector3* corners)
+        {
+            corners[0] = new Vector3(Min.X, Max.Y, Max.Z);
+            corners[1] = new Vector3(Max.X, Max.Y, Max.Z);
+            corners[2] = new Vector3(Max.X, Min.Y, Max.Z);
+            corners[3] = new Vector3(Min.X, Min.Y, Max.Z);
+            corners[4] = new Vector3(Min.X, Max.Y, Min.Z);
+            corners[5] = new Vector3(Max.X, Max.Y, Min.Z);
+            corners[6] = new Vector3(Max.X, Min.Y, Min.Z);
+            corners[7] = new Vector3(Min.X, Min.Y, Min.Z);
+        }
+
+        /// <summary>
+        /// Calculates the surface area of a <see cref="BoundingBox"/>
+        /// </summary>
+        /// <returns>The surface area.</returns>
+        public readonly float Area()
+        {
+            float length = Max.X - Min.X;
+            float width = Max.Y - Min.Y;
+            float height = Max.Z - Min.Z;
+
+            float areaXZ = 2 * length * height;
+            float areaXY = 2 * length * width;
+            float areaYZ = 2 * width * height;
+
+            return areaXZ + areaXY + areaYZ;
+        }
+
+        /// <summary>
         /// Determines whether the bounding box contains the specified point.
         /// </summary>
         /// <param name="point">The point to check for containment.</param>
@@ -365,6 +398,16 @@
             Vector3 clampedVector = Vector3.Clamp(sphere.Center, Min, Max);
             float distance = Vector3.DistanceSquared(sphere.Center, clampedVector);
             return distance <= sphere.Radius * sphere.Radius;
+        }
+
+        /// <summary>
+        /// Checks whether the current <see cref="BoundingBox"/> intersects with a specified <see cref="BoundingFrustum"/>.
+        /// </summary>
+        /// <param name="frustum">The <see cref="BoundingFrustum"/> to check for intersection with the current <see cref="BoundingBox"/>.</param>
+        /// <returns>True if intersects, false otherwise.</returns>
+        public readonly bool Intersects(in BoundingFrustum frustum)
+        {
+            return frustum.Intersects(this);
         }
 
         /// <summary>

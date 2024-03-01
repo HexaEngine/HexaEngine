@@ -8,7 +8,7 @@
 
 #include "../../common.hlsl"
 #include "../../camera.hlsl"
-#include "../../shadowCommon.hlsl"
+#include "../../commonShadows.hlsl"
 #include "../../light.hlsl"
 #include "../../dither.hlsl"
 #include "../../math.hlsl"
@@ -62,21 +62,10 @@ struct VertexOut
     float2 tex : TEXCOORD;
 };
 
-// Function to calculate Rayleigh scattering
-float RayleighScattering(float3 V, float3 L)
+float HenyeyGreenstein(float3 V, float3 L)
 {
     float cosTheta = dot(V, L);
-    return rayleighCoefficient * (1.0 + cosTheta * cosTheta) / (4.0 * PI);
-}
-
-// Function to calculate Mie scattering
-float MieScattering(float3 V, float3 L)
-{
-    float cosTheta = dot(V, L);
-    float gSquared = mieG * mieG;
-    float part1 = (1.0 - gSquared) * (1.0 + cosTheta * cosTheta);
-    float part2 = pow(abs(1.0 + gSquared - 2.0 * mieG * cosTheta), 1.5);
-    return mieCoefficient * part1 / (4.0 * PI * part2);
+    return (1.0 - mieG * mieG) / (4.0 * PI * pow(abs(1.0 + mieG * mieG - 2.0 * mieG * cosTheta), 1.5));
 }
 
 #endif

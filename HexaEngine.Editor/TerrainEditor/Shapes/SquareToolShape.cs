@@ -6,7 +6,7 @@
     using HexaEngine.Meshes;
     using System.Numerics;
 
-    public class CircleToolShape : TerrainToolShape
+    public class SquareToolShape : TerrainToolShape
     {
         public override bool TestCell(TerrainToolContext context, TerrainTool tool, TerrainCell cell)
         {
@@ -14,18 +14,20 @@
             // we ignore the y axis.
             global.Max.Y = float.MaxValue;
             global.Min.Y = float.MinValue;
-            BoundingSphere sphere = new(context.Position, tool.Size);
-            return global.Intersects(sphere);
+
+            Vector3 sizeVec = new(tool.Size);
+            BoundingBox box = new(context.Position - sizeVec, context.Position + sizeVec);
+            return global.Intersects(box);
         }
 
         public override bool TestVertex(TerrainToolContext context, TerrainTool tool, TerrainVertex vertex, out float distance)
         {
             Vector3 vertexWS = Vector3.Transform(vertex.Position, context.Transform);
 
-            Vector2 p1 = new(vertexWS.X, vertexWS.Z);
-            Vector2 p2 = new(context.Position.X, context.Position.Z);
+            float deltaX = Math.Abs(vertexWS.X - context.Position.X);
+            float deltaZ = Math.Abs(vertexWS.Z - context.Position.Z);
 
-            distance = Vector2.Distance(p2, p1);
+            distance = Math.Max(deltaX, deltaZ);
 
             return distance <= tool.Size;
         }

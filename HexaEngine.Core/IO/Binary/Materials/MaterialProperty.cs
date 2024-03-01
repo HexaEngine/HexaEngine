@@ -63,6 +63,23 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MaterialProperty"/> struct.
+        /// </summary>
+        /// <param name="name">The name of the material property.</param>
+        /// <param name="type">The type of the material property.</param>
+        /// <param name="valueType">The value type of the material property.</param>
+        /// <param name="endianness">The endianness of the material property data.</param>
+        public MaterialProperty(string name, MaterialPropertyType type, MaterialValueType valueType, Endianness endianness)
+        {
+            Name = name;
+            Type = type;
+            Length = GetByteCount(valueType);
+            Data = new byte[Length];
+            ValueType = valueType;
+            Endianness = endianness;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MaterialProperty"/> struct with a float value.
         /// </summary>
         /// <param name="name">The name of the material property.</param>

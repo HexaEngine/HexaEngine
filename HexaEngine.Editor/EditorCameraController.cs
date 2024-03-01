@@ -161,11 +161,11 @@
                     {
                         var deltaT = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
                         rotation += deltaT;
-                        if (rotation.Y < 4.7123889804f & rotation.Y > MathUtil.PI)
+                        if (rotation.Y <= 4.7123889804f & rotation.Y >= MathUtil.PI)
                         {
                             rotation = new Vector3(rotation.X, 4.7123889804f, rotation.Z);
                         }
-                        if (rotation.Y > MathUtil.PIDIV2 & rotation.Y < 4.7123889804f)
+                        if (rotation.Y >= MathUtil.PIDIV2 & rotation.Y <= 4.7123889804f)
                         {
                             rotation = new Vector3(rotation.X, MathUtil.PIDIV2, rotation.Z);
                         }

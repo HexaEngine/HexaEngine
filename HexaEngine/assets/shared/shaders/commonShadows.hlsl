@@ -18,19 +18,91 @@
 #define HARD_SHADOWS_SPOTLIGHTS 0
 #endif
 
-float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
+inline float3 GetShadowUVD(float3 pos, float4x4 view)
+{
+    float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
+    fragPosLightSpace.y = -fragPosLightSpace.y;
+    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords.xy = projCoords.xy * 0.5 + 0.5;
+    return projCoords;
+}
+
+inline float3 GetShadowAtlasUVD(float3 pos, float size, float4 region, float4x4 view)
+{
+    float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
+    fragPosLightSpace.y = -fragPosLightSpace.y;
+    float3 shadowSpaceCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
+    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * region.zw;
+    return shadowSpaceCoord;
+}
+
+inline float2 GetShadowAtlasUV(float3 pos, float size, float4 region, float4x4 view)
+{
+    float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
+    fragPosLightSpace.y = -fragPosLightSpace.y;
+    float2 shadowSpaceCoord = fragPosLightSpace.xy / fragPosLightSpace.w;
+    shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
+    shadowSpaceCoord.xy = region.xy + shadowSpaceCoord.xy * region.zw;
+    return shadowSpaceCoord;
+}
+
+inline float2 NormalizeShadowAtlasUV(float2 shadowSpaceCoord, float4 region)
+{
+    return region.xy + shadowSpaceCoord.xy * region.zw;
+}
+
+inline float4 paraboloid(float4 frag_pos, float dir, float near, float far)
+{
+    float4 result = frag_pos;
+
+    result /= result.w;
+
+    result.z *= dir;
+
+    float len = length(result.xyz);
+    result /= len;
+
+    result.x /= result.z + 1.0f;
+    result.y /= result.z + 1.0f;
+
+    result.z = (len - near) / (far - near);
+    result.w = 1.0;
+
+    return result;
+}
+
+int GetPointLightFace(float3 r)
+{
+    float rx = abs(r.x);
+    float ry = abs(r.y);
+    float rz = abs(r.z);
+    float d = max(rx, max(ry, rz));
+    if (d == rx)
+    {
+        return (r.x >= 0.0 ? 0 : 1); // X+: 0, X-: 1
+    }
+    else if (d == ry)
+    {
+        return (r.y >= 0.0 ? 2 : 3); // Y+: 2, Y-:3
+    }
+    else
+    {
+        return (r.z >= 0.0 ? 4 : 5); // Z+: 4, Z-:5
+    }
+}
+
+float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position, float NdotL)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
     if (uvd.z > 1.0f)
         return 1.0;
 
-    float3 L = normalize(position - light.position.xyz);
-
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
 
 #if HARD_SHADOWS_DIRECTIONAL
     return shadowAtlas.SampleCmpLevelZero(state, float2(uvd.xy), depth - bias);
@@ -56,19 +128,17 @@ float ShadowFactorDirectionalLight(SamplerComparisonState state, Texture2D<float
 #endif
 }
 
-float ShadowFactorDirectionalLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
+float ShadowFactorDirectionalLight(SamplerState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position, float NdotL)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
     if (uvd.z > 1.0f)
         return 1.0;
 
-    float3 L = normalize(position - light.position.xyz);
-
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
 
 #if HARD_SHADOWS_DIRECTIONAL
     float shadowDepth = shadowAtlas.SampleLevel(state, uvd.xy, 0);
@@ -97,7 +167,7 @@ float ShadowFactorDirectionalLight(SamplerState state, Texture2D<float> shadowAt
 #endif
 }
 
-float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture2DArray depthTex, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture2DArray depthTex, ShadowData data, float3 position, float NdotL)
 {
     float cascadePlaneDistances[8] = (float[8]) data.cascades;
 
@@ -121,10 +191,9 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
         return 1.0;
 
     float depth = uvd.z;
-    float3 L = normalize(position - light.position.xyz);
 
     // calculate bias (based on depth map resolution and slope)
-    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
     if (layer == data.cascadeCount)
     {
         bias *= 1 / (camFar * 0.5f);
@@ -158,14 +227,10 @@ float ShadowFactorDirectionalLightCascaded(SamplerComparisonState state, Texture
 #endif
 }
 
-float ShadowFactorPointLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorPointLight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float NdotL)
 {
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
     // calculate bias (based on slope)
-    //float bias = max(data.slopeBias * (1.0 - dot(N, L)), data.bias);
-    const float bias = 0.005f;
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
 
     const float near = 0.001;
     const float far = light.range;
@@ -234,14 +299,10 @@ float ShadowFactorPointLight(SamplerComparisonState state, Texture2D<float> shad
     }
 }
 
-float ShadowFactorPointLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorPointLight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float NdotL)
 {
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
     //calculate bias (based on slope)
-    //float bias = max(data.slopeBias * (1.0 - dot(N, L)), data.bias);
-    const float bias = 0.005f;
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
 
     const float near = 0.001;
     const float far = light.range;
@@ -315,21 +376,17 @@ float ShadowFactorPointLight(SamplerState state, Texture2D<float> shadowAtlas, L
     }
 }
 
-float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float3 N)
+float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position, float NdotL)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
     if (uvd.z > 1.0f)
         return 1.0;
 
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
-    const float bias = 0.00001;
+    float bias = max(0.0001 * (1.0 - NdotL), 0.00001);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return shadowAtlas.SampleCmpLevelZero(state, uvd.xy, depth - bias);
@@ -355,21 +412,17 @@ float ShadowFactorSpotlight(SamplerComparisonState state, Texture2D<float> shado
 #endif
 }
 
-float ShadowFactorSpotlight(SamplerState state, Texture2D<float> shadowAtlas, Light light, ShadowData data, float3 position, float N)
+float ShadowFactorSpotlight(SamplerState state, Texture2D<float> shadowAtlas, ShadowData data, float3 position, float NdotL)
 {
     float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
     if (uvd.z > 1.0f)
         return 1.0;
 
-    float3 lightDirection = position - light.position.xyz;
-    float3 L = normalize(lightDirection);
-
     float depth = uvd.z;
 
     // calculate bias (based on slope)
-    //float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
-    const float bias = 0.00001;
+    float bias = max(0.0001 * (1.0 - NdotL), 0.00001);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     float shadowDepth = shadowAtlas.SampleLevel(state, uvd.xy, 0);
@@ -752,6 +805,131 @@ float ShadowFactorSpotlight(SamplerState state, Texture2D<float> shadowAtlas, Sh
     }
     return 1 - (percentLit /= 9.0f);
 #endif
+}
+
+////////////////////////////////////////////// VSM //////////////////////////////////////////////
+
+float Linstep(float a, float b, float v)
+{
+    return saturate((v - a) / (b - a));
+}
+
+float ReduceLightBleeding(float pMax, float amount)
+{
+	// Remove the [0, amount] tail and linearly rescale (amount, 1].
+    return Linstep(amount, 1.0f, pMax);
+}
+
+float Chebyshev(float2 moments, float depth)
+{
+    if (depth <= moments.x)
+    {
+        return 1.0;
+    }
+
+    float variance = moments.y - (moments.x * moments.x);
+
+    float d = depth - moments.x; // attenuation
+    float pMax = variance / (variance + d * d);
+
+    pMax = max(pMax, 0.01);
+
+    return pMax;
+}
+
+float ShadowFactorDirectionalLightCascadedVSM(SamplerState state, Texture2DArray depthTex, Light light, ShadowData data, float3 position, float3 N, float lightBleedingReduction)
+{
+    float cascadePlaneDistances[8] = (float[8]) data.cascades;
+
+	// select cascade layer
+    float4 fragPosViewSpace = mul(float4(position, 1.0), view);
+    float depthValue = abs(fragPosViewSpace.z);
+    float cascadePlaneDistance;
+    uint layer = data.cascadeCount;
+    for (uint i = 0; i < (uint) data.cascadeCount; ++i)
+    {
+        if (depthValue < cascadePlaneDistances[i])
+        {
+            cascadePlaneDistance = cascadePlaneDistances[i];
+            layer = i;
+            break;
+        }
+    }
+
+    float3 uvd = GetShadowUVD(position, data.views[layer]);
+    if (uvd.z > 1.0f)
+        return 1.0;
+
+    float depth = uvd.z;
+    float3 L = normalize(position - light.position.xyz);
+
+    // calculate bias (based on depth map resolution and slope)
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    if (layer == data.cascadeCount)
+    {
+        bias *= 1 / (camFar * 0.5f);
+    }
+    else
+    {
+        bias *= 1 / (cascadePlaneDistance * 0.5f);
+    }
+
+    float lit = 0.0f;
+    float2 moments = depthTex.Sample(state, float3(uvd.xy, layer)).rg;
+
+    float p = Chebyshev(moments, depth);
+
+    p = ReduceLightBleeding(p, lightBleedingReduction);
+    lit = max(p, depth <= moments.x + bias);
+
+    return lit;
+}
+
+float ShadowFactorDirectionalLightCascadedVSM(SamplerState state, Texture2DArray depthTex, ShadowData data, float3 position, float NdotL, float lightBleedingReduction)
+{
+    float cascadePlaneDistances[8] = (float[8]) data.cascades;
+
+	// select cascade layer
+    float4 fragPosViewSpace = mul(float4(position, 1.0), view);
+    float depthValue = abs(fragPosViewSpace.z);
+    float cascadePlaneDistance;
+    uint layer = data.cascadeCount;
+    for (uint i = 0; i < (uint) data.cascadeCount; ++i)
+    {
+        if (depthValue < cascadePlaneDistances[i])
+        {
+            cascadePlaneDistance = cascadePlaneDistances[i];
+            layer = i;
+            break;
+        }
+    }
+
+    float3 uvd = GetShadowUVD(position, data.views[layer]);
+    if (uvd.z > 1.0f)
+        return 1.0;
+
+    float depth = uvd.z;
+
+    // calculate bias (based on depth map resolution and slope)
+    float bias = max(0.05 * (1.0 - NdotL), 0.005);
+    if (layer == data.cascadeCount)
+    {
+        bias *= 1 / (camFar * 0.5f);
+    }
+    else
+    {
+        bias *= 1 / (cascadePlaneDistance * 0.5f);
+    }
+
+    float lit = 0.0f;
+    float2 moments = depthTex.Sample(state, float3(uvd.xy, layer)).rg;
+
+    float p = Chebyshev(moments, depth);
+
+    p = ReduceLightBleeding(p, lightBleedingReduction);
+    lit = max(p, depth <= moments.x + bias);
+
+    return lit;
 }
 
 #endif

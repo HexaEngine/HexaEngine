@@ -52,9 +52,9 @@ namespace HexaEngine.Core.Assets.Importer
 
         public int MaxHeight;
 
-        public bool ImportMaterials;
+        public bool ImportMaterials = true;
 
-        public bool ImportTextures;
+        public bool ImportTextures = true;
 
         public TexCompressFlags TexCompressFlags = TexCompressFlags.Parallel;
     }
@@ -165,7 +165,7 @@ namespace HexaEngine.Core.Assets.Importer
             var modelName = Path.GetFileNameWithoutExtension(context.SourcePath);
             var sourceDir = Path.GetDirectoryName(context.SourcePath);
 
-            var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour));
+            var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
             *outScene = scene;
 
             if (scene == null)
@@ -191,10 +191,12 @@ namespace HexaEngine.Core.Assets.Importer
 
             Guid[]? materialIds = null;
             MaterialFile[]? materials = null;
+            List<string>? texturePaths = null;
+            Dictionary<string, Guid>? texturePathToGuid = null;
 
             if (settings.ImportMaterials)
             {
-                if (!LoadMaterials(modelName, scene, context, out materialIds, out materials, out var texturePaths))
+                if (!LoadMaterials(modelName, scene, context, out materialIds, out materials, out texturePaths, out texturePathToGuid))
                 {
                     return false;
                 }
@@ -217,45 +219,65 @@ namespace HexaEngine.Core.Assets.Importer
 
             if (settings.ImportTextures)
             {
-                /*if (!LoadTextures(targetPlatform, settings, sourceDir, scene, context, texturePaths))
+                if (!LoadTextures(targetPlatform, settings, sourceDir, scene, context, texturePaths, texturePathToGuid))
                 {
                     return false;
-                }*/
+                }
             }
 
             return true;
         }
 
-        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, AssimpScene* scene, string outputPath, List<string> texturePaths)
+        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, AssimpScene* scene, ImportContext context, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
-            for (int i = 0; i < scene->MNumTextures; i++)
-            {
-                Texture* tex = scene->MTextures[i];
-
-                /*
-                var outputFile = Path.Combine(outputPath, tex->MFilename);
-                if (tex->MHeight != 0)
-                {
-                    Logger.Warn($"Failed to import texture {tex->MFilename}, importer doesn't support raw pixel formats.");
-                    continue;
-                }
-                */
-
-                Logger.Warn($"Failed to import texture {tex->MFilename}, importer doesn't support embedded textures.");
-
-                /*
-                var fs = System.IO.File.Create(outputFile);
-
-                var sHint = Encoding.UTF8.GetString(new Span<byte>(tex->AchFormatHint, 4));
-
-                var texImporter = ImporterRegistry.GetImporter<TextureImporter>();
-
-                texImporter.Import(TargetPlatform.Windows, outputPath, outputFile, null);
-                */
-            }
-
             var device = Application.GraphicsDevice;
             var loader = device.TextureLoader;
+            for (int i = 0; i < texturePaths.Count; i++)
+            {
+                var texturePath = texturePaths[i];
+
+                if (!texturePathToGuid.TryGetValue(texturePath, out var guid))
+                {
+                    continue;
+                }
+
+                if (texturePath.StartsWith('*'))
+                {
+                    var index = int.Parse(texturePath[1..]);
+                    Texture* tex = scene->MTextures[index];
+
+                    string fileName = tex->MFilename;
+
+                    if (tex->MHeight != 0)
+                    {
+                        Logger.Warn($"Failed to import texture {tex->MFilename}, importer doesn't support raw pixel formats.");
+                        continue;
+                    }
+
+                    var sHint = Encoding.UTF8.GetString(new Span<byte>(tex->AchFormatHint, 3));
+
+                    IScratchImage? image = null;
+                    switch (sHint)
+                    {
+                        case "jpg":
+                            image = loader.LoadFromMemory(TexFileFormat.JPEG, (byte*)tex->PcData, tex->MWidth);
+                            break;
+
+                        case "png":
+                            image = loader.LoadFromMemory(TexFileFormat.PNG, (byte*)tex->PcData, tex->MWidth);
+                            break;
+
+                        default:
+                            Logger.Warn($"Failed to import texture {tex->MFilename}, importer doesn't support {sHint} formats.");
+                            continue;
+                    }
+
+                    Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+                    {
+                        TextureImporter.ExportImage(device, targetPlatform, context, guid, fileName, new(), image);
+                    });
+                }
+            }
 
             /*
             for (int i = 0; i < texturePaths.Count; i++)
@@ -394,12 +416,12 @@ namespace HexaEngine.Core.Assets.Importer
             return false;
         }
 
-        private unsafe bool LoadMaterials(string modelName, AssimpScene* scene, ImportContext context, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths)
+        private unsafe bool LoadMaterials(string modelName, AssimpScene* scene, ImportContext context, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths, [MaybeNullWhen(false)] out Dictionary<string, Guid> texturePathToGuid)
         {
             try
             {
                 texturePaths = [];
-                Dictionary<(MaterialFile, int), string> texturePathToGuid = new();
+                texturePathToGuid = new();
                 materials = new MaterialFile[scene->MNumMaterials];
                 materialIds = new Guid[scene->MNumMaterials];
                 for (int i = 0; i < scene->MNumMaterials; i++)
@@ -440,7 +462,7 @@ namespace HexaEngine.Core.Assets.Importer
                             return ref textures.GetInternalArray()[index];
                         }
 
-                        static int FindOrCreateIdx(List<MaterialTexture> textures, TextureType type)
+                        static int FindOrCreateIdx(List<MaterialTexture> textures, Guid guid, TextureType type)
                         {
                             var t = Convert(type);
                             for (int i = 0; i < textures.Count; i++)
@@ -452,7 +474,7 @@ namespace HexaEngine.Core.Assets.Importer
                                 }
                             }
                             var index = textures.Count;
-                            textures.Add(new MaterialTexture() { Type = t });
+                            textures.Add(new MaterialTexture() { Type = t, File = guid });
                             return index;
                         }
 
@@ -495,7 +517,7 @@ namespace HexaEngine.Core.Assets.Importer
                                 break;
 
                             case Assimp.MatkeyReflectivity:
-                                properties.Add(new("Reflectivity", MaterialPropertyType.Reflectivity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                properties.Add(new("Reflectivity", MaterialPropertyType.Reflectance, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                                 break;
 
                             case Assimp.MatkeyShininessStrength:
@@ -613,7 +635,15 @@ namespace HexaEngine.Core.Assets.Importer
 
                             case Assimp.MatkeyTextureBase:
                                 var filePath = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
-                                texturePathToGuid.Add((material, FindOrCreateIdx(textures, (TextureType)semantic)), filePath);
+
+                                if (!texturePathToGuid.TryGetValue(filePath, out var guid))
+                                {
+                                    guid = Guid.NewGuid();
+                                    texturePathToGuid.Add(filePath, guid);
+                                }
+
+                                var index = FindOrCreateIdx(textures, guid, (TextureType)semantic);
+
                                 if (!texturePaths.Contains(filePath))
                                 {
                                     texturePaths.Add(filePath);
@@ -691,7 +721,8 @@ namespace HexaEngine.Core.Assets.Importer
 
                     try
                     {
-                        context.EmitArtifact(material.Name, AssetType.Material, out string path);
+                        var guid = materialIds[i] = Guid.NewGuid();
+                        context.EmitArtifact(material.Name, guid, AssetType.Material, out string path);
                         material.Save(path, Encoding.UTF8);
                     }
                     catch (Exception ex)
@@ -707,6 +738,7 @@ namespace HexaEngine.Core.Assets.Importer
                 materials = null;
                 materialIds = null;
                 texturePaths = null;
+                texturePathToGuid = null;
                 Logger.Log(ex);
                 MessageBox.Show("Failed to load materials", ex.Message);
                 return false;

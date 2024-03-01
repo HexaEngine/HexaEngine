@@ -71,17 +71,6 @@
             return (Vector3.One + A * MathUtil.Exp(B)) * (Vector3.One + C * MathUtil.Exp(D * thetaS) + E * MathUtil.Sqr(cosThetaS));
         }
 
-        private static void Extract(SkyParameters parameters, float* Ys, float* xs, float* ys)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                var param = parameters[i];
-                Ys[i] = param.X;
-                xs[i] = param.Y;
-                ys[i] = param.Z;
-            }
-        }
-
         /// <summary>
         /// Calculates sky parameters based on turbidity and sun direction.
         /// </summary>

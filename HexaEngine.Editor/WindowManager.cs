@@ -248,8 +248,6 @@
 
         private static void Closed(IEditorWindow window)
         {
-            if (window.Initialized)
-                window.Dispose();
         }
 
         private static void Shown(IEditorWindow window)

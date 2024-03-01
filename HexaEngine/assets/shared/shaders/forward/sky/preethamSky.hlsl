@@ -1,5 +1,4 @@
 #include "../../weather.hlsl"
-#include "../../math.hlsl"
 
 struct VertexOut
 {
@@ -10,7 +9,7 @@ struct VertexOut
 
 float saturatedDot(in float3 a, in float3 b)
 {
-    return max(dot(a, b), 0.0);
+    return abs(max(dot(a, b), 0.0));
 }
 
 float3 YxyToXYZ(in float3 Yxy)
@@ -50,11 +49,11 @@ float3 calculatePerezLuminanceYxy(in float theta, in float gamma, in float3 A, i
     return (1.0 + A * exp(B / cos(theta))) * (1.0 + C * exp(D * gamma) + E * cos(gamma) * cos(gamma));
 }
 
-float3 calculateSkyLuminanceRGB(in float3 s, in float3 e, in float t)
+float3 calculateSkyLuminanceRGB(in float3 s, in float3 e)
 {
     float thetaS = acos(clamp(s.y, 0, 1));
     float thetaE = acos(saturatedDot(e, float3(0, 1, 0)));
-    float gammaE = acos(saturatedDot(s, e));
+    float gammaE = acos(max(dot(s, e) - 1.19209290e-07, 0));
 
     float3 fThetaGamma = calculatePerezLuminanceYxy(thetaE, gammaE, A, B, C, D, E);
     float3 fZeroThetaS = calculatePerezLuminanceYxy(0.0, thetaS, A, B, C, D, E);
@@ -66,24 +65,19 @@ float3 calculateSkyLuminanceRGB(in float3 s, in float3 e, in float t)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-    float3 dir = normalize(pin.pos);
+    float3 dir = normalize(pin.tex);
 
-    float3 skyLuminance = calculateSkyLuminanceRGB(light_dir.xyz, dir, 2);
+    float3 skyLuminance = calculateSkyLuminanceRGB(light_dir.xyz, dir);
 
     skyLuminance *= 0.005;
 
-    float lerpFactor = 1;
-
-    float cosTheta = light_dir.y;
-    if (cosTheta < 0.0f)    // Handle sun going below the horizon
-    {
-        float a = clamp(1.0f + cosTheta * 2.0f, 0, 1);
-        lerpFactor *= max(a, 0.1);
-    }
-
-    float3 skyColor = sky_color.xyz;
-
-    float3 finalColor = lerp(skyLuminance, skyColor * (1 - lerpFactor), saturate(pin.tex.y)) + skyLuminance * lerpFactor;
+    float distanceToSun = distance(light_dir.xyz, dir);
+    float sunRadius = 0.05f;
+    float sunIntensity = 10.0f;
+    float brightness = saturate(1.0f - distanceToSun / sunRadius);
+    float3 sunColor = float3(1.0f, 1.0f, 0.5f);
+    float3 L0 = sunColor * brightness * sunIntensity;
+    float3 finalColor = skyLuminance + L0;
 
     return float4(finalColor, 1.0);
 }

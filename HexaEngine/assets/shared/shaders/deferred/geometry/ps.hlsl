@@ -9,6 +9,9 @@
 #ifndef Metallic
 #define Metallic 0
 #endif
+#ifndef Reflectance
+#define Reflectance 0.5
+#endif
 #ifndef Ao
 #define Ao 1
 #endif
@@ -30,6 +33,9 @@
 #endif
 #ifndef HasRoughnessTex
 #define HasRoughnessTex 0
+#endif
+#ifndef HasReflectanceTex
+#define HasReflectanceTex 0
 #endif
 #ifndef HasEmissiveTex
 #define HasEmissiveTex 0
@@ -59,6 +65,10 @@ SamplerState roughnessTextureSampler;
 #if HasMetallicTex
 Texture2D metallicTexture;
 SamplerState metallicTextureSampler;
+#endif
+#if HasReflectanceTex
+Texture2D reflectanceTexture;
+SamplerState reflectanceTextureSampler;
 #endif
 #if HasEmissiveTex
 Texture2D emissiveTexture;
@@ -128,6 +138,7 @@ GeometryData main(PixelInput input)
     float ao = Ao;
     float roughness = Roughness;
     float metallic = Metallic;
+    float reflectance = Reflectance;
 
 #if HasBaseColorTex
 	float4 color = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
@@ -147,6 +158,10 @@ GeometryData main(PixelInput input)
 
 #if HasMetallicTex
     metallic = metallicTexture.Sample(metallicTextureSampler, (float2) input.tex).r;
+#endif
+
+#if HasReflectanceTex
+    reflectance = reflectanceTexture.Sample(reflectanceTextureSampler, (float2) input.tex).r;
 #endif
 
 #if HasEmissiveTex
@@ -170,8 +185,8 @@ GeometryData main(PixelInput input)
     metallic = orm.b;
 #endif
 
-    int matID = -1;
-    return PackGeometryData(matID, baseColor.rgb, normal, roughness, metallic, 0, ao, 0, emissive, 1);
+    int matID = 1;
+    return PackGeometryData(matID, baseColor.rgb, normal, roughness, metallic, reflectance, ao, 1, emissive, 1);
 }
 
 #else

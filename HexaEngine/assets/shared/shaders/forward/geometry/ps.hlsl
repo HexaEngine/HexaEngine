@@ -10,6 +10,9 @@
 #ifndef Metallic
 #define Metallic 0
 #endif
+#ifndef Reflectance
+#define Reflectance 0.5
+#endif
 #ifndef Ao
 #define Ao 1
 #endif
@@ -31,6 +34,9 @@
 #endif
 #ifndef HasRoughnessTex
 #define HasRoughnessTex 0
+#endif
+#ifndef HasReflectanceTex
+#define HasReflectanceTex 0
 #endif
 #ifndef HasEmissiveTex
 #define HasEmissiveTex 0
@@ -60,6 +66,10 @@ SamplerState roughnessTextureSampler;
 #if HasMetallicTex
 Texture2D metallicTexture;
 SamplerState metallicTextureSampler;
+#endif
+#if HasReflectanceTex
+Texture2D reflectanceTexture;
+SamplerState reflectanceTextureSampler;
 #endif
 #if HasEmissiveTex
 Texture2D emissiveTexture;
@@ -114,14 +124,14 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
-struct Pixel
+struct PixelOutput
 {
     float4 Color : SV_Target0;
     float4 Normal : SV_Target1;
 };
 
 [earlydepthstencil]
-Pixel main(PixelInput input)
+PixelOutput main(PixelInput input)
 {
     float3 position = input.pos;
     float4 baseColor = BaseColor;
@@ -133,6 +143,7 @@ Pixel main(PixelInput input)
     float ao = Ao;
     float roughness = Roughness;
     float metallic = Metallic;
+    float reflectance = Reflectance;
     float3 emissive = Emissive;
 
 #if HasBaseColorTex
@@ -150,6 +161,10 @@ Pixel main(PixelInput input)
 
 #if HasMetallicTex
 	metallic = metallicTexture.Sample(metallicTextureSampler, (float2)input.tex).r;
+#endif
+
+#if HasReflectanceTex
+    reflectance = reflectanceTexture.Sample(reflectanceTextureSampler, (float2) input.tex).r;
 #endif
 
 #if HasEmissiveTex
@@ -178,14 +193,14 @@ Pixel main(PixelInput input)
     float3 N = normalize(normal);
     float3 V = normalize(GetCameraPos() - position);
 
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor.rgb, metallic);
+    PixelParams pixel = ComputeSurfaceProps(position, V, N, baseColor.rgb, roughness, metallic, reflectance);
 
     float2 screenUV = GetScreenUV(input.position);
 
-    float3 direct = ComputeDirectLightning(input.position.z / input.position.w, position, V, N, baseColor.rgb, F0, roughness, metallic);
-    float3 ambient = ComputeIndirectLightning(screenUV, V, N, baseColor.rgb, F0, roughness, metallic, ao, emissive);
+    float3 direct = ComputeDirectLightning(input.position.z / input.position.w, pixel);
+    float3 ambient = ComputeIndirectLightning(screenUV, pixel, ao, emissive);
 
-    Pixel output;
+    PixelOutput output;
     output.Color = float4(ambient + direct, baseColor.a);
     output.Normal = float4(PackNormal(N), baseColor.a);
 
