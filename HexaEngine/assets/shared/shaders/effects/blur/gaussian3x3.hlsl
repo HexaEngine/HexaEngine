@@ -1,23 +1,19 @@
-static const int SAMPLE_COUNT = 6;
+#define SAMPLE_COUNT 4
 
-static const float OFFSETS[6] =
+static const float OFFSETS[4] =
 {
-    -4.48876136715687,
-    -2.493755926496706,
-    -0.49874988611319804,
-    1.4962530470023068,
-    3.4912585165653676,
-    5
+    -2.351564403533789,
+    -0.46943377969837197,
+    1.409199877085212,
+    3
 };
 
-static const float WEIGHTS[6] =
+static const float WEIGHTS[4] =
 {
-    0.17240384242538973,
-    0.1848610194629113,
-    0.190472258826138,
-    0.1885828129221358,
-    0.17941572863649413,
-    0.08426433772693104
+    0.20281755282997538,
+    0.4044856614512111,
+    0.32139335373196054,
+    0.07130343198685299
 };
 
 // blurDirection is:
@@ -28,6 +24,7 @@ static const float WEIGHTS[6] =
 float4 blur(Texture2D sourceTexture, SamplerState state, float2 blurDirection, float2 pixelCoord, float2 textureDimensions)
 {
     float4 result = 0.0;
+    [unroll(SAMPLE_COUNT)]
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float2 offset = blurDirection * OFFSETS[i] / textureDimensions;

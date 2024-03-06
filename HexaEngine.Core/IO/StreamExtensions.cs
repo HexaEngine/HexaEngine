@@ -1162,7 +1162,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void WriteArrayInt16(this Stream stream, short[] array, Endianness endianness)
+        public static unsafe void WriteArrayInt16(this Stream stream, Span<short> array, Endianness endianness)
         {
             int stride = sizeof(short);
             fixed (short* p = array)

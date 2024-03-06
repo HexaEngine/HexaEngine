@@ -1,11 +1,6 @@
 #ifndef VOLUMETRICS_COMMON_H_INCLUDED
 #define VOLUMETRICS_COMMON_H_INCLUDED
 
-#define HARD_SHADOWS_DIRECTIONAL 1
-#define HARD_SHADOWS_DIRECTIONAL_CASCADED 1
-#define HARD_SHADOWS_POINTLIGHTS 1
-#define HARD_SHADOWS_SPOTLIGHTS 1
-
 #include "../../common.hlsl"
 #include "../../camera.hlsl"
 #include "../../commonShadows.hlsl"
@@ -37,10 +32,9 @@ struct VolumetricLight
 };
 
 SamplerState linear_clamp_sampler : register(s0);
-SamplerComparisonState shadow_sampler : register(s1);
 
 Texture2D<float> depthTx : register(t0);
-Texture2D<float> shadowAtlas : register(t1);
+Texture2D shadowAtlas : register(t1);
 Texture2DArray cascadeShadowMaps : register(t2);
 
 StructuredBuffer<VolumetricLight> lights : register(t3);

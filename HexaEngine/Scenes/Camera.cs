@@ -11,15 +11,30 @@
     [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject
     {
-        public new CameraTransform Transform;
+        public new CameraTransform Transform = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
         /// </summary>
         public Camera()
         {
-            base.Transform = Transform = new();
+            OverwriteTransform(Transform);
             AddComponentSingleton<SphereSelectionComponent>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        [JsonConstructor]
+        public Camera(ProjectionType projectionType, float fov, float far, float near, float width, float height)
+        {
+            OverwriteTransform(Transform);
+            ProjectionType = projectionType;
+            Fov = fov;
+            Far = far;
+            Near = near;
+            Width = width;
+            Height = height;
         }
 
         [EditorProperty("Visible Layers")]

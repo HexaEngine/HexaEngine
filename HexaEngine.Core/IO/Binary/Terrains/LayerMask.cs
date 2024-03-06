@@ -2,10 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
-    using System.Buffers.Binary;
     using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a layer mask used for terrain rendering.

@@ -11,26 +11,43 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
+    [EditorCategory("Lights")]
     [EditorGameObject<DirectionalLight>("Directional Light")]
     public class DirectionalLight : Light
     {
         private DepthStencil? csmDepthBuffer;
+        private Texture2D? csmBuffer;
         public new CameraTransform Transform = new();
 
-        [JsonIgnore]
-        public BoundingFrustum[] ShadowFrustra = new BoundingFrustum[8];
+        private readonly BoundingFrustum[] shadowFrustra = new BoundingFrustum[8];
 
         private int cascadeCount = 4;
+        private CascadesSplitMode splitMode = CascadesSplitMode.Log;
+        private float splitLambda = 0.85f;
 
-        public DirectionalLight()
+        public const int MaxCascadeCount = 8;
+
+        public DirectionalLight() : base()
         {
             for (int i = 0; i < 8; i++)
             {
-                ShadowFrustra[i] = new();
+                shadowFrustra[i] = new();
             }
-            base.Transform = Transform;
             OverwriteTransform(Transform);
         }
+
+        [JsonConstructor]
+        public DirectionalLight(Vector4 color) : base(color)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                shadowFrustra[i] = new();
+            }
+            OverwriteTransform(Transform);
+        }
+
+        [JsonIgnore]
+        public IReadOnlyList<BoundingFrustum> ShadowFrustra => shadowFrustra;
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Cascade Count")]
@@ -39,27 +56,21 @@
             get => cascadeCount;
             set
             {
-                cascadeCount = value % 8;
+                cascadeCount = MathUtil.Clamp(value, 1, MaxCascadeCount);
                 DestroyShadowMap();
             }
         }
 
         [EditorCategory("Shadow Map", "Shadows")]
-        [EditorProperty("Split Mode")]
-        public CascadesSplitMode SplitMode { get; set; }
+        [EditorProperty<CascadesSplitMode>("Split Mode")]
+        public CascadesSplitMode SplitMode { get => splitMode; set => splitMode = value; }
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Split Lambda")]
-        [EditorPropertyCondition<DirectionalLight>(nameof(SplitLambdaCheck))]
-        public float SplitLambda { get; set; }
+        public float SplitLambda { get => splitLambda; set => splitLambda = value; }
 
         [JsonIgnore]
         public override int ShadowMapSize => GraphicsSettings.GetSMSizeDirectionalLight(ShadowMapResolution);
-
-        private static bool SplitLambdaCheck(DirectionalLight obj)
-        {
-            return obj.SplitMode == CascadesSplitMode.Log;
-        }
 
         /// <inheritdoc/>
         [JsonIgnore]
@@ -67,50 +78,59 @@
 
         /// <inheritdoc/>
         [JsonIgnore]
-        public override bool HasShadowMap => csmDepthBuffer != null;
+        public override bool HasShadowMap => csmBuffer != null;
 
         /// <inheritdoc/>
         public override IShaderResourceView? GetShadowMap()
         {
-            return csmDepthBuffer?.SRV;
+            return csmBuffer?.SRV;
         }
+
+        public Texture2D? GetMap() => csmBuffer;
 
         /// <inheritdoc/>
         public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
-            if (csmDepthBuffer != null)
+            if (csmBuffer != null)
             {
                 return;
             }
 
+            csmBuffer = new(device, GraphicsSettings.ShadowMapFormat, ShadowMapSize, ShadowMapSize, cascadeCount - 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            csmBuffer.CreateArraySlices(device);
             csmDepthBuffer = new(device, Format.D32Float, ShadowMapSize, ShadowMapSize, cascadeCount - 1);
         }
 
         /// <inheritdoc/>
         public override void DestroyShadowMap()
         {
-            if (csmDepthBuffer == null)
+            if (csmBuffer != null)
             {
-                return;
+                csmBuffer?.Dispose();
+                csmBuffer = null;
             }
 
-            csmDepthBuffer?.Dispose();
-            csmDepthBuffer = null;
+            if (csmDepthBuffer != null)
+            {
+                csmDepthBuffer?.Dispose();
+                csmDepthBuffer = null;
+            }
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer, Camera camera)
         {
-            var data = buffer.Local + QueueIndex;
+            ShadowData* data = buffer.Local + QueueIndex;
+            data->Softness = ShadowMapLightBleedingReduction;
 
             Matrix4x4* views = ShadowData.GetViews(data);
             float* cascades = ShadowData.GetCascades(data);
 
-            CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra, ShadowMapSize, cascadeCount);
+            CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, shadowFrustra, ShadowMapSize, cascadeCount);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmBuffer, Camera camera)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmConstantBuffer, Camera camera)
         {
-            if (csmDepthBuffer == null)
+            if (csmBuffer == null)
             {
                 return;
             }
@@ -120,19 +140,21 @@
             Matrix4x4* views = ShadowData.GetViews(data);
             float* cascades = ShadowData.GetCascades(data);
 
-            var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra, ShadowMapSize, cascadeCount);
+            var matrices = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, shadowFrustra, ShadowMapSize, cascadeCount);
             CSMShadowParams shadowParams = default;
             for (uint i = 0; i < cascadeCount - 1; i++)
             {
-                shadowParams[i] = mtxs[i];
+                shadowParams[i] = matrices[i];
             }
             shadowParams.CascadeCount = (uint)(cascadeCount - 1);
 
-            context.Write(csmBuffer.Buffer, shadowParams);
+            context.Write(csmConstantBuffer.Buffer, shadowParams);
 
+            context.ClearRenderTargetView(csmBuffer.RTV, Vector4.One);
             context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
-            context.SetRenderTarget(null, csmDepthBuffer.DSV);
-            context.SetViewport(csmDepthBuffer.Viewport);
+            context.SetRenderTarget(csmBuffer.RTV, csmDepthBuffer.DSV);
+            context.SetViewport(csmBuffer.Viewport);
+
 #nullable enable
         }
 

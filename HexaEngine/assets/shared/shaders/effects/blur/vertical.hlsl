@@ -1,4 +1,4 @@
-#include "gaussian.hlsl"
+#include "gaussian3x3.hlsl"
 
 struct VSOut
 {

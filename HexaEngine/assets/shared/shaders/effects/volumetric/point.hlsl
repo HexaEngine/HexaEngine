@@ -22,7 +22,7 @@ float3 PointLightVolumetric(float ditherValue, float3 position, float3 VN, float
 
         float distanceAttenuation = exp(-density) * Attenuation(distance, light.range);
 
-        float visibility = ShadowFactorPointLight(shadow_sampler, shadowAtlas, light, shadowData, x);
+        float visibility = ShadowFactorPointLight(linear_clamp_sampler, shadowAtlas, light, shadowData, x, 0);
         result += visibility * HenyeyGreenstein(V, L) * distanceAttenuation;
         x += deltaStep;
     }

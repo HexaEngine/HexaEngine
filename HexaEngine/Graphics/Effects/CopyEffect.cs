@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using System.Numerics;
 
@@ -29,7 +30,45 @@
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
                 Macros = macros
-            }, GraphicsPipelineStateDesc.Default);
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
+            SamplerStateDescription description = SamplerStateDescription.PointClamp;
+
+            switch (filter)
+            {
+                case CopyFilter.Point:
+                    description = new(Filter.MinMagMipPoint, TextureAddressMode.Clamp);
+                    break;
+
+                case CopyFilter.Bilinear:
+                    description = new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp);
+                    break;
+
+                case CopyFilter.Trilinear:
+                    description = new(Filter.MinMagMipLinear, TextureAddressMode.Clamp);
+                    break;
+
+                case CopyFilter.Anisotropic:
+                    description = new(Filter.Anisotropic, TextureAddressMode.Clamp);
+                    break;
+            }
+
+            samplerState = device.CreateSamplerState(description);
+            paramBuffer = new(device, CpuAccessFlags.Write);
+        }
+
+        public CopyEffect(IGraphResourceBuilder creator, string name, CopyFilter filter)
+        {
+            ShaderMacro[] macros = filter != CopyFilter.None ? [new("SAMPLED", 1)] : [];
+
+            var device = creator.Device;
+
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/copy/ps.hlsl",
+                Macros = macros
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             SamplerStateDescription description = SamplerStateDescription.PointClamp;
 

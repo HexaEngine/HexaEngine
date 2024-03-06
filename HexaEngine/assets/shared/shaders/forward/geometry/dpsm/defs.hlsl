@@ -2,14 +2,6 @@
 #define VtxSkinned 0
 #endif
 
-#ifndef Tessellation
-#define Tessellation 0
-#endif
-
-#ifndef TessellationFactor
-#define TessellationFactor 1
-#endif
-
 #ifndef MaxBones
 #define MaxBones 100
 #endif
@@ -36,10 +28,4 @@ struct PixelInput
     float4 position : SV_POSITION;
     float depth : DEPTH;
     float clip : TEXCOORD;
-};
-
-struct PatchTess
-{
-    float EdgeTess[3] : SV_TessFactor;
-    float InsideTess : SV_InsideTessFactor;
 };

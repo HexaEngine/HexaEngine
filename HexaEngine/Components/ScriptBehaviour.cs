@@ -72,7 +72,7 @@
             }
         }
 
-        private static JsonSerializerSettings serializerSettings = new()
+        private static readonly JsonSerializerSettings serializerSettings = new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
@@ -240,9 +240,9 @@
                     var prop = properties[i];
                     if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null && prop.CanWrite && prop.CanWrite)
                     {
-                        if (propertyValues.ContainsKey(prop.Name))
+                        if (propertyValues.TryGetValue(prop.Name, out object? value))
                         {
-                            prop.SetValue(instance, propertyValues[prop.Name]);
+                            prop.SetValue(instance, value);
                         }
                         else
                         {

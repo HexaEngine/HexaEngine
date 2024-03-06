@@ -224,6 +224,7 @@
 
         protected void OverwriteTransform(Transform transform)
         {
+            Transform = transform;
             Transform.Updated -= TransformUpdated;
             transform.Updated += TransformUpdated;
         }

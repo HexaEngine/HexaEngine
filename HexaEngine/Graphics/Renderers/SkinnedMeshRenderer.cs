@@ -315,6 +315,7 @@
             context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
             context.VSSetConstantBuffer(1, light);
             context.GSSetConstantBuffer(0, light);
+            context.PSSetConstantBuffer(0, light);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -335,6 +336,7 @@
                     boneOffset++;
             }
 
+            context.PSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(1, null);
             context.GSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(0, null);

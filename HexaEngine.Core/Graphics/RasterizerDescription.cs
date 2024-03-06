@@ -124,6 +124,11 @@
         public static readonly RasterizerDescription CullBack = new(CullMode.Back, FillMode.Solid);
 
         /// <summary>
+        /// A built-in description with settings for culling primitives with counter-clockwise winding order and scissors enabled.
+        /// </summary>
+        public static readonly RasterizerDescription CullBackScissors = new(CullMode.Back, FillMode.Solid) { ScissorEnable = true };
+
+        /// <summary>
         /// A built-in description with settings for not culling any primitives and wireframe fill mode.
         /// </summary>
         public static readonly RasterizerDescription Wireframe = new(CullMode.None, FillMode.Wireframe);

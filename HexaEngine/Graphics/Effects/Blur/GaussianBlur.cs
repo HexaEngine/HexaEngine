@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -23,15 +24,24 @@
             public Vector2 padd;
         }
 
-        public GaussianBlur(IGraphResourceBuilder creator, Format format, int width, int height, bool alphaBlend = false, bool additive = false, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public GaussianBlur(IGraphResourceBuilder creator, Format format, int width, int height, bool alphaBlend = false, bool additive = false, bool scissors = false, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            Format = format;
+            Width = width;
+            Height = height;
             device = creator.Device;
+
+            RasterizerDescription rasterizerDescription = scissors ? RasterizerDescription.CullBackScissors : RasterizerDescription.CullBack;
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+            }, new()
+            {
+                Rasterizer = rasterizerDescription,
+                Topology = PrimitiveTopology.TriangleStrip
+            });
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -39,6 +49,7 @@
                 PixelShader = "effects/blur/vertical.hlsl",
             }, new()
             {
+                Rasterizer = rasterizerDescription,
                 Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
@@ -50,15 +61,24 @@
             intermediateTex = creator.CreateTexture2D(filename + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
-        public GaussianBlur(IGraphResourceBuilder creator, string name, Format format, int width, int height, bool alphaBlend = false, bool additive = false)
+        public GaussianBlur(IGraphResourceBuilder creator, string name, Format format, int width, int height, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
+            Format = format;
+            Width = width;
+            Height = height;
             device = creator.Device;
+
+            RasterizerDescription rasterizerDescription = scissors ? RasterizerDescription.CullBackScissors : RasterizerDescription.CullBack;
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+            }, new()
+            {
+                Rasterizer = rasterizerDescription,
+                Topology = PrimitiveTopology.TriangleStrip
+            });
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -66,6 +86,7 @@
                 PixelShader = "effects/blur/vertical.hlsl",
             }, new()
             {
+                Rasterizer = rasterizerDescription,
                 Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
@@ -77,15 +98,21 @@
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
-        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, Format format, bool alphaBlend = false, bool additive = false)
+        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, Format format, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
             device = creator.Device;
+
+            RasterizerDescription rasterizerDescription = scissors ? RasterizerDescription.CullBackScissors : RasterizerDescription.CullBack;
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+            }, new()
+            {
+                Rasterizer = rasterizerDescription,
+                Topology = PrimitiveTopology.TriangleStrip
+            });
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -93,6 +120,7 @@
                 PixelShader = "effects/blur/vertical.hlsl",
             }, new()
             {
+                Rasterizer = rasterizerDescription,
                 Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
@@ -104,15 +132,21 @@
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, creator.Width, creator.Height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
-        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, bool alphaBlend = false, bool additive = false)
+        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
             device = creator.Device;
+
+            RasterizerDescription rasterizerDescription = scissors ? RasterizerDescription.CullBackScissors : RasterizerDescription.CullBack;
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+            }, new()
+            {
+                Rasterizer = rasterizerDescription,
+                Topology = PrimitiveTopology.TriangleStrip
+            });
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -120,6 +154,7 @@
                 PixelShader = "effects/blur/vertical.hlsl",
             }, new()
             {
+                Rasterizer = rasterizerDescription,
                 Blend = additive ? BlendDescription.Additive : alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
@@ -132,6 +167,12 @@
         }
 
         public BlurType Type => BlurType.Gaussian;
+
+        public Format Format { get; private set; }
+
+        public int Width { get; private set; }
+
+        public int Height { get; private set; }
 
         public unsafe void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, float width, float height)
         {
@@ -146,6 +187,9 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.SetPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
+
+            context.SetRenderTarget(null, null);
+            context.PSSetShaderResource(0, null);
 
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
@@ -173,6 +217,9 @@
             context.SetPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
 
+            context.SetRenderTarget(null, null);
+            context.PSSetShaderResource(0, null);
+
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
             context.SetPipelineState(vertical);
@@ -185,8 +232,42 @@
             context.SetRenderTarget(null, null);
         }
 
+        public unsafe void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, float width, float height, Point4 scissors)
+        {
+            GaussianBlurParams gaussianBlurParams = default;
+            gaussianBlurParams.TextureDimentions = new(width, height);
+            paramsBuffer.Update(context, gaussianBlurParams);
+
+            context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);
+            context.SetRenderTarget(intermediateTex.Value.RTV, null);
+            context.SetViewport(new(width, height));
+            context.PSSetShaderResource(0, src);
+            context.PSSetSampler(0, linearClampSampler);
+            context.PSSetConstantBuffer(0, paramsBuffer);
+            context.SetPipelineState(horizontal);
+            context.DrawInstanced(4, 1, 0, 0);
+
+            context.SetRenderTarget(null, null);
+            context.PSSetShaderResource(0, null);
+
+            context.SetRenderTarget(dst, null);
+            context.PSSetShaderResource(0, intermediateTex.Value.SRV);
+            context.SetPipelineState(vertical);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetPipelineState(null);
+            context.PSSetConstantBuffer(0, null);
+            context.PSSetSampler(0, null);
+            context.PSSetShaderResource(0, null);
+            context.SetViewport(default);
+            context.SetRenderTarget(null, null);
+            context.SetScissorRect(0, 0, 0, 0);
+        }
+
         public void Resize(Format format, int width, int height)
         {
+            Format = format;
+            Width = width;
+            Height = height;
             intermediateTex.Value.Resize(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 

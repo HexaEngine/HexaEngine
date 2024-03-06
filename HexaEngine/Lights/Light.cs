@@ -12,17 +12,32 @@
     {
         internal bool InUpdateQueue;
         internal uint QueueIndex;
-        protected const float DegToRadFactor = 0.0174532925f;
         protected Vector4 color = Vector4.One;
         private float range = 50;
         private float intensity = 1;
         private bool shadowMapEnable;
         private ShadowResolution shadowMapResolution;
+        private ShadowUpdateMode shadowMapUpdateMode = ShadowUpdateMode.OnDemand;
+        private float shadowMapSlopeScaleDepthBias;
+        private float shadowMapNormalBias;
+        private float shadowMapSoftness;
+        private bool contactShadowsEnable;
+        private float contactShadowsThickness;
+        private uint contactShadowsMaxSteps;
+        private float contactShadowsMaxRayDistance;
+        private float contactShadowsMaxDepthDistance;
+        private bool volumetricsEnable;
+        private float volumetricsMultiplier;
 
-        public override void Initialize()
+        public Light()
         {
             AddComponentSingleton<SphereSelectionComponent>();
-            base.Initialize();
+        }
+
+        [JsonConstructor]
+        public Light(Vector4 color)
+        {
+            this.color = color;
         }
 
         public abstract LightType LightType { get; }
@@ -53,7 +68,7 @@
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowUpdateMode>("Update Mode")]
-        public ShadowUpdateMode ShadowMapUpdateMode { get; set; } = ShadowUpdateMode.OnDemand;
+        public ShadowUpdateMode ShadowMapUpdateMode { get => shadowMapUpdateMode; set => shadowMapUpdateMode = value; }
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowResolution>("Resolution")]
@@ -68,11 +83,19 @@
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Slope-Scale depth Bias")]
-        public float ShadowMapSlopeScaleDepthBias { get; set; }
+        public float ShadowMapSlopeScaleDepthBias { get => shadowMapSlopeScaleDepthBias; set => shadowMapSlopeScaleDepthBias = value; }
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Normal Bias")]
-        public float ShadowMapNormalBias { get; set; }
+        public float ShadowMapNormalBias { get => shadowMapNormalBias; set => shadowMapNormalBias = value; }
+
+        [EditorCategory("Shadow Map", "Shadows")]
+        [EditorProperty("Softness")]
+        public float ShadowMapSoftness { get => shadowMapSoftness; set => shadowMapSoftness = value; }
+
+        [EditorCategory("Shadow Map", "Shadows")]
+        [EditorProperty("Light Bleeding Reduction")]
+        public float ShadowMapLightBleedingReduction { get => shadowMapSoftness; set => shadowMapSoftness = value; }
 
         [JsonIgnore]
         public abstract int ShadowMapSize { get; }
@@ -83,23 +106,23 @@
 
         [EditorCategory("Contact Shadows", "Shadows")]
         [EditorProperty("Enable")]
-        public bool ContactShadowsEnable { get; set; }
+        public bool ContactShadowsEnable { get => contactShadowsEnable; set => contactShadowsEnable = value; }
 
         [EditorCategory("Contact Shadows", "Shadows")]
         [EditorProperty("Thickness")]
-        public float ContactShadowsThickness { get; set; }
+        public float ContactShadowsThickness { get => contactShadowsThickness; set => contactShadowsThickness = value; }
 
         [EditorCategory("Contact Shadows", "Shadows")]
         [EditorProperty("Max Steps")]
-        public uint ContactShadowsMaxSteps { get; set; }
+        public uint ContactShadowsMaxSteps { get => contactShadowsMaxSteps; set => contactShadowsMaxSteps = value; }
 
         [EditorCategory("Contact Shadows", "Shadows")]
         [EditorProperty("Max Ray Distance")]
-        public float ContactShadowsMaxRayDistance { get; set; }
+        public float ContactShadowsMaxRayDistance { get => contactShadowsMaxRayDistance; set => contactShadowsMaxRayDistance = value; }
 
         [EditorCategory("Contact Shadows", "Shadows")]
         [EditorProperty("Max depth Distance")]
-        public float ContactShadowsMaxDepthDistance { get; set; }
+        public float ContactShadowsMaxDepthDistance { get => contactShadowsMaxDepthDistance; set => contactShadowsMaxDepthDistance = value; }
 
         #endregion Contact Shadows
 
@@ -109,11 +132,11 @@
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Enable")]
-        public bool VolumetricsEnable { get; set; }
+        public bool VolumetricsEnable { get => volumetricsEnable; set => volumetricsEnable = value; }
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Multiplier")]
-        public float VolumetricsMultiplier { get; set; }
+        public float VolumetricsMultiplier { get => volumetricsMultiplier; set => volumetricsMultiplier = value; }
 
         #endregion Volumetrics
 

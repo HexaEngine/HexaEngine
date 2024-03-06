@@ -10,7 +10,8 @@
     {
         private static AssemblyLoadContext assemblyLoadContext;
         private static readonly List<Assembly> assemblies = new();
-        private static readonly Dictionary<Type, IList<Type>> _typeCache = new();
+        private static readonly Dictionary<Guid, Type> _typeCache = new();
+        private static readonly Dictionary<Type, IList<Type>> _typeToTypeCache = new();
         private static readonly Dictionary<Type, string[]> _typeNameCache = new();
 
         private static readonly Dictionary<Type, Array> _enumCache = new();
@@ -70,10 +71,17 @@
                 }
             }
 
+            var types = assembly.GetTypes();
+            for (int i = 0; i < types.Length; i++)
+            {
+                var type = types[i];
+                _typeCache.Add(type.GUID, type);
+            }
+
             assemblies.Add(assembly);
             AssemblyLoaded?.Invoke(null, assembly);
 
-            _typeCache.Clear();
+            _typeToTypeCache.Clear();
             _typeNameCache.Clear();
 
             loadLock.Set();
@@ -90,12 +98,12 @@
         {
             loadLock.Wait();
 
-            if (!_typeCache.TryGetValue(typeof(T), out var result))
+            if (!_typeToTypeCache.TryGetValue(typeof(T), out var result))
             {
                 try
                 {
                     result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(typeof(T)))).ToList();
-                    _typeCache.Add(typeof(T), result);
+                    _typeToTypeCache.Add(typeof(T), result);
                 }
                 catch (Exception ex)
                 {
@@ -121,12 +129,12 @@
             if (Assemblies.Count == 0)
                 return Array.Empty<Type>();
 
-            if (!_typeCache.TryGetValue(type, out var result))
+            if (!_typeToTypeCache.TryGetValue(type, out var result))
             {
                 try
                 {
                     result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type))).ToList();
-                    _typeCache.Add(type, result);
+                    _typeToTypeCache.Add(type, result);
                 }
                 catch (Exception ex)
                 {
@@ -276,6 +284,7 @@
                 try
                 {
                     Type? type = assembly.GetType(name, false, false);
+
                     if (type != null)
                     {
                         return type;
@@ -292,11 +301,23 @@
             return null;
         }
 
+        public static Type? GetTypeByGUID(Guid guid)
+        {
+            loadLock.Wait();
+
+            if (_typeCache.TryGetValue(guid, out var type))
+            {
+                return type;
+            }
+
+            return null;
+        }
+
         public static void Unload()
         {
             loadLock.Reset();
-
             _typeCache.Clear();
+            _typeToTypeCache.Clear();
             _typeNameCache.Clear();
             _enumCache.Clear();
             _enumNameCache.Clear();

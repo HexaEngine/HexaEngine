@@ -101,6 +101,11 @@
         public static GraphicsPipelineStateDesc DefaultFullscreen => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };
 
         /// <summary>
+        /// Gets a default fullscreen graphics pipeline state for rendering to the entire screen with scissors enabled.
+        /// </summary>
+        public static GraphicsPipelineStateDesc DefaultFullscreenScissors => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBackScissors, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };
+
+        /// <summary>
         /// Gets a default additive fullscreen graphics pipeline state for rendering to the entire screen with additive blending.
         /// </summary>
         public static GraphicsPipelineStateDesc DefaultAdditiveFullscreen => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Additive, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };

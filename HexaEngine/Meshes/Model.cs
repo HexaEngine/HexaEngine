@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Meshes
 {
     using HexaEngine.Components.Renderer;
+    using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Materials;
@@ -272,7 +273,7 @@
         {
             flags = ModelMaterialShaderFlags.DepthTest | ModelMaterialShaderFlags.Deferred | ModelMaterialShaderFlags.Shadow | ModelMaterialShaderFlags.Bake;
             macros = [];
-            shadowMacros = [];
+            shadowMacros = [new("SOFT_SHADOWS", (int)GraphicsSettings.SoftShadowMode)];
 
             if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
             {
@@ -448,13 +449,14 @@
                 {
                     VertexShader = "forward/geometry/csm/vs.hlsl",
                     GeometryShader = "forward/geometry/csm/gs.hlsl",
+                    PixelShader = "forward/geometry/csm/ps.hlsl",
                     Macros = shadowMacros
                 };
 
                 GraphicsPipelineStateDesc csmPipelineStateDesc = new()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
+                    Rasterizer = RasterizerDescription.CullNone,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -477,13 +479,14 @@
                 GraphicsPipelineDesc psmPipelineDesc = new()
                 {
                     VertexShader = "forward/geometry/psm/vs.hlsl",
+                    PixelShader = "forward/geometry/psm/ps.hlsl",
                     Macros = shadowMacros
                 };
 
                 GraphicsPipelineStateDesc psmPipelineStateDesc = new()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = rasterizer,
+                    Rasterizer = RasterizerDescription.CullNone,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };

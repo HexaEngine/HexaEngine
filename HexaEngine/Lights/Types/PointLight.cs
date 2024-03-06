@@ -11,12 +11,20 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
+    [EditorCategory("Lights")]
     [EditorGameObject<PointLight>("Point Light")]
     public class PointLight : Light
     {
-        private ShadowAtlasRangeHandle atlasHandle;
+        private ShadowAtlasRangeHandle? atlasHandle;
 
-        public PointLight()
+        public PointLight() : base()
+        {
+            ShadowMapNormalBias = 0;
+            ShadowMapSlopeScaleDepthBias = 0;
+        }
+
+        [JsonConstructor]
+        public PointLight(Vector4 color) : base(color)
         {
             ShadowMapNormalBias = 0;
             ShadowMapSlopeScaleDepthBias = 0;
@@ -68,7 +76,7 @@
 
             var data = buffer.Local + QueueIndex;
             data->Size = ShadowMapSize;
-            data->Softness = 1;
+            data->Softness = ShadowMapLightBleedingReduction;
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
@@ -83,11 +91,11 @@
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<DPSMShadowParams> osmBuffer, int pass)
+        public unsafe Viewport UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<DPSMShadowParams> osmBuffer, int pass)
         {
             if (!HasShadowMap)
             {
-                return;
+                return default;
             }
 
 #nullable disable
@@ -103,7 +111,7 @@
             for (int i = 0; i < 2; i++)
             {
                 var vp = atlasHandle.Handles[i].Viewport;
-                coords[i] = new Vector4(vp.X + 2, vp.Y + 2, vp.Width - 2, vp.Height - 2) * texel;
+                coords[i] = new Vector4(vp.X + 0, vp.Y + 0, vp.Width - 0, vp.Height - 0) * texel;
             }
 
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
@@ -115,10 +123,7 @@
             osmBuffer.Local->HemiDir = pass == 0 ? 1 : -1;
             osmBuffer.Update(context);
 
-            context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);
-            context.SetRenderTarget(null, atlasHandle.Atlas.DSV);
-            context.SetViewport(viewport);
-
+            return viewport;
 #nullable enable
         }
 

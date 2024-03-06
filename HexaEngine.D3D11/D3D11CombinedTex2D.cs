@@ -11,7 +11,7 @@
         internal ComPtr<ID3D11RenderTargetView> rtv;
         internal ComPtr<ID3D11UnorderedAccessView> uav;
         internal ComPtr<ID3D11DepthStencilView> dsv;
-        private HexaEngine.Mathematics.Viewport viewport;
+        private readonly Mathematics.Viewport viewport;
 
         public D3D11CombinedTex2D(D3D11GraphicsDevice device, CombinedTex2DDesc description)
         {

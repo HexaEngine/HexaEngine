@@ -304,7 +304,8 @@
         /// <param name="value">The value to set for the configuration value.</param>
         /// <param name="isReadOnly">A value indicating whether the configuration value is read-only.</param>
         /// <param name="enumType">The enum type associated with the configuration value.</param>
-        public void AddValue(string key, DataType type, string? value, bool isReadOnly, Type? enumType)
+        /// <returns>The newly created config value key</returns>
+        public ConfigValue AddValue(string key, DataType type, string? value, bool isReadOnly, Type? enumType)
         {
             lock (_lock)
             {
@@ -312,6 +313,7 @@
                 configValue.DefaultValue = value;
                 configValue.EnumType = enumType;
                 Values.Add(configValue);
+                return configValue;
             }
         }
 
@@ -543,6 +545,166 @@
                 }
 
                 return Enum.Parse<T>(val);
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, int defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Int32, defaultValue.ToString(), false, typeof(int));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, float defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Float, defaultValue.ToString(), false, typeof(float));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, double defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Double, defaultValue.ToString(), false, typeof(double));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, bool defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Bool, defaultValue.ToString(), false, typeof(bool));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, Vector2 defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Float2, defaultValue.ToString(), false, typeof(Vector2));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, Vector3 defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Float3, defaultValue.ToString(), false, typeof(Vector3));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey(string key, Vector4 defaultValue)
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Float4, defaultValue.ToString(), false, typeof(Vector4));
+                }
+
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an value associated with the specified key. If the key does not exist,
+        /// it adds a new value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <returns>The value key associated with the key or the default value if the key doesn't exist.</returns>
+        public ConfigValue GetOrAddValueKey<T>(string key, T defaultValue) where T : struct, Enum
+        {
+            lock (_lock)
+            {
+                if (!TryGetKeyValue(key, out var value))
+                {
+                    return AddValue(key, DataType.Enum, defaultValue.ToString(), false, typeof(T));
+                }
+
+                return value;
             }
         }
 

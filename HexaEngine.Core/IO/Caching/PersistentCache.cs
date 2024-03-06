@@ -17,9 +17,6 @@
         private readonly string indexFile;
 
         private readonly List<PersistentCacheEntry> entries = [];
-        private readonly SemaphoreSlim writeSemaphore = new(1);
-        private readonly ManualResetEventSlim writeLock = new(true);
-        private readonly SemaphoreSlim readSemaphore = new(MaxConcurrentReader);
 
         private readonly SemaphoreSlim memorySemaphore = new(1);
         private readonly SemaphoreSlim indexFileSemaphore = new(1);
@@ -81,11 +78,6 @@
         private const int Version = 1;
 
         /// <summary>
-        /// Maximum concurrent readers/threads.
-        /// </summary>
-        public const int MaxConcurrentReader = 64;
-
-        /// <summary>
         /// Gets or sets maximum memory cache size in bytes. Default value is 512MB (536870912 Bytes).
         /// </summary>
         public int MaxMemorySize { get => maxMemorySize; set => maxMemorySize = value; }
@@ -95,40 +87,64 @@
         /// </summary>
         public ICachePolicy CachePolicy { get => cachePolicy; set => cachePolicy = value; }
 
+        private readonly ManualResetEventSlim readLock = new(true);
+        private readonly SemaphoreSlim writeSemaphore = new(1);
+        private readonly ManualResetEventSlim writeLock = new(true);
+        private readonly SemaphoreSlim readSemaphore = new(MaxConcurrentReaders);
+
+        /// <summary>
+        /// Maximum concurrent readers/threads.
+        /// </summary>
+        public const int MaxConcurrentReaders = 64;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BeginWrite()
         {
+            // wait for exclusive write lock.
             writeSemaphore.Wait();
 
+            // reset write lock to block readers.
             writeLock.Reset();
 
-            while (readSemaphore.CurrentCount != MaxConcurrentReader)
-            {
-                Thread.Yield();
-            }
-            Thread.MemoryBarrier();
+            // wait for readers to end their read process.
+            readLock.Wait();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EndWrite()
         {
-            Thread.MemoryBarrier();
+            // sets the write lock to allow readers again to read.
             writeLock.Set();
+
+            // release exclusive write lock.
             writeSemaphore.Release();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BeginRead()
         {
+            // blocks the reader if a write is pending.
             writeLock.Wait();
+
+            // resets the read lock to block writers until the read process is done.
+            readLock.Reset();
+
+            // waits for reader semaphore.
             readSemaphore.Wait();
-            Thread.MemoryBarrier();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EndRead()
         {
+            // releases reader semaphore.
             readSemaphore.Release();
+
+            // checks if all readers exited the reading process, note that CurrentCount is read with Volatile.Read internally.
+            if (readSemaphore.CurrentCount == MaxConcurrentReaders)
+            {
+                // sets the read lock to inform writers that all read processes are done.
+                readLock.Set();
+            }
         }
 
         private bool TryGetEntry(string key, [NotNullWhen(true)] out PersistentCacheEntry? entry)

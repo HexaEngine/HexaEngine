@@ -242,6 +242,7 @@
             context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
             context.VSSetConstantBuffer(1, light);
             context.GSSetConstantBuffer(0, light);
+            context.PSSetConstantBuffer(0, light);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -261,6 +262,7 @@
 
             context.VSSetConstantBuffer(1, null);
             context.GSSetConstantBuffer(0, null);
+            context.PSSetConstantBuffer(0, null);
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetShaderResource(1, null);

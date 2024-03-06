@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
+    using HexaEngine.Resources;
 
     public class TerrainDrawLayer
     {

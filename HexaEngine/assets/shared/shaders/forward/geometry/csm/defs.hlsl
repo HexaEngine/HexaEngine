@@ -32,10 +32,5 @@ struct PixelInput
 {
     float4 position : SV_POSITION;
     uint rtvIndex : SV_RenderTargetArrayIndex;
-};
-
-struct PatchTess
-{
-    float EdgeTess[3] : SV_TessFactor;
-    float InsideTess : SV_InsideTessFactor;
+    float depth : DEPTH;
 };

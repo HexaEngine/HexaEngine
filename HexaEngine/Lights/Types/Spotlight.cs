@@ -12,15 +12,16 @@
     using System;
     using System.Numerics;
 
+    [EditorCategory("Lights")]
     [EditorGameObject<Spotlight>("Spotlight")]
     public class Spotlight : Light
     {
-        public new CameraTransform Transform;
+        public new CameraTransform Transform = new();
 
         private float coneAngle;
         private float blend;
         private Matrix4x4 view;
-        private ShadowAtlasHandle atlasHandle;
+        private ShadowAtlasHandle? atlasHandle;
         private readonly List<SpatialCacheHandle> cacheHandles = [];
 
         [JsonIgnore]
@@ -34,7 +35,13 @@
 
         public Spotlight()
         {
-            base.Transform = Transform = new();
+            OverwriteTransform(Transform);
+        }
+
+        [JsonConstructor]
+        public Spotlight(CameraTransform transform, Vector4 color) : base(color)
+        {
+            Transform = transform;
             OverwriteTransform(Transform);
         }
 
@@ -85,7 +92,7 @@
 
             var data = buffer.Local + QueueIndex;
             data->Size = ShadowMapSize;
-            data->Softness = 1;
+            data->Softness = ShadowMapLightBleedingReduction;
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
@@ -97,21 +104,21 @@
             views[0] = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<PSMShadowParams> psmBuffer)
+        public unsafe Viewport UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<PSMShadowParams> psmBuffer)
         {
             if (!HasShadowMap)
             {
-                return;
+                return default;
             }
 #nullable disable
 
             var viewport = atlasHandle.Handle.Viewport;
-            view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
-            context.Write(psmBuffer, view);
-            context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);
-            context.SetRenderTarget(null, atlasHandle.Atlas.DSV);
-            context.SetViewport(viewport);
+            Matrix4x4 view;
+            Matrix4x4 viewProjection;
+            PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum, &view, &viewProjection);
+            psmBuffer.Update(context, new(view, viewProjection, Transform.GlobalPosition, Range, 0));
 
+            return viewport;
 #nullable enable
         }
 
@@ -119,6 +126,7 @@
 
         public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
         {
+            return false;
             var distance = camera.DistanceTo(this);
 
             var distanceScaled = distance / Range;

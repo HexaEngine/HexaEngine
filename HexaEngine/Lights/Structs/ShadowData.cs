@@ -16,9 +16,10 @@
         public Matrix4x4 View6;
         public Matrix4x4 View7;
         public uint CascadeCount;
-        public UPoint3 Padding;
+        public float ESMExponent;
+        public UPoint2 Padding;
 
-        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7, uint cascadesCount)
+        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7, uint cascadesCount, float esmExponent)
         {
             View0 = view0;
             View1 = view1;
@@ -29,6 +30,7 @@
             View6 = view6;
             View7 = view7;
             CascadeCount = cascadesCount;
+            ESMExponent = esmExponent;
         }
 
         public unsafe Matrix4x4 this[uint index]
@@ -47,10 +49,20 @@
     public struct PSMShadowParams
     {
         public Matrix4x4 View;
+        public Matrix4x4 ViewProjection;
+        public Vector3 Position;
+        public float Far;
+        public float ESMExponent;
+        public Vector3 Padding;
 
-        public PSMShadowParams(Matrix4x4 view)
+        public PSMShadowParams(Matrix4x4 view, Matrix4x4 viewProjection, Vector3 position, float far, float esmExponent)
         {
             View = view;
+            ViewProjection = viewProjection;
+            Position = position;
+            Far = far;
+            ESMExponent = esmExponent;
+            Padding = default;
         }
     }
 
@@ -60,15 +72,15 @@
         public float Near;
         public float Far;
         public float HemiDir;
-        public float _padd;
+        public float ESMExponent;
 
-        public DPSMShadowParams(Matrix4x4 view, float near, float far, float hemiDir)
+        public DPSMShadowParams(Matrix4x4 view, float near, float far, float hemiDir, float esmExponent)
         {
             View = view;
             Near = near;
             Far = far;
             HemiDir = hemiDir;
-            _padd = 0;
+            ESMExponent = esmExponent;
         }
     }
 
@@ -113,7 +125,7 @@
         {
             View0 = light.Transform.View;
             Size = size;
-            Softness = 1;
+            Softness = light.ShadowMapLightBleedingReduction;
             CascadeCount = 0;
             NormalBias = light.ShadowMapNormalBias;
             SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
@@ -123,7 +135,7 @@
         {
             View0 = light.View;
             Size = size;
-            Softness = 1;
+            Softness = light.ShadowMapLightBleedingReduction;
             CascadeCount = 0;
             NormalBias = light.ShadowMapNormalBias;
             SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;
@@ -133,7 +145,7 @@
         {
             View0 = light.Transform.View;
             Size = size;
-            Softness = 1;
+            Softness = light.ShadowMapLightBleedingReduction;
             CascadeCount = (uint)light.CascadeCount;
             NormalBias = light.ShadowMapNormalBias;
             SlopeScaleDepthBias = light.ShadowMapSlopeScaleDepthBias;

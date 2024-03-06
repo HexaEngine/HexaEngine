@@ -5,7 +5,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Noise;
     using System;
-    using System.Globalization;
     using System.Numerics;
 
     /// <summary>
