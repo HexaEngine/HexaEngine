@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
@@ -7,7 +8,7 @@
     using MagicPhysX;
     using System.Numerics;
 
-    public abstract unsafe class BaseCollider : IColliderComponent
+    public abstract unsafe class ColliderShape : IColliderComponent
     {
         protected PxMaterial* material;
 
@@ -16,6 +17,11 @@
         private float staticFriction = 0.5f;
         private float restitution = 0.6f;
         private PxTransform localPose;
+
+        private readonly List<Pointer<PxShape>> shapes = new();
+
+        [JsonIgnore]
+        internal static readonly ConcurrentNativeToManagedMapper mapper = new();
 
         [EditorProperty("Density")]
         public float Density
@@ -64,7 +70,13 @@
 
         public virtual void DestroyShapes()
         {
-            if (material == null)
+            for (int i = 0; i < shapes.Count; i++)
+            {
+                mapper.RemoveMapping(shapes[i]);
+            }
+            shapes.Clear();
+
+            if (material != null)
             {
                 ((PxBase*)material)->ReleaseMut();
                 material = null;
@@ -75,6 +87,8 @@
 
         public virtual void AttachShape(PxRigidActor* actor, PxShape* shape, PxTransform localPose)
         {
+            shapes.Add(shape);
+            mapper.AddMapping(shape, this);
             shape->SetLocalPoseMut(&localPose);
             actor->AttachShapeMut(shape);
             shape->ReleaseMut();
@@ -82,6 +96,8 @@
 
         public virtual void AttachShape(PxRigidActor* actor, PxShape* shape)
         {
+            shapes.Add(shape);
+            mapper.AddMapping(shape, this);
             var pose = localPose;
             shape->SetLocalPoseMut(&pose);
             actor->AttachShapeMut(shape);

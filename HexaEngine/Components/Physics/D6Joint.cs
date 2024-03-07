@@ -556,7 +556,7 @@
 
         [EditorCategory("Twist Motor")]
         [EditorProperty("Target Velocity")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float TwistMotorTargetVelocity
         {
             get => twistMotorTargetVelocity;
@@ -569,7 +569,7 @@
 
         [EditorCategory("Twist Motor")]
         [EditorProperty("Stiffness")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float TwistMotorStiffness
         {
             get => twistMotorStiffness;
@@ -582,7 +582,7 @@
 
         [EditorCategory("Twist Motor")]
         [EditorProperty("Damping")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float TwistMotorDamping
         {
             get => twistMotorDamping;
@@ -595,7 +595,7 @@
 
         [EditorCategory("Twist Motor")]
         [EditorProperty("Force Limit")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float TwistMotorForceLimit
         {
             get => twistMotorForceLimit;
@@ -608,7 +608,7 @@
 
         [EditorCategory("Twist Motor")]
         [EditorProperty("Is Acceleration")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public bool TwistMotorIsAcceleration
         {
             get => twistMotorIsAcceleration;
@@ -621,7 +621,7 @@
 
         [EditorCategory("Swing Motor")]
         [EditorProperty("Target Velocity")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public Vector2 SwingMotorTargetVelocity
         {
             get => swingMotorTargetVelocity;
@@ -634,7 +634,7 @@
 
         [EditorCategory("Swing Motor")]
         [EditorProperty("Stiffness")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float SwingMotorStiffness
         {
             get => swingMotorStiffness;
@@ -647,7 +647,7 @@
 
         [EditorCategory("Swing Motor")]
         [EditorProperty("Damping")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float SwingMotorDamping
         {
             get => swingMotorDamping;
@@ -660,7 +660,7 @@
 
         [EditorCategory("Swing Motor")]
         [EditorProperty("Force Limit")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public float SwingMotorForceLimit
         {
             get => swingMotorForceLimit;
@@ -673,7 +673,7 @@
 
         [EditorCategory("Swing Motor")]
         [EditorProperty("Is Acceleration")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
         public bool SwingMotorIsAcceleration
         {
             get => swingMotorIsAcceleration;
@@ -686,7 +686,7 @@
 
         [EditorCategory("SLerp Motor")]
         [EditorProperty("Target Velocity")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
         public Vector3 SLerpMotorTargetVelocity
         {
             get => sLerpMotorTargetVelocity;
@@ -699,7 +699,7 @@
 
         [EditorCategory("SLerp Motor")]
         [EditorProperty("Stiffness")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
         public float SLerpMotorStiffness
         {
             get => sLerpMotorStiffness;
@@ -712,7 +712,7 @@
 
         [EditorCategory("SLerp Motor")]
         [EditorProperty("Damping")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
         public float SLerpMotorDamping
         {
             get => sLerpMotorDamping;
@@ -725,7 +725,7 @@
 
         [EditorCategory("SLerp Motor")]
         [EditorProperty("Force Limit")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
         public float SLerpMotorForceLimit
         {
             get => sLerpMotorForceLimit;
@@ -738,7 +738,7 @@
 
         [EditorCategory("SLerp Motor")]
         [EditorProperty("Is Acceleration")]
-        [EditorPropertyCondition<D6Joint>(nameof(IsTwistAndSwingMotor))]
+        [EditorPropertyCondition<D6Joint>(nameof(IsSLerpMotor))]
         public bool SLerpMotorIsAcceleration
         {
             get => sLerpMotorIsAcceleration;

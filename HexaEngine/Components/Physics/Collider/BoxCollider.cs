@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<BoxCollider>("Box Collider")]
-    public unsafe class BoxCollider : BaseCollider
+    public unsafe class BoxCollider : ColliderShape
     {
         private float height = 1;
         private float depth = 1;

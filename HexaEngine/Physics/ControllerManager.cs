@@ -5,26 +5,26 @@
     public unsafe class ControllerManager
     {
         private readonly object _lock = new();
-        private PxControllerManager* manager;
+        internal PxControllerManager* manager;
 
         public ControllerManager(PhysicsSystem system)
         {
             manager = NativeMethods.phys_PxCreateControllerManager(system.PxScene, false);
         }
 
-        public PxController* CreateController(PxCapsuleControllerDesc desc)
+        public PxController* CreateController(PxCapsuleControllerDesc* desc)
         {
             lock (_lock)
             {
-                return manager->CreateControllerMut((PxControllerDesc*)&desc);
+                return manager->CreateControllerMut((PxControllerDesc*)desc);
             }
         }
 
-        public PxController* CreateController(PxBoxControllerDesc desc)
+        public PxController* CreateController(PxBoxControllerDesc* desc)
         {
             lock (_lock)
             {
-                return manager->CreateControllerMut((PxControllerDesc*)&desc);
+                return manager->CreateControllerMut((PxControllerDesc*)desc);
             }
         }
 

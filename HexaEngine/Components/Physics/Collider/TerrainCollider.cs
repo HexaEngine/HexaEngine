@@ -12,7 +12,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<TerrainCollider>("Terrain Collider", false, true)]
-    public unsafe class TerrainCollider : BaseCollider
+    public unsafe class TerrainCollider : ColliderShape
     {
         private readonly List<Pointer<PxHeightField>> pxHeightFields = [];
         private AssetRef terrainAsset;

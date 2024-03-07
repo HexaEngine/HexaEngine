@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGuizmo;
+    using HexaEngine.Components.Physics;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
@@ -211,6 +212,19 @@
                         if (component is CapsuleCollider capsule)
                         {
                             DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length * 2, Vector4.One);
+                        }
+                        if (component is CharacterController controller)
+                        {
+                            switch (controller.Shape)
+                            {
+                                case Physics.CharacterControllerShape.Capsule:
+                                    DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, controller.CapsuleRadius, controller.CapsuleHeight * 2, Vector4.One);
+                                    break;
+
+                                case Physics.CharacterControllerShape.Box:
+                                    DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, controller.BoxWidth, controller.BoxHeight, controller.BoxDepth, Vector4.One);
+                                    break;
+                            }
                         }
                     }
                 }

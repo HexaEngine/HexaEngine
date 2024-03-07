@@ -1,12 +1,14 @@
 ﻿namespace HexaEngine.Components.Physics
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using MagicPhysX;
     using System;
+    using System.Runtime.InteropServices;
 
     // TODO: Constraints.
     // TODO: Dominance Group Editor.
@@ -21,13 +23,16 @@
         private byte dominanceGroup = 0;
 
         [JsonIgnore]
+        internal static readonly ConcurrentNativeToManagedMapper mapper = new();
+
+        [JsonIgnore]
         public GameObject GameObject { get; set; }
 
         [EditorProperty<ActorType>("Type")]
         public ActorType Type
         { get => type; set { type = value; NotifyOnRecreate(); } }
 
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Disable Gravity")]
         public bool DisableGravity
         {
@@ -43,7 +48,7 @@
             }
         }
 
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Send Sleep Notifies")]
         public bool SendSleepNotifies
         {
@@ -119,6 +124,11 @@
             return rigidBody.type == ActorType.Static;
         }
 
+        protected static bool IsDynamic(RigidBody rigidBody)
+        {
+            return rigidBody.type != ActorType.Static;
+        }
+
         protected void NotifyOnRecreate()
         {
             isUpdating = true;
@@ -132,6 +142,8 @@
             actor = CreateActor(physics, scene);
             if (actor != null)
             {
+                mapper.AddMapping(actor, this);
+
                 actor->SetActorFlagsMut(Helper.Convert(Flags));
                 actor->SetDominanceGroupMut(dominanceGroup);
 
@@ -151,6 +163,7 @@
         {
             if (actor != null)
             {
+                mapper.RemoveMapping(actor);
                 var scene = actor->GetScene();
                 scene->RemoveActorMut(actor, true);
                 actor->SetNameMut(null);

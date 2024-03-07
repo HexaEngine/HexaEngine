@@ -73,10 +73,12 @@
                 GC.WaitForFullGCComplete();
                 GC.RefreshMemoryLimit();
             });
+#if DEBUG
             RegisterCommand("qqq", _ =>
             {
                 throw new Exception("Command qqq was triggered!");
             });
+#endif
         }
 
         /// <summary>

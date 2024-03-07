@@ -29,7 +29,7 @@ SOFTWARE.
 using HexaEngine.Mathematics;
 using System.Numerics;
 
-namespace MeshDecimator
+namespace HexaEngine.Core.MeshDecimator
 {
     /// <summary>
     /// A mesh.
@@ -151,7 +151,7 @@ namespace MeshDecimator
                 {
                     throw new ArgumentNullException(nameof(value));
                 }
-                else if ((value.Length % 3) != 0)
+                else if (value.Length % 3 != 0)
                 {
                     throw new ArgumentException("The index count must be multiple by 3.", nameof(value));
                 }
@@ -284,7 +284,7 @@ namespace MeshDecimator
             {
                 throw new ArgumentNullException(nameof(indices));
             }
-            else if ((indices.Length % 3) != 0)
+            else if (indices.Length % 3 != 0)
             {
                 throw new ArgumentException("The index count must be multiple by 3.", nameof(indices));
             }
@@ -309,7 +309,7 @@ namespace MeshDecimator
             {
                 throw new ArgumentNullException(nameof(indices));
             }
-            else if ((indices.Length % 3) != 0)
+            else if (indices.Length % 3 != 0)
             {
                 throw new ArgumentException("The index count must be multiple by 3.", nameof(indices));
             }
@@ -334,7 +334,7 @@ namespace MeshDecimator
 
             for (int i = 0; i < indices.Length; i++)
             {
-                if (indices[i] != null && (indices[i].Length % 3) != 0)
+                if (indices[i] != null && indices[i].Length % 3 != 0)
                 {
                     throw new ArgumentException(string.Format("The index count must be multiple by 3 at sub-mesh index {0}.", i), nameof(indices));
                 }
@@ -428,9 +428,9 @@ namespace MeshDecimator
             }
 
             // Also make sure that we have the first UV set
-            bool uvIs2D = (uvs2D != null && uvs2D[0] != null);
-            bool uvIs3D = (uvs3D != null && uvs3D[0] != null);
-            bool uvIs4D = (uvs4D != null && uvs4D[0] != null);
+            bool uvIs2D = uvs2D != null && uvs2D[0] != null;
+            bool uvIs3D = uvs3D != null && uvs3D[0] != null;
+            bool uvIs4D = uvs4D != null && uvs4D[0] != null;
             if (!uvIs2D && !uvIs3D && !uvIs4D)
             {
                 return;
@@ -526,12 +526,12 @@ namespace MeshDecimator
                 Vector3 n = normals[i];
                 Vector3 t = tan1[i];
 
-                Vector3 tmp = (t - n * Vector3.Dot(n, t));
+                Vector3 tmp = t - n * Vector3.Dot(n, t);
                 tmp = Vector3.Normalize(tmp);
 
                 Vector3 c = Vector3.Cross(n, t);
                 float dot = Vector3.Dot(c, tan2[i]);
-                float dirCorrection = (dot < 0f ? -1f : 1f);
+                float dirCorrection = dot < 0f ? -1f : 1f;
                 tangents[i] = new Vector3(tmp.X, tmp.Y, tmp.Z) * dirCorrection;
             }
 
@@ -601,7 +601,7 @@ namespace MeshDecimator
             {
                 throw new ArgumentNullException(nameof(indices));
             }
-            else if ((indices.Length % 3) != 0)
+            else if (indices.Length % 3 != 0)
             {
                 throw new ArgumentException("The index count must be multiple by 3.", nameof(indices));
             }

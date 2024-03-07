@@ -65,8 +65,7 @@
             if (Condition != null)
             {
                 conditionState = Condition(instance);
-
-                isVisible = ConditionMode != EditorPropertyConditionMode.Visible || !conditionState;
+                isVisible = ConditionMode != EditorPropertyConditionMode.Visible || conditionState;
                 return isVisible;
             }
             else

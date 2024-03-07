@@ -77,6 +77,7 @@
         public void Dispose()
         {
             material.Dispose();
+            mask.Dispose();
         }
     }
 }

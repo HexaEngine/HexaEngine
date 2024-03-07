@@ -22,6 +22,8 @@
 
         public IReadOnlyList<GPU> GPUs { get; }
 
+        public int AdapterIndex { get; }
+
         public static void Init(IWindow source, bool debug)
         {
             GraphicsAdapter.Adapters.Add(new OpenGLAdapter(source, debug));

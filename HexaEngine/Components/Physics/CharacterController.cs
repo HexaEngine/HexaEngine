@@ -1,128 +1,458 @@
 ﻿namespace HexaEngine.Components.Physics
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using MagicPhysX;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     [EditorCategory("Physics")]
     [EditorComponent<CharacterController>("Character Controller")]
-    public unsafe class CharacterController : IComponent
+    public unsafe class CharacterController : ICharacterControllerComponent
     {
+        protected PxMaterial* material;
         private CharacterControllerShape shape;
 
-        private Scene scene;
-        private PhysicsSystem system;
-        private ControllerManager manager;
-        private PxController* controller;
-        private float height = 1;
-        private float radius = 0.5f;
-        private float density = 1;
-        private float maxJumpHeight = 1;
-        private float contactOffset;
-        private float stepOffset;
-        private float slopeLimit;
-        private float volumeGrowth;
-        private float invisibleWallHeight;
-        private float scaleCoeff;
+        private float dynamicFriction = 0.5f;
+        private float staticFriction = 0.5f;
+        private float restitution = 0.6f;
+
+        internal PxController* controller;
+        private float capsuleHeight = 1;
+        private float capsuleRadius = 1f;
+        private float boxDepth = 1;
+        private float boxHeight = 1;
+        private float boxWidth = 1;
+        private float density = 10.0f;
+        private float maxJumpHeight = 0;
+        private float contactOffset = 0.1f;
+        private float stepOffset = 0.5f;
+        private float slopeLimit = 0.707f;
+        private float volumeGrowth = 1.5f;
+        private float invisibleWallHeight = 0f;
+        private float scaleCoeff = 0.8f;
         private CapsuleClimbingMode capsuleClimbingMode;
         private ControllerNonWalkableMode nonWalkableMode;
 
         [EditorProperty<CharacterControllerShape>("Shape")]
         public CharacterControllerShape Shape { get => shape; set => shape = value; }
 
-        public float Height { get => height; set => height = value; }
+        [EditorPropertyCondition<CharacterController>(nameof(IsCapsule))]
+        [EditorCategory("Capsule")]
+        [EditorProperty("Height")]
+        public float CapsuleHeight
+        {
+            get => capsuleHeight;
+            set
+            {
+                capsuleHeight = value;
+                if (controller != null && shape == CharacterControllerShape.Capsule)
+                {
+                    ((PxCapsuleController*)controller)->SetHeightMut(value);
+                }
+            }
+        }
 
-        public float Radius { get => radius; set => radius = value; }
+        [EditorPropertyCondition<CharacterController>(nameof(IsCapsule))]
+        [EditorCategory("Capsule")]
+        [EditorProperty("Radius")]
+        public float CapsuleRadius
+        {
+            get => capsuleRadius;
+            set
+            {
+                capsuleRadius = value;
+                if (controller != null && shape == CharacterControllerShape.Capsule)
+                {
+                    ((PxCapsuleController*)controller)->SetRadiusMut(value);
+                }
+            }
+        }
 
-        public float Density { get => density; set => density = value; }
+        [EditorPropertyCondition<CharacterController>(nameof(IsBox))]
+        [EditorCategory("Box")]
+        [EditorProperty("Width")]
+        public float BoxWidth
+        {
+            get => boxWidth;
+            set
+            {
+                boxWidth = value;
+                if (controller != null && shape == CharacterControllerShape.Box)
+                {
+                    ((PxBoxController*)controller)->SetHalfSideExtentMut(value);
+                }
+            }
+        }
 
-        public float MaxJumpHeight { get => maxJumpHeight; set => maxJumpHeight = value; }
+        [EditorPropertyCondition<CharacterController>(nameof(IsBox))]
+        [EditorCategory("Box")]
+        [EditorProperty("Height")]
+        public float BoxHeight
+        {
+            get => boxHeight;
+            set
+            {
+                boxHeight = value;
+                if (controller != null && shape == CharacterControllerShape.Box)
+                {
+                    ((PxBoxController*)controller)->SetHalfHeightMut(value);
+                }
+            }
+        }
 
-        public float ContactOffset { get => contactOffset; set => contactOffset = value; }
+        [EditorPropertyCondition<CharacterController>(nameof(IsBox))]
+        [EditorCategory("Box")]
+        [EditorProperty("Depth")]
+        public float BoxDepth
+        {
+            get => boxDepth;
+            set
+            {
+                boxDepth = value;
+                if (controller != null && shape == CharacterControllerShape.Box)
+                {
+                    ((PxBoxController*)controller)->SetHalfForwardExtentMut(value);
+                }
+            }
+        }
 
-        public float StepOffset { get => stepOffset; set => stepOffset = value; }
+        [EditorProperty("Density")]
+        public float Density
+        {
+            get => density;
+            set
+            {
+                density = value;
+            }
+        }
 
-        public float SlopeLimit { get => slopeLimit; set => slopeLimit = value; }
+        [EditorProperty("Static Friction")]
+        public float StaticFriction
+        {
+            get => staticFriction;
+            set
+            {
+                staticFriction = value;
+            }
+        }
 
+        [EditorProperty("Dynamic Friction")]
+        public float DynamicFriction
+        {
+            get => dynamicFriction;
+            set
+            {
+                dynamicFriction = value;
+            }
+        }
+
+        [EditorProperty("Restitution")]
+        public float Restitution
+        {
+            get => restitution;
+            set
+            {
+                restitution = value;
+            }
+        }
+
+        [EditorProperty("Step Offset")]
+        public float StepOffset
+        {
+            get => stepOffset;
+            set
+            {
+                stepOffset = value;
+                if (controller != null)
+                {
+                    controller->SetStepOffsetMut(value);
+                }
+            }
+        }
+
+        [EditorProperty<ControllerNonWalkableMode>("Non Walkable Mode")]
+        public ControllerNonWalkableMode NonWalkableMode
+        {
+            get => nonWalkableMode;
+            set
+            {
+                nonWalkableMode = value;
+                if (controller != null)
+                {
+                    controller->SetNonWalkableModeMut(Helper.Convert(value));
+                }
+            }
+        }
+
+        [EditorProperty("Contact Offset")]
+        public float ContactOffset
+        {
+            get => contactOffset;
+            set
+            {
+                contactOffset = value;
+                if (controller != null)
+                {
+                    controller->SetContactOffsetMut(value);
+                }
+            }
+        }
+
+        [EditorProperty("Slope Limit")]
+        public float SlopeLimit
+        {
+            get => slopeLimit;
+            set
+            {
+                slopeLimit = value;
+                if (controller != null)
+                {
+                    controller->SetSlopeLimitMut(value);
+                }
+            }
+        }
+
+        [EditorProperty("Max Jump Height")]
+        public float MaxJumpHeight
+        {
+            get => maxJumpHeight;
+            set
+            {
+                maxJumpHeight = value;
+            }
+        }
+
+        [EditorProperty("Volume Growth")]
         public float VolumeGrowth { get => volumeGrowth; set => volumeGrowth = value; }
 
+        [EditorProperty("Invisible Wall Height")]
         public float InvisibleWallHeight { get => invisibleWallHeight; set => invisibleWallHeight = value; }
 
+        [EditorProperty("Scale Coeff")]
         public float ScaleCoeff { get => scaleCoeff; set => scaleCoeff = value; }
 
+        [EditorPropertyCondition<CharacterController>(nameof(IsCapsule))]
+        [EditorCategory("Capsule")]
+        [EditorProperty<CapsuleClimbingMode>("Capsule Climbing Mode")]
         public CapsuleClimbingMode CapsuleClimbingMode { get => capsuleClimbingMode; set => capsuleClimbingMode = value; }
 
-        public ControllerNonWalkableMode NonWalkableMode { get => nonWalkableMode; set => nonWalkableMode = value; }
-
+        [JsonIgnore]
         public GameObject GameObject { get; set; }
+
+        [JsonIgnore]
+        public Vector3D Position
+        {
+            get
+            {
+                if (controller == null)
+                {
+                    return default;
+                }
+
+                return *(Vector3D*)controller->GetPosition();
+            }
+            set
+            {
+                if (controller == null)
+                {
+                    return;
+                }
+
+                controller->SetPositionMut((PxExtendedVec3*)&value);
+            }
+        }
+
+        [JsonIgnore]
+        public Vector3D FootPosition
+        {
+            get
+            {
+                if (controller == null)
+                {
+                    return default;
+                }
+
+                return Unsafe.BitCast<PxExtendedVec3, Vector3D>(controller->GetFootPosition());
+            }
+            set
+            {
+                if (controller == null)
+                {
+                    return;
+                }
+
+                controller->SetFootPositionMut((PxExtendedVec3*)&value);
+            }
+        }
+
+        [JsonIgnore]
+        public Vector3 UpDirection
+        {
+            get
+            {
+                if (controller == null)
+                {
+                    return default;
+                }
+                return controller->GetUpDirection();
+            }
+            set
+            {
+                if (controller == null)
+                {
+                    return;
+                }
+
+                controller->SetUpDirectionMut((PxVec3*)&value);
+            }
+        }
+
+        protected static bool IsCapsule(CharacterController controller)
+        {
+            return controller.shape == CharacterControllerShape.Capsule;
+        }
+
+        protected static bool IsBox(CharacterController controller)
+        {
+            return controller.shape == CharacterControllerShape.Box;
+        }
 
         public void Awake()
         {
-            scene = GameObject.GetScene();
-            system = scene.GetRequiredSystem<PhysicsSystem>();
-            manager = system.ControllerManager;
+        }
+
+        public void Destroy()
+        {
+        }
+
+        public void CreateController(PxPhysics* physics, PxScene* scene, PxControllerManager* manager)
+        {
+            material = physics->CreateMaterialMut(staticFriction, dynamicFriction, restitution);
 
             var transform = GameObject.Transform;
 
             switch (shape)
             {
                 case CharacterControllerShape.Capsule:
-                    PxCapsuleControllerDesc capsuleControllerDesc = new()
-                    {
-                        climbingMode = Helper.Convert(capsuleClimbingMode),
-                        height = height,
-                        radius = radius,
-                        position = new() { x = transform.GlobalPosition.X, y = transform.GlobalPosition.Y, z = transform.GlobalPosition.Z },
-                        upDirection = GameObject.Transform.Up,
-                        density = density,
-                        maxJumpHeight = maxJumpHeight,
-                        nonWalkableMode = Helper.Convert(nonWalkableMode),
-                        contactOffset = contactOffset,
-                        stepOffset = stepOffset,
-                        slopeLimit = slopeLimit,
-                        volumeGrowth = volumeGrowth,
-                        invisibleWallHeight = invisibleWallHeight,
-                        scaleCoeff = scaleCoeff,
-                    };
+                    PxCapsuleControllerDesc* capsuleControllerDesc = NativeMethods.PxCapsuleControllerDesc_new_alloc();
+                    capsuleControllerDesc->SetToDefaultMut();
+                    capsuleControllerDesc->climbingMode = Helper.Convert(capsuleClimbingMode);
+                    capsuleControllerDesc->height = capsuleHeight * 2;
+                    capsuleControllerDesc->radius = capsuleRadius;
+                    capsuleControllerDesc->position = new() { x = transform.GlobalPosition.X, y = transform.GlobalPosition.Y, z = transform.GlobalPosition.Z };
+                    capsuleControllerDesc->upDirection = GameObject.Transform.Up;
+                    capsuleControllerDesc->density = density;
+                    capsuleControllerDesc->maxJumpHeight = maxJumpHeight;
+                    capsuleControllerDesc->nonWalkableMode = Helper.Convert(nonWalkableMode);
+                    capsuleControllerDesc->contactOffset = contactOffset;
+                    capsuleControllerDesc->stepOffset = stepOffset;
+                    capsuleControllerDesc->slopeLimit = slopeLimit;
+                    capsuleControllerDesc->volumeGrowth = volumeGrowth;
+                    capsuleControllerDesc->invisibleWallHeight = invisibleWallHeight;
+                    capsuleControllerDesc->scaleCoeff = scaleCoeff;
+                    capsuleControllerDesc->material = material;
 
-                    controller = manager.CreateController(capsuleControllerDesc);
+                    if (!capsuleControllerDesc->IsValid())
+                    {
+                        Logger.Error("Couldn't create character controller, invalid parameters.");
+                        capsuleControllerDesc->Delete();
+                        return;
+                    }
+
+                    controller = manager->CreateControllerMut((PxControllerDesc*)capsuleControllerDesc);
+                    capsuleControllerDesc->Delete();
                     break;
 
                 case CharacterControllerShape.Box:
-                    PxBoxControllerDesc boxControllerDesc = new()
-                    {
-                        position = new() { x = transform.GlobalPosition.X, y = transform.GlobalPosition.Y, z = transform.GlobalPosition.Z },
-                        upDirection = GameObject.Transform.Up,
-                        density = density,
-                        maxJumpHeight = maxJumpHeight,
-                        nonWalkableMode = Helper.Convert(nonWalkableMode),
-                        contactOffset = contactOffset,
-                        stepOffset = stepOffset,
-                        slopeLimit = slopeLimit,
-                        volumeGrowth = volumeGrowth,
-                        invisibleWallHeight = invisibleWallHeight,
-                        scaleCoeff = scaleCoeff,
-                    };
+                    PxBoxControllerDesc* boxControllerDesc = NativeMethods.PxBoxControllerDesc_new_alloc();
 
-                    controller = manager.CreateController(boxControllerDesc);
+                    boxControllerDesc->halfSideExtent = boxWidth;
+                    boxControllerDesc->halfHeight = boxHeight;
+                    boxControllerDesc->halfForwardExtent = boxDepth;
+                    boxControllerDesc->position = new() { x = transform.GlobalPosition.X, y = transform.GlobalPosition.Y, z = transform.GlobalPosition.Z };
+                    boxControllerDesc->upDirection = GameObject.Transform.Up;
+                    boxControllerDesc->density = density;
+                    boxControllerDesc->maxJumpHeight = maxJumpHeight;
+                    boxControllerDesc->nonWalkableMode = Helper.Convert(nonWalkableMode);
+                    boxControllerDesc->contactOffset = contactOffset;
+                    boxControllerDesc->stepOffset = stepOffset;
+                    boxControllerDesc->slopeLimit = slopeLimit;
+                    boxControllerDesc->volumeGrowth = volumeGrowth;
+                    boxControllerDesc->invisibleWallHeight = invisibleWallHeight;
+                    boxControllerDesc->scaleCoeff = scaleCoeff;
+                    boxControllerDesc->material = material;
+
+                    if (!boxControllerDesc->IsValid())
+                    {
+                        Logger.Error("Couldn't create character controller, invalid parameters.");
+                        boxControllerDesc->Delete();
+                        return;
+                    }
+
+                    controller = manager->CreateControllerMut((PxControllerDesc*)boxControllerDesc);
+                    boxControllerDesc->Delete();
                     break;
 
                 default:
-                    throw new NotSupportedException($"CharacterControllerShape ({Shape}) is not supported.");
+                    Logger.Error($"CharacterControllerShape ({Shape}) is not supported.");
+                    return;
             }
         }
 
-        public void Destroy()
+        public void DestroyController()
         {
-            controller->ReleaseMut();
-            controller = null;
+            if (material != null)
+            {
+                ((PxBase*)material)->ReleaseMut();
+                material = null;
+            }
+
+            if (controller != null)
+            {
+                controller->ReleaseMut();
+                controller = null;
+            }
+        }
+
+        public void Update()
+        {
+            PxExtendedVec3* pos = controller->GetPosition();
+            GameObject.Transform.GlobalPosition = new((float)pos->x, (float)pos->y, (float)pos->z);
         }
 
         public void Move(Vector3 displacement, float minDistance, float elapsedTime)
         {
+            if (controller == null)
+            {
+                return;
+            }
+
             controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, null, null);
+        }
+
+        public void InvalidateCache()
+        {
+            if (controller == null)
+            {
+                return;
+            }
+
+            controller->InvalidateCacheMut();
+        }
+
+        public void Resize(float height)
+        {
+            if (controller == null)
+            {
+                return;
+            }
+
+            controller->ResizeMut(height);
         }
     }
 }

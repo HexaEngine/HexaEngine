@@ -26,7 +26,7 @@ SOFTWARE.
 
 #endregion
 
-namespace MeshDecimator.Collections
+namespace HexaEngine.Core.MeshDecimator.Collections
 {
     /// <summary>
     /// A resizable array.

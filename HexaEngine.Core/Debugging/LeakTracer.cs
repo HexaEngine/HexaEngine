@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Core.Debugging
+﻿#define TRACELEAK
+
+namespace HexaEngine.Core.Debugging
 {
     using System.Runtime.CompilerServices;
 
@@ -53,11 +55,11 @@
             {
                 if (pair.Key is IDeviceChild child)
                 {
-                    Debug.WriteLine($"******LIVE INSTANCE: {child.DebugName} \n{pair}");
+                    Logger.Error($"******LIVE INSTANCE: {child.DebugName} \n{pair}");
                 }
                 else
                 {
-                    Debug.WriteLine($"******LIVE INSTANCE: \n{pair}");
+                    Logger.Error($"******LIVE INSTANCE: \n{pair}");
                 }
             }
 #endif

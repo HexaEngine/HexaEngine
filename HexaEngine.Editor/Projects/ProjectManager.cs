@@ -232,7 +232,7 @@
 
             string output = Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
             bool failed = output.Contains("FAILED");
-            Logger.Log(output);
+            AnalyseLog(output);
             scriptProjectChanged = false;
             return !failed;
         }
@@ -243,7 +243,7 @@
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
             string output = Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
             bool failed = output.Contains("FAILED");
-            Logger.Log(output);
+            AnalyseLog(output);
             scriptProjectChanged = false;
             return !failed;
         }
@@ -252,8 +252,28 @@
         {
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
-            Logger.Log(Dotnet.Clean(projectFilePath));
+            AnalyseLog(Dotnet.Clean(projectFilePath));
             scriptProjectChanged = true;
+        }
+
+        private static void AnalyseLog(string message)
+        {
+            string[] lines = message.Split('\n');
+            foreach (string line in lines)
+            {
+                if (line.Contains("0 Warning(s)"))
+                {
+                    Logger.Info(line);
+                }
+                else if (line.Contains("0 Error(s)"))
+                {
+                    Logger.Info(line);
+                }
+                else
+                {
+                    Logger.Log(line);
+                }
+            }
         }
 
         public static Task Publish(PublishSettings settings)

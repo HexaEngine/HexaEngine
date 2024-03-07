@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
     using System.Runtime.CompilerServices;
+    using System;
 
     /// <summary>
     /// Represents an unsafe vector.

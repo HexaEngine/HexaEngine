@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<SphereCollider>("Sphere Collider")]
-    public unsafe class SphereCollider : BaseCollider
+    public unsafe class SphereCollider : ColliderShape
     {
         private float radius = 1;
 

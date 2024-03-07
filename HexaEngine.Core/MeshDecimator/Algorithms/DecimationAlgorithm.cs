@@ -26,7 +26,7 @@ SOFTWARE.
 
 #endregion
 
-namespace MeshDecimator.Algorithms
+namespace HexaEngine.Core.MeshDecimator.Algorithms
 {
     /// <summary>
     /// A decimation algorithm.

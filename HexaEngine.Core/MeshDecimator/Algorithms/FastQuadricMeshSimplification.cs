@@ -42,11 +42,11 @@ SOFTWARE.
 #endregion
 
 using HexaEngine.Core.Debugging;
+using HexaEngine.Core.MeshDecimator.Collections;
 using HexaEngine.Mathematics;
-using MeshDecimator.Collections;
 using System.Numerics;
 
-namespace MeshDecimator.Algorithms
+namespace HexaEngine.Core.MeshDecimator.Algorithms
 {
     /// <summary>
     /// The fast quadric mesh simplification algorithm.
@@ -93,7 +93,7 @@ namespace MeshDecimator.Algorithms
             {
                 readonly get
                 {
-                    return (index == 0 ? V0 : (index == 1 ? V1 : V2));
+                    return index == 0 ? V0 : index == 1 ? V1 : V2;
                 }
                 set
                 {
@@ -402,8 +402,8 @@ namespace MeshDecimator.Algorithms
         private static double CalculateError(ref Vertex vert0, ref Vertex vert1, out Vector3D result, out int resultIndex)
         {
             // compute interpolated vertex
-            SymmetricMatrix q = (vert0.q + vert1.q);
-            bool border = (vert0.border & vert1.border);
+            SymmetricMatrix q = vert0.q + vert1.q;
+            bool border = vert0.border & vert1.border;
             double error;
             double det = q.Determinant1();
             if (det != 0.0 && !border)
@@ -485,7 +485,7 @@ namespace MeshDecimator.Algorithms
                 Vector3D d2 = vertices[id2].p - p;
                 d2 = Vector3D.Normalize(d2);
                 double dot = Vector3D.Dot(d1, d2);
-                if (System.Math.Abs(dot) > 0.999)
+                if (Math.Abs(dot) > 0.999)
                 {
                     return true;
                 }
@@ -626,7 +626,7 @@ namespace MeshDecimator.Algorithms
                         continue;
                     }
 
-                    int nextEdgeIndex = ((edgeIndex + 1) % 3);
+                    int nextEdgeIndex = (edgeIndex + 1) % 3;
                     int i0 = triangles[tid][edgeIndex];
                     int i1 = triangles[tid][nextEdgeIndex];
 
@@ -678,7 +678,7 @@ namespace MeshDecimator.Algorithms
                     }
 
                     // Calculate the barycentric coordinates within the triangle
-                    int nextNextEdgeIndex = ((edgeIndex + 2) % 3);
+                    int nextNextEdgeIndex = (edgeIndex + 2) % 3;
                     int i2 = triangles[tid][nextNextEdgeIndex];
                     CalculateBarycentricCoords(ref p, ref vertices[i0].p, ref vertices[i1].p, ref vertices[i2].p, out Vector3 barycentricCoord);
 
@@ -722,7 +722,7 @@ namespace MeshDecimator.Algorithms
                 }
 
                 // Check if we are already done
-                if ((startTrisCount - deletedTris) <= targetTrisCount && remainingVertices < maxVertexCount)
+                if (startTrisCount - deletedTris <= targetTrisCount && remainingVertices < maxVertexCount)
                 {
                     break;
                 }
@@ -733,7 +733,7 @@ namespace MeshDecimator.Algorithms
 
         private static void CalculateBarycentricCoords(ref Vector3D point, ref Vector3D a, ref Vector3D b, ref Vector3D c, out Vector3 result)
         {
-            Vector3D v0 = (b - a), v1 = (c - a), v2 = (point - a);
+            Vector3D v0 = b - a, v1 = c - a, v2 = point - a;
             double d00 = Vector3D.Dot(v0, v0);
             double d01 = Vector3D.Dot(v0, v1);
             double d11 = Vector3D.Dot(v1, v1);
@@ -761,11 +761,11 @@ namespace MeshDecimator.Algorithms
         {
             if (vertNormals != null)
             {
-                vertNormals[dst] = Vector3.Normalize((vertNormals[i0] * barycentricCoord.X) + (vertNormals[i1] * barycentricCoord.Y) + (vertNormals[i2] * barycentricCoord.Z));
+                vertNormals[dst] = Vector3.Normalize(vertNormals[i0] * barycentricCoord.X + vertNormals[i1] * barycentricCoord.Y + vertNormals[i2] * barycentricCoord.Z);
             }
             if (vertTangents != null)
             {
-                vertTangents[dst] = Vector3.Normalize((vertTangents[i0] * barycentricCoord.X) + (vertTangents[i1] * barycentricCoord.Y) + (vertTangents[i2] * barycentricCoord.Z));
+                vertTangents[dst] = Vector3.Normalize(vertTangents[i0] * barycentricCoord.X + vertTangents[i1] * barycentricCoord.Y + vertTangents[i2] * barycentricCoord.Z);
             }
             if (vertUV2D != null)
             {
@@ -774,7 +774,7 @@ namespace MeshDecimator.Algorithms
                     var vertUV = vertUV2D[i];
                     if (vertUV != null)
                     {
-                        vertUV[dst] = (vertUV[i0] * barycentricCoord.X) + (vertUV[i1] * barycentricCoord.Y) + (vertUV[i2] * barycentricCoord.Z);
+                        vertUV[dst] = vertUV[i0] * barycentricCoord.X + vertUV[i1] * barycentricCoord.Y + vertUV[i2] * barycentricCoord.Z;
                     }
                 }
             }
@@ -785,7 +785,7 @@ namespace MeshDecimator.Algorithms
                     var vertUV = vertUV3D[i];
                     if (vertUV != null)
                     {
-                        vertUV[dst] = (vertUV[i0] * barycentricCoord.X) + (vertUV[i1] * barycentricCoord.Y) + (vertUV[i2] * barycentricCoord.Z);
+                        vertUV[dst] = vertUV[i0] * barycentricCoord.X + vertUV[i1] * barycentricCoord.Y + vertUV[i2] * barycentricCoord.Z;
                     }
                 }
             }
@@ -796,13 +796,13 @@ namespace MeshDecimator.Algorithms
                     var vertUV = vertUV4D[i];
                     if (vertUV != null)
                     {
-                        vertUV[dst] = (vertUV[i0] * barycentricCoord.X) + (vertUV[i1] * barycentricCoord.Y) + (vertUV[i2] * barycentricCoord.Z);
+                        vertUV[dst] = vertUV[i0] * barycentricCoord.X + vertUV[i1] * barycentricCoord.Y + vertUV[i2] * barycentricCoord.Z;
                     }
                 }
             }
             if (vertColors != null)
             {
-                vertColors[dst] = (vertColors[i0] * barycentricCoord.X) + (vertColors[i1] * barycentricCoord.Y) + (vertColors[i2] * barycentricCoord.Z);
+                vertColors[dst] = vertColors[i0] * barycentricCoord.X + vertColors[i1] * barycentricCoord.Y + vertColors[i2] * barycentricCoord.Z;
             }
 
             // TODO: Do we have to blend bone weights at all or can we just keep them as it is in this scenario?
@@ -936,7 +936,7 @@ namespace MeshDecimator.Algorithms
                     {
                         if (vertices[i].border)
                         {
-                            int vertexHash = (int)(((((vertices[i].p.X - borderMinX) / borderAreaWidth) * 2.0) - 1.0) * int.MaxValue);
+                            int vertexHash = (int)(((vertices[i].p.X - borderMinX) / borderAreaWidth * 2.0 - 1.0) * int.MaxValue);
                             borderVertices[borderIndexCount] = new BorderVertex(i, vertexHash);
                             ++borderIndexCount;
                         }
@@ -947,7 +947,7 @@ namespace MeshDecimator.Algorithms
 
                     // Calculate the maximum hash distance based on the maximum vertex link distance
                     double vertexLinkDistance = Math.Sqrt(vertexLinkDistanceSqr);
-                    int hashMaxDistance = Math.Max((int)((vertexLinkDistance / borderAreaWidth) * int.MaxValue), 1);
+                    int hashMaxDistance = Math.Max((int)(vertexLinkDistance / borderAreaWidth * int.MaxValue), 1);
 
                     // Then find identical border vertices and bind them together as one
                     for (int i = 0; i < borderIndexCount; i++)
@@ -966,15 +966,15 @@ namespace MeshDecimator.Algorithms
                             {
                                 continue;
                             }
-                            else if ((borderVertices[j].hash - borderVertices[i].hash) > hashMaxDistance) // There is no point to continue beyond this point
+                            else if (borderVertices[j].hash - borderVertices[i].hash > hashMaxDistance) // There is no point to continue beyond this point
                             {
                                 break;
                             }
 
                             Vector3D otherPoint = vertices[otherIndex].p;
-                            double sqrX = ((myPoint.X - otherPoint.X) * (myPoint.X - otherPoint.X));
-                            double sqrY = ((myPoint.Y - otherPoint.Y) * (myPoint.Y - otherPoint.Y));
-                            double sqrZ = ((myPoint.Z - otherPoint.Z) * (myPoint.Z - otherPoint.Z));
+                            double sqrX = (myPoint.X - otherPoint.X) * (myPoint.X - otherPoint.X);
+                            double sqrY = (myPoint.Y - otherPoint.Y) * (myPoint.Y - otherPoint.Y);
+                            double sqrZ = (myPoint.Z - otherPoint.Z) * (myPoint.Z - otherPoint.Z);
                             double sqrMagnitude = sqrX + sqrY + sqrZ;
 
                             if (sqrMagnitude <= vertexLinkDistanceSqr)
@@ -1135,13 +1135,13 @@ namespace MeshDecimator.Algorithms
                 vertices[i].tcount = 0;
             }
 
-            Vector3[]? vertNormals = (this.vertNormals?.Data);
-            Vector3[]? vertTangents = (this.vertTangents?.Data);
-            Vector2[]?[]? vertUV2D = (this.vertUV2D?.Data);
-            Vector3[]?[]? vertUV3D = (this.vertUV3D?.Data);
-            Vector4[]?[]? vertUV4D = (this.vertUV4D?.Data);
-            Vector4[]? vertColors = (this.vertColors?.Data);
-            BoneWeight[]? vertBoneWeights = (this.vertBoneWeights?.Data);
+            Vector3[]? vertNormals = this.vertNormals?.Data;
+            Vector3[]? vertTangents = this.vertTangents?.Data;
+            Vector2[]?[]? vertUV2D = this.vertUV2D?.Data;
+            Vector3[]?[]? vertUV3D = this.vertUV3D?.Data;
+            Vector4[]?[]? vertUV4D = this.vertUV4D?.Data;
+            Vector4[]? vertColors = this.vertColors?.Data;
+            BoneWeight[]? vertBoneWeights = this.vertBoneWeights?.Data;
 
             Triangle[] triangles = this.triangles.Data;
             int triangleCount = this.triangles.Length;
@@ -1394,14 +1394,14 @@ namespace MeshDecimator.Algorithms
 
             for (int iteration = 0; iteration < maxIterationCount; iteration++)
             {
-                ReportStatus(iteration, startTrisCount, (startTrisCount - deletedTris), targetTrisCount);
-                if ((startTrisCount - deletedTris) <= targetTrisCount && remainingVertices < maxVertexCount)
+                ReportStatus(iteration, startTrisCount, startTrisCount - deletedTris, targetTrisCount);
+                if (startTrisCount - deletedTris <= targetTrisCount && remainingVertices < maxVertexCount)
                 {
                     break;
                 }
 
                 // Update mesh once in a while
-                if ((iteration % 5) == 0)
+                if (iteration % 5 == 0)
                 {
                     UpdateMesh(iteration);
                     triangles = this.triangles.Data;
@@ -1418,11 +1418,11 @@ namespace MeshDecimator.Algorithms
                 //
                 // The following numbers works well for most models.
                 // If it does not, try to adjust the 3 parameters
-                double threshold = 0.000000001 * System.Math.Pow(iteration + 3, agressiveness);
+                double threshold = 0.000000001 * Math.Pow(iteration + 3, agressiveness);
 
-                if (Verbose && (iteration % 5) == 0)
+                if (Verbose && iteration % 5 == 0)
                 {
-                    Logger.Info($"iteration {iteration} - triangles {(startTrisCount - deletedTris)} threshold {threshold}");
+                    Logger.Info($"iteration {iteration} - triangles {startTrisCount - deletedTris} threshold {threshold}");
                 }
 
                 // Remove vertices & mark deleted triangles
@@ -1538,7 +1538,7 @@ namespace MeshDecimator.Algorithms
                 int startOffset = subMeshOffsets[subMeshIndex];
                 if (startOffset < triangleCount)
                 {
-                    int endOffset = ((subMeshIndex + 1) < subMeshCount ? subMeshOffsets[subMeshIndex + 1] : triangleCount);
+                    int endOffset = subMeshIndex + 1 < subMeshCount ? subMeshOffsets[subMeshIndex + 1] : triangleCount;
                     int subMeshTriangleCount = endOffset - startOffset;
                     if (subMeshTriangleCount < 0)
                     {

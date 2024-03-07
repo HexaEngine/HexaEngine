@@ -26,9 +26,9 @@ SOFTWARE.
 
 #endregion
 
-using MeshDecimator.Algorithms;
+using HexaEngine.Core.MeshDecimator.Algorithms;
 
-namespace MeshDecimator
+namespace HexaEngine.Core.MeshDecimator
 {
     #region Algorithm
 

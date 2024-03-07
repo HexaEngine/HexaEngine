@@ -23,16 +23,16 @@
         /// <summary>
         /// Warning severity, used for warning messages.
         /// </summary>
-        Warning = 3,
+        Warning = 4,
 
         /// <summary>
         /// Error severity, used for error messages.
         /// </summary>
-        Error = 4,
+        Error = 8,
 
         /// <summary>
         /// Critical severity, used for critical error messages.
         /// </summary>
-        Critical = 5
+        Critical = 16
     }
 }

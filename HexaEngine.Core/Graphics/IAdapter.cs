@@ -52,5 +52,10 @@
         /// Gets a list of GPU objects, representing the graphics processing units available on the graphics adapter.
         /// </summary>
         IReadOnlyList<GPU> GPUs { get; }
+
+        /// <summary>
+        /// The index of the active gpu.
+        /// </summary>
+        int AdapterIndex { get; }
     }
 }

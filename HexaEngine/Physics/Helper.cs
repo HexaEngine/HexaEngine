@@ -163,5 +163,43 @@
                 _ => throw new NotSupportedException()
             };
         }
+
+        public static PxQueryFlags Convert(QueryFlags value)
+        {
+            PxQueryFlags result = 0;
+            if ((value & QueryFlags.Static) != 0)
+            {
+                result |= PxQueryFlags.Static;
+            }
+            if ((value & QueryFlags.Dynamic) != 0)
+            {
+                result |= PxQueryFlags.Dynamic;
+            }
+            if ((value & QueryFlags.Prefilter) != 0)
+            {
+                result |= PxQueryFlags.Prefilter;
+            }
+            if ((value & QueryFlags.Postfilter) != 0)
+            {
+                result |= PxQueryFlags.Postfilter;
+            }
+            if ((value & QueryFlags.AnyHit) != 0)
+            {
+                result |= PxQueryFlags.AnyHit;
+            }
+            if ((value & QueryFlags.NoBlock) != 0)
+            {
+                result |= PxQueryFlags.NoBlock;
+            }
+            if ((value & QueryFlags.DisableHardcodedFilter) != 0)
+            {
+                result |= PxQueryFlags.DisableHardcodedFilter;
+            }
+            if ((value & QueryFlags.Reserved) != 0)
+            {
+                result |= PxQueryFlags.Reserved;
+            }
+            return result;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Physics
 {
+    using HexaEngine.Components.Physics;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
@@ -18,6 +19,7 @@
 
         private readonly ComponentTypeQuery<IActorComponent> actors = new();
         private readonly ComponentTypeQuery<IJointComponent> joints = new();
+        private readonly ComponentTypeQuery<ICharacterControllerComponent> characterControllers = new();
         private PxScene* pxScene;
 
         private readonly SimulationEventCallbacks eventCallbacks;
@@ -142,12 +144,16 @@
         {
             scene.QueryManager.AddQuery(actors);
             scene.QueryManager.AddQuery(joints);
+            scene.QueryManager.AddQuery(characterControllers);
 
             actors.OnAdded += OnActorAdded;
             actors.OnRemoved += OnActorRemoved;
 
             joints.OnAdded += OnJointAdded;
             joints.OnRemoved += OnJointRemoved;
+
+            characterControllers.OnAdded += OnCharacterControllerAdded;
+            characterControllers.OnRemoved += OnCharacterControllerRemoved;
 
             for (int i = 0; i < actors.Count; i++)
             {
@@ -157,6 +163,11 @@
             for (int i = 0; i < joints.Count; i++)
             {
                 joints[i].CreateJoint(physics, pxScene);
+            }
+
+            for (int i = 0; i < characterControllers.Count; i++)
+            {
+                characterControllers[i].CreateController(physics, pxScene, controllerManager.manager);
             }
         }
 
@@ -178,6 +189,22 @@
             lock (_lock)
             {
                 pxScene->ShiftOriginMut((PxVec3*)&shift);
+            }
+        }
+
+        private void OnCharacterControllerRemoved(GameObject gameObject, ICharacterControllerComponent controller)
+        {
+            lock (_lock)
+            {
+                controller.DestroyController();
+            }
+        }
+
+        private void OnCharacterControllerAdded(GameObject gameObject, ICharacterControllerComponent controller)
+        {
+            lock (_lock)
+            {
+                controller.CreateController(physics, pxScene, controllerManager.manager);
             }
         }
 
@@ -270,6 +297,11 @@
             {
                 actors[i].EndUpdate();
             }
+
+            for (int i = 0; i < actors.Count; i++)
+            {
+                characterControllers[i].Update();
+            }
         }
 
         public void Destroy()
@@ -295,6 +327,16 @@
             actors.OnRemoved -= OnActorRemoved;
 
             actors.Dispose();
+
+            for (int i = 0; i < characterControllers.Count; i++)
+            {
+                characterControllers[i].DestroyController();
+            }
+
+            characterControllers.OnAdded -= OnCharacterControllerAdded;
+            characterControllers.OnRemoved -= OnCharacterControllerRemoved;
+
+            characterControllers.Dispose();
 
             eventCallbacks.Dispose();
             controllerManager.Dispose();

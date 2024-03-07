@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Audio
 {
+    using HexaEngine.Core.Graphics;
+
     /// <summary>
     /// Provides a set of audio adapters to create audio devices for various audio backends.
     /// </summary>
@@ -9,6 +11,11 @@
         /// Gets a list of available audio adapters for creating audio devices.
         /// </summary>
         public static readonly List<IAudioAdapter> Adapters = new();
+
+        /// <summary>
+        /// Gets the current audio adapter.
+        /// </summary>
+        public static IAudioAdapter? Current { get; private set; }
 
         /// <summary>
         /// Creates an audio device for the specified audio backend.
@@ -23,6 +30,7 @@
             {
                 if (Adapters.Count == 1)
                 {
+                    Current = Adapters[0];
                     return Adapters[0].CreateAudioDevice(name);
                 }
                 else
@@ -35,10 +43,12 @@
                             audioAdapter = Adapters[i];
                         }
                     }
+                    Current = audioAdapter;
                     return audioAdapter.CreateAudioDevice(name);
                 }
             }
-            var adapter = Adapters.FirstOrDefault(x => x.Backend == backend) ?? throw new PlatformNotSupportedException();
+            IAudioAdapter adapter = Adapters.FirstOrDefault(x => x.Backend == backend) ?? throw new PlatformNotSupportedException();
+            Current = adapter;
             return adapter.CreateAudioDevice(name);
         }
     }

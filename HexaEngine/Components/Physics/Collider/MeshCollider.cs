@@ -14,7 +14,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<MeshCollider>("Mesh Collider")]
-    public unsafe class MeshCollider : BaseCollider
+    public unsafe class MeshCollider : ColliderShape
     {
         private string model = string.Empty;
 

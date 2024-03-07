@@ -174,6 +174,8 @@
 
         public virtual IReadOnlyList<GPU> GPUs => gpus;
 
+        public int AdapterIndex { get; private set; }
+
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
             AdapterDesc1 desc;
@@ -309,6 +311,7 @@
                 // select by adapter name (description)
                 if (name != null && nameSpan == name)
                 {
+                    AdapterIndex = (int)adapterIndex;
                     return adapter;
                 }
 
@@ -319,6 +322,7 @@
                     continue;
                 }
 
+                AdapterIndex = (int)adapterIndex;
                 selected = adapter;
             }
 

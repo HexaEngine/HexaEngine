@@ -22,6 +22,13 @@
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            // force init.
+            _ = CullingManager.Current;
+        }
+
+        public override void Release()
+        {
+            CullingManager.Current.Release();
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)

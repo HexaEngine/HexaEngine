@@ -237,5 +237,13 @@
 
             profiler?.End("ShadowMap.UpdateDirectional");
         }
+
+        public override void Release()
+        {
+            copyEffect.Dispose();
+            blurFilter.Dispose();
+            tex?.Dispose();
+            depth?.Dispose();
+        }
     }
 }

@@ -26,7 +26,6 @@
         public unsafe List<string> GetAvailableDevices()
         {
             List<string> devices;
-
             if (alc.TryGetExtension<Enumeration>(null, out var enumeration))
             {
                 devices = new(enumeration.GetStringList(GetEnumerationContextStringList.DeviceSpecifiers));

@@ -7,7 +7,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
-    public unsafe class CapsuleCollider : BaseCollider
+    public unsafe class CapsuleCollider : ColliderShape
     {
         private float radius = 1;
         private float length = 1;

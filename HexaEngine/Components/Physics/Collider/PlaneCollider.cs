@@ -6,7 +6,7 @@
 
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<PlaneCollider>("Plane Collider")]
-    public unsafe class PlaneCollider : BaseCollider
+    public unsafe class PlaneCollider : ColliderShape
     {
         public override unsafe void AddShapes(PxPhysics* physics, PxScene* scene, PxRigidActor* actor, PxTransform localPose, Vector3 scale)
         {

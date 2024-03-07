@@ -1,4 +1,4 @@
-﻿namespace MeshDecimator.Collections
+﻿namespace HexaEngine.Core.MeshDecimator.Collections
 {
     /// <summary>
     /// A collection of UV channels.

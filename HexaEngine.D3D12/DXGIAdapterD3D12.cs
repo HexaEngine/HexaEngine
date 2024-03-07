@@ -72,6 +72,8 @@
 
         public IReadOnlyList<GPU> GPUs { get; }
 
+        public int AdapterIndex { get; private set; }
+
         [SupportedOSPlatform("windows")]
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
@@ -138,6 +140,7 @@
                         continue;
                     }
 
+                    AdapterIndex = (int)adapterIndex;
                     return adapter;
                 }
 
@@ -154,8 +157,6 @@
                     adapter->GetDesc1(&desc);
                     string name = new(desc.Description);
 
-                    Trace.WriteLine($"Found Adapter {name}");
-
                     if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                     {
                         // Don't select the Basic Render Driver adapter.
@@ -163,6 +164,7 @@
                         continue;
                     }
 
+                    AdapterIndex = (int)adapterIndex;
                     return adapter;
                 }
             }

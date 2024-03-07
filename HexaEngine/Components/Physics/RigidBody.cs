@@ -7,6 +7,7 @@
     using MagicPhysX;
     using System.Collections.Generic;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     [EditorCategory("Physics")]
     [EditorComponent<RigidBody>("Rigid Body")]
@@ -163,7 +164,7 @@
             }
         }
 
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Sleep Threshold")]
         public float SleepThreshold
         {
@@ -198,7 +199,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Stabilization Threshold")]
         public float StabilizationThreshold
         {
@@ -233,7 +234,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Linear Damping")]
         public float LinearDamping
         {
@@ -268,7 +269,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Angular Damping")]
         public float AngularDamping
         {
@@ -303,7 +304,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Max Linear Velocity")]
         public float MaxLinearVelocity
         {
@@ -338,7 +339,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Max Angular Velocity")]
         public float MaxAngularVelocity
         {
@@ -373,7 +374,7 @@
         }
 
         [EditorCategory("Contacts")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Contact Report Threshold")]
         public float ContactReportThreshold
         {
@@ -556,7 +557,7 @@
 
         [JsonIgnore]
         [EditorCategory("CCD")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Enable CCD")]
         public bool EnableCCD
         {
@@ -592,7 +593,7 @@
 
         [JsonIgnore]
         [EditorCategory("CCD")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Enable CCD Friction")]
         public bool EnableCCDFriction
         {
@@ -628,7 +629,7 @@
 
         [JsonIgnore]
         [EditorCategory("CCD")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Enable CCD Max Contact Impulse")]
         public bool EnableCCDMaxContactImpulse
         {
@@ -664,7 +665,7 @@
 
         [JsonIgnore]
         [EditorCategory("CCD")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Enable Speculative CCD")]
         public bool EnableSpeculativeCCD
         {
@@ -699,7 +700,7 @@
         }
 
         [EditorCategory("CCD")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Min CCD Advance Coefficient")]
         public float MinCCDAdvanceCoefficient
         {
@@ -734,7 +735,7 @@
         }
 
         [EditorCategory("Contacts")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Max Depenetration Velocity")]
         public float MaxDepenetrationVelocity
         {
@@ -769,7 +770,7 @@
         }
 
         [EditorCategory("Contacts")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Max Contact Impulse")]
         public float MaxContactImpulse
         {
@@ -804,7 +805,7 @@
         }
 
         [EditorCategory("Contacts")]
-        [EditorPropertyCondition<RigidBody>(nameof(IsStatic))]
+        [EditorPropertyCondition<RigidBody>(nameof(IsDynamic))]
         [EditorProperty("Contact Slop Coefficient")]
         public float ContactSlopCoefficient
         {

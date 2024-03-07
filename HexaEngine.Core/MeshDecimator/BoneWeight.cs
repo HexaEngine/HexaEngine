@@ -29,7 +29,7 @@ SOFTWARE.
 using HexaEngine.Mathematics;
 using System.Numerics;
 
-namespace MeshDecimator
+namespace HexaEngine.Core.MeshDecimator
 {
     /// <summary>
     /// A bone weight.
@@ -131,8 +131,8 @@ namespace MeshDecimator
         /// <returns>If equals.</returns>
         public static bool operator ==(BoneWeight lhs, BoneWeight rhs)
         {
-            return (lhs.BoneIndex0 == rhs.BoneIndex0 && lhs.BoneIndex1 == rhs.BoneIndex1 && lhs.BoneIndex2 == rhs.BoneIndex2 && lhs.BoneIndex3 == rhs.BoneIndex3 &&
-                new Vector4(lhs.BoneWeight0, lhs.BoneWeight1, lhs.BoneWeight2, lhs.BoneWeight3) == new Vector4(rhs.BoneWeight0, rhs.BoneWeight1, rhs.BoneWeight2, rhs.BoneWeight3));
+            return lhs.BoneIndex0 == rhs.BoneIndex0 && lhs.BoneIndex1 == rhs.BoneIndex1 && lhs.BoneIndex2 == rhs.BoneIndex2 && lhs.BoneIndex3 == rhs.BoneIndex3 &&
+                new Vector4(lhs.BoneWeight0, lhs.BoneWeight1, lhs.BoneWeight2, lhs.BoneWeight3) == new Vector4(rhs.BoneWeight0, rhs.BoneWeight1, rhs.BoneWeight2, rhs.BoneWeight3);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace MeshDecimator
 
         private void Normalize()
         {
-            float mag = (float)System.Math.Sqrt(BoneWeight0 * BoneWeight0 + BoneWeight1 * BoneWeight1 + BoneWeight2 * BoneWeight2 + BoneWeight3 * BoneWeight3);
+            float mag = (float)Math.Sqrt(BoneWeight0 * BoneWeight0 + BoneWeight1 * BoneWeight1 + BoneWeight2 * BoneWeight2 + BoneWeight3 * BoneWeight3);
             if (mag > float.Epsilon)
             {
                 BoneWeight0 /= mag;
@@ -235,8 +235,8 @@ namespace MeshDecimator
                 return false;
             }
             BoneWeight other = (BoneWeight)obj;
-            return (BoneIndex0 == other.BoneIndex0 && BoneIndex1 == other.BoneIndex1 && BoneIndex2 == other.BoneIndex2 && BoneIndex3 == other.BoneIndex3 &&
-                BoneWeight0 == other.BoneWeight0 && BoneWeight1 == other.BoneWeight1 && BoneWeight2 == other.BoneWeight2 && BoneWeight3 == other.BoneWeight3);
+            return BoneIndex0 == other.BoneIndex0 && BoneIndex1 == other.BoneIndex1 && BoneIndex2 == other.BoneIndex2 && BoneIndex3 == other.BoneIndex3 &&
+                BoneWeight0 == other.BoneWeight0 && BoneWeight1 == other.BoneWeight1 && BoneWeight2 == other.BoneWeight2 && BoneWeight3 == other.BoneWeight3;
         }
 
         /// <summary>
@@ -246,8 +246,8 @@ namespace MeshDecimator
         /// <returns>If equals.</returns>
         public readonly bool Equals(BoneWeight other)
         {
-            return (BoneIndex0 == other.BoneIndex0 && BoneIndex1 == other.BoneIndex1 && BoneIndex2 == other.BoneIndex2 && BoneIndex3 == other.BoneIndex3 &&
-                BoneWeight0 == other.BoneWeight0 && BoneWeight1 == other.BoneWeight1 && BoneWeight2 == other.BoneWeight2 && BoneWeight3 == other.BoneWeight3);
+            return BoneIndex0 == other.BoneIndex0 && BoneIndex1 == other.BoneIndex1 && BoneIndex2 == other.BoneIndex2 && BoneIndex3 == other.BoneIndex3 &&
+                BoneWeight0 == other.BoneWeight0 && BoneWeight1 == other.BoneWeight1 && BoneWeight2 == other.BoneWeight2 && BoneWeight3 == other.BoneWeight3;
         }
 
         /// <summary>
