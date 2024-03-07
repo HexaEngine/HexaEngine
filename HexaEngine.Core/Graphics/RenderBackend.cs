@@ -8,36 +8,36 @@
         /// <summary>
         /// Automatically select the most appropriate graphics backend.
         /// </summary>
-        Auto,
+        Auto = 0,
 
         /// <summary>
         /// DirectX 12 (D3D12) graphics backend.
         /// </summary>
-        D3D12,
+        D3D12 = 1,
 
         /// <summary>
         /// DirectX 11 (D3D11) graphics backend.
         /// </summary>
-        D3D11,
+        D3D11 = 2,
 
         /// <summary>
         /// DirectX 11 (D3D11) on top of DirectX 12 (D3D12) graphics backend.
         /// </summary>
-        D3D11On12,
+        D3D11On12 = 4,
 
         /// <summary>
         /// Vulkan graphics backend.
         /// </summary>
-        Vulkan,
+        Vulkan = 8,
 
         /// <summary>
         /// OpenGL graphics backend.
         /// </summary>
-        OpenGL,
+        OpenGL = 16,
 
         /// <summary>
         /// Metal graphics backend (used on Apple platforms).
         /// </summary>
-        Metal
+        Metal = 32
     }
 }
