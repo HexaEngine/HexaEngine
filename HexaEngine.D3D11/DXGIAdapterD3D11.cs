@@ -323,7 +323,7 @@
             }
 
             if (selected.Handle == null)
-                throw new NotSupportedException();
+                throw new NotSupportedException("No compatible GPU found. Please ensure your system meets the minimum requirements.");
             return selected;
         }
 
@@ -336,25 +336,34 @@
                 (ResultCode)IDXGIAdapter.EnumOutputs(outputIndex, ref output) !=
                 ResultCode.DXGI_ERROR_NOT_FOUND;
                 outputIndex++)
-
             {
                 OutputDesc1 desc;
                 output.GetDesc1(&desc).ThrowHResult();
 
                 // select the user chosen display by name.
                 var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(desc.DeviceName);
-                if (name != null && nameSpan == name)
+                if (name != null)
                 {
-                    return output;
+                    if (nameSpan == name)
+                    {
+                        return output;
+                    }
+
+                    output.Release();
+                    continue;
                 }
+
+                selected = output;
 
                 // select primary monitor.
                 if (desc.DesktopCoordinates.Min == Vector2D<int>.Zero)
                 {
-                    selected = output;
+                    break;
                 }
             }
 
+            if (selected.Handle == null)
+                throw new NotSupportedException("No output found. Please connect a monitor.");
             return selected;
         }
 
