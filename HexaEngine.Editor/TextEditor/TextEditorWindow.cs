@@ -19,7 +19,6 @@
 
         public TextEditorWindow()
         {
-            IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar;
         }
 

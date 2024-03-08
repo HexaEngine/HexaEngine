@@ -61,7 +61,6 @@
             imageProperties.Show();
             toolProperties.Show();
             brushes.Show();
-            IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.AlwaysHorizontalScrollbar | ImGuiWindowFlags.AlwaysVerticalScrollbar;
 
             TouchDevices.TouchDown += TouchDown;

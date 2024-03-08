@@ -174,7 +174,7 @@
 
         public virtual IReadOnlyList<GPU> GPUs => gpus;
 
-        public int AdapterIndex { get; private set; }
+        public int AdapterIndex { get; private set; } = -1;
 
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
@@ -322,8 +322,11 @@
                     continue;
                 }
 
-                AdapterIndex = (int)adapterIndex;
-                selected = adapter;
+                if (AdapterIndex == -1)
+                {
+                    AdapterIndex = (int)adapterIndex;
+                    selected = adapter;
+                }
             }
 
             if (selected.Handle == null)
@@ -367,7 +370,7 @@
             }
 
             if (selected.Handle == null)
-                throw new NotSupportedException("No output found. Please connect a monitor.");
+                throw new NotSupportedException("No output found. Please connect a monitor or make sure your monitors don't run over the iGPU if you are on Mobile/Laptop.");
             return selected;
         }
 

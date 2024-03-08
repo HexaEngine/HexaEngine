@@ -32,9 +32,17 @@
         /// </summary>
         public static void Initialize()
         {
-            info = new HardwareInfo();
-            task = new(info.RefreshAll);
-            task.Start();
+            try
+            {
+                info = new HardwareInfo();
+                task = new(info.RefreshAll);
+                task.Start();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
+
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Logger.Writers.Add(FileLogWriter);
         }
@@ -46,7 +54,7 @@
                 Logger.Close();
                 var exception = (Exception)e.ExceptionObject;
 
-                task.Wait();
+                task?.Wait();
 
                 StringBuilder sb = new();
                 sb.AppendLine($"HexaEngine {Assembly.GetExecutingAssembly().GetName().Version}");

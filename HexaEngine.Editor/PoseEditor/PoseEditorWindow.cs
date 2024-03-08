@@ -12,7 +12,6 @@
         public PoseEditorWindow()
         {
             Flags = ImGuiWindowFlags.MenuBar;
-            IsShown = true;
             sequencer.Show();
         }
 
