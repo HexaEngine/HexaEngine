@@ -7,6 +7,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     public class ImGuiManager
     {
@@ -644,14 +645,21 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             config.MergeMode = true;
             config.GlyphMinAdvanceX = 18;
             config.GlyphOffset = new(0, 4);
-            var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
-            fixed (char* buffer = range)
+            var glyphRanges = new char[]
             {
-                var bytes = File.ReadAllBytes("assets/shared/fonts/SEGMDL2.TTF");
-                fixed (byte* buffer2 = bytes)
-                {
-                    io.Fonts.AddFontFromMemoryTTF(buffer2, bytes.Length, 14, config, buffer);
-                }
+                (char)0xE700, (char)0xF800,
+                (char)0 // null terminator
+            };
+
+            fixed (char* pGlyphRanges = glyphRanges)
+            {
+                byte[] fontBytes = File.ReadAllBytes("assets/shared/fonts/SEGMDL2.TTF");
+                byte* pFontBytes = (byte*)ImGui.MemAlloc((nuint)fontBytes.Length);
+                Marshal.Copy(fontBytes, 0, (nint)pFontBytes, fontBytes.Length);
+
+                // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
+                // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
+                io.Fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
             }
 
             var style = ImGui.GetStyle();
