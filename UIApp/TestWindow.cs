@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Mathematics;
     using HexaEngine.UI;
     using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
@@ -27,8 +28,69 @@
             commandList = new();
 
             window = new("", 1280, 720);
-            Button button = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            window.Children.Add(button);
+            Button button = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            button.GridColumn = 1;
+            button.GridRow = 0;
+
+            Button button1 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            button1.GridColumn = 0;
+            button1.GridRow = 0;
+
+            Button button2 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            button2.GridColumn = 2;
+            button2.GridRow = 0;
+
+            Button button3 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            button3.GridColumn = 1;
+            button3.GridRow = 1;
+
+            Button buttonWide = new() { Content = "Test Button WIDE", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            buttonWide.GridColumn = 0;
+            buttonWide.GridColumnSpan = 2;
+            buttonWide.GridRow = 1;
+
+            Button buttonLONG = new() { Content = "Test Button LONG", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            buttonLONG.GridColumn = 2;
+            buttonLONG.GridRow = 0;
+            buttonLONG.GridRowSpan = 2;
+
+            Image image = new()
+            {
+                ImageSource = ImageSource.CreateFromUri(new("https://pluspng.com/img-png/random-png-image-mabel-s-sweater-creator-random-gnome-png-gravity-falls-wiki-fandom-powered-by-wikia-510.png")),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Stretch = Stretch.UniformFill
+            };
+            image.GridColumn = 2;
+            image.GridRow = 1;
+
+            Button buttonS = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Button buttonS1 = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Button buttonS2 = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+
+            StackPanel stackPanel = new();
+            stackPanel.Children.Add(buttonS);
+            stackPanel.Children.Add(buttonS1);
+            stackPanel.Children.Add(buttonS2);
+
+            Grid grid = new() { BackgroundColor = Colors.Blue, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
+            grid.RowDefinitions.Add(new());
+            grid.RowDefinitions.Add(new());
+            grid.RowDefinitions.Add(new(new(100, GridUnitType.Pixel)));
+            grid.ColumnDefinitions.Add(new(new(0, GridUnitType.Auto)));
+            grid.ColumnDefinitions.Add(new());
+            grid.ColumnDefinitions.Add(new());
+            grid.Children.Add(button);
+            grid.Children.Add(button1);
+            grid.Children.Add(button2);
+            grid.Children.Add(button3);
+            grid.Children.Add(stackPanel);
+            grid.Children.Add(buttonWide);
+            grid.Children.Add(buttonLONG);
+
+            grid.Children.Add(image);
+
+            window.Children.Add(grid);
             window.Show();
         }
 
@@ -142,11 +204,12 @@
 
         protected override void OnRendererDispose()
         {
+            HexaEngine.Web.HttpClientExtensions.WebCache.Save();
             uirenderer.Release();
         }
 
         /// <summary>
-        /// Raises the <see cref="E:HexaEngine.Core.Windows.SdlWindow.Resized" /> event.
+        /// Raises the <see cref="HexaEngine.Core.Windows.SdlWindow.Resized" /> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
         protected override void OnResized(ResizedEventArgs args)

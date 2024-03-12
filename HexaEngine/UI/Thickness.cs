@@ -91,5 +91,10 @@
         {
             return $"L: {Left}, T: {Top}, R: {Right},  B: {Bottom}";
         }
+
+        public Vector2 ToSize()
+        {
+            return new(Left + Right, Top + Bottom);
+        }
     }
 }

@@ -8,7 +8,9 @@
         private UnsafeList<UIVertex> vertices = new();
         private UnsafeList<uint> indices = new();
         private UnsafeList<UIDrawCommand> commands = new();
+        private readonly Stack<ClipRectangle> clipRectStack = new();
 
+        private ClipRectangle clipRect;
         private uint vertexCountSinceLast;
         private uint indexCountSinceLast;
         private uint vertexCountOffset;
@@ -34,6 +36,19 @@
         public uint* IdxWritePtr => indices.Back;
 
         public Matrix3x2 Transform { get => transform; set => transform = value; }
+
+        public ClipRectangle ClipRect => clipRect;
+
+        public void PushClipRect(ClipRectangle clipRect)
+        {
+            clipRectStack.Push(this.clipRect);
+            this.clipRect = clipRect;
+        }
+
+        public void PopClipRect()
+        {
+            clipRect = clipRectStack.Pop();
+        }
 
         public uint AddVertex(UIVertex vertex)
         {
@@ -97,7 +112,7 @@
 
         public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, nint textureId0 = 0, nint textureId1 = 0)
         {
-            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, commandType, textureId0, textureId1);
+            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, clipRect, commandType, textureId0, textureId1);
             commands.PushBack(cmd);
 
             if (transform != Matrix3x2.Identity)
@@ -121,6 +136,7 @@
                 var cmd = commandList.commands[i];
                 cmd.VertexOffset += vertexCountOffset;
                 cmd.IndexOffset += indexCountOffset;
+                cmd.ClipRect = clipRect;
                 commands.PushBack(cmd);
             }
 

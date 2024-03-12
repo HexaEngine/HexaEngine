@@ -8,6 +8,14 @@
 
         public bool IsInitialized { get; set; }
 
+        public int GridColumn { get; set; }
+
+        public int GridRow { get; set; }
+
+        public int GridColumnSpan { get; set; } = 1;
+
+        public int GridRowSpan { get; set; } = 1;
+
         protected virtual void OnInitialized()
         {
             Initialized?.Invoke(this, EventArgs.Empty);

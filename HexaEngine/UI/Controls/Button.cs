@@ -47,8 +47,18 @@
             }
         }
 
-        public override Vector2 GetContentSize()
+        public override Vector2 GetContentSize(UIElement? ancestor)
         {
+            if (textLayout == null)
+            {
+                return default;
+            }
+
+            var avail = NormalizeAvailSize(ancestor.GetAvailableContentSize(this));
+
+            textLayout.MaxWidth = avail.X;
+            textLayout.MaxHeight = avail.Y;
+
             return new Vector2(textLayout?.Metrics.Width ?? 0, textLayout?.Metrics.Height ?? 0);
         }
 

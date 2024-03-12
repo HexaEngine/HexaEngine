@@ -66,7 +66,7 @@
             {
                 FillMode = FillMode.Solid,
                 CullMode = CullMode.None,
-                ScissorEnable = false,
+                ScissorEnable = true,
                 DepthClipEnable = false,
             };
 
@@ -220,6 +220,7 @@
             for (int i = 0; i < cmdList.CmdBuffer.Size; i++)
             {
                 var cmd = cmdList.CmdBuffer[i];
+                var clip = cmd.ClipRect;
 
                 switch (cmd.Type)
                 {
@@ -244,6 +245,7 @@
 
                 ctx.PSSetShaderResources(0, 2, (void**)srvs);
 
+                ctx.SetScissorRect(clip.Left, clip.Top, clip.Right, clip.Bottom);
                 ctx.DrawIndexedInstanced(cmd.IndexCount, 1, global_idx_offset, global_vtx_offset, 0);
 
                 global_idx_offset += cmd.IndexCount;
@@ -258,6 +260,7 @@
             ctx.PSSetSampler(0, null);
             ctx.PSSetShaderResource(0, null);
             ctx.PSSetShaderResource(1, null);
+            ctx.SetScissorRect(default, default, default, default);
         }
 
         public void Release()

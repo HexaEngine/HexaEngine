@@ -235,6 +235,80 @@
             MemoryManager.Register(texture);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture2D"/> class using the specified <see cref="TextureFileDescription"/>.
+        /// </summary>
+        /// <param name="device">The graphics device associated with this texture.</param>
+        /// <param name="source">The source image of the texture.</param>
+        /// <param name="description">The <see cref="TextureDescription"/> used to create the texture.</param>
+        /// <param name="filename">The file path of the source code file where this constructor is called. (auto-generated)</param>
+        /// <param name="lineNumber">The line number in the source code file where this constructor is called. (auto-generated)</param>
+        public Texture2D(IGraphicsDevice device, IScratchImage source, Texture2DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
+            texture = source.CreateTexture2D(device, description.Usage, description.BindFlags, description.CPUAccessFlags, description.MiscFlags);
+            texture.DebugName = dbgName;
+            this.description = texture.Description;
+            format = this.description.Format;
+            width = this.description.Width;
+            height = this.description.Height;
+            mipLevels = this.description.MipLevels;
+            arraySize = this.description.ArraySize;
+            cpuAccessFlags = this.description.CPUAccessFlags;
+            gpuAccessFlags = this.description.Usage switch
+            {
+                Usage.Default => GpuAccessFlags.RW,
+                Usage.Dynamic => GpuAccessFlags.Read,
+                Usage.Staging => GpuAccessFlags.None,
+                Usage.Immutable => GpuAccessFlags.Read,
+                _ => throw new NotImplementedException(),
+            };
+            miscFlag = this.description.MiscFlags;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                ShaderResourceViewDimension shaderResourceViewDimension = ShaderResourceViewDimension.Texture2D;
+                if (arraySize > 1)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                }
+
+                if ((miscFlag & ResourceMiscFlag.TextureCube) != 0)
+                {
+                    shaderResourceViewDimension = ShaderResourceViewDimension.TextureCube;
+                    if (arraySize > 6)
+                    {
+                        shaderResourceViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    }
+                }
+
+                srv = device.CreateShaderResourceView(texture, new(texture, shaderResourceViewDimension));
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture, new(texture, arraySize > 1 ? RenderTargetViewDimension.Texture2DArray : RenderTargetViewDimension.Texture2D));
+                rtv.DebugName = dbgName + ".RTV";
+            }
+
+            MemoryManager.Register(texture);
+        }
+
 #nullable restore
 
 #nullable disable

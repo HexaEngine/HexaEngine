@@ -197,19 +197,19 @@
                 switch (extension)
                 {
                     case ".dds":
-                        DirectXTex.LoadFromDDSMemory(p, (nuint)data.Length, DDSFlags.None, null, image);
+                        DirectXTex.LoadFromDDSMemory(p, (nuint)data.Length, DDSFlags.None, null, image).ThrowHResult();
                         break;
 
                     case ".tga":
-                        DirectXTex.LoadFromTGAMemory(p, (nuint)data.Length, TGAFlags.None, null, image);
+                        DirectXTex.LoadFromTGAMemory(p, (nuint)data.Length, TGAFlags.None, null, image).ThrowHResult();
                         break;
 
                     case ".hdr":
-                        DirectXTex.LoadFromHDRMemory(p, (nuint)data.Length, null, image);
+                        DirectXTex.LoadFromHDRMemory(p, (nuint)data.Length, null, image).ThrowHResult();
                         break;
 
                     default:
-                        DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default);
+                        DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default).ThrowHResult();
                         break;
                 };
 

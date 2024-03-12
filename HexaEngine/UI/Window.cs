@@ -51,13 +51,15 @@
 
         public override void DrawContent(UICommandList commandList)
         {
+            commandList.PushClipRect(new ClipRectangle(Vector2.Zero, new(Width, Height)));
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].Draw(commandList);
             }
+            commandList.PopClipRect();
         }
 
-        public override Vector2 GetContentSize()
+        public override Vector2 GetContentSize(UIElement? ancestor)
         {
             return new Vector2(Width, Height);
         }

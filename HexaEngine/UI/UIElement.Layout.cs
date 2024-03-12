@@ -125,6 +125,30 @@
             }
         }
 
+        public float MinWidth
+        {
+            get;
+            set;
+        }
+
+        public float MinHeight
+        {
+            get;
+            set;
+        }
+
+        public float MaxWidth
+        {
+            get;
+            set;
+        }
+
+        public float MaxHeight
+        {
+            get;
+            set;
+        }
+
         public float ActualWidth
         {
             get => actualWidth;
@@ -141,6 +165,8 @@
 
         public virtual void Draw(UICommandList commandList)
         {
+            RectangleF rect = RectangleF.Transform(outerRectangle, positionMatrix);
+            commandList.PushClipRect(new(rect));
             var before = commandList.Transform;
             commandList.Transform = positionMatrix;
 
@@ -151,6 +177,7 @@
             commandList.Transform = positionContentMatrix;
             DrawContent(commandList);
             commandList.Transform = before;
+            commandList.PopClipRect();
         }
 
         public virtual void DrawContent(UICommandList context)
@@ -179,9 +206,9 @@
         {
         }
 
-        protected virtual Thickness GetBounds()
+        public virtual Thickness GetBounds(UIElement? ancestor)
         {
-            Vector2 contentSizeHalf = GetContentSize() / 2;
+            Vector2 contentSizeHalf = GetContentSize(ancestor) / 2;
             Thickness thickness = new(
                 contentSizeHalf.X + Padding.Left + BorderThickness.Left,
                 contentSizeHalf.Y + Padding.Top + BorderThickness.Top,
@@ -193,9 +220,9 @@
 
         protected void UpdateBounds(UIElement? ancestor)
         {
-            var bounds = GetBounds();
+            var bounds = GetBounds(ancestor);
 
-            Thickness absBounds = ancestor?.bounds ?? default;
+            Thickness absBounds = ancestor?.GetContentRegion(this) ?? default;
             if (horizontalAlignment == HorizontalAlignment.Stretch)
             {
                 bounds.Left = absBounds.Left;
@@ -214,11 +241,13 @@
         {
             center = Vector2.Zero;
 
-            float actualWidth = ancestor?.contentWidth ?? 0;
-            float actualHeight = ancestor?.contentHeight ?? 0;
+            var avail = ancestor?.GetAvailableContentSize(this) ?? default;
 
-            float actualWidthHalf = ancestor?.contentWidth / 2 ?? 0;
-            float actualHeightHalf = ancestor?.contentHeight / 2 ?? 0;
+            float actualWidth = avail.X;
+            float actualHeight = avail.Y;
+
+            float actualWidthHalf = avail.X / 2;
+            float actualHeightHalf = avail.Y / 2;
 
             switch (horizontalAlignment)
             {
@@ -259,9 +288,25 @@
             }
         }
 
+        public virtual Vector2 GetAvailableContentSize(UIElement? child)
+        {
+            return new(contentWidth, contentHeight);
+        }
+
+        protected virtual Vector2 GetPositionInElement(UIElement? child)
+        {
+            return absolutePosition;
+        }
+
+        protected virtual Thickness GetContentRegion(UIElement? child)
+        {
+            var size = GetAvailableContentSize(child) / 2;
+            return new(size.X, size.Y, size.X, size.Y);
+        }
+
         protected void UpdateLayout(UIElement? ancestor, Vector2 center)
         {
-            Vector2 origin = ancestor?.absolutePosition ?? default;
+            Vector2 origin = ancestor?.GetPositionInElement(this) ?? default;
 
             Vector2 position = Vector2.Zero;
             Vector2 positionExtend = Vector2.Zero;
@@ -357,9 +402,44 @@
             positionContentMatrix = Matrix3x2.CreateTranslation(contentPosition);
         }
 
-        public virtual Vector2 GetContentSize()
+        public virtual Vector2 GetContentSize(UIElement? ancestor)
         {
             return Vector2.Zero;
+        }
+
+        public Vector2 NormalizeAvailSize(Vector2 avail)
+        {
+            if (!float.IsNaN(Width))
+            {
+                avail.X = Width;
+            }
+
+            if (!float.IsNaN(Height))
+            {
+                avail.Y = Height;
+            }
+
+            if (MinWidth != 0)
+            {
+                avail.X = Math.Max(avail.X, MinWidth);
+            }
+
+            if (MaxWidth != 0)
+            {
+                avail.X = Math.Min(avail.X, MaxWidth);
+            }
+
+            if (MinHeight != 0)
+            {
+                avail.Y = Math.Max(avail.Y, MinHeight);
+            }
+
+            if (MaxHeight != 0)
+            {
+                avail.Y = Math.Min(avail.Y, MaxHeight);
+            }
+
+            return avail;
         }
     }
 }

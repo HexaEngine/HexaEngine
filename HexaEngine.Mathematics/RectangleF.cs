@@ -2,6 +2,7 @@
 {
     using System;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a rectangle in floating-point coordinates.
@@ -264,6 +265,25 @@
         public override readonly string ToString()
         {
             return $"<Left: {Left}, Top: {Top}, Right: {Right}, Bottom: {Bottom}>";
+        }
+
+        public static RectangleF Union(RectangleF rect1, RectangleF rect2)
+        {
+            float left = Math.Min(rect1.Left, rect2.Left);
+            float top = Math.Min(rect1.Top, rect2.Top);
+            float right = Math.Max(rect1.Right, rect2.Right);
+            float bottom = Math.Max(rect1.Bottom, rect2.Bottom);
+
+            return new RectangleF(left, top, right, bottom);
+        }
+
+        public static RectangleF Transform(RectangleF rectangle, Matrix3x2 matrix)
+        {
+            Vector2 min = new(rectangle.Left, rectangle.Top);
+            Vector2 max = new(rectangle.Right, rectangle.Bottom);
+            min = Vector2.Transform(min, matrix);
+            max = Vector2.Transform(max, matrix);
+            return new(min.X, min.Y, max.X, max.Y);
         }
     }
 }
