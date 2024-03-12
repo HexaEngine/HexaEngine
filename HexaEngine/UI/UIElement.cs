@@ -1,11 +1,43 @@
 ﻿namespace HexaEngine.UI
 {
-    using System.Numerics;
-
-    public abstract class UIElement : UINavigationElement, IUIElement
+    public partial class UIElement : InputElement
     {
-        public Vector2 Position { get; set; }
+        public event EventHandler<EventArgs>? Initialized;
 
-        public abstract Vector2 Size { get; }
+        public event EventHandler<EventArgs>? Uninitialized;
+
+        public bool IsInitialized { get; set; }
+
+        protected virtual void OnInitialized()
+        {
+            Initialized?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnUninitialized()
+        {
+            Uninitialized?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal virtual void Initialize()
+        {
+            IsInitialized = true;
+            OnInitialized();
+            InitializeComponent();
+        }
+
+        internal virtual void Uninitialize()
+        {
+            IsInitialized = false;
+            OnUninitialized();
+            UninitializeComponent();
+        }
+
+        public virtual void InitializeComponent()
+        {
+        }
+
+        public virtual void UninitializeComponent()
+        {
+        }
     }
 }

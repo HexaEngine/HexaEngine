@@ -1,142 +1,10 @@
-﻿namespace HexaEngine.UI
+﻿namespace HexaEngine.UI.Graphics
 {
+    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-
-    public class Font
-    {
-    }
-
-    public class TextFormat
-    {
-        public Font Font { get; set; }
-
-        public float FontSize { get; set; }
-
-        public float FontWeight { get; set; }
-
-        public float FontHeight { get; set; }
-    }
-
-    public class TextLayout
-    {
-        private readonly UICommandList commandList;
-
-        public TextLayout(string text, TextFormat format, float maxWidth, float maxHeight)
-        {
-            commandList = new();
-            Text = text;
-            Format = format;
-            MaxWidth = maxWidth;
-            MaxHeight = maxHeight;
-        }
-
-        public string Text { get; }
-
-        public TextFormat Format { get; }
-
-        public float MaxWidth { get; }
-
-        public float MaxHeight { get; }
-
-        public Font Font { get => Format.Font; }
-
-        private struct TextRun
-        {
-            public float X;
-            public float Y;
-            public float Width;
-            public float Height;
-            public int Start;
-            public int End;
-        }
-
-        private void Compute()
-        {
-            float fontHeight = Format.FontHeight;
-            bool shouldWrap = false;
-            bool newWord = false;
-            bool whiteSpace = false;
-
-            int wordStart = 0;
-            float wordOriginX = 0;
-            float wordOriginY = 0;
-
-            float x = 0;
-            float y = 0;
-            for (int i = 0; i < Text.Length; i++)
-            {
-                var c = Text[i];
-                if (c == '\n' || c == '\r')
-                {
-                    shouldWrap = true;
-                    newWord = true;
-                    continue;
-                }
-                if (shouldWrap)
-                {
-                    y += fontHeight;
-                    x = 0;
-                    if (newWord)
-                    {
-                        wordOriginX = x;
-                        wordOriginY = y;
-                        newWord = false;
-                        wordStart = i;
-                    }
-                    if (y >= MaxHeight)
-                    {
-                        break;
-                    }
-                }
-
-                if (c == ' ')
-                {
-                    newWord = true;
-                    whiteSpace = true;
-                }
-                else
-                {
-                    whiteSpace = false;
-                }
-
-                if (newWord && !whiteSpace)
-                {
-                    wordOriginX = x;
-                    wordOriginY = y;
-                    newWord = false;
-                    wordStart = i;
-                }
-
-                float charWidth = GetWidth(Text, i);
-                float xNew = x + charWidth;
-                if (xNew >= MaxWidth)
-                {
-                    shouldWrap = true;
-                }
-            }
-        }
-
-        private float GetWidth(string text, int index)
-        {
-            // return here the char width of the given index + kerning.
-            return 0;
-        }
-
-        private float EmitWord(float x, float y)
-        {
-            // implement char emit here and return the width of the char - kerning padd.
-            return 1;
-        }
-
-        private float EmitChar(char c, float x, float y)
-        {
-            // implement char emit here and return the width of the char - kerning padd.
-            return 1;
-        }
-    }
 
     public static class DrawHelper
     {
@@ -175,12 +43,14 @@
             return ColorConvertFloat4ToU32(i);
         }
 
-        public static void DrawText(this UICommandList list, string text, Vector2 origin, uint color, Font font)
+        public static void FillRect(this UICommandList list, RectangleF rectangle, Brush brush)
         {
+            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, default);
         }
 
-        public static void DrawTextLayout(this UICommandList list, TextLayout textLayout, Vector2 origin, uint color)
+        public static void FillRect(this UICommandList list, RectangleF rectangle, uint color)
         {
+            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, color);
         }
 
         public static void FillRect(this UICommandList list, Vector2 origin, Vector2 size, uint color)
@@ -358,33 +228,34 @@
         {
             Vector2 uv = Vector2.Zero;
             Vector2 b = new(c.X, a.Y), d = new(a.X, c.Y);
-            list.AddFace(0, 1, 2);
-            list.AddFace(0, 2, 3);
-            list.AddVertex(new(a, uv, color));
-            list.AddVertex(new(b, uv, color));
-            list.AddVertex(new(c, uv, color));
-            list.AddVertex(new(d, uv, color));
+
+            uint idx0 = list.AddVertex(new(a, uv, color));
+            uint idx1 = list.AddVertex(new(b, uv, color));
+            uint idx2 = list.AddVertex(new(c, uv, color));
+            uint idx3 = list.AddVertex(new(d, uv, color));
+            list.AddFace(idx0, idx1, idx2);
+            list.AddFace(idx0, idx2, idx3);
         }
 
         public static void PrimRect(this UICommandList list, Vector2 a, Vector2 c, Vector2 uvA, Vector2 uvC, uint color)
         {
             Vector2 b = new(c.X, a.Y), d = new(a.X, c.Y), uvB = new(uvC.X, uvA.Y), uvD = new(uvA.X, uvC.Y);
-            list.AddFace(0, 1, 2);
-            list.AddFace(0, 2, 3);
-            list.AddVertex(new(a, uvA, color));
-            list.AddVertex(new(b, uvB, color));
-            list.AddVertex(new(c, uvC, color));
-            list.AddVertex(new(d, uvD, color));
+            uint idx0 = list.AddVertex(new(a, uvA, color));
+            uint idx1 = list.AddVertex(new(b, uvB, color));
+            uint idx2 = list.AddVertex(new(c, uvC, color));
+            uint idx3 = list.AddVertex(new(d, uvD, color));
+            list.AddFace(idx0, idx1, idx2);
+            list.AddFace(idx0, idx2, idx3);
         }
 
         public static void PrimQuad(this UICommandList list, Vector2 a, Vector2 b, Vector2 c, Vector2 d, Vector2 uvA, Vector2 uvB, Vector2 uvC, Vector2 uvD, uint color)
         {
-            list.AddFace(0, 1, 2);
-            list.AddFace(0, 2, 3);
-            list.AddVertex(new(a, uvA, color));
-            list.AddVertex(new(b, uvB, color));
-            list.AddVertex(new(c, uvC, color));
-            list.AddVertex(new(d, uvD, color));
+            uint idx0 = list.AddVertex(new(a, uvA, color));
+            uint idx1 = list.AddVertex(new(b, uvB, color));
+            uint idx2 = list.AddVertex(new(c, uvC, color));
+            uint idx3 = list.AddVertex(new(d, uvD, color));
+            list.AddFace(idx0, idx1, idx2);
+            list.AddFace(idx0, idx2, idx3);
         }
 
         private static Vector2 NormalizeOverZero(Vector2 normal)

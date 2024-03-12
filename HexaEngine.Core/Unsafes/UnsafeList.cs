@@ -702,5 +702,10 @@
         {
             return Remove(item);
         }
+
+        public readonly Span<T> AsSpan()
+        {
+            return new(pointer, (int)size);
+        }
     }
 }

@@ -163,7 +163,7 @@
             });
 
             // Load the specified startup scene if provided
-            if (StartupScene != null)
+            if (!string.IsNullOrEmpty(StartupScene))
             {
 #nullable disable // Scene cant be null here, unless something bad happend like corrupted files, but I dont care.
                 SceneManager.Load(StartupScene);

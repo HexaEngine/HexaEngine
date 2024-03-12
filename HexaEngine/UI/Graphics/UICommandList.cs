@@ -1,11 +1,11 @@
-﻿namespace HexaEngine.UI
+﻿namespace HexaEngine.UI.Graphics
 {
     using HexaEngine.Core.Unsafes;
     using System.Numerics;
 
     public unsafe class UICommandList
     {
-        private readonly UnsafeList<RmGuiVertex> vertices = new();
+        private UnsafeList<UIVertex> vertices = new();
         private UnsafeList<uint> indices = new();
         private UnsafeList<UIDrawCommand> commands = new();
 
@@ -23,19 +23,19 @@
 
         public int TotalIdxCount => (int)indices.Size;
 
-        public UnsafeList<RmGuiVertex> VtxBuffer => vertices;
+        public UnsafeList<UIVertex> VtxBuffer => vertices;
 
         public UnsafeList<uint> IdxBuffer => indices;
 
         public UnsafeList<UIDrawCommand> CmdBuffer => commands;
 
-        public RmGuiVertex* VtxWritePtr => vertices.Back;
+        public UIVertex* VtxWritePtr => vertices.Back;
 
         public uint* IdxWritePtr => indices.Back;
 
         public Matrix3x2 Transform { get => transform; set => transform = value; }
 
-        public uint AddVertex(RmGuiVertex vertex)
+        public uint AddVertex(UIVertex vertex)
         {
             uint idx = vertexCountSinceLast;
             vertices.Add(vertex);
@@ -65,7 +65,7 @@
             indexCountSinceLast += 3;
         }
 
-        public RmGuiVertex* ReserveVertices(uint count)
+        public UIVertex* ReserveVertices(uint count)
         {
             var s = vertices.Size;
             vertices.Resize(vertices.Size + count);
@@ -95,17 +95,9 @@
             vertices.Reserve(vertices.Size + (uint)vtxCount);
         }
 
-        public void Ex(int idxCount, int vtxCount)
+        public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, nint textureId0 = 0, nint textureId1 = 0)
         {
-            indices.Resize(indices.Size + (uint)idxCount);
-            indexCountSinceLast += (uint)idxCount;
-            vertices.Resize(vertices.Size + (uint)vtxCount);
-            vertexCountSinceLast += (uint)vtxCount;
-        }
-
-        public void RecordDraw()
-        {
-            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset);
+            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, commandType, textureId0, textureId1);
             commands.PushBack(cmd);
 
             if (transform != Matrix3x2.Identity)
@@ -122,14 +114,24 @@
             indexCountSinceLast = 0;
         }
 
-        public void RecordDraw(nint textureId)
+        public void ExecuteCommandList(UICommandList commandList)
         {
-            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, textureId);
-            commands.PushBack(cmd);
+            for (uint i = 0; i < commandList.commands.Count; i++)
+            {
+                var cmd = commandList.commands[i];
+                cmd.VertexOffset += vertexCountOffset;
+                cmd.IndexOffset += indexCountOffset;
+                commands.PushBack(cmd);
+            }
+
+            PrimReserve(commandList.TotalIdxCount, commandList.TotalVtxCount);
+
+            vertices.AppendRange(commandList.vertices.Data, commandList.vertices.Size);
+            indices.AppendRange(commandList.indices.Data, commandList.indices.Size);
 
             if (transform != Matrix3x2.Identity)
             {
-                for (uint i = 0; i < vertexCountSinceLast; i++)
+                for (uint i = 0; i < commandList.vertices.Size; i++)
                 {
                     vertices.Data[vertexCountOffset + i].Position = Vector2.Transform(vertices[vertexCountOffset + i].Position, transform);
                 }
@@ -137,8 +139,6 @@
 
             vertexCountOffset = vertices.Size;
             indexCountOffset = indices.Size;
-            vertexCountSinceLast = 0;
-            indexCountSinceLast = 0;
         }
 
         public void BeginDraw()
@@ -157,22 +157,23 @@
             {
                 return;
             }
+
             var lastCmd = commands[0];
             var lastCmdIdx = 0;
             for (int i = 1; i < commands.Size; i++)
             {
                 var cmd = commands[i];
-                if (cmd.TextureId == lastCmd.TextureId)
+                if (cmd.Type == lastCmd.Type && cmd.TextureId0 == lastCmd.TextureId0 && cmd.TextureId1 == lastCmd.TextureId1)
                 {
                     if (lastCmd.VertexOffset + lastCmd.VertexCount == cmd.VertexOffset)
                     {
-                        lastCmd.VertexCount += cmd.VertexCount;
-                        lastCmd.IndexCount += cmd.IndexCount;
-
                         for (uint j = 0; j < cmd.IndexCount; j++)
                         {
-                            indices[j + cmd.IndexOffset] += cmd.VertexOffset;
+                            indices[j + cmd.IndexOffset] += lastCmd.VertexCount;
                         }
+
+                        lastCmd.VertexCount += cmd.VertexCount;
+                        lastCmd.IndexCount += cmd.IndexCount;
 
                         commands[lastCmdIdx] = lastCmd;
                         commands.RemoveAt(i);
@@ -185,6 +186,13 @@
                 lastCmd = cmd;
                 lastCmdIdx = i;
             }
+        }
+
+        public void Dispose()
+        {
+            vertices.Release();
+            indices.Release();
+            commands.Release();
         }
     }
 }

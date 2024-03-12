@@ -60,6 +60,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Tests", "HexaEngine.Tests\HexaEngine.Tests.csproj", "{32ED2032-235C-4FEE-B912-5A8262186367}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIApp", "UIApp\UIApp.csproj", "{BD48B8CE-923A-4912-AFF7-101265056CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -709,6 +711,36 @@ Global
 		{32ED2032-235C-4FEE-B912-5A8262186367}.TraceLeak|x64.Build.0 = Debug|Any CPU
 		{32ED2032-235C-4FEE-B912-5A8262186367}.TraceLeak|x86.ActiveCfg = Debug|Any CPU
 		{32ED2032-235C-4FEE-B912-5A8262186367}.TraceLeak|x86.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|x64.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|Any CPU.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|x64.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|x64.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|x86.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.MinSizeRel|x86.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|x64.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.Release|x86.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|Any CPU.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|x64.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|x64.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|x86.ActiveCfg = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.RelWithDebInfo|x86.Build.0 = Release|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|Any CPU.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|x64.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|x64.Build.0 = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|x86.ActiveCfg = Debug|Any CPU
+		{BD48B8CE-923A-4912-AFF7-101265056CFC}.TraceLeak|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,17 +23,14 @@
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
 		<Compile Remove="Editor\Templates\**" />
-		<Compile Remove="UI\Editor\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
 		<EmbeddedResource Remove="Editor\Templates\**" />
-		<EmbeddedResource Remove="UI\Editor\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
 		<None Remove="Editor\Templates\**" />
-		<None Remove="UI\Editor\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -54,6 +51,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="assets\shared\fonts\arial.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\icons\dark\animation.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -187,6 +187,24 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\terrain\unlit\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\prim\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\prim\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\tex\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\tex\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\vec\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\internal\ui\vec\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\material.hlsl">
@@ -944,7 +962,6 @@
 
 	<ItemGroup>
 		<Folder Include="assets\shared\shaders\forward\sun\" />
-		<Folder Include="assets\shared\shaders\internal\ui\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\textured\" />
 		<Folder Include="Components\Physics\Joints\" />

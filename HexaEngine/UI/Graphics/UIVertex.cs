@@ -1,14 +1,14 @@
-﻿namespace HexaEngine.UI
+﻿namespace HexaEngine.UI.Graphics
 {
     using System.Numerics;
 
-    public struct RmGuiVertex
+    public struct UIVertex
     {
         public Vector2 Position;
         public Vector2 UV;
         public uint Color;
 
-        public RmGuiVertex(Vector2 position, Vector2 uv, uint color)
+        public UIVertex(Vector2 position, Vector2 uv, uint color)
         {
             Position = position;
             UV = uv;

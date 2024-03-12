@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
-    using g3;
-    using HexaEngine.Animations;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;

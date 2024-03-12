@@ -130,9 +130,9 @@
 
             lock (lockObject)
             {
-                for (int i = 0; i < manager.Count; i++)
+                for (int i = 0; i < manager.ActiveEffects.Count; i++)
                 {
-                    var effect = manager.Effects[i];
+                    var effect = manager.ActiveEffects[i];
                     if (ImGui.TreeNode(effect.Name))
                     {
                         ImGui.TreeNodeEx($"Flags: {effect.Flags}", ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.NoTreePushOnOpen);

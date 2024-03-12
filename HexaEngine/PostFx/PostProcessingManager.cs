@@ -15,7 +15,7 @@
 
         private ShaderMacro[] macros;
         private readonly PostProcessingContext postContext;
-        private readonly List<IPostFx> effectsSorted = new();
+        private readonly List<IPostFx> activeEffects = new();
         private readonly List<IPostFx> effects = [];
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
@@ -73,11 +73,11 @@
             }
         }
 
-        public int Count => effectsSorted.Count;
-
         public PostFxGraph Graph => graph;
 
-        public IReadOnlyList<IPostFx> Effects => effectsSorted;
+        public IReadOnlyList<IPostFx> Effects => effects;
+
+        public IReadOnlyList<IPostFx> ActiveEffects => activeEffects;
 
         public IReadOnlyList<PostProcessingExecutionGroup> Groups => groups;
 
@@ -220,11 +220,11 @@
 
         public IPostFx? GetByName(string name)
         {
-            lock (effectsSorted)
+            lock (activeEffects)
             {
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (effect.Name == name)
                     {
                         return effect;
@@ -236,11 +236,11 @@
 
         public T? GetByName<T>(string name) where T : class, IPostFx
         {
-            lock (effectsSorted)
+            lock (activeEffects)
             {
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (effect is T t && effect.Name == name)
                     {
                         return t;
@@ -252,11 +252,11 @@
 
         public T? GetByType<T>() where T : class, IPostFx
         {
-            lock (effectsSorted)
+            lock (activeEffects)
             {
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (effect is T t)
                     {
                         return t;
@@ -394,10 +394,10 @@
                 return;
             }
 
-            for (int i = 0; i < effectsSorted.Count; i++)
+            for (int i = 0; i < activeEffects.Count; i++)
             {
                 if (effects[i].Enabled)
-                    effectsSorted[i].Resize(width, height);
+                    activeEffects[i].Resize(width, height);
             }
 
             postContext.Resize(device, width, height);
@@ -415,9 +415,9 @@
 
             lock (_lock)
             {
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
                     {
                         continue;
@@ -426,9 +426,9 @@
                 }
 
                 context.ClearState();
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0)
                     {
                         continue;
@@ -466,9 +466,9 @@
                     isDirty = false;
                 }
 
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
                     {
                         continue;
@@ -489,7 +489,7 @@
         {
             lock (_lock)
             {
-                graph.Build(effectsSorted);
+                graph.Build(activeEffects);
             }
         }
 
@@ -504,20 +504,20 @@
                 groups.Clear();
             }
 
-            if (effectsSorted.Count == 0)
+            if (activeEffects.Count == 0)
             {
                 return;
             }
 
             lock (_lock)
             {
-                IPostFx first = effectsSorted[0];
+                IPostFx first = activeEffects[0];
                 PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), false);
                 group.Passes.Add(first);
                 groups.Add(group);
-                for (int i = 1; i < effectsSorted.Count; i++)
+                for (int i = 1; i < activeEffects.Count; i++)
                 {
-                    var effect = effectsSorted[i];
+                    var effect = activeEffects[i];
                     var isDynamic = effect.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic);
 
                     if (group.IsDynamic != isDynamic)
@@ -562,7 +562,7 @@
                     effect.PropertyChanged -= PropertyChanged;
                 }
                 effects.Clear();
-                effectsSorted.Clear();
+                activeEffects.Clear();
                 graph.Clear();
 
                 for (int i = 0; i < groups.Count; i++)

@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.UI;
+    using HexaEngine.UI.Graphics;
     using System;
     using System.Numerics;
     using System.Runtime.InteropServices;
@@ -12,12 +13,12 @@
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
         private readonly IGraphicsDevice device;
 
+        private IGraphicsPipelineState primPso;
+        private IGraphicsPipelineState texPso;
+        private IGraphicsPipelineState bezierPso;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
         private IBuffer constantBuffer;
-        private IGraphicsPipelineState pso;
-
-        private IShaderResourceView fontTextureView;
         private ISamplerState fontSampler;
 
         public UIRenderer(IGraphicsDevice device)
@@ -28,43 +29,6 @@
 
         private void CreateFontsTexture(IGraphicsDevice device)
         {
-            int width = 2;
-            int height = 2;
-            uint* pixels = (uint*)Marshal.AllocHGlobal(width * height * sizeof(uint));
-
-            var texDesc = new Texture2DDescription
-            {
-                Width = width,
-                Height = height,
-                MipLevels = 1,
-                ArraySize = 1,
-                Format = Format.R8G8B8A8UNorm,
-                SampleDescription = new SampleDescription { Count = 1 },
-                Usage = Usage.Default,
-                BindFlags = BindFlags.ShaderResource,
-                CPUAccessFlags = CpuAccessFlags.None
-            };
-
-            var subResource = new SubresourceData
-            {
-                DataPointer = (nint)pixels,
-                RowPitch = texDesc.Width * 4,
-                SlicePitch = 0
-            };
-
-            var texture = device.CreateTexture2D(texDesc, new[] { subResource });
-
-            Marshal.FreeHGlobal((nint)pixels);
-
-            var resViewDesc = new ShaderResourceViewDescription
-            {
-                Format = Format.R8G8B8A8UNorm,
-                ViewDimension = ShaderResourceViewDimension.Texture2D,
-                Texture2D = new Texture2DShaderResourceView { MipLevels = texDesc.MipLevels, MostDetailedMip = 0 }
-            };
-            fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
-            texture.Dispose();
-
             var samplerDesc = new SamplerStateDescription
             {
                 Filter = Filter.MinMagMipLinear,
@@ -124,22 +88,36 @@
                 new InputElementDescription( "COLOR",    0, Format.R8G8B8A8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
             };
 
-            pso = device.CreateGraphicsPipelineState(new()
+            GraphicsPipelineStateDesc stateDesc = new()
             {
-                Pipeline = new()
-                {
-                    VertexShader = "internal/ui/vs.hlsl",
-                    PixelShader = "internal/ui/ps.hlsl"
-                },
-                State = new()
-                {
-                    Blend = blendDesc,
-                    Rasterizer = rasterDesc,
-                    DepthStencil = depthDesc,
-                    Topology = PrimitiveTopology.TriangleList,
-                    InputElements = inputElements
-                }
-            });
+                Blend = blendDesc,
+                Rasterizer = rasterDesc,
+                DepthStencil = depthDesc,
+                StencilRef = 0,
+                BlendFactor = Vector4.One,
+                InputElements = inputElements,
+                Topology = PrimitiveTopology.TriangleList,
+            };
+
+            primPso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "internal/ui/prim/vs.hlsl",
+                PixelShader = "internal/ui/prim/ps.hlsl"
+            }, stateDesc);
+
+            texPso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "internal/ui/tex/vs.hlsl",
+                PixelShader = "internal/ui/tex/ps.hlsl"
+            }, stateDesc);
+
+            stateDesc.InputElements = null;
+
+            bezierPso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "internal/ui/vec/vs.hlsl",
+                PixelShader = "internal/ui/vec/ps.hlsl"
+            }, stateDesc);
 
             var constBufferDesc = new BufferDescription
             {
@@ -150,19 +128,19 @@
             };
 
             constantBuffer = device.CreateBuffer(constBufferDesc);
+
+            CreateFontsTexture(device);
         }
 
         private void SetupRenderState(Viewport viewport, IGraphicsContext ctx)
         {
             ctx.SetViewport(viewport);
 
-            uint stride = (uint)sizeof(RmGuiVertex);
+            uint stride = (uint)sizeof(UIVertex);
             uint offset = 0;
 
-            ctx.SetPipelineState(pso);
             ctx.SetVertexBuffer(0, vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-            ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
             ctx.VSSetConstantBuffer(0, constantBuffer);
             ctx.PSSetSampler(0, fontSampler);
         }
@@ -185,11 +163,13 @@
             {
                 vertexBuffer?.Dispose();
                 vertexBufferSize = cmdList.TotalVtxCount + 5000;
-                BufferDescription desc = new();
-                desc.Usage = Usage.Dynamic;
-                desc.ByteWidth = vertexBufferSize * sizeof(RmGuiVertex);
-                desc.BindFlags = BindFlags.VertexBuffer;
-                desc.CPUAccessFlags = CpuAccessFlags.Write;
+                BufferDescription desc = new()
+                {
+                    Usage = Usage.Dynamic,
+                    ByteWidth = vertexBufferSize * sizeof(UIVertex),
+                    BindFlags = BindFlags.VertexBuffer,
+                    CPUAccessFlags = CpuAccessFlags.Write
+                };
                 vertexBuffer = device.CreateBuffer(desc);
             }
 
@@ -197,20 +177,22 @@
             {
                 indexBuffer?.Dispose();
                 indexBufferSize = cmdList.TotalIdxCount + 10000;
-                BufferDescription desc = new();
-                desc.Usage = Usage.Dynamic;
-                desc.ByteWidth = indexBufferSize * sizeof(uint);
-                desc.BindFlags = BindFlags.IndexBuffer;
-                desc.CPUAccessFlags = CpuAccessFlags.Write;
+                BufferDescription desc = new()
+                {
+                    Usage = Usage.Dynamic,
+                    ByteWidth = indexBufferSize * sizeof(uint),
+                    BindFlags = BindFlags.IndexBuffer,
+                    CPUAccessFlags = CpuAccessFlags.Write
+                };
                 indexBuffer = device.CreateBuffer(desc);
             }
 
             var vertexResource = ctx.Map(vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var indexResource = ctx.Map(indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
-            var vertexResourcePointer = (RmGuiVertex*)vertexResource.PData;
+            var vertexResourcePointer = (UIVertex*)vertexResource.PData;
             var indexResourcePointer = (uint*)indexResource.PData;
 
-            var vertBytes = cmdList.VtxBuffer.Size * sizeof(RmGuiVertex);
+            var vertBytes = cmdList.VtxBuffer.Size * sizeof(UIVertex);
             Buffer.MemoryCopy(cmdList.VtxBuffer.Data, vertexResourcePointer, vertBytes, vertBytes);
 
             var idxBytes = cmdList.IdxBuffer.Size * sizeof(uint);
@@ -233,12 +215,34 @@
             uint global_idx_offset = 0;
             int global_vtx_offset = 0;
 
+            nint* srvs = stackalloc nint[2] { 0, 0 };
+
             for (int i = 0; i < cmdList.CmdBuffer.Size; i++)
             {
                 var cmd = cmdList.CmdBuffer[i];
 
-                //var srv = (void*)cmd.TextureId;
-                //ctx.PSSetShaderResources(0, 1, &srv);
+                switch (cmd.Type)
+                {
+                    case UICommandType.None:
+                        break;
+
+                    case UICommandType.DrawPrimitive:
+                        ctx.SetPipelineState(primPso);
+                        break;
+
+                    case UICommandType.DrawTexture:
+                        ctx.SetPipelineState(texPso);
+                        break;
+
+                    case UICommandType.DrawTextVector:
+                        ctx.SetPipelineState(bezierPso);
+                        break;
+                }
+
+                srvs[0] = cmd.TextureId0;
+                srvs[1] = cmd.TextureId1;
+
+                ctx.PSSetShaderResources(0, 2, (void**)srvs);
 
                 ctx.DrawIndexedInstanced(cmd.IndexCount, 1, global_idx_offset, global_vtx_offset, 0);
 
@@ -253,15 +257,17 @@
             ctx.VSSetConstantBuffer(0, null);
             ctx.PSSetSampler(0, null);
             ctx.PSSetShaderResource(0, null);
+            ctx.PSSetShaderResource(1, null);
         }
 
         public void Release()
         {
-            pso.Dispose();
+            primPso.Dispose();
+            texPso.Dispose();
+            bezierPso.Dispose();
             fontSampler.Dispose();
-            fontTextureView.Dispose();
-            indexBuffer.Dispose();
-            vertexBuffer.Dispose();
+            indexBuffer?.Dispose();
+            vertexBuffer?.Dispose();
             constantBuffer.Dispose();
         }
     }

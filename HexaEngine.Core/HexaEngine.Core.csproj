@@ -41,8 +41,8 @@
 		<None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="geometry3Sharp" Version="1.0.324" />
 		<PackageReference Include="Hardware.Info" Version="100.1.0" />
+		<PackageReference Include="Hexa.NET.FreeType" Version="1.0.1" />
 		<PackageReference Include="Hexa.NET.ImGui" Version="1.0.2" />
 		<PackageReference Include="Hexa.NET.ImGuizmo" Version="1.0.2" />
 		<PackageReference Include="Hexa.NET.ImNodes" Version="1.0.2" />
@@ -50,6 +50,7 @@
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Silk.NET.GLFW" Version="2.20.0" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.20.0" />
