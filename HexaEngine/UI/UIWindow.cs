@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
+    using HexaEngine.Core.Input;
     using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
     using System.Numerics;
@@ -36,8 +37,28 @@
 
         public new void Initialize()
         {
+            Mouse.Moved += MouseMoved;
+            Mouse.ButtonDown += MouseButtonDown;
+            Mouse.ButtonUp += MouseButtonUp;
+
             base.Initialize();
-            InvalidateLayout();
+            Children.ForEach(child => child.InitializeComponent());
+            InvalidateArrange();
+        }
+
+        private void MouseButtonUp(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        {
+            OnMouseUp(e);
+        }
+
+        private void MouseButtonDown(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        {
+            OnMouseDown(e);
+        }
+
+        private void MouseMoved(object? sender, Core.Input.Events.MouseMotionEventArgs e)
+        {
+            OnMouseMove(e);
         }
 
         public override void Draw(UICommandList commandList)
@@ -46,10 +67,10 @@
             {
                 return;
             }
-            DrawContent(commandList);
+            OnRender(commandList);
         }
 
-        public override void DrawContent(UICommandList commandList)
+        public override void OnRender(UICommandList commandList)
         {
             commandList.PushClipRect(new ClipRectangle(Vector2.Zero, new(Width, Height)));
             for (int i = 0; i < Children.Count; i++)
@@ -59,29 +80,33 @@
             commandList.PopClipRect();
         }
 
-        public override Vector2 GetContentSize(UIElement? ancestor)
+        public override void InvalidateArrange()
         {
-            return new Vector2(Width, Height);
+            Measure(new(Width, Height));
+            Arrange(new(0, 0, Width, Height));
+            InvalidateVisual();
         }
 
-        public override void InvalidateLayout()
+        public override void InvalidateVisual()
         {
-            CalculateBounds();
         }
 
-        public override void CalculateBounds()
+        protected override void ArrangeCore(RectangleF finalRect)
         {
-            BoundingBox = new(0, 0, Width, Height);
-            ActualWidth = Width;
-            ActualHeight = Height;
-            UpdateBounds(null);
-            Vector2 center = new Vector2(Width, Height) / 2f;
-            UpdateLayout(null, center);
-
+            base.ArrangeCore(finalRect);
             for (int i = 0; i < Children.Count; i++)
             {
-                Children[i].CalculateBounds();
+                Children[i].Arrange(finalRect);
             }
+        }
+
+        protected override Vector2 MeasureCore(Vector2 availableSize)
+        {
+            for (int i = 0; i < Children.Count; i++)
+            {
+                Children[i].Measure(availableSize);
+            }
+            return availableSize;
         }
 
         ~UIWindow()

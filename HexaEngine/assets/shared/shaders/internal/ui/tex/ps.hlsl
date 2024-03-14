@@ -1,3 +1,8 @@
+cbuffer CBSolidColorBrush
+{
+	float4 color;
+}
+
 struct PSIn
 {
 	float4 position : SV_POSITION;
@@ -11,6 +16,5 @@ SamplerState fontSampler : register(s0);
 float4 main(PSIn input) : SV_TARGET
 {
 	float4 textureColor = fontTex.Sample(fontSampler, input.uv);
-	float4 color = input.color * textureColor;
-	return color;
+	return color * textureColor;
 }

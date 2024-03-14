@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
-    using System.Numerics;
-
     public unsafe struct UIDrawCommand
     {
         public UIVertex* Vertices;
@@ -12,10 +10,11 @@
         public uint VertexOffset;
         public ClipRectangle ClipRect;
         public UICommandType Type;
+        public Brush? Brush;
         public nint TextureId0;
         public nint TextureId1;
 
-        public UIDrawCommand(UIVertex* vertices, uint* indices, uint vertexCount, uint indexCount, uint vertexOffset, uint indexOffset, ClipRectangle clipRect, UICommandType type, nint textureId0 = 0, nint textureId1 = 0)
+        public UIDrawCommand(UIVertex* vertices, uint* indices, uint vertexCount, uint indexCount, uint vertexOffset, uint indexOffset, ClipRectangle clipRect, UICommandType type, Brush? brush, nint textureId0 = 0, nint textureId1 = 0)
         {
             Vertices = vertices;
             Indices = indices;
@@ -25,6 +24,7 @@
             IndexOffset = indexOffset;
             ClipRect = clipRect;
             Type = type;
+            Brush = brush;
             TextureId0 = textureId0;
             TextureId1 = textureId1;
         }

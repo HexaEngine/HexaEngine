@@ -1,24 +1,13 @@
 ﻿namespace HexaEngine.UI
 {
     using HexaEngine.Mathematics;
-    using HexaEngine.UI.Graphics;
     using System.Numerics;
 
     public partial class UIElement
     {
-        private Vector2 absolutePosition;
-        private Thickness bounds;
-
         private float actualHeight;
         private float actualWidth;
 
-        private RectangleF outerRectangle;
-        private RectangleF innerRectangle;
-        private RectangleF contentRectangle;
-
-        private Matrix3x2 positionMatrix;
-        private Matrix3x2 positionInnerMatrix;
-        private Matrix3x2 positionContentMatrix;
         private HorizontalAlignment horizontalAlignment;
         private VerticalAlignment verticalAlignment;
         private Thickness padding;
@@ -28,14 +17,7 @@
         private float width = float.NaN;
         private float contentWidth;
         private float contentHeight;
-
-        public Brush? Background { get; set; }
-
-        public Brush? Border { get; set; }
-
-        public Color BackgroundColor { get; set; }
-
-        public Color BorderColor { get; set; }
+        private Vector2 desiredSize;
 
         public HorizontalAlignment HorizontalAlignment
         {
@@ -45,7 +27,7 @@
                 if (horizontalAlignment == value)
                     return;
                 horizontalAlignment = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -57,7 +39,7 @@
                 if (verticalAlignment == value)
                     return;
                 verticalAlignment = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -69,7 +51,7 @@
                 if (padding == value)
                     return;
                 padding = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -81,7 +63,7 @@
                 if (margin == value)
                     return;
                 margin = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -93,7 +75,7 @@
                 if (border == value)
                     return;
                 border = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -107,7 +89,7 @@
                     return;
                 }
                 height = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -121,7 +103,7 @@
                     return;
                 }
                 width = value;
-                InvalidateLayout();
+                InvalidateArrange();
             }
         }
 
@@ -161,152 +143,147 @@
             protected set => actualHeight = value;
         }
 
-        public RectangleF BoundingBox { get; protected set; }
+        public float ContentWidth => contentWidth;
 
-        public virtual void Draw(UICommandList commandList)
+        public float ContentHeight => contentHeight;
+
+        public RectangleF ContentBounds => contentRectangle;
+
+        public Vector2 DesiredSize => desiredSize;
+
+        public virtual void InvalidateArrange()
         {
-            RectangleF rect = RectangleF.Transform(outerRectangle, positionMatrix);
-            commandList.PushClipRect(new(rect));
-            var before = commandList.Transform;
-            commandList.Transform = positionMatrix;
+            if (!IsInitialized)
+            {
+                return;
+            }
 
-            commandList.FillRect(outerRectangle, BorderColor.ToVector4().Col4ToUInt());
-            commandList.Transform = positionInnerMatrix;
-
-            commandList.FillRect(innerRectangle, BackgroundColor.ToVector4().Col4ToUInt());
-            commandList.Transform = positionContentMatrix;
-            DrawContent(commandList);
-            commandList.Transform = before;
-            commandList.PopClipRect();
+            ResolveObject<UIWindow>()?.InvalidateArrange();
         }
 
-        public virtual void DrawContent(UICommandList context)
+        public virtual void InvalidateVisual()
         {
-            return;
+            if (!IsInitialized)
+            {
+                return;
+            }
+
+            ResolveObject<UIWindow>()?.InvalidateVisual();
         }
 
-        public virtual void InvalidateLayout()
+        protected virtual Vector2 MeasureCore(Vector2 availableSize)
         {
-            if (!IsInitialized) return;
-            ResolveObject<UIWindow>()?.CalculateBounds();
+            return default;
         }
 
-        public virtual void CalculateBounds()
+        public void Measure(Vector2 availableSize)
         {
-            UIElement? ancestor = ResolveObject<UIElement>();
-            UpdateBounds(ancestor);
-            GetCenter(ancestor, out Vector2 center);
-            UpdateLayout(ancestor, center);
+            if (visibility == Visibility.Collapsed)
+            {
+                desiredSize = default;
+                return;
+            }
 
-            BoundingBox = new RectangleF(absolutePosition.X, absolutePosition.Y, ActualWidth, ActualHeight);
-            OnBoundsUpdated(BoundingBox);
-        }
+            if (!float.IsNaN(width))
+            {
+                availableSize.X = width;
+            }
 
-        protected virtual void OnBoundsUpdated(RectangleF boundingBox)
-        {
-        }
+            if (!float.IsNaN(height))
+            {
+                availableSize.Y = height;
+            }
 
-        public virtual Thickness GetBounds(UIElement? ancestor)
-        {
-            Vector2 contentSizeHalf = GetContentSize(ancestor) / 2;
-            Thickness thickness = new(
-                contentSizeHalf.X + Padding.Left + BorderThickness.Left,
-                contentSizeHalf.Y + Padding.Top + BorderThickness.Top,
-                contentSizeHalf.X + Padding.Right + BorderThickness.Right,
-                contentSizeHalf.Y + Padding.Bottom + BorderThickness.Bottom);
+            if (MinWidth != 0)
+            {
+                availableSize.X = Math.Max(availableSize.X, MinWidth);
+            }
 
-            return thickness;
-        }
+            if (MaxWidth != 0)
+            {
+                availableSize.X = Math.Min(availableSize.X, MaxWidth);
+            }
 
-        protected void UpdateBounds(UIElement? ancestor)
-        {
-            var bounds = GetBounds(ancestor);
+            if (MinHeight != 0)
+            {
+                availableSize.Y = Math.Max(availableSize.Y, MinHeight);
+            }
 
-            Thickness absBounds = ancestor?.GetContentRegion(this) ?? default;
+            if (MaxHeight != 0)
+            {
+                availableSize.Y = Math.Min(availableSize.Y, MaxHeight);
+            }
+
+            Vector2 actualAvailableSize = availableSize;
+
+            actualAvailableSize.X -= Margin.Left + Margin.Right;
+            actualAvailableSize.Y -= Margin.Top + Margin.Bottom;
+            actualAvailableSize.X -= BorderThickness.Left + BorderThickness.Right;
+            actualAvailableSize.Y -= BorderThickness.Top + BorderThickness.Bottom;
+            actualAvailableSize.X -= Padding.Left + Padding.Right;
+            actualAvailableSize.Y -= Padding.Top + Padding.Bottom;
+
+            desiredSize = MeasureCore(actualAvailableSize);
+
+            desiredSize.X += BorderThickness.Left + BorderThickness.Right;
+            desiredSize.Y += BorderThickness.Top + BorderThickness.Bottom;
+            desiredSize.X += Padding.Left + Padding.Right;
+            desiredSize.Y += Padding.Top + Padding.Bottom;
+
             if (horizontalAlignment == HorizontalAlignment.Stretch)
             {
-                bounds.Left = absBounds.Left;
-                bounds.Right = absBounds.Right;
+                desiredSize.X = availableSize.X;
             }
+
             if (verticalAlignment == VerticalAlignment.Stretch)
             {
-                bounds.Top = absBounds.Top;
-                bounds.Bottom = absBounds.Bottom;
+                desiredSize.Y = availableSize.Y;
             }
-
-            this.bounds = bounds;
         }
 
-        protected void GetCenter(UIElement? ancestor, out Vector2 center)
+        public void Arrange(RectangleF finalRect)
         {
-            center = Vector2.Zero;
-
-            var avail = ancestor?.GetAvailableContentSize(this) ?? default;
-
-            float actualWidth = avail.X;
-            float actualHeight = avail.Y;
-
-            float actualWidthHalf = avail.X / 2;
-            float actualHeightHalf = avail.Y / 2;
-
-            switch (horizontalAlignment)
+            if (visibility == Visibility.Collapsed)
             {
-                case HorizontalAlignment.Left:
-                    center.X = bounds.Left;
-                    break;
-
-                case HorizontalAlignment.Center:
-                    center.X = actualWidthHalf;
-                    break;
-
-                case HorizontalAlignment.Right:
-                    center.X = actualWidth + bounds.Right;
-                    break;
-
-                case HorizontalAlignment.Stretch:
-                    center.X = actualWidthHalf;
-                    break;
+                return;
             }
 
-            switch (verticalAlignment)
+            ArrangeCore(finalRect);
+        }
+
+        protected virtual void ArrangeCore(RectangleF finalRect)
+        {
+            Vector2 origin = new(finalRect.Left, finalRect.Top);
+            Vector2 rectSize = finalRect.Size;
+
+            if (horizontalAlignment == HorizontalAlignment.Left)
             {
-                case VerticalAlignment.Top:
-                    center.Y = bounds.Top;
-                    break;
-
-                case VerticalAlignment.Center:
-                    center.Y = actualHeightHalf;
-                    break;
-
-                case VerticalAlignment.Bottom:
-                    center.Y = actualHeight + bounds.Bottom;
-                    break;
-
-                case VerticalAlignment.Stretch:
-                    center.Y = actualHeightHalf;
-                    break;
+                origin.X = finalRect.Left;
             }
-        }
 
-        public virtual Vector2 GetAvailableContentSize(UIElement? child)
-        {
-            return new(contentWidth, contentHeight);
-        }
+            if (horizontalAlignment == HorizontalAlignment.Right)
+            {
+                origin.X = finalRect.Right - DesiredSize.X;
+            }
+            if (horizontalAlignment == HorizontalAlignment.Center)
+            {
+                origin.X = finalRect.Left + (rectSize.X - DesiredSize.X) / 2;
+            }
 
-        protected virtual Vector2 GetPositionInElement(UIElement? child)
-        {
-            return absolutePosition;
-        }
+            if (verticalAlignment == VerticalAlignment.Top)
+            {
+                origin.Y = finalRect.Top;
+            }
 
-        protected virtual Thickness GetContentRegion(UIElement? child)
-        {
-            var size = GetAvailableContentSize(child) / 2;
-            return new(size.X, size.Y, size.X, size.Y);
-        }
+            if (verticalAlignment == VerticalAlignment.Bottom)
+            {
+                origin.Y = finalRect.Bottom - DesiredSize.Y;
+            }
 
-        protected void UpdateLayout(UIElement? ancestor, Vector2 center)
-        {
-            Vector2 origin = ancestor?.GetPositionInElement(this) ?? default;
+            if (verticalAlignment == VerticalAlignment.Center)
+            {
+                origin.Y += (rectSize.Y - DesiredSize.Y) / 2;
+            }
 
             Vector2 position = Vector2.Zero;
             Vector2 positionExtend = Vector2.Zero;
@@ -331,115 +308,45 @@
                 position.Y -= margin.Bottom;
             }
 
-            if (float.IsNaN(height))
-            {
-                position.Y -= bounds.Top / 2 + bounds.Bottom / 2;
-                positionExtend.Y += bounds.Bottom / 2 + bounds.Top / 2;
-            }
-            else
-            {
-                position.Y -= height / 2;
-                positionExtend.Y += height / 2;
-            }
-
             if (float.IsNaN(Width))
             {
-                position.X -= bounds.Left / 2 + bounds.Right / 2;
-                positionExtend.X += bounds.Right / 2 + bounds.Left / 2;
+                actualWidth = positionExtend.X;
             }
             else
             {
-                position.X -= width / 2;
-                positionExtend.X += width / 2;
+                positionExtend.X = width;
+                actualWidth = width;
             }
+
+            if (float.IsNaN(height))
+            {
+                actualHeight = positionExtend.Y;
+            }
+            else
+            {
+                positionExtend.Y = height;
+                actualHeight = height;
+            }
+
+            position += origin;
+            positionExtend += origin + DesiredSize;
 
             actualWidth = positionExtend.X - position.X;
             actualHeight = positionExtend.Y - position.Y;
 
-            if (HorizontalAlignment == HorizontalAlignment.Right)
-            {
-                position.X -= actualWidth;
-                positionExtend.X -= actualWidth;
-            }
-
-            if (VerticalAlignment == VerticalAlignment.Bottom)
-            {
-                position.Y -= actualHeight;
-                positionExtend.Y -= actualHeight;
-            }
-
-            position += center + origin;
-            positionExtend += center + origin;
-
-            actualWidth = positionExtend.X - position.X;
-            actualHeight = positionExtend.Y - position.Y;
-
-            absolutePosition = position;
-
-            Vector2 borderPosition = position;
-            borderPosition.X += border.Left;
-            borderPosition.Y += border.Top;
-            Vector2 borderPositionExtend = positionExtend;
-            borderPositionExtend.X -= border.Right;
-            borderPositionExtend.Y -= border.Bottom;
-            float borderWidth = borderPositionExtend.X - borderPosition.X;
-            float borderHeight = borderPositionExtend.Y - borderPosition.Y;
-
-            Vector2 contentPosition = borderPosition;
-            contentPosition.X += padding.Left;
-            contentPosition.Y += padding.Top;
-            Vector2 contentPositionExtend = borderPositionExtend;
-            contentPositionExtend.X -= padding.Right;
-            contentPositionExtend.Y -= padding.Bottom;
+            Vector2 contentPosition = position;
+            contentPosition.X += padding.Left + border.Left;
+            contentPosition.Y += padding.Top + border.Top;
+            Vector2 contentPositionExtend = positionExtend;
+            contentPositionExtend.X -= padding.Right + border.Right;
+            contentPositionExtend.Y -= padding.Bottom + border.Bottom;
             contentWidth = contentPositionExtend.X - contentPosition.X;
             contentHeight = contentPositionExtend.Y - contentPosition.Y;
 
             outerRectangle = new RectangleF(0, 0, actualWidth, actualHeight);
-            innerRectangle = new RectangleF(0, 0, borderWidth, borderHeight);
-            contentRectangle = new RectangleF(0, 0, contentWidth, contentHeight);
+            contentRectangle = new RectangleF(contentPosition.X, contentPosition.Y, contentWidth, contentHeight);
             positionMatrix = Matrix3x2.CreateTranslation(position);
-            positionInnerMatrix = Matrix3x2.CreateTranslation(borderPosition);
             positionContentMatrix = Matrix3x2.CreateTranslation(contentPosition);
-        }
-
-        public virtual Vector2 GetContentSize(UIElement? ancestor)
-        {
-            return Vector2.Zero;
-        }
-
-        public Vector2 NormalizeAvailSize(Vector2 avail)
-        {
-            if (!float.IsNaN(Width))
-            {
-                avail.X = Width;
-            }
-
-            if (!float.IsNaN(Height))
-            {
-                avail.Y = Height;
-            }
-
-            if (MinWidth != 0)
-            {
-                avail.X = Math.Max(avail.X, MinWidth);
-            }
-
-            if (MaxWidth != 0)
-            {
-                avail.X = Math.Min(avail.X, MaxWidth);
-            }
-
-            if (MinHeight != 0)
-            {
-                avail.Y = Math.Max(avail.Y, MinHeight);
-            }
-
-            if (MaxHeight != 0)
-            {
-                avail.Y = Math.Min(avail.Y, MaxHeight);
-            }
-
-            return avail;
         }
     }
 }

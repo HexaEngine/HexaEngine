@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
-    using HexaEngine.UI;
     using HexaEngine.UI.Graphics;
     using System;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public unsafe class UIRenderer
     {
@@ -18,8 +17,22 @@
         private IGraphicsPipelineState bezierPso;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
-        private IBuffer constantBuffer;
+        private ConstantBuffer<Matrix4x4> constantBuffer;
+        private SolidColorBrush solidColorBrush;
         private ISamplerState fontSampler;
+
+        private struct CBBrush
+        {
+            public uint Type;
+            public UPoint3 Padding;
+            public Vector4 Color;
+        }
+
+        private struct GradientStop
+        {
+            public Vector4 Color;
+            public float Offset;
+        }
 
         public UIRenderer(IGraphicsDevice device)
         {
@@ -119,15 +132,8 @@
                 PixelShader = "internal/ui/vec/ps.hlsl"
             }, stateDesc);
 
-            var constBufferDesc = new BufferDescription
-            {
-                ByteWidth = sizeof(Matrix4x4),
-                Usage = Usage.Dynamic,
-                BindFlags = BindFlags.ConstantBuffer,
-                CPUAccessFlags = CpuAccessFlags.Write,
-            };
-
-            constantBuffer = device.CreateBuffer(constBufferDesc);
+            constantBuffer = new(device, CpuAccessFlags.Write);
+            solidColorBrush = new(device, Colors.White);
 
             CreateFontsTexture(device);
         }
@@ -153,7 +159,7 @@
                 return;
             }
 
-            if (cmdList.CmdBuffer.Size == 0)
+            if (cmdList.CmdBuffer.Count == 0)
             {
                 return;
             }
@@ -217,7 +223,7 @@
 
             nint* srvs = stackalloc nint[2] { 0, 0 };
 
-            for (int i = 0; i < cmdList.CmdBuffer.Size; i++)
+            for (int i = 0; i < cmdList.CmdBuffer.Count; i++)
             {
                 var cmd = cmdList.CmdBuffer[i];
                 var clip = cmd.ClipRect;
@@ -244,6 +250,15 @@
                 srvs[1] = cmd.TextureId1;
 
                 ctx.PSSetShaderResources(0, 2, (void**)srvs);
+
+                if (cmd.Brush == null)
+                {
+                    solidColorBrush.Apply(cmd, ctx);
+                }
+                else
+                {
+                    cmd.Brush?.Apply(cmd, ctx);
+                }
 
                 ctx.SetScissorRect(clip.Left, clip.Top, clip.Right, clip.Bottom);
                 ctx.DrawIndexedInstanced(cmd.IndexCount, 1, global_idx_offset, global_vtx_offset, 0);
@@ -272,6 +287,7 @@
             indexBuffer?.Dispose();
             vertexBuffer?.Dispose();
             constantBuffer.Dispose();
+            solidColorBrush.Dispose();
         }
     }
 }

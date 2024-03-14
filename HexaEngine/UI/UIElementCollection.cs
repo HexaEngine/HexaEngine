@@ -27,7 +27,7 @@
             item.Parent = parent;
             ((ICollection<UIElement>)objects).Add(item);
             ElementAdded?.Invoke(this, item);
-            parent.ResolveObject<UIElement>()?.InvalidateLayout();
+            parent.ResolveObject<UIElement>()?.InvalidateArrange();
         }
 
         public void Clear()

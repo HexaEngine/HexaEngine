@@ -2,46 +2,6 @@
 {
     using System.Numerics;
 
-    public struct TextLayoutMetrics
-    {
-        public float Top;
-        public float Left;
-        public float Bottom;
-        public float Right;
-
-        public TextLayoutMetrics(float top, float left, float bottom, float right)
-        {
-            Top = top;
-            Left = left;
-            Bottom = bottom;
-            Right = right;
-        }
-
-        public TextLayoutMetrics(Vector2 origin, Vector2 size)
-        {
-            Top = origin.Y;
-            Left = origin.X;
-            Bottom = origin.Y + size.Y;
-            Right = origin.X + size.X;
-        }
-
-        public readonly Vector2 Origin => new(Left, Top);
-
-        public readonly Vector2 Size => new Vector2(Right, Bottom) - Origin;
-
-        public readonly float Width => Right - Left;
-
-        public readonly float Height => Bottom - Top;
-
-        public void Merge(TextLayoutMetrics other)
-        {
-            Top = Math.Min(Top, other.Top);
-            Left = Math.Min(Left, other.Left);
-            Bottom = Math.Max(Bottom, other.Bottom);
-            Right = Math.Max(Right, other.Right);
-        }
-    }
-
     public class TextLayout : IDisposable
     {
         private string text;
@@ -51,13 +11,40 @@
         private float maxWidth;
         private float maxHeight;
 
+        private readonly List<LineSpan> lines = [];
+
         public TextLayout(string text, TextFormat format, float maxWidth, float maxHeight)
         {
             this.text = text;
             Format = format;
             MaxWidth = maxWidth;
             MaxHeight = maxHeight;
-            Compute();
+            UpdateLayout();
+        }
+
+        private struct LineSpan
+        {
+            public TextSpan Text;
+            public Vector2 Position;
+            public Vector2 Size;
+
+            public readonly int Length => Text.Length;
+
+            public readonly Vector2 Min => Position;
+
+            public readonly Vector2 Max => Position + Size;
+
+            public char this[int index]
+            {
+                get => Text[index];
+            }
+
+            public LineSpan(TextSpan text, Vector2 position, Vector2 size)
+            {
+                Text = text;
+                Position = position;
+                Size = size;
+            }
         }
 
         public string Text
@@ -70,7 +57,7 @@
                     return;
                 }
                 text = value;
-                Compute();
+                UpdateLayout();
             }
         }
 
@@ -88,7 +75,6 @@
                     return;
                 }
                 maxWidth = value;
-                Compute();
             }
         }
 
@@ -102,29 +88,80 @@
                     return;
                 }
                 maxHeight = value;
-                Compute();
             }
         }
 
         public IFont Font { get => Format.Font; }
 
-        private void Compute()
+        public void UpdateLayout()
         {
-            preRecordedList.BeginDraw();
-            float penX = 0;
-            float penY = 0;
+            lines.Clear();
 
-            float lineHeight = Font.GetLineHeight(Format.FontSize);
-
+            IFont font = Format.Font;
             float emSize = Font.EmSize;
             float fontSize = Format.FontSize;
+            float lineHeight = Font.GetLineHeight(Format.FontSize);
             float incrementalTabStop = Format.IncrementalTabStop;
+            float wordSpacing = Format.WordSpacing;
+            float lineSpacing = Format.LineSpacing;
+            float whitespaceWidth = GetWhitespaceWidth(font, wordSpacing, emSize, Format.FontSize);
 
-            if (Format.FlowDirection == FlowDirection.BottomToTop)
+            lineHeight += lineSpacing / emSize * fontSize;
+
+            WordWrapping wordWrapping = Format.WordWrapping;
+
+            // measure text and split into lines.
+            Measure(font, wordWrapping, emSize, fontSize, lineHeight, incrementalTabStop);
+
+            // compute actual max and min width and height.
+            float minWidth = 0;
+            float minHeight = 0;
+            float maxWidth = 0;
+            float maxHeight = 0;
+            for (int i = 0; i < lines.Count; i++)
             {
-                penY = MaxHeight - lineHeight;
-                lineHeight = -lineHeight;
+                var line = lines[i];
+                var min = line.Min;
+                var max = line.Max;
+                minWidth = Math.Min(min.X, minWidth);
+                minHeight = Math.Min(min.Y, minHeight);
+                maxWidth = MathF.Max(max.X, maxWidth);
+                maxHeight = MathF.Max(max.Y, maxHeight);
             }
+
+            metrics = new(minWidth, minHeight, maxWidth, maxHeight);
+
+            FlowDirection flowDirection = Format.FlowDirection;
+            ReadingDirection readingDirection = Format.ReadingDirection;
+            TextAlignment alignment = Format.TextAlignment;
+
+            // reverse alignment if RTL layout.
+            if (readingDirection == ReadingDirection.RightToLeft)
+            {
+                alignment = alignment switch
+                {
+                    TextAlignment.Leading => TextAlignment.Trailing,
+                    TextAlignment.Trailing => TextAlignment.Leading,
+                    TextAlignment.Center => TextAlignment.Center,
+                    TextAlignment.Justified => TextAlignment.Justified,
+                    _ => throw new NotSupportedException(),
+                };
+            }
+
+            preRecordedList.BeginDraw();
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                AddGlyphRun(font, lines[i], flowDirection, readingDirection, alignment, incrementalTabStop, whitespaceWidth);
+            }
+
+            preRecordedList.EndDraw();
+        }
+
+        private void Measure(IFont font, WordWrapping wordWrapping, float emSize, float fontSize, float lineHeight, float incrementalTabStop)
+        {
+            float penX = 0;
+            float penY = 0;
 
             TextSpan span = new(text, 0, 0);
             uint previous = 0;
@@ -137,17 +174,8 @@
 
                 if (c == '\n')
                 {
-                    span.Length = i - span.Start;
-                    AddGlyphRun(new(0, penY), span);
-                    span.Start = i + 1;
-
-                    penX = 0;
-                    penY += lineHeight;
-
-                    if (penY > MaxHeight)
+                    if (EmitLine(ref penX, ref penY, lineHeight, ref span, i))
                     {
-                        // return here max height reached, no more glyph runs possible.
-                        preRecordedList.EndDraw();
                         return;
                     }
 
@@ -160,11 +188,11 @@
                     continue;
                 }
 
-                GlyphMetrics metrics = Font.GetMetrics(c);
+                GlyphMetrics metrics = font.GetMetrics(c);
 
                 if (previous != 0 && metrics.Glyph != 0)
                 {
-                    if (Font.GetKerning(previous, metrics.Glyph, out Vector2 kerning))
+                    if (font.GetKerning(previous, metrics.Glyph, out Vector2 kerning))
                     {
                         penX += kerning.X / emSize * fontSize;
                     }
@@ -172,9 +200,9 @@
 
                 float nextPositionX = penX + metrics.HorizontalAdvance / emSize * fontSize;
 
-                if (nextPositionX > MaxWidth && Format.WordWrapping != WordWrapping.NoWrap)
+                if (nextPositionX > maxWidth && wordWrapping != WordWrapping.NoWrap)
                 {
-                    if (Format.WordWrapping == WordWrapping.WrapWord)
+                    if (wordWrapping == WordWrapping.WrapWord)
                     {
                         // Reverse search for ' ' space char to find word boundary.
                         int j = i - 1;
@@ -193,34 +221,16 @@
                         // +1 to skip the space.
                         i = j + 1;
 
-                        span.Length = j - span.Start;
-                        AddGlyphRun(new(0, penY), span);
-                        span.Start = i;
-
-                        penX = 0;
-                        penY += lineHeight;
-
-                        if (penY > MaxHeight)
+                        if (EmitLine(ref penX, ref penY, lineHeight, ref span, j))
                         {
-                            // return here max height reached, no more glyph runs possible.
-                            preRecordedList.EndDraw();
                             return;
                         }
 
                         continue;
                     }
 
-                    span.Length = i - span.Start;
-                    AddGlyphRun(new(0, penY), span);
-                    span.Start = i;
-
-                    penX = 0;
-                    penY += lineHeight;
-
-                    if (penY > MaxHeight)
+                    if (EmitLine(ref penX, ref penY, lineHeight, ref span, i))
                     {
-                        // return here max height reached, no more glyph runs possible.
-                        preRecordedList.EndDraw();
                         return;
                     }
 
@@ -233,58 +243,64 @@
             if (span.Start < text.Length)
             {
                 span.Length = text.Length - span.Start;
-                AddGlyphRun(new(0, penY), span);
+                AddLine(new(0, penY), span);
             }
-
-            preRecordedList.EndDraw();
         }
 
-        private void AddGlyphRun(Vector2 origin, TextSpan span)
+        private void AddLine(Vector2 origin, TextSpan span)
+        {
+            Vector2 size = Font.MeasureSize(span, Format.FontSize, Format.IncrementalTabStop);
+            LineSpan line = new(span, origin, size);
+            lines.Add(line);
+        }
+
+        private bool EmitLine(ref float penX, ref float penY, float lineHeight, ref TextSpan span, int i)
+        {
+            span.Length = i - span.Start;
+            AddLine(new(0, penY), span);
+            span.Start = i + 1;
+
+            penX = 0;
+            penY += lineHeight;
+
+            return penY > maxHeight;
+        }
+
+        private void AddGlyphRun(IFont font, LineSpan span, FlowDirection flowDirection, ReadingDirection readingDirection, TextAlignment alignment, float incrementalTabStop, float whitespaceWidth)
         {
             if (span.Length == 0)
             {
                 return;
             }
 
-            Vector2 size = Font.MeasureSize(span, Format.FontSize, Format.IncrementalTabStop);
-            TextLayoutMetrics metrics = new(origin, size);
-            this.metrics.Merge(metrics);
+            Vector2 origin = span.Position;
+            Vector2 size = span.Size;
+
             float usedSpace = size.X;
-
             float whitespaceScale = 1;
+            bool bottomToTop = flowDirection == FlowDirection.BottomToTop;
 
-            bool rightToLeft = Format.ReadingDirection == ReadingDirection.RightToLeft;
+            if (bottomToTop)
+            {
+                origin.Y = metrics.Height - (origin.Y - size.Y);
+            }
 
-            switch (Format.TextAlignment)
+            switch (alignment)
             {
                 case TextAlignment.Leading:
-                    if (rightToLeft)
-                    {
-                        origin.X = MaxWidth - usedSpace;
-                    }
-                    else
-                    {
-                        origin.X = 0;
-                    }
+                    origin.X = 0;
                     break;
 
                 case TextAlignment.Trailing:
-                    if (rightToLeft)
-                    {
-                        origin.X = 0;
-                    }
-                    else
-                    {
-                        origin.X = MaxWidth - usedSpace;
-                    }
+                    origin.X = metrics.Width - usedSpace;
                     break;
 
                 case TextAlignment.Center:
-                    origin.X = (MaxWidth - usedSpace) / 2;
+                    origin.X = (metrics.Width - usedSpace) / 2;
                     break;
 
                 case TextAlignment.Justified:
-                    float freeSpace = MaxWidth - usedSpace;
+                    float freeSpace = metrics.Width - usedSpace;
                     int whitespaceCount = 0;
                     for (int i = 0; i < span.Length; i++)
                     {
@@ -295,22 +311,29 @@
                     }
                     if (whitespaceCount > 0)
                     {
-                        whitespaceScale = freeSpace / (whitespaceCount * GetWhitespaceWidth(Format.FontSize));
+                        whitespaceScale = freeSpace / (whitespaceCount * whitespaceWidth);
                     }
 
                     break;
             }
 
-            Font.RenderText(preRecordedList, origin, span, Format.FontSize, whitespaceScale, Format.IncrementalTabStop, Format.ReadingDirection, null);
+            font.RenderText(preRecordedList, origin, span.Text, Format.FontSize, whitespaceScale, incrementalTabStop, readingDirection, null);
         }
 
-        public float GetWhitespaceWidth(float fontSize)
+        private static float GetWhitespaceWidth(IFont font, float wordSpacing, float emSize, float fontSize)
         {
-            return Font.GetMetrics(' ').HorizontalAdvance / Font.EmSize * fontSize;
+            return font.GetMetrics(' ').HorizontalAdvance / emSize * fontSize + wordSpacing / emSize * fontSize;
         }
 
-        public void DrawText(UICommandList commandList)
+        public void DrawText(UICommandList commandList, Brush brush)
         {
+            for (int i = 0; i < preRecordedList.CmdBuffer.Count; i++)
+            {
+                UIDrawCommand cmd = preRecordedList.CmdBuffer[i];
+                cmd.Brush = brush;
+                preRecordedList.CmdBuffer[i] = cmd;
+            }
+
             commandList.ExecuteCommandList(preRecordedList);
         }
 

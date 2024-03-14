@@ -1,5 +1,10 @@
 // Based on: http://wdobbie.com/post/gpu-text-rendering-with-vector-textures/
 
+cbuffer CBSolidColorBrush
+{
+	float4 color;
+}
+
 struct PSIn
 {
 	float4 position : SV_POSITION;
@@ -25,17 +30,14 @@ cbuffer BrushParams
 	//float4 color = 1;
 }
 
-cbuffer TextRenderParams
-{
-	// Size of the window (in pixels) used for 1-dimensional anti-aliasing along each rays.
+// Size of the window (in pixels) used for 1-dimensional anti-aliasing along each rays.
 //   0 - no anti-aliasing
 //   1 - normal anti-aliasing
 // >=2 - exaggerated effect
-	//float antiAliasingWindowSize = 1.0;
+//float antiAliasingWindowSize = 1.0;
 
 // Enable a second ray along the y-axis to achieve 2-dimensional anti-aliasing.
 //bool enableSuperSamplingAntiAliasing = true;
-}
 
 Glyph loadGlyph(uint index)
 {
@@ -142,8 +144,6 @@ uint bufferIndex = input.bufferIndex;
 	if (enableSuperSamplingAntiAliasing) {
 		alpha *= 0.5;
 	}
-
-	float4 color = 1;
 
 	alpha = clamp(alpha, 0.0, 1.0);
 	float4 result = color * alpha;

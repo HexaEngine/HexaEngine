@@ -146,12 +146,7 @@
 
         public float FontSize => fontSize;
 
-        public void RenderText(UICommandList list, string text, Vector2 position, uint color)
-        {
-            RenderText(list, text, position, color, fontSize);
-        }
-
-        public void RenderText(UICommandList list, string text, Vector2 position, uint color, float fontSize)
+        public void RenderText(UICommandList list, string text, Vector2 position, Brush brush, float fontSize)
         {
             int indexCount = 6 * text.Length;
             int vertexCount = 4 * text.Length;
@@ -204,7 +199,7 @@
                     float x1 = position.X + u1 * fontSize;
                     float y1 = position.Y + fontSize - v0 * fontSize;
 
-                    list.PrimRect(new(x0, y0), new(x1, y1), glyph.UVStart, glyph.UVEnd, color);
+                    list.PrimRect(new(x0, y0), new(x1, y1), glyph.UVStart, glyph.UVEnd, uint.MaxValue);
                 }
 
                 position.X += glyph.Advance / emSize * fontSize;
@@ -212,16 +207,7 @@
                 previous = glyph.Index;
             }
 
-            list.RecordDraw(UICommandType.DrawTexture, srv.NativePointer);
-        }
-
-        public void DrawAtlas(UICommandList list, Vector2 position, Vector2 size)
-        {
-            list.PrimReserve(6, 4);
-
-            list.PrimRect(position, position + size, Vector2.Zero, Vector2.One, new Vector4(1, 1, 1, 1).Col4ToUInt());
-
-            list.RecordDraw(UICommandType.DrawTexture, srv.NativePointer);
+            list.RecordDraw(UICommandType.DrawTexture, brush, srv.NativePointer);
         }
 
         public float GetLineHeight(float fontSize)

@@ -3,7 +3,6 @@
     using Hexa.NET.FreeType;
     using HexaEngine.Core.Graphics;
     using System;
-    using System.Numerics;
 
     public class TextFormat : IDisposable
     {
@@ -23,7 +22,9 @@
 
         public float IncrementalTabStop { get; set; } = 48;
 
-        public float LineSpacing { get; set; } = 1;
+        public float LineSpacing { get; set; } = 0;
+
+        public float WordSpacing { get; set; } = 0;
 
         public FlowDirection FlowDirection { get; set; }
 
@@ -34,11 +35,6 @@
         public ParagraphAlignment ParagraphAlignment { get; set; }
 
         public TextAlignment TextAlignment { get; set; }
-
-        public void RenderText(UICommandList commandList, Vector2 origin, string text)
-        {
-            font.RenderText(commandList, text, origin, fontSize);
-        }
 
         protected virtual void Dispose(bool disposing)
         {

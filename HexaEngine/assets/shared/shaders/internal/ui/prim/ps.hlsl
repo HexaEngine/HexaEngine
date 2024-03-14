@@ -1,3 +1,8 @@
+cbuffer CBSolidColorBrush
+{
+	float4 color;
+}
+
 struct PSIn
 {
 	float4 position : SV_POSITION;
@@ -6,5 +11,5 @@ struct PSIn
 
 float4 main(PSIn input) : SV_TARGET
 {
-	return input.color;
+	return color;
 }

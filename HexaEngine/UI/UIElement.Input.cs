@@ -6,9 +6,9 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public class InputElement : DependencyElement, IInputElement
+    public partial class UIElement : IInputElement
     {
-        private List<InputElement> hovering = [];
+        private List<UIElement> hovering = [];
 
         public event EventHandler<KeyboardCharEventArgs>? TextInput;
 
@@ -64,22 +64,22 @@
             LostFocus?.Invoke(this, args);
         }
 
-        internal virtual void OnChar(KeyboardCharEventArgs args)
+        protected virtual void OnChar(KeyboardCharEventArgs args)
         {
             TextInput?.Invoke(this, args);
         }
 
-        internal virtual void OnKeyDown(KeyboardEventArgs args)
+        protected virtual void OnKeyDown(KeyboardEventArgs args)
         {
             KeyDown?.Invoke(this, args);
         }
 
-        internal virtual void OnKeyUp(KeyboardEventArgs args)
+        protected virtual void OnKeyUp(KeyboardEventArgs args)
         {
             KeyUp?.Invoke(this, args);
         }
 
-        internal virtual void OnMouseDown(MouseButtonEventArgs args)
+        protected virtual void OnMouseDown(MouseButtonEventArgs args)
         {
             if (args.Button == MouseButton.Left)
                 Focus();
@@ -87,19 +87,19 @@
             RouteMouseDownEvent(args);
         }
 
-        internal virtual void OnMouseUp(MouseButtonEventArgs args)
+        protected virtual void OnMouseUp(MouseButtonEventArgs args)
         {
             MouseUp?.Invoke(this, args);
             RouteMouseUpEvent(args);
         }
 
-        internal virtual void OnDoubleClick(MouseButtonEventArgs args)
+        protected virtual void OnDoubleClick(MouseButtonEventArgs args)
         {
             DoubleClick?.Invoke(this, args);
             RouteDoubleClickEvent(args);
         }
 
-        internal virtual void OnMouseEnter(MouseEventArgs args)
+        protected virtual void OnMouseEnter(MouseEventArgs args)
         {
             IsMouseOver = true;
             Trace.WriteLine(GetType().Name + " Enter");
@@ -107,7 +107,7 @@
             RouteMouseEnterEvent(args);
         }
 
-        internal virtual void OnMouseLeave(MouseEventArgs args)
+        protected virtual void OnMouseLeave(MouseEventArgs args)
         {
             IsMouseOver = false;
             MouseLeave?.Invoke(this, args);
@@ -115,56 +115,89 @@
             Trace.WriteLine(GetType().Name + " Leave");
         }
 
-        internal virtual void OnMouseMove(MouseMotionEventArgs args)
+        protected virtual void OnMouseMove(MouseMotionEventArgs args)
         {
             MouseMove?.Invoke(this, args);
             RouteMouseMoveEvent(args);
         }
 
-        internal virtual void OnMouseWheel(MouseWheelEventArgs args)
+        protected virtual void OnMouseWheel(MouseWheelEventArgs args)
         {
             MouseWheel?.Invoke(this, args);
             RouteMouseWheelEvent(args);
         }
 
-        internal virtual void RouteMouseWheelEvent(MouseWheelEventArgs args)
+        protected virtual void RouteMouseWheelEvent(MouseWheelEventArgs args)
         {
-            hovering.ForEach(child => { child.OnMouseWheel(args); if (args.Handled) return; });
+            if (args.Handled)
+                return;
+            for (int i = 0; i < hovering.Count; i++)
+            {
+                hovering[i].OnMouseWheel(args);
+                if (args.Handled)
+                    return;
+            }
         }
 
-        internal virtual void RouteDoubleClickEvent(MouseButtonEventArgs args)
+        protected virtual void RouteDoubleClickEvent(MouseButtonEventArgs args)
         {
-            hovering.ForEach(child => { child.OnDoubleClick(args); if (args.Handled) return; });
+            if (args.Handled)
+                return;
+            for (int i = 0; i < hovering.Count; i++)
+            {
+                hovering[i].OnDoubleClick(args);
+                if (args.Handled)
+                    return;
+            }
         }
 
-        internal virtual void RouteMouseLeaveEvent(MouseEventArgs args)
+        protected virtual void RouteMouseLeaveEvent(MouseEventArgs args)
         {
-            if (args.Handled) return;
-            hovering.ForEach(child => child.OnMouseLeave(args));
+            if (args.Handled)
+                return;
+            for (int i = 0; i < hovering.Count; i++)
+            {
+                hovering[i].OnMouseLeave(args);
+            }
+
             hovering.Clear();
         }
 
-        internal virtual void RouteMouseEnterEvent(MouseEventArgs args)
+        protected virtual void RouteMouseEnterEvent(MouseEventArgs args)
         {
-            if (args.Handled) return;
+            if (args.Handled)
+                return;
         }
 
-        internal virtual void RouteMouseUpEvent(MouseButtonEventArgs args)
+        protected virtual void RouteMouseUpEvent(MouseButtonEventArgs args)
         {
-            if (args.Handled) return;
-            hovering.ForEach(child => { child.OnMouseUp(args); if (args.Handled) return; });
+            if (args.Handled)
+                return;
+            for (int i = 0; i < hovering.Count; i++)
+            {
+                hovering[i].OnMouseUp(args);
+                if (args.Handled)
+                    return;
+            }
         }
 
-        internal void RouteMouseDownEvent(MouseButtonEventArgs args)
+        protected void RouteMouseDownEvent(MouseButtonEventArgs args)
         {
-            if (args.Handled) return;
-            hovering.ForEach(child => { child.OnMouseDown(args); if (args.Handled) return; });
+            if (args.Handled)
+                return;
+            for (int i = 0; i < hovering.Count; i++)
+            {
+                hovering[i].OnMouseDown(args);
+                if (args.Handled)
+                    return;
+            }
         }
 
-        internal virtual void RouteMouseMoveEvent(MouseMotionEventArgs args)
+        protected virtual void RouteMouseMoveEvent(MouseMotionEventArgs args)
         {
+            // TODO: Optimize code, less gc pressure.
             if (args.Handled) return;
-            var newHover = new List<InputElement>();
+            var newHover = new List<UIElement>();
             if (this is IChildContainer container)
             {
                 container.Children.ForEach(child =>

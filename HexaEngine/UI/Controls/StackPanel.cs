@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.UI.Controls
 {
+    using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
     using System.Numerics;
 
@@ -23,12 +24,12 @@
 
         protected virtual void OnChildAdded(object? sender, UIElement e)
         {
-            InvalidateLayout();
+            InvalidateArrange();
         }
 
         protected virtual void OnChildRemoved(object? sender, UIElement e)
         {
-            InvalidateLayout();
+            InvalidateArrange();
         }
 
         internal override void Initialize()
@@ -45,80 +46,58 @@
             base.Uninitialize();
         }
 
-        public override void DrawContent(UICommandList commandList)
+        public override void OnRender(UICommandList commandList)
         {
             Children.ForEach(child => child.Draw(commandList));
         }
 
-        public override void CalculateBounds()
+        protected override void ArrangeCore(RectangleF finalRect)
         {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].CalculateBounds();
-            }
+            base.ArrangeCore(finalRect);
 
-            base.CalculateBounds();
-        }
+            RectangleF content = ContentBounds;
+            Vector2 origin = content.Offset;
 
-        protected override Vector2 GetPositionInElement(UIElement? child)
-        {
-            Vector2 origin = base.GetPositionInElement(child);
-
-            if (child == null)
-            {
-                return origin;
-            }
-
-            for (int i = 0; i < Children.Count; i++)
-            {
-                var child1 = Children[i];
-
-                if (child == child1)
-                    break;
-
-                var childSize = child1.GetBounds(this).ToSize();
-                if (Direction == StackPanelDirection.Vertical)
-                {
-                    origin.Y += childSize.Y;
-                }
-                else
-                {
-                    origin.X += childSize.X;
-                }
-            }
-
-            return origin;
-        }
-
-        public override Vector2 GetAvailableContentSize(UIElement? child)
-        {
-            Vector2 avail = base.GetAvailableContentSize(child);
-
-            if (child == null)
-            {
-                return avail;
-            }
-
-            return avail;
-        }
-
-        public override Vector2 GetContentSize(UIElement? ancestor)
-        {
-            Vector2 size = default;
-
+            float pen = 0;
             for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                var childSize = child.GetBounds(this).ToSize();
+                Vector2 desiredSize = child.DesiredSize;
+                Vector2 childOrigin;
                 if (Direction == StackPanelDirection.Vertical)
                 {
-                    size.Y += childSize.Y;
-                    size.X = MathF.Max(size.X, childSize.X);
+                    childOrigin = new(0, pen);
+                    pen += desiredSize.Y;
                 }
                 else
                 {
-                    size.X += childSize.X;
-                    size.Y = MathF.Max(size.Y, childSize.Y);
+                    childOrigin = new(pen, 0);
+                    pen += desiredSize.X;
+                }
+
+                RectangleF childRect = new(origin + childOrigin, desiredSize);
+                child.Arrange(childRect);
+            }
+        }
+
+        protected override Vector2 MeasureCore(Vector2 availableSize)
+        {
+            Vector2 size = default;
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+                child.Measure(availableSize);
+                Vector2 desiredSize = child.DesiredSize;
+
+                if (Direction == StackPanelDirection.Vertical)
+                {
+                    size.Y += desiredSize.Y;
+                    size.X = MathF.Max(size.X, desiredSize.X);
+                }
+                else
+                {
+                    size.X += desiredSize.X;
+                    size.Y = MathF.Max(size.Y, desiredSize.Y);
                 }
             }
 

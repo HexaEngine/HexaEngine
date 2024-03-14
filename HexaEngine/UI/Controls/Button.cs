@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.UI.Controls
 {
+    using HexaEngine.Core.Input.Events;
     using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;
@@ -14,21 +15,12 @@
         private Brush background;
         private Brush HighlightBrush;
 
-        public Button()
-        {
-            BackgroundColor = Colors.Black;
-            BorderColor = Colors.DarkGray;
-        }
-
         public override void InitializeComponent()
         {
-            BackgroundColor = Colors.Black;
-            BorderColor = Colors.DarkGray;
-            //foreground = DeviceManager.CreateSolidColorBrush(new((Vector4)Colors.Black));
-            //background = DeviceManager.CreateSolidColorBrush(new((Vector4)Colors.White));
-            //Border = DeviceManager.CreateSolidColorBrush(new((Vector4)Colors.DarkGray));
-            //HighlightBrush = DeviceManager.CreateSolidColorBrush(new((Vector4)Colors.LightGray));
-            CreateTextFormat();
+            foreground = UIFactory.CreateSolidColorBrush(Colors.Black);
+            Background = UIFactory.CreateSolidColorBrush(Colors.White);
+            Border = UIFactory.CreateSolidColorBrush(Colors.DarkGray);
+            HighlightBrush = UIFactory.CreateSolidColorBrush(Colors.LightGray);
         }
 
         public string Content
@@ -42,51 +34,48 @@
 
                 content = value;
 
-                InvalidateLayout();
+                InvalidateArrange();
                 textLayout ??= CreateTextLayout(content, float.MaxValue, float.MaxValue);
             }
         }
 
-        public override Vector2 GetContentSize(UIElement? ancestor)
-        {
-            if (textLayout == null)
-            {
-                return default;
-            }
-
-            var avail = NormalizeAvailSize(ancestor.GetAvailableContentSize(this));
-
-            textLayout.MaxWidth = avail.X;
-            textLayout.MaxHeight = avail.Y;
-
-            return new Vector2(textLayout?.Metrics.Width ?? 0, textLayout?.Metrics.Height ?? 0);
-        }
-
-        protected override void OnBoundsUpdated(RectangleF boundingBox)
-        {
-            var size = boundingBox.Size;
-            if (textLayout == null)
-            {
-                return;
-            }
-            if (textLayout.MaxWidth != size.X || textLayout.MaxHeight != size.Y)
-            {
-                textLayout.MaxWidth = size.X;
-                textLayout.MaxHeight = size.Y;
-                InvalidateLayout();
-            }
-        }
-
-        public override void DrawContent(UICommandList commandList)
+        public override void OnRender(UICommandList commandList)
         {
             if (textLayout == null)
             {
                 return;
             }
 
-            textLayout.DrawText(commandList);
+            textLayout.DrawText(commandList, foreground);
+        }
 
-            //commandList.DrawRect(textLayout.Metrics.Origin, textLayout.Metrics.Size, new Vector4(1, 0, 0, 1).Col4ToUInt(), 1);
+        protected override Vector2 MeasureCore(Vector2 availableSize)
+        {
+            if (textLayout == null)
+            {
+                return Vector2.Zero;
+            }
+
+            textLayout.MaxWidth = availableSize.X;
+            textLayout.MaxHeight = availableSize.Y;
+            textLayout.UpdateLayout();
+
+            return new Vector2(textLayout.Metrics.Width, textLayout.Metrics.Height);
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs args)
+        {
+            base.OnMouseEnter(args);
+            background = Background;
+            Background = HighlightBrush;
+            InvalidateVisual();
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs args)
+        {
+            base.OnMouseLeave(args);
+            Background = background;
+            InvalidateVisual();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.UI.Controls
 {
+    using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
     using System.Numerics;
 
@@ -25,12 +26,12 @@
 
         private void OnChildAdded(object? sender, UIElement e)
         {
-            InvalidateLayout();
+            InvalidateArrange();
         }
 
         private void OnChildRemoved(object? sender, UIElement e)
         {
-            InvalidateLayout();
+            InvalidateArrange();
         }
 
         internal override void Initialize()
@@ -47,198 +48,25 @@
             base.Uninitialize();
         }
 
-        public override void DrawContent(UICommandList commandList)
+        public override void OnRender(UICommandList commandList)
         {
+#if DEBUG
+            float pen = 0;
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                var column = ColumnDefinitions[i];
+                pen += column.ActualWidth;
+                commandList.DrawLine(new(pen, 0), new(pen, ActualHeight), Border, 1);
+            }
+            pen = 0;
+            for (int i = 0; i < RowDefinitions.Count; i++)
+            {
+                var row = RowDefinitions[i];
+                pen += row.ActualHeight;
+                commandList.DrawLine(new(0, pen), new(ActualWidth, pen), Border, 1);
+            }
+#endif
             Children.ForEach(child => child.Draw(commandList));
-        }
-
-        public override void CalculateBounds()
-        {
-            UIElement? ancestor = ResolveObject<UIElement>();
-            Vector2 avail = NormalizeAvailSize(ancestor.GetAvailableContentSize(this));
-
-            int columnStarCount = 0;
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
-            {
-                float actualWidth = 0;
-                var column = ColumnDefinitions[i];
-
-                if (column.Width.GridUnitType == GridUnitType.Star)
-                {
-                    columnStarCount++;
-                    continue;
-                }
-
-                switch (column.Width.GridUnitType)
-                {
-                    case GridUnitType.Auto:
-                        foreach (var child in GetChildrenInColumn(i))
-                        {
-                            var bounds = child.GetBounds(this);
-                            actualWidth = MathF.Max(bounds.Left + bounds.Right, actualWidth);
-                        }
-                        break;
-
-                    case GridUnitType.Pixel:
-                        actualWidth = column.Width.Value;
-                        break;
-                }
-
-                actualWidth = column.NormalizeWidth(actualWidth);
-
-                avail.X -= actualWidth;
-                column.ActualWidth = actualWidth;
-            }
-
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
-            {
-                var column = ColumnDefinitions[i];
-
-                if (column.Width.GridUnitType != GridUnitType.Star)
-                    continue;
-
-                column.ActualWidth = column.NormalizeWidth(avail.X / (column.Width.Value * columnStarCount));
-            }
-
-            int rowStarCount = 0;
-            for (int i = 0; i < RowDefinitions.Count; i++)
-            {
-                float actualHeight = 0;
-                var row = RowDefinitions[i];
-
-                if (row.Height.GridUnitType == GridUnitType.Star)
-                {
-                    rowStarCount++;
-                    continue;
-                }
-
-                switch (row.Height.GridUnitType)
-                {
-                    case GridUnitType.Auto:
-                        foreach (var child in GetChildrenInRow(i))
-                        {
-                            var bounds = child.GetBounds(this);
-                            actualHeight = MathF.Max(bounds.Top + bounds.Bottom, actualHeight);
-                        }
-                        break;
-
-                    case GridUnitType.Pixel:
-                        actualHeight = row.Height.Value;
-                        break;
-                }
-
-                actualHeight = row.NormalizeHeight(actualHeight);
-                avail.Y -= actualHeight;
-                row.ActualHeight = actualHeight;
-            }
-
-            for (int i = 0; i < RowDefinitions.Count; i++)
-            {
-                var row = RowDefinitions[i];
-
-                if (row.Height.GridUnitType != GridUnitType.Star)
-                    continue;
-
-                row.ActualHeight = row.NormalizeHeight(avail.Y / (row.Height.Value * rowStarCount));
-            }
-
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].CalculateBounds();
-            }
-
-            base.CalculateBounds();
-        }
-
-        protected override Vector2 GetPositionInElement(UIElement? child)
-        {
-            Vector2 origin = base.GetPositionInElement(child);
-
-            if (child == null)
-            {
-                return origin;
-            }
-
-            if (child.GridColumn >= 0 && child.GridColumn < ColumnDefinitions.Count)
-            {
-                for (int i = 0; i < child.GridColumn; i++)
-                {
-                    var column = ColumnDefinitions[i];
-                    origin.X += column.ActualWidth;
-                }
-            }
-
-            if (child.GridRow >= 0 && child.GridRow < RowDefinitions.Count)
-            {
-                for (int i = 0; i < child.GridRow; i++)
-                {
-                    var row = RowDefinitions[i];
-                    origin.Y += row.ActualHeight;
-                }
-            }
-
-            return origin;
-        }
-
-        public override Vector2 GetAvailableContentSize(UIElement? child)
-        {
-            Vector2 avail = base.GetAvailableContentSize(child);
-
-            if (child == null)
-            {
-                return avail;
-            }
-
-            if (child.GridColumn >= 0 && child.GridColumn < ColumnDefinitions.Count)
-            {
-                avail.X = 0;
-                int end = Math.Min(child.GridColumn + child.GridColumnSpan, ColumnDefinitions.Count);
-                for (int i = child.GridColumn; i < end; i++)
-                {
-                    avail.X += ColumnDefinitions[i].ActualWidth;
-                }
-            }
-
-            if (child.GridRow >= 0 && child.GridRow < RowDefinitions.Count)
-            {
-                avail.Y = 0;
-                int end = Math.Min(child.GridRow + child.GridRowSpan, RowDefinitions.Count);
-                for (int i = child.GridRow; i < end; i++)
-                {
-                    avail.Y += RowDefinitions[i].ActualHeight;
-                }
-            }
-
-            return avail;
-        }
-
-        public override Vector2 GetContentSize(UIElement? ancestor)
-        {
-            if (Children.Count == 0)
-                return default;
-
-            Vector2 size = default;
-
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
-            {
-                size.X += ColumnDefinitions[i].ActualWidth;
-            }
-
-            for (int i = 0; i < RowDefinitions.Count; i++)
-            {
-                size.Y += RowDefinitions[i].ActualHeight;
-            }
-
-            if (ColumnDefinitions.Count == 0 && RowDefinitions.Count == 0)
-            {
-                for (int i = 0; i < Children.Count; i++)
-                {
-                    var child = Children[i];
-                    size += child.GetBounds(this).ToSize();
-                }
-            }
-
-            return size;
         }
 
         public IEnumerable<UIElement> GetChildrenInColumn(int columnIndex)
@@ -267,7 +95,171 @@
 
         public static bool InSpan(int startIndex, int length, int searchIndex)
         {
-            return startIndex >= searchIndex && (searchIndex - startIndex) < length;
+            return searchIndex >= startIndex && searchIndex - startIndex < length;
+        }
+
+        public Vector2 GetAvailableSizeInGrid(UIElement element)
+        {
+            Vector2 size = default;
+
+            int columnStart = Math.Min(element.GridColumn, ColumnDefinitions.Count - 1);
+            int columnEnd = Math.Min(columnStart + element.GridColumnSpan, ColumnDefinitions.Count);
+            for (int i = columnStart; i < columnEnd; i++)
+            {
+                ColumnDefinition column = ColumnDefinitions[i];
+                size.X += column.ActualWidth;
+            }
+
+            int rowStart = Math.Min(element.GridRow, RowDefinitions.Count - 1);
+            int rowEnd = Math.Min(rowStart + element.GridRowSpan, RowDefinitions.Count);
+            for (int i = rowStart; i < rowEnd; i++)
+            {
+                RowDefinition row = RowDefinitions[i];
+                size.Y += row.ActualHeight;
+            }
+
+            return size;
+        }
+
+        public Vector2 GetPositionInGrid(UIElement element)
+        {
+            Vector2 origin = default;
+
+            if (element.GridColumn >= 0 && element.GridColumn < ColumnDefinitions.Count)
+            {
+                for (int i = 0; i < element.GridColumn; i++)
+                {
+                    var column = ColumnDefinitions[i];
+                    origin.X += column.ActualWidth;
+                }
+            }
+
+            if (element.GridRow >= 0 && element.GridRow < RowDefinitions.Count)
+            {
+                for (int i = 0; i < element.GridRow; i++)
+                {
+                    var row = RowDefinitions[i];
+                    origin.Y += row.ActualHeight;
+                }
+            }
+
+            return origin;
+        }
+
+        protected override void ArrangeCore(RectangleF finalRect)
+        {
+            base.ArrangeCore(finalRect);
+
+            RectangleF nextRect = ContentBounds;
+            Vector2 origin = nextRect.Offset;
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+                var childOrigin = GetPositionInGrid(child);
+                var desiredSize = GetAvailableSizeInGrid(child);
+                RectangleF nextChildRect = new(origin + childOrigin, desiredSize);
+                Children[i].Arrange(nextChildRect);
+            }
+        }
+
+        protected override Vector2 MeasureCore(Vector2 availableSize)
+        {
+            Vector2 avail = availableSize;
+
+            // first pass, fixed size grid columns and rows, subtract from available space.
+            foreach (var column in ColumnDefinitions)
+            {
+                if (column.Width.GridUnitType != GridUnitType.Pixel) continue;
+                float actualWidth = column.ActualWidth = column.NormalizeWidth(column.Width.Value);
+                availableSize.X -= actualWidth;
+            }
+
+            foreach (var row in RowDefinitions)
+            {
+                if (row.Height.GridUnitType != GridUnitType.Pixel) continue;
+                float actualHeight = row.ActualHeight = row.NormalizeHeight(row.Height.Value);
+                availableSize.Y -= actualHeight;
+            }
+
+            // second pass, auto size grid columns and rows, subtract from available space.
+            int columnStarCount = 0;
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                float actualWidth = 0;
+                var column = ColumnDefinitions[i];
+                var unit = column.Width.GridUnitType;
+                if (unit == GridUnitType.Star)
+                {
+                    columnStarCount++;
+                    continue;
+                }
+                if (unit == GridUnitType.Pixel) continue;
+
+                foreach (var child in GetChildrenInColumn(i))
+                {
+                    child.Measure(availableSize);
+                    // skip stretch items, would cause wrong layout.
+                    if (child.HorizontalAlignment == HorizontalAlignment.Stretch) continue;
+                    actualWidth = MathF.Max(child.DesiredSize.X, actualWidth);
+                }
+
+                actualWidth = column.NormalizeWidth(actualWidth);
+
+                availableSize.X -= actualWidth;
+                column.ActualWidth = actualWidth;
+            }
+
+            int rowStarCount = 0;
+            for (int i = 0; i < RowDefinitions.Count; i++)
+            {
+                float actualHeight = 0;
+                var row = RowDefinitions[i];
+                var unit = row.Height.GridUnitType;
+                if (unit == GridUnitType.Star)
+                {
+                    rowStarCount++;
+                    continue;
+                }
+                if (unit == GridUnitType.Pixel) continue;
+
+                foreach (var child in GetChildrenInRow(i))
+                {
+                    child.Measure(availableSize);
+                    // skip stretch items, would cause wrong layout.
+                    if (child.VerticalAlignment == VerticalAlignment.Stretch) continue;
+                    actualHeight = MathF.Max(child.DesiredSize.Y, actualHeight);
+                }
+
+                actualHeight = row.NormalizeHeight(actualHeight);
+                availableSize.Y -= actualHeight;
+                row.ActualHeight = actualHeight;
+            }
+
+            // third pass, star grid columns and rows, use remaining space.
+            foreach (var column in ColumnDefinitions)
+            {
+                if (column.Width.GridUnitType != GridUnitType.Star)
+                    continue;
+
+                column.ActualWidth = column.NormalizeWidth(availableSize.X / (column.Width.Value * columnStarCount));
+            }
+
+            foreach (var row in RowDefinitions)
+            {
+                if (row.Height.GridUnitType != GridUnitType.Star)
+                    continue;
+
+                row.ActualHeight = row.NormalizeHeight(availableSize.Y / (row.Height.Value * rowStarCount));
+            }
+
+            // update sizes of children.
+            foreach (var child in Children)
+            {
+                child.Measure(GetAvailableSizeInGrid(child));
+            }
+
+            return avail;
         }
     }
 }

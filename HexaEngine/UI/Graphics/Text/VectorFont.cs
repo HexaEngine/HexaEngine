@@ -353,148 +353,6 @@
             }
         }
 
-        public void RenderText(UICommandList list, string text, Vector2 position)
-        {
-            int vertexCount = 4 * text.Length;
-            int indexCount = 6 * text.Length;
-
-            list.PrimReserve(indexCount, vertexCount);
-
-            float originalX = position.X;
-
-            uint previous = 0;
-            for (int i = 0; i < text.Length; i++)
-            {
-                uint charcode = text[i];
-
-                if (charcode == '\r') continue;
-
-                if (charcode == '\n')
-                {
-                    position.X = originalX;
-                    position.Y -= face->Height / (float)face->UnitsPerEM * fontSize;
-                    if (hinting)
-                    {
-                        position.Y = MathF.Round(position.Y);
-                    }
-
-                    continue;
-                }
-
-                VectorFontGlyph glyph = glyphs[charcode];
-
-                if (previous != 0 && glyph.Index != 0)
-                {
-                    FTVector kerning;
-                    FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
-                    {
-                        position.X += kerning.X / emSize * fontSize;
-                    }
-                }
-
-                // Do not emit quad for empty glyphs (whitespace).
-                if (glyph.CurveCount > 0)
-                {
-                    uint d = (uint)(emSize * dilation);
-
-                    float u0 = (glyph.BearingX - d) / emSize;
-                    float v0 = (glyph.BearingY - glyph.Height - d) / emSize;
-                    float u1 = (glyph.BearingX + glyph.Width + d) / emSize;
-                    float v1 = (glyph.BearingY + d) / emSize;
-
-                    float x0 = position.X + u0 * fontSize;
-                    float y0 = position.Y + fontSize - v1 * fontSize;
-                    float x1 = position.X + u1 * fontSize;
-                    float y1 = position.Y + fontSize - v0 * fontSize;
-
-                    uint idx0 = list.AddVertex(new(new(x0, y0), new(u0, v1), glyph.BufferIndex));
-                    uint idx1 = list.AddVertex(new(new(x1, y0), new(u1, v1), glyph.BufferIndex));
-                    uint idx2 = list.AddVertex(new(new(x1, y1), new(u1, v0), glyph.BufferIndex));
-                    uint idx3 = list.AddVertex(new(new(x0, y1), new(u0, v0), glyph.BufferIndex));
-                    list.AddFace(idx0, idx1, idx2);
-                    list.AddFace(idx0, idx2, idx3);
-                }
-
-                position.X += glyph.Advance / emSize * fontSize;
-
-                previous = glyph.Index;
-            }
-
-            list.RecordDraw(UICommandType.DrawTextVector, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
-        }
-
-        public void RenderText(UICommandList list, string text, Vector2 position, float fontSize)
-        {
-            int vertexCount = 4 * text.Length;
-            int indexCount = 6 * text.Length;
-
-            list.PrimReserve(indexCount, vertexCount);
-
-            float originalX = position.X;
-
-            uint previous = 0;
-            for (int i = 0; i < text.Length; i++)
-            {
-                uint charcode = text[i];
-
-                if (charcode == '\r') continue;
-
-                if (charcode == '\n')
-                {
-                    position.X = originalX;
-                    position.Y -= face->Height / (float)face->UnitsPerEM * fontSize;
-                    if (hinting)
-                    {
-                        position.Y = MathF.Round(position.Y);
-                    }
-
-                    continue;
-                }
-
-                VectorFontGlyph glyph = glyphs[charcode];
-
-                if (previous != 0 && glyph.Index != 0)
-                {
-                    FTVector kerning;
-                    FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
-                    {
-                        position.X += kerning.X / emSize * fontSize;
-                    }
-                }
-
-                // Do not emit quad for empty glyphs (whitespace).
-                if (glyph.CurveCount > 0)
-                {
-                    uint d = (uint)(emSize * dilation);
-
-                    float u0 = (glyph.BearingX - d) / emSize;
-                    float v0 = (glyph.BearingY - glyph.Height - d) / emSize;
-                    float u1 = (glyph.BearingX + glyph.Width + d) / emSize;
-                    float v1 = (glyph.BearingY + d) / emSize;
-
-                    float x0 = position.X + u0 * fontSize;
-                    float y0 = position.Y + fontSize - v1 * fontSize;
-                    float x1 = position.X + u1 * fontSize;
-                    float y1 = position.Y + fontSize - v0 * fontSize;
-
-                    uint idx0 = list.AddVertex(new(new(x0, y0), new(u0, v1), glyph.BufferIndex));
-                    uint idx1 = list.AddVertex(new(new(x1, y0), new(u1, v1), glyph.BufferIndex));
-                    uint idx2 = list.AddVertex(new(new(x1, y1), new(u1, v0), glyph.BufferIndex));
-                    uint idx3 = list.AddVertex(new(new(x0, y1), new(u0, v0), glyph.BufferIndex));
-                    list.AddFace(idx0, idx1, idx2);
-                    list.AddFace(idx0, idx2, idx3);
-                }
-
-                position.X += glyph.Advance / emSize * fontSize;
-
-                previous = glyph.Index;
-            }
-
-            list.RecordDraw(UICommandType.DrawTextVector, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
-        }
-
         public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
@@ -563,7 +421,7 @@
                 previous = glyph.Index;
             }
 
-            commandList.RecordDraw(UICommandType.DrawTextVector, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTextVector, brush, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
         }
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextSpan text, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
@@ -653,7 +511,7 @@
                 previous = glyph.Index;
             }
 
-            commandList.RecordDraw(UICommandType.DrawTextVector, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTextVector, brush, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
         }
 
         public float GetLineHeight(float fontSize)

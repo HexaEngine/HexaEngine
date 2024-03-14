@@ -28,69 +28,145 @@
             commandList = new();
 
             window = new("", 1280, 720);
-            Button button = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            button.GridColumn = 1;
-            button.GridRow = 0;
 
-            Button button1 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            button1.GridColumn = 0;
-            button1.GridRow = 0;
+            Label label = new() { Text = "Label Left Top", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label.GridColumn = 1;
+            label.GridRow = 0;
 
-            Button button2 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            button2.GridColumn = 2;
-            button2.GridRow = 0;
+            Label label1 = new() { Text = "Label Centered", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label1.GridColumn = 1;
+            label1.GridRow = 0;
 
-            Button button3 = new() { Content = "Test Button", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            button3.GridColumn = 1;
-            button3.GridRow = 1;
+            Label label2 = new() { Text = "Label Right Top", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label2.GridColumn = 1;
+            label2.GridRow = 0;
 
-            Button buttonWide = new() { Content = "Test Button WIDE", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Label label3 = new() { Text = "Label Right Bottom", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label3.GridColumn = 1;
+            label3.GridRow = 0;
+
+            Label label4 = new() { Text = "Label Left Bottom", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Bottom, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label4.GridColumn = 1;
+            label4.GridRow = 0;
+
+            Label label5 = new() { Text = "Label Top Center", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label5.GridColumn = 1;
+            label5.GridRow = 0;
+
+            Label label6 = new() { Text = "Label Bottom Center", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label6.GridColumn = 1;
+            label6.GridRow = 0;
+
+            Label label7 = new() { Text = "Label Center Left", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label7.GridColumn = 1;
+            label7.GridRow = 0;
+
+            Label label8 = new() { Text = "Label Center Right", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label8.GridColumn = 1;
+            label8.GridRow = 0;
+
+            Label label9 = new() { Text = "Margin Test", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label9.GridColumn = 0;
+            label9.GridRow = 3;
+
+            Label label10 = new() { Text = "Label 20px 30px 00px 00px", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = default, Padding = default, Margin = new(20, 30, 00, 00) };
+            label10.GridColumn = 0;
+            label10.GridRow = 3;
+
+            Label label11 = new() { Text = "Padding Test", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label11.GridColumn = 1;
+            label11.GridRow = 3;
+
+            Label label12 = new() { Text = "Label 20px 30px 10px 40px", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = default, Padding = new(20, 30, 10, 40), Margin = new(0, 0, 0, 0), Border = UIFactory.CreateSolidColorBrush(Colors.Gray) };
+            label12.GridColumn = 1;
+            label12.GridRow = 3;
+
+            Label label13 = new() { Text = "Border Test", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label13.GridColumn = 2;
+            label13.GridRow = 3;
+
+            Label label14 = new() { Text = "Label 20px 30px 10px 40px", HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, BorderThickness = new(20, 30, 10, 40), Padding = default, Margin = new(0, 0, 0, 0), Border = UIFactory.CreateSolidColorBrush(Colors.Gray) };
+            label14.GridColumn = 2;
+            label14.GridRow = 3;
+
+            Button buttonWide = new() { Content = "Column Span 2", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center, BorderThickness = new(10), Padding = new(5) };
             buttonWide.GridColumn = 0;
             buttonWide.GridColumnSpan = 2;
             buttonWide.GridRow = 1;
 
-            Button buttonLONG = new() { Content = "Test Button LONG", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Button buttonLONG = new() { Content = "Row Span 2", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
             buttonLONG.GridColumn = 2;
             buttonLONG.GridRow = 0;
             buttonLONG.GridRowSpan = 2;
 
-            Image image = new()
-            {
-                ImageSource = ImageSource.CreateFromUri(new("https://pluspng.com/img-png/random-png-image-mabel-s-sweater-creator-random-gnome-png-gravity-falls-wiki-fandom-powered-by-wikia-510.png")),
-                VerticalAlignment = VerticalAlignment.Stretch,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Stretch = Stretch.UniformFill
-            };
-            image.GridColumn = 2;
-            image.GridRow = 1;
+            Button buttonS = new() { Content = "Stack Panel Item 1", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Button buttonS1 = new() { Content = "Stack Panel Item 2", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            Button buttonS2 = new() { Content = "Stack Panel Item 3", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
 
-            Button buttonS = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            Button buttonS1 = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-            Button buttonS2 = new() { Content = "Test Button", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
-
-            StackPanel stackPanel = new();
+            StackPanel stackPanel = new() { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             stackPanel.Children.Add(buttonS);
             stackPanel.Children.Add(buttonS1);
             stackPanel.Children.Add(buttonS2);
 
-            Grid grid = new() { BackgroundColor = Colors.Blue, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
+            Grid grid = new() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
+            grid.Border = UIFactory.CreateSolidColorBrush(Colors.LightBlue);
+            grid.Background = UIFactory.CreateSolidColorBrush(Colors.Beige);
+            grid.RowDefinitions.Add(new());
+            grid.RowDefinitions.Add(new());
+            grid.RowDefinitions.Add(new(new(150, GridUnitType.Auto)));
+            grid.RowDefinitions.Add(new(new(150, GridUnitType.Pixel)));
+            grid.ColumnDefinitions.Add(new());
+            grid.ColumnDefinitions.Add(new());
+            grid.ColumnDefinitions.Add(new());
+            grid.Children.Add(label);
+            grid.Children.Add(label1);
+            grid.Children.Add(label2);
+            grid.Children.Add(label3);
+            grid.Children.Add(label4);
+            grid.Children.Add(label5);
+            grid.Children.Add(label6);
+            grid.Children.Add(label7);
+            grid.Children.Add(label8);
+            grid.Children.Add(label9);
+            grid.Children.Add(label10);
+            grid.Children.Add(label11);
+            grid.Children.Add(label12);
+            grid.Children.Add(label14);
+            grid.Children.Add(label13);
+
+            grid.Children.Add(stackPanel);
+            grid.Children.Add(buttonWide);
+            grid.Children.Add(buttonLONG);
+
+            window.Children.Add(grid);
+
+            /*
+            Grid grid = new() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
             grid.RowDefinitions.Add(new());
             grid.RowDefinitions.Add(new());
             grid.RowDefinitions.Add(new(new(100, GridUnitType.Pixel)));
             grid.ColumnDefinitions.Add(new(new(0, GridUnitType.Auto)));
             grid.ColumnDefinitions.Add(new());
             grid.ColumnDefinitions.Add(new());
-            grid.Children.Add(button);
-            grid.Children.Add(button1);
-            grid.Children.Add(button2);
-            grid.Children.Add(button3);
-            grid.Children.Add(stackPanel);
-            grid.Children.Add(buttonWide);
-            grid.Children.Add(buttonLONG);
 
-            grid.Children.Add(image);
+            Label label0 = new() { Text = "Test Label", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label0.GridColumn = 0;
+            label0.GridRow = 0;
 
+            Label label1 = new() { Text = "Test Label 1", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label1.GridColumn = 1;
+            label1.GridRow = 1;
+
+            Label label2 = new() { Text = "Test Label 2", BorderThickness = new(10), Padding = new(5), Margin = new(0, 0, 0, 0) };
+            label2.GridColumn = 2;
+            label2.GridRow = 2;
+
+            grid.Children.Add(label0);
+            grid.Children.Add(label1);
+            grid.Children.Add(label2);
             window.Children.Add(grid);
+            */
+
             window.Show();
         }
 

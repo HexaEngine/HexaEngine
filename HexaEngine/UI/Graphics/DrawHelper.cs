@@ -45,20 +45,15 @@
 
         public static void FillRect(this UICommandList list, RectangleF rectangle, Brush brush)
         {
-            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, default);
+            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, brush);
         }
 
-        public static void FillRect(this UICommandList list, RectangleF rectangle, uint color)
+        public static void FillRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush)
         {
-            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, color);
+            list.FillRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush);
         }
 
-        public static void FillRect(this UICommandList list, Vector2 origin, Vector2 size, uint color)
-        {
-            list.FillRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, color);
-        }
-
-        public static unsafe void FillRect(this UICommandList list, float top, float bottom, float left, float right, uint color)
+        public static unsafe void FillRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush)
         {
             Vector2 p0 = new(left, bottom); // bottom left corner
             Vector2 p1 = new(left, top); // top left corner
@@ -67,16 +62,20 @@
 
             Vector2* controlPoints = stackalloc Vector2[4] { p0, p1, p2, p3 };
 
-            list.FillConvexPath(controlPoints, 4, color);
+            list.FillConvexPath(controlPoints, 4, brush);
         }
 
-        public static void DrawRect(this UICommandList list, Vector2 origin, Vector2 size, uint color, float thickness)
+        public static void DrawRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush, float thickness)
         {
-            list.DrawRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, color, thickness);
+            if (thickness == 0)
+                return;
+            list.DrawRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush, thickness);
         }
 
-        public static unsafe void DrawRect(this UICommandList list, float top, float bottom, float left, float right, uint color, float thickness)
+        public static unsafe void DrawRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush, float thickness)
         {
+            if (thickness == 0)
+                return;
             Vector2 p0 = new(left, bottom); // bottom left corner
             Vector2 p1 = new(left, top); // top left corner
             Vector2 p2 = new(right, top); // top right corner
@@ -84,15 +83,44 @@
 
             Vector2* controlPoints = stackalloc Vector2[4] { p0, p1, p2, p3 };
 
-            list.DrawPath(controlPoints, 4, color, thickness, true);
+            list.DrawPath(controlPoints, 4, brush, thickness, true);
         }
 
-        public static void DrawRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, uint color, float thickness)
+        public static void DrawRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush, float thickness)
         {
-            list.DrawRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, color, thickness);
+            if (thickness == 0)
+                return;
+            list.DrawRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, thickness);
         }
 
-        public static unsafe void DrawRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, uint color, float thickness)
+        public static unsafe void DrawRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, float thickness)
+        {
+            if (thickness == 0)
+                return;
+            const int segments = 32;
+            const float step = MathF.PI * 2 / segments;
+
+            Vector2* controlPoints = stackalloc Vector2[segments];
+
+            Vector2 p0 = new(left + radius.X, bottom - radius.Y); // bottom left corner
+            Vector2 p1 = new(left + radius.X, top + radius.Y); // top left corner
+            Vector2 p2 = new(right - radius.X, top + radius.Y); // top right corner
+            Vector2 p3 = new(right - radius.X, bottom - radius.Y); // bottom right corner
+
+            DrawArcInternal(controlPoints, p3, radius, segments / 4, 0, 0, step);
+            DrawArcInternal(controlPoints, p0, radius, segments / 4, 8, 8, step);
+            DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
+            DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
+
+            list.DrawPath(controlPoints, segments, brush, thickness, true);
+        }
+
+        public static void FillRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush)
+        {
+            list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush);
+        }
+
+        public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush)
         {
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
@@ -109,32 +137,7 @@
             DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
             DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
 
-            list.DrawPath(controlPoints, segments, color, thickness, true);
-        }
-
-        public static void FillRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, uint color)
-        {
-            list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, color);
-        }
-
-        public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, uint color)
-        {
-            const int segments = 32;
-            const float step = MathF.PI * 2 / segments;
-
-            Vector2* controlPoints = stackalloc Vector2[segments];
-
-            Vector2 p0 = new(left + radius.X, bottom - radius.Y); // bottom left corner
-            Vector2 p1 = new(left + radius.X, top + radius.Y); // top left corner
-            Vector2 p2 = new(right - radius.X, top + radius.Y); // top right corner
-            Vector2 p3 = new(right - radius.X, bottom - radius.Y); // bottom right corner
-
-            DrawArcInternal(controlPoints, p3, radius, segments / 4, 0, 0, step);
-            DrawArcInternal(controlPoints, p0, radius, segments / 4, 8, 8, step);
-            DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
-            DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
-
-            list.FillConvexPath(controlPoints, segments, color);
+            list.FillConvexPath(controlPoints, segments, brush);
         }
 
         private static unsafe void DrawArcInternal(Vector2* controlPoints, Vector2 center, Vector2 radius, int segments, int offset, int arcOffset, float step)
@@ -148,15 +151,19 @@
             }
         }
 
-        public static unsafe void DrawLine(this UICommandList builder, Vector2 start, Vector2 end, uint color, float thickness)
+        public static unsafe void DrawLine(this UICommandList builder, Vector2 start, Vector2 end, Brush brush, float thickness)
         {
+            if (thickness == 0)
+                return;
             Vector2* controlPoints = stackalloc Vector2[2] { start, end };
 
-            builder.DrawPath(controlPoints, 2, color, thickness, false);
+            builder.DrawPath(controlPoints, 2, brush, thickness, false);
         }
 
-        public static unsafe void DrawEllipse(this UICommandList list, Vector2 center, Vector2 radius, uint color, float thickness)
+        public static unsafe void DrawEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush, float thickness)
         {
+            if (thickness == 0)
+                return;
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
 
@@ -170,10 +177,10 @@
                 controlPoints[i] = new Vector2(x, y);
             }
 
-            list.DrawPath(controlPoints, segments, color, thickness, true);
+            list.DrawPath(controlPoints, segments, brush, thickness, true);
         }
 
-        public static unsafe void FillEllipse(this UICommandList list, Vector2 center, Vector2 radius, uint color)
+        public static unsafe void FillEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush)
         {
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
@@ -186,11 +193,13 @@
                 controlPoints[i] = new(x, y);
             }
 
-            list.FillConvexPath(controlPoints, segments, color);
+            list.FillConvexPath(controlPoints, segments, brush);
         }
 
-        public static unsafe void DrawArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, uint color, float thickness)
+        public static unsafe void DrawArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush, float thickness)
         {
+            if (thickness == 0)
+                return;
             const int segments = 32;
             float angleRange = endAngle - startAngle;
             float step = angleRange / segments;
@@ -203,10 +212,10 @@
                 controlPoints[i] = new(x, y);
             }
 
-            list.DrawPath(controlPoints, segments + 1, color, thickness, false);
+            list.DrawPath(controlPoints, segments + 1, brush, thickness, false);
         }
 
-        public static unsafe void FillArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, uint color)
+        public static unsafe void FillArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush)
         {
             const int segments = 32;
             float angleRange = endAngle - startAngle;
@@ -221,7 +230,7 @@
                 controlPoints[i + 1] = new(x, y);
             }
 
-            list.FillConvexPath(controlPoints, segments + 2, color);
+            list.FillConvexPath(controlPoints, segments + 2, brush);
         }
 
         public static void PrimRect(this UICommandList list, Vector2 a, Vector2 c, uint color)
@@ -292,8 +301,9 @@
 
         public static float AntiAliasSize { get; set; } = 1f;
 
-        public static unsafe void DrawPath(this UICommandList list, Vector2* points, int pointCount, uint color, float thickness, bool closed)
+        public static unsafe void DrawPath(this UICommandList list, Vector2* points, int pointCount, Brush brush, float thickness, bool closed)
         {
+            uint color = uint.MaxValue;
             if (pointCount < 2 || (color & COL32_A_MASK) == 0)
                 return;
 
@@ -434,11 +444,13 @@
                 }
             }
 
-            list.RecordDraw();
+            list.RecordDraw(UICommandType.DrawPrimitive, brush);
         }
 
-        public static unsafe void FillConvexPath(this UICommandList list, Vector2* points, int pointCount, uint color)
+        public static unsafe void FillConvexPath(this UICommandList list, Vector2* points, int pointCount, Brush brush)
         {
+            uint color = uint.MaxValue;
+
             if (pointCount < 3 || (color & COL32_A_MASK) == 0)
                 return;
 
@@ -524,7 +536,7 @@
                 }
             }
 
-            list.RecordDraw();
+            list.RecordDraw(UICommandType.DrawPrimitive, brush);
         }
     }
 }

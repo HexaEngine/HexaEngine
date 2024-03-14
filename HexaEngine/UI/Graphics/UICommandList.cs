@@ -7,7 +7,7 @@
     {
         private UnsafeList<UIVertex> vertices = new();
         private UnsafeList<uint> indices = new();
-        private UnsafeList<UIDrawCommand> commands = new();
+        private List<UIDrawCommand> commands = new();
         private readonly Stack<ClipRectangle> clipRectStack = new();
 
         private ClipRectangle clipRect;
@@ -29,7 +29,7 @@
 
         public UnsafeList<uint> IdxBuffer => indices;
 
-        public UnsafeList<UIDrawCommand> CmdBuffer => commands;
+        public List<UIDrawCommand> CmdBuffer => commands;
 
         public UIVertex* VtxWritePtr => vertices.Back;
 
@@ -110,10 +110,10 @@
             vertices.Reserve(vertices.Size + (uint)vtxCount);
         }
 
-        public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, nint textureId0 = 0, nint textureId1 = 0)
+        public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, Brush? brush = null, nint textureId0 = 0, nint textureId1 = 0)
         {
-            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, clipRect, commandType, textureId0, textureId1);
-            commands.PushBack(cmd);
+            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, clipRect, commandType, brush, textureId0, textureId1);
+            commands.Add(cmd);
 
             if (transform != Matrix3x2.Identity)
             {
@@ -131,13 +131,13 @@
 
         public void ExecuteCommandList(UICommandList commandList)
         {
-            for (uint i = 0; i < commandList.commands.Count; i++)
+            for (int i = 0; i < commandList.commands.Count; i++)
             {
                 var cmd = commandList.commands[i];
                 cmd.VertexOffset += vertexCountOffset;
                 cmd.IndexOffset += indexCountOffset;
                 cmd.ClipRect = clipRect;
-                commands.PushBack(cmd);
+                commands.Add(cmd);
             }
 
             PrimReserve(commandList.TotalIdxCount, commandList.TotalVtxCount);
@@ -162,6 +162,7 @@
             vertices.Clear();
             indices.Clear();
             commands.Clear();
+            clipRectStack.Clear();
 
             indexCountOffset = 0;
             vertexCountOffset = 0;
@@ -169,17 +170,17 @@
 
         public void EndDraw()
         {
-            if (commands.Size == 1)
+            if (commands.Count < 2)
             {
                 return;
             }
 
             var lastCmd = commands[0];
             var lastCmdIdx = 0;
-            for (int i = 1; i < commands.Size; i++)
+            for (int i = 1; i < commands.Count; i++)
             {
                 var cmd = commands[i];
-                if (cmd.Type == lastCmd.Type && cmd.TextureId0 == lastCmd.TextureId0 && cmd.TextureId1 == lastCmd.TextureId1)
+                if (cmd.Type == lastCmd.Type && cmd.TextureId0 == lastCmd.TextureId0 && cmd.TextureId1 == lastCmd.TextureId1 && cmd.Brush == lastCmd.Brush)
                 {
                     if (lastCmd.VertexOffset + lastCmd.VertexCount == cmd.VertexOffset)
                     {
@@ -208,7 +209,6 @@
         {
             vertices.Release();
             indices.Release();
-            commands.Release();
         }
     }
 }

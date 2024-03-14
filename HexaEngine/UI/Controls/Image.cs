@@ -27,7 +27,12 @@
 
         public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
 
-        public override void DrawContent(UICommandList commandList)
+        protected override Vector2 MeasureCore(Vector2 availableSize)
+        {
+            return default;
+        }
+
+        public override void OnRender(UICommandList commandList)
         {
             if (ImageSource == null)
             {
