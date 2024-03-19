@@ -43,7 +43,7 @@
         /// <summary>
         /// Occurs when a touch-motion event is detected.
         /// </summary>
-        public static event TouchDeviceEventHandler<TouchMotionEventArgs>? TouchMotion;
+        public static event TouchDeviceEventHandler<TouchMoveEventArgs>? TouchMotion;
 
         /// <summary>
         /// Initializes the touch device management system.

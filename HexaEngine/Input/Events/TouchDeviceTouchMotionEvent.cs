@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Input.Events;
 
-    public struct TouchDeviceTouchMotionEvent(TouchMotionEventArgs eventArgs)
+    public struct TouchDeviceTouchMotionEvent(TouchMoveEventArgs eventArgs)
     {
         public long Finger = eventArgs.FingerId;
         public float X = eventArgs.X;

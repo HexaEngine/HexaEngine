@@ -15,31 +15,31 @@
 
         public bool IsMouseOver { get; }
 
-        public event EventHandler<KeyboardCharEventArgs>? TextInput;
+        public event RoutedEventHandler<TextInputEventArgs> TextInput;
 
-        public event EventHandler<KeyboardEventArgs>? KeyDown;
+        public event RoutedEventHandler<KeyboardEventArgs> KeyDown;
 
-        public event EventHandler<KeyboardEventArgs>? KeyUp;
+        public event RoutedEventHandler<KeyboardEventArgs> KeyUp;
 
-        public event EventHandler<MouseButtonEventArgs>? MouseDown;
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseDown;
 
-        public event EventHandler<MouseButtonEventArgs>? MouseUp;
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseUp;
 
-        public event EventHandler<MouseButtonEventArgs>? DoubleClick;
+        public event RoutedEventHandler<MouseButtonEventArgs> DoubleClick;
 
-        public event EventHandler<MouseEventArgs>? MouseLeave;
+        public event RoutedEventHandler<MouseEventArgs> MouseLeave;
 
-        public event EventHandler<MouseEventArgs>? MouseEnter;
+        public event RoutedEventHandler<MouseEventArgs> MouseEnter;
 
-        public event EventHandler<MouseMotionEventArgs>? MouseMove;
+        public event RoutedEventHandler<MouseMoveEventArgs> MouseMove;
 
-        public event EventHandler<MouseWheelEventArgs>? MouseWheel;
+        public event RoutedEventHandler<MouseWheelEventArgs> MouseWheel;
 
-        public event EventHandler<FocusGainedEventArgs>? GotFocus;
+        public event RoutedEventHandler<FocusGainedEventArgs> GotFocus;
 
-        public event EventHandler<FocusLostEventArgs>? LostFocus;
+        public event RoutedEventHandler<FocusLostEventArgs> LostFocus;
 
-        public void RaiseEvent(RoutedEventArgs e);
+        public void RouteEvent(RoutedEventArgs e);
 
         public void Focus();
     }

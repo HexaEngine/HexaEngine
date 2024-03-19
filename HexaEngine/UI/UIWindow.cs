@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.UI
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Input.Events;
     using HexaEngine.Mathematics;
-    using HexaEngine.UI.Graphics;
-    using System.Numerics;
+    using HexaEngine.UI.Controls;
 
-    public class UIWindow : UIElement, IChildContainer, IDisposable
+    public class UIWindow : ContentControl, IChildContainer, IDisposable
     {
         private bool disposedValue;
         private bool shown;
@@ -41,72 +42,143 @@
             Mouse.ButtonDown += MouseButtonDown;
             Mouse.ButtonUp += MouseButtonUp;
 
+            Keyboard.KeyDown += KeyboardKeyDown;
+            Keyboard.KeyUp += KeyboardKeyUp;
+            Keyboard.TextInput += KeyboardTextInput;
+
+            Application.MainWindow.Enter += MainWindowEnter;
+            Application.MainWindow.Leave += MainWindowLeave;
+
             base.Initialize();
-            Children.ForEach(child => child.InitializeComponent());
             InvalidateArrange();
         }
 
-        private void MouseButtonUp(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        private void KeyboardTextInput(object? sender, TextInputEventArgs e)
         {
-            OnMouseUp(e);
+            e.RoutedEvent = TextInputEvent;
+            Focused?.RouteEvent(e);
         }
 
-        private void MouseButtonDown(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        private void KeyboardKeyUp(object? sender, KeyboardEventArgs e)
         {
-            OnMouseDown(e);
+            e.RoutedEvent = KeyUpEvent;
+            Focused?.RouteEvent(e);
         }
 
-        private void MouseMoved(object? sender, Core.Input.Events.MouseMotionEventArgs e)
+        private void KeyboardKeyDown(object? sender, KeyboardEventArgs e)
         {
-            OnMouseMove(e);
+            e.RoutedEvent = KeyDownEvent;
+            Focused?.RouteEvent(e);
         }
 
-        public override void Draw(UICommandList commandList)
+        private UIElement? mouseFocused;
+
+        private void MouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
-            if (!shown)
+            e.RoutedEvent = MouseUpEvent;
+            mouseFocused?.RouteEvent(e);
+        }
+
+        private void MouseButtonDown(object? sender, MouseButtonEventArgs e)
+        {
+            e.RoutedEvent = MouseDownEvent;
+            mouseFocused?.RouteEvent(e);
+            if (e.Clicks % 2 == 0)
+            {
+                e.RoutedEvent = MouseDoubleClickEvent;
+                e.Handled = false;
+                mouseFocused?.RouteEvent(e);
+            }
+        }
+
+        private void MainWindowLeave(object? sender, Core.Windows.Events.LeaveEventArgs e)
+        {
+            mouseLeaveEventArgs.Handled = false;
+            mouseFocused?.RouteEvent(mouseLeaveEventArgs);
+            mouseFocused = null;
+        }
+
+        private void MainWindowEnter(object? sender, Core.Windows.Events.EnterEventArgs e)
+        {
+            var position = Application.MainWindow.MousePosition;
+            var result = VisualTreeHelper.HitTest(this, position);
+            if (result.VisualHit == null)
             {
                 return;
             }
-            OnRender(commandList);
+            var first = result.VisualHit.FindFirstObject<UIElement>();
+            if (first != null)
+            {
+                UpdateMouseFocus(first);
+            }
         }
 
-        public override void OnRender(UICommandList commandList)
+        private void MouseMoved(object? sender, MouseMoveEventArgs e)
         {
-            commandList.PushClipRect(new ClipRectangle(Vector2.Zero, new(Width, Height)));
-            for (int i = 0; i < Children.Count; i++)
+            var position = Application.MainWindow.MousePosition;
+            var result = VisualTreeHelper.HitTest(this, position);
+            if (result.VisualHit == null)
             {
-                Children[i].Draw(commandList);
+                return;
             }
-            commandList.PopClipRect();
+            var first = result.VisualHit.FindFirstObject<UIElement>();
+
+            if (first != null)
+            {
+                UpdateMouseFocus(first);
+
+                e.RoutedEvent = MouseMoveEvent;
+                first.RouteEvent(e);
+            }
+        }
+
+        private readonly MouseEventArgs mouseEnterEventArgs = new(MouseEnterEvent);
+        private readonly MouseEventArgs mouseLeaveEventArgs = new(MouseLeaveEvent);
+
+        private void UpdateMouseFocus(UIElement newElement)
+        {
+            if (mouseFocused == newElement)
+            {
+                return;
+            }
+
+            mouseEnterEventArgs.Handled = false;
+            mouseLeaveEventArgs.Handled = false;
+
+            if (mouseFocused != null)
+            {
+                if (mouseFocused.IsAncestorOf(newElement))
+                {
+                    newElement.RouteEvent(mouseEnterEventArgs, mouseFocused);
+                }
+                else if (mouseFocused.IsDescendantOf(newElement))
+                {
+                    mouseFocused.RouteEvent(mouseLeaveEventArgs, newElement);
+                }
+                else
+                {
+                    var commonAncestor = mouseFocused.FindCommonVisualAncestor(newElement);
+                    mouseFocused.RouteEvent(mouseLeaveEventArgs, commonAncestor);
+                    newElement.RouteEvent(mouseEnterEventArgs, commonAncestor);
+                }
+            }
+            else
+            {
+                newElement.RouteEvent(mouseEnterEventArgs);
+            }
+
+            mouseFocused = newElement;
         }
 
         public override void InvalidateArrange()
         {
-            Measure(new(Width, Height));
-            Arrange(new(0, 0, Width, Height));
+            Measure(new(Width - X, Height - Y));
+            Arrange(new(X, Y, Width, Height));
             InvalidateVisual();
         }
 
         public override void InvalidateVisual()
         {
-        }
-
-        protected override void ArrangeCore(RectangleF finalRect)
-        {
-            base.ArrangeCore(finalRect);
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].Arrange(finalRect);
-            }
-        }
-
-        protected override Vector2 MeasureCore(Vector2 availableSize)
-        {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].Measure(availableSize);
-            }
-            return availableSize;
         }
 
         ~UIWindow()
@@ -118,8 +190,7 @@
         {
             if (!disposedValue)
             {
-                Children.ForEach(child => child.UninitializeComponent());
-
+                Uninitialize();
                 disposedValue = true;
             }
         }

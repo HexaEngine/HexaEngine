@@ -1,68 +1,12 @@
 ﻿namespace HexaEngine.Core.Windows
 {
-    using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input.Events;
-    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
-
-    /// <summary>
-    /// Represents a render window.
-    /// </summary>
-    public interface IRenderWindow : IWindow
-    {
-        /// <summary>
-        /// Gets the render dispatcher associated with the render window.
-        /// </summary>
-        ThreadDispatcher Dispatcher { get; }
-
-        /// <summary>
-        /// Gets the graphics device associated with the render window.
-        /// </summary>
-        IGraphicsDevice Device { get; }
-
-        /// <summary>
-        /// Gets the graphics context associated with the render window.
-        /// </summary>
-        IGraphicsContext Context { get; }
-
-        /// <summary>
-        /// Gets the swap chain associated with the render window.
-        /// </summary>
-        ISwapChain SwapChain { get; }
-
-        /// <summary>
-        /// Gets the viewport for rendering operations.
-        /// </summary>
-        Viewport RenderViewport { get; }
-
-        /// <summary>
-        /// Gets the viewport for the window.
-        /// </summary>
-        Viewport WindowViewport { get; }
-
-        /// <summary>
-        /// Initializes the render window with the specified audio and graphics devices.
-        /// </summary>
-        /// <param name="audioDevice">The audio device to use.</param>
-        /// <param name="graphicsDevice">The graphics device to use.</param>
-        void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice);
-
-        /// <summary>
-        /// Renders the graphics using the specified graphics context.
-        /// </summary>
-        /// <param name="context">The graphics context to use for rendering.</param>
-        void Render(IGraphicsContext context);
-
-        /// <summary>
-        /// Uninitializes the render window and releases associated resources.
-        /// </summary>
-        void Uninitialize();
-    }
+    using System.Numerics;
 
     /// <summary>
     /// Represents a window.
@@ -182,7 +126,7 @@
         /// <summary>
         /// Event triggered when a character input is received from the keyboard.
         /// </summary>
-        event EventHandler<KeyboardCharEventArgs>? KeyboardCharInput;
+        event EventHandler<TextInputEventArgs>? KeyboardCharInput;
 
         /// <summary>
         /// Event triggered when a keyboard input is received.
@@ -212,7 +156,7 @@
         /// <summary>
         /// Event triggered when a mouse motion input is received.
         /// </summary>
-        event EventHandler<MouseMotionEventArgs>? MouseMotionInput;
+        event EventHandler<MouseMoveEventArgs>? MouseMotionInput;
 
         /// <summary>
         /// Event triggered when a mouse wheel input is received.
@@ -227,7 +171,7 @@
         /// <summary>
         /// Event triggered when a touch motion input is received.
         /// </summary>
-        event EventHandler<TouchMotionEventArgs>? TouchMotionInput;
+        event EventHandler<TouchMoveEventArgs>? TouchMotionInput;
 
         /// <summary>
         /// Event triggered when the window is moved.
@@ -308,5 +252,11 @@
         /// Clears the input state for the window.
         /// </summary>
         internal void ClearState();
+
+        /// <summary>
+        /// Gets the mouse position inside of the window client area.
+        /// </summary>
+        /// <remarks>Nan signals that the window is not focused.</remarks>
+        public Vector2 MousePosition { get; }
     }
 }

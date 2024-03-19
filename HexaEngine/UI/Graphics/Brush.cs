@@ -3,40 +3,15 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
+    using System.Collections.Generic;
     using System.Numerics;
 
-    public abstract class Brush : IDisposable
+    public abstract class Brush : UIResource
     {
-        private bool disposedValue;
-
         public abstract void Apply(UIDrawCommand command, IGraphicsContext context);
-
-        protected abstract void DisposeCore();
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                DisposeCore();
-                disposedValue = true;
-            }
-        }
-
-        ~Brush()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
     }
 
-    public sealed class SolidColorBrush : Brush
+    public sealed class SolidColorBrush : Brush, IEquatable<SolidColorBrush?>
     {
         private readonly ConstantBuffer<Vector4> constantBuffer;
 
@@ -53,9 +28,34 @@
             context.PSSetConstantBuffer(0, constantBuffer);
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as SolidColorBrush);
+        }
+
+        public bool Equals(SolidColorBrush? other)
+        {
+            return other is not null && Color.Equals(other.Color);
+        }
+
         protected override void DisposeCore()
         {
             constantBuffer.Dispose();
+        }
+
+        public static bool operator ==(SolidColorBrush? left, SolidColorBrush? right)
+        {
+            return EqualityComparer<SolidColorBrush>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(SolidColorBrush? left, SolidColorBrush? right)
+        {
+            return !(left == right);
+        }
+
+        public override string ToString()
+        {
+            return $"Color: {Color}";
         }
     }
 

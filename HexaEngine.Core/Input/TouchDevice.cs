@@ -24,7 +24,7 @@
         private readonly Dictionary<long, int> fingerIdToIndex = new();
 
         private readonly TouchEventArgs touchEventArgs = new();
-        private readonly TouchMotionEventArgs touchMotionEventArgs = new();
+        private readonly TouchMoveEventArgs touchMotionEventArgs = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TouchDevice"/> class using the specified index.
@@ -99,7 +99,7 @@
         /// <summary>
         /// Occurs when a finger moves on the touch device.
         /// </summary>
-        public event TouchDeviceEventHandler<TouchMotionEventArgs>? TouchMotion;
+        public event TouchDeviceEventHandler<TouchMoveEventArgs>? TouchMotion;
 
         internal (TouchDevice, TouchEventArgs) OnFingerUp(TouchFingerEvent evnt)
         {
@@ -137,7 +137,7 @@
             return (this, touchEventArgs);
         }
 
-        internal (TouchDevice, TouchMotionEventArgs) OnFingerMotion(TouchFingerEvent evnt)
+        internal (TouchDevice, TouchMoveEventArgs) OnFingerMotion(TouchFingerEvent evnt)
         {
             touchMotionEventArgs.Timestamp = evnt.Timestamp;
             touchMotionEventArgs.TouchDeviceId = id;

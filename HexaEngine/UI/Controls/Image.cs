@@ -3,23 +3,7 @@
     using HexaEngine.UI.Graphics;
     using System.Numerics;
 
-    public enum Stretch
-    {
-        Fill,
-        None,
-        Uniform,
-        UniformFill,
-    }
-
-    public enum StretchDirection
-    {
-        None = 0,
-        Horizontal = 1,
-        Vertical = 2,
-        Both = Horizontal | Vertical,
-    }
-
-    public class Image : UIElement
+    public class Image : FrameworkElement
     {
         public ImageSource? ImageSource { get; set; }
 
@@ -27,12 +11,7 @@
 
         public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
 
-        protected override Vector2 MeasureCore(Vector2 availableSize)
-        {
-            return default;
-        }
-
-        public override void OnRender(UICommandList commandList)
+        protected override void OnRender(UICommandList commandList)
         {
             if (ImageSource == null)
             {

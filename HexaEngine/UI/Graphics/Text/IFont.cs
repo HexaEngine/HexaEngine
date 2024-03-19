@@ -2,9 +2,13 @@
 {
     using System.Numerics;
 
-    public interface IFont : IDisposable
+    public interface IFont : IUIResource
     {
         float EmSize { get; }
+
+        float FontSize { get; set; }
+
+        bool Hinting { get; set; }
 
         float GetLineHeight(float fontSize);
 

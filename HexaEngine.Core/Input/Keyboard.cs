@@ -19,7 +19,7 @@
         private static readonly string[] keyNames = new string[keys.Length];
         private static readonly Dictionary<Key, KeyState> states = new();
         private static readonly KeyboardEventArgs keyboardEventArgs = new();
-        private static readonly KeyboardCharEventArgs keyboardCharEventArgs = new();
+        private static readonly TextInputEventArgs keyboardCharEventArgs = new();
 
         /// <summary>
         /// Gets a read-only list of available keyboard keys.
@@ -110,7 +110,7 @@
         /// <summary>
         /// Event raised when text input is received from the keyboard.
         /// </summary>
-        public static event EventHandler<KeyboardCharEventArgs>? TextInput;
+        public static event EventHandler<TextInputEventArgs>? TextInput;
 
         /// <summary>
         /// Checks if a specific key is in the "up" state.

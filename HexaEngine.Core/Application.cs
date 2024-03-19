@@ -47,15 +47,15 @@
         private static bool initialized = false;
         private static bool exiting = false;
         private static bool supressQuitApp = false;
-        private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
-        private static readonly List<IRenderWindow> windows = new();
+        private static readonly Dictionary<uint, ICoreWindow> windowIdToWindow = new();
+        private static readonly List<ICoreWindow> windows = new();
         private static readonly List<Func<Event, bool>> hooks = new();
 
         private static bool inEditorMode;
         private static EditorPlayState editorPlayState;
 
 #nullable disable
-        private static IRenderWindow mainWindow;
+        private static ICoreWindow mainWindow;
         private static IGraphicsDevice graphicsDevice;
         private static IGraphicsContext graphicsContext;
         private static IAudioDevice audioDevice;
@@ -65,7 +65,7 @@
         /// <summary>
         /// Gets the main window of the application.
         /// </summary>
-        public static IRenderWindow MainWindow => mainWindow;
+        public static ICoreWindow MainWindow => mainWindow;
 
         /// <summary>
         /// Gets the graphics device used by the application.
@@ -293,7 +293,7 @@
         /// Runs the application with the specified main window.
         /// </summary>
         /// <param name="mainWindow">The main window of the application.</param>
-        public static void Run(IRenderWindow mainWindow)
+        public static void Run(ICoreWindow mainWindow)
         {
             RegisterWindow(mainWindow);
             Application.mainWindow = mainWindow;
@@ -348,7 +348,7 @@
         /// Registers a window to the application.
         /// </summary>
         /// <param name="window">The window to register.</param>
-        internal static void RegisterWindow(IRenderWindow window)
+        internal static void RegisterWindow(ICoreWindow window)
         {
             if (windows.Contains(window))
             {
@@ -404,12 +404,16 @@
 
             for (int i = 0; i < windows.Count; i++)
             {
-                windows[i].Uninitialize();
+                windows[i].Dispose();
             }
 
             ((SdlWindow)mainWindow).DestroyWindow();
 
             OnApplicationClose?.Invoke();
+
+            audioDevice.Dispose();
+            graphicsContext.Dispose();
+            graphicsDevice.Dispose();
 
             SdlCheckError();
             sdl.Quit();

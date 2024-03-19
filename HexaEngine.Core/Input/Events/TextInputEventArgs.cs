@@ -5,20 +5,20 @@
     /// <summary>
     /// Provides data for keyboard character input events.
     /// </summary>
-    public class KeyboardCharEventArgs : RoutedEventArgs
+    public class TextInputEventArgs : RoutedEventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyboardCharEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="TextInputEventArgs"/> class.
         /// </summary>
-        public KeyboardCharEventArgs()
+        public TextInputEventArgs()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyboardCharEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="TextInputEventArgs"/> class.
         /// </summary>
         /// <param name="char">The character.</param>
-        public KeyboardCharEventArgs(char @char)
+        public TextInputEventArgs(char @char)
         {
             Char = @char;
         }

@@ -14,13 +14,12 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Microsoft.Extensions.DependencyInjection;
-    using System;
     using System.Numerics;
 
     /// <summary>
-    /// Represents the application window that implements the <see cref="IRenderWindow"/> interface.
+    /// Represents the application window that implements the <see cref="ICoreWindow"/> interface.
     /// </summary>
-    public class Window : SdlWindow, IRenderWindow
+    public class Window : CoreWindow
     {
         protected ThreadDispatcher renderDispatcher;
         protected bool running;
@@ -47,39 +46,9 @@
         public RendererFlags Flags;
 
         /// <summary>
-        /// Gets the thread dispatcher associated with the rendering.
-        /// </summary>
-        public ThreadDispatcher Dispatcher => renderDispatcher;
-
-        /// <summary>
-        /// Gets the graphics device used by the window.
-        /// </summary>
-        public IGraphicsDevice Device => graphicsDevice;
-
-        /// <summary>
-        /// Gets the graphics context associated with the window.
-        /// </summary>
-        public IGraphicsContext Context => graphicsContext;
-
-        /// <summary>
-        /// Gets the audio device used by the window.
-        /// </summary>
-        public IAudioDevice AudioDevice => audioDevice;
-
-        /// <summary>
-        /// Gets the swap chain associated with the window.
-        /// </summary>
-        public ISwapChain SwapChain => swapChain;
-
-        /// <summary>
         /// Gets or sets the startup scene to be loaded.
         /// </summary>
         public string? StartupScene;
-
-        /// <summary>
-        /// Gets the viewport of the window.
-        /// </summary>
-        public Viewport WindowViewport => windowViewport;
 
         /// <summary>
         /// Gets the scene renderer associated with the window.
@@ -87,9 +56,14 @@
         public ISceneRenderer Renderer => sceneRenderer;
 
         /// <summary>
+        /// Gets the viewport of the window.
+        /// </summary>
+        public override sealed Viewport WindowViewport => windowViewport;
+
+        /// <summary>
         /// Gets the viewport used for rendering.
         /// </summary>
-        public Viewport RenderViewport => renderViewport;
+        public override sealed Viewport RenderViewport => renderViewport;
 
 #nullable disable
 
@@ -107,16 +81,15 @@
         /// </summary>
         /// <param name="audioDevice">The audio device to use for audio processing.</param>
         /// <param name="graphicsDevice">The graphics device to use for rendering.</param>
-        public virtual void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
+        public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
+            base.Initialize(audioDevice, graphicsDevice);
             running = true;
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
-
             graphicsContext = graphicsDevice.Context;
-            swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
-            swapChain.Active = true;
-            renderDispatcher = new(Thread.CurrentThread);
+            swapChain = SwapChain;
+            renderDispatcher = Dispatcher;
 
             if (Application.MainWindow == this)
             {
@@ -215,7 +188,7 @@
         /// Renders the content of the window using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context.</param>
-        public virtual void Render(IGraphicsContext context)
+        public override void Render(IGraphicsContext context)
         {
 #if PROFILE
             // Begin profiling frame and total time if profiling is enabled.
@@ -294,42 +267,6 @@
         }
 
         /// <summary>
-        /// Uninitializes the window, releasing resources and stopping rendering.
-        /// </summary>
-        public virtual void Uninitialize()
-        {
-            // Set the running flag to false.
-            running = false;
-
-            // Remove the participant from the synchronization barrier and join the update thread.
-            syncBarrier.RemoveParticipant();
-            updateThread.Join();
-
-            // Invoke virtual method for disposing renderer-specific resources.
-            OnRendererDispose();
-
-            // Dispose the profiler associated with the graphics device.
-            Device.Profiler.Dispose();
-
-            // Unload the scene manager and wait for initialization task completion if not already completed.
-            SceneManager.Unload();
-            if (!initTask.IsCompleted)
-            {
-                initTask.Wait();
-            }
-
-            // Dispose of the scene renderer, render dispatcher, shared resource manager, audio manager, swap chain,
-            // graphics context, and graphics device.
-            sceneRenderer.Dispose();
-            renderDispatcher.Dispose();
-            ResourceManager.Shared.Dispose();
-            AudioManager.Release();
-            swapChain.Dispose();
-            graphicsContext.Dispose();
-            graphicsDevice.Dispose();
-        }
-
-        /// <summary>
         /// Called when [renderer initialize].
         /// </summary>
         /// <param name="device">The device.</param>
@@ -376,6 +313,36 @@
         {
             resize = true;
             base.OnResized(args);
+        }
+
+        protected override void DisposeCore()
+        {
+            // Set the running flag to false.
+            running = false;
+
+            // Remove the participant from the synchronization barrier and join the update thread.
+            syncBarrier.RemoveParticipant();
+            updateThread.Join();
+
+            // Invoke virtual method for disposing renderer-specific resources.
+            OnRendererDispose();
+
+            // Dispose the profiler associated with the graphics device.
+            GraphicsDevice.Profiler.Dispose();
+
+            // Unload the scene manager and wait for initialization task completion if not already completed.
+            SceneManager.Unload();
+            if (!initTask.IsCompleted)
+            {
+                initTask.Wait();
+            }
+
+            // Dispose of the scene renderer, render dispatcher, shared resource manager, audio manager, swap chain,
+            // graphics context, and graphics device.
+            sceneRenderer.Dispose();
+            renderDispatcher.Dispose();
+            ResourceManager.Shared.Dispose();
+            AudioManager.Release();
         }
     }
 }

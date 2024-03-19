@@ -290,7 +290,7 @@
                         win?.Dispatcher.Invoke(() =>
                         {
                             string fileName = $"screenshot-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.png";
-                            win.Renderer.TakeScreenshot(win.Context, fileName);
+                            win.Renderer.TakeScreenshot(win.GraphicsContext, fileName);
                             Logger.Info($"Saved screenshot: {Path.GetFullPath(fileName)}");
                         });
                     }

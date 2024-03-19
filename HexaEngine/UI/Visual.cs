@@ -1,12 +1,27 @@
 ﻿namespace HexaEngine.UI
 {
+    using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
+    using System;
+    using System.Numerics;
 
-    public class Visual : DependencyElement
+    public class Visual : DependencyObject
     {
+        private Type? type;
+
         public Visual? VisualParent { get; private set; }
 
         public VisualCollection VisualChildren { get; } = [];
+
+        public override Type DependencyObjectType => type ??= GetType();
+
+        protected internal Vector2 VisualOffset { get; protected set; }
+
+        protected internal RectangleF BoundingBox { get; protected set; }
+
+        protected internal RectangleF InnerContentBounds { get; protected set; }
+
+        protected internal RectangleF VisualClip { get; protected set; }
 
         public void AddVisualChild(Visual visual)
         {
@@ -20,9 +35,77 @@
             VisualChildren.Remove(visual);
         }
 
-        public virtual void OnRender(UICommandList context)
+        public virtual void Render(UICommandList commandList)
+        {
+        }
+
+        protected virtual void OnRender(UICommandList commandList)
         {
             return;
+        }
+
+        public bool IsDescendantOf(DependencyObject element)
+        {
+            var current = Parent;
+            while (current != null)
+            {
+                if (current == element)
+                    return true;
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        public bool IsAncestorOf(DependencyObject element)
+        {
+            var current = element.Parent;
+            while (current != null)
+            {
+                if (current == this)
+                    return true;
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        public DependencyObject? FindCommonVisualAncestor(DependencyObject element)
+        {
+            DependencyObject? currentA = this;
+            DependencyObject? currentB = element;
+
+            int depthA = GetDepth(currentA);
+            int depthB = GetDepth(currentB);
+
+            while (depthB > depthA)
+            {
+                currentB = currentB?.Parent;
+                depthB--;
+            }
+
+            while (currentA != null && currentB != null)
+            {
+                if (currentA == currentB)
+                {
+                    return currentA;
+                }
+
+                currentA = currentA.Parent;
+                currentB = currentB.Parent;
+            }
+
+            return null;
+        }
+
+        private static int GetDepth(DependencyObject element)
+        {
+            int depth = 0;
+            DependencyObject? current = element;
+            while (current != null)
+            {
+                depth++;
+                current = current.Parent;
+            }
+            return depth;
         }
     }
 }

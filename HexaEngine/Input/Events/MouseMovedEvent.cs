@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Input.Events;
 
-    public struct MouseMovedEvent(MouseMotionEventArgs eventArgs)
+    public struct MouseMovedEvent(MouseMoveEventArgs eventArgs)
     {
         public float X = eventArgs.X;
         public float Y = eventArgs.Y;

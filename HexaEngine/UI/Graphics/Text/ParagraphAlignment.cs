@@ -2,8 +2,10 @@
 {
     public enum ParagraphAlignment
     {
-        Near,
-        Far,
-        Center
+        Undefined,
+        Center,
+        Justify,
+        Left,
+        Right,
     }
 }

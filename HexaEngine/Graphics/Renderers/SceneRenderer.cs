@@ -21,7 +21,7 @@ namespace HexaEngine.Graphics.Renderers
     {
         private IGraphicsDevice device;
         private ISwapChain swapChain;
-        private IRenderWindow window;
+        private ICoreWindow window;
 
         private readonly RendererSettings settings = new();
         private readonly CPUFlameProfiler profiler = new();
@@ -81,7 +81,7 @@ namespace HexaEngine.Graphics.Renderers
         /// <param dbgName="device">The device.</param>
         /// <param dbgName="window">The window.</param>
         /// <returns></returns>
-        public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window)
+        public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, ICoreWindow window)
         {
             Config.Global.Sort();
             this.device = device;

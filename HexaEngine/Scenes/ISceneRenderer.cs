@@ -22,7 +22,7 @@
 
         Vector2 Size { get; set; }
 
-        Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);
+        Task Initialize(IGraphicsDevice device, ISwapChain swapChain, ICoreWindow window);
 
         void Render(IGraphicsContext context, Viewport viewport, Scene scene, Camera camera);
 

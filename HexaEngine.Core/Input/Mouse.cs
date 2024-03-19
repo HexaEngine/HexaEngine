@@ -21,7 +21,7 @@
 #nullable enable
 
         private static readonly Dictionary<MouseButton, MouseButtonState> states = new();
-        private static readonly MouseMotionEventArgs motionEventArgs = new();
+        private static readonly MouseMoveEventArgs motionEventArgs = new();
         private static readonly MouseButtonEventArgs buttonEventArgs = new();
         private static readonly MouseWheelEventArgs wheelEventArgs = new();
 
@@ -97,7 +97,7 @@
         /// <summary>
         /// Event triggered when the mouse is moved.
         /// </summary>
-        public static event EventHandler<MouseMotionEventArgs>? Moved;
+        public static event EventHandler<MouseMoveEventArgs>? Moved;
 
         /// <summary>
         /// Event triggered when a mouse button is pressed.

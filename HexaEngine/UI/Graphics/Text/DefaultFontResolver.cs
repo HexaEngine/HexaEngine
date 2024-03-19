@@ -82,7 +82,7 @@
                     fontFamilies.Add(family);
                     for (int i = 0; i < group.Length; i++)
                     {
-                        InstalledFonts.Add(group[i], group[i].Path);
+                        InstalledFonts.TryAdd(group[i], group[i].Path);
                     }
                 }
                 catch (Exception e)

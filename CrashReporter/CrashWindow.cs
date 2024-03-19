@@ -14,11 +14,9 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public class CrashWindow : SdlWindow, IRenderWindow
+    public sealed class CrashWindow : CoreWindow
     {
         private ImGuiManager? imGuiRenderer;
-        private IAudioDevice audioDevice;
-        private IGraphicsDevice graphicsDevice;
         private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
         private bool resize;
@@ -41,35 +39,21 @@
             }
         }
 
-        public ThreadDispatcher Dispatcher => throw new NotSupportedException();
-
-        public IGraphicsDevice Device => graphicsDevice;
-
-        public IGraphicsContext Context => graphicsContext;
-
-        public IAudioDevice AudioDevice => audioDevice;
-
-        public ISwapChain SwapChain => swapChain;
-
-        public Viewport WindowViewport => throw new NotSupportedException();
+        public override sealed Viewport WindowViewport => throw new NotSupportedException();
 
         public ISceneRenderer Renderer => throw new NotSupportedException();
 
-        public Viewport RenderViewport => throw new NotSupportedException();
+        public override sealed Viewport RenderViewport => throw new NotSupportedException();
 
-        public virtual void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
+        public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
-            this.audioDevice = audioDevice;
-            this.graphicsDevice = graphicsDevice;
-
+            base.Initialize(audioDevice, graphicsDevice);
             graphicsContext = graphicsDevice.Context;
-            swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
-            swapChain.Active = true;
-
+            swapChain = SwapChain;
             imGuiRenderer = new(this, graphicsDevice, graphicsContext, ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad | ImGuiConfigFlags.DockingEnable);
         }
 
-        public void Render(IGraphicsContext context)
+        public override void Render(IGraphicsContext context)
         {
             if (resize)
             {
@@ -135,13 +119,9 @@
             swapChain.Wait();
         }
 
-        public virtual void Uninitialize()
+        protected override void DisposeCore()
         {
             imGuiRenderer?.Dispose();
-
-            swapChain.Dispose();
-            graphicsContext.Dispose();
-            graphicsDevice.Dispose();
         }
 
         protected override void OnResized(ResizedEventArgs args)

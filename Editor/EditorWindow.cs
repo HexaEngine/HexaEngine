@@ -13,13 +13,13 @@
     using System.Numerics;
 
     /// <summary>
-    /// Represents the application window that implements the <see cref="IRenderWindow"/> interface.
+    /// Represents the application window that implements the <see cref="ICoreWindow"/> interface.
     /// </summary>
-    public class EditorWindow : Window, IRenderWindow
+    public sealed class EditorWindow : Window
     {
-        protected ImGuiManager imGuiRenderer;
-        protected Task initEditorTask;
-        protected bool editorInitialized;
+        private ImGuiManager imGuiRenderer;
+        private Task initEditorTask;
+        private bool editorInitialized;
 #nullable disable
 
         /// <summary>
@@ -93,8 +93,8 @@
         {
 #if PROFILE
             // Begin profiling frame and total time if profiling is enabled.
-            Device.Profiler.BeginFrame();
-            Device.Profiler.Begin(Context, "Total");
+            GraphicsDevice.Profiler.BeginFrame();
+            GraphicsDevice.Profiler.Begin(GraphicsContext, "Total");
             sceneRenderer.Profiler.BeginFrame();
             sceneRenderer.Profiler.Begin("Total");
 #endif
@@ -174,7 +174,7 @@
 
 #if PROFILE
             // Begin profiling ImGui if profiling is enabled.
-            Device.Profiler.Begin(Context, "ImGui");
+            GraphicsDevice.Profiler.Begin(GraphicsContext, "ImGui");
             sceneRenderer.Profiler.Begin("ImGui");
 #endif
             // End the ImGui frame rendering.
@@ -182,7 +182,7 @@
 #if PROFILE
             // End profiling ImGui if profiling is enabled.
             sceneRenderer.Profiler.End("ImGui");
-            Device.Profiler.End(Context, "ImGui");
+            GraphicsDevice.Profiler.End(GraphicsContext, "ImGui");
 #endif
             // Invoke virtual method for post-render operations.
             OnRenderEnd(context);
@@ -199,8 +199,8 @@
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.
             sceneRenderer.Profiler.End("Total");
-            Device.Profiler.End(Context, "Total");
-            Device.Profiler.EndFrame(context);
+            GraphicsDevice.Profiler.End(GraphicsContext, "Total");
+            GraphicsDevice.Profiler.EndFrame(context);
 #endif
         }
 

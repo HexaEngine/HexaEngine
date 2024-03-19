@@ -5,9 +5,9 @@
     public class UIElementCollection : IList<UIElement>
     {
         private readonly List<UIElement> objects = new();
-        private readonly DependencyElement parent;
+        private readonly UIElement parent;
 
-        public UIElementCollection(DependencyElement parent)
+        public UIElementCollection(UIElement parent)
         {
             this.parent = parent;
         }
@@ -27,6 +27,7 @@
             item.Parent = parent;
             ((ICollection<UIElement>)objects).Add(item);
             ElementAdded?.Invoke(this, item);
+            parent.AddVisualChild(item);
             parent.ResolveObject<UIElement>()?.InvalidateArrange();
         }
 
@@ -35,6 +36,7 @@
             ((ICollection<UIElement>)objects).Clear();
             foreach (var element in objects)
             {
+                parent.RemoveVisualChild(element);
                 element.Parent = null;
                 ElementRemoved?.Invoke(this, element);
             }

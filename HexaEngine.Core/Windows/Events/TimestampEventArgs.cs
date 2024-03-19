@@ -9,6 +9,6 @@
         /// <summary>
         /// Gets the timestamp of an event.
         /// </summary>
-        public uint Timestamp { get; internal set; }
+        public uint Timestamp { get; set; }
     }
 }

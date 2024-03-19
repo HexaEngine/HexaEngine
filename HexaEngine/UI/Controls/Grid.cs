@@ -4,18 +4,67 @@
     using HexaEngine.UI.Graphics;
     using System.Numerics;
 
-    public class Grid : UIElement, IChildContainer
+    public class Grid : Panel, IChildContainer
     {
-        public Grid()
-        {
-            Children = new(this);
-        }
-
-        public UIElementCollection Children { get; }
-
         public List<ColumnDefinition> ColumnDefinitions { get; } = [];
 
         public List<RowDefinition> RowDefinitions { get; } = [];
+
+        static Grid()
+        {
+            ColumnProperty.AddOwner<UIElement>();
+            RowProperty.AddOwner<UIElement>();
+            ColumnSpanProperty.AddOwner<UIElement>();
+            RowSpanProperty.AddOwner<UIElement>();
+        }
+
+        public static readonly DependencyProperty<int> ColumnProperty = DependencyProperty.RegisterAttached<Grid, int>("Column", false, new FrameworkMetadata(0) { AffectsMeasure = true, AffectsArrange = true });
+
+        public static readonly DependencyProperty<int> RowProperty = DependencyProperty.RegisterAttached<Grid, int>("Row", false, new FrameworkMetadata(0) { AffectsMeasure = true, AffectsArrange = true });
+
+        public static readonly DependencyProperty<int> ColumnSpanProperty = DependencyProperty.RegisterAttached<Grid, int>("ColumnSpan", false, new FrameworkMetadata(1) { AffectsMeasure = true, AffectsArrange = true });
+
+        public static readonly DependencyProperty<int> RowSpanProperty = DependencyProperty.RegisterAttached<Grid, int>("RowSpan", false, new FrameworkMetadata(1) { AffectsMeasure = true, AffectsArrange = true });
+
+        public static int GetColumn(UIElement element)
+        {
+            return element.GetValue(ColumnProperty);
+        }
+
+        public static int GetRow(UIElement element)
+        {
+            return element.GetValue(RowProperty);
+        }
+
+        public static int GetColumnSpan(UIElement element)
+        {
+            return element.GetValue(ColumnSpanProperty);
+        }
+
+        public static int GetRowSpan(UIElement element)
+        {
+            return element.GetValue(RowSpanProperty);
+        }
+
+        public static void SetColumn(UIElement element, int column)
+        {
+            element.SetValue(ColumnProperty, column);
+        }
+
+        public static void SetRow(UIElement element, int row)
+        {
+            element.SetValue(RowProperty, row);
+        }
+
+        public static void SetColumnSpan(UIElement element, int columnSpan)
+        {
+            element.SetValue(ColumnSpanProperty, columnSpan);
+        }
+
+        public static void SetRowSpan(UIElement element, int rowSpan)
+        {
+            element.SetValue(RowSpanProperty, rowSpan);
+        }
 
         public override void InitializeComponent()
         {
@@ -34,7 +83,7 @@
             InvalidateArrange();
         }
 
-        internal override void Initialize()
+        public override void Initialize()
         {
             base.Initialize();
             Children.ForEach(child => child.Initialize());
@@ -48,25 +97,9 @@
             base.Uninitialize();
         }
 
-        public override void OnRender(UICommandList commandList)
+        protected override void OnRender(UICommandList commandList)
         {
-#if DEBUG
-            float pen = 0;
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
-            {
-                var column = ColumnDefinitions[i];
-                pen += column.ActualWidth;
-                commandList.DrawLine(new(pen, 0), new(pen, ActualHeight), Border, 1);
-            }
-            pen = 0;
-            for (int i = 0; i < RowDefinitions.Count; i++)
-            {
-                var row = RowDefinitions[i];
-                pen += row.ActualHeight;
-                commandList.DrawLine(new(0, pen), new(ActualWidth, pen), Border, 1);
-            }
-#endif
-            Children.ForEach(child => child.Draw(commandList));
+            Children.ForEach(child => child.Render(commandList));
         }
 
         public IEnumerable<UIElement> GetChildrenInColumn(int columnIndex)
@@ -74,7 +107,9 @@
             for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                if (InSpan(child.GridColumn, child.GridColumnSpan, columnIndex))
+                var column = GetColumn(child);
+                var columnSpan = GetColumnSpan(child);
+                if (InSpan(column, columnSpan, columnIndex))
                 {
                     yield return child;
                 }
@@ -86,7 +121,9 @@
             for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                if (InSpan(child.GridRow, child.GridRowSpan, rowIndex))
+                var row = GetRow(child);
+                var rowSpan = GetRowSpan(child);
+                if (InSpan(row, rowSpan, rowIndex))
                 {
                     yield return child;
                 }
@@ -102,16 +139,22 @@
         {
             Vector2 size = default;
 
-            int columnStart = Math.Min(element.GridColumn, ColumnDefinitions.Count - 1);
-            int columnEnd = Math.Min(columnStart + element.GridColumnSpan, ColumnDefinitions.Count);
+            var columnIndex = GetColumn(element);
+            var columnSpan = GetColumnSpan(element);
+
+            var rowIndex = GetRow(element);
+            var rowSpan = GetRowSpan(element);
+
+            int columnStart = Math.Min(columnIndex, ColumnDefinitions.Count - 1);
+            int columnEnd = Math.Min(columnStart + columnSpan, ColumnDefinitions.Count);
             for (int i = columnStart; i < columnEnd; i++)
             {
                 ColumnDefinition column = ColumnDefinitions[i];
                 size.X += column.ActualWidth;
             }
 
-            int rowStart = Math.Min(element.GridRow, RowDefinitions.Count - 1);
-            int rowEnd = Math.Min(rowStart + element.GridRowSpan, RowDefinitions.Count);
+            int rowStart = Math.Min(rowIndex, RowDefinitions.Count - 1);
+            int rowEnd = Math.Min(rowStart + rowSpan, RowDefinitions.Count);
             for (int i = rowStart; i < rowEnd; i++)
             {
                 RowDefinition row = RowDefinitions[i];
@@ -125,18 +168,22 @@
         {
             Vector2 origin = default;
 
-            if (element.GridColumn >= 0 && element.GridColumn < ColumnDefinitions.Count)
+            var columnIndex = GetColumn(element);
+
+            var rowIndex = GetRow(element);
+
+            if (columnIndex >= 0 && columnIndex < ColumnDefinitions.Count)
             {
-                for (int i = 0; i < element.GridColumn; i++)
+                for (int i = 0; i < columnIndex; i++)
                 {
                     var column = ColumnDefinitions[i];
                     origin.X += column.ActualWidth;
                 }
             }
 
-            if (element.GridRow >= 0 && element.GridRow < RowDefinitions.Count)
+            if (rowIndex >= 0 && rowIndex < RowDefinitions.Count)
             {
-                for (int i = 0; i < element.GridRow; i++)
+                for (int i = 0; i < rowIndex; i++)
                 {
                     var row = RowDefinitions[i];
                     origin.Y += row.ActualHeight;
@@ -146,12 +193,9 @@
             return origin;
         }
 
-        protected override void ArrangeCore(RectangleF finalRect)
+        protected override Vector2 ArrangeOverwrite(Vector2 size)
         {
-            base.ArrangeCore(finalRect);
-
-            RectangleF nextRect = ContentBounds;
-            Vector2 origin = nextRect.Offset;
+            Vector2 origin = ContentOffset.Translation;
 
             for (int i = 0; i < Children.Count; i++)
             {
@@ -161,9 +205,11 @@
                 RectangleF nextChildRect = new(origin + childOrigin, desiredSize);
                 Children[i].Arrange(nextChildRect);
             }
+
+            return size;
         }
 
-        protected override Vector2 MeasureCore(Vector2 availableSize)
+        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
         {
             Vector2 avail = availableSize;
 

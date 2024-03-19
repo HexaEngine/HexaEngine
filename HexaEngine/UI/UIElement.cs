@@ -1,93 +1,44 @@
 ﻿namespace HexaEngine.UI
 {
-    using HexaEngine.Mathematics;
-    using HexaEngine.UI.Graphics;
+    using HexaEngine.Core.Windows.Events;
     using System.Numerics;
 
     public partial class UIElement : Visual
     {
-        private Visibility visibility;
-        private RectangleF outerRectangle;
-        private RectangleF contentRectangle;
-
-        private Matrix3x2 positionMatrix;
-        private Matrix3x2 positionContentMatrix;
-
-        public Brush? Background { get; set; }
-
-        public Brush? Border { get; set; }
+        private readonly List<EventRoute> eventRoutes = [];
+        private bool isInitialized;
 
         public event EventHandler<EventArgs>? Initialized;
 
         public event EventHandler<EventArgs>? Uninitialized;
 
-        public bool IsInitialized { get; set; }
+        public bool IsInitialized => isInitialized;
 
-        public int GridColumn { get; set; }
-
-        public int GridRow { get; set; }
-
-        public int GridColumnSpan { get; set; } = 1;
-
-        public int GridRowSpan { get; set; } = 1;
+        public static readonly DependencyProperty<Visibility> VisibilityProperty = DependencyProperty.Register<UIElement, Visibility>(nameof(Visibility), false, new FrameworkMetadata(Visibility.Visible) { AffectsMeasure = true, AffectsArrange = true, AffectsRender = true });
 
         public Visibility Visibility
         {
-            get => visibility;
-            set
-            {
-                if (visibility == value)
-                {
-                    return;
-                }
-
-                Visibility old = visibility;
-                visibility = value;
-
-                if (old == Visibility.Collapsed || value == Visibility.Collapsed)
-                {
-                    InvalidateArrange();
-                }
-                else
-                {
-                    InvalidateVisual();
-                }
-            }
+            get => GetValue(VisibilityProperty);
+            set => SetValue(VisibilityProperty, value);
         }
 
-        public RectangleF BoundingBox => RectangleF.Transform(outerRectangle, positionMatrix);
+        public static readonly DependencyProperty<bool> IsEnabledProperty = DependencyProperty.Register<UIElement, bool>(nameof(IsEnabled), false, new FrameworkMetadata(true) { AffectsRender = true });
 
-        public virtual void Draw(UICommandList commandList)
+        public bool IsEnabled
         {
-            if (visibility != Visibility.Visible)
-            {
-                return;
-            }
-
-            RectangleF rect = BoundingBox;
-            commandList.PushClipRect(new(rect));
-            var before = commandList.Transform;
-
-            if (Background != null)
-            {
-                commandList.Transform = positionMatrix;
-                commandList.FillRect(outerRectangle, Background);
-            }
-
-            if (Border != null)
-            {
-                commandList.Transform = positionMatrix;
-                commandList.DrawLine(Vector2.Zero, new(outerRectangle.Right, 0), Border, border.Top * 2);
-                commandList.DrawLine(Vector2.Zero, new(0, outerRectangle.Bottom), Border, border.Left * 2);
-                commandList.DrawLine(new(0, outerRectangle.Bottom), new(outerRectangle.Right, outerRectangle.Bottom), Border, border.Bottom * 2);
-                commandList.DrawLine(new(outerRectangle.Right, 0), new(outerRectangle.Right, outerRectangle.Bottom), Border, border.Right * 2);
-            }
-
-            commandList.Transform = positionContentMatrix;
-            OnRender(commandList);
-            commandList.Transform = before;
-            commandList.PopClipRect();
+            get => GetValue(IsEnabledProperty);
+            set => SetValue(IsEnabledProperty, value);
         }
+
+        public static readonly DependencyProperty<bool> FocusableProperty = DependencyProperty.Register<UIElement, bool>(nameof(Focusable), false, new FrameworkMetadata(true) { AffectsRender = true });
+
+        public bool Focusable
+        {
+            get => GetValue(FocusableProperty);
+            set => SetValue(FocusableProperty, value);
+        }
+
+        public Vector2 RenderSize { get; set; }
 
         protected virtual void OnInitialized()
         {
@@ -99,16 +50,49 @@
             Uninitialized?.Invoke(this, EventArgs.Empty);
         }
 
-        internal virtual void Initialize()
+        public virtual void Initialize()
         {
-            IsInitialized = true;
+            foreach (var even in EventManager.GetRoutedEventsForOwnerIterator(DependencyObjectType))
+            {
+                var route = even.CreateEventRoute(this);
+                BuildRoute(route);
+                eventRoutes.Add(route);
+            }
+
+            isInitialized = true;
             OnInitialized();
             InitializeComponent();
         }
 
+        private void BuildRoute(EventRoute route)
+        {
+            var current = Parent;
+            while (current != null)
+            {
+                if (current is UIElement element)
+                {
+                    element.AddToEventRoute(route);
+                }
+
+                current = current.Parent;
+            }
+        }
+
+        public void AddToEventRoute(EventRoute route)
+        {
+            foreach (var even in EventManager.GetRoutedEventsForOwnerIterator(DependencyObjectType))
+            {
+                if (route.RoutedEvent != even)
+                {
+                    continue;
+                }
+                even.AddToEventRoute(route, this);
+            }
+        }
+
         internal virtual void Uninitialize()
         {
-            IsInitialized = false;
+            isInitialized = false;
             OnUninitialized();
             UninitializeComponent();
         }
@@ -119,6 +103,68 @@
 
         public virtual void UninitializeComponent()
         {
+        }
+
+        public void AddHandler<T>(RoutedEvent<T> routedEvent, RoutedEventHandler<T> value) where T : RoutedEventArgs
+        {
+            for (int i = 0; i < eventRoutes.Count; i++)
+            {
+                var route = eventRoutes[i];
+                if (route.RoutedEvent == routedEvent)
+                {
+                    ((EventRoute<T>)route).Remove(this, value);
+                }
+            }
+        }
+
+        public void RemoveHandler<T>(RoutedEvent<T> routedEvent, RoutedEventHandler<T> value) where T : RoutedEventArgs
+        {
+            for (int i = 0; i < eventRoutes.Count; i++)
+            {
+                var route = eventRoutes[i];
+                if (route.RoutedEvent == routedEvent)
+                {
+                    ((EventRoute<T>)route).Add(this, value);
+                }
+            }
+        }
+
+        public void RouteEvent(RoutedEventArgs args)
+        {
+            if (args.RoutedEvent == null)
+            {
+                return;
+            }
+
+            args.Source = this;
+
+            for (int i = 0; i < eventRoutes.Count; i++)
+            {
+                var route = eventRoutes[i];
+                if (route.RoutedEvent == args.RoutedEvent)
+                {
+                    route.Invoke(args);
+                }
+            }
+        }
+
+        public void RouteEvent(RoutedEventArgs args, object? stop)
+        {
+            if (args.RoutedEvent == null)
+            {
+                return;
+            }
+
+            args.Source = this;
+
+            for (int i = 0; i < eventRoutes.Count; i++)
+            {
+                var route = eventRoutes[i];
+                if (route.RoutedEvent == args.RoutedEvent)
+                {
+                    route.Invoke(args, stop);
+                }
+            }
         }
     }
 }

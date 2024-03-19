@@ -117,7 +117,7 @@
 
             window.Dispatcher.InvokeBlocking(state =>
             {
-                var values = (Tuple<IRenderWindow, Scene>)state;
+                var values = (Tuple<ICoreWindow, Scene>)state;
                 var window = values.Item1;
                 var scene = values.Item2;
 
@@ -125,8 +125,8 @@
 
                 if (Current == null)
                 {
-                    scene.Initialize(window.Device);
-                    scene.Load(window.Device);
+                    scene.Initialize(window.GraphicsDevice);
+                    scene.Load(window.GraphicsDevice);
                     lock (_lock)
                     {
                         Current = scene;
@@ -162,7 +162,7 @@
 
                     ResourceManager.Shared.Release();
 
-                    scene.Initialize(window.Device);
+                    scene.Initialize(window.GraphicsDevice);
 
                     lock (_lock)
                     {
@@ -176,7 +176,7 @@
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<IRenderWindow, Scene>(window, scene));
+            }, new Tuple<ICoreWindow, Scene>(window, scene));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -196,14 +196,14 @@
 
                 semaphore.Wait();
 
-                var window = (IRenderWindow)state;
+                var window = (ICoreWindow)state;
                 ResourceManager.Shared.BeginNoGCRegion();
 
                 Current.Unload();
                 Current.Uninitialize();
 
-                Current.Initialize(window.Device);
-                Current.Load(window.Device);
+                Current.Initialize(window.GraphicsDevice);
+                Current.Load(window.GraphicsDevice);
 
                 SceneChanged?.Invoke(null, new(Current, Current));
 
@@ -260,11 +260,11 @@
                     }
                 }
 
-                var window = (IRenderWindow)state;
+                var window = (ICoreWindow)state;
                 semaphore.Wait();
 
-                Current.Initialize(window.Device);
-                Current.Load(window.Device);
+                Current.Initialize(window.GraphicsDevice);
+                Current.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
                 SceneChanged?.Invoke(null, new(Current, Current));
@@ -307,7 +307,7 @@
 
             return window.Dispatcher.InvokeAsync(async state =>
             {
-                var values = (Tuple<IRenderWindow, Scene>)state;
+                var values = (Tuple<ICoreWindow, Scene>)state;
                 var window = values.Item1;
                 var scene = values.Item2;
 
@@ -315,8 +315,8 @@
 
                 if (Current == null)
                 {
-                    await scene.InitializeAsync(window.Device);
-                    scene.Load(window.Device);
+                    await scene.InitializeAsync(window.GraphicsDevice);
+                    scene.Load(window.GraphicsDevice);
 
                     lock (_lock)
                     {
@@ -353,8 +353,8 @@
 
                     ResourceManager.Shared.Release();
 
-                    await scene.InitializeAsync(window.Device);
-                    scene.Load(window.Device);
+                    await scene.InitializeAsync(window.GraphicsDevice);
+                    scene.Load(window.GraphicsDevice);
 
                     lock (_lock)
                     {
@@ -368,7 +368,7 @@
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<IRenderWindow, Scene>(window, scene));
+            }, new Tuple<ICoreWindow, Scene>(window, scene));
         }
 
         /// <summary>

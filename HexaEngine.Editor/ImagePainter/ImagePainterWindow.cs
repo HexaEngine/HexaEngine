@@ -80,11 +80,11 @@
         {
         }
 
-        private void MouseMoved(object? sender, Core.Input.Events.MouseMotionEventArgs e)
+        private void MouseMoved(object? sender, Core.Input.Events.MouseMoveEventArgs e)
         {
         }
 
-        private void TouchMotion(object? sender, Core.Input.Events.TouchMotionEventArgs e)
+        private void TouchMotion(object? sender, Core.Input.Events.TouchMoveEventArgs e)
         {
         }
 

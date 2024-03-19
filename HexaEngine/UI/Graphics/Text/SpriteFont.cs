@@ -7,27 +7,75 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    public unsafe class SpriteFont : IFont
+    public unsafe class SpriteFont : UIRevivableResource, IFont
     {
-        private readonly FTFace faceHandle;
-        private readonly FTFaceRec* face;
-        private readonly ITexture2D texture2D;
-        private readonly IShaderResourceView srv;
+        private readonly IGraphicsDevice device;
+        private readonly FTLibrary library;
+        private readonly string path;
+        private FTFace faceHandle;
+        private FTFaceRec* face;
+
+        private ITexture2D texture2D;
+        private IShaderResourceView srv;
+
         private readonly List<SpriteFontGlyph> glyphList = [];
         private readonly Dictionary<uint, SpriteFontGlyph> glyphs = [];
-        private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = new();
+        private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = [];
 
-        private readonly float fontSize;
-        private readonly float emSize;
-        private readonly bool hinting;
-        private readonly int loadFlags;
-        private readonly uint kerningMode;
-        private bool disposedValue;
+        private float fontSize;
+        private bool hinting;
+        private float emSize;
+        private int loadFlags;
+        private uint kerningMode;
 
         public SpriteFont(IGraphicsDevice device, FTLibrary library, string path, float fontSize, bool hinting = false)
         {
+            this.device = device;
+            this.library = library;
+            this.path = path;
             this.fontSize = fontSize;
             this.hinting = hinting;
+
+            ReviveCore();
+        }
+
+        public float FontSize
+        {
+            get => fontSize;
+            set
+            {
+                if (fontSize == value)
+                    return;
+                fontSize = value;
+                if (!hinting)
+                    return;
+                DisposeCore();
+                ReviveCore();
+            }
+        }
+
+        public bool Hinting
+        {
+            get => hinting;
+            set
+            {
+                if (hinting == value)
+                    return;
+                hinting = value;
+                DisposeCore();
+                ReviveCore();
+            }
+        }
+
+        public float EmSize => emSize;
+
+        public float GetLineHeight(float fontSize)
+        {
+            return face->Height / (float)face->UnitsPerEM * fontSize;
+        }
+
+        protected override void ReviveCore()
+        {
             FTError error;
 
             FTFace faceHandle;
@@ -144,31 +192,29 @@
             glyphMetrics.Add(charcode, metrics);
         }
 
-        public float FontSize => fontSize;
-
-        public void RenderText(UICommandList list, string text, Vector2 position, Brush brush, float fontSize)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, Brush brush)
         {
-            int indexCount = 6 * text.Length;
-            int vertexCount = 4 * text.Length;
+            int indexCount = 6 * textSpan.Length;
+            int vertexCount = 4 * textSpan.Length;
 
-            list.PrimReserve(indexCount, vertexCount);
+            commandList.PrimReserve(indexCount, vertexCount);
 
-            float originalX = position.X;
+            float originalX = origin.X;
 
             uint previous = 0;
-            for (int i = 0; i < text.Length; i++)
+            for (int i = 0; i < textSpan.Length; i++)
             {
-                uint charcode = text[i];
+                uint charcode = textSpan[i];
 
                 if (charcode == '\r') continue;
 
                 if (charcode == '\n')
                 {
-                    position.X = originalX;
-                    position.Y -= face->Height / (float)face->UnitsPerEM * fontSize;
+                    origin.X = originalX;
+                    origin.Y -= face->Height / (float)face->UnitsPerEM * fontSize;
                     if (hinting)
                     {
-                        position.Y = MathF.Round(position.Y);
+                        origin.Y = MathF.Round(origin.Y);
                     }
 
                     continue;
@@ -182,42 +228,115 @@
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
                     if (error == FTError.FtErrOk)
                     {
-                        position.X += kerning.X / emSize * fontSize;
+                        origin.X += kerning.X / emSize * fontSize;
                     }
                 }
 
                 // Do not emit quad for empty glyphs (whitespace).
-                if (glyph.Width > 0 || glyph.Height > 0)
+                if (glyph.Width > 0 && glyph.Height > 0)
                 {
                     float u0 = glyph.BearingX / emSize;
                     float v0 = (glyph.BearingY - glyph.Height) / emSize;
                     float u1 = (glyph.BearingX + glyph.Width) / emSize;
                     float v1 = glyph.BearingY / emSize;
 
-                    float x0 = position.X + u0 * fontSize;
-                    float y0 = position.Y + fontSize - v1 * fontSize;
-                    float x1 = position.X + u1 * fontSize;
-                    float y1 = position.Y + fontSize - v0 * fontSize;
+                    float x0 = origin.X + u0 * fontSize;
+                    float y0 = origin.Y + fontSize - v1 * fontSize;
+                    float x1 = origin.X + u1 * fontSize;
+                    float y1 = origin.Y + fontSize - v0 * fontSize;
 
-                    list.PrimRect(new(x0, y0), new(x1, y1), glyph.UVStart, glyph.UVEnd, uint.MaxValue);
+                    commandList.PrimRect(new(x0, y0), new(x1, y1), glyph.UVStart, glyph.UVEnd, uint.MaxValue);
                 }
 
-                position.X += glyph.Advance / emSize * fontSize;
+                origin.X += glyph.Advance / emSize * fontSize;
 
                 previous = glyph.Index;
             }
 
-            list.RecordDraw(UICommandType.DrawTexture, brush, srv.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTexture, brush, srv.NativePointer);
         }
 
-        public float GetLineHeight(float fontSize)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
-            return face->Height / (float)face->UnitsPerEM * fontSize;
-        }
+            int vertexCount = 4 * textSpan.Length;
+            int indexCount = 6 * textSpan.Length;
 
-        public float EmSize
-        {
-            get => emSize;
+            commandList.PrimReserve(indexCount, vertexCount);
+
+            float originalX = origin.X;
+
+            bool rightToLeft = readingDirection == ReadingDirection.RightToLeft;
+            int startIndex = rightToLeft ? textSpan.Length - 1 : 0;
+            int endIndex = rightToLeft ? -1 : textSpan.Length;
+
+            int step = rightToLeft ? -1 : 1;
+
+            uint previous = 0;
+            for (int i = startIndex; i != endIndex; i += step)
+            {
+                uint charcode = textSpan[i];
+
+                if (charcode == '\r') continue;
+
+                if (charcode == '\n')
+                {
+                    origin.X = originalX;
+                    origin.Y += face->Height / (float)face->UnitsPerEM * fontSize;
+                    if (hinting)
+                    {
+                        origin.Y = MathF.Round(origin.Y);
+                    }
+
+                    continue;
+                }
+
+                if (charcode == '\t')
+                {
+                    origin.X = ((int)(origin.X / incrementalTabStop) + 1) * incrementalTabStop;
+                    continue;
+                }
+
+                SpriteFontGlyph glyph = glyphs[charcode];
+
+                if (previous != 0 && glyph.Index != 0)
+                {
+                    FTVector kerning;
+                    FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
+                    if (error == FTError.FtErrOk)
+                    {
+                        origin.X += kerning.X / emSize * fontSize;
+                    }
+                }
+
+                // Do not emit quad for empty glyphs (whitespace).
+                if (glyph.Width > 0 && glyph.Height > 0)
+                {
+                    float u0 = glyph.BearingX / emSize;
+                    float v0 = (glyph.BearingY - glyph.Height) / emSize;
+                    float u1 = (glyph.BearingX + glyph.Width) / emSize;
+                    float v1 = glyph.BearingY / emSize;
+
+                    float x0 = origin.X + u0 * fontSize;
+                    float y0 = origin.Y + fontSize - v1 * fontSize;
+                    float x1 = origin.X + u1 * fontSize;
+                    float y1 = origin.Y + fontSize - v0 * fontSize;
+
+                    commandList.PrimRect(new(x0, y0), new(x1, y1), glyph.UVStart, glyph.UVEnd, uint.MaxValue);
+                }
+
+                if (charcode == ' ')
+                {
+                    origin.X += glyph.Advance / emSize * fontSize * whitespaceScale;
+                }
+                else
+                {
+                    origin.X += glyph.Advance / emSize * fontSize;
+                }
+
+                previous = glyph.Index;
+            }
+
+            commandList.RecordDraw(UICommandType.DrawTexture, brush, srv.NativePointer);
         }
 
         public bool GetKerning(uint left, uint right, out Vector2 kerning)
@@ -266,41 +385,14 @@
             return new Vector2(x, y);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                texture2D.Dispose();
-                srv.Dispose();
-                glyphList.Clear();
-                glyphs.Clear();
-                glyphMetrics.Clear();
-                faceHandle.DoneFace();
-                disposedValue = true;
-            }
-        }
-
-        ~SpriteFont()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, Brush brush)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, float whitespaceScale, float tabStopIncrement, ReadingDirection readingDirection, Brush brush)
-        {
-            throw new NotImplementedException();
+            glyphList.Clear();
+            glyphs.Clear();
+            glyphMetrics.Clear();
+            texture2D.Dispose();
+            srv.Dispose();
+            faceHandle.DoneFace();
         }
     }
 }

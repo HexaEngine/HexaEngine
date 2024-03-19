@@ -10,6 +10,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using System;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -43,12 +44,12 @@
         private readonly TakeFocusEventArgs takeFocusEventArgs = new();
         private readonly HitTestEventArgs hitTestEventArgs = new();
         private readonly KeyboardEventArgs keyboardEventArgs = new();
-        private readonly KeyboardCharEventArgs keyboardCharEventArgs = new();
+        private readonly TextInputEventArgs keyboardCharEventArgs = new();
         private readonly MouseButtonEventArgs mouseButtonEventArgs = new();
-        private readonly MouseMotionEventArgs mouseMotionEventArgs = new();
+        private readonly MouseMoveEventArgs mouseMotionEventArgs = new();
         private readonly MouseWheelEventArgs mouseWheelEventArgs = new();
         private readonly TouchEventArgs touchEventArgs = new();
-        private readonly TouchMotionEventArgs touchMotionEventArgs = new();
+        private readonly TouchMoveEventArgs touchMotionEventArgs = new();
 
         private Window* window;
         private bool created;
@@ -176,7 +177,7 @@
         public void Show()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            Application.RegisterWindow((IRenderWindow)this);
+            Application.RegisterWindow((ICoreWindow)this);
             sdl.ShowWindow(window);
         }
 
@@ -365,12 +366,31 @@
         }
 
         /// <summary>
-        /// Gets a _value indicating whether the mouse is hovering over the window.
+        /// Gets the mouse position inside of the window client area.
+        /// </summary>
+        /// <remarks>Nan signals that the window is not focused.</remarks>
+        public Vector2 MousePosition
+        {
+            get
+            {
+                if (!hovering)
+                {
+                    return new(float.NaN);
+                }
+
+                int x, y;
+                sdl.GetMouseState(&x, &y);
+                return new Vector2(x, y);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the mouse is hovering over the window.
         /// </summary>
         public bool Hovering => hovering;
 
         /// <summary>
-        /// Gets a _value indicating whether the window has input focus.
+        /// Gets a value indicating whether the window has input focus.
         /// </summary>
         public bool Focused => focused;
 
@@ -643,7 +663,7 @@
         /// <summary>
         /// Event triggered when a character input is received from the keyboard.
         /// </summary>
-        public event EventHandler<KeyboardCharEventArgs>? KeyboardCharInput;
+        public event EventHandler<TextInputEventArgs>? KeyboardCharInput;
 
         /// <summary>
         /// Event triggered when a mouse button input is received.
@@ -653,7 +673,7 @@
         /// <summary>
         /// Event triggered when a mouse motion input is received.
         /// </summary>
-        public event EventHandler<MouseMotionEventArgs>? MouseMotionInput;
+        public event EventHandler<MouseMoveEventArgs>? MouseMotionInput;
 
         /// <summary>
         /// Event triggered when a mouse wheel input is received.
@@ -668,7 +688,7 @@
         /// <summary>
         /// Event triggered when a touch motion input is received.
         /// </summary>
-        public event EventHandler<TouchMotionEventArgs>? TouchMotionInput;
+        public event EventHandler<TouchMoveEventArgs>? TouchMotionInput;
 
         /// <summary>
         /// Raises the <see cref="Shown"/> event.
@@ -846,7 +866,7 @@
         /// Raises the <see cref="KeyboardCharInput"/> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
-        protected virtual void OnKeyboardCharInput(KeyboardCharEventArgs args)
+        protected virtual void OnKeyboardCharInput(TextInputEventArgs args)
         {
             KeyboardCharInput?.Invoke(this, args);
         }
@@ -864,7 +884,7 @@
         /// Raises the <see cref="MouseMotionInput"/> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
-        protected virtual void OnMouseMotionInput(MouseMotionEventArgs args)
+        protected virtual void OnMouseMotionInput(MouseMoveEventArgs args)
         {
             MouseMotionInput?.Invoke(this, args);
         }
@@ -891,7 +911,7 @@
         /// Raises the <see cref="TouchMotionInput"/> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
-        protected virtual void OnTouchMotionInput(TouchMotionEventArgs args)
+        protected virtual void OnTouchMotionInput(TouchMoveEventArgs args)
         {
             TouchMotionInput?.Invoke(this, args);
         }

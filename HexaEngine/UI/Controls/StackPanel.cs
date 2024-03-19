@@ -4,15 +4,8 @@
     using HexaEngine.UI.Graphics;
     using System.Numerics;
 
-    public class StackPanel : UIElement, IChildContainer
+    public class StackPanel : Panel, IChildContainer
     {
-        public StackPanel()
-        {
-            Children = new(this);
-        }
-
-        public UIElementCollection Children { get; }
-
         public StackPanelDirection Direction { get; set; }
 
         public override void InitializeComponent()
@@ -32,7 +25,7 @@
             InvalidateArrange();
         }
 
-        internal override void Initialize()
+        public override void Initialize()
         {
             base.Initialize();
             Children.ForEach(child => child.Initialize());
@@ -46,17 +39,14 @@
             base.Uninitialize();
         }
 
-        public override void OnRender(UICommandList commandList)
+        protected override void OnRender(UICommandList commandList)
         {
-            Children.ForEach(child => child.Draw(commandList));
+            Children.ForEach(child => child.Render(commandList));
         }
 
-        protected override void ArrangeCore(RectangleF finalRect)
+        protected override Vector2 ArrangeOverwrite(Vector2 size)
         {
-            base.ArrangeCore(finalRect);
-
-            RectangleF content = ContentBounds;
-            Vector2 origin = content.Offset;
+            Vector2 origin = ContentOffset.Translation;
 
             float pen = 0;
             for (int i = 0; i < Children.Count; i++)
@@ -78,9 +68,11 @@
                 RectangleF childRect = new(origin + childOrigin, desiredSize);
                 child.Arrange(childRect);
             }
+
+            return size;
         }
 
-        protected override Vector2 MeasureCore(Vector2 availableSize)
+        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
         {
             Vector2 size = default;
             for (int i = 0; i < Children.Count; i++)

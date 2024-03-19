@@ -35,7 +35,7 @@
                 return;
             }
 
-            window.Draw(commandList);
+            window.Render(commandList);
         }
 
         public void Unload()

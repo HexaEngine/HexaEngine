@@ -60,7 +60,7 @@
         /// <summary>
         /// Occurs when the finger's position is updated.
         /// </summary>
-        public event EventHandler<TouchMotionEventArgs>? TouchMotion;
+        public event EventHandler<TouchMoveEventArgs>? TouchMotion;
 
         internal void OnFingerUp(TouchEventArgs touchEventArgs)
         {
@@ -74,7 +74,7 @@
             TouchDown?.Invoke(this, touchEventArgs);
         }
 
-        internal void OnFingerMotion(TouchMotionEventArgs touchMotionEventArgs)
+        internal void OnFingerMotion(TouchMoveEventArgs touchMotionEventArgs)
         {
             TouchMotion?.Invoke(this, touchMotionEventArgs);
         }

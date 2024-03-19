@@ -2,12 +2,12 @@
 {
     using System.Numerics;
 
-    public class TextLayout : IDisposable
+    public class TextLayout : UIResource
     {
         private string text;
+        private TextFormat format;
         private readonly UICommandList preRecordedList = new();
         private TextLayoutMetrics metrics;
-        private bool disposedValue;
         private float maxWidth;
         private float maxHeight;
 
@@ -15,10 +15,11 @@
 
         public TextLayout(string text, TextFormat format, float maxWidth, float maxHeight)
         {
+            format.AddRef();
             this.text = text;
-            Format = format;
-            MaxWidth = maxWidth;
-            MaxHeight = maxHeight;
+            this.format = format;
+            this.maxWidth = maxWidth;
+            this.maxHeight = maxHeight;
             UpdateLayout();
         }
 
@@ -61,7 +62,17 @@
             }
         }
 
-        public TextFormat Format { get; }
+        public TextFormat Format
+        {
+            get => format;
+            set
+            {
+                format.Dispose();
+                value.AddRef();
+                format = value;
+                UpdateLayout();
+            }
+        }
 
         public TextLayoutMetrics Metrics => metrics;
 
@@ -325,7 +336,7 @@
             return font.GetMetrics(' ').HorizontalAdvance / emSize * fontSize + wordSpacing / emSize * fontSize;
         }
 
-        public void DrawText(UICommandList commandList, Brush brush)
+        public void DrawText(UICommandList commandList, Brush? brush)
         {
             for (int i = 0; i < preRecordedList.CmdBuffer.Count; i++)
             {
@@ -337,26 +348,10 @@
             commandList.ExecuteCommandList(preRecordedList);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                preRecordedList.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~TextLayout()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            preRecordedList.Dispose();
+            format.Dispose();
         }
     }
 }

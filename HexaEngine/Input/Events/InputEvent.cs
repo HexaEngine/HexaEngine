@@ -7,7 +7,7 @@
     [StructLayout(LayoutKind.Explicit)]
     public struct InputEvent
     {
-        public InputEvent(MouseMotionEventArgs eventArgs)
+        public InputEvent(MouseMoveEventArgs eventArgs)
         {
             Timestamp = eventArgs.Timestamp;
             Type = InputEventType.MouseMoved;
@@ -119,7 +119,7 @@
             TouchDeviceTouchEvent = new(eventArgs);
         }
 
-        public InputEvent(TouchMotionEventArgs eventArgs)
+        public InputEvent(TouchMoveEventArgs eventArgs)
         {
             Timestamp = eventArgs.Timestamp;
             Type = InputEventType.TouchDeviceTouchMotion;

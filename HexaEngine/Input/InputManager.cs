@@ -209,7 +209,7 @@
 
         #region EventHandlers
 
-        private void OnTouchDevicesTouchMotion(object? sender, Core.Input.Events.TouchMotionEventArgs e)
+        private void OnTouchDevicesTouchMotion(object? sender, Core.Input.Events.TouchMoveEventArgs e)
         {
             inputBuffer.RecordEvent(new(e));
         }
@@ -309,7 +309,7 @@
             inputBuffer.RecordEvent(new(e));
         }
 
-        private void OnMouseMoved(object? sender, Core.Input.Events.MouseMotionEventArgs e)
+        private void OnMouseMoved(object? sender, Core.Input.Events.MouseMoveEventArgs e)
         {
             inputBuffer.RecordEvent(new(e));
         }

@@ -1,45 +1,89 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.UI.Graphics;
-    using Silk.NET.Assimp;
     using System;
     using System.Collections.Generic;
     using System.Numerics;
-    using static System.Net.Mime.MediaTypeNames;
 
-    public unsafe class VectorFont : IFont
+    public unsafe class VectorFont : UIRevivableResource, IFont
     {
-        private readonly FTFace faceHandle;
-        private readonly FTFaceRec* face;
-        private readonly float fontSize;
+        private readonly IGraphicsDevice device;
+        private readonly FTLibrary library;
+        private readonly string path;
+        private FTFace faceHandle;
+        private FTFaceRec* face;
 
         private readonly Dictionary<uint, VectorFontGlyph> glyphs = [];
-        private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = new();
+        private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = [];
 
-        private readonly IBuffer glyphBuffer;
-        private readonly IBuffer curveBuffer;
-        private readonly IShaderResourceView glyphBufferSRV;
-        private readonly IShaderResourceView curveBufferSRV;
+        private IBuffer glyphBuffer;
+        private IBuffer curveBuffer;
+        private IShaderResourceView glyphBufferSRV;
+        private IShaderResourceView curveBufferSRV;
 
-        private float emSize;
+        private float fontSize;
         private bool hinting;
+        private float emSize;
         private int loadFlags;
         private uint kerningMode;
         private float dilation = 0.1f;
 
         private UnsafeList<BufferGlyph> bufferGlyphs = [];
         private UnsafeList<BufferCurve> bufferCurves = [];
-        private bool disposedValue;
 
         public VectorFont(IGraphicsDevice device, FTLibrary library, string path, float fontSize = 1.0f, bool hinting = false)
         {
+            this.device = device;
+            this.library = library;
+            this.path = path;
             this.fontSize = fontSize;
             this.hinting = hinting;
 
+            ReviveCore();
+        }
+
+        public float FontSize
+        {
+            get => fontSize;
+            set
+            {
+                if (fontSize == value)
+                    return;
+                fontSize = value;
+                if (!hinting)
+                    return;
+                DisposeCore();
+                ReviveCore();
+            }
+        }
+
+        public bool Hinting
+        {
+            get => hinting;
+            set
+            {
+                if (hinting == value)
+                    return;
+                hinting = value;
+                DisposeCore();
+                ReviveCore();
+            }
+        }
+
+        public float EmSize => emSize;
+
+        public float Dilation { get => dilation; set => dilation = value; }
+
+        public float GetLineHeight(float fontSize)
+        {
+            return face->Height / (float)face->UnitsPerEM * fontSize;
+        }
+
+        protected override void ReviveCore()
+        {
             FTError error;
 
             FTFace faceHandle;
@@ -52,8 +96,8 @@
 
             face = (FTFaceRec*)faceHandle.Handle;
 
-            var family = Utils.ToStringFromUTF8(face->FamilyName);
-            var style = Utils.ToStringFromUTF8(face->StyleName);
+            var family = ToStringFromUTF8(face->FamilyName);
+            var style = ToStringFromUTF8(face->StyleName);
 
             TtOs2* os2 = (TtOs2*)faceHandle.GetSfntTable(FTSfntTag.Os2);
 
@@ -73,7 +117,7 @@
                 error = (FTError)faceHandle.SetPixelSizes(0, (uint)MathF.Ceiling(fontSize));
                 if (error != FTError.FtErrOk)
                 {
-                    throw new($"Failed to load font file, {error}");
+                    throw new($"Failed to set pixel sizes, {error}");
                 }
             }
             else
@@ -514,16 +558,6 @@
             commandList.RecordDraw(UICommandType.DrawTextVector, brush, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
         }
 
-        public float GetLineHeight(float fontSize)
-        {
-            return face->Height / (float)face->UnitsPerEM * fontSize;
-        }
-
-        public float EmSize
-        {
-            get => emSize;
-        }
-
         public GlyphMetrics GetMetrics(uint character)
         {
             if (glyphMetrics.TryGetValue(character, out var metrics))
@@ -577,32 +611,15 @@
             return new Vector2(x, GetLineHeight(fontSize));
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                glyphs.Clear();
-                glyphMetrics.Clear();
-                glyphBuffer.Dispose();
-                glyphBufferSRV.Dispose();
-                curveBuffer.Dispose();
-                curveBufferSRV.Dispose();
-                faceHandle.DoneFace();
-                disposedValue = true;
-            }
-        }
-
-        ~VectorFont()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            glyphs.Clear();
+            glyphMetrics.Clear();
+            glyphBuffer.Dispose();
+            glyphBufferSRV.Dispose();
+            curveBuffer.Dispose();
+            curveBufferSRV.Dispose();
+            faceHandle.DoneFace();
         }
     }
 }

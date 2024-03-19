@@ -1,22 +1,17 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
-    using Hexa.NET.FreeType;
-    using HexaEngine.Core.Graphics;
-    using System;
-
-    public class TextFormat : IDisposable
+    public class TextFormat : UIResource
     {
-        private readonly VectorFont font;
-        private bool disposedValue;
+        private readonly IFont font;
         private float fontSize;
 
-        public TextFormat(IGraphicsDevice device, FTLibrary library, string file, float fontSize = 1)
+        public TextFormat(IFont font, float fontSize = 1)
         {
-            font = new VectorFont(device, library, file, fontSize);
+            this.font = font;
             this.fontSize = fontSize;
         }
 
-        public VectorFont Font => font;
+        public IFont Font => font;
 
         public float FontSize { get => fontSize; set => fontSize = value; }
 
@@ -36,26 +31,9 @@
 
         public TextAlignment TextAlignment { get; set; }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                font.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~TextFormat()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            font.Dispose();
         }
     }
 }
