@@ -1,15 +1,25 @@
 ﻿namespace HexaEngine.UI.Controls
 {
     using HexaEngine.UI.Graphics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
+    using System.Xml.Serialization;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Image : FrameworkElement
     {
-        public ImageSource? ImageSource { get; set; }
+        public static readonly DependencyProperty<ImageSource> ImageSourceProperty = DependencyProperty.Register<Image, ImageSource>(nameof(ImageSource), false);
 
-        public Stretch Stretch { get; set; } = Stretch.Fill;
+        [XmlIgnore]
+        public ImageSource? ImageSource { get => GetValue(ImageSourceProperty); set => SetValue(ImageSourceProperty, value); }
 
-        public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
+        public static readonly DependencyProperty<Stretch> StretchProperty = DependencyProperty.Register<Image, Stretch>(nameof(Stretch), false, new PropertyMetadata(Stretch.Fill));
+
+        public Stretch Stretch { get => GetValue(StretchProperty); set => SetValue(StretchProperty, value); }
+
+        public static readonly DependencyProperty<StretchDirection> StretchDirectionProperty = DependencyProperty.Register<Image, StretchDirection>(nameof(StretchDirection), false, new PropertyMetadata(StretchDirection.Both));
+
+        public StretchDirection StretchDirection { get => GetValue(StretchDirectionProperty); set => SetValue(StretchDirectionProperty, value); }
 
         protected override void OnRender(UICommandList commandList)
         {

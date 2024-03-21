@@ -57,11 +57,6 @@
 
         public abstract Type DependencyObjectType { get; }
 
-        public virtual void Invalidate()
-        {
-            Parent?.Invalidate();
-        }
-
         /// <summary>
         /// Searches for the first <typeparamref name="T"/> in the tree including self testing.
         /// </summary>

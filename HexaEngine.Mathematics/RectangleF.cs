@@ -285,5 +285,10 @@
             max = Vector2.Transform(max, matrix);
             return new(min.X, min.Y, max.X, max.Y);
         }
+
+        public readonly Vector4 ToVec4()
+        {
+            return new(Left, Top, Right, Bottom);
+        }
     }
 }

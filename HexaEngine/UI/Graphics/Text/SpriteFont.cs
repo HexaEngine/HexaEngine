@@ -192,7 +192,7 @@
             glyphMetrics.Add(charcode, metrics);
         }
 
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, Brush brush)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)
         {
             int indexCount = 6 * textSpan.Length;
             int vertexCount = 4 * textSpan.Length;
@@ -256,7 +256,7 @@
             commandList.RecordDraw(UICommandType.DrawTexture, brush, srv.NativePointer);
         }
 
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
             int indexCount = 6 * textSpan.Length;
@@ -361,7 +361,7 @@
             return default;
         }
 
-        public Vector2 MeasureSize(TextSpan text, float fontSize, float incrementalTabStop)
+        public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop)
         {
             float x = 0;
             float y = 0;

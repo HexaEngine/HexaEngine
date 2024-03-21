@@ -3,45 +3,10 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using System.Numerics;
 
     public partial class UIElement : IInputElement
     {
         private bool isMouseOver;
-
-        public static readonly RoutedEvent<TextInputEventArgs> TextInputEvent = EventManager.Register<UIElement, TextInputEventArgs>(nameof(TextInputEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<KeyboardEventArgs> KeyUpEvent = EventManager.Register<UIElement, KeyboardEventArgs>(nameof(KeyUpEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<KeyboardEventArgs> KeyDownEvent = EventManager.Register<UIElement, KeyboardEventArgs>(nameof(KeyDownEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<MouseButtonEventArgs> MouseUpEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseUpEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<MouseButtonEventArgs> MouseDownEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseDownEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<MouseButtonEventArgs> MouseDoubleClickEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseDoubleClickEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<MouseEventArgs> MouseEnterEvent = EventManager.Register<UIElement, MouseEventArgs>(nameof(MouseEnterEvent), RoutingStrategy.Tunnel);
-
-        public static readonly RoutedEvent<MouseEventArgs> MouseLeaveEvent = EventManager.Register<UIElement, MouseEventArgs>(nameof(MouseLeaveEvent), RoutingStrategy.Bubble);
-
-        public static readonly RoutedEvent<MouseMoveEventArgs> MouseMoveEvent = EventManager.Register<UIElement, MouseMoveEventArgs>(nameof(MouseMoveEvent), RoutingStrategy.Tunnel);
-
-        public static readonly RoutedEvent<MouseWheelEventArgs> MouseWheelEvent = EventManager.Register<UIElement, MouseWheelEventArgs>(nameof(MouseWheelEvent), RoutingStrategy.Tunnel);
-
-        public static readonly RoutedEvent<FocusGainedEventArgs> FocusGrainedEvent = EventManager.Register<UIElement, FocusGainedEventArgs>(nameof(FocusGrainedEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<FocusLostEventArgs> FocusLostEvent = EventManager.Register<UIElement, FocusLostEventArgs>(nameof(FocusLostEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<TouchEventArgs> TouchEnterEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchEnterEvent), RoutingStrategy.Tunnel);
-
-        public static readonly RoutedEvent<TouchEventArgs> TouchLeaveEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchLeaveEvent), RoutingStrategy.Bubble);
-
-        public static readonly RoutedEvent<TouchMoveEventArgs> TouchMoveEvent = EventManager.Register<UIElement, TouchMoveEventArgs>(nameof(TouchMoveEvent), RoutingStrategy.Tunnel);
-
-        public static readonly RoutedEvent<TouchEventArgs> TouchDownEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchDownEvent), RoutingStrategy.Direct);
-
-        public static readonly RoutedEvent<TouchEventArgs> TouchUpEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchUpEvent), RoutingStrategy.Direct);
 
         static UIElement()
         {
@@ -50,14 +15,20 @@
             KeyDownEvent.AddClassHandler<UIElement>((x, args) => x?.OnKeyDown(args));
             MouseUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseUp(args));
             MouseDownEvent.AddClassHandler<UIElement>(HandleMouseDown);
-            MouseDoubleClickEvent.AddClassHandler<UIElement>((x, args) => x?.OnDoubleClick(args));
             MouseEnterEvent.AddClassHandler<UIElement>(HandleMouseEnter);
             MouseLeaveEvent.AddClassHandler<UIElement>(HandleMouseLeave);
             MouseMoveEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseMove(args));
             MouseWheelEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseWheel(args));
-            FocusGrainedEvent.AddClassHandler<UIElement>((x, args) => x?.OnGotFocus(args));
-            FocusLostEvent.AddClassHandler<UIElement>((x, args) => x?.OnLostFocus(args));
+            GotFocusEvent.AddClassHandler<UIElement>((x, args) => x?.OnGotFocus(args));
+            LostFocusEvent.AddClassHandler<UIElement>((x, args) => x?.OnLostFocus(args));
+            TouchEnterEvent.AddClassHandler<UIElement>((x, args) => x?.OnTouchEnter(args));
+            TouchLeaveEvent.AddClassHandler<UIElement>((x, args) => x?.OnTouchLeave(args));
+            TouchMoveEvent.AddClassHandler<UIElement>((x, args) => x?.OnTouchMove(args));
+            TouchDownEvent.AddClassHandler<UIElement>((x, args) => x?.OnTouchDown(args));
+            TouchUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnTouchUp(args));
         }
+
+        public static readonly RoutedEvent<TextInputEventArgs> TextInputEvent = EventManager.Register<UIElement, TextInputEventArgs>(nameof(TextInput), RoutingStrategy.Direct);
 
         public event RoutedEventHandler<TextInputEventArgs> TextInput
         {
@@ -65,11 +36,15 @@
             remove => RemoveHandler(TextInputEvent, value);
         }
 
+        public static readonly RoutedEvent<KeyboardEventArgs> KeyUpEvent = EventManager.Register<UIElement, KeyboardEventArgs>(nameof(KeyUp), RoutingStrategy.Direct);
+
         public event RoutedEventHandler<KeyboardEventArgs> KeyUp
         {
             add => AddHandler(KeyUpEvent, value);
             remove => RemoveHandler(KeyUpEvent, value);
         }
+
+        public static readonly RoutedEvent<KeyboardEventArgs> KeyDownEvent = EventManager.Register<UIElement, KeyboardEventArgs>(nameof(KeyDown), RoutingStrategy.Direct);
 
         public event RoutedEventHandler<KeyboardEventArgs> KeyDown
         {
@@ -77,11 +52,15 @@
             remove => RemoveHandler(KeyDownEvent, value);
         }
 
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseUpEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseUp), RoutingStrategy.Direct);
+
         public event RoutedEventHandler<MouseButtonEventArgs> MouseUp
         {
             add => AddHandler(MouseUpEvent, value);
             remove => RemoveHandler(MouseUpEvent, value);
         }
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseDownEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseDown), RoutingStrategy.Direct);
 
         public event RoutedEventHandler<MouseButtonEventArgs> MouseDown
         {
@@ -89,17 +68,7 @@
             remove => RemoveHandler(MouseDownEvent, value);
         }
 
-        public event RoutedEventHandler<MouseButtonEventArgs> DoubleClick
-        {
-            add => AddHandler(MouseDoubleClickEvent, value);
-            remove => RemoveHandler(MouseDoubleClickEvent, value);
-        }
-
-        public event RoutedEventHandler<MouseEventArgs> MouseLeave
-        {
-            add => AddHandler(MouseLeaveEvent, value);
-            remove => RemoveHandler(MouseLeaveEvent, value);
-        }
+        public static readonly RoutedEvent<MouseEventArgs> MouseEnterEvent = EventManager.Register<UIElement, MouseEventArgs>(nameof(MouseEnter), RoutingStrategy.Tunnel);
 
         public event RoutedEventHandler<MouseEventArgs> MouseEnter
         {
@@ -107,11 +76,23 @@
             remove => RemoveHandler(MouseEnterEvent, value);
         }
 
+        public static readonly RoutedEvent<MouseEventArgs> MouseLeaveEvent = EventManager.Register<UIElement, MouseEventArgs>(nameof(MouseLeave), RoutingStrategy.Bubble);
+
+        public event RoutedEventHandler<MouseEventArgs> MouseLeave
+        {
+            add => AddHandler(MouseLeaveEvent, value);
+            remove => RemoveHandler(MouseLeaveEvent, value);
+        }
+
+        public static readonly RoutedEvent<MouseMoveEventArgs> MouseMoveEvent = EventManager.Register<UIElement, MouseMoveEventArgs>(nameof(MouseMove), RoutingStrategy.Tunnel);
+
         public event RoutedEventHandler<MouseMoveEventArgs> MouseMove
         {
             add => AddHandler(MouseMoveEvent, value);
             remove => RemoveHandler(MouseMoveEvent, value);
         }
+
+        public static readonly RoutedEvent<MouseWheelEventArgs> MouseWheelEvent = EventManager.Register<UIElement, MouseWheelEventArgs>(nameof(MouseWheel), RoutingStrategy.Tunnel);
 
         public event RoutedEventHandler<MouseWheelEventArgs> MouseWheel
         {
@@ -119,16 +100,60 @@
             remove => RemoveHandler(MouseWheelEvent, value);
         }
 
+        public static readonly RoutedEvent<FocusGainedEventArgs> GotFocusEvent = EventManager.Register<UIElement, FocusGainedEventArgs>(nameof(GotFocus), RoutingStrategy.Direct);
+
         public event RoutedEventHandler<FocusGainedEventArgs> GotFocus
         {
-            add => AddHandler(FocusGrainedEvent, value);
-            remove => RemoveHandler(FocusGrainedEvent, value);
+            add => AddHandler(GotFocusEvent, value);
+            remove => RemoveHandler(GotFocusEvent, value);
         }
+
+        public static readonly RoutedEvent<FocusLostEventArgs> LostFocusEvent = EventManager.Register<UIElement, FocusLostEventArgs>(nameof(LostFocus), RoutingStrategy.Direct);
 
         public event RoutedEventHandler<FocusLostEventArgs> LostFocus
         {
-            add => AddHandler(FocusLostEvent, value);
-            remove => RemoveHandler(FocusLostEvent, value);
+            add => AddHandler(LostFocusEvent, value);
+            remove => RemoveHandler(LostFocusEvent, value);
+        }
+
+        public static readonly RoutedEvent<TouchEventArgs> TouchEnterEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchEnter), RoutingStrategy.Tunnel);
+
+        public event RoutedEventHandler<TouchEventArgs> TouchEnter
+        {
+            add => AddHandler(TouchEnterEvent, value);
+            remove => RemoveHandler(TouchEnterEvent, value);
+        }
+
+        public static readonly RoutedEvent<TouchEventArgs> TouchLeaveEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchLeave), RoutingStrategy.Bubble);
+
+        public event RoutedEventHandler<TouchEventArgs> TouchLeave
+        {
+            add => AddHandler(TouchLeaveEvent, value);
+            remove => RemoveHandler(TouchLeaveEvent, value);
+        }
+
+        public static readonly RoutedEvent<TouchMoveEventArgs> TouchMoveEvent = EventManager.Register<UIElement, TouchMoveEventArgs>(nameof(TouchMove), RoutingStrategy.Tunnel);
+
+        public event RoutedEventHandler<TouchMoveEventArgs> TouchMove
+        {
+            add => AddHandler(TouchMoveEvent, value);
+            remove => RemoveHandler(TouchMoveEvent, value);
+        }
+
+        public static readonly RoutedEvent<TouchEventArgs> TouchDownEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchDown), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<TouchEventArgs> TouchDown
+        {
+            add => AddHandler(TouchDownEvent, value);
+            remove => RemoveHandler(TouchDownEvent, value);
+        }
+
+        public static readonly RoutedEvent<TouchEventArgs> TouchUpEvent = EventManager.Register<UIElement, TouchEventArgs>(nameof(TouchUp), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<TouchEventArgs> TouchUp
+        {
+            add => AddHandler(TouchUpEvent, value);
+            remove => RemoveHandler(TouchUpEvent, value);
         }
 
         public static IInputElement? Focused { get; internal set; }
@@ -207,10 +232,6 @@
         {
         }
 
-        protected virtual void OnDoubleClick(MouseButtonEventArgs args)
-        {
-        }
-
         protected virtual void OnMouseEnter(MouseEventArgs args)
         {
         }
@@ -227,7 +248,23 @@
         {
         }
 
-        protected virtual void RouteDoubleClickEvent(MouseButtonEventArgs args)
+        protected virtual void OnTouchEnter(TouchEventArgs args)
+        {
+        }
+
+        protected virtual void OnTouchLeave(TouchEventArgs args)
+        {
+        }
+
+        protected virtual void OnTouchMove(TouchMoveEventArgs args)
+        {
+        }
+
+        protected virtual void OnTouchDown(TouchEventArgs args)
+        {
+        }
+
+        protected virtual void OnTouchUp(TouchEventArgs args)
         {
         }
 
@@ -239,14 +276,21 @@
             }
         }
 
-        internal static void SetFocus(IInputElement? element)
+        internal static bool SetFocus(IInputElement? element)
         {
             if (element == Focused)
-                return;
+                return true;
+
+            if (element != null && !element.Focusable)
+            {
+                return false;
+            }
 
             Focused?.RouteEvent(new FocusLostEventArgs());
             Focused = element;
             Focused?.RouteEvent(new FocusGainedEventArgs());
+
+            return true;
         }
     }
 }

@@ -2,8 +2,10 @@
 {
     using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class FrameworkElement : UIElement
     {
         private Matrix3x2 baseOffset;
@@ -28,6 +30,10 @@
         public Matrix3x2 BaseOffset => baseOffset;
 
         public Matrix3x2 ContentOffset => contentOffset;
+
+        public static readonly DependencyProperty<object> DataContextProperty = DependencyProperty.Register<FrameworkElement, object>(nameof(DataContext), false, new FrameworkMetadata(null));
+
+        public object? DataContext { get => GetValue(DataContextProperty); set => SetValue(DataContextProperty, value); }
 
         public override void Render(UICommandList commandList)
         {

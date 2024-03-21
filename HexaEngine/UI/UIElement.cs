@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.UI
 {
     using HexaEngine.Core.Windows.Events;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public partial class UIElement : Visual
     {
         private readonly List<EventRoute> eventRoutes = [];

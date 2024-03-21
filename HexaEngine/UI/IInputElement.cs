@@ -25,8 +25,6 @@
 
         public event RoutedEventHandler<MouseButtonEventArgs> MouseUp;
 
-        public event RoutedEventHandler<MouseButtonEventArgs> DoubleClick;
-
         public event RoutedEventHandler<MouseEventArgs> MouseLeave;
 
         public event RoutedEventHandler<MouseEventArgs> MouseEnter;

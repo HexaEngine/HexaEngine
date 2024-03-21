@@ -44,6 +44,21 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Color"/> struct with specified channel values.
+        /// </summary>
+        /// <param name="r">The red channel value.</param>
+        /// <param name="g">The green channel value.</param>
+        /// <param name="b">The blue channel value.</param>
+        /// <param name="a">The alpha channel value.</param>
+        public Color(byte r, byte g, byte b, byte a)
+        {
+            R = r / (float)byte.MaxValue;
+            G = g / (float)byte.MaxValue;
+            B = b / (float)byte.MaxValue;
+            A = a / (float)byte.MaxValue;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Color"/> struct from an unsigned integer representation.
         /// </summary>
         /// <param name="color">The unsigned integer representation of the color.</param>

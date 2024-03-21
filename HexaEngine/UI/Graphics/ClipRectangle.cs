@@ -57,6 +57,11 @@
             return HashCode.Combine(Left, Top, Right, Bottom);
         }
 
+        public readonly Vector4 ToVec4()
+        {
+            return new(Left, Top, Right, Bottom);
+        }
+
         public static bool operator ==(ClipRectangle left, ClipRectangle right)
         {
             return left.Equals(right);

@@ -2,8 +2,10 @@
 {
     using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Grid : Panel, IChildContainer
     {
         public List<ColumnDefinition> ColumnDefinitions { get; } = [];
@@ -97,11 +99,6 @@
             base.Uninitialize();
         }
 
-        protected override void OnRender(UICommandList commandList)
-        {
-            Children.ForEach(child => child.Render(commandList));
-        }
-
         public IEnumerable<UIElement> GetChildrenInColumn(int columnIndex)
         {
             for (int i = 0; i < Children.Count; i++)
@@ -138,6 +135,11 @@
         public Vector2 GetAvailableSizeInGrid(UIElement element)
         {
             Vector2 size = default;
+
+            if (ColumnDefinitions.Count == 0 || RowDefinitions.Count == 0)
+            {
+                return DesiredSize;
+            }
 
             var columnIndex = GetColumn(element);
             var columnSpan = GetColumnSpan(element);

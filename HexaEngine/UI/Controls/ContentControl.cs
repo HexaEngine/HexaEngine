@@ -2,9 +2,13 @@
 {
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;
+    using HexaEngine.UI.Markup;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
-    public class ContentControl : Control
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+    [ContentProperty("Content")]
+    public class ContentControl : Control, IAddChild
     {
         private object? content;
         private TextLayout? textLayout;
@@ -110,6 +114,16 @@
             }
 
             textLayout?.DrawText(commandList, Foreground);
+        }
+
+        void IAddChild.AddChild(object value)
+        {
+            Content = value;
+        }
+
+        void IAddChild.AddText(string text)
+        {
+            Content = text;
         }
     }
 }

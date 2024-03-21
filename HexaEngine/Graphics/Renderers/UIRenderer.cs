@@ -18,14 +18,22 @@
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
         private ConstantBuffer<Matrix4x4> constantBuffer;
-        private SolidColorBrush solidColorBrush;
+        private ConstantBuffer<CBBrush> colorBuffer;
         private ISamplerState fontSampler;
 
         private struct CBBrush
         {
-            public uint Type;
-            public UPoint3 Padding;
             public Vector4 Color;
+            public Vector4 PrimDimensions;
+            public uint BrushType;
+            public UPoint3 Padding;
+
+            public CBBrush(Vector4 color, Vector4 primDimensions, uint brushType)
+            {
+                Color = color;
+                PrimDimensions = primDimensions;
+                BrushType = brushType;
+            }
         }
 
         private struct GradientStop
@@ -133,7 +141,7 @@
             }, stateDesc);
 
             constantBuffer = new(device, CpuAccessFlags.Write);
-            solidColorBrush = new(device, Colors.White);
+            colorBuffer = new(device, CpuAccessFlags.Write);
 
             CreateFontsTexture(device);
         }
@@ -149,6 +157,7 @@
             ctx.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
             ctx.VSSetConstantBuffer(0, constantBuffer);
             ctx.PSSetSampler(0, fontSampler);
+            ctx.PSSetConstantBuffer(0, colorBuffer);
         }
 
         public void RenderDrawData(IGraphicsContext ctx, Viewport viewport, Matrix4x4 transform, UICommandList cmdList)
@@ -227,6 +236,7 @@
             {
                 var cmd = cmdList.CmdBuffer[i];
                 var clip = cmd.ClipRect;
+                var bounds = cmd.Bounds.ToVec4();
 
                 switch (cmd.Type)
                 {
@@ -253,11 +263,16 @@
 
                 if (cmd.Brush == null)
                 {
-                    solidColorBrush.Apply(cmd, ctx);
+                    colorBuffer.Update(ctx, new(Vector4.One, bounds, 0));
                 }
-                else
+                else if (cmd.Brush is SolidColorBrush solidColorBrush)
                 {
-                    cmd.Brush?.Apply(cmd, ctx);
+                    colorBuffer.Update(ctx, new(solidColorBrush.Color, bounds, 0));
+                }
+                else if (cmd.Brush is ImageBrush imageBrush)
+                {
+                    colorBuffer.Update(ctx, new(Vector4.One, bounds, 1));
+                    ctx.PSSetShaderResource(2, imageBrush.ImageSource.Texture);
                 }
 
                 ctx.SetScissorRect(clip.Left, clip.Top, clip.Right, clip.Bottom);
@@ -272,6 +287,7 @@
             ctx.SetVertexBuffer(0, null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);
             ctx.VSSetConstantBuffer(0, null);
+            ctx.PSSetConstantBuffer(0, null);
             ctx.PSSetSampler(0, null);
             ctx.PSSetShaderResource(0, null);
             ctx.PSSetShaderResource(1, null);
@@ -287,7 +303,7 @@
             indexBuffer?.Dispose();
             vertexBuffer?.Dispose();
             constantBuffer.Dispose();
-            solidColorBrush.Dispose();
+            colorBuffer?.Dispose();
         }
     }
 }

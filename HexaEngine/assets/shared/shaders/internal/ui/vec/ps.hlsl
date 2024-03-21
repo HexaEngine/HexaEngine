@@ -146,7 +146,6 @@ uint bufferIndex = input.bufferIndex;
 	}
 
 	alpha = clamp(alpha, 0.0, 1.0);
-	float4 result = color * alpha;
 
-	return result;
+	return float4(color.rgb, color.a * alpha);
 }

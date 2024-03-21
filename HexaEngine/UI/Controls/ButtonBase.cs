@@ -3,7 +3,9 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
+    using System.Diagnostics.CodeAnalysis;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class ButtonBase : ContentControl
     {
         public static readonly RoutedEvent<RoutedEventArgs> ClickEvent = EventManager.Register<Button, RoutedEventArgs>(nameof(ClickEvent), RoutingStrategy.Direct);
@@ -30,6 +32,7 @@
 
         protected override void OnMouseDown(MouseButtonEventArgs args)
         {
+            base.OnMouseDown(args);
             if (clickMode != ClickMode.Press || args.Button != MouseButton.Left)
             {
                 return;

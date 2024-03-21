@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.UI
 {
+    using System;
     using System.Collections;
 
-    public class UIElementCollection : IList<UIElement>
+    public class UIElementCollection : IList<UIElement>, ICollection<UIElement>, IEnumerable<UIElement>, IList, ICollection, IEnumerable
     {
         private readonly List<UIElement> objects = new();
         private readonly UIElement parent;
@@ -18,6 +19,14 @@
 
         public bool IsReadOnly => ((ICollection<UIElement>)objects).IsReadOnly;
 
+        bool IList.IsFixedSize => false;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => this;
+
+        object? IList.this[int index] { get => this[index]; set => this[index] = (UIElement)value; }
+
         public event EventHandler<UIElement>? ElementAdded;
 
         public event EventHandler<UIElement>? ElementRemoved;
@@ -28,7 +37,7 @@
             ((ICollection<UIElement>)objects).Add(item);
             ElementAdded?.Invoke(this, item);
             parent.AddVisualChild(item);
-            parent.ResolveObject<UIElement>()?.InvalidateArrange();
+            parent.InvalidateArrange();
         }
 
         public void Clear()
@@ -115,6 +124,52 @@
         public void InitializeComponent()
         {
             ForEach(obj => obj.InitializeComponent());
+        }
+
+        int IList.Add(object? value)
+        {
+            if (value is UIElement element)
+            {
+                int index = Count;
+                Add(element);
+                return index;
+            }
+            return -1;
+        }
+
+        bool IList.Contains(object? value)
+        {
+            if (value is UIElement element)
+                return Contains(element);
+            return false;
+        }
+
+        int IList.IndexOf(object? value)
+        {
+            if (value is UIElement element)
+                return IndexOf(element);
+            return -1;
+        }
+
+        void IList.Insert(int index, object? value)
+        {
+            if (value is UIElement element)
+            {
+                Insert(index, element);
+            }
+        }
+
+        void IList.Remove(object? value)
+        {
+            if (value is UIElement element)
+            {
+                Remove(element);
+            }
+        }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            ((ICollection)objects).CopyTo(array, index);
         }
     }
 }

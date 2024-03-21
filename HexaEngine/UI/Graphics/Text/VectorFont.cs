@@ -397,7 +397,7 @@
             }
         }
 
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan textSpan, float fontSize, Brush brush)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
             int indexCount = 6 * textSpan.Length;
@@ -468,7 +468,7 @@
             commandList.RecordDraw(UICommandType.DrawTextVector, brush, glyphBufferSRV.NativePointer, curveBufferSRV.NativePointer);
         }
 
-        public void RenderText(UICommandList commandList, Vector2 origin, TextSpan text, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
+        public void RenderText(UICommandList commandList, Vector2 origin, TextRange text, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
             int vertexCount = 4 * text.Length;
             int indexCount = 6 * text.Length;
@@ -580,7 +580,7 @@
             return false;
         }
 
-        public Vector2 MeasureSize(TextSpan text, float fontSize, float incrementalTabStop)
+        public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop)
         {
             float x = 0;
             uint previous = 0;

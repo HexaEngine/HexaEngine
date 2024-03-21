@@ -160,7 +160,7 @@
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
 
-            ResultCode code = (ResultCode)swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+            ResultCode code = (ResultCode)swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatUnknown, (uint)flags);
 
             if (CheckError(code))
             {

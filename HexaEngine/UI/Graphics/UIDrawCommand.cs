@@ -1,7 +1,10 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
-    public unsafe struct UIDrawCommand : IComparable<UIDrawCommand>
+    using HexaEngine.Mathematics;
+
+    public unsafe struct UIDrawCommand
     {
+        public long Id;
         public UIVertex* Vertices;
         public uint* Indices;
         public uint VertexCount;
@@ -10,15 +13,15 @@
         public uint VertexOffset;
         public int ZIndex;
         public ClipRectangle ClipRect;
+        public RectangleF Bounds;
         public UICommandType Type;
         public Brush? Brush;
         public nint TextureId0;
         public nint TextureId1;
-        public long Id;
 
         internal static long id;
 
-        public UIDrawCommand(UIVertex* vertices, uint* indices, uint vertexCount, uint indexCount, uint vertexOffset, uint indexOffset, int zIndex, ClipRectangle clipRect, UICommandType type, Brush? brush, nint textureId0 = 0, nint textureId1 = 0)
+        public UIDrawCommand(UIVertex* vertices, uint* indices, uint vertexCount, uint indexCount, uint vertexOffset, uint indexOffset, int zIndex, ClipRectangle clipRect, RectangleF bounds, UICommandType type, Brush? brush, nint textureId0 = 0, nint textureId1 = 0)
         {
             Vertices = vertices;
             Indices = indices;
@@ -28,6 +31,7 @@
             IndexOffset = indexOffset;
             ZIndex = zIndex;
             ClipRect = clipRect;
+            Bounds = bounds;
             Type = type;
             Brush = brush;
             TextureId0 = textureId0;
@@ -35,12 +39,7 @@
             Id = Interlocked.Increment(ref id);
         }
 
-        public int CompareTo(UIDrawCommand other)
-        {
-            return ZIndex.CompareTo(other.ZIndex);
-        }
-
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"{Id}";
         }

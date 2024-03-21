@@ -21,6 +21,12 @@
 
         public float Y { get; set; }
 
+        public event EventHandler? OnInvalidateVisual;
+
+        public UIWindow()
+        {
+        }
+
         public UIWindow(string title, float width, float height)
         {
             Title = title;
@@ -83,12 +89,6 @@
         {
             e.RoutedEvent = MouseDownEvent;
             mouseFocused?.RouteEvent(e);
-            if (e.Clicks % 2 == 0)
-            {
-                e.RoutedEvent = MouseDoubleClickEvent;
-                e.Handled = false;
-                mouseFocused?.RouteEvent(e);
-            }
         }
 
         private void MainWindowLeave(object? sender, Core.Windows.Events.LeaveEventArgs e)
@@ -179,6 +179,7 @@
 
         public override void InvalidateVisual()
         {
+            OnInvalidateVisual?.Invoke(this, EventArgs.Empty);
         }
 
         ~UIWindow()

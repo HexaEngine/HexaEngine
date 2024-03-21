@@ -25,7 +25,7 @@
 
         private struct LineSpan
         {
-            public TextSpan Text;
+            public TextRange Text;
             public Vector2 Position;
             public Vector2 Size;
 
@@ -40,7 +40,7 @@
                 get => Text[index];
             }
 
-            public LineSpan(TextSpan text, Vector2 position, Vector2 size)
+            public LineSpan(TextRange text, Vector2 position, Vector2 size)
             {
                 Text = text;
                 Position = position;
@@ -174,7 +174,7 @@
             float penX = 0;
             float penY = 0;
 
-            TextSpan span = new(text, 0, 0);
+            TextRange span = new(text, 0, 0);
             uint previous = 0;
             for (int i = 0; i < text.Length; i++)
             {
@@ -258,14 +258,14 @@
             }
         }
 
-        private void AddLine(Vector2 origin, TextSpan span)
+        private void AddLine(Vector2 origin, TextRange span)
         {
             Vector2 size = Font.MeasureSize(span, Format.FontSize, Format.IncrementalTabStop);
             LineSpan line = new(span, origin, size);
             lines.Add(line);
         }
 
-        private bool EmitLine(ref float penX, ref float penY, float lineHeight, ref TextSpan span, int i)
+        private bool EmitLine(ref float penX, ref float penY, float lineHeight, ref TextRange span, int i)
         {
             span.Length = i - span.Start;
             AddLine(new(0, penY), span);

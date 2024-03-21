@@ -162,6 +162,19 @@
             }
             return dp;
         }
+
+        internal static DependencyProperty? GetByName(Type attachedType, string attachedPropertyName)
+        {
+            for (var i = 0; i < properties.Count; i++)
+            {
+                var dp = properties[i];
+                if (dp.OwnerType == attachedType && dp.Name == attachedPropertyName)
+                {
+                    return dp;
+                }
+            }
+            return null;
+        }
     }
 
     public class DependencyProperty<TType> : DependencyProperty

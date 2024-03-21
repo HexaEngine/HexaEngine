@@ -1,25 +1,22 @@
 ﻿namespace HexaEngine.UI.Controls
 {
     using HexaEngine.Core.Input.Events;
-    using HexaEngine.Mathematics;
     using HexaEngine.UI.Graphics;
+    using System.Diagnostics.CodeAnalysis;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Button : ButtonBase
     {
         private Brush? background;
-        private Brush? HighlightBrush;
 
         public Button()
         {
             Focusable = true;
         }
 
-        public override void InitializeComponent()
-        {
-            Background = UIFactory.CreateSolidColorBrush(Colors.White);
-            Border = UIFactory.CreateSolidColorBrush(Colors.DarkGray);
-            HighlightBrush = UIFactory.CreateSolidColorBrush(Colors.LightGray);
-        }
+        public static readonly DependencyProperty<Brush> HighlightBrushProperty = DependencyProperty.Register<Button, Brush>(nameof(HighlightBrush), false, new(Brushes.LightGray));
+
+        public Brush? HighlightBrush { get => GetValue(HighlightBrushProperty); set => SetValue(HighlightBrushProperty, value); }
 
         protected override void OnMouseEnter(MouseEventArgs args)
         {

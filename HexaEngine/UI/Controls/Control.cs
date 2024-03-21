@@ -4,30 +4,50 @@
     using HexaEngine.UI.Graphics;
     using HexaEngine.Mathematics;
     using System.Numerics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Xml.Serialization;
+    using HexaEngine.Core.Windows.Events;
+    using HexaEngine.Core.Input.Events;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Control : FrameworkElement
     {
         private readonly List<TextLayout> layouts = [];
         private TextFactory? textFactory;
-        private Brush? foreground;
 
+        static Control()
+        {
+            MouseDoubleClickEvent.AddClassHandler<Control>((x, args) => x?.OnDoubleClick(args));
+        }
+
+        [XmlIgnore]
         public TextFormat? Format
         {
             get;
             private set;
         }
 
-        public Brush? Foreground
-        {
-            get => foreground;
-            set => foreground = value;
-        }
+        public static readonly DependencyProperty<Brush> ForegroundProperty = DependencyProperty.Register<Control, Brush>(nameof(Foreground), false, new(Brushes.Black));
 
-        public Brush? Background { get; set; }
+        public Brush? Foreground { get => GetValue(ForegroundProperty); set => SetValue(ForegroundProperty, value); }
 
-        public Brush? Border { get; set; }
+        public static readonly DependencyProperty<Brush> BackgroundProperty = DependencyProperty.Register<Control, Brush>(nameof(Background), false, new(Brushes.Transparent));
+
+        public Brush? Background { get => GetValue(BackgroundProperty); set => SetValue(BackgroundProperty, value); }
+
+        public static readonly DependencyProperty<Brush> BorderProperty = DependencyProperty.Register<Control, Brush>(nameof(Border), false, new(Brushes.Transparent));
+
+        public Brush? Border { get => GetValue(BorderProperty); set => SetValue(BorderProperty, value); }
 
         public static readonly DependencyProperty<Thickness> BorderThicknessProperty = DependencyProperty.Register<Control, Thickness>(nameof(BorderThickness), false, new(new Thickness(0)));
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseDoubleClickEvent = EventManager.Register<Control, MouseButtonEventArgs>(nameof(MouseDoubleClick), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseDoubleClick
+        {
+            add => AddHandler(MouseDoubleClickEvent, value);
+            remove => RemoveHandler(MouseDoubleClickEvent, value);
+        }
 
         public Thickness BorderThickness
         {
@@ -159,13 +179,6 @@
             }
         }
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            foreground ??= UIFactory.CreateSolidColorBrush(Colors.Black);
-            Border ??= UIFactory.CreateSolidColorBrush(Colors.Gray);
-        }
-
         internal void CreateTextFormat()
         {
             textFactory ??= UISystem.Current?.TextFactory;
@@ -205,25 +218,24 @@
             commandList.PushClipRect(VisualClip);
             var before = commandList.Transform;
 
+            var transform = Matrix3x2.CreateTranslation(ContentOffset.Translation + new Vector2(BorderThickness.Left, BorderThickness.Top));
+            var border = BorderThickness;
             var bounds = new RectangleF(0, 0, ActualWidth, ActualHeight);
+            var contentBounds = InnerContentBounds;
+            var contentRectSize = contentBounds.Size - border.ToSize();
 
-            if (Background != null)
+            if (border.ToSize() != Vector2.Zero)
             {
+                Brush borderBrush = Border ?? Brushes.Alpha;
                 commandList.Transform = BaseOffset;
-                commandList.FillRect(bounds, Background);
+                commandList.FillRect(new(-border.Left, -border.Top, bounds.Right + border.Right, bounds.Bottom + border.Bottom), borderBrush);
             }
 
-            if (Border != null)
-            {
-                var border = BorderThickness;
-                commandList.Transform = BaseOffset;
-                commandList.DrawLine(Vector2.Zero, new(bounds.Right, 0), Border, border.Top * 2);
-                commandList.DrawLine(Vector2.Zero, new(0, bounds.Bottom), Border, border.Left * 2);
-                commandList.DrawLine(new(0, bounds.Bottom), new(bounds.Right, bounds.Bottom), Border, border.Bottom * 2);
-                commandList.DrawLine(new(bounds.Right, 0), new(bounds.Right, bounds.Bottom), Border, border.Right * 2);
-            }
+            commandList.Transform = transform;
+            Brush backgroundBrush = Background ?? Brushes.Alpha;
+            commandList.FillRect(new(0, 0, contentRectSize.X, contentRectSize.Y), backgroundBrush);
 
-            commandList.Transform = Matrix3x2.CreateTranslation(ContentOffset.Translation + new Vector2(BorderThickness.Left, BorderThickness.Top));
+            commandList.Transform = transform;
             OnRender(commandList);
             commandList.Transform = before;
             commandList.PopClipRect();
@@ -258,6 +270,20 @@
             Format.WordWrapping = WordWrapping;
             Format.ParagraphAlignment = ParagraphAlignment;
             Format.TextAlignment = TextAlignment;
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs args)
+        {
+            if (args.Clicks % 2 == 0)
+            {
+                args.RoutedEvent = MouseDoubleClickEvent;
+                args.Handled = false;
+                RouteEvent(args);
+            }
+        }
+
+        protected virtual void OnDoubleClick(MouseButtonEventArgs args)
+        {
         }
     }
 }

@@ -39,11 +39,6 @@
             base.Uninitialize();
         }
 
-        protected override void OnRender(UICommandList commandList)
-        {
-            Children.ForEach(child => child.Render(commandList));
-        }
-
         protected override Vector2 ArrangeOverwrite(Vector2 size)
         {
             Vector2 origin = ContentOffset.Translation;

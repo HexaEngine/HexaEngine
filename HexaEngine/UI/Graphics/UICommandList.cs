@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public static class SortingAlgorithms
@@ -226,7 +227,7 @@
     {
         private UnsafeList<UIVertex> vertices = new();
         private UnsafeList<uint> indices = new();
-        private List<UIDrawCommand> commands = new();
+        private readonly List<UIDrawCommand> commands = new();
         private readonly Stack<Matrix3x2> transformStack = new();
         private readonly Stack<ClipRectangle> clipRectStack = new();
 
@@ -362,16 +363,21 @@
 
         public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, Brush? brush = null, nint textureId0 = 0, nint textureId1 = 0)
         {
-            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, zIndex: zIndex, clipRect, commandType, brush, textureId0, textureId1);
-            commands.Add(cmd);
-
-            if (transformGlobal != Matrix3x2.Identity)
+            Vector2 min = new(float.MaxValue);
+            Vector2 max = new(float.MinValue);
+            for (uint i = 0; i < vertexCountSinceLast; i++)
             {
-                for (uint i = 0; i < vertexCountSinceLast; i++)
-                {
-                    vertices.Data[vertexCountOffset + i].Position = Vector2.Transform(vertices[vertexCountOffset + i].Position, transformGlobal);
-                }
+                Vector2* v = &vertices.Data[vertexCountOffset + i].Position;
+                Vector2 ve = Vector2.Transform(*v, transformGlobal);
+                min = Vector2.Min(min, ve);
+                max = Vector2.Max(max, ve);
+                *v = ve;
             }
+
+            RectangleF bounds = new(min.X, min.Y, max.X, max.Y);
+
+            UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, zIndex: zIndex, clipRect, bounds, commandType, brush, textureId0, textureId1);
+            commands.Add(cmd);
 
             vertexCountOffset = vertices.Size;
             indexCountOffset = indices.Size;
