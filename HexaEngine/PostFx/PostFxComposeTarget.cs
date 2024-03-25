@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.Mathematics;
     using System;
     using System.ComponentModel;
@@ -16,6 +17,7 @@
             Flags &= ~PostFxFlags.Compose;
             Flags |= PostFxFlags.ComposeTarget;
             Name = $"{parent.Name}.Compose";
+            DisplayName = new(Name);
         }
 
         public string Name { get; }
@@ -27,6 +29,8 @@
         public bool Enabled { get => parent.Enabled; set => parent.Enabled = value; }
 
         public PostFxColorSpace ColorSpace => parent.ColorSpace;
+
+        public ImGuiName DisplayName { get; }
 
         public event Action<IPostFx, bool>? OnEnabledChanged
         {

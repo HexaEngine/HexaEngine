@@ -131,7 +131,7 @@
             }
         }
 
-        public void RouteEvent(RoutedEventArgs args)
+        public void RaiseEvent(RoutedEventArgs args)
         {
             if (args.RoutedEvent == null)
             {

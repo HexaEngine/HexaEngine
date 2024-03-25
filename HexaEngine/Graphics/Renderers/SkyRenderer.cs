@@ -104,7 +104,7 @@
 
         public void Draw(IGraphicsContext context, SkyType type)
         {
-            WeatherManager.Current.SkyModel = type;
+            WeatherSystem.Current.SkyModel = type;
 
             switch (type)
             {

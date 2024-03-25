@@ -3,7 +3,7 @@
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
 
-    public class AudioSystem : ISystem
+    public class AudioSystem : ISceneSystem
     {
         private readonly ComponentTypeQuery<IAudioComponent> components = new();
 

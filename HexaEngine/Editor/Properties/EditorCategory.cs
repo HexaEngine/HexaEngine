@@ -108,6 +108,28 @@
             }
         }
 
+        public static unsafe void StyleTreeNode(bool always = false)
+        {
+            var hovered = ImGui.IsItemHovered(ImGuiHoveredFlags.None);
+            var active = ImGui.IsItemActive();
+
+            Vector4 col = *ImGui.GetStyleColorVec4(ImGuiCol.Header);
+            if (hovered)
+            {
+                col = *ImGui.GetStyleColorVec4(ImGuiCol.HeaderHovered);
+            }
+            if (active)
+            {
+                col = *ImGui.GetStyleColorVec4(ImGuiCol.HeaderActive);
+            }
+
+            if (always || hovered || active)
+            {
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.ColorConvertFloat4ToU32(col));
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(col));
+            }
+        }
+
         private bool IsVisible(object instance)
         {
             bool visible = true;

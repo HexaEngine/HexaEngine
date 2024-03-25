@@ -287,7 +287,7 @@
 
         public unsafe void Simulate(IGraphicsContext context, IShaderResourceView depthSRV)
         {
-            var wind = WeatherManager.Current?.WindDirection ?? Vector2.Zero;
+            var wind = WeatherSystem.Current?.WindDirection ?? Vector2.Zero;
             SimulationCBuffer simulationData = default;
             simulationData.WindDirectionX = wind.X;
             simulationData.WindDirectionY = wind.Y;

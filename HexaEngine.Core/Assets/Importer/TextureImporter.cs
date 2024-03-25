@@ -249,7 +249,7 @@
                     {
                         try
                         {
-                            SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                            SwapImage(ref image, image.Compress(settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
                         }
                         catch (Exception ex)
                         {

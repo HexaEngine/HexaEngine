@@ -1,8 +1,11 @@
 ﻿namespace HexaEngine.Editor.Properties
 {
+    using HexaEngine.Editor.Attributes;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
+    using System.Xml.Linq;
 
     /// <summary>
     /// Factory class responsible for creating and managing object editors.
@@ -99,6 +102,47 @@
         public static IObjectEditor CreateEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>()
         {
             return CreateEditor(typeof(T));
+        }
+
+        private static readonly EditorPropertyAttribute dummy = new(null, EditorPropertyMode.Default);
+
+        public static IPropertyEditor? CreatePropertyEditor(PropertyInfo property)
+        {
+            dummy.Name = null;
+            var nameAttr = property.GetCustomAttribute<EditorPropertyAttribute>() ?? dummy;
+
+            if (string.IsNullOrEmpty(nameAttr.Name))
+            {
+                nameAttr.Name = property.Name;
+            }
+
+            for (int i = 0; i < factories.Count; i++)
+            {
+                if (factories[i].TryCreate(property, nameAttr, out var editor))
+                {
+                    return editor;
+                }
+            }
+
+            return null;
+        }
+
+        public static IPropertyEditor? CreatePropertyEditor(PropertyInfo property, EditorPropertyAttribute nameAttr)
+        {
+            if (string.IsNullOrEmpty(nameAttr.Name))
+            {
+                nameAttr.Name = property.Name;
+            }
+
+            for (int i = 0; i < factories.Count; i++)
+            {
+                if (factories[i].TryCreate(property, nameAttr, out var editor))
+                {
+                    return editor;
+                }
+            }
+
+            return null;
         }
     }
 }

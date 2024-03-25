@@ -5,7 +5,7 @@
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;
 
-    public class UISystem : ISystem
+    public class UISystem : ISceneSystem
     {
         private TextFactory textFactory;
         private readonly UICommandList commandList = new();

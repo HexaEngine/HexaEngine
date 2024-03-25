@@ -34,6 +34,19 @@
         /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name and mode.
         /// </summary>
         /// <param name="name">The name of the property.</param>
+        /// <param name="defaultValue">The default value of the property.</param>
+        /// <param name="mode">The editor property mode.</param>
+        public EditorPropertyAttribute(string name, object? defaultValue, EditorPropertyMode mode = EditorPropertyMode.Default)
+        {
+            Name = name;
+            DefaultValue = defaultValue;
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name and mode.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
         /// <param name="assetType">The asset type.</param>
         /// <param name="mode">The editor property mode.</param>
         public EditorPropertyAttribute(string name, AssetType assetType, EditorPropertyMode mode = EditorPropertyMode.Default)
@@ -76,6 +89,23 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, enum values, enum names, and mode for enum property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="defaultValue">The default value of the property.</param>
+        /// <param name="enumValues">The values of the enum property.</param>
+        /// <param name="enumNames">The names of the enum values.</param>
+        /// <param name="mode">The editor property mode for enum property.</param>
+        public EditorPropertyAttribute(string name, object? defaultValue, object[] enumValues, string[] enumNames, EditorPropertyMode mode = EditorPropertyMode.Enum)
+        {
+            Name = name;
+            DefaultValue = defaultValue;
+            EnumValues = enumValues;
+            EnumNames = enumNames;
+            Mode = mode;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, min, max, and mode for slider property.
         /// </summary>
         /// <param name="name">The name of the property.</param>
@@ -85,6 +115,23 @@
         public EditorPropertyAttribute(string name, object min, object max, EditorPropertyMode mode = EditorPropertyMode.Slider)
         {
             Name = name;
+            Mode = mode;
+            Min = min;
+            Max = max;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, min, max, and mode for slider property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="defaultValue">The default value of the property.</param>
+        /// <param name="min">The minimum value for the slider property.</param>
+        /// <param name="max">The maximum value for the slider property.</param>
+        /// <param name="mode">The editor property mode for slider property.</param>
+        public EditorPropertyAttribute(string name, object? defaultValue, object min, object max, EditorPropertyMode mode = EditorPropertyMode.Slider)
+        {
+            Name = name;
+            DefaultValue = defaultValue;
             Mode = mode;
             Min = min;
             Max = max;
@@ -108,9 +155,33 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, target type, types, type names, and mode for type selector property.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="defaultValue">The default value of the property.</param>
+        /// <param name="target">The target type for the type selector property.</param>
+        /// <param name="types">The types available in the type selector property.</param>
+        /// <param name="typeNames">The names of the available types.</param>
+        /// <param name="mode">The editor property mode for type selector property.</param>
+        public EditorPropertyAttribute(string name, object? defaultValue, Type target, Type[] types, string[] typeNames, EditorPropertyMode mode = EditorPropertyMode.TypeSelector)
+        {
+            Name = name;
+            DefaultValue = defaultValue;
+            TargetType = target;
+            Types = types;
+            TypeNames = typeNames;
+            Mode = mode;
+        }
+
+        /// <summary>
         /// Gets or sets the name of the property.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        ///  Gets or sets the default value of the property.
+        /// </summary>
+        public object? DefaultValue { get; set; }
 
         /// <summary>
         /// Gets the editor property mode.
@@ -185,6 +256,20 @@
         /// <param name="name">The name of the property.</param>
         public EditorPropertyAttribute(string name) :
             base(name,
+                Enum.GetValues<T>().Cast<object>().ToArray(),
+                Enum.GetNames<T>(),
+                EditorPropertyMode.Enum)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorPropertyAttribute{T}"/> class with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="defaultValue">The default value of the property.</param>
+        public EditorPropertyAttribute(string name, T defaultValue) :
+            base(name,
+                defaultValue,
                 Enum.GetValues<T>().Cast<object>().ToArray(),
                 Enum.GetNames<T>(),
                 EditorPropertyMode.Enum)

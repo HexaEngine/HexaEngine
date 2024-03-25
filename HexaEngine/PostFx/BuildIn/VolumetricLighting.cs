@@ -24,7 +24,7 @@
         private ISamplerState shadowSampler;
 
         private ResourceRef<Texture2D> buffer;
-
+        private PostFxGraphResourceBuilder creator;
         private ResourceRef<ShadowAtlas> shadowAtlas;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<DepthMipChain> depthChain;
@@ -170,6 +170,7 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
+            this.creator = creator;
             shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             depthChain = creator.GetDepthMipChain("HiZBuffer");
@@ -311,6 +312,7 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
+            creator.DisposeResource("VOLUMETRIC_LIGHTNING_BUFFER");
             pipeline.Dispose();
             blurPipeline.Dispose();
             blurParams.Dispose();

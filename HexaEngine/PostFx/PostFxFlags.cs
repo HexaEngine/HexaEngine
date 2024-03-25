@@ -49,5 +49,10 @@
         /// Do not use or else the effect will be treated as composition target.
         /// </summary>
         ComposeTarget = 128,
+
+        /// <summary>
+        /// The effect is always enabled and cannot be disabled.
+        /// </summary>
+        AlwaysEnabled = 256,
     }
 }

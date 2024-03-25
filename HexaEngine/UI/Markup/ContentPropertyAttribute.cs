@@ -3,13 +3,29 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class ContentPropertyAttribute : Attribute
+    public sealed class ContentPropertyAttribute : Attribute
     {
-        public ContentPropertyAttribute(string property)
+        public ContentPropertyAttribute(string name)
         {
-            Property = property;
+            Name = name;
         }
 
-        public string Property { get; set; }
+        public string Name { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
+    public sealed class LocalizabilityAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public sealed class UsableDuringInitializationAttribute : Attribute
+    {
+        public UsableDuringInitializationAttribute(bool usable)
+        {
+            Usable = usable;
+        }
+
+        public bool Usable { get; }
     }
 }

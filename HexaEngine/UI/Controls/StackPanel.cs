@@ -47,7 +47,8 @@
             for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                Vector2 desiredSize = child.DesiredSize;
+                Vector2 desiredSize = Vector2.Min(child.DesiredSize, size);
+
                 Vector2 childOrigin;
                 if (Direction == StackPanelDirection.Vertical)
                 {
@@ -87,6 +88,8 @@
                     size.Y = MathF.Max(size.Y, desiredSize.Y);
                 }
             }
+
+            size = Vector2.Min(size, availableSize);
 
             return size;
         }

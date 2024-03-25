@@ -10,14 +10,44 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
-    public class MaterialManager
+    public class MaterialManager : IDisposable
     {
         private readonly List<MaterialFile> materials = [];
         private readonly Dictionary<Guid, MaterialFile> guidToMaterial = [];
         private readonly object _lock = new();
+        private bool disposedValue;
 
         public MaterialManager(string? path)
         {
+            if (path == null)
+            {
+                return;
+            }
+
+            foreach (var asset in ArtifactDatabase.GetArtifactsFromType(AssetType.Material))
+            {
+                Stream? stream = null;
+
+                try
+                {
+                    stream = asset.OpenRead();
+                    MaterialFile material = MaterialFile.Read(stream);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    Logger.Error($"Failed to load material file, {asset.Path}");
+                }
+                finally
+                {
+                    stream?.Dispose();
+                }
+            }
+        }
+
+        public MaterialManager(Scene scene)
+        {
+            var path = scene.Path;
             if (path == null)
             {
                 return;
@@ -147,6 +177,32 @@
             }
 
             return MaterialData.Empty;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                lock (_lock)
+                {
+                    materials.Clear();
+                    guidToMaterial.Clear();
+                }
+                disposedValue = true;
+            }
+        }
+
+        ~MaterialManager()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
 
-    public interface ISystem : IHasFlags<SystemFlags>
+    public interface ISceneSystem : IHasFlags<SystemFlags>
     {
         public string Name { get; }
 

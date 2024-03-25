@@ -2,11 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using System.Numerics;
 
     /// <summary>
     /// A post-processing effect simulating chromatic aberration.
     /// </summary>
+    [EditorDisplayName("Chromatic Aberration")]
     public class ChromaticAberration : PostFxBase
     {
 #nullable disable
@@ -40,6 +42,8 @@
         /// <summary>
         /// Gets or sets the intensity of the chromatic aberration effect.
         /// </summary>
+        [EditorProperty("Intensity", 1)]
+        [Tooltip("(Default: 1) Determines the intensity of the chromatic aberration effect")]
         public float Intensity
         {
             get => intensity;

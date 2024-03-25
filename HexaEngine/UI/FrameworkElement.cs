@@ -8,9 +8,6 @@
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class FrameworkElement : UIElement
     {
-        private Matrix3x2 baseOffset;
-        private Matrix3x2 contentOffset;
-
         public static readonly DependencyProperty<float> ActualWidthProperty = DependencyProperty.Register<FrameworkElement, float>(nameof(ActualWidth), false, new FrameworkMetadata(0f));
 
         public static readonly DependencyProperty<float> ActualHeightProperty = DependencyProperty.Register<FrameworkElement, float>(nameof(ActualHeight), false, new FrameworkMetadata(0f));
@@ -27,13 +24,13 @@
             private set => SetValue(ActualHeightProperty, value);
         }
 
-        public Matrix3x2 BaseOffset => baseOffset;
-
-        public Matrix3x2 ContentOffset => contentOffset;
-
         public static readonly DependencyProperty<object> DataContextProperty = DependencyProperty.Register<FrameworkElement, object>(nameof(DataContext), false, new FrameworkMetadata(null));
 
         public object? DataContext { get => GetValue(DataContextProperty); set => SetValue(DataContextProperty, value); }
+
+        public static readonly DependencyProperty<Style> StyleProperty = DependencyProperty.Register<FrameworkElement, Style>(nameof(Style), false, new FrameworkMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+
+        public Style? Style { get => GetValue(StyleProperty); set => SetValue(StyleProperty, value); }
 
         public override void Render(UICommandList commandList)
         {
@@ -57,8 +54,8 @@
 
             var horizontalAlign = HorizontalAlignment;
             var verticalAlign = VerticalAlignment;
-            var marginSize = Margin.ToSize();
-            var paddingSize = Padding.ToSize();
+            var marginSize = Margin.Size;
+            var paddingSize = Padding.Size;
 
             if (!float.IsNaN(width))
             {
@@ -70,25 +67,27 @@
                 availableSize.Y = height;
             }
 
-            if (minWidth != 0)
+            if (minWidth == 0)
             {
-                availableSize.X = Math.Max(availableSize.X, minWidth);
+                minWidth = float.MinValue;
             }
 
-            if (minHeight != 0)
+            if (minHeight == 0)
             {
-                availableSize.Y = Math.Max(availableSize.Y, minHeight);
+                minHeight = float.MinValue;
             }
 
-            if (maxWidth != 0)
+            if (maxWidth == 0)
             {
-                availableSize.X = Math.Min(availableSize.X, maxWidth);
+                maxWidth = float.MaxValue;
             }
 
-            if (maxHeight != 0)
+            if (maxHeight == 0)
             {
-                availableSize.Y = Math.Min(availableSize.Y, maxHeight);
+                maxHeight = float.MaxValue;
             }
+
+            availableSize = Vector2.Clamp(availableSize, new(minWidth, minHeight), new(maxWidth, maxHeight));
 
             Vector2 actualAvailableSize = availableSize;
 
@@ -119,25 +118,7 @@
                 desiredSize.Y = height;
             }
 
-            if (minWidth != 0)
-            {
-                availableSize.X = Math.Max(availableSize.X, minWidth);
-            }
-
-            if (minHeight != 0)
-            {
-                availableSize.Y = Math.Max(availableSize.Y, minHeight);
-            }
-
-            if (maxWidth != 0)
-            {
-                availableSize.X = Math.Min(availableSize.X, maxWidth);
-            }
-
-            if (maxHeight != 0)
-            {
-                availableSize.Y = Math.Min(availableSize.Y, maxHeight);
-            }
+            desiredSize = Vector2.Clamp(desiredSize, new(minWidth, minHeight), new(maxWidth, maxHeight));
 
             return desiredSize;
         }
@@ -215,7 +196,7 @@
             position += origin;
             positionExtend += origin + desiredSize;
 
-            Vector2 size = new(positionExtend.X - position.X, positionExtend.Y - position.Y);
+            Vector2 size = positionExtend - position;
             size = ArrangeOverwrite(size);
 
             positionExtend = position + size;
@@ -233,8 +214,8 @@
             RenderSize = size;
             BoundingBox = VisualClip = new RectangleF(position, size);
             InnerContentBounds = new RectangleF(contentPosition, contentSize);
-            baseOffset = Matrix3x2.CreateTranslation(position);
-            contentOffset = Matrix3x2.CreateTranslation(contentPosition);
+            BaseOffset = Matrix3x2.CreateTranslation(position);
+            ContentOffset = Matrix3x2.CreateTranslation(contentPosition);
         }
 
         protected virtual Vector2 ArrangeOverwrite(Vector2 size)

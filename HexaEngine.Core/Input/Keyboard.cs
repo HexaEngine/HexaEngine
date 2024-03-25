@@ -4,6 +4,7 @@
     using Silk.NET.SDL;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -17,9 +18,10 @@
 
         private static readonly Key[] keys = Enum.GetValues<Key>();
         private static readonly string[] keyNames = new string[keys.Length];
-        private static readonly Dictionary<Key, KeyState> states = new();
+        private static readonly Dictionary<Key, KeyState> states = [];
         private static readonly KeyboardEventArgs keyboardEventArgs = new();
-        private static readonly TextInputEventArgs keyboardCharEventArgs = new();
+        private static readonly TextInputEventArgs keyboardTextInputEventArgs = new();
+        private static readonly TextEditingEventArgs keyboardTextEditingEventArgs = new();
 
         /// <summary>
         /// Gets a read-only list of available keyboard keys.
@@ -81,15 +83,37 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnTextInput(TextInputEvent textInputEvent)
+        internal static unsafe void OnTextInput(TextInputEvent textInputEvent)
         {
-            keyboardCharEventArgs.Timestamp = textInputEvent.Timestamp;
-            keyboardCharEventArgs.Handled = false;
-            unsafe
-            {
-                keyboardCharEventArgs.Char = *(char*)textInputEvent.Text;
-            }
-            TextInput?.Invoke(null, keyboardCharEventArgs);
+            keyboardTextInputEventArgs.Timestamp = textInputEvent.Timestamp;
+            keyboardTextInputEventArgs.Handled = false;
+            keyboardTextInputEventArgs.Text = textInputEvent.Text;
+            TextInput?.Invoke(null, keyboardTextInputEventArgs);
+            Debug.WriteLine($"TextInputEvent {ToStringFromUTF8(textInputEvent.Text)}");
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe void OnTextEditing(TextEditingEvent textInputEvent)
+        {
+            keyboardTextEditingEventArgs.Timestamp = textInputEvent.Timestamp;
+            keyboardTextEditingEventArgs.Handled = false;
+            keyboardTextEditingEventArgs.Text = textInputEvent.Text;
+            keyboardTextEditingEventArgs.Start = textInputEvent.Start;
+            keyboardTextEditingEventArgs.Length = textInputEvent.Length;
+            TextEditing?.Invoke(null, keyboardTextEditingEventArgs);
+            Debug.WriteLine($"TextEditingEvent {ToStringFromUTF8(textInputEvent.Text)}, {textInputEvent.Start}, {textInputEvent.Length}");
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe void OnTextEditing(TextEditingExtEvent textInputEvent)
+        {
+            keyboardTextEditingEventArgs.Timestamp = textInputEvent.Timestamp;
+            keyboardTextEditingEventArgs.Handled = false;
+            keyboardTextEditingEventArgs.Text = textInputEvent.Text;
+            keyboardTextEditingEventArgs.Start = textInputEvent.Start;
+            keyboardTextEditingEventArgs.Length = textInputEvent.Length;
+            TextEditing?.Invoke(null, keyboardTextEditingEventArgs);
+            Debug.WriteLine($"TextEditingExtEvent {ToStringFromUTF8(textInputEvent.Text)}, {textInputEvent.Start}, {textInputEvent.Length}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -108,9 +132,14 @@
         public static event EventHandler<KeyboardEventArgs>? KeyUp;
 
         /// <summary>
-        /// Event raised when text input is received from the keyboard.
+        /// Event raised when text input is received from the keyboard. (non-IME)
         /// </summary>
         public static event EventHandler<TextInputEventArgs>? TextInput;
+
+        /// <summary>
+        /// Event raised when text input is received from the keyboard. (IME)
+        /// </summary>
+        public static event EventHandler<TextEditingEventArgs>? TextEditing;
 
         /// <summary>
         /// Checks if a specific key is in the "up" state.

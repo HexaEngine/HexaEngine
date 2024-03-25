@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
@@ -12,6 +14,7 @@
     /// <summary>
     /// A post-processing effect for simulating bloom.
     /// </summary>
+    [EditorDisplayName("Bloom")]
     public class Bloom : PostFxBase
     {
 #nullable disable
@@ -37,11 +40,13 @@
 
         private Texture2D? lensDirtTex;
 
+        private BloomQualityPreset quality = BloomQualityPreset.High;
+        private int passes = 8;
         private float filterRadius = 0.003f;
         private float bloomIntensity = 0.04f;
-        private float bloomThreshold = 0.9f;
+        private float bloomThreshold = 0.0f;
         private float lensDirtIntensity = 1.0f;
-        private string lensDirtTexPath = string.Empty;
+        private AssetRef lensDirtAsset;
 
         private int width;
         private int height;
@@ -55,9 +60,48 @@
         /// <inheritdoc/>
         public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
+        public enum BloomQualityPreset
+        {
+            Custom = -1,
+            Low = 0,
+            Medium = 1,
+            High = 2,
+            Ultra = 3,
+        }
+
+        [EditorProperty<BloomQualityPreset>("Bloom Quality", BloomQualityPreset.High)]
+        [Tooltip("Determines the quality of the bloom effect.")]
+        public BloomQualityPreset Quality
+        {
+            get => quality;
+            set => quality = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the number of passes for the bloom effect.
+        /// </summary>
+        [EditorProperty("Bloom Passes", 8)]
+        [Tooltip("(Default: 8) Determines the number of passes for the bloom effect. Only has a effect if quality preset is set to custom, pass count will be clamped to current display size.")]
+        public int Passes
+        {
+            get => passes;
+            set
+            {
+                if (passes == value)
+                    return;
+                NotifyPropertyChangedAndSet(ref passes, value);
+                if (quality == BloomQualityPreset.Custom)
+                {
+                    NotifyReload();
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets the filter radius for bloom.
         /// </summary>
+        [EditorProperty("Filter Radius", 0.003f)]
+        [Tooltip("(Default: 0.003) Determines the filter radius for the bloom effect.")]
         public float FilterRadius
         {
             get => filterRadius;
@@ -67,6 +111,8 @@
         /// <summary>
         /// Gets or sets the intensity of the bloom effect.
         /// </summary>
+        [EditorProperty("Bloom Intensity", 0.04f)]
+        [Tooltip("(Default: 0.04) Determines the intensity of the bloom effect.")]
         public float BloomIntensity
         {
             get => bloomIntensity;
@@ -76,6 +122,8 @@
         /// <summary>
         /// Gets or sets the threshold for triggering the bloom effect.
         /// </summary>
+        [EditorProperty("Bloom Threshold", 0.0f)]
+        [Tooltip("(Default: 0.0) Determines the threshold for triggering the bloom effect.")]
         public float BloomThreshold
         {
             get => bloomThreshold;
@@ -85,6 +133,8 @@
         /// <summary>
         /// Gets or sets the intensity of the lens dirt effect.
         /// </summary>
+        [EditorProperty("Dirt Mask Intensity", 1.0f)]
+        [Tooltip("(Default: 1.0) Determines the intensity of the lens dirt effect.")]
         public float LensDirtIntensity
         {
             get => lensDirtIntensity;
@@ -94,10 +144,12 @@
         /// <summary>
         /// Gets or sets the file path for the lens dirt texture.
         /// </summary>
-        public string LensDirtTexPath
+        [EditorProperty("Dirt Mask Texture", AssetType.Texture2D)]
+        [Tooltip("Determines the file path for the lens dirt texture.")]
+        public AssetRef DirtMaskAsset
         {
-            get => lensDirtTexPath;
-            set => NotifyPropertyChangedAndSetAndReload(ref lensDirtTexPath, value ?? string.Empty);
+            get => lensDirtAsset;
+            set => NotifyPropertyChangedAndSetAndReload(ref lensDirtAsset, value);
         }
 
         #region Structs
@@ -172,16 +224,13 @@
 
             List<ShaderMacro> shaderMacros = new(macros);
 
-            if (!string.IsNullOrEmpty(lensDirtTexPath))
+            if (lensDirtAsset.Exists())
             {
                 try
                 {
-                    lensDirtTex = Texture2D.LoadFromAssets(device, lensDirtTexPath);
+                    lensDirtTex = Texture2D.LoadFromAssets(device, lensDirtAsset);
                     lensDirtTex.TextureReloaded += TextureReloaded;
-                    if (lensDirtTex.Exists)
-                    {
-                        shaderMacros.Add(new ShaderMacro("LensDirtTex", "1"));
-                    }
+                    shaderMacros.Add(new ShaderMacro("LensDirtTex", "1"));
                 }
                 catch (Exception ex)
                 {

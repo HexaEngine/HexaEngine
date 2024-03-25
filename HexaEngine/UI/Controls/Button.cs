@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.UI.Controls
 {
     using HexaEngine.Core.Input.Events;
+    using HexaEngine.UI.Controls.Primitives;
     using HexaEngine.UI.Graphics;
     using System.Diagnostics.CodeAnalysis;
 

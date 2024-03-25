@@ -75,6 +75,9 @@
 		<None Update="assets\shared\icons\dark\image.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\icons\dark\logo.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\icons\dark\material.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -107,6 +110,9 @@
 		</None>
 		<None Update="assets\shared\icons\light\light.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\logo.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\light\material.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

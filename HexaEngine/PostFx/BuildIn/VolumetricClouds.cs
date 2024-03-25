@@ -85,7 +85,7 @@
 
         public override unsafe void Draw(IGraphicsContext context)
         {
-            if (Output == null || WeatherManager.Current == null)
+            if (Output == null || WeatherSystem.Current == null)
             {
                 return;
             }

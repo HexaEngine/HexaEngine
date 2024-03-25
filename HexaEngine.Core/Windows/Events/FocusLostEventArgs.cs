@@ -6,5 +6,12 @@
     public class FocusLostEventArgs : RoutedEventArgs
     {
         // No additional members or properties in this class
+        public FocusLostEventArgs()
+        {
+        }
+
+        public FocusLostEventArgs(RoutedEvent routedEvent) : base(routedEvent)
+        {
+        }
     }
 }

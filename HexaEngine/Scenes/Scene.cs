@@ -2,52 +2,66 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Physics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
-    using HexaEngine.Scenes.Systems;
     using HexaEngine.Weather;
+    using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Text;
 
     public class Scene
     {
-        private readonly FlaggedList<SystemFlags, ISystem> systems = new();
-        private readonly List<GameObject> nodes = new();
-        private readonly List<Camera> cameras = new();
-        private readonly List<string> cameraNames = new();
-        private ScriptManager scriptManager;
-        private ModelManager meshManager;
-        private LightManager lightManager;
-        private RenderManager renderManager;
-        private AnimationManager animationManager;
-        private MaterialManager materialManager;
-        private WeatherManager weatherManager;
-        private ObjectPickerManager objectPickerManager;
-        private DrawLayerManager drawLayerManager;
-        private QueryManager queryManager;
+        private readonly FlaggedList<SystemFlags, ISceneSystem> systems = [];
+        private readonly List<GameObject> nodes = [];
+        private readonly CameraContainer cameraContainer = new();
+
+        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceCollection services;
 
         private readonly SemaphoreSlim semaphore = new(1);
-        private string? path;
 
         private readonly GameObject root;
+        private readonly SceneInitFlags initFlags;
 
-        public int ActiveCamera;
+        private string? path;
+        private SceneFlags flags;
 
         public Scene()
         {
             Name = "Scene";
             root = new SceneRootNode(this);
+
+            services = SceneSystemRegistry.GetServices(this);
+            serviceProvider = services.BuildServiceProvider();
+        }
+
+        public Scene(SceneInitFlags flags)
+        {
+            Name = "Scene";
+            root = new SceneRootNode(this);
+
+            services = SceneSystemRegistry.GetServices(this);
+            serviceProvider = services.BuildServiceProvider();
+            initFlags = flags;
+        }
+
+        public Scene(IServiceCollection services, SceneInitFlags flags)
+        {
+            Name = "Scene";
+            root = new SceneRootNode(this);
+
+            this.services = services;
+            serviceProvider = services.BuildServiceProvider();
+            initFlags = flags;
         }
 
         public string Name { get; }
@@ -56,51 +70,102 @@
         public string? Path { get => path; set => path = value; }
 
         [JsonIgnore]
+        public bool Initialized
+        {
+            get => (flags & SceneFlags.Initialized) != 0;
+        }
+
+        [JsonIgnore]
+        public bool Valid
+        {
+            get => (flags & SceneFlags.Valid) != 0;
+        }
+
+        [JsonIgnore]
+        public bool Loaded
+        {
+            get => (flags & SceneFlags.Loaded) != 0;
+        }
+
+        public bool IsSimulating
+        {
+            get => (flags & SceneFlags.Simulating) != 0;
+            set
+            {
+                if (value)
+                {
+                    flags |= SceneFlags.Simulating;
+                }
+                else
+                {
+                    flags &= ~SceneFlags.Simulating;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public bool UnsavedChanged
+        {
+            get => (flags & SceneFlags.UnsavedChanges) != 0;
+            set
+            {
+                if (value)
+                {
+                    flags |= SceneFlags.UnsavedChanges;
+                }
+                else
+                {
+                    flags &= ~SceneFlags.UnsavedChanges;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public SceneFlags Flags => flags;
+
+        [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
-        [JsonIgnore]
-        public List<Camera> Cameras => cameras;
+        public CameraContainer Cameras { get => cameraContainer; }
 
         [JsonIgnore]
-        public string[] CameraNames => cameraNames.GetInternalArray();
-
-        [JsonIgnore]
-        public LightManager LightManager => lightManager;
+        public LightManager LightManager => GetRequiredService<LightManager>();
 
         [JsonIgnore]
         public List<GameObject> GameObjects => nodes;
 
         [JsonIgnore]
-        public Camera? CurrentCamera => ActiveCamera >= 0 && ActiveCamera < cameras.Count ? cameras[ActiveCamera] : null;
+        public Camera? CurrentCamera => cameraContainer.ActiveCamera;
 
         [JsonIgnore]
-        public ScriptManager Scripts => scriptManager;
+        public ScriptManager Scripts => GetRequiredService<ScriptManager>();
 
         [JsonIgnore]
-        public RenderManager RenderManager => renderManager;
+        public RenderManager RenderManager => GetRequiredService<RenderManager>();
 
         [JsonIgnore]
-        public MaterialManager MaterialManager => materialManager;
+        public MaterialManager MaterialManager => GetRequiredService<MaterialManager>();
 
         [JsonIgnore]
-        public WeatherManager WeatherManager => weatherManager;
+        public WeatherSystem WeatherManager => GetRequiredService<WeatherSystem>();
 
         [JsonIgnore]
-        public FlaggedList<SystemFlags, ISystem> Systems => systems;
+        public FlaggedList<SystemFlags, ISceneSystem> Systems => systems;
 
         [JsonIgnore]
-        public ModelManager ModelManager { get => meshManager; set => meshManager = value; }
+        public ModelManager ModelManager => GetRequiredService<ModelManager>();
 
         [JsonIgnore]
-        public AnimationManager AnimationManager { get => animationManager; set => animationManager = value; }
+        public AnimationManager AnimationManager => GetRequiredService<AnimationManager>();
 
         [JsonIgnore]
-        public QueryManager QueryManager { get => queryManager; set => queryManager = value; }
+        public QuerySystem QueryManager => GetRequiredService<QuerySystem>();
 
         [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
 
-        public DrawLayerManager DrawLayerManager { get => drawLayerManager; set => drawLayerManager = value; }
+        [JsonIgnore]
+        public DrawLayerManager DrawLayerManager => serviceProvider.GetRequiredService<DrawLayerManager>();
 
         public SceneVariables Variables { get; } = [];
 
@@ -110,31 +175,12 @@
 
         public GameObject Root => root;
 
-        public bool IsSimulating;
-
-        public void Initialize(IGraphicsDevice device)
+        public void Initialize()
         {
-            queryManager = new(this);
-            scriptManager = new();
-            meshManager = new();
-            lightManager = new(device);
-            renderManager = new(device, lightManager);
-            animationManager = new();
-            materialManager = new(path);
-            weatherManager = new();
-            objectPickerManager = new();
-            drawLayerManager = new();
-
-            systems.Add(new AudioSystem());
-            systems.Add(new AnimationSystem(this));
-            systems.Add(scriptManager);
-            systems.Add(lightManager);
-            systems.Add(new PhysicsSystem());
-            systems.Add(new TransformSystem());
-            systems.Add(renderManager);
-            systems.Add(weatherManager);
-            systems.Add(objectPickerManager);
-            systems.Add(new LODSystem());
+            foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
+            {
+                systems.Add(service);
+            }
 
             semaphore.Wait();
 
@@ -149,31 +195,16 @@
             {
                 awake[i].Awake(this);
             }
+
+            flags |= SceneFlags.Initialized;
         }
 
-        public async Task InitializeAsync(IGraphicsDevice device)
+        public async Task InitializeAsync()
         {
-            queryManager = new(this);
-            scriptManager = new();
-            meshManager = new();
-            lightManager = new(device);
-            renderManager = new(device, lightManager);
-            animationManager = new();
-            materialManager = new(path);
-            weatherManager = new();
-            objectPickerManager = new();
-            drawLayerManager = new();
-
-            systems.Add(new AudioSystem());
-            systems.Add(new AnimationSystem(this));
-            systems.Add(scriptManager);
-            systems.Add(lightManager);
-            systems.Add(new PhysicsSystem());
-            systems.Add(new TransformSystem());
-            systems.Add(renderManager);
-            systems.Add(weatherManager);
-            systems.Add(objectPickerManager);
-            systems.Add(new LODSystem());
+            foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
+            {
+                systems.Add(service);
+            }
 
             await semaphore.WaitAsync();
 
@@ -188,6 +219,8 @@
             {
                 awake[i].Awake(this);
             }
+
+            flags |= SceneFlags.Initialized;
         }
 
         public void Load(IGraphicsDevice device)
@@ -201,10 +234,14 @@
             Job.WaitAll(JobScheduler.Default.GetAllJobsWithFlag(JobFlags.BlockOnSceneLoad));
 
             Time.ResetTime();
+
+            flags |= SceneFlags.Loaded;
         }
 
         public void Unload()
         {
+            flags &= ~SceneFlags.Loaded;
+
             var unload = systems[SystemFlags.Unload];
             for (int i = 0; i < unload.Count; i++)
             {
@@ -212,16 +249,69 @@
             }
         }
 
-        public bool Validate()
+        public void Validate()
+        {
+            if ((initFlags & SceneInitFlags.SkipValidation) != 0)
+            {
+                flags |= SceneFlags.Valid;
+                return;
+            }
+
+            HashSet<GameObject> visited = [];
+            foreach (var node in root.Children)
+            {
+                ValidateUniqueness(node);
+                ValidateChildParentRelation(node, visited);
+            }
+
+            flags |= SceneFlags.Valid;
+        }
+
+        private void ValidateUniqueness(GameObject gameObject)
         {
             foreach (var node in nodes)
             {
-                if (nodes.Any(x => node != x && x.Name == x.Name))
+                if (node != gameObject && node.Guid == gameObject.Guid)
                 {
-                    return false;
+                    throw new InvalidSceneException($"'{node.FullName}' is not unique.");
                 }
             }
-            return true;
+        }
+
+        private static void ValidateChildParentRelation(GameObject parent, HashSet<GameObject> visited)
+        {
+            if (visited.Contains(parent))
+            {
+                Stack<GameObject> cyclePath = new();
+                cyclePath.Push(parent);
+                var currentNode = parent.Parent;
+                while (currentNode != null)
+                {
+                    cyclePath.Push(currentNode);
+                    currentNode = currentNode.Parent;
+                }
+                cyclePath.Push(parent);
+
+                StringBuilder cycleStringBuilder = new();
+                while (cyclePath.TryPop(out var gameObject))
+                {
+                    cycleStringBuilder.Append($"{gameObject.FullName} -> ");
+                }
+
+                throw new InvalidSceneException($"Cycle detected: {cycleStringBuilder}");
+            }
+
+            visited.Add(parent);
+
+            foreach (var child in parent.Children)
+            {
+                if (child.Parent != parent)
+                {
+                    throw new InvalidSceneException($"'{parent.FullName}' child parent relation error.");
+                }
+
+                ValidateChildParentRelation(child, visited);
+            }
         }
 
         public void SaveState()
@@ -482,10 +572,7 @@
         internal void RegisterChild(GameObject node)
         {
             nodes.Add(node);
-            if (cameras.AddIfIs(node))
-            {
-                cameraNames.Add(node.Name);
-            }
+            cameraContainer.Add(node);
 
             for (int i = 0; i < systems.Count; i++)
             {
@@ -498,11 +585,7 @@
         internal void UnregisterChild(GameObject node)
         {
             nodes.Remove(node);
-            if (cameras.RemoveIfIs(node))
-            {
-                cameraNames.Remove(node.Name);
-            }
-
+            cameraContainer.Remove(node);
             for (int i = 0; i < systems.Count; i++)
             {
                 systems[i].Unregister(node);
@@ -552,14 +635,10 @@
 
         public void Uninitialize()
         {
+            flags &= ~SceneFlags.Initialized;
             semaphore.Wait();
             Time.FixedUpdate -= FixedUpdate;
             root.Uninitialize();
-            lightManager.Dispose();
-            meshManager.Clear();
-            materialManager.Clear();
-            animationManager.Clear();
-
             for (int i = 0; i < systems.Count; i++)
             {
                 systems[i].Destroy();
@@ -594,39 +673,28 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T? GetSystem<T>() where T : class, ISystem
+        public T? GetService<T>() where T : class
         {
-            for (int i = 0; i < systems.Count; i++)
-            {
-                var system = systems[i];
-                if (system is T t)
-                {
-                    return t;
-                }
-            }
-            return null;
+            return serviceProvider.GetService<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetSystem<T>([NotNullWhen(true)] out T? system) where T : class, ISystem
+        public bool TryGetService<T>([NotNullWhen(true)] out T? system) where T : class
         {
-            system = GetSystem<T>();
+            system = GetService<T>();
             return system != null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetRequiredSystem<T>() where T : class, ISystem
+        public T GetRequiredService<T>() where T : class
         {
-            var sys = GetSystem<T>();
-            if (sys == null)
-                throw new NullReferenceException(nameof(sys));
-            return sys;
+            return serviceProvider.GetRequiredService<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public GameObject? SelectObject(Ray ray)
         {
-            return objectPickerManager.SelectObject(ray);
+            return serviceProvider.GetRequiredService<ObjectPickerManager>().SelectObject(ray);
         }
     }
 }

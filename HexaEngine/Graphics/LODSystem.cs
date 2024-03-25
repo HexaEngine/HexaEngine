@@ -4,7 +4,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
-    public class LODSystem : ISystem
+    public class LODSystem : ISceneSystem
     {
         private readonly ComponentTypeQuery<ILODRendererComponent> lodRenderers = new();
 

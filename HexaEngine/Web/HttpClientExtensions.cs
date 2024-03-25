@@ -10,8 +10,6 @@
 
     public static class HttpClientExtensions
     {
-        public static readonly WebCache WebCache = new("./cache/webcache.cache", "./cache/webcache.index");
-
         public static async Task DownloadAsync(
           this HttpClient client,
           string requestUri,
@@ -38,7 +36,7 @@
         {
             byte* data;
             uint size;
-            if (WebCache.TryGet(requestUri, &data, &size))
+            if (WebCache.Shared.TryGet(requestUri, &data, &size))
             {
                 destination.Write(new Span<byte>(data, (int)size));
                 Marshal.FreeHGlobal((nint)data);
@@ -66,7 +64,15 @@
                 ms.Position = 0;
                 ms.CopyTo(destination);
 
-                WebCache.Set(requestUri.AbsoluteUri, ms.ToArray());
+                if (response.Content.Headers.Expires != null)
+                {
+                    WebCache.Shared.Set(requestUri.AbsoluteUri, ms.ToArray(), response.Content.Headers.Expires.Value.LocalDateTime);
+                }
+                else
+                {
+                    WebCache.Shared.Set(requestUri.AbsoluteUri, ms.ToArray());
+                }
+
                 return;
             }
 
@@ -77,7 +83,7 @@
             ms.Position = 0;
             ms.CopyTo(destination);
 
-            WebCache.Set(requestUri.AbsoluteUri, ms.ToArray());
+            WebCache.Shared.Set(requestUri.AbsoluteUri, ms.ToArray());
         }
 
         public static async Task DownloadAsyncCached(this HttpClient client, string requestUri, Stream destination, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
@@ -99,7 +105,7 @@
                 ms.Position = 0;
                 ms.CopyTo(destination);
 
-                WebCache.Set(requestUri, ms.ToArray());
+                WebCache.Shared.Set(requestUri, ms.ToArray());
                 return;
             }
 
@@ -110,7 +116,7 @@
             ms.Position = 0;
             ms.CopyTo(destination);
 
-            WebCache.Set(requestUri, ms.ToArray());
+            WebCache.Shared.Set(requestUri, ms.ToArray());
         }
     }
 }

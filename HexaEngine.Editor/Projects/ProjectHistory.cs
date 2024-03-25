@@ -28,15 +28,45 @@
                 var entry = entries[i];
                 if (entry.Path == path)
                 {
-                    entries.RemoveAt(i);
-                    entries.Insert(0, entry);
+                    entry.LastAccess = DateTime.UtcNow;
+                    entries[i] = entry;
                     Save();
                     return;
                 }
             }
 
-            entries.Add(new HistoryEntry { Name = name, Path = path });
+            entries.Add(new HistoryEntry(name, path));
             Save();
+        }
+
+        public static void Pin(string path)
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var entry = entries[i];
+                if (entry.Path == path)
+                {
+                    entry.Pinned = true;
+                    entries[i] = entry;
+                    Save();
+                    return;
+                }
+            }
+        }
+
+        public static void Unpin(string path)
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var entry = entries[i];
+                if (entry.Path == path)
+                {
+                    entry.Pinned = false;
+                    entries[i] = entry;
+                    Save();
+                    return;
+                }
+            }
         }
 
         public static void RemoveEntryByName(string name)

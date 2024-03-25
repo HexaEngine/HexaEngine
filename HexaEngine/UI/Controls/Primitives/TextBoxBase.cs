@@ -1,8 +1,13 @@
-﻿namespace HexaEngine.UI.Controls
+﻿namespace HexaEngine.UI.Controls.Primitives
 {
     using HexaEngine.Core.Windows.Events;
+    using HexaEngine.UI;
+    using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
 
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public abstract class TextBoxBase : Control
     {
         public static readonly DependencyProperty<bool> AcceptsReturnProperty = DependencyProperty.Register<TextBoxBase, bool>(nameof(AcceptsReturn), false, new PropertyMetadata(false));
@@ -80,9 +85,5 @@
             add => AddHandler(TextChangedEvent, value);
             remove => RemoveHandler(TextChangedEvent, value);
         }
-    }
-
-    public class TextBox : TextBoxBase
-    {
     }
 }

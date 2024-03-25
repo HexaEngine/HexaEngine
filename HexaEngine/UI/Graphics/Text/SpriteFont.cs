@@ -220,7 +220,10 @@
                     continue;
                 }
 
-                SpriteFontGlyph glyph = glyphs[charcode];
+                if (!glyphs.TryGetValue(charcode, out SpriteFontGlyph glyph))
+                {
+                    glyph = glyphs['?'];
+                }
 
                 if (previous != 0 && glyph.Index != 0)
                 {
@@ -296,7 +299,10 @@
                     continue;
                 }
 
-                SpriteFontGlyph glyph = glyphs[charcode];
+                if (!glyphs.TryGetValue(charcode, out SpriteFontGlyph glyph))
+                {
+                    glyph = glyphs['?'];
+                }
 
                 if (previous != 0 && glyph.Index != 0)
                 {

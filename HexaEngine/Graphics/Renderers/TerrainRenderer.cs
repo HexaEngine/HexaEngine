@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Utilities;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
@@ -169,6 +170,8 @@
             if (!initialized)
                 return;
 
+            var name = EnumHelper<ShadowType>.GetName(type);
+
             context.VSSetConstantBuffer(1, light);
             context.GSSetConstantBuffer(0, light);
             context.PSSetConstantBuffer(0, light);
@@ -193,7 +196,7 @@
                     TerrainDrawLayer layer = cell.DrawLayers[j];
                     TerrainMaterial material = layer.Material;
 
-                    material.DrawIndexedInstanced(context, type.ToString(), cell.IndexCount, 1, 0, 0, 0);
+                    material.DrawIndexedInstanced(context, name, cell.IndexCount, 1, 0, 0, 0);
                     break;
                 }
                 cell.Unbind(context);

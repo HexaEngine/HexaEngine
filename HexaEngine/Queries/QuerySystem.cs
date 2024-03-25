@@ -3,20 +3,20 @@
     using HexaEngine.Collections;
     using HexaEngine.Scenes;
 
-    public class QueryManager : ISystem, IDisposable
+    public class QuerySystem : ISceneSystem, IDisposable
     {
         private readonly Scene scene;
         private readonly FlaggedList<QueryFlags, IQuery> queries = new();
         private bool disposedValue;
 
-        public QueryManager(Scene scene)
+        public QuerySystem(Scene scene)
         {
             this.scene = scene;
             scene.OnGameObjectAdded += OnGameObjectAdded;
             scene.OnGameObjectRemoved += OnGameObjectRemoved;
         }
 
-        public static QueryManager? Current => SceneManager.Current?.QueryManager;
+        public static QuerySystem? Current => SceneManager.Current?.QueryManager;
 
         public string Name { get; } = "Query System";
 
@@ -201,7 +201,7 @@
             }
         }
 
-        ~QueryManager()
+        ~QuerySystem()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

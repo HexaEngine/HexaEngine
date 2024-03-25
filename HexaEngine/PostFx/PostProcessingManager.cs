@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
@@ -18,7 +16,6 @@
         private readonly List<IPostFx> activeEffects = new();
         private readonly List<IPostFx> effects = [];
         private readonly IGraphicsContext deferredContext;
-        private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private readonly PostProcessingFlags flags;
         private readonly PostFxGraphResourceBuilder creator;
@@ -39,7 +36,6 @@
         {
             Format format = (flags & PostProcessingFlags.HDR) != 0 ? Format.R16G16B16A16Float : Format.R8G8B8A8UNorm;
             Current ??= this;
-            config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
             this.flags = flags;
             this.creator = new(creator, device, format, width, height);
@@ -178,8 +174,6 @@
                 graph.Add(effect);
                 effects.Add(effect);
             }
-
-            config.GenerateSubKeyAuto(effect, effect.Name);
 
             if (isInitialized)
             {
@@ -512,7 +506,7 @@
             lock (_lock)
             {
                 IPostFx first = activeEffects[0];
-                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), false);
+                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), true, false);
                 group.Passes.Add(first);
                 groups.Add(group);
                 for (int i = 1; i < activeEffects.Count; i++)
@@ -523,7 +517,7 @@
                     if (group.IsDynamic != isDynamic)
                     {
                         var tmp = group;
-                        group = new(isDynamic, false);
+                        group = new(isDynamic, false, false);
                         tmp.Next = group;
                         groups.Add(group);
                     }

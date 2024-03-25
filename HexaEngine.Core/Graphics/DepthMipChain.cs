@@ -39,7 +39,7 @@
             width = desc.Width;
             height = desc.Height;
 
-            mipLevels = TextureHelper.ComputeMipLevels(desc.Width, desc.Height);
+            mipLevels = desc.MipLevels == 0 ? TextureHelper.ComputeMipLevels(desc.Width, desc.Height) : desc.MipLevels;
 
             texture = new(device, Format.R32Float, desc.Width, desc.Height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
             texture.DebugName = dbgName;

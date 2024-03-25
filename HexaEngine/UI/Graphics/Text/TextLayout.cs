@@ -1,6 +1,48 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
+    using System;
     using System.Numerics;
+
+    public struct LineMetrics
+    {
+        public TextRange Text;
+        public Vector2 Position;
+        public Vector2 Size;
+
+        public readonly int Length => Text.Length;
+
+        public readonly Vector2 Min => Position;
+
+        public readonly Vector2 Max => Position + Size;
+
+        public char this[int index]
+        {
+            get => Text[index];
+        }
+
+        public LineMetrics(TextRange text, Vector2 position, Vector2 size)
+        {
+            Text = text;
+            Position = position;
+            Size = size;
+        }
+    }
+
+    public struct CharacterMetrics
+    {
+        public string Text;
+        public int Index;
+        public float Width;
+
+        public CharacterMetrics(string text, int index, float width)
+        {
+            Text = text;
+            Index = index;
+            Width = width;
+        }
+
+        public readonly char Char => Text[Index];
+    }
 
     public class TextLayout : UIResource
     {
@@ -11,7 +53,8 @@
         private float maxWidth;
         private float maxHeight;
 
-        private readonly List<LineSpan> lines = [];
+        private readonly List<LineMetrics> lines = [];
+        private readonly List<CharacterMetrics> characterMetrics = [];
 
         public TextLayout(string text, TextFormat format, float maxWidth, float maxHeight)
         {
@@ -21,31 +64,6 @@
             this.maxWidth = maxWidth;
             this.maxHeight = maxHeight;
             UpdateLayout();
-        }
-
-        private struct LineSpan
-        {
-            public TextRange Text;
-            public Vector2 Position;
-            public Vector2 Size;
-
-            public readonly int Length => Text.Length;
-
-            public readonly Vector2 Min => Position;
-
-            public readonly Vector2 Max => Position + Size;
-
-            public char this[int index]
-            {
-                get => Text[index];
-            }
-
-            public LineSpan(TextRange text, Vector2 position, Vector2 size)
-            {
-                Text = text;
-                Position = position;
-                Size = size;
-            }
         }
 
         public string Text
@@ -107,6 +125,7 @@
         public void UpdateLayout()
         {
             lines.Clear();
+            characterMetrics.Clear();
 
             IFont font = Format.Font;
             float emSize = Font.EmSize;
@@ -140,7 +159,7 @@
                 maxHeight = MathF.Max(max.Y, maxHeight);
             }
 
-            metrics = new(minWidth, minHeight, maxWidth, maxHeight);
+            metrics = new(minWidth, minHeight, maxWidth, maxHeight, lineHeight, lines);
 
             FlowDirection flowDirection = Format.FlowDirection;
             ReadingDirection readingDirection = Format.ReadingDirection;
@@ -181,7 +200,11 @@
                 char c = text[i];
 
                 if (c == '\r')
+                {
+                    previous = 0;
+                    characterMetrics.Add(new(text, i, 0));
                     continue;
+                }
 
                 if (c == '\n')
                 {
@@ -190,12 +213,17 @@
                         return;
                     }
 
+                    previous = 0;
+                    characterMetrics.Add(new(text, i, 0));
                     continue;
                 }
 
                 if (c == '\t')
                 {
-                    penX = ((int)(penX / incrementalTabStop) + 1) * incrementalTabStop;
+                    float nextPosition = ((int)(penX / incrementalTabStop) + 1) * incrementalTabStop;
+                    characterMetrics.Add(new(text, i, nextPosition - penX));
+                    penX = nextPosition;
+
                     continue;
                 }
 
@@ -205,14 +233,31 @@
                 {
                     if (font.GetKerning(previous, metrics.Glyph, out Vector2 kerning))
                     {
-                        penX += kerning.X / emSize * fontSize;
+                        float k = kerning.X / emSize * fontSize;
+                        penX += k;
+                        if (i > 0)
+                        {
+                            var met = characterMetrics[i - 1];
+                            met.Width += k;
+                            characterMetrics[i - 1] = met;
+                        }
                     }
                 }
 
+                previous = metrics.Glyph;
+
                 float nextPositionX = penX + metrics.HorizontalAdvance / emSize * fontSize;
 
-                if (nextPositionX > maxWidth && wordWrapping != WordWrapping.NoWrap)
+                characterMetrics.Add(new(text, i, nextPositionX - penX));
+
+                if (nextPositionX > maxWidth)
                 {
+                    if (wordWrapping == WordWrapping.NoWrap)
+                    {
+                        EmitLine(ref penX, ref penY, lineHeight, ref span, i--);
+                        return;
+                    }
+
                     if (wordWrapping == WordWrapping.WrapWord)
                     {
                         // Reverse search for ' ' space char to find word boundary.
@@ -236,15 +281,15 @@
                         {
                             return;
                         }
-
+                        previous = 0;
                         continue;
                     }
 
-                    if (EmitLine(ref penX, ref penY, lineHeight, ref span, i))
+                    if (EmitLine(ref penX, ref penY, lineHeight, ref span, i--))
                     {
                         return;
                     }
-
+                    previous = 0;
                     continue;
                 }
 
@@ -261,7 +306,7 @@
         private void AddLine(Vector2 origin, TextRange span)
         {
             Vector2 size = Font.MeasureSize(span, Format.FontSize, Format.IncrementalTabStop);
-            LineSpan line = new(span, origin, size);
+            LineMetrics line = new(span, origin, size);
             lines.Add(line);
         }
 
@@ -269,7 +314,7 @@
         {
             span.Length = i - span.Start;
             AddLine(new(0, penY), span);
-            span.Start = i + 1;
+            span.Start = i;
 
             penX = 0;
             penY += lineHeight;
@@ -277,7 +322,7 @@
             return penY > maxHeight;
         }
 
-        private void AddGlyphRun(IFont font, LineSpan span, FlowDirection flowDirection, ReadingDirection readingDirection, TextAlignment alignment, float incrementalTabStop, float whitespaceWidth)
+        private void AddGlyphRun(IFont font, LineMetrics span, FlowDirection flowDirection, ReadingDirection readingDirection, TextAlignment alignment, float incrementalTabStop, float whitespaceWidth)
         {
             if (span.Length == 0)
             {
@@ -346,6 +391,90 @@
             }
 
             commandList.ExecuteCommandList(preRecordedList);
+        }
+
+        public Vector2 GetCursorPosition(int index)
+        {
+            if (index == -1)
+            {
+                return default;
+            }
+
+            float emSize = Font.EmSize;
+            float fontSize = Format.FontSize;
+            float lineHeight = Font.GetLineHeight(Format.FontSize);
+            float lineSpacing = Format.LineSpacing;
+
+            lineHeight += lineSpacing / emSize * fontSize;
+
+            float penX = 0;
+            float penY = 0;
+
+            LineMetrics selectedLineMetrics = default;
+            for (int i = 0; i < metrics.LineMetrics.Count; i++)
+            {
+                var lineMetrics = metrics.LineMetrics[i];
+                if (lineMetrics.Text.Start <= index && lineMetrics.Text.End >= index)
+                {
+                    selectedLineMetrics = lineMetrics;
+                    break;
+                }
+                penY += lineHeight;
+            }
+
+            if (selectedLineMetrics.Length == 0)
+            {
+                return default;
+            }
+
+            for (int i = selectedLineMetrics.Text.Start; i < selectedLineMetrics.Text.End; i++)
+            {
+                if (i == index)
+                    break;
+
+                penX += characterMetrics[i].Width;
+            }
+
+            return new(penX, penY);
+        }
+
+        public int HitTest(Vector2 position)
+        {
+            float emSize = Font.EmSize;
+            float fontSize = Format.FontSize;
+            float lineHeight = Font.GetLineHeight(Format.FontSize);
+            float lineSpacing = Format.LineSpacing;
+
+            lineHeight += lineSpacing / emSize * fontSize;
+
+            int lineIndex = (int)MathF.Floor(position.Y / lineHeight);
+
+            if (lineIndex < 0 || lineIndex >= metrics.LineMetrics.Count)
+            {
+                return text.Length;
+            }
+
+            var line = metrics.LineMetrics[lineIndex];
+
+            float penX = 0;
+
+            for (int i = line.Text.Start; i < line.Text.End; i++)
+            {
+                float nextPositionX = penX + characterMetrics[i].Width;
+
+                float last = penX;
+
+                penX = nextPositionX;
+
+                if (penX > position.X)
+                {
+                    if (Math.Abs(penX - position.X) < Math.Abs(last - position.X))
+                        return i + 1;
+                    return i;
+                }
+            }
+
+            return text.Length;
         }
 
         protected override void DisposeCore()

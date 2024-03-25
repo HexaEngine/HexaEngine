@@ -13,7 +13,6 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
-    using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
@@ -24,10 +23,8 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Diagnostics;
-    using System.Drawing;
     using System.Numerics;
     using System.Text;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public class TerrainObjectEditor : IObjectEditor
     {

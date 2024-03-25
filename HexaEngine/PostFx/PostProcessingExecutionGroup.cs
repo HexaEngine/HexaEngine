@@ -3,9 +3,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
 
-    public class PostProcessingExecutionGroup(bool isDynamicGroup, bool isLastGroup) : IDisposable
+    public class PostProcessingExecutionGroup(bool isDynamicGroup, bool isFirst, bool isLastGroup) : IDisposable
     {
         private bool isDynamicGroup = isDynamicGroup;
+        private bool isFirst = isFirst;
         private bool isLastGroup = isLastGroup;
         private ICommandList? commandList;
         private PostProcessingExecutionGroup next;
@@ -13,6 +14,8 @@
         public List<IPostFx> Passes = [];
 
         public ICommandList? CommandList => commandList;
+
+        public bool IsFirst { get => isFirst; set => isFirst = value; }
 
         public bool IsDynamic { get => isDynamicGroup; set => isDynamicGroup = value; }
 
@@ -46,6 +49,16 @@
                 }
 
                 var flags = effect.Flags;
+
+                if ((flags & PostFxFlags.Inline) != 0 && isFirst && postContext.IsFirst)
+                {
+                    if (i - 1 < 0 || Passes[i - 1] is not CopyPass)
+                    {
+                        Passes.Insert(i, new CopyPass());
+                        i--;
+                        continue;
+                    }
+                }
 
                 if ((flags & PostFxFlags.NoInput) == 0 && (flags & PostFxFlags.ComposeTarget) == 0)
                 {

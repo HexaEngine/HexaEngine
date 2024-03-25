@@ -9,7 +9,7 @@
         public bool SelectRayTest(Ray ray, ref float depth);
     }
 
-    public class ObjectPickerManager : ISystem
+    public class ObjectPickerManager : ISceneSystem
     {
         private readonly ComponentTypeQuery<ISelectableRayTest> pickables = new();
 

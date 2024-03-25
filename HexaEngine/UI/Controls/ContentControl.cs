@@ -64,7 +64,7 @@
 
         protected override Vector2 MeasureOverwrite(Vector2 availableSize)
         {
-            var borderSize = BorderThickness.ToSize();
+            var borderSize = BorderThickness.Size;
 
             availableSize -= borderSize;
 

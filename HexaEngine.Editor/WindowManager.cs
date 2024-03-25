@@ -45,6 +45,7 @@
             Register<RenderGraphWidget>();
             Register<RendererWidget>();
             Register<MemoryWidget>();
+            Register<NativeMemoryWidget>();
             Register<InputManagerWindow>();
 
             Register<BakeWindow>();

@@ -7,7 +7,7 @@
     /// <summary>
     /// Represents event arguments for routed events.
     /// </summary>
-    public class RoutedEventArgs : TimestampEventArgs
+    public class RoutedEventArgs
     {
         public RoutedEventArgs()
         {

@@ -11,7 +11,7 @@
 
         private ISamplerState samplerState;
 
-        private float intensity = -1;
+        private float intensity = 1;
         private float ratio = 1;
         private float radius = 1;
         private float slope = 8;

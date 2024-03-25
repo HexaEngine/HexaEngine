@@ -176,10 +176,10 @@
                         }
                     }
 
-                    int cameraIndex = scene.ActiveCamera;
-                    if (ImGui.Combo("##ActiveCamCombo", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
+                    int cameraIndex = scene.Cameras.ActiveCameraIndex;
+                    if (ImGui.Combo("##ActiveCamCombo", ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
                     {
-                        scene.ActiveCamera = cameraIndex;
+                        scene.Cameras.ActiveCameraIndex = cameraIndex;
                     }
 
                     ImGui.Separator();

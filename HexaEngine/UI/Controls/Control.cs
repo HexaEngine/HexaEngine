@@ -218,24 +218,25 @@
             commandList.PushClipRect(VisualClip);
             var before = commandList.Transform;
 
-            var transform = Matrix3x2.CreateTranslation(ContentOffset.Translation + new Vector2(BorderThickness.Left, BorderThickness.Top));
+            var padding = Padding;
             var border = BorderThickness;
             var bounds = new RectangleF(0, 0, ActualWidth, ActualHeight);
             var contentBounds = InnerContentBounds;
-            var contentRectSize = contentBounds.Size - border.ToSize();
+            var contentRectSize = contentBounds.Size - border.Size;
+            var contentPaddingSize = contentRectSize + padding.Size;
 
-            if (border.ToSize() != Vector2.Zero)
+            if (border.Size != Vector2.Zero)
             {
                 Brush borderBrush = Border ?? Brushes.Alpha;
                 commandList.Transform = BaseOffset;
                 commandList.FillRect(new(-border.Left, -border.Top, bounds.Right + border.Right, bounds.Bottom + border.Bottom), borderBrush);
             }
 
-            commandList.Transform = transform;
+            commandList.Transform = Matrix3x2.CreateTranslation(BaseOffset.Translation + new Vector2(BorderThickness.Left, BorderThickness.Top));
             Brush backgroundBrush = Background ?? Brushes.Alpha;
-            commandList.FillRect(new(0, 0, contentRectSize.X, contentRectSize.Y), backgroundBrush);
+            commandList.FillRect(new(0, 0, contentPaddingSize.X, contentPaddingSize.Y), backgroundBrush);
 
-            commandList.Transform = transform;
+            commandList.Transform = Matrix3x2.CreateTranslation(ContentOffset.Translation + new Vector2(BorderThickness.Left, BorderThickness.Top));
             OnRender(commandList);
             commandList.Transform = before;
             commandList.PopClipRect();
@@ -278,7 +279,7 @@
             {
                 args.RoutedEvent = MouseDoubleClickEvent;
                 args.Handled = false;
-                RouteEvent(args);
+                RaiseEvent(args);
             }
         }
 

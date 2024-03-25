@@ -933,7 +933,6 @@
 
                 case WindowEventID.Shown:
                     {
-                        shownEventArgs.Timestamp = evnt.Timestamp;
                         shownEventArgs.Handled = false;
                         OnShown(shownEventArgs);
                         if (shownEventArgs.Handled)
@@ -947,7 +946,6 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Hidden;
-                        hiddenEventArgs.Timestamp = evnt.Timestamp;
                         hiddenEventArgs.OldState = oldState;
                         hiddenEventArgs.NewState = WindowState.Hidden;
                         hiddenEventArgs.Handled = false;
@@ -961,7 +959,6 @@
 
                 case WindowEventID.Exposed:
                     {
-                        exposedEventArgs.Timestamp = evnt.Timestamp;
                         exposedEventArgs.Handled = false;
                         OnExposed(exposedEventArgs);
                     }
@@ -973,7 +970,6 @@
                         int yold = y;
                         x = evnt.Data1;
                         y = evnt.Data2;
-                        movedEventArgs.Timestamp = evnt.Timestamp;
                         movedEventArgs.OldX = xold;
                         movedEventArgs.OldY = yold;
                         movedEventArgs.NewX = x;
@@ -994,7 +990,6 @@
                         width = evnt.Data1;
                         height = evnt.Data2;
                         Viewport = new(width, height);
-                        resizedEventArgs.Timestamp = evnt.Timestamp;
                         resizedEventArgs.OldWidth = widthOld;
                         resizedEventArgs.OldWidth = heightOld;
                         resizedEventArgs.NewWidth = width;
@@ -1015,7 +1010,6 @@
                         width = evnt.Data1;
                         height = evnt.Data2;
                         Viewport = new(width, height);
-                        sizeChangedEventArgs.Timestamp = evnt.Timestamp;
                         sizeChangedEventArgs.OldWidth = widthOld;
                         sizeChangedEventArgs.OldHeight = heightOld;
                         sizeChangedEventArgs.Width = evnt.Data1;
@@ -1029,7 +1023,6 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Minimized;
-                        minimizedEventArgs.Timestamp = evnt.Timestamp;
                         minimizedEventArgs.OldState = oldState;
                         minimizedEventArgs.NewState = WindowState.Minimized;
                         minimizedEventArgs.Handled = false;
@@ -1045,7 +1038,6 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Maximized;
-                        maximizedEventArgs.Timestamp = evnt.Timestamp;
                         maximizedEventArgs.OldState = oldState;
                         maximizedEventArgs.NewState = WindowState.Maximized;
                         maximizedEventArgs.Handled = false;
@@ -1061,7 +1053,6 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Normal;
-                        restoredEventArgs.Timestamp = evnt.Timestamp;
                         restoredEventArgs.OldState = oldState;
                         restoredEventArgs.NewState = WindowState.Normal;
                         restoredEventArgs.Handled = false;
@@ -1076,7 +1067,6 @@
                 case WindowEventID.Enter:
                     {
                         hovering = true;
-                        enterEventArgs.Timestamp = evnt.Timestamp;
                         enterEventArgs.Handled = false;
                         OnEnter(enterEventArgs);
                     }
@@ -1085,7 +1075,6 @@
                 case WindowEventID.Leave:
                     {
                         hovering = false;
-                        leaveEventArgs.Timestamp = evnt.Timestamp;
                         leaveEventArgs.Handled = false;
                         OnLeave(leaveEventArgs);
                     }
@@ -1094,7 +1083,6 @@
                 case WindowEventID.FocusGained:
                     {
                         focused = true;
-                        focusGainedEventArgs.Timestamp = evnt.Timestamp;
                         focusGainedEventArgs.Handled = false;
                         OnFocusGained(focusGainedEventArgs);
                     }
@@ -1103,7 +1091,6 @@
                 case WindowEventID.FocusLost:
                     {
                         focused = false;
-                        focusLostEventArgs.Timestamp = evnt.Timestamp;
                         focusLostEventArgs.Handled = false;
                         OnFocusLost(focusLostEventArgs);
                     }
@@ -1111,7 +1098,6 @@
 
                 case WindowEventID.Close:
                     {
-                        closeEventArgs.Timestamp = evnt.Timestamp;
                         closeEventArgs.Handled = false;
                         OnClosing(closeEventArgs);
                         if (closeEventArgs.Handled)
@@ -1123,7 +1109,6 @@
 
                 case WindowEventID.TakeFocus:
                     {
-                        takeFocusEventArgs.Timestamp = evnt.Timestamp;
                         takeFocusEventArgs.Handled = false;
                         OnTakeFocus(takeFocusEventArgs);
                         if (!takeFocusEventArgs.Handled)
@@ -1169,7 +1154,7 @@
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             keyboardCharEventArgs.Timestamp = evnt.Timestamp;
             keyboardCharEventArgs.Handled = false;
-            keyboardCharEventArgs.Char = (char)evnt.Text[0];
+            keyboardCharEventArgs.Text = evnt.Text;
             OnKeyboardCharInput(keyboardCharEventArgs);
         }
 
@@ -1188,6 +1173,7 @@
             mouseButtonEventArgs.Button = button;
             mouseButtonEventArgs.State = state;
             mouseButtonEventArgs.Clicks = evnt.Clicks;
+            mouseButtonEventArgs.Position = new(evnt.X, evnt.Y);
             OnMouseButtonInput(mouseButtonEventArgs);
         }
 

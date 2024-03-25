@@ -35,6 +35,10 @@
 
         public static readonly Thickness NaN = new(float.NaN, float.NaN, float.NaN, float.NaN);
 
+        public readonly Vector2 Offset => new(Left, Top);
+
+        public readonly Vector2 Size => new(Left + Right, Top + Bottom);
+
         public readonly Thickness Add(Thickness thickness)
         {
             return new Thickness(Left + thickness.Left, Top + thickness.Top, Right + thickness.Right, Bottom + thickness.Bottom);
@@ -89,12 +93,7 @@
 
         public override readonly string ToString()
         {
-            return $"L: {Left}, T: {Top}, R: {Right},  B: {Bottom}";
-        }
-
-        public readonly Vector2 ToSize()
-        {
-            return new(Left + Right, Top + Bottom);
+            return $"T: {Top}, R: {Right}, L: {Left}, B: {Bottom}";
         }
     }
 }

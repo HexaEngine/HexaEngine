@@ -5,6 +5,7 @@
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Mathematics;
     using HexaEngine.UI.Controls;
+    using System.Numerics;
 
     public class UIWindow : ContentControl, IChildContainer, IDisposable
     {
@@ -47,6 +48,7 @@
             Mouse.Moved += MouseMoved;
             Mouse.ButtonDown += MouseButtonDown;
             Mouse.ButtonUp += MouseButtonUp;
+            Mouse.Wheel += MouseWheel;
 
             Keyboard.KeyDown += KeyboardKeyDown;
             Keyboard.KeyUp += KeyboardKeyUp;
@@ -59,22 +61,28 @@
             InvalidateArrange();
         }
 
+        private void MouseWheel(object? sender, MouseWheelEventArgs e)
+        {
+            e.RoutedEvent = MouseWheelEvent;
+            mouseFocused?.RaiseEvent(e);
+        }
+
         private void KeyboardTextInput(object? sender, TextInputEventArgs e)
         {
             e.RoutedEvent = TextInputEvent;
-            Focused?.RouteEvent(e);
+            Focused?.RaiseEvent(e);
         }
 
         private void KeyboardKeyUp(object? sender, KeyboardEventArgs e)
         {
             e.RoutedEvent = KeyUpEvent;
-            Focused?.RouteEvent(e);
+            Focused?.RaiseEvent(e);
         }
 
         private void KeyboardKeyDown(object? sender, KeyboardEventArgs e)
         {
             e.RoutedEvent = KeyDownEvent;
-            Focused?.RouteEvent(e);
+            Focused?.RaiseEvent(e);
         }
 
         private UIElement? mouseFocused;
@@ -82,41 +90,32 @@
         private void MouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             e.RoutedEvent = MouseUpEvent;
-            mouseFocused?.RouteEvent(e);
+            mouseFocused?.RaiseEvent(e);
         }
 
         private void MouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             e.RoutedEvent = MouseDownEvent;
-            mouseFocused?.RouteEvent(e);
+            mouseFocused?.RaiseEvent(e);
         }
 
         private void MainWindowLeave(object? sender, Core.Windows.Events.LeaveEventArgs e)
         {
             mouseLeaveEventArgs.Handled = false;
-            mouseFocused?.RouteEvent(mouseLeaveEventArgs);
+            mouseFocused?.RaiseEvent(mouseLeaveEventArgs);
             mouseFocused = null;
         }
 
         private void MainWindowEnter(object? sender, Core.Windows.Events.EnterEventArgs e)
         {
-            var position = Application.MainWindow.MousePosition;
-            var result = VisualTreeHelper.HitTest(this, position);
-            if (result.VisualHit == null)
-            {
-                return;
-            }
-            var first = result.VisualHit.FindFirstObject<UIElement>();
-            if (first != null)
-            {
-                UpdateMouseFocus(first);
-            }
+            mouseEnterEventArgs.Handled = false;
+            RaiseEvent(mouseEnterEventArgs);
+            mouseFocused = this;
         }
 
         private void MouseMoved(object? sender, MouseMoveEventArgs e)
         {
-            var position = Application.MainWindow.MousePosition;
-            var result = VisualTreeHelper.HitTest(this, position);
+            var result = VisualTreeHelper.HitTest(this, new Vector2(e.X, e.Y));
             if (result.VisualHit == null)
             {
                 return;
@@ -128,7 +127,7 @@
                 UpdateMouseFocus(first);
 
                 e.RoutedEvent = MouseMoveEvent;
-                first.RouteEvent(e);
+                first.RaiseEvent(e);
             }
         }
 
@@ -164,15 +163,20 @@
             }
             else
             {
-                newElement.RouteEvent(mouseEnterEventArgs);
+                newElement.RaiseEvent(mouseEnterEventArgs);
             }
 
             mouseFocused = newElement;
         }
 
-        public override void InvalidateArrange()
+        public override sealed void InvalidateMeasure()
         {
             Measure(new(Width - X, Height - Y));
+            InvalidateArrange();
+        }
+
+        public override sealed void InvalidateArrange()
+        {
             Arrange(new(X, Y, Width, Height));
             InvalidateVisual();
         }

@@ -12,6 +12,7 @@
     using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Volumes;
     using System.Diagnostics;
     using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@
 
             ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
+            ObjectEditorFactory.RegisterEditor(typeof(Volume), new VolumeObjectEditor());
         }
 
         public static void Dispose()

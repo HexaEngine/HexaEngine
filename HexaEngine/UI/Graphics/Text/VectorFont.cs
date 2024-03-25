@@ -425,7 +425,10 @@
                     continue;
                 }
 
-                VectorFontGlyph glyph = glyphs[charcode];
+                if (!glyphs.TryGetValue(charcode, out VectorFontGlyph glyph))
+                {
+                    glyph = glyphs['?'];
+                }
 
                 if (previous != 0 && glyph.Index != 0)
                 {
@@ -508,7 +511,10 @@
                     continue;
                 }
 
-                VectorFontGlyph glyph = glyphs[charcode];
+                if (!glyphs.TryGetValue(charcode, out VectorFontGlyph glyph))
+                {
+                    glyph = glyphs['?'];
+                }
 
                 if (previous != 0 && glyph.Index != 0)
                 {
@@ -607,6 +613,39 @@
                 }
 
                 x += metrics.HorizontalAdvance / emSize * fontSize;
+            }
+            return new Vector2(x, GetLineHeight(fontSize));
+        }
+
+        public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop, List<CharacterMetrics> characterMetrics)
+        {
+            float x = 0;
+            uint previous = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                var charcode = text[i];
+
+                if (charcode == '\t')
+                {
+                    x = ((int)(x / incrementalTabStop) + 1) * incrementalTabStop;
+                    continue;
+                }
+
+                GlyphMetrics metrics = GetMetrics(charcode);
+
+                if (previous != 0 && metrics.Glyph != 0)
+                {
+                    FTVector kerning;
+                    FTError error = (FTError)faceHandle.GetKerning(previous, metrics.Glyph, kerningMode, &kerning);
+                    if (error == FTError.FtErrOk)
+                    {
+                        x += kerning.X / emSize * fontSize;
+                    }
+                }
+
+                float size = metrics.HorizontalAdvance / emSize * fontSize;
+
+                x += size;
             }
             return new Vector2(x, GetLineHeight(fontSize));
         }

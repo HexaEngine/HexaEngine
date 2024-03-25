@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    using HexaEngine.Core.Windows.Events;
-
     /// <summary>
     /// Provides base data for joystick-related events.
     /// </summary>
-    public class JoystickEventArgs : RoutedEventArgs
+    public class JoystickEventArgs : InputEventArgs
     {
         /// <summary>
         /// Gets the ID of the joystick associated with the event.

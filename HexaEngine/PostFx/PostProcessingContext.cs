@@ -61,6 +61,8 @@
 
         public bool CanDraw => input != null && output != null;
 
+        public bool IsFirst => previous == input;
+
         public void Swap()
         {
             previous = Current;
@@ -74,13 +76,23 @@
         public void Reset()
         {
             bufferIndex = 0;
-            previous = Input;
+            previous = input;
         }
 
         public void CopyInputToOutput(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.PSSetShaderResource(0, Input.SRV);
+            context.SetViewport(OutputViewport);
+            context.SetPipelineState(copy);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.ClearState();
+        }
+
+        public void CopyPreviousToCurrent(IGraphicsContext context)
+        {
+            context.SetRenderTarget(Current, null);
+            context.PSSetShaderResource(0, previous.SRV);
             context.SetViewport(OutputViewport);
             context.SetPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);

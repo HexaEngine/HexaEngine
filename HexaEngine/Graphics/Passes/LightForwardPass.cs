@@ -10,6 +10,7 @@
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
+    using System.Numerics;
 
     public class LightForwardPass : RenderPass
     {
@@ -189,6 +190,8 @@
             context.SetRenderTargets(nForwardRTVs, (void**)null_rtvs, null);
 
             profiler?.End("LightForward.End");
+
+            context.ClearRenderTargetView(AOBuffer.Value.RTV, Vector4.One);
         }
     }
 }

@@ -277,6 +277,9 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
+                if (capacity == value)
+                    return;
+
                 var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(uint);
                 var newsize = value * sizeof(uint);

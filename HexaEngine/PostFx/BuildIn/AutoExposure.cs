@@ -5,6 +5,7 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
     using System;
@@ -13,6 +14,7 @@ namespace HexaEngine.PostFx.BuildIn
     /// <summary>
     /// An auto-exposure post-processing effect.
     /// </summary>
+    [EditorDisplayName("Auto Exposure")]
     public class AutoExposure : PostFxBase
     {
         private PostFxGraphResourceBuilder creator;
@@ -46,6 +48,8 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the minimum log luminance value.
         /// </summary>
+        [EditorProperty("Min Log Luminance", -8)]
+        [Tooltip("(Default: -8) Minimum log luminance determines the lowest logarithmic value of light intensity considered by auto exposure. Pixels with a log luminance value below this threshold are considered too dark and may be adjusted for correct exposure. Lower values include more dark pixels in exposure calculations, resulting in an overall brighter scene. Be cautious as setting this too low may also amplify noise or artifacts.")]
         public unsafe float MinLogLuminance
         {
             get => minLogLuminance;
@@ -55,6 +59,8 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the maximum log luminance value.
         /// </summary>
+        [EditorProperty("Max Log Luminance", 3)]
+        [Tooltip("(Default: 3) Maximum log luminance determines the highest logarithmic value of light intensity considered by auto exposure. Pixels with a log luminance value above this threshold are considered too bright and may be adjusted for correct exposure. A higher value limits the brightness of the scene to avoid overexposure.")]
         public unsafe float MaxLogLuminance
         {
             get => maxLogLuminance;
@@ -64,6 +70,8 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the tau value.
         /// </summary>
+        [EditorProperty("Tau", 1.1f)]
+        [Tooltip("(Default: 1.1) Tau determines the rate at which exposure adjusts to changes in luminance. A higher Tau value results in smoother and slower exposure adjustments, reducing rapid fluctuations in lighting conditions. Conversely, a lower Tau value leads to faster exposure adjustments, allowing the camera to react more quickly to changes in brightness.")]
         public unsafe float Tau
         {
             get => tau;

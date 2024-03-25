@@ -36,6 +36,19 @@
 
         private long nextExpirationDate;
 
+        public static readonly WebCache Shared = new("./cache/webcache.cache", "./cache/webcache.index");
+
+        static WebCache()
+        {
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
+        }
+
+        private static void CurrentDomainProcessExit(object? sender, EventArgs e)
+        {
+            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
+            Shared.Save();
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="WebCache"/>.
         /// </summary>
@@ -342,6 +355,7 @@
         /// </summary>
         /// <param name="key">The key of the entry.</param>
         /// <param name="data">The byte array representing the data to be stored.</param>
+        /// <param name="expirationDate"></param>
         public unsafe void Set(string key, byte[] data, DateTime expirationDate)
         {
             fixed (byte* ptr = data)
@@ -361,13 +375,14 @@
             {
                 Set(key, ptr, (uint)data.Length, DateTime.MaxValue);
             }
-        }/// <summary>
+        }
 
-         /// Sets the data associated with the specified key in the cache.
-         /// </summary>
-         /// <param name="key">The key of the entry.</param>
-         /// <param name="data">A pointer to the memory location where the data is stored.</param>
-         /// <param name="size">The size of the data, in bytes.</param>
+        /// <summary>
+        /// Sets the data associated with the specified key in the cache.
+        /// </summary>
+        /// <param name="key">The key of the entry.</param>
+        /// <param name="data">A pointer to the memory location where the data is stored.</param>
+        /// <param name="size">The size of the data, in bytes.</param>
         public unsafe void Set(string key, byte* data, uint size)
         {
             Set(key, data, size, DateTime.MaxValue);

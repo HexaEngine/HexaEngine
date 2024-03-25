@@ -15,6 +15,10 @@
 
         public override Type DependencyObjectType => type ??= GetType();
 
+        protected internal Matrix3x2 BaseOffset { get; protected set; }
+
+        protected internal Matrix3x2 ContentOffset { get; protected set; }
+
         protected internal Vector2 VisualOffset { get; protected set; }
 
         protected internal RectangleF BoundingBox { get; protected set; }
@@ -22,6 +26,17 @@
         protected internal RectangleF InnerContentBounds { get; protected set; }
 
         protected internal RectangleF VisualClip { get; protected set; }
+
+        public Vector2 PointFromScreen(Vector2 pointOnScreen)
+        {
+            Matrix3x2.Invert(BaseOffset, out var result);
+            return Vector2.Transform(pointOnScreen, result);
+        }
+
+        public Vector2 PointToScreen(Vector2 pointInElement)
+        {
+            return Vector2.Transform(pointInElement, BaseOffset);
+        }
 
         public void AddVisualChild(Visual visual)
         {

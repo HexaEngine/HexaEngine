@@ -2,8 +2,14 @@
 {
     public enum VolumeMode
     {
-        Local,
         Global,
+        Local,
+    }
+
+    public enum VolumeShape
+    {
+        Box,
+        Sphere
     }
 
     public enum VolumeTransitionMode

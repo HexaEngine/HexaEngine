@@ -5,7 +5,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
-    public class TransformSystem : ISystem
+    public class TransformSystem : ISceneSystem
     {
         private readonly List<GameObject> objects = new();
         private readonly ConcurrentQueue<Transform> updateQueue = new();

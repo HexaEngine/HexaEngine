@@ -6,7 +6,7 @@ namespace HexaEngine.Scenes.Managers
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
 
-    public class ScriptManager : ISystem
+    public class ScriptManager : ISceneSystem
     {
         private readonly FlaggedList<ScriptFlags, IScriptComponent> scripts = new();
         private bool awaked;

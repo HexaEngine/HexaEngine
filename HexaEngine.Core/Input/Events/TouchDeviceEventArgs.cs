@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    using HexaEngine.Core.Windows.Events;
-
     /// <summary>
     /// Provides a base class for touch-device-related event arguments.
     /// </summary>
-    public class TouchDeviceEventArgs : RoutedEventArgs
+    public class TouchDeviceEventArgs : InputEventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TouchDeviceEventArgs"/> class.

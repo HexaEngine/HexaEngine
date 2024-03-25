@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.UI.Controls
+﻿namespace HexaEngine.UI.Controls.Primitives
 {
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
@@ -8,7 +8,7 @@
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class ButtonBase : ContentControl
     {
-        public static readonly RoutedEvent<RoutedEventArgs> ClickEvent = EventManager.Register<Button, RoutedEventArgs>(nameof(ClickEvent), RoutingStrategy.Direct);
+        public static readonly RoutedEvent<RoutedEventArgs> ClickEvent = EventManager.Register<Button, RoutedEventArgs>(nameof(Click), RoutingStrategy.Direct);
         private ClickMode clickMode;
 
         public event RoutedEventHandler<RoutedEventArgs> Click
@@ -27,7 +27,7 @@
             }
 
             args.Handled = true;
-            RouteEvent(new RoutedEventArgs(ClickEvent));
+            RaiseEvent(new RoutedEventArgs(ClickEvent));
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs args)
@@ -39,7 +39,7 @@
             }
 
             args.Handled = true;
-            RouteEvent(new RoutedEventArgs(ClickEvent));
+            RaiseEvent(new RoutedEventArgs(ClickEvent));
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs args)
@@ -50,7 +50,7 @@
             }
 
             args.Handled = true;
-            RouteEvent(new RoutedEventArgs(ClickEvent));
+            RaiseEvent(new RoutedEventArgs(ClickEvent));
         }
     }
 }

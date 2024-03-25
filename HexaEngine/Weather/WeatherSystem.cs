@@ -32,7 +32,7 @@
     /// TODO: Weather Id system with transitions or something like that.
     /// TODO: Volumes in general should be added.
     /// </summary>
-    public class WeatherManager : ISystem
+    public class WeatherSystem : ISceneSystem
     {
 #nullable disable
         private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
@@ -43,7 +43,7 @@
         /// <summary>
         /// Gets the current instance of the WeatherManager if available in the current scene.
         /// </summary>
-        public static WeatherManager? Current => SceneManager.Current?.WeatherManager;
+        public static WeatherSystem? Current => SceneManager.Current?.WeatherManager;
 
         private Vector3 skyColor = new(0.53f, 0.81f, 0.92f);
         private Vector3 ambientColor = new(15.0f / 255.0f, 15.0f / 255.0f, 15.0f / 255.0f);

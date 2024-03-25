@@ -9,12 +9,9 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Mathematics;
     using HexaEngine.UI;
-    using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;
-    using System.Diagnostics;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public sealed class TestWindow : CoreWindow
     {
@@ -151,7 +148,6 @@
 
         protected override void DisposeCore()
         {
-            HexaEngine.Web.HttpClientExtensions.WebCache.Save();
             uirenderer.Release();
         }
     }

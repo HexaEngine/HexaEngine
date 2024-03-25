@@ -20,18 +20,21 @@
         {
             if (signalShow)
             {
+                shown = true;
                 ImGui.OpenPopup(Name);
                 signalShow = false;
             }
-            shown = true;
+
             if (!ImGui.BeginPopupModal(Name, ref shown, Flags))
             {
                 return;
             }
+
             if (signalClose)
             {
                 ImGui.CloseCurrentPopup();
                 signalClose = false;
+                shown = false;
             }
             windowEnded = false;
             ImGui.SetWindowPos(ImGui.GetIO().DisplaySize * 0.5f, ImGuiCond.Appearing);
@@ -56,6 +59,7 @@
         public virtual void Close()
         {
             signalClose = true;
+            shown = false;
         }
 
         public abstract void Reset();

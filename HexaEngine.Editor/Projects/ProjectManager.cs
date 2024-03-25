@@ -131,9 +131,12 @@
 
             string projectName = Path.GetFileName(CurrentProjectFolder);
             CurrentProjectFilePath = Path.Combine(CurrentProjectFolder, $"{projectName}.hexproj");
+            HexaProject project = new(CurrentProjectFilePath);
+            project.Save();
 
             FileSystem.RemoveSource(CurrentProjectAssetsFolder);
             CurrentProjectAssetsFolder = Path.Combine(CurrentProjectFolder, "assets");
+            Directory.CreateDirectory(CurrentProjectAssetsFolder);
             FileSystem.AddSource(CurrentProjectAssetsFolder);
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
             ProjectHistory.AddEntry(projectName, CurrentProjectFilePath);

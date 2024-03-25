@@ -48,7 +48,7 @@
             list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, brush);
         }
 
-        public static void FillRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush)
+        public static void FillRectangle(this UICommandList list, Vector2 origin, Vector2 size, Brush brush)
         {
             list.FillRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush);
         }

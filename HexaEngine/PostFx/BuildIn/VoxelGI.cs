@@ -96,7 +96,7 @@ namespace HexaEngine.PostFx.BuildIn
 
             lights.ResetCounter();
 
-            for (int i = 0; i < lightView.ActiveCount; i++)
+            for (int i = 0; i < lightView.Active.Count; i++)
             {
                 var light = lightView.Active[i];
                 LightData lightData = default;

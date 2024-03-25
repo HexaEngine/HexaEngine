@@ -237,6 +237,11 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
+                if (capacity == value)
+                {
+                    return;
+                }
+
                 if (items != null)
                 {
                     var tmp = AllocT<T>((int)value);

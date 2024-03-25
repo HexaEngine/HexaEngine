@@ -133,7 +133,7 @@
                         for (int i = 0; i < entries.Count; i++)
                         {
                             var entry = entries[i];
-                            if (ImGui.MenuItem(entry.Fullname))
+                            if (ImGui.MenuItem(entry.FullName))
                             {
                                 ProjectManager.Load(entry.Path);
                             }

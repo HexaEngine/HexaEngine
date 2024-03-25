@@ -1,15 +1,18 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
+    using HexaEngine.Core.Debugging;
     using System.Runtime.InteropServices;
 
     public unsafe class AllocationCallbacks : IAllocationCallbacks
     {
 #if TRACELEAK
         private readonly List<Allocation> allocations = [];
+
+        public IReadOnlyList<Allocation> Allocations => allocations;
 #endif
 #if TRACELEAK
 
-        private struct Allocation
+        public struct Allocation
         {
             public void* Ptr;
             public nint Size;

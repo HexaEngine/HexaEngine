@@ -7,6 +7,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
+    using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -420,6 +421,21 @@
             //SdlCheckError();
         }
 
+        public static void StartTextInput()
+        {
+            sdl.StartTextInput();
+        }
+
+        public static void StopTextInput()
+        {
+            sdl.StopTextInput();
+        }
+
+        public static void SetTextInputRect(Rectangle rect)
+        {
+            sdl.SetTextInputRect((Silk.NET.Maths.Rectangle<int>*)&rect);
+        }
+
         private static void HandleEvent(Event evnt)
         {
             EventType type = (EventType)evnt.Type;
@@ -494,6 +510,10 @@
                     break;
 
                 case EventType.Textediting:
+                    {
+                        var even = evnt.Edit;
+                        Keyboard.OnTextEditing(even);
+                    }
                     break;
 
                 case EventType.Textinput:

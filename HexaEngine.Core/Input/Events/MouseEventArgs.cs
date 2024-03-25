@@ -5,7 +5,7 @@
     /// <summary>
     /// Provides a base class for mouse-related event arguments.
     /// </summary>
-    public class MouseEventArgs : RoutedEventArgs
+    public class MouseEventArgs : InputEventArgs
     {
         public MouseEventArgs()
         {

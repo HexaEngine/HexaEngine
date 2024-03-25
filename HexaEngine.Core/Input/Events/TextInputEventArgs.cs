@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    using HexaEngine.Core.Windows.Events;
-
     /// <summary>
-    /// Provides data for keyboard character input events.
+    /// Provides data for keyboard text input events (non-IME).
     /// </summary>
-    public class TextInputEventArgs : RoutedEventArgs
+    public class TextInputEventArgs : InputEventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TextInputEventArgs"/> class.
@@ -17,15 +15,15 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TextInputEventArgs"/> class.
         /// </summary>
-        /// <param name="char">The character.</param>
-        public TextInputEventArgs(char @char)
+        /// <param name="text">The text.</param>
+        public unsafe TextInputEventArgs(byte* text)
         {
-            Char = @char;
+            Text = text;
         }
 
         /// <summary>
-        /// Gets the character associated with the event.
+        /// The null-terminated input text in UTF-8 encoding.
         /// </summary>
-        public char Char { get; internal set; }
+        public unsafe byte* Text { get; internal set; }
     }
 }

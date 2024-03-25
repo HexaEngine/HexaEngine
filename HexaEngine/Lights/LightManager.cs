@@ -9,7 +9,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
-    public partial class LightManager : ISystem
+    public partial class LightManager : ISceneSystem
     {
         private readonly IGraphicsDevice device;
 

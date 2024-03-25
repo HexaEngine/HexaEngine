@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using System.ComponentModel;
@@ -14,6 +16,11 @@
         /// Gets the name of the post-processing effect.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the display name of the post-processing effect.
+        /// </summary>
+        public ImGuiName DisplayName { get; }
 
         /// <summary>
         /// Gets the flags associated with the post-processing effect.

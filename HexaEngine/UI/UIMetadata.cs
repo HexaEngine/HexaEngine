@@ -22,6 +22,11 @@
         {
         }
 
+        public UIMetadata(object? defaultValue, PropertyChangedCallback? propertyChangedCallback, CoerceValueCallback? coerceValueCallback, bool isAnimationProhibited) : base(defaultValue, propertyChangedCallback, coerceValueCallback)
+        {
+            IsAnimationProhibited = isAnimationProhibited;
+        }
+
         public bool IsAnimationProhibited { get; set; }
     }
 }

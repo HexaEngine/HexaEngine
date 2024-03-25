@@ -2,9 +2,10 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using System.Numerics;
 
-    public enum Tonemap
+    public enum Tonemapper
     {
         ACESFilm,
         Neutral,
@@ -40,7 +41,7 @@
         private Vector3 channelMaskRed = new(1, 0, 0);
         private Vector3 channelMaskGreen = new(0, 1, 0);
         private Vector3 channelMaskBlue = new(0, 0, 1);
-        private Tonemap tonemap;
+        private Tonemapper tonemapper;
 
         public struct ColorGradingParams
         {
@@ -92,35 +93,50 @@
         public override string Name { get; } = "ColorGrading";
 
         /// <inheritdoc/>
-        public override PostFxFlags Flags { get; }
+        public override PostFxFlags Flags { get; } = PostFxFlags.AlwaysEnabled;
 
         /// <inheritdoc/>
         public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
-        public Tonemap Tonemap
+        [EditorCategory("Tonemapping")]
+        [EditorProperty<Tonemapper>("Tonemapper")]
+        [Tooltip("Selects the tonemapping algorithm to be used.")]
+        public Tonemapper Tonemapper
         {
-            get => tonemap;
-            set => NotifyPropertyChangedAndSet(ref tonemap, value);
+            get => tonemapper;
+            set => NotifyPropertyChangedAndSet(ref tonemapper, value);
         }
 
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("Shoulder Strength")]
+        [Tooltip("Determines the strength of the tonemapping shoulder.")]
         public float ShoulderStrength
         {
             get => shoulderStrength;
             set => NotifyPropertyChangedAndSet(ref shoulderStrength, value);
         }
 
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("Linear Strength")]
+        [Tooltip("Determines the strength of the tonemapping linear component.")]
         public float LinearStrength
         {
             get => linearStrength;
             set => NotifyPropertyChangedAndSet(ref linearStrength, value);
         }
 
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("Linear Angle")]
+        [Tooltip("Determines the angle of the tonemapping linear component.")]
         public float LinearAngle
         {
             get => linearAngle;
             set => NotifyPropertyChangedAndSet(ref linearAngle, value);
         }
 
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("Toe Strength")]
+        [Tooltip("Determines the strength of the tonemapping toe.")]
         public float ToeStrength
         {
             get => toeStrength;
@@ -130,6 +146,9 @@
         /// <summary>
         /// Pre - curve white point adjustment.
         /// </summary>
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("White Level")]
+        [Tooltip("Determines the white level.")]
         public float WhiteLevel
         {
             get => whiteLevel;
@@ -139,6 +158,9 @@
         /// <summary>
         /// Post - curve white point adjustment.
         /// </summary>
+        [EditorCategory("Tonemapping")]
+        [EditorProperty("White Clip")]
+        [Tooltip("Determines the white clip.")]
         public float WhiteClip
         {
             get => whiteClip;
@@ -148,6 +170,9 @@
         /// <summary>
         /// Adjusts overall exposure in EV units.
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Post Exposure")]
+        [Tooltip("Adjusts overall exposure in EV units.")]
         public float PostExposure
         {
             get => postExposure;
@@ -157,6 +182,9 @@
         /// <summary>
         /// Sets the white balance to a custom color temperature.
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Temperature")]
+        [Tooltip("Sets the white balance to a custom color temperature.")]
         public float Temperature
         {
             get => temperature;
@@ -166,6 +194,9 @@
         /// <summary>
         /// Sets the white balance to compensate for tint (green or magenta).
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Tint")]
+        [Tooltip("Sets the white balance to compensate for tint (green or magenta).")]
         public float Tint
         {
             get => tint;
@@ -175,6 +206,9 @@
         /// <summary>
         /// Shift the hue of all colors.
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Hue Shift")]
+        [Tooltip("Shift the hue of all colors.")]
         public float HueShift
         {
             get => hueShift;
@@ -184,6 +218,9 @@
         /// <summary>
         /// Adjusts saturation (color intensity).
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Saturation")]
+        [Tooltip("Adjusts saturation (color intensity).")]
         public float Saturation
         {
             get => saturation;
@@ -193,48 +230,84 @@
         /// <summary>
         /// Adjusts the contrast.
         /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Contrast")]
+        [Tooltip("Adjusts the contrast.")]
         public float Contrast
         {
             get => contrast;
             set => NotifyPropertyChangedAndSet(ref contrast, value);
         }
 
+        /// <summary>
+        /// Adjusts the contrast mid-point.
+        /// </summary>
+        [EditorCategory("Basic")]
+        [EditorProperty("Contrast Midpoint")]
+        [Tooltip("Adjusts the contrast mid-point.")]
         public float ContrastMidpoint
         {
             get => contrastMidpoint;
             set => NotifyPropertyChangedAndSet(ref contrastMidpoint, value);
         }
 
+        [EditorCategory("Channel Mixer")]
+        [EditorProperty("Red")]
+        [Tooltip("Specifies the channel mask for the red channel.")]
         public Vector3 ChannelMaskRed
         {
             get => channelMaskRed;
             set => NotifyPropertyChangedAndSet(ref channelMaskRed, value);
         }
 
+        [EditorCategory("Channel Mixer")]
+        [EditorProperty("Green")]
+        [Tooltip("Specifies the channel mask for the green channel.")]
         public Vector3 ChannelMaskGreen
         {
             get => channelMaskGreen;
             set => NotifyPropertyChangedAndSet(ref channelMaskGreen, value);
         }
 
+        [EditorCategory("Channel Mixer")]
+        [EditorProperty("Blue")]
+        [Tooltip("Specifies the channel mask for the blue channel.")]
         public Vector3 ChannelMaskBlue
         {
             get => channelMaskBlue;
             set => NotifyPropertyChangedAndSet(ref channelMaskBlue, value);
         }
 
+        /// <summary>
+        /// Adjusts the lift of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Lift")]
+        [Tooltip("Adjusts the lift of the color grading.")]
         public float Lift
         {
             get => lift;
             set => NotifyPropertyChangedAndSet(ref lift, value);
         }
 
+        /// <summary>
+        /// Adjusts the gamma of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Gamma")]
+        [Tooltip("Adjusts the gamma of the color grading.")]
         public float Gamma
         {
             get => gamma;
             set => NotifyPropertyChangedAndSet(ref gamma, value);
         }
 
+        /// <summary>
+        /// Adjusts the gain of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Gain")]
+        [Tooltip("Adjusts the gain of the color grading.")]
         public float Gain
         {
             get => gain;

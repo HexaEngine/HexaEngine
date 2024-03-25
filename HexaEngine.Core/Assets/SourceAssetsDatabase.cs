@@ -35,7 +35,9 @@
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.Security;
 
-            foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
+            string[] metafiles = Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories);
+
+            foreach (string file in metafiles)
             {
                 var metadata = SourceAssetMetadata.LoadMetadata(file);
 

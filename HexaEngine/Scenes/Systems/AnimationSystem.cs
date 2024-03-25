@@ -3,7 +3,7 @@
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
 
-    public class AnimationSystem : ISystem
+    public class AnimationSystem : ISceneSystem
     {
         private readonly ComponentTypeQuery<IAnimator> animators = new();
         private readonly Scene scene;

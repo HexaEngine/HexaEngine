@@ -18,8 +18,12 @@
             <Label Margin="15,0,0,0" Foreground="#FFFFFF">StackItem 1</Label>
             <Label Margin="30,0,0,0" Foreground="#FFFFFF">StackItem 2</Label>
             <Label Margin="45,0,0,0" Foreground="#FFFFFF">StackItem 3</Label>
+            <TextBox MinWidth="100" MinHeight="40" WordWrapping="Wrap" />
         </StackPanel>
         <Button Grid.Column="2">Test Button</Button>
-        <Image ImageSource="" />
+
+        <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Image ImageSource="" />
+        </ScrollViewer>
     </Grid>
 </UIWindow>

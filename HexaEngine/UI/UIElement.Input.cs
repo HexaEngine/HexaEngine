@@ -3,6 +3,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
+    using System.Diagnostics;
 
     public partial class UIElement : IInputElement
     {
@@ -13,8 +14,12 @@
             TextInputEvent.AddClassHandler<UIElement>((x, args) => x?.OnTextInput(args));
             KeyUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnKeyUp(args));
             KeyDownEvent.AddClassHandler<UIElement>((x, args) => x?.OnKeyDown(args));
-            MouseUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseUp(args));
+            MouseUpEvent.AddClassHandler<UIElement>(HandleMouseUp);
             MouseDownEvent.AddClassHandler<UIElement>(HandleMouseDown);
+            MouseLeftButtonUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseLeftButtonUp(args));
+            MouseLeftButtonDownEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseLeftButtonDown(args));
+            MouseRightButtonUpEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseRightButtonUp(args));
+            MouseRightButtonDownEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseRightButtonDown(args));
             MouseEnterEvent.AddClassHandler<UIElement>(HandleMouseEnter);
             MouseLeaveEvent.AddClassHandler<UIElement>(HandleMouseLeave);
             MouseMoveEvent.AddClassHandler<UIElement>((x, args) => x?.OnMouseMove(args));
@@ -66,6 +71,38 @@
         {
             add => AddHandler(MouseDownEvent, value);
             remove => RemoveHandler(MouseDownEvent, value);
+        }
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseLeftButtonUpEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseLeftButtonUp), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseLeftButtonUp
+        {
+            add => AddHandler(MouseLeftButtonUpEvent, value);
+            remove => RemoveHandler(MouseLeftButtonUpEvent, value);
+        }
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseRightButtonDownEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseRightButtonDown), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseRightButtonDown
+        {
+            add => AddHandler(MouseRightButtonDownEvent, value);
+            remove => RemoveHandler(MouseRightButtonDownEvent, value);
+        }
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseRightButtonUpEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseRightButtonUp), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseRightButtonUp
+        {
+            add => AddHandler(MouseRightButtonUpEvent, value);
+            remove => RemoveHandler(MouseRightButtonUpEvent, value);
+        }
+
+        public static readonly RoutedEvent<MouseButtonEventArgs> MouseLeftButtonDownEvent = EventManager.Register<UIElement, MouseButtonEventArgs>(nameof(MouseLeftButtonDown), RoutingStrategy.Direct);
+
+        public event RoutedEventHandler<MouseButtonEventArgs> MouseLeftButtonDown
+        {
+            add => AddHandler(MouseLeftButtonDownEvent, value);
+            remove => RemoveHandler(MouseLeftButtonDownEvent, value);
         }
 
         public static readonly RoutedEvent<MouseEventArgs> MouseEnterEvent = EventManager.Register<UIElement, MouseEventArgs>(nameof(MouseEnter), RoutingStrategy.Tunnel);
@@ -172,6 +209,26 @@
 
         public bool IsMouseOver => isMouseOver;
 
+        private static void HandleMouseUp(UIElement? sender, MouseButtonEventArgs e)
+        {
+            if (sender == null) return;
+
+            sender.OnMouseUp(e);
+
+            switch (e.Button)
+            {
+                case MouseButton.Left:
+                    e.RoutedEvent = MouseLeftButtonUpEvent;
+                    sender.RaiseEvent(e);
+                    break;
+
+                case MouseButton.Right:
+                    e.RoutedEvent = MouseRightButtonUpEvent;
+                    sender.RaiseEvent(e);
+                    break;
+            }
+        }
+
         private static void HandleMouseDown(UIElement? sender, MouseButtonEventArgs e)
         {
             if (sender == null) return;
@@ -182,6 +239,19 @@
             }
 
             sender.OnMouseDown(e);
+
+            switch (e.Button)
+            {
+                case MouseButton.Left:
+                    e.RoutedEvent = MouseLeftButtonDownEvent;
+                    sender.RaiseEvent(e);
+                    break;
+
+                case MouseButton.Right:
+                    e.RoutedEvent = MouseRightButtonDownEvent;
+                    sender.RaiseEvent(e);
+                    break;
+            }
         }
 
         private static void HandleMouseEnter(UIElement? sender, MouseEventArgs e)
@@ -229,6 +299,22 @@
         }
 
         protected virtual void OnMouseUp(MouseButtonEventArgs args)
+        {
+        }
+
+        protected virtual void OnMouseLeftButtonDown(MouseButtonEventArgs args)
+        {
+        }
+
+        protected virtual void OnMouseLeftButtonUp(MouseButtonEventArgs args)
+        {
+        }
+
+        protected virtual void OnMouseRightButtonDown(MouseButtonEventArgs args)
+        {
+        }
+
+        protected virtual void OnMouseRightButtonUp(MouseButtonEventArgs args)
         {
         }
 
@@ -286,9 +372,9 @@
                 return false;
             }
 
-            Focused?.RouteEvent(new FocusLostEventArgs());
+            Focused?.RaiseEvent(new FocusLostEventArgs(LostFocusEvent));
             Focused = element;
-            Focused?.RouteEvent(new FocusGainedEventArgs());
+            Focused?.RaiseEvent(new FocusGainedEventArgs(GotFocusEvent));
 
             return true;
         }

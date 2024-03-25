@@ -37,7 +37,7 @@
 
         public event RoutedEventHandler<FocusLostEventArgs> LostFocus;
 
-        public void RouteEvent(RoutedEventArgs e);
+        public void RaiseEvent(RoutedEventArgs e);
 
         public void Focus();
     }

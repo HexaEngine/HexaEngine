@@ -64,7 +64,7 @@
         {
             for (int i = 0; i < nodes.Count; i++)
             {
-                nodes[i].Clear(true);
+                nodes[i].Reset(true);
             }
             nodes.Clear();
             effectToNode.Clear();
@@ -108,7 +108,14 @@
 
             for (int i = 0; i < nodes.Count; i++)
             {
-                nodes[i].Clear();
+                var node = nodes[i];
+                node.Reset();
+
+                // force enable post fx.
+                if (node.PostFx.Flags.HasFlag(PostFxFlags.AlwaysEnabled))
+                {
+                    node.PostFx.Enabled = true;
+                }
             }
 
             for (int i = 0; i < nodes.Count; i++)

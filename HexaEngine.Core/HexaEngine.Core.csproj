@@ -6,34 +6,12 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DebugType>embedded</DebugType>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<DefineConstants>$(DefineConstants)</DefineConstants>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE;</DefineConstants>
-	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;Debug</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove="Graphics\Passes\**" />

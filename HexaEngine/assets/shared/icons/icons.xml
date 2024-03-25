@@ -2,7 +2,7 @@
 <Icons>
 	<Icon theme="Light" name="File" path="assets/icons/light/file.png" target=".*" priority="-1" />
 	<Icon theme="Light" name="Folder" path="assets/icons/light/folder.png" target="/" priority="-1" />
-	<Icon theme="Light" name="Material" path="assets/icons/light/material.png" target="*.matlib" />
+	<Icon theme="Light" name="Material" path="assets/icons/light/material.png" target="*.material" />
 	<Icon theme="Light" name="Model" path="assets/icons/light/model.png" target="*.model" />
 	<Icon theme="Light" name="Scene" path="assets/icons/light/scene.png" target="*.hexlvl" />
 	<Icon theme="Light" name="Animation" path="assets/icons/light/animation.png" target="*.anim" />
@@ -11,15 +11,17 @@
 
 	<Icon theme="Light" name="ImgPng" path="assets/icons/light/image.png" target="*.png" />
 	<Icon theme="Light" name="ImgJpg" path="assets/icons/light/image.png" target="*.jpg" />
+	<Icon theme="Light" name="ImgJpeg" path="assets/icons/light/image.png" target="*.jpeg" />
 	<Icon theme="Light" name="ImgDDS" path="assets/icons/light/image.png" target="*.dds" />
 	<Icon theme="Light" name="ImgTGA" path="assets/icons/light/image.png" target="*.tga" />
 	<Icon theme="Light" name="ImgHDR" path="assets/icons/light/image.png" target="*.hdr" />
 	<Icon theme="Light" name="ImgIco" path="assets/icons/light/image.png" target="*.ico" />
 	<Icon theme="Light" name="ImgBmp" path="assets/icons/light/image.png" target="*.bmp" />
+	<Icon theme="Light" name="Logo" path="assets/icons/light/logo.png" target="^logo$" />
 
 	<Icon theme="Dark" name="File" path="assets/icons/dark/file.png" target=".*" priority="-1" />
 	<Icon theme="Dark" name="Folder" path="assets/icons/dark/folder.png" target="/" priority="-1" />
-	<Icon theme="Dark" name="Material" path="assets/icons/dark/material.png" target="*.matlib" />
+	<Icon theme="Dark" name="Material" path="assets/icons/dark/material.png" target="*.material" />
 	<Icon theme="Dark" name="Model" path="assets/icons/dark/model.png" target="*.model" />
 	<Icon theme="Dark" name="Scene" path="assets/icons/dark/scene.png" target="*.hexlvl" />
 	<Icon theme="Dark" name="Animation" path="assets/icons/dark/animation.png" target="*.anim" />
@@ -28,11 +30,13 @@
 
 	<Icon theme="Dark" name="ImgPng" path="assets/icons/dark/image.png" target="*.png" />
 	<Icon theme="Dark" name="ImgJpg" path="assets/icons/dark/image.png" target="*.jpg" />
+	<Icon theme="Dark" name="ImgJpeg" path="assets/icons/dark/image.png" target="*.jpeg" />
 	<Icon theme="Dark" name="ImgDDS" path="assets/icons/dark/image.png" target="*.dds" />
 	<Icon theme="Dark" name="ImgTGA" path="assets/icons/dark/image.png" target="*.tga" />
 	<Icon theme="Dark" name="ImgHDR" path="assets/icons/dark/image.png" target="*.hdr" />
 	<Icon theme="Dark" name="ImgIco" path="assets/icons/dark/image.png" target="*.ico" />
 	<Icon theme="Dark" name="ImgBmp" path="assets/icons/dark/image.png" target="*.bmp" />
+	<Icon theme="Dark" name="Logo" path="assets/icons/dark/logo.png" target="^logo$" />
 
 	<Icon theme="Dark" name="Camera" path="assets/icons/dark/camera.png" target="Camera" />
 	<Icon theme="Light" name="Camera" path="assets/icons/light/camera.png" target="Camera" />

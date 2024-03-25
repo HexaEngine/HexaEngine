@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Windows.Events;
 
     /// <summary>
     /// Provides data for keyboard input events.
     /// </summary>
-    public class KeyboardEventArgs : RoutedEventArgs
+    public class KeyboardEventArgs : InputEventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardEventArgs"/> class.

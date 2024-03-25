@@ -3,10 +3,11 @@
     using HexaEngine.Core.IO.Binary.Meshes;
     using System.Collections.Generic;
 
-    public class ModelManager
+    public class ModelManager : IDisposable
     {
         private readonly Dictionary<string, ModelFile> pathToMeshes = new();
         private readonly List<ModelFile> meshes = new();
+        private bool disposedValue;
 
         public IReadOnlyList<ModelFile> Meshes => meshes;
 
@@ -49,6 +50,32 @@
                     }
                 }
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                lock (meshes)
+                {
+                    meshes.Clear();
+                    pathToMeshes.Clear();
+                }
+                disposedValue = true;
+            }
+        }
+
+        ~ModelManager()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

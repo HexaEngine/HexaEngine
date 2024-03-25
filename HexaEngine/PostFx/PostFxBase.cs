@@ -1,10 +1,13 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -46,8 +49,15 @@
         /// </summary>
         protected Viewport Viewport;
 
+        private ImGuiName? displayName;
+
         /// <inheritdoc/>
         public abstract string Name { get; }
+
+        public virtual ImGuiName DisplayName
+        {
+            get => displayName ??= CreateDisplayName();
+        }
 
         /// <inheritdoc/>
         public abstract PostFxFlags Flags { get; }
@@ -61,9 +71,19 @@
         /// <inheritdoc/>
         public unsafe bool Enabled
         {
-            get => enabled;
+            get
+            {
+                if ((Flags & PostFxFlags.AlwaysEnabled) != 0)
+                    return true;
+
+                return enabled;
+            }
             set
             {
+                // prevent raising a reload event.
+                if ((Flags & PostFxFlags.AlwaysEnabled) != 0)
+                    return;
+
                 if (value == enabled)
                     return;
 
@@ -89,6 +109,12 @@
             Initialize(device, creator, width, height, macros);
             initialized = true;
             dirty = true;
+        }
+
+        protected virtual ImGuiName CreateDisplayName()
+        {
+            EditorDisplayNameAttribute? displayNameAttribute = GetType().GetCustomAttribute<EditorDisplayNameAttribute>();
+            return displayNameAttribute == null ? new(Name) : new(displayNameAttribute.Name);
         }
 
         /// <summary>

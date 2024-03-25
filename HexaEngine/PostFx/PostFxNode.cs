@@ -38,7 +38,7 @@
 
         List<INode> INode.Dependencies => Dependencies.Cast<INode>().ToList();
 
-        public void Clear(bool clearContainer = false)
+        public void Reset(bool clearContainer = false)
         {
             Dependencies.Clear();
             GlobalDependencies.Clear();

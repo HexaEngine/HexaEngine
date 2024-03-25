@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -237,6 +238,8 @@
             if (!initialized)
                 return;
 
+            var name = EnumHelper<ShadowType>.GetName(type);
+
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformNoBuffer.SRV);
             context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
@@ -256,7 +259,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawType.Instances.Length);
+                material.DrawIndexedInstanced(context, name, mesh.IndexCount, (uint)drawType.Instances.Length);
                 mesh.EndDraw(context);
             }
 

@@ -144,7 +144,7 @@
         private void Simulate(int id)
         {
             var camera = CameraManager.Current;
-            var wind_direction = WeatherManager.Current?.WindDirection ?? Vector2.Zero;
+            var wind_direction = WeatherSystem.Current?.WindDirection ?? Vector2.Zero;
             float delta_time = Time.Delta;
             if (id == 0)
             {

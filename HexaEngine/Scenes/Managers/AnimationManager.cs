@@ -5,7 +5,7 @@
     using HexaEngine.Core.IO.Binary.Animations;
     using System.Collections.Generic;
 
-    public class AnimationManager
+    public class AnimationManager : IDisposable
     {
         private readonly List<AnimationLibrary> libraries = new();
         private readonly Dictionary<string, AnimationLibrary> pathToLib = new();
@@ -14,6 +14,7 @@
         private readonly Dictionary<AnimationClip, AnimationLibrary> animationToLib = new();
 
         private readonly object _lock = new();
+        private bool disposedValue;
 
         public IReadOnlyList<AnimationLibrary> Libraries => libraries;
 
@@ -80,6 +81,28 @@
             }
 
             return library;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                lock (_lock)
+                {
+                    libraries.Clear();
+                    pathToLib.Clear();
+                    animations.Clear();
+                    animationToLib.Clear();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

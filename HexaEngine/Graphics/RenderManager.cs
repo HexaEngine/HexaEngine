@@ -12,7 +12,7 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public class RenderManager : ISystem
+    public class RenderManager : ISceneSystem
     {
         private readonly IGraphicsDevice device;
         private readonly ComponentTypeQuery<IRendererComponent> renderers = new();

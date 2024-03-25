@@ -147,6 +147,7 @@
             buttonEventArgs.Button = button;
             buttonEventArgs.State = MouseButtonState.Down;
             buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
+            buttonEventArgs.Position = new(mouseButtonEvent.X, mouseButtonEvent.Y);
             ButtonDown?.Invoke(null, buttonEventArgs);
         }
 
@@ -161,6 +162,7 @@
             buttonEventArgs.Button = button;
             buttonEventArgs.State = MouseButtonState.Up;
             buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
+            buttonEventArgs.Position = new(mouseButtonEvent.X, mouseButtonEvent.Y);
             ButtonUp?.Invoke(null, buttonEventArgs);
         }
 

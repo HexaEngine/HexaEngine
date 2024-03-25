@@ -56,6 +56,7 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
+            context.ClearRenderTargetView(postFxBuffer.Value.RTV, default);
             postProcessingManager.Enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoPostProcessing) == 0;
             postProcessingManager.Input = lightBuffer.Value;
             postProcessingManager.Output = postFxBuffer.Value;

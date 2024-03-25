@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
     using System;
@@ -128,6 +129,18 @@
         public static Texture2D LoadFromAssets(IGraphicsDevice device, string path, bool generateMips = true)
         {
             return new(device, FileSystem.GetAsset(Paths.CurrentTexturePath + path), generateMips);
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from assets and returns it.
+        /// </summary>
+        /// <param name="device">The graphics device associated with the texture.</param>
+        /// <param name="assetRef">The path to the texture asset.</param>
+        /// <param name="generateMips">Indicates whether to generate mipmaps.</param>
+        /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
+        public static Texture2D LoadFromAssets(IGraphicsDevice device, AssetRef assetRef, bool generateMips = true)
+        {
+            return new(device, FileSystem.GetAsset(assetRef.GetPath()), generateMips);
         }
 
 #nullable disable

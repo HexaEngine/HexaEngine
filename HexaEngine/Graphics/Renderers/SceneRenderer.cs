@@ -37,6 +37,7 @@ namespace HexaEngine.Graphics.Renderers
         private float RenderResolution;
         private int width;
         private int height;
+        private bool enableProfiling;
 
         public ICPUFlameProfiler Profiler => profiler;
 
@@ -49,6 +50,8 @@ namespace HexaEngine.Graphics.Renderers
         public IReadOnlyList<RenderPass> Passes => renderGraph.Passes;
 
         public GraphResourceBuilder ResourceBuilder => graphExecuter.ResourceBuilder;
+
+        public bool EnableProfiling { get => enableProfiling; set => enableProfiling = value; }
 
         public int Width => width;
 
@@ -229,7 +232,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, profiler);
+            graphExecuter.Execute(context, enableProfiling ? profiler : null);
         }
 
         public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, Scene scene, Camera camera)
@@ -254,7 +257,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = target;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, profiler);
+            graphExecuter.Execute(context, enableProfiling ? profiler : null);
         }
 
         public void TakeScreenshot(IGraphicsContext context, string path)
@@ -268,7 +271,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
             graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;
-            graphExecuter.Execute(context, profiler);
+            graphExecuter.Execute(context, enableProfiling ? profiler : null);
 
             tempTexture.Dispose();
 

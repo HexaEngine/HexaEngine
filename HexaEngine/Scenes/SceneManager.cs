@@ -125,7 +125,7 @@
 
                 if (Current == null)
                 {
-                    scene.Initialize(window.GraphicsDevice);
+                    scene.Initialize();
                     scene.Load(window.GraphicsDevice);
                     lock (_lock)
                     {
@@ -162,7 +162,7 @@
 
                     ResourceManager.Shared.Release();
 
-                    scene.Initialize(window.GraphicsDevice);
+                    scene.Initialize();
 
                     lock (_lock)
                     {
@@ -202,7 +202,7 @@
                 Current.Unload();
                 Current.Uninitialize();
 
-                Current.Initialize(window.GraphicsDevice);
+                Current.Initialize();
                 Current.Load(window.GraphicsDevice);
 
                 SceneChanged?.Invoke(null, new(Current, Current));
@@ -263,7 +263,7 @@
                 var window = (ICoreWindow)state;
                 semaphore.Wait();
 
-                Current.Initialize(window.GraphicsDevice);
+                Current.Initialize();
                 Current.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
@@ -315,7 +315,7 @@
 
                 if (Current == null)
                 {
-                    await scene.InitializeAsync(window.GraphicsDevice);
+                    await scene.InitializeAsync();
                     scene.Load(window.GraphicsDevice);
 
                     lock (_lock)
@@ -353,7 +353,7 @@
 
                     ResourceManager.Shared.Release();
 
-                    await scene.InitializeAsync(window.GraphicsDevice);
+                    await scene.InitializeAsync();
                     scene.Load(window.GraphicsDevice);
 
                     lock (_lock)

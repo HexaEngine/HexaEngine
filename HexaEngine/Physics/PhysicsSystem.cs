@@ -9,7 +9,7 @@
     using MagicPhysX;
     using System.Numerics;
 
-    public unsafe class PhysicsSystem : ISystem
+    public unsafe class PhysicsSystem : ISceneSystem
     {
         private static readonly PersistentCache cookingCache = new("./cache/cookingcache.bin", "./cache/cookingcache.index");
         private static readonly PxFoundation* foundation;

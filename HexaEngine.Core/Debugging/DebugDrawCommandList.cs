@@ -13,7 +13,7 @@ namespace HexaEngine.Core.Debugging
         private UnsafeList<DebugDrawVert> vertices = new(vertexBufferSize);
         private UnsafeList<uint> indices = new(indexBufferSize);
 
-        private UnsafeList<DebugDrawCommand> queue = [];
+        private List<DebugDrawCommand> queue = [];
 
         private uint nVerticesCmd;
         private uint nIndicesCmd;
@@ -56,7 +56,7 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Gets the list of debug draw commands.
         /// </summary>
-        public UnsafeList<DebugDrawCommand> Commands => queue;
+        public List<DebugDrawCommand> Commands => queue;
 
         /// <summary>
         /// Gets the type of the debug draw command list.
@@ -178,7 +178,7 @@ namespace HexaEngine.Core.Debugging
         public void RecordCmd(PrimitiveTopology topology, nint texId, bool enableDepth)
         {
             DebugDrawCommand cmd = new(topology, nVerticesCmd, nIndicesCmd, nVerticesTotal, nIndicesTotal, texId, enableDepth);
-            queue.PushBack(cmd);
+            queue.Add(cmd);
             nVerticesTotal += nVerticesCmd;
             nIndicesTotal += nIndicesCmd;
             nIndicesCmd = 0;

@@ -654,7 +654,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             fixed (char* pGlyphRanges = glyphRanges)
             {
                 byte[] fontBytes = File.ReadAllBytes("assets/shared/fonts/SEGMDL2.TTF");
-                byte* pFontBytes = (byte*)ImGui.MemAlloc((nuint)fontBytes.Length);
+                byte* pFontBytes = (byte*)Marshal.AllocHGlobal((nint)fontBytes.Length);
                 Marshal.Copy(fontBytes, 0, (nint)pFontBytes, fontBytes.Length);
 
                 // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.

@@ -12,7 +12,7 @@
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
-            var manager = WeatherManager.Current;
+            var manager = WeatherSystem.Current;
             if (manager == null)
                 return;
 
