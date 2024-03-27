@@ -2,9 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.PostFx;
     using System.Numerics;
 
+    [EditorDisplayName("User LUT")]
     public class UserLUT : PostFxBase
     {
         private IGraphicsPipelineState pipeline;

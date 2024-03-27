@@ -40,7 +40,10 @@
             Container.Build(postManager.Effects);
             if (Mode == VolumeMode.Global)
             {
-                Container.Apply(postManager.Effects);
+                using (postManager.SupressReload())
+                {
+                    Container.Apply(postManager.Effects);
+                }
             }
         }
     }

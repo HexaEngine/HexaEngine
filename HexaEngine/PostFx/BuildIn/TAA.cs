@@ -2,9 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
 
+    [EditorDisplayName("TAA")]
     public class TAA : PostFxBase
     {
         private PostFxGraphResourceBuilder creator;
@@ -92,7 +94,7 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.GetTexture2D("VelocityBuffer");
-            Previous = creator.CreateBuffer("TAA_PREVIOUS_BUFFER");
+            Previous = creator.CreateBuffer("TAA_PREVIOUS_BUFFER", creationFlags: ResourceCreationFlags.None);
 
             Viewport = new(width, height);
         }

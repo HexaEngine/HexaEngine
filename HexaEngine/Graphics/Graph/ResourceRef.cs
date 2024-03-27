@@ -15,12 +15,19 @@
     {
         private IDisposable? _value;
 
-        public ResourceRef(string name)
+        public ResourceRef(GraphResourceBuilder builder, string name)
         {
+            Builder = builder;
             Name = name;
         }
 
+        public GraphResourceBuilder Builder { get; }
+
         public string Name { get; }
+
+        public bool Shared { get; internal set; }
+
+        public ResourceRef? ShareSource { get; internal set; }
 
         public IDisposable? Value
         {

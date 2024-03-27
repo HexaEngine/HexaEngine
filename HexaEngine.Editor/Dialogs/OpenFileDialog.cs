@@ -311,6 +311,7 @@
             backHistory.Push(CurrentFolder);
             CurrentFolder = path;
             forwardHistory.Clear();
+            Refresh();
         }
 
         public void GoHome()

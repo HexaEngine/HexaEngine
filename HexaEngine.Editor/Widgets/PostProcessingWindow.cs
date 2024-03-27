@@ -20,8 +20,13 @@
             buffer?.Dispose();
         }
 
-        private void Select(IGraphicsContext context, IResource resource)
+        private void Select(IGraphicsContext context, IResource? resource)
         {
+            if (resource == null)
+            {
+                Unselect();
+            }
+
             if (selected == resource)
             {
                 return;
@@ -170,6 +175,31 @@
                                         {
                                             Select(context, entry.Resource);
                                         }
+                                    }
+                                    ImGui.TreePop();
+                                }
+
+                                if (ImGui.TreeNode($"Resources: {container.Resources.Count}"))
+                                {
+                                    for (int j = 0; j < container.Resources.Count; j++)
+                                    {
+                                        var resourceRef = container.Resources[j];
+                                        var resource = resourceRef.Value as IResource;
+                                        ImGui.TreeNodeEx($"{resourceRef.Name} ({resource?.Dimension ?? ResourceDimension.Unknown}){(resourceRef.ShareSource != null ? $" -> {resourceRef.ShareSource.Name}" : string.Empty)}", ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.NoTreePushOnOpen);
+                                        if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                                        {
+                                            Select(context, resource);
+                                        }
+                                    }
+                                    ImGui.TreePop();
+                                }
+
+                                if (ImGui.TreeNode($"Shared Resources: {container.SharedResources.Count}"))
+                                {
+                                    for (int j = 0; j < container.SharedResources.Count; j++)
+                                    {
+                                        var entry = container.SharedResources[j];
+                                        ImGui.TreeNodeEx($"{entry.Name} ({(entry.Value as IResource)?.Dimension})", ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.NoTreePushOnOpen);
                                     }
                                     ImGui.TreePop();
                                 }

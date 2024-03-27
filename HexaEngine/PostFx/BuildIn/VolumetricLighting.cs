@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
@@ -10,6 +11,7 @@
     using HexaEngine.Meshes;
     using System.Numerics;
 
+    [EditorDisplayName("Volumetric Lighting")]
     public class VolumetricLighting : PostFxBase
     {
         private IGraphicsPipelineState pipeline;

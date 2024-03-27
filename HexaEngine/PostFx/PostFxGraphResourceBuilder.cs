@@ -39,6 +39,8 @@
 
         public Viewport Viewport => resourceBuilder.Viewport;
 
+        public Viewport ViewportHalf => new(resourceBuilder.Viewport.Offset, resourceBuilder.Viewport.Size / 2f);
+
         public IGraphicsDevice Device => device;
 
         public GraphResourceContainer? Container { get => resourceBuilder.Container; set => resourceBuilder.Container = value; }
@@ -48,15 +50,27 @@
             return resourceBuilder.AddResource(name);
         }
 
-        public ResourceRef<Texture2D> CreateBuffer(string name, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW)
+        public ResourceRef<Texture2D> CreateBuffer(string name, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
         {
-            var texRef = CreateTexture2D(name, new(Format, Width, Height, arraySize, mipLevels, gpuAccessFlags), ResourceCreationFlags.None);
+            var texRef = CreateTexture2D(name, new(Format, Width, Height, arraySize, mipLevels, gpuAccessFlags), creationFlags);
             return texRef;
         }
 
-        public ResourceRef<Texture2D> CreateBufferHalfRes(string name)
+        public ResourceRef<Texture2D> CreateBufferHalfRes(string name, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
         {
-            var texRef = CreateTexture2D(name, new(Format, Width / 2, Height / 2, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            var texRef = CreateTexture2D(name, new(Format, Width / 2, Height / 2, arraySize, mipLevels, GpuAccessFlags.RW), creationFlags);
+            return texRef;
+        }
+
+        public ResourceRef<Texture2D> CreateBuffer(string name, Format format, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
+        {
+            var texRef = CreateTexture2D(name, new(format, Width, Height, arraySize, mipLevels, gpuAccessFlags), creationFlags);
+            return texRef;
+        }
+
+        public ResourceRef<Texture2D> CreateBufferHalfRes(string name, Format format, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
+        {
+            var texRef = CreateTexture2D(name, new(format, Width / 2, Height / 2, arraySize, mipLevels, GpuAccessFlags.RW), creationFlags);
             return texRef;
         }
 
@@ -275,7 +289,7 @@
             return resourceBuilder.CreateGraphicsPipelineState(name, description, flags);
         }
 
-        ResourceRef<TType> IGraphResourceBuilder.CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, ResourceCreationFlags flags)
+        ResourceRef<TType> IGraphResourceBuilder.CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<ResourceDescriptor<TDesc>> lazyDescs, ResourceCreationFlags flags)
         {
             return resourceBuilder.CreateResource(name, description, constructor, group, lazyDescs, flags);
         }

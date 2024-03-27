@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
@@ -9,6 +10,7 @@
     /// <summary>
     /// Screen Space Reflections (SSR) post-processing effect.
     /// </summary>
+    [EditorDisplayName("SSR")]
     public class SSR : PostFxBase
     {
         private IGraphicsPipelineState pipelineSSR;
@@ -111,8 +113,10 @@
         }
 
         /// <summary>
-        /// Gets or sets the quality preset for SSR.
+        /// Gets or sets the quality preset for SSR. Set to custom to control max rays and ray steps manually.
         /// </summary>
+        [EditorProperty<SSRQualityPreset>("Quality Preset")]
+        [Tooltip("Specifies the quality level for Screen Space Reflections (SSR). Higher presets result in more accurate reflections but may impact performance. Set to 'Custom' to manually control maximum rays and ray steps.")]
         public SSRQualityPreset QualityPreset
         {
             get => qualityPreset;
@@ -125,6 +129,8 @@
         /// <summary>
         /// Gets or sets the maximum number of rays for SSR.
         /// </summary>
+        [EditorProperty("Max Ray Count")]
+        [Tooltip("Specifies the maximum number of rays for Screen Space Reflections (SSR). This value is applicable when the quality preset is set to 'Custom'.")]
         public int MaxRayCount
         {
             get => maxRayCount;
@@ -141,6 +147,8 @@
         /// <summary>
         /// Gets or sets the number of steps for SSR ray tracing.
         /// </summary>
+        [EditorProperty("Ray Steps")]
+        [Tooltip("Specifies the number of steps for ray tracing in Screen Space Reflections (SSR). This value is applicable when the quality preset is set to 'Custom'.")]
         public int RaySteps
         {
             get => raySteps;
@@ -157,6 +165,8 @@
         /// <summary>
         /// Gets or sets the step size for SSR ray tracing.
         /// </summary>
+        [EditorProperty("Ray Step")]
+        [Tooltip("Specifies the step size for ray tracing in Screen Space Reflections (SSR). This value is applicable when the quality preset is set to 'Custom'.")]
         public float RayStep
         {
             get => rayStep;
@@ -173,6 +183,8 @@
         /// <summary>
         /// Gets or sets the threshold for SSR ray hits.
         /// </summary>
+        [EditorProperty("Ray Hit Threshold")]
+        [Tooltip("Specifies the threshold for ray hits in Screen Space Reflections (SSR). This value is applicable when the quality preset is set to 'Custom'.")]
         public float RayHitThreshold
         {
             get => rayHitThreshold;

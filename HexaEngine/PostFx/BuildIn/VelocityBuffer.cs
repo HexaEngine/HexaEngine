@@ -2,11 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
 
+    [EditorDisplayName("Velocity Buffer")]
     public class VelocityBuffer : PostFxBase
     {
         private IGraphicsPipelineState pipeline;

@@ -109,7 +109,7 @@
             for (int i = 0; i < nodes.Count; i++)
             {
                 var node = nodes[i];
-                node.Reset();
+                node.Reset(true);
 
                 // force enable post fx.
                 if (node.PostFx.Flags.HasFlag(PostFxFlags.AlwaysEnabled))
@@ -148,7 +148,7 @@
                 var node = nodes[i];
                 if (node.Enabled || node.PostFx.Flags.HasFlag(PostFxFlags.Optional))
                 {
-                    node.Builder.Build(nodes, new List<ResourceBinding>());
+                    node.Builder.Build(nodes, []);
                 }
             }
 

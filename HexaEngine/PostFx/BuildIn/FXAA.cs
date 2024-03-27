@@ -3,11 +3,13 @@
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.PostFx;
 
     /// <summary>
     /// Post-processing effect for Fast Approximate Anti-Aliasing (FXAA).
     /// </summary>
+    [EditorDisplayName("FXAA")]
     public class FXAA : PostFxBase
     {
         private IGraphicsPipelineState pipeline;

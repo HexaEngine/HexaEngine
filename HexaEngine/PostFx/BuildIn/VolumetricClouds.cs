@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
@@ -11,6 +12,7 @@
     using HexaEngine.Weather;
     using System.Numerics;
 
+    [EditorDisplayName("Volumetric Clouds")]
     public class VolumetricClouds : PostFxBase
     {
         private IGraphicsDevice device;
@@ -76,7 +78,7 @@
             worleyTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
 
             intermediateTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", true);
+            gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);
         }
 
         public override void Update(IGraphicsContext context)

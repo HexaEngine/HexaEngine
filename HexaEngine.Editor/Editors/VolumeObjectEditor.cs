@@ -26,6 +26,8 @@
 
         public bool NoTable { get; set; }
 
+        public string Symbol { get; } = "?";
+
         public unsafe bool Draw(IGraphicsContext context)
         {
             PostProcessingManager? postManager = PostProcessingManager.Current;
@@ -168,8 +170,6 @@
         private static void DrawEnable(int id, IPostFx effect, PostFxProxy proxy, bool isOpen)
         {
             ImGui.SameLine();
-            ImGui.Dummy(new(1, 0));
-            ImGui.SameLine();
 
             if ((effect.Flags & (PostFxFlags.AlwaysEnabled | PostFxFlags.Optional)) == 0)
             {
@@ -191,8 +191,6 @@
             {
                 ImGui.TreeNodeSetOpen(id, !isOpen);
             }
-
-            ImGui.Dummy(new(0, 1));
         }
 
         public void Dispose()

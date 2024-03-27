@@ -9,6 +9,11 @@
     public interface IObjectEditor : IDisposable
     {
         /// <summary>
+        /// Gets the symbol associated with the object editor.
+        /// </summary>
+        string Symbol { get; }
+
+        /// <summary>
         /// Gets the name associated with the object editor.
         /// </summary>
         string Name { get; }

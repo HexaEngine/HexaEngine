@@ -73,6 +73,8 @@ namespace HexaEngine.Editor.TerrainEditor
 
         public bool NoTable { get; set; }
 
+        public string Symbol { get; } = "?";
+
         public bool Draw(IGraphicsContext context)
         {
             if (Instance is not TerrainRendererComponent component)

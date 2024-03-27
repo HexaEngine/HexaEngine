@@ -8,6 +8,13 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
+    public enum GaussianRadius
+    {
+        Radius3x3 = 3,
+        Radius5x5 = 5,
+        Radius7x7 = 7,
+    }
+
     public class GaussianBlur : IBlur
     {
         private readonly IGraphicsPipelineState horizontal;
@@ -24,7 +31,7 @@
             public Vector2 padd;
         }
 
-        public GaussianBlur(IGraphResourceBuilder creator, Format format, int width, int height, bool alphaBlend = false, bool additive = false, bool scissors = false, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public GaussianBlur(IGraphResourceBuilder creator, Format format, int width, int height, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             Format = format;
             Width = width;
@@ -37,6 +44,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -47,6 +55,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/vertical.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -58,10 +67,10 @@
             paramsBuffer = new(device, CpuAccessFlags.Write, filename + "_GAUSSIAN_BLUR_CONSTANT_BUFFER", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            intermediateTex = creator.CreateTexture2D(filename + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            intermediateTex = creator.CreateTexture2D(filename + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
         }
 
-        public GaussianBlur(IGraphResourceBuilder creator, string name, Format format, int width, int height, bool alphaBlend = false, bool additive = false, bool scissors = false)
+        public GaussianBlur(IGraphResourceBuilder creator, string name, Format format, int width, int height, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
             Format = format;
             Width = width;
@@ -74,6 +83,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -84,6 +94,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/vertical.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -95,10 +106,10 @@
             paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
         }
 
-        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, Format format, bool alphaBlend = false, bool additive = false, bool scissors = false)
+        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, Format format, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
             device = creator.Device;
 
@@ -108,6 +119,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -118,6 +130,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/vertical.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -129,10 +142,10 @@
             paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, creator.Width, creator.Height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, creator.Width, creator.Height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
         }
 
-        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, bool alphaBlend = false, bool additive = false, bool scissors = false)
+        public GaussianBlur(PostFxGraphResourceBuilder creator, string name, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
         {
             device = creator.Device;
 
@@ -142,6 +155,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -152,6 +166,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/vertical.hlsl",
+                Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
                 Rasterizer = rasterizerDescription,
@@ -163,7 +178,7 @@
             paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            intermediateTex = creator.CreateBuffer(name + "_GAUSSIAN_BLUR_BUFFER");
+            intermediateTex = creator.CreateBuffer(name + "_GAUSSIAN_BLUR_BUFFER", creationFlags: ResourceCreationFlags.Shared);
         }
 
         public BlurType Type => BlurType.Gaussian;

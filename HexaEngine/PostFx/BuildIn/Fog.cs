@@ -2,12 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
 
+    [EditorDisplayName("Fog")]
     public class Fog : PostFxBase
     {
         private ISamplerState linearClampSampler;

@@ -2,10 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     public struct ResourceRefBinding<T> where T : class, INative, IDisposable
@@ -24,6 +27,7 @@
     {
         private readonly List<ResourceRef> resources = new();
         private readonly Dictionary<string, ResourceRef> nameToResource = new();
+        private readonly Dictionary<ResourceRef, IResourceDescriptor> resourceToDescriptor = new();
         private readonly IGraphicsDevice device;
         private Viewport viewport;
         private Viewport outputViewport;
@@ -41,34 +45,34 @@
         private readonly List<IConstantBuffer> constantBuffers = new();
 
         private readonly List<ShadowAtlas> shadowAtlas = new();
-        private readonly List<LazyInitDesc<ShadowAtlasDescription>> lazyShadowAtlas = new();
+        private readonly List<ResourceDescriptor<ShadowAtlasDescription>> shadowAtlasDescriptors = new();
 
         private readonly List<DepthMipChain> depthMipChains = new();
-        private readonly List<LazyInitDesc<DepthStencilBufferDescription>> lazyDepthMipChains = new();
+        private readonly List<ResourceDescriptor<DepthStencilBufferDescription>> depthMipChainDescriptors = new();
 
         private readonly List<DepthStencil> depthStencilBuffers = new();
-        private readonly List<LazyInitDesc<DepthStencilBufferDescription>> lazyDepthStencilBuffers = new();
+        private readonly List<ResourceDescriptor<DepthStencilBufferDescription>> depthStencilBufferDescriptors = new();
 
         private readonly List<GBuffer> gBuffers = new();
-        private readonly List<LazyInitDesc<GBufferDescription>> lazyGBuffers = new();
+        private readonly List<ResourceDescriptor<GBufferDescription>> gBufferDescriptors = new();
 
         private readonly List<Texture1D> textures1d = new();
-        private readonly List<LazyInitDesc<Texture1DDescription>> lazyTextures1d = new();
+        private readonly List<ResourceDescriptor<Texture1DDescription>> textures1dDescriptors = new();
 
         private readonly List<Texture2D> textures2d = new();
-        private readonly List<LazyInitDesc<Texture2DDescription>> lazyTextures2d = new();
+        private readonly List<ResourceDescriptor<Texture2DDescription>> textures2dDescriptors = new();
 
         private readonly List<Texture3D> textures3d = new();
-        private readonly List<LazyInitDesc<Texture3DDescription>> lazyTextures3d = new();
+        private readonly List<ResourceDescriptor<Texture3DDescription>> textures3dDescriptors = new();
 
         private readonly List<ISamplerState> samplerStates = new();
-        private readonly List<LazyInitDesc<SamplerStateDescription>> lazySamplerStates = new();
+        private readonly List<ResourceDescriptor<SamplerStateDescription>> samplerStateDescriptors = new();
 
         private readonly List<IGraphicsPipelineState> graphicsPipelineStates = new();
-        private readonly List<LazyInitDesc<GraphicsPipelineStateDescEx>> lazyGraphicsPipelineStates = new();
+        private readonly List<ResourceDescriptor<GraphicsPipelineStateDescEx>> graphicsPipelineStateDescriptors = new();
 
         private readonly List<IComputePipeline> computePipelines = new();
-        private readonly List<LazyInitDesc<ComputePipelineDesc>> lazyComputePipelines = new();
+        private readonly List<ResourceDescriptor<ComputePipelineDesc>> computePipelineDescriptors = new();
 
         public IGraphicsDevice Device => device;
 
@@ -80,57 +84,70 @@
 
         public GraphResourceContainer? Container { get => container; set => container = value; }
 
+        private void ConstructList<TType, TDesc>(List<ResourceDescriptor<TDesc>> descriptors, List<TType> group) where TDesc : struct where TType : class, IDisposable
+        {
+            for (int i = 0; i < descriptors.Count; i++)
+            {
+                var descriptor = descriptors[i];
+
+                if (descriptor.IsCreated || (descriptor.Flags & ResourceCreationFlags.LazyInit) == 0)
+                    continue;
+
+                var shared = FindMatching<TType, TDesc>(descriptor, descriptors);
+                descriptor.IsCreated = true;
+                descriptor.ShareSource = shared;
+                descriptor.Ref.Value = shared?.Ref.Value;
+                if ((shared?.Ref.Value) == null)
+                {
+                    descriptor.IsCreated = true;
+                    descriptors[i].Construct(device, group);
+                }
+            }
+        }
+
+        private static ResourceDescriptor<TDesc>? FindMatching<TType, TDesc>(ResourceDescriptor<TDesc> descriptor, IList<ResourceDescriptor<TDesc>> descriptors) where TDesc : struct where TType : class, IDisposable
+        {
+            if ((descriptor.Flags & ResourceCreationFlags.Shared) == 0)
+                return null;
+            for (int j = 0; j < descriptors.Count; j++)
+            {
+                var descShared = descriptors[j];
+
+                if (!descShared.IsCreated || descShared == descriptor || (descShared.Flags & ResourceCreationFlags.Shared) == 0)
+                {
+                    continue;
+                }
+
+                if (descShared.Container != null && descShared.Container == descriptor.Container && ((descriptor.Flags & ResourceCreationFlags.GroupShared) == 0 || (descShared.Flags & ResourceCreationFlags.GroupShared) == 0))
+                {
+                    continue;
+                }
+
+                if (descriptor.Container?.HasSharedResource(descShared.Ref) ?? true)
+                {
+                    continue;
+                }
+
+                if (descShared.Desc.Equals(descriptor.Desc))
+                {
+                    return descShared;
+                }
+            }
+            return null;
+        }
+
         internal void CreateResources()
         {
-            for (int i = 0; i < lazyShadowAtlas.Count; i++)
-            {
-                lazyShadowAtlas[i].Construct(device, shadowAtlas);
-            }
-
-            for (int i = 0; i < lazyDepthMipChains.Count; i++)
-            {
-                lazyDepthMipChains[i].Construct(device, depthMipChains);
-            }
-
-            for (int i = 0; i < lazyDepthStencilBuffers.Count; i++)
-            {
-                lazyDepthStencilBuffers[i].Construct(device, depthStencilBuffers);
-            }
-
-            for (int i = 0; i < lazyGBuffers.Count; i++)
-            {
-                lazyGBuffers[i].Construct(device, gBuffers);
-            }
-
-            for (int i = 0; i < lazyTextures1d.Count; i++)
-            {
-                lazyTextures1d[i].Construct(device, textures1d);
-            }
-
-            for (int i = 0; i < lazyTextures2d.Count; i++)
-            {
-                lazyTextures2d[i].Construct(device, textures2d);
-            }
-
-            for (int i = 0; i < lazyTextures3d.Count; i++)
-            {
-                lazyTextures3d[i].Construct(device, textures3d);
-            }
-
-            for (int i = 0; i < lazySamplerStates.Count; i++)
-            {
-                lazySamplerStates[i].Construct(device, samplerStates);
-            }
-
-            for (int i = 0; i < lazyGraphicsPipelineStates.Count; i++)
-            {
-                lazyGraphicsPipelineStates[i].Construct(device, graphicsPipelineStates);
-            }
-
-            for (int i = 0; i < lazyComputePipelines.Count; i++)
-            {
-                lazyComputePipelines[i].Construct(device, computePipelines);
-            }
+            ConstructList(shadowAtlasDescriptors, shadowAtlas);
+            ConstructList(depthMipChainDescriptors, depthMipChains);
+            ConstructList(depthStencilBufferDescriptors, depthStencilBuffers);
+            ConstructList(gBufferDescriptors, gBuffers);
+            ConstructList(textures1dDescriptors, textures1d);
+            ConstructList(textures2dDescriptors, textures2d);
+            ConstructList(textures3dDescriptors, textures3d);
+            ConstructList(samplerStateDescriptors, samplerStates);
+            ConstructList(graphicsPipelineStateDescriptors, graphicsPipelineStates);
+            ConstructList(computePipelineDescriptors, computePipelines);
         }
 
         internal void ReleaseResources()
@@ -142,42 +159,31 @@
 
             resources.Clear();
             nameToResource.Clear();
+            resourceToDescriptor.Clear();
 
             structuredUavBuffers.Clear();
-
             structuredBuffers.Clear();
-
             constantBuffers.Clear();
-
-            shadowAtlas.Clear();
-            lazyShadowAtlas.Clear();
-
             depthMipChains.Clear();
-            lazyDepthMipChains.Clear();
-
             depthStencilBuffers.Clear();
-            lazyDepthStencilBuffers.Clear();
-
             gBuffers.Clear();
-            lazyGBuffers.Clear();
-
             textures1d.Clear();
-            lazyTextures1d.Clear();
-
             textures2d.Clear();
-            lazyTextures2d.Clear();
-
             textures3d.Clear();
-            lazyTextures3d.Clear();
-
             samplerStates.Clear();
-            lazySamplerStates.Clear();
-
             graphicsPipelineStates.Clear();
-            lazyGraphicsPipelineStates.Clear();
-
             computePipelines.Clear();
-            lazyComputePipelines.Clear();
+
+            shadowAtlasDescriptors.Clear();
+            depthMipChainDescriptors.Clear();
+            depthStencilBufferDescriptors.Clear();
+            gBufferDescriptors.Clear();
+            textures1dDescriptors.Clear();
+            textures2dDescriptors.Clear();
+            textures3dDescriptors.Clear();
+            samplerStateDescriptors.Clear();
+            graphicsPipelineStateDescriptors.Clear();
+            computePipelineDescriptors.Clear();
         }
 
         public ResourceRef AddResource(string name)
@@ -187,7 +193,7 @@
                 throw new Exception($"Duplicate resource, the resource named {name} already exists!");
             }
 
-            ResourceRef resource = new(name);
+            ResourceRef resource = new(this, name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
             container?.AddResource(resource);
@@ -201,7 +207,7 @@
                 throw new Exception($"Duplicate resource, the resource named {name} already exists!");
             }
 
-            ResourceRef resource = new(name);
+            ResourceRef resource = new(this, name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
             container?.AddResource(resource);
@@ -215,7 +221,7 @@
                 return resource;
             }
 
-            resource = new(name);
+            resource = new(this, name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
             container?.AddResource(resource);
@@ -229,9 +235,10 @@
                 return new(resource);
             }
 
-            resource = new(name);
+            resource = new(this, name);
             nameToResource.Add(name, resource);
             resources.Add(resource);
+
             container?.AddResource(resource);
             return new(resource);
         }
@@ -291,8 +298,29 @@
         {
             if (TryGetResource(name, out ResourceRef? resource))
             {
-                nameToResource.Remove(name);
-                resources.Remove(resource);
+                return RemoveResource(resource);
+            }
+            return false;
+        }
+
+        public bool RemoveResource(ResourceRef resource)
+        {
+            if (resources.Remove(resource))
+            {
+                var descriptor = resourceToDescriptor[resource];
+                ((IList)shadowAtlasDescriptors).Remove(descriptor);
+                ((IList)depthMipChainDescriptors).Remove(descriptor);
+                ((IList)depthStencilBufferDescriptors).Remove(descriptor);
+                ((IList)gBufferDescriptors).Remove(descriptor);
+                ((IList)textures1dDescriptors).Remove(descriptor);
+                ((IList)textures2dDescriptors).Remove(descriptor);
+                ((IList)textures3dDescriptors).Remove(descriptor);
+                ((IList)samplerStateDescriptors).Remove(descriptor);
+                ((IList)graphicsPipelineStateDescriptors).Remove(descriptor);
+                ((IList)computePipelineDescriptors).Remove(descriptor);
+                resourceToDescriptor.Remove(resource);
+
+                nameToResource.Remove(resource.Name);
                 container?.RemoveResource(resource);
                 resource.Dispose();
                 return true;
@@ -469,12 +497,12 @@
 
         public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, flags);
+            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, computePipelineDescriptors, flags);
         }
 
         public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, lazyComputePipelines, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, computePipelineDescriptors, flags);
         }
 
         public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
@@ -503,38 +531,38 @@
 
         public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains, lazyDepthMipChains, flags);
+            return CreateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains, depthMipChainDescriptors, flags);
         }
 
         public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, lazyDepthStencilBuffers, flags);
+            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, depthStencilBufferDescriptors, flags);
         }
 
         public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, lazyGBuffers, flags);
+            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, gBufferDescriptors, flags);
         }
 
         public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
             string name = description.GetHashCode().ToString();
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, lazyGraphicsPipelineStates, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, graphicsPipelineStateDescriptors, flags);
         }
 
         public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, lazyGraphicsPipelineStates, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, graphicsPipelineStateDescriptors, flags);
         }
 
-        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All | ResourceCreationFlags.GroupShared)
         {
-            return CreateResource(name, description, (dev, desc) => dev.CreateSamplerState(desc), samplerStates, lazySamplerStates, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateSamplerState(desc), samplerStates, samplerStateDescriptors, flags);
         }
 
         public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas, lazyShadowAtlas, flags);
+            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas, shadowAtlasDescriptors, flags);
         }
 
         public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
@@ -587,45 +615,58 @@
 
         public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, lazyTextures1d, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, textures1dDescriptors, flags);
         }
 
         public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, lazyTextures2d, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, textures2dDescriptors, flags);
         }
 
         public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, lazyTextures3d, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, textures3dDescriptors, flags);
         }
 
-        public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<LazyInitDesc<TDesc>> lazyDescs, ResourceCreationFlags flags) where TType : class, IDisposable
+        public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<ResourceDescriptor<TDesc>> descriptors, ResourceCreationFlags flags) where TDesc : struct where TType : class, IDisposable
         {
             if (TryGetResource<TType>(name, out var resourceRef) && resourceRef.Value != null)
             {
                 return resourceRef;
-                //throw new InvalidOperationException($"Resource {name} is already created ({resourceRef.Value})");
             }
 
             resourceRef ??= AddResource<TType>(name);
 
-            var idx = lazyDescs.IndexOf(new LazyInitDesc<TDesc>(default, resourceRef.Resource, null, 0));
-            var contains = idx != -1;
+            var contains = resourceToDescriptor.TryGetValue(resourceRef.Resource, out var resourceDescriptor);
 
             if ((flags & ResourceCreationFlags.LazyInit) == 0)
             {
-                TType resource = constructor(device, description);
-                resourceRef.Value = resource;
-                group.Add(resource);
-                if (contains)
+                ResourceDescriptor<TDesc> descriptor = resourceDescriptor != null ? (ResourceDescriptor<TDesc>)resourceDescriptor : new ResourceDescriptor<TDesc>(description, resourceRef.Resource, container, null, flags);
+                if (!contains)
                 {
-                    lazyDescs.RemoveAt(idx);
+                    descriptors.Add(descriptor);
+                    resourceToDescriptor.Add(resourceRef.Resource, descriptor);
+                }
+
+                ResourceDescriptor<TDesc>? shared = FindMatching<TType, TDesc>(descriptor, descriptors);
+
+                TType resource = (TType)(shared?.Ref.Value ?? constructor(device, description));
+
+                descriptor.Flags &= ~ResourceCreationFlags.LazyInit;
+                descriptor.IsCreated = true;
+                descriptor.ShareSource = shared;
+                resourceRef.Value = resource;
+
+                if (shared == null)
+                {
+                    group.Add(resource);
                 }
             }
             else if (!contains)
             {
-                lazyDescs.Add(new(description, resourceRef.Resource, constructor, flags));
+                ResourceDescriptor<TDesc> descriptor = new(description, resourceRef.Resource, container, constructor, flags);
+                descriptors.Add(descriptor);
+                resourceToDescriptor.Add(resourceRef.Resource, descriptor);
             }
 
             return resourceRef;

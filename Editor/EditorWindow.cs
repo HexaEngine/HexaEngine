@@ -141,9 +141,7 @@
 
             // Set the camera for DebugDraw based on the current camera's view projection matrix.
 
-#nullable disable // cant be null because CameraManager.Current would be the editor camera because of Application.InEditorMode.
-            DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
-#nullable restore
+            DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();

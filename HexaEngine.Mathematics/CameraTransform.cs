@@ -55,7 +55,7 @@
         /// <summary>
         /// The fov of the camera.
         /// </summary>
-        protected float fov = 90;
+        protected float fov = 90f.ToRad();
 
         /// <summary>
         /// The near plane distance of the camera.
@@ -259,7 +259,7 @@
                     break;
 
                 case ProjectionType.Perspective:
-                    projection = MathUtil.PerspectiveFovLH(fov.ToRad(), aspectRatio, near, far);
+                    projection = MathUtil.PerspectiveFovLH(fov, aspectRatio, near, far);
                     break;
             }
             Matrix4x4.Invert(projection, out projectionInv);

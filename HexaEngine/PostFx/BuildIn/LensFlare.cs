@@ -2,17 +2,21 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
 
+    [EditorDisplayName("Lens Flare")]
     public class LensFlare : PostFxBase
     {
         private IGraphicsPipelineState downsamplePipeline;
         private ConstantBuffer<DownsampleParams> downsampleCB;
         private ISamplerState samplerState;
         private ResourceRef<Texture2D> downsampleBuffer;
+        private Viewport downsampleViewport;
         private ResourceRef<Texture2D> accumBuffer;
 
         private IGraphicsPipelineState lensPipeline;
@@ -108,6 +112,7 @@
             downsampleCB = new(device, CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
+            downsampleViewport = creator.ViewportHalf;
 
             lensPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -119,7 +124,7 @@
 
             accumBuffer = creator.CreateBufferHalfRes("LENS_ACCUMULATION_BUFFER");
 
-            blur = new(creator, "LENS", false, true);
+            blur = new(creator, "LENS", additive: true);
 
             blendPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -132,7 +137,7 @@
         public override void Update(IGraphicsContext context)
         {
             downsampleCB.Update(context, new(scale, bias));
-            lensCB.Update(context, new(ghosts, ghostDispersal, downsampleBuffer.Value.Viewport.Size, haloWidth, distortion));
+            lensCB.Update(context, new(ghosts, ghostDispersal, downsampleViewport.Size, haloWidth, distortion));
         }
 
         public override void Draw(IGraphicsContext context)

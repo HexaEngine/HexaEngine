@@ -136,5 +136,14 @@
                 ImGui.EndMenu();
             }
         }
+
+        public void DrawContent(GameObject gameObject)
+        {
+            for (int i = 0; i < categories.Count; i++)
+            {
+                var category = categories[i];
+                category.Draw(gameObject);
+            }
+        }
     }
 }

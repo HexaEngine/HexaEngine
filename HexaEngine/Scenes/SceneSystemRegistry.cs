@@ -67,6 +67,16 @@
             for (int i = 0; i < descriptors.Count; i++)
             {
                 ((ICollection<ServiceDescriptor>)services).Add(descriptors[i]);
+                /*
+                var descriptor = descriptors[i];
+                if (descriptor.ImplementationInstance != null)
+                {
+                    services.AddSingleton(descriptors[i].ServiceType, descriptor.ImplementationInstance);
+                }
+                else
+                {
+                    services.AddSingleton(descriptors[i].ServiceType, descriptors[i].ImplementationType ?? descriptors[i].ServiceType);
+                }*/
             }
             return services;
         }

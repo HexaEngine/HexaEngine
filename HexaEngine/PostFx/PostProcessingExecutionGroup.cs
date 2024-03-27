@@ -50,7 +50,7 @@
 
                 var flags = effect.Flags;
 
-                if ((flags & PostFxFlags.Inline) != 0 && isFirst && postContext.IsFirst)
+                if ((flags & PostFxFlags.Inline) != 0 && postContext.IsFirst)
                 {
                     if (i - 1 < 0 || Passes[i - 1] is not CopyPass)
                     {

@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
+    using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostProcessingManager : IDisposable
@@ -132,17 +133,52 @@
             semaphore.Release();
         }
 
+        private enum PrivateFlags
+        {
+            None = 0,
+            ReloadPending = 1,
+            InvalidatePending = 2,
+        }
+
+        private bool suppressListeners;
+        private PrivateFlags privateFlags;
+        private Queue<IPostFx> reloadQueue = new();
+
         private void OnEnabledChanged(IPostFx postFx, bool enabled)
         {
             if (postFx.Flags.HasFlag(PostFxFlags.Optional))
             {
                 return;
             }
+
+            if (suppressListeners)
+            {
+                lock (this)
+                {
+                    privateFlags |= PrivateFlags.ReloadPending;
+                }
+                return;
+            }
+
             ReloadAsync();
         }
 
         private void OnReload(IPostFx postFx)
         {
+            if (!postFx.Enabled)
+            {
+                return;
+            }
+
+            if (suppressListeners)
+            {
+                lock (this)
+                {
+                    reloadQueue.Enqueue(postFx);
+                }
+                return;
+            }
+
             semaphore.Wait();
             GraphResourceContainer container = graph.GetNode(postFx).Container;
             postFx.Dispose();
@@ -155,10 +191,93 @@
             semaphore.Release();
         }
 
-        private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (sender is not IPostFx postFx || !postFx.Enabled)
+            {
+                return;
+            }
+
+            if (suppressListeners)
+            {
+                privateFlags |= PrivateFlags.InvalidatePending;
+                return;
+            }
+
             semaphore.Wait();
             Invalidate();
+            semaphore.Release();
+        }
+
+        private class SuppressHandle : IDisposable
+        {
+            private readonly PostProcessingManager instance;
+
+            public SuppressHandle(PostProcessingManager instance)
+            {
+                this.instance = instance;
+            }
+
+            ~SuppressHandle()
+            {
+                DisposeInternal();
+            }
+
+            private void DisposeInternal()
+            {
+                instance.ResumeReload();
+            }
+
+            public void Dispose()
+            {
+                DisposeInternal();
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        /// <summary>
+        /// Supresses internal reload mechanisms used for reducing overhead for high frequency changes, call <see cref="ResumeReload"/> or <see cref="IDisposable.Dispose"/> afterwards to avoid dead-locks.
+        /// </summary>
+        /// <remarks><c>Call <see cref="ResumeReload"/> or <see cref="IDisposable.Dispose"/> immediately</c> after your operations are done to avoid dead-locks.</remarks>
+        public IDisposable SupressReload()
+        {
+            if (suppressListeners)
+                return new SuppressHandle(this);
+            semaphore.Wait();
+            suppressListeners = true;
+            return new SuppressHandle(this);
+        }
+
+        public void ResumeReload()
+        {
+            if (!suppressListeners)
+                return;
+            suppressListeners = false;
+
+            if ((privateFlags & PrivateFlags.ReloadPending) != 0)
+            {
+                reloadQueue.Clear();
+                ReloadAsync();
+                privateFlags = PrivateFlags.None;
+            }
+
+            while (reloadQueue.TryDequeue(out var postFx))
+            {
+                GraphResourceContainer container = graph.GetNode(postFx).Container;
+                postFx.Dispose();
+                container.DisposeResources();
+
+                creator.Container = container;
+                postFx.Initialize(device, creator, width, height, macros);
+                creator.Container = null;
+                privateFlags |= PrivateFlags.InvalidatePending;
+            }
+
+            if ((privateFlags & PrivateFlags.InvalidatePending) != 0)
+            {
+                Invalidate();
+            }
+
             semaphore.Release();
         }
 
@@ -306,7 +425,7 @@
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
 
-            Parallel.For(0, effects.Count, i =>
+            for (int i = 0; i < effects.Count; i++)
             {
                 var effect = effects[i];
                 if (effect.Enabled)
@@ -316,7 +435,7 @@
                     effect.Initialize(device, creator, width, height, macros);
                     creator.Container = null;
                 }
-            });
+            }
 
             UpdateGroups();
 
@@ -353,7 +472,7 @@
                     macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
                 }
 
-                Parallel.For(0, effects.Count, i =>
+                for (int i = 0; i < effects.Count; i++)
                 {
                     var effect = effects[i];
                     if (effect.Enabled)
@@ -363,7 +482,7 @@
                         effect.Initialize(device, creator, width, height, macros);
                         creator.Container = null;
                     }
-                });
+                }
 
                 UpdateGroups();
 

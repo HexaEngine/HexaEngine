@@ -45,13 +45,17 @@
     public class GraphResourceContainer
     {
         private readonly List<ResourceRef> resources = new();
+        private readonly List<ResourceRef> sharedResources = new();
         private readonly Dictionary<string, ResourceRef> nameToResource = new();
+        private readonly Dictionary<string, ResourceRef> nameToSharedResource = new();
         private readonly List<ResourceEntry> entries = new();
         private readonly object _lock = new();
 
         private long size;
 
         public IReadOnlyList<ResourceRef> Resources => resources;
+
+        public IReadOnlyList<ResourceRef> SharedResources => sharedResources;
 
         public IReadOnlyList<ResourceEntry> Entries => entries;
 
@@ -81,12 +85,64 @@
             }
         }
 
+        public void AddSharedResource(ResourceRef resourceRef)
+        {
+            lock (_lock)
+            {
+                sharedResources.Add(resourceRef);
+                nameToSharedResource.Add(resourceRef.Name, resourceRef);
+            }
+        }
+
+        public void RemoveSharedResource(ResourceRef resourceRef)
+        {
+            lock (_lock)
+            {
+                sharedResources.Remove(resourceRef);
+                nameToSharedResource.Remove(resourceRef.Name);
+            }
+        }
+
+        public bool HasResource(ResourceRef name)
+        {
+            return HasResource(name.Name);
+        }
+
+        public bool HasSharedResource(ResourceRef name)
+        {
+            return HasSharedResource(name.Name);
+        }
+
+        public bool HasResource(string name)
+        {
+            lock (_lock)
+            {
+                return nameToResource.ContainsKey(name);
+            }
+        }
+
+        public bool HasSharedResource(string name)
+        {
+            lock (_lock)
+            {
+                return nameToSharedResource.ContainsKey(name);
+            }
+        }
+
         public void Clear()
         {
             lock (_lock)
             {
+                for (int i = 0; i < resources.Count; i++)
+                {
+                    var resource = resources[i];
+                    resource.Builder.RemoveResource(resource);
+                }
+
                 resources.Clear();
                 nameToResource.Clear();
+                sharedResources.Clear();
+                nameToSharedResource.Clear();
                 entries.Clear();
                 size = 0;
             }
@@ -110,7 +166,7 @@
                     entries.RemoveAt(index);
                 }
 
-                if (resourceRef.Value is not IResource resource)
+                if (resourceRef.Value is not IResource resource || resourceRef.ShareSource != null)
                 {
                     return false;
                 }

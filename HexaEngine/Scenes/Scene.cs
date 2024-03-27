@@ -24,8 +24,8 @@
         private readonly List<GameObject> nodes = [];
         private readonly CameraContainer cameraContainer = new();
 
-        private readonly IServiceProvider serviceProvider;
-        private readonly IServiceCollection services;
+        private IServiceProvider serviceProvider;
+        private IServiceCollection services;
 
         private readonly SemaphoreSlim semaphore = new(1);
 
@@ -177,6 +177,8 @@
 
         public void Initialize()
         {
+            services = SceneSystemRegistry.GetServices(this);
+            serviceProvider = services.BuildServiceProvider();
             foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
             {
                 systems.Add(service);
@@ -201,6 +203,8 @@
 
         public async Task InitializeAsync()
         {
+            services = SceneSystemRegistry.GetServices(this);
+            serviceProvider = services.BuildServiceProvider();
             foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
             {
                 systems.Add(service);

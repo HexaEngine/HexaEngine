@@ -78,7 +78,11 @@
 
                 if (propertyData.TryGetValue(property.Name, out var value))
                 {
-                    if (property.PropertyType == typeof(float))
+                    if (property.PropertyType.IsInstanceOfType(value))
+                    {
+                        propertyData[property.Name] = value;
+                    }
+                    else if (property.PropertyType == typeof(float))
                     {
                         propertyData[property.Name] = (float)(double)value;
                     }

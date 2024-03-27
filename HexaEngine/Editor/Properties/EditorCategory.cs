@@ -103,8 +103,8 @@
 
             if (CategoryParent == null || hovered || active)
             {
-                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.ColorConvertFloat4ToU32(col));
-                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(col));
+                //ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.ColorConvertFloat4ToU32(col));
+                // ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(col));
             }
         }
 
@@ -136,12 +136,12 @@
 
             for (int i = 0; i < elements.Count; i++)
             {
-                visible &= elements[i].UpdateVisibility(instance);
+                visible |= elements[i].UpdateVisibility(instance);
             }
 
             for (int i = 0; i < childCategories.Count; i++)
             {
-                visible &= childCategories[i].IsVisible(instance);
+                visible |= childCategories[i].IsVisible(instance);
             }
 
             return visible;

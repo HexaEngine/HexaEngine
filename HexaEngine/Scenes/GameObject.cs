@@ -87,12 +87,12 @@
         }
 
         /// <summary>
-        /// Gets the full name of the GameObject, which is a unique combination of its name and Guid.
+        /// Gets the full name of the <see cref="GameObject"/>, which is a unique combination of its name and Guid.
         /// The full name is lazily generated when accessed for the first time and will be
         /// reinitialized if either the name or Guid property is modified.
         /// </summary>
         /// <value>
-        /// The full name of the GameObject.
+        /// The full name of the <see cref="GameObject"/>.
         /// </value>
         [JsonIgnore]
         public string FullName
@@ -224,8 +224,8 @@
 
         protected void OverwriteTransform(Transform transform)
         {
-            Transform = transform;
             Transform.Updated -= TransformUpdated;
+            Transform = transform;
             transform.Updated += TransformUpdated;
         }
 

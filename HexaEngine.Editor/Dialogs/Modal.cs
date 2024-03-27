@@ -37,7 +37,7 @@
                 shown = false;
             }
             windowEnded = false;
-            ImGui.SetWindowPos(ImGui.GetIO().DisplaySize * 0.5f, ImGuiCond.Appearing);
+
             DrawContent();
 
             if (!windowEnded)

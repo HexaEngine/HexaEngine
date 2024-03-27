@@ -16,6 +16,7 @@
         private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
         private string searchString = string.Empty;
         private HistoryEntry historyEntry;
+        private bool first = false;
 
         public OpenProjectWindow()
         {
@@ -23,7 +24,7 @@
 
         public override string Name => "Open Project";
 
-        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoMove;
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar;
 
         public override unsafe void Draw()
         {
@@ -64,17 +65,27 @@
             ImGui.Begin("Overlay", null, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs);
             ImGui.End();
 
+            if (first)
+            {
+                ImGui.SetNextWindowSize(new(800, 500));
+                var size = ImGui.GetWindowSize();
+                Vector2 mainViewportPos = ImGui.GetMainViewport().Pos;
+                var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+
+                ImGui.SetNextWindowPos(mainViewportPos + (s / 2 - size / 2));
+                first = false;
+            }
             base.Draw();
+        }
+
+        public override void Show()
+        {
+            first = true;
+            base.Show();
         }
 
         protected override unsafe void DrawContent()
         {
-            ImGui.SetWindowSize(new(800, 500));
-            var size = ImGui.GetWindowSize();
-            var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
-
-            ImGui.SetWindowPos(s / 2 - size / 2);
-
             ImGui.Separator();
 
             Vector2 pos = ImGui.GetCursorPos();

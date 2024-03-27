@@ -68,7 +68,7 @@
             shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
 
             var viewport = creator.Viewport;
-            lightBuffer = creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            lightBuffer = creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), ResourceCreationFlags.LazyInit);
 
             smps = AllocArrayAndZero(nSamplers);
             linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);

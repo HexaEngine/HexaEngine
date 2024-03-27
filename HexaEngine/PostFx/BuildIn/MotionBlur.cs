@@ -2,10 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
     using System.Numerics;
 
+    [EditorDisplayName("Motion Blur")]
     public class MotionBlur : PostFxBase
     {
         private IGraphicsPipelineState pipeline;

@@ -8,16 +8,38 @@
     using System;
     using System.Numerics;
 
+    public enum SensorFit
+    {
+        Auto = 0,
+        Horizontal,
+        Vertical
+    }
+
+    public enum LensUnit
+    {
+        FieldOfView,
+        Millimeters,
+    }
+
+    public enum CameraMode
+    {
+        NonPhysical,
+        Physical,
+    }
+
     [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject
     {
         public new CameraTransform Transform = new();
+        private float focalLength = 50;
+        private float sensorSize = 36;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
         /// </summary>
         public Camera()
         {
+            focalLength = FovToFocalLength(Transform.Fov, sensorSize);
             OverwriteTransform(Transform);
             AddComponentSingleton<SphereSelectionComponent>();
         }
@@ -40,25 +62,70 @@
         [EditorProperty("Visible Layers")]
         public DrawLayerCollection VisibleLayers { get; set; } = [];
 
+        [EditorCategory("Lens")]
         [EditorProperty<ProjectionType>("Type")]
         public ProjectionType ProjectionType { get => Transform.ProjectionType; set => Transform.ProjectionType = value; }
 
-        [EditorProperty(nameof(Fov))]
-        public float Fov { get => Transform.Fov; set => Transform.Fov = value; }
+        [EditorCategory("Lens")]
+        [EditorPropertyCondition<Camera>(nameof(IsLensUnitFov))]
+        [EditorProperty("Field of view", 0f, float.Pi - 0.0174532925f, EditorPropertyMode.SliderAngle)]
+        public float Fov
+        {
+            get => Transform.Fov;
+            set
+            {
+                Transform.Fov = value;
+                focalLength = FovToFocalLength(value, sensorSize);
+            }
+        }
 
-        [EditorProperty(nameof(Far))]
+        [EditorCategory("Lens")]
+        [EditorPropertyCondition<Camera>(nameof(IsLensUnitMM))]
+        [EditorProperty("Focal Length")]
+        public float FocalLength
+        {
+            get => focalLength;
+            set
+            {
+                Transform.Fov = FocalLengthToFov(value, sensorSize);
+                focalLength = value;
+            }
+        }
+
+        [EditorCategory("Lens")]
+        [EditorProperty<LensUnit>("Lens Unit")]
+        public LensUnit LensUnit { get; set; } = LensUnit.Millimeters;
+
+        [EditorCategory("Lens")]
+        [EditorProperty("Far")]
         public float Far { get => Transform.Far; set => Transform.Far = value; }
 
-        [EditorProperty(nameof(Near))]
+        [EditorCategory("Lens")]
+        [EditorProperty("Near")]
         public float Near { get => Transform.Near; set => Transform.Near = value; }
 
-        [EditorProperty(nameof(Width))]
         public float Width { get => Transform.Width; set => Transform.Width = value; }
 
-        [EditorProperty(nameof(Height))]
         public float Height { get => Transform.Height; set => Transform.Height = value; }
 
-        [EditorProperty(nameof(VisualizeCulling))]
+        [EditorCategory("Camera")]
+        [EditorProperty<SensorFit>("Sensor Fit")]
+        public SensorFit SensorFit { get; set; } = SensorFit.Auto;
+
+        [EditorCategory("Camera")]
+        [EditorProperty("Sensor Size")]
+        public float SensorSize
+        {
+            get => sensorSize;
+            set
+            {
+                sensorSize = value;
+                Transform.Fov = FocalLengthToFov(focalLength, value);
+            }
+        }
+
+        [EditorCategory("Debug")]
+        [EditorProperty("Visualize Culling")]
         public bool VisualizeCulling
         {
             get => CameraManager.Culling == this;
@@ -68,6 +135,19 @@
             }
         }
 
+        public bool AutoFocus { get; set; }
+
+        public float FocusDistance { get; set; }
+
+        public float ApertureFStop { get; set; }
+
+        public int ApertureBlades { get; set; }
+
+        public float ApertureRotation { get; set; }
+
+        public float ApertureRatio { get; set; }
+
+        [EditorCategory("Camera")]
         [EditorButton("Copy from View")]
         public void CopySettings()
         {
@@ -75,6 +155,32 @@
             if (current == null)
                 return;
             Transform.PositionRotation = current.Transform.PositionRotation;
+        }
+
+        public static float FocalLengthToFov(float focalLength, float sensorSize)
+        {
+            return 2 * MathF.Atan(sensorSize / (2 * focalLength));
+        }
+
+        public static float FovToFocalLength(float fov, float sensorSize)
+        {
+            return sensorSize / (2 * MathF.Tan(fov / 2));
+        }
+
+        public static bool IsLensUnitFov(Camera camera)
+        {
+            return camera.LensUnit == LensUnit.FieldOfView;
+        }
+
+        public static bool IsLensUnitMM(Camera camera)
+        {
+            return camera.LensUnit == LensUnit.Millimeters;
+        }
+
+        public override void Initialize()
+        {
+            OverwriteTransform(Transform);
+            base.Initialize();
         }
 
         public override void Uninitialize()

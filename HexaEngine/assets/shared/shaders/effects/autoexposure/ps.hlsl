@@ -11,9 +11,13 @@ struct VSOut
 
 float4 main(VSOut vs) : SV_Target
 {
+	const float sensitivity = 12.5;
 	float avgLum = lumaTexture.Load(0);
-	float keyValue = 1.03 - (2.0 / (2.0 + log2(avgLum + 1.0)));
-	float exposure = keyValue / avgLum;
+	float ev100 = log2(avgLum * 100.0 / sensitivity);
+	float exposure = 1.0 / (pow(2.0, ev100) * 1.2);
+
+	float aperture = sqrt(100.0 * sensitivity / (avgLum * pow(2.0, ev100)));
+	float shutterSpeed = 1.0 / (sensitivity * pow(2.0, ev100));
 
 	float3 color = hdrTexture.Sample(linearClampSampler, vs.Tex).rgb * exposure;
 

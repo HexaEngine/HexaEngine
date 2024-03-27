@@ -20,7 +20,7 @@
         [JsonIgnore]
         public Camera? ActiveCamera
         {
-            get => activeCamera >= 0 && activeCamera < cameras.Count ? null : cameras[activeCamera];
+            get => activeCamera >= 0 && activeCamera < cameras.Count ? cameras[activeCamera] : null;
             set
             {
                 if (value == null)

@@ -4,6 +4,7 @@ namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
@@ -12,6 +13,7 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
+    [EditorDisplayName("HBAO")]
     public class HBAO : PostFxBase
     {
         private IGraphicsDevice device;

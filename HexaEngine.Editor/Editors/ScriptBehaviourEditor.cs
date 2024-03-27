@@ -24,6 +24,8 @@
 
         public bool NoTable { get; set; }
 
+        public string Symbol { get; } = "\xE9F5";
+
         public void Dispose()
         {
         }

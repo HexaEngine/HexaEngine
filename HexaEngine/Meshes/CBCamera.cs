@@ -26,13 +26,15 @@
 
         public CBCamera(Camera camera, Vector2 screenDim)
         {
-            Proj = Matrix4x4.Transpose(camera.Transform.Projection);
-            View = Matrix4x4.Transpose(camera.Transform.View);
-            ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
-            ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
-            ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
-            PrevViewProj = Matrix4x4.Transpose(camera.Transform.PrevViewProjection);
+            var transform = camera.Transform;
+            transform.Width = screenDim.X;
+            transform.Height = screenDim.Y;
+            Proj = Matrix4x4.Transpose(transform.Projection);
+            View = Matrix4x4.Transpose(transform.View);
+            ProjInv = Matrix4x4.Transpose(transform.ProjectionInv);
+            ViewInv = Matrix4x4.Transpose(transform.ViewInv);
+            ViewProj = Matrix4x4.Transpose(transform.ViewProjection);
+            ViewProjInv = Matrix4x4.Transpose(transform.ViewProjectionInv);
 
             Far = camera.Far;
             Near = camera.Near;
@@ -46,12 +48,15 @@
 
         public CBCamera(Camera camera, Vector2 screenDim, Matrix4x4 last)
         {
-            Proj = Matrix4x4.Transpose(camera.Transform.Projection);
-            View = Matrix4x4.Transpose(camera.Transform.View);
-            ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
-            ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
-            ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
+            var transform = camera.Transform;
+            transform.Width = screenDim.X;
+            transform.Height = screenDim.Y;
+            Proj = Matrix4x4.Transpose(transform.Projection);
+            View = Matrix4x4.Transpose(transform.View);
+            ProjInv = Matrix4x4.Transpose(transform.ProjectionInv);
+            ViewInv = Matrix4x4.Transpose(transform.ViewInv);
+            ViewProj = Matrix4x4.Transpose(transform.ViewProjection);
+            ViewProjInv = Matrix4x4.Transpose(transform.ViewProjectionInv);
             PrevViewProj = Matrix4x4.Transpose(last);
 
             Far = camera.Far;
@@ -66,12 +71,15 @@
 
         public CBCamera(Camera camera, Vector2 screenDim, CBCamera last)
         {
-            Proj = Matrix4x4.Transpose(camera.Transform.Projection);
-            View = Matrix4x4.Transpose(camera.Transform.View);
-            ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
-            ViewProj = Matrix4x4.Transpose(camera.Transform.ViewProjection);
-            ViewProjInv = Matrix4x4.Transpose(camera.Transform.ViewProjectionInv);
+            var transform = camera.Transform;
+            transform.Width = screenDim.X;
+            transform.Height = screenDim.Y;
+            Proj = Matrix4x4.Transpose(transform.Projection);
+            View = Matrix4x4.Transpose(transform.View);
+            ProjInv = Matrix4x4.Transpose(transform.ProjectionInv);
+            ViewInv = Matrix4x4.Transpose(transform.ViewInv);
+            ViewProj = Matrix4x4.Transpose(transform.ViewProjection);
+            ViewProjInv = Matrix4x4.Transpose(transform.ViewProjectionInv);
             PrevViewProj = last.ViewProj;
 
             Far = camera.Far;
@@ -86,13 +94,15 @@
 
         public CBCamera(CameraTransform camera, Vector2 screenDim)
         {
-            Proj = Matrix4x4.Transpose(camera.Projection);
-            View = Matrix4x4.Transpose(camera.View);
-            ProjInv = Matrix4x4.Transpose(camera.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.ViewInv);
-            ViewProj = Matrix4x4.Transpose(camera.ViewProjection);
-            ViewProjInv = Matrix4x4.Transpose(camera.ViewProjectionInv);
-            PrevViewProj = Matrix4x4.Transpose(camera.PrevViewProjection);
+            var transform = camera;
+            transform.Width = screenDim.X;
+            transform.Height = screenDim.Y;
+            Proj = Matrix4x4.Transpose(transform.Projection);
+            View = Matrix4x4.Transpose(transform.View);
+            ProjInv = Matrix4x4.Transpose(transform.ProjectionInv);
+            ViewInv = Matrix4x4.Transpose(transform.ViewInv);
+            ViewProj = Matrix4x4.Transpose(transform.ViewProjection);
+            ViewProjInv = Matrix4x4.Transpose(transform.ViewProjectionInv);
 
             Far = camera.Far;
             Near = camera.Near;

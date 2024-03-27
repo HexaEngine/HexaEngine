@@ -269,7 +269,7 @@
         /// <returns>An array of light space matrices for each cascade.</returns>
         public static unsafe Matrix4x4* GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4* ret, float* cascades, BoundingFrustum[] frustra, float smSize, int cascadesCount = 4)
         {
-            float fov = camera.Fov.ToRad();
+            float fov = camera.Fov;
             float aspect = camera.AspectRatio;
             float far = camera.Far;
             float near = camera.Near;

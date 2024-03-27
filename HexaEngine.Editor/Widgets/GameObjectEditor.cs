@@ -183,6 +183,29 @@
 
             DrawComponents(context, gameObject, scene);
 
+            Vector2 avail = ImGui.GetContentRegionAvail();
+            avail.Y = 0;
+            avail.X -= 40;
+            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 20);
+            if (ImGui.Button("Add Component", avail))
+            {
+                ImGui.OpenPopup("AddComponentPopup");
+            }
+
+            if (ImGui.BeginPopupContextItem("AddComponentPopup"))
+            {
+                if (typeFilterComponentCache.TryGetValue(type, out EditorComponentCacheEntry? cacheEntry))
+                {
+                    cacheEntry.DrawContent(gameObject);
+                }
+                else
+                {
+                    PopulateTypeCache(type);
+                }
+
+                ImGui.EndPopup();
+            }
+
             // fill up space so that the context menu is completely filling the empty space.
             var space = ImGui.GetContentRegionAvail();
             ImGui.Dummy(space);
@@ -204,7 +227,10 @@
                 {
                     continue;
                 }
+
                 string name = $"{editor.Name}##{i}";
+                string id = $"##{i}";
+                string idCheckbox = $"##Checkbox{i}";
 
                 ImGui.PushID(name);
 
@@ -212,13 +238,13 @@
 
                 editor.Instance = component;
 
-                ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.Framed;
+                ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.NoTreePushOnOpen;
                 if (!editor.IsHidden)
                 {
                     flags |= ImGuiTreeNodeFlags.DefaultOpen;
                 }
 
-                if (ImGui.CollapsingHeader(name, flags))
+                if (TreeNode(editor, id, flags))
                 {
                     changed |= editor.Draw(context);
                 }
@@ -229,10 +255,32 @@
 
                 ImGui.PopID();
 
-                if (i < element.Components.Count - 1)
-                    ImGui.Separator();
+                ImGui.Separator();
             }
             return changed;
+        }
+
+        private static bool TreeNode(IObjectEditor editor, string id, string idCheckbox, ref bool enabled, ImGuiTreeNodeFlags flags)
+        {
+            bool open = ImGui.TreeNodeEx(id, flags);
+            ImGui.SameLine();
+            ImGui.Text(editor.Symbol);
+            ImGui.SameLine();
+            ImGui.Checkbox(idCheckbox, ref enabled);
+            ImGui.SameLine();
+            ImGui.Text(editor.Name);
+            return open;
+        }
+
+        private static bool TreeNode(IObjectEditor editor, string id, ImGuiTreeNodeFlags flags)
+        {
+            bool enabled = false;
+            bool open = ImGui.TreeNodeEx(id, flags);
+            ImGui.SameLine();
+            ImGui.Text(editor.Symbol);
+            ImGui.SameLine();
+            ImGui.Text(editor.Name);
+            return open;
         }
 
         private static bool DrawObjectEditor(IGraphicsContext context, GameObject element, Type type)

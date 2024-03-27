@@ -205,6 +205,11 @@
         }
 
         /// <summary>
+        /// Gets the symbol associated with the object editor.
+        /// </summary>
+        public string Symbol { get; } = "?";
+
+        /// <summary>
         /// Gets the name associated with the object editor.
         /// </summary>
         public string Name => guiName.Name;

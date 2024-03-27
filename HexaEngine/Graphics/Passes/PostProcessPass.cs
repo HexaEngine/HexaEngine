@@ -26,7 +26,7 @@
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
             var viewport = creator.Viewport;
-            postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, PostProcessingFlags.HDR | PostProcessingFlags.ForceDynamic);
+            postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, PostProcessingFlags.HDR);
             postProcessingManager.Add<VelocityBuffer>();
             postProcessingManager.Add<SSAO>();
             postProcessingManager.Add<HBAO>();
@@ -51,7 +51,7 @@
             postProcessingManager.Initialize((int)viewport.Width, (int)viewport.Height, profiler);
             postProcessingManager.Enabled = true;
 
-            postFxBuffer = creator.CreateTexture2D("PostFxBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.RenderTarget | BindFlags.ShaderResource));
+            postFxBuffer = creator.CreateTexture2D("PostFxBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.RenderTarget | BindFlags.ShaderResource), ResourceCreationFlags.LazyInit);
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)

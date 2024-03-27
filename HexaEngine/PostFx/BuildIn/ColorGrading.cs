@@ -15,6 +15,7 @@
     /// <summary>
     /// A post-processing effect for color grading adjustments.
     /// </summary>
+    [EditorDisplayName("Color Grading")]
     public class ColorGrading : PostFxBase
     {
 #nullable disable

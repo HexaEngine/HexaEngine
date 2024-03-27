@@ -25,9 +25,9 @@
         Shared = 2,
 
         /// <summary>
-        /// Disables resource sharing between graphs and sub graphs.
+        /// Allows a resource to be shared in a single <see cref="GraphResourceContainer"/>.
         /// </summary>
-        NoCrossGraphSharing = 4,
+        GroupShared = 4,
 
         /// <summary>
         /// Enable all flags.

@@ -3,11 +3,13 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
 
     /// <summary>
     /// Post-processing effect for adding grain to the scene.
     /// </summary>
+    [EditorDisplayName("Grain")]
     public class Grain : PostFxBase
     {
 #nullable disable
