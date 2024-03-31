@@ -35,14 +35,14 @@ namespace HexaEngine.Core.MeshDecimator.Collections
     internal sealed unsafe class ResizableArray<T>
     {
         private T[] items;
-        private int length = 0;
+        private uint length = 0;
 
         private static readonly T[] emptyArr = [];
 
         /// <summary>
         /// Gets the length of this array.
         /// </summary>
-        public int Length
+        public uint Length
         {
             get { return length; }
         }
@@ -60,7 +60,29 @@ namespace HexaEngine.Core.MeshDecimator.Collections
         /// </summary>
         /// <param name="index">The element index.</param>
         /// <returns>The element value.</returns>
+        public T this[uint index]
+        {
+            get { return items[index]; }
+            set { items[index] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the element value at a specific index.
+        /// </summary>
+        /// <param name="index">The element index.</param>
+        /// <returns>The element value.</returns>
         public T this[int index]
+        {
+            get { return items[index]; }
+            set { items[index] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the element value at a specific index.
+        /// </summary>
+        /// <param name="index">The element index.</param>
+        /// <returns>The element value.</returns>
+        public T this[long index]
         {
             get { return items[index]; }
             set { items[index] = value; }
@@ -100,10 +122,17 @@ namespace HexaEngine.Core.MeshDecimator.Collections
                 items = emptyArr;
             }
 
-            this.length = length;
+            this.length = (uint)length;
         }
 
         private void IncreaseCapacity(int capacity)
+        {
+            T[] newItems = new T[capacity];
+            Array.Copy(items, 0, newItems, 0, Math.Min(length, capacity));
+            items = newItems;
+        }
+
+        private void IncreaseCapacity(uint capacity)
         {
             T[] newItems = new T[capacity];
             Array.Copy(items, 0, newItems, 0, Math.Min(length, capacity));
@@ -115,7 +144,7 @@ namespace HexaEngine.Core.MeshDecimator.Collections
         /// </summary>
         public void Clear()
         {
-            Array.Clear(items, 0, length);
+            Array.Clear(items, 0, (int)length);
             length = 0;
         }
 
@@ -125,6 +154,32 @@ namespace HexaEngine.Core.MeshDecimator.Collections
         /// <param name="length">The new length.</param>
         /// <param name="trimExess">If exess memory should be trimmed.</param>
         public void Resize(int length, bool trimExess = false)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(length);
+
+            if (length > items.Length)
+            {
+                IncreaseCapacity(length);
+            }
+            else if (length < this.length)
+            {
+                //Array.Clear(items, capacity, length - capacity);
+            }
+
+            this.length = (uint)length;
+
+            if (trimExess)
+            {
+                TrimExcess();
+            }
+        }
+
+        /// <summary>
+        /// Resizes this array.
+        /// </summary>
+        /// <param name="length">The new length.</param>
+        /// <param name="trimExess">If exess memory should be trimmed.</param>
+        public void Resize(uint length, bool trimExess = false)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(length);
 

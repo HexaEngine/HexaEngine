@@ -48,7 +48,7 @@ namespace HexaEngine.Core.MeshDecimator
         #region Fields
 
         private Vector3D[] vertices;
-        private int[][] indices;
+        private uint[][] indices;
         private Vector3[]? normals;
         private Vector3[]? tangents;
         private Vector2[]?[]? uvs2D;
@@ -57,7 +57,7 @@ namespace HexaEngine.Core.MeshDecimator
         private Vector4[]? colors;
         private BoneWeight[]? boneWeights;
 
-        private static readonly int[] emptyIndices = [];
+        private static readonly uint[] emptyIndices = [];
 
         #endregion
 
@@ -81,7 +81,7 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
 
-                int[][] newIndices = new int[value][];
+                uint[][] newIndices = new uint[value][];
                 Array.Copy(indices, 0, newIndices, 0, Math.Min(indices.Length, newIndices.Length));
                 indices = newIndices;
             }
@@ -90,16 +90,16 @@ namespace HexaEngine.Core.MeshDecimator
         /// <summary>
         /// Gets the total count of triangles in this mesh.
         /// </summary>
-        public int TriangleCount
+        public uint TriangleCount
         {
             get
             {
-                int triangleCount = 0;
+                uint triangleCount = 0;
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] != null)
                     {
-                        triangleCount += indices[i].Length / 3;
+                        triangleCount += (uint)indices[i].Length / 3;
                     }
                 }
                 return triangleCount;
@@ -124,7 +124,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// <summary>
         /// Gets or sets the combined indices for this mesh. Once set, the sub-mesh count gets set to 1.
         /// </summary>
-        public int[] Indices
+        public uint[] Indices
         {
             get
             {
@@ -134,15 +134,26 @@ namespace HexaEngine.Core.MeshDecimator
                 }
                 else
                 {
-                    List<int> indexList = new(TriangleCount * 3);
+                    long count = 0;
                     for (int i = 0; i < indices.Length; i++)
                     {
                         if (indices[i] != null)
                         {
-                            indexList.AddRange(indices[i]);
+                            count += indices.LongLength;
                         }
                     }
-                    return [.. indexList];
+
+                    uint[] indexList = new uint[count];
+                    long id = 0;
+                    for (int i = 0; i < indices.Length; i++)
+                    {
+                        if (indices[i] != null)
+                        {
+                            indices[i].CopyTo(indexList, id);
+                            id += indices[i].LongLength;
+                        }
+                    }
+                    return indexList;
                 }
             }
             set
@@ -290,8 +301,8 @@ namespace HexaEngine.Core.MeshDecimator
             }
 
             this.vertices = vertices.Select(x => new Vector3D(x.X, x.Y, x.Z)).ToArray();
-            this.indices = new int[1][];
-            this.indices[0] = indices.Select(x => (int)x).ToArray();
+            this.indices = new uint[1][];
+            this.indices[0] = indices;
         }
 
         /// <summary>
@@ -299,7 +310,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// </summary>
         /// <param name="vertices">The mesh vertices.</param>
         /// <param name="indices">The mesh indices.</param>
-        public Mesh(Vector3D[] vertices, int[] indices)
+        public Mesh(Vector3D[] vertices, uint[] indices)
         {
             if (vertices == null)
             {
@@ -315,7 +326,7 @@ namespace HexaEngine.Core.MeshDecimator
             }
 
             this.vertices = vertices;
-            this.indices = new int[1][];
+            this.indices = new uint[1][];
             this.indices[0] = indices;
         }
 
@@ -324,7 +335,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// </summary>
         /// <param name="vertices">The mesh vertices.</param>
         /// <param name="indices">The mesh indices.</param>
-        public Mesh(Vector3D[] vertices, int[][] indices)
+        public Mesh(Vector3D[] vertices, uint[][] indices)
         {
             if (vertices == null)
             {
@@ -376,7 +387,7 @@ namespace HexaEngine.Core.MeshDecimator
             int subMeshCount = indices.Length;
             for (int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
             {
-                int[] indices = this.indices[subMeshIndex];
+                uint[] indices = this.indices[subMeshIndex];
                 if (indices == null)
                 {
                     continue;
@@ -385,9 +396,9 @@ namespace HexaEngine.Core.MeshDecimator
                 int indexCount = indices.Length;
                 for (int i = 0; i < indexCount; i += 3)
                 {
-                    int i0 = indices[i];
-                    int i1 = indices[i + 1];
-                    int i2 = indices[i + 2];
+                    uint i0 = indices[i];
+                    uint i1 = indices[i + 1];
+                    uint i2 = indices[i + 2];
 
                     Vector3 v0 = vertices[i0];
                     Vector3 v1 = vertices[i1];
@@ -451,7 +462,7 @@ namespace HexaEngine.Core.MeshDecimator
             int subMeshCount = indices.Length;
             for (int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
             {
-                int[] indices = this.indices[subMeshIndex];
+                uint[] indices = this.indices[subMeshIndex];
                 if (indices == null)
                 {
                     continue;
@@ -460,9 +471,9 @@ namespace HexaEngine.Core.MeshDecimator
                 int indexCount = indices.Length;
                 for (int i = 0; i < indexCount; i += 3)
                 {
-                    int i0 = indices[i];
-                    int i1 = indices[i + 1];
-                    int i2 = indices[i + 2];
+                    uint i0 = indices[i];
+                    uint i1 = indices[i + 1];
+                    uint i2 = indices[i + 2];
 
                     Vector3D v0 = vertices[i0];
                     Vector3D v1 = vertices[i1];
@@ -562,7 +573,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// </summary>
         /// <param name="subMeshIndex">The sub-mesh index.</param>
         /// <returns>The triangle indices.</returns>
-        public int[] GetIndices(int subMeshIndex)
+        public uint[] GetIndices(int subMeshIndex)
         {
             if (subMeshIndex < 0 || subMeshIndex >= indices.Length)
             {
@@ -576,9 +587,9 @@ namespace HexaEngine.Core.MeshDecimator
         /// Returns the triangle indices for all sub-meshes in this mesh.
         /// </summary>
         /// <returns>The sub-mesh triangle indices.</returns>
-        public int[][] GetSubMeshIndices()
+        public uint[][] GetSubMeshIndices()
         {
-            int[][] subMeshIndices = new int[indices.Length][];
+            uint[][] subMeshIndices = new uint[indices.Length][];
             for (int subMeshIndex = 0; subMeshIndex < indices.Length; subMeshIndex++)
             {
                 subMeshIndices[subMeshIndex] = indices[subMeshIndex] ?? emptyIndices;
@@ -591,7 +602,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// </summary>
         /// <param name="subMeshIndex">The sub-mesh index.</param>
         /// <param name="indices">The triangle indices.</param>
-        public void SetIndices(int subMeshIndex, int[] indices)
+        public void SetIndices(int subMeshIndex, uint[] indices)
         {
             if (subMeshIndex < 0 || subMeshIndex >= this.indices.Length)
             {

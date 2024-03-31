@@ -23,12 +23,14 @@
     {
         private ModelManager modelManager;
         private MaterialManager materialManager;
-        private MeshRenderer renderer;
         private Model? model;
         private AssetRef modelAsset;
         private int maxLODLevel;
         private int minLODLevel;
         private int currentLODLevel;
+
+        private static MeshRenderer meshRenderer1;
+        private static int instances;
 
         static MeshRendererComponent()
         {
@@ -99,62 +101,84 @@
             }
         }
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             modelManager = GameObject.GetScene().ModelManager;
             materialManager = GameObject.GetScene().MaterialManager;
 
-            renderer = new(device);
+            if (Interlocked.Increment(ref instances) == 1)
+            {
+                meshRenderer1 = new();
+                ((IRenderer1)meshRenderer1).Initialize(device, CullingManager.Current.Context);
+            }
 
             UpdateModel();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
-            renderer.Dispose();
+            if (Interlocked.Decrement(ref instances) == 0)
+            {
+                meshRenderer1.Dispose();
+            }
+
             model?.Dispose();
         }
 
         public override void Update(IGraphicsContext context)
         {
-            renderer.Update(context, GameObject.Transform.Global);
+            if (model == null)
+                return;
+            meshRenderer1.Update(context, GameObject.Transform.Global, model);
         }
 
         public void DrawDepth(IGraphicsContext context, IBuffer cam)
         {
-            renderer.DrawDepth(context, cam);
+            if (model == null)
+                return;
+            meshRenderer1.DrawDepth(context, model, cam);
         }
 
         public override void DrawDepth(IGraphicsContext context)
         {
-            renderer.DrawDepth(context);
+            if (model == null)
+                return;
+            meshRenderer1.DrawDepth(context, model);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            renderer.DrawShadowMap(context, light, type);
+            if (model == null)
+                return;
+            meshRenderer1.DrawShadowMap(context, model, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
         {
-            renderer.VisibilityTest(context);
+            if (model == null)
+                return;
+            meshRenderer1.VisibilityTest(context, model);
         }
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
+            if (model == null)
+                return;
             if (path == RenderPath.Deferred)
             {
-                renderer.DrawDeferred(context);
+                meshRenderer1.DrawDeferred(context, model);
             }
             else
             {
-                renderer.DrawForward(context);
+                meshRenderer1.DrawForward(context, model);
             }
         }
 
         public override void Bake(IGraphicsContext context)
         {
-            renderer.Bake(context);
+            if (model == null)
+                return;
+            meshRenderer1.Bake(context, model);
         }
 
         public bool SelectRayTest(Ray ray, ref float depth)
@@ -193,7 +217,6 @@
         public Job UpdateModel()
         {
             Loaded = false;
-            renderer?.Uninitialize();
             var tmpModel = model;
             model = null;
             tmpModel?.Dispose();
@@ -211,6 +234,11 @@
                 }
 
                 if (component.modelManager == null)
+                {
+                    return;
+                }
+
+                if (component.modelAsset.Guid == Guid.Empty)
                 {
                     return;
                 }
@@ -238,7 +266,6 @@
                         component.QueueIndex = (uint)RenderQueueIndex.Transparency;
                     }
 
-                    component.renderer.Initialize(component.model);
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }

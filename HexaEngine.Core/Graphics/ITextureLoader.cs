@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.IO;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -292,6 +293,15 @@
         /// <param name="format">The file format to use for saving.</param>
         /// <param name="flags">Additional saving flags.</param>
         public void SaveToMemory(Stream stream, TexFileFormat format, int flags);
+
+        /// <summary>
+        /// Saves the scratch image to a blob with the specified format and flags.
+        /// </summary>
+        /// <param name="ppData">The data pointer of the texture.</param>
+        /// <param name="pSize">The data pointer size.</param>
+        /// <param name="format">The file format to use for saving.</param>
+        /// <param name="flags">Additional saving flags.</param>
+        unsafe void SaveToMemory(byte** ppData, nuint* pSize, TexFileFormat format, int flags);
 
         /// <summary>
         /// Resizes the scratch image with a specified scale factor and filtering flags.

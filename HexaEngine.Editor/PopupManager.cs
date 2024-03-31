@@ -12,16 +12,27 @@
 
         public static IReadOnlyList<IPopup> Popups => popups;
 
-        public static void Show(IPopup popup)
+        public static IPopup Show(IPopup popup)
         {
             lock (_lock)
             {
                 popups.Add(popup);
                 popup.Show();
             }
+            return popup;
         }
 
-        public static void Show<T>() where T : IPopup, new()
+        public static T Show<T>(T popup) where T : IPopup
+        {
+            lock (_lock)
+            {
+                popups.Add(popup);
+                popup.Show();
+            }
+            return popup;
+        }
+
+        public static T Show<T>() where T : IPopup, new()
         {
             T popup = new();
             lock (_lock)
@@ -29,6 +40,7 @@
                 popups.Add(popup);
                 popup.Show();
             }
+            return popup;
         }
 
         public static void Close(IPopup popup)
@@ -44,16 +56,16 @@
         {
             lock (_lock)
             {
-                for (var i = 0; i < popups.Count; i++)
+                if (popups.Count == 0)
+                    return;
+                var popup = popups[^1];
+                popup.Draw();
+                if (!popup.Shown)
                 {
-                    var popup = popups[i];
-                    if (!popup.Shown)
-                    {
-                        popups.RemoveAt(i);
-                        i--;
-                        continue;
-                    }
-                    popup.Draw();
+                    popups.RemoveAt(popups.Count - 1);
+                    if (popups.Count == 0)
+                        return;
+                    popups[^1].Show();
                 }
             }
         }

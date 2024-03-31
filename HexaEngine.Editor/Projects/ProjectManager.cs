@@ -1,12 +1,15 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
+    using Hexa.NET.ImGui;
     using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Archives;
+    using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Scripts;
     using System;
     using System.Collections.Generic;
@@ -14,6 +17,7 @@
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
 
     public static class ProjectManager
@@ -21,6 +25,8 @@
         private static bool loaded;
         private static FileSystemWatcher? watcher;
         private static bool scriptProjectChanged;
+
+        private static readonly SemaphoreSlim semaphore = new(1);
 
         public static readonly List<string> ReferencedAssemblyNames = [];
 
@@ -51,51 +57,114 @@
 
         public static string? CurrentProjectAssetsFolder { get; private set; }
 
+        public static HexaProject? CurrentProject { get; private set; }
+
         public static bool ScriptProjectChanged => scriptProjectChanged;
 
-        public static event Action<HexaProject?>? ProjectChanged;
+        public static event ProjectUnloadedHandler? ProjectUnloaded;
+
+        public static event ProjectLoadingHandler? ProjectLoading;
+
+        public static event ProjectLoadFailedHandler? ProjectLoadFailed;
+
+        public static event ProjectLoadedHandler? ProjectLoaded;
+
+        public delegate void ProjectUnloadedHandler(string? projectFile);
+
+        public delegate void ProjectLoadingHandler(string projectFile);
+
+        public delegate void ProjectLoadFailedHandler(string projectFile, Exception exception);
+
+        public delegate void ProjectLoadedHandler(HexaProject project);
 
         public static bool Loaded => loaded;
 
-        public static void Load(string path)
+        public static Task Load(string path)
         {
-            CurrentProjectFilePath = path;
+            return Task.Run(() =>
+            {
+                semaphore.Wait();
 
+                UnloadInternal();
+
+                var popup = PopupManager.Show(new ProgressModal("Loading project...", "Please wait, loading project...", ProgressType.Bar));
+                try
+                {
+                    ProjectLoading?.Invoke(path);
+
+                    CurrentProjectFilePath = path;
+
+                    loaded = true;
+
+                    CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath);
+                    CurrentProject = HexaProject.Load(path) ?? throw new FileNotFoundException($"Couldn't find project file '{path}'");
+
+                    ProjectVersionControl.TryInit();
+
+                    CurrentProjectAssetsFolder = Path.Combine(CurrentProjectFolder, "assets");
+                    string solutionName = Path.GetFileName(CurrentProjectFolder);
+                    Directory.CreateDirectory(CurrentProjectAssetsFolder);
+                    FileSystem.AddSource(CurrentProjectAssetsFolder);
+                    Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
+                    ProjectHistory.AddEntry(solutionName, CurrentProjectFilePath);
+
+                    SourceAssetsDatabase.Init(CurrentProjectFolder, popup);
+
+                    string projectPath = Path.Combine(CurrentProjectFolder, solutionName);
+
+                    watcher = new(projectPath);
+                    watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
+                    watcher.Changed += Watcher_Changed;
+                    watcher.EnableRaisingEvents = true;
+                    _ = Task.Factory.StartNew(BuildScripts);
+
+                    FileSystem.FileCreated += FileSystemFileCreated;
+                    FileSystem.FileDeleted += FileSystemFileDeleted;
+                    FileSystem.FileRenamed += FileSystemFileRenamed;
+                }
+                catch (Exception ex)
+                {
+                    // unload/reset project to keep a consistent state.
+                    UnloadInternal();
+                    Logger.Error($"Failed to load project. '{path}'");
+                    Logger.Log(ex);
+                    MessageBox.Show($"Failed to load project. '{path}'", ex.Message);
+                    return;
+                }
+                finally
+                {
+                    popup.Close();
+                }
+
+                ProjectLoaded?.Invoke(CurrentProject);
+
+                semaphore.Release();
+            });
+        }
+
+        public static void Unload()
+        {
+            semaphore.Wait();
+
+            UnloadInternal();
+
+            semaphore.Release();
+        }
+
+        private static void UnloadInternal()
+        {
             if (loaded)
             {
+                ProjectUnloaded?.Invoke(CurrentProjectFilePath);
+                FileSystem.RemoveSource(CurrentProjectAssetsFolder);
                 ProjectVersionControl.Unload();
+                SourceAssetsDatabase.Clear();
+                CurrentProjectFilePath = null;
+                CurrentProjectFolder = null;
+                CurrentProjectAssetsFolder = null;
+                CurrentProject = null;
+                loaded = false;
             }
-
-            loaded = true;
-
-            CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath);
-
-            ProjectVersionControl.TryInit();
-
-            SourceAssetsDatabase.Clear();
-
-            FileSystem.RemoveSource(CurrentProjectAssetsFolder);
-            CurrentProjectAssetsFolder = Path.Combine(CurrentProjectFolder, "assets");
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            Directory.CreateDirectory(CurrentProjectAssetsFolder);
-            FileSystem.AddSource(CurrentProjectAssetsFolder);
-            Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
-            ProjectHistory.AddEntry(solutionName, CurrentProjectFilePath);
-            ProjectChanged?.Invoke(null);
-
-            SourceAssetsDatabase.Init(CurrentProjectFolder);
-
-            string projectPath = Path.Combine(CurrentProjectFolder, solutionName);
-
-            watcher = new(projectPath);
-            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
-            watcher.Changed += Watcher_Changed;
-            watcher.EnableRaisingEvents = true;
-            _ = Task.Factory.StartNew(BuildScripts);
-
-            FileSystem.FileCreated += FileSystemFileCreated;
-            FileSystem.FileDeleted += FileSystemFileDeleted;
-            FileSystem.FileRenamed += FileSystemFileRenamed;
         }
 
         private static void FileSystemFileRenamed(Core.IO.RenamedEventArgs args)
@@ -115,53 +184,72 @@
             scriptProjectChanged = true;
         }
 
-        public static void Create(string path)
+        public static Task Create(string path)
         {
-            CurrentProjectFolder = path;
-            GenerateProject();
-            GenerateSolution();
+            return Task.Run(async () =>
+            {
+                string projectFilePath;
+                var popup = PopupManager.Show(new ProgressModal("Generating project...", "Please wait, generating project..."));
+                try
+                {
+                    projectFilePath = GenerateProject(path);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to create project. '{path}'");
+                    Logger.Log(ex);
+                    MessageBox.Show($"Failed to create project. '{path}'", ex.Message);
+                    return;
+                }
+                finally
+                {
+                    popup.Close();
+                }
+
+                await Load(projectFilePath);
+            });
         }
 
-        private static void GenerateProject()
+        private static bool IsDirectoryEmpty(string path)
         {
-            if (CurrentProjectFolder == null)
+            return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
+
+        private static string GenerateProject(string path)
+        {
+            if (Directory.Exists(path) && !IsDirectoryEmpty(path))
             {
-                return;
+                throw new InvalidOperationException($"Directory '{path}' is not empty.");
             }
 
-            string projectName = Path.GetFileName(CurrentProjectFolder);
-            CurrentProjectFilePath = Path.Combine(CurrentProjectFolder, $"{projectName}.hexproj");
-            HexaProject project = new(CurrentProjectFilePath);
+            string projectName = Path.GetFileName(path);
+            string projectFilePath = Path.Combine(path, $"{projectName}.hexproj");
+            HexaProject project = new(projectFilePath);
             project.Save();
 
-            FileSystem.RemoveSource(CurrentProjectAssetsFolder);
-            CurrentProjectAssetsFolder = Path.Combine(CurrentProjectFolder, "assets");
-            Directory.CreateDirectory(CurrentProjectAssetsFolder);
-            FileSystem.AddSource(CurrentProjectAssetsFolder);
-            Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
-            ProjectHistory.AddEntry(projectName, CurrentProjectFilePath);
-            ProjectChanged?.Invoke(null);
+            var currentProjectAssetsFolder = Path.Combine(path, "assets");
+            Directory.CreateDirectory(currentProjectAssetsFolder);
+
+            GenerateSolution(path);
+
+            return projectFilePath;
         }
 
-        private static void GenerateSolution()
+        private static void GenerateSolution(string path)
         {
-            if (CurrentProjectFolder == null)
-            {
-                return;
-            }
-
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            string solutionPath = Path.Combine(CurrentProjectFolder, solutionName + ".sln");
-            Dotnet.New(DotnetTemplate.Sln, CurrentProjectFolder, solutionName);
-            Dotnet.New(DotnetTemplate.Classlib, Path.Combine(CurrentProjectFolder, solutionName));
-            string projectPath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
-            string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
+            string solutionName = Path.GetFileName(path);
+            string solutionPath = Path.Combine(path, solutionName + ".sln");
+            Dotnet.New(DotnetTemplate.Sln, path, solutionName);
+            Dotnet.New(DotnetTemplate.Classlib, Path.Combine(path, solutionName));
+            string projectPath = Path.Combine(path, solutionName, $"{solutionName}.csproj");
+            string projectFilePath = Path.Combine(path, solutionName, $"{solutionName}.csproj");
             Dotnet.Sln(SlnCommand.Add, solutionPath, projectPath);
             Dotnet.AddDlls(projectFilePath, ReferencedAssemblies.ConvertAll(x => x.Location));
         }
 
         public static void OpenVisualStudio()
         {
+            semaphore.Wait();
             if (CurrentProjectFolder == null)
             {
                 return;
@@ -175,56 +263,68 @@
             psi.CreateNoWindow = true;
             psi.UseShellExecute = false;
             Process.Start(psi);
+            semaphore.Release();
         }
 
         public static Task BuildScripts()
         {
+            semaphore.Wait();
             AssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             if (!Build())
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
+            semaphore.Release();
             return Task.CompletedTask;
         }
 
         public static Task RebuildScripts()
         {
+            semaphore.Wait();
             AssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             if (!Rebuild())
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
+            semaphore.Release();
             return Task.CompletedTask;
         }
 
         public static Task CleanScripts()
         {
+            semaphore.Wait();
             AssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             Clean();
 
+            semaphore.Release();
             return Task.CompletedTask;
         }
 
@@ -237,6 +337,7 @@
             bool failed = output.Contains("FAILED");
             AnalyseLog(output);
             scriptProjectChanged = false;
+
             return !failed;
         }
 
@@ -281,24 +382,29 @@
 
         public static Task Publish(PublishSettings settings)
         {
+            semaphore.Wait();
             var debugType = settings.StripDebugInfo ? DebugType.None : DebugType.Full;
             if (settings.StartupScene == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             if (CurrentProjectFolder == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             if (CurrentProjectFilePath == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
             if (CurrentProjectAssetsFolder == null)
             {
+                semaphore.Release();
                 return Task.CompletedTask;
             }
 
@@ -308,6 +414,7 @@
                 var path = Path.Combine(CurrentProjectAssetsFolder, scene);
                 if (!File.Exists(path))
                 {
+                    semaphore.Release();
                     return Task.CompletedTask;
                 }
             }
@@ -445,6 +552,8 @@
             }
 
             Logger.Info("Published Project");
+
+            semaphore.Release();
 
             return Task.CompletedTask;
         }

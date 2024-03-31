@@ -336,13 +336,29 @@
 
             if (ImGui.BeginChild("ScrollRegion##", new Vector2(0, -footerHeightToReserve), false, 0))
             {
+                float scrollPos = ImGui.GetScrollY();
+                float lineHeight = ImGui.GetTextLineHeightWithSpacing();
+                int startLine = (int)(scrollPos / lineHeight);
+
+                float windowHeight = ImGui.GetWindowHeight();
+                int visibleLines = (int)MathF.Ceiling(windowHeight / lineHeight);
+                int endLine = startLine + visibleLines;
+
+                endLine = Math.Min(endLine, messages.Count);
+
+                float dummyHeight = messages.Count * lineHeight;
+
+                Vector2 cursor = ImGui.GetCursorPos();
+                ImGui.Dummy(new(0, dummyHeight));
+                ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
+
                 // Display colored command output.
                 Vector2 size = default;
                 ImGui.CalcTextSize(ref size, "00:00:00:0000");    // Timestamp.
                 float timestamp_width = size.X;
 
                 // Display items.
-                for (int i = 0; i < messages.Count; i++)
+                for (int i = startLine; i < endLine; i++)
                 {
                     var item = messages[i];
 
@@ -380,7 +396,7 @@
 
                         // Draw time stamp.
                         ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[ConsoleColor.Gray]);
-                        ImGui.Text(item.Timestamp);
+                        ImGui.Text(item.Timestamp ?? string.Empty);
                         ImGui.PopStyleColor();
                     }
                 }

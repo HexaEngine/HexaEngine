@@ -66,7 +66,7 @@
         [JsonIgnore]
         public SpriteAtlas? SpriteAtlas => spriteAtlas;
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             this.device = device;
             DebugName = GameObject.Name + DebugName;
@@ -77,7 +77,7 @@
             UpdateAtlasAsync();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
             renderer.Dispose();
             spriteAtlas.Dispose();

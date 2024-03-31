@@ -14,8 +14,8 @@
         /// <returns>The computed bounding box that encloses the specified positions.</returns>
         public static BoundingBox Compute(Vector3[] positions)
         {
-            Vector3 min = default;
-            Vector3 max = default;
+            Vector3 min = new(float.MaxValue);
+            Vector3 max = new(float.MinValue);
 
             for (int i = 0; i < positions.Length; i++)
             {
@@ -35,8 +35,8 @@
         /// <returns>The computed bounding box that encloses the specified vertices.</returns>
         public static unsafe BoundingBox Compute(void* vertices, uint verticesCount, uint vertexStride)
         {
-            Vector3 min = default;
-            Vector3 max = default;
+            Vector3 min = new(float.MaxValue);
+            Vector3 max = new(float.MinValue);
 
             for (int i = 0; i < verticesCount; i++)
             {

@@ -105,7 +105,7 @@
         public Tonemapper Tonemapper
         {
             get => tonemapper;
-            set => NotifyPropertyChangedAndSet(ref tonemapper, value);
+            set => NotifyPropertyChangedAndSetAndReload(ref tonemapper, value);
         }
 
         [EditorCategory("Tonemapping")]
@@ -333,6 +333,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/colorgrading/ps.hlsl",
+                Macros = [.. macros, new ShaderMacro("TONEMAP", ((int)tonemapper).ToString())]
             },
             GraphicsPipelineStateDesc.DefaultFullscreen
            );

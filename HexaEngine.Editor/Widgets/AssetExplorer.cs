@@ -44,6 +44,7 @@
     // TODO: Asset Importing
     // TODO: Metadata
     // TODO: Automatic refresh
+
     /// <summary>
     /// A editor widget for managing assets.
     /// </summary>
@@ -55,8 +56,10 @@
         private readonly RenameFileDialog renameFileDialog = new(false);
         private readonly RenameDirectoryDialog renameDirectoryDialog = new(false);
         private readonly OpenFileDialog importFileDialog = new();
-        private readonly List<Item> files = new();
-        private readonly List<Item> dirs = new();
+        private readonly List<Item> files = [];
+        private readonly List<Item> dirs = [];
+        private readonly HashSet<Guid> groups = [];
+        private readonly HashSet<Guid> openGroups = [];
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
         private string? CurrentFolder = null;
@@ -73,11 +76,58 @@
         private PasteMode pasteMode;
         private string? pasteTarget;
 
-        private struct Item(string name, string path)
+        private struct Item(string name, string path, SourceAssetMetadata? metadata, Ref<Texture2D>? thumbnail)
         {
             public string Path = path;
             public string Name = name;
             public string NameNoExtension = System.IO.Path.GetFileNameWithoutExtension(path);
+            public SourceAssetMetadata? Metadata = metadata;
+            public readonly Ref<Texture2D>? Thumbnail = thumbnail;
+        }
+
+        private readonly struct ItemGroupComparer(HashSet<Guid> groups) : IComparer<Item>
+        {
+            private readonly HashSet<Guid> groups = groups;
+
+            public int Compare(Item x, Item y)
+            {
+                var parentA = x.Metadata?.ParentGuid ?? default;
+                var parentB = y.Metadata?.ParentGuid ?? default;
+
+                if (parentA == default && parentB == default)
+                {
+                    var a = groups.Contains(x.Metadata?.Guid ?? default);
+                    var b = groups.Contains(y.Metadata?.Guid ?? default);
+                    if (a && b)
+                    {
+                        return x.Name.CompareTo(y.Name);
+                    }
+
+                    if (a)
+                    {
+                        return -1;
+                    }
+
+                    if (b)
+                    {
+                        return 1;
+                    }
+
+                    return x.Name.CompareTo(y.Name);
+                }
+
+                if (parentA != default && parentB != default)
+                {
+                    return x.Name.CompareTo(y.Name);
+                }
+
+                if (parentA == default)
+                {
+                    return -1;
+                }
+
+                return 1;
+            }
         }
 
         public AssetExplorer()
@@ -87,7 +137,7 @@
             Refresh();
             currentDir = null;
             parentDir = currentDir?.Parent;
-            ProjectManager.ProjectChanged += ProjectLoaded;
+            ProjectManager.ProjectLoaded += ProjectLoaded;
             DisplayMode = config.GetOrAddValue("Display Mode", AssetExplorerDisplayMode.Pretty);
             IconSize = config.GetOrAddValue("Icon Size", AssetExplorerIconSize.Medium);
             ShowExtensions = config.GetOrAddValue("Show Extensions", false);
@@ -96,10 +146,6 @@
 
         private void FileSystemChanged(FileSystemEventArgs obj)
         {
-            if (obj.ChangeType == FileSystemChangeTypes.Changed)
-            {
-                return;
-            }
             Refresh();
         }
 
@@ -175,46 +221,59 @@
 
         public void Refresh()
         {
-            files.Clear();
-            dirs.Clear();
-            if (CurrentFolder == null)
+            lock (this)
             {
-                return;
-            }
-
-            currentDir = new(CurrentFolder);
-            parentDir = currentDir?.Parent;
-
-            foreach (var fse in Directory.GetFileSystemEntries(CurrentFolder, string.Empty))
-            {
-                if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                files.Clear();
+                dirs.Clear();
+                if (CurrentFolder == null)
                 {
-                    continue;
+                    return;
                 }
 
-                if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden) && !showHidden)
+                currentDir = new(CurrentFolder);
+                parentDir = currentDir?.Parent;
+
+                foreach (var fse in Directory.GetFileSystemEntries(CurrentFolder, string.Empty))
                 {
-                    continue;
+                    if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                    {
+                        continue;
+                    }
+
+                    if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden) && !showHidden)
+                    {
+                        continue;
+                    }
+
+                    if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                    {
+                        continue;
+                    }
+
+                    if (fse.EndsWith(".meta") && !showHidden)
+                    {
+                        continue;
+                    }
+
+                    if (Directory.Exists(fse))
+                    {
+                        dirs.Add(new(Path.GetFileName(fse), fse, null, null));
+                    }
+                    else
+                    {
+                        var metadata = SourceAssetsDatabase.GetMetadata(fse);
+                        Ref<Texture2D>? thumbnail = null;
+                        if (metadata != null)
+                        {
+                            SourceAssetsDatabase.ThumbnailCache.TryGet(metadata.Guid, out thumbnail);
+                            if (metadata.ParentGuid != default)
+                                groups.Add(metadata.ParentGuid);
+                        }
+                        files.Add(new(Path.GetFileName(fse), fse, metadata, thumbnail));
+                    }
                 }
 
-                if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
-                {
-                    continue;
-                }
-
-                if (fse.EndsWith(".meta") && !showHidden)
-                {
-                    continue;
-                }
-
-                if (Directory.Exists(fse))
-                {
-                    dirs.Add(new(Path.GetFileName(fse), fse));
-                }
-                else
-                {
-                    files.Add(new(Path.GetFileName(fse), fse));
-                }
+                files.Sort(new ItemGroupComparer(groups));
             }
         }
 
@@ -449,13 +508,12 @@
             Refresh();
         }
 
-        private void DisplayFile(Item file)
+        private unsafe void DisplayFile(Item file, Guid guid)
         {
+            bool isSelected = SelectedFile == file.Path;
             switch (displayMode)
             {
                 case AssetExplorerDisplayMode.Minimal:
-                    bool isSelected = SelectedFile == file.Path;
-
                     if (ImGui.Selectable($"\xe8a5{(showExtensions ? file.Name : file.NameNoExtension)}", isSelected, ImGuiSelectableFlags.DontClosePopups))
                     {
                         SelectedFile = file.Path;
@@ -463,19 +521,60 @@
                     break;
 
                 case AssetExplorerDisplayMode.Pretty:
+                    ImGui.BeginChild(file.Path, chipSize, ImGuiWindowFlags.NoScrollbar);
 
-                    ImGui.BeginChild(file.Path, chipSize);
+                    if (isSelected)
+                    {
+                        ImDrawList* drawList = ImGui.GetWindowDrawList();
+                        ImGuiWindow* window = ImGui.GetCurrentWindow();
+                        uint col = ImGui.GetColorU32(ImGuiCol.TextSelectedBg);
+                        Vector2 min = window->DC.CursorPos;
+                        Vector2 max = min + window->Size;
+                        drawList->AddRectFilled(min, max, col);
+                    }
 
-                    var icon = IconManager.GetIconForFile(file.Name);
+                    if (file.Thumbnail != null && !file.Thumbnail.IsNull)
+                    {
+                        ImageHelper.ImageCenteredH(file.Thumbnail.Value.SRV.NativePointer, imageSize);
+                    }
+                    else
+                    {
+                        var icon = IconManager.GetIconForFile(file.Name);
+                        ImageHelper.ImageCenteredH(icon, imageSize);
+                    }
 
-                    var hovered = ImGui.IsWindowHovered();
-
-                    ImageHelper.ImageCenteredH(icon, imageSize);
                     TextHelper.TextCenteredH(showExtensions ? file.Name : file.NameNoExtension);
 
-                    if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(0))
+                    if (ImGui.IsWindowHovered())
                     {
-                        Designer.OpenFile(file.Path);
+                        if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                        {
+                            SelectionCollection.Global.AddOverwriteSelection(file.Path);
+                            SelectedFile = file.Path;
+                        }
+                        if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                        {
+                            Designer.OpenFile(file.Path);
+                        }
+                    }
+
+                    if (groups.Contains(guid))
+                    {
+                        ImGui.SetCursorPos(new(chipSize.X - 32, chipSize.Y / 2 - 16));
+                        if (!openGroups.Contains(guid))
+                        {
+                            if (ImGui.Button(">"))
+                            {
+                                openGroups.Add(guid);
+                            }
+                        }
+                        else
+                        {
+                            if (ImGui.Button("<"))
+                            {
+                                openGroups.Remove(guid);
+                            }
+                        }
                     }
 
                     ImGui.EndChild();
@@ -623,25 +722,7 @@
 
                 if (ImGui.BeginMenu("\xE713 Settings"))
                 {
-                    if (ComboEnumHelper<AssetExplorerDisplayMode>.Combo("Display Mode", ref displayMode))
-                    {
-                        DisplayMode = displayMode;
-                    }
-
-                    if (ComboEnumHelper<AssetExplorerIconSize>.Combo("Icon Size", ref iconSize))
-                    {
-                        IconSize = iconSize;
-                    }
-
-                    if (ImGui.Checkbox("Show Extensions", ref showExtensions))
-                    {
-                        ShowExtensions = showExtensions;
-                    }
-
-                    if (ImGui.Checkbox("Show Hidden", ref showHidden))
-                    {
-                        ShowHidden = showHidden;
-                    }
+                    DrawSettings();
 
                     ImGui.EndMenu();
                 }
@@ -666,6 +747,29 @@
                 }
 
                 ImGui.EndPopup();
+            }
+        }
+
+        private void DrawSettings()
+        {
+            if (ComboEnumHelper<AssetExplorerDisplayMode>.Combo("Display Mode", ref displayMode))
+            {
+                DisplayMode = displayMode;
+            }
+
+            if (ComboEnumHelper<AssetExplorerIconSize>.Combo("Icon Size", ref iconSize))
+            {
+                IconSize = iconSize;
+            }
+
+            if (ImGui.Checkbox("Show Extensions", ref showExtensions))
+            {
+                ShowExtensions = showExtensions;
+            }
+
+            if (ImGui.Checkbox("Show Hidden", ref showHidden))
+            {
+                ShowHidden = showHidden;
             }
         }
 
@@ -735,7 +839,18 @@
             {
                 if (importFileDialog.Result == OpenFileResult.Ok)
                 {
-                    _ = SourceAssetsDatabase.ImportFileAsync(importFileDialog.FullPath);
+                    Task.Run(async () =>
+                    {
+                        var popup = PopupManager.Show(new ProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ...", ProgressType.Bar));
+                        try
+                        {
+                            await SourceAssetsDatabase.ImportFileAsync(importFileDialog.FullPath, progress: popup);
+                        }
+                        finally
+                        {
+                            popup.Dispose();
+                        }
+                    });
                 }
             }
             if (currentDir.Exists)
@@ -761,7 +876,6 @@
                 float size = chipSize.X + style.WindowPadding.X;
                 var windowSize = ImGui.GetContentRegionAvail();
                 float x = 0;
-                float y = 0;
 
                 if (parentDir != null && CurrentFolder != Paths.CurrentProjectFolder)
                 {
@@ -803,32 +917,48 @@
 
                     ImGui.PopStyleColor();
                 }
-
-                for (int i = 0; i < dirs.Count; i++)
+                lock (this)
                 {
-                    DisplayDir(dirs[i]);
-                    x += size;
-                    if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
+                    for (int i = 0; i < dirs.Count; i++)
                     {
-                        ImGui.SameLine();
+                        DisplayDir(dirs[i]);
+                        x += size;
+                        if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
+                        {
+                            ImGui.SameLine();
+                        }
+                        else
+                        {
+                            x = 0;
+                        }
                     }
-                    else
-                    {
-                        x = 0;
-                    }
-                }
 
-                for (int i = 0; i < files.Count; i++)
-                {
-                    DisplayFile(files[i]);
-                    x += size;
-                    if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
+                    for (int i = 0; i < files.Count; i++)
                     {
-                        ImGui.SameLine();
-                    }
-                    else
-                    {
-                        x = 0;
+                        var file = files[i];
+                        Guid guid = default;
+                        Guid parentGuid = default;
+                        if (file.Metadata != null)
+                        {
+                            guid = file.Metadata.Guid;
+                            parentGuid = file.Metadata.ParentGuid;
+                        }
+
+                        if (parentGuid != default && !openGroups.Contains(parentGuid))
+                        {
+                            continue;
+                        }
+
+                        DisplayFile(file, guid);
+                        x += size;
+                        if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
+                        {
+                            ImGui.SameLine();
+                        }
+                        else
+                        {
+                            x = 0;
+                        }
                     }
                 }
 
@@ -840,6 +970,12 @@
         {
             if (ImGui.BeginMenuBar())
             {
+                if (ImGui.BeginMenu("\xE713"))
+                {
+                    DrawSettings();
+                    ImGui.EndMenu();
+                }
+
                 if (ImGui.Button("\xE8B5 Import"))
                 {
                     importFileDialog.Show();

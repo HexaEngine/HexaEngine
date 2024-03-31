@@ -71,9 +71,8 @@
         public static BoundingSphere CreateFromBoundingBox(in BoundingBox box)
         {
             Unsafe.SkipInit(out BoundingSphere result);
-
-            result.Center = Vector3.Lerp(box.Min, box.Max, 0.5f);
-            result.Radius = Vector3.Distance(box.Min, box.Max) * 0.5f;
+            result.Center = box.Center;
+            result.Radius = Vector3.Distance(result.Center, box.Max);
             return result;
         }
 

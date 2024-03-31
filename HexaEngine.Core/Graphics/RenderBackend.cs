@@ -38,6 +38,11 @@
         /// <summary>
         /// Metal graphics backend (used on Apple platforms).
         /// </summary>
-        Metal = 32
+        Metal = 32,
+
+        /// <summary>
+        /// A dummy backend for Unit-Testing.
+        /// </summary>
+        Dummy = 64,
     }
 }

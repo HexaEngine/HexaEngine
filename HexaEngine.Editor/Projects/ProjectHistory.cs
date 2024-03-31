@@ -5,13 +5,15 @@
 
     public static class ProjectHistory
     {
+        private const string historyFile = "projectHistory.json";
+        private static readonly string historyPath = Path.Combine(EditorConfig.BasePath, historyFile);
         private static readonly List<HistoryEntry> entries;
 
         static ProjectHistory()
         {
-            if (File.Exists("projectHistory.json"))
+            if (File.Exists(historyPath))
             {
-                entries = JsonConvert.DeserializeObject<List<HistoryEntry>>(File.ReadAllText("projectHistory.json")) ?? new();
+                entries = JsonConvert.DeserializeObject<List<HistoryEntry>>(File.ReadAllText(historyPath)) ?? new();
             }
             else
             {
@@ -89,7 +91,7 @@
 
         private static void Save()
         {
-            File.WriteAllText("projectHistory.json", JsonConvert.SerializeObject(entries));
+            File.WriteAllText(historyPath, JsonConvert.SerializeObject(entries));
         }
     }
 }

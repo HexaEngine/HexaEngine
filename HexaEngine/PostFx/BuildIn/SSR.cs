@@ -237,7 +237,12 @@
             }
             if (qualityPreset == SSRQualityPreset.Dynamic)
             {
-                ssrParamsBuffer = new(device, CpuAccessFlags.Write);
+                SSRParams ssrParams;
+                ssrParams.MaxRayCount = maxRayCount;
+                ssrParams.RaySteps = raySteps;
+                ssrParams.RayStep = rayStep;
+                ssrParams.RayHitThreshold = rayHitThreshold;
+                ssrParamsBuffer = new(device, ssrParams, CpuAccessFlags.Write);
             }
 
             pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -303,6 +308,7 @@
             linearClampSampler.Dispose();
             linearBorderSampler.Dispose();
             ssrParamsBuffer?.Dispose();
+            ssrParamsBuffer = null;
         }
     }
 }

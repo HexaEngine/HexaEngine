@@ -7,11 +7,13 @@
     using HexaEngine.PostFx;
     using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Scenes;
+    using System.Numerics;
 
     public class PostProcessPass : DrawPass
     {
         private PostProcessingManager postProcessingManager;
         private ResourceRef<Texture2D> lightBuffer;
+        private ResourceRef<Texture2D> AOBuffer;
         private ResourceRef<Texture2D> postFxBuffer;
 
         public PostProcessPass() : base("PostProcess")
@@ -25,6 +27,7 @@
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
+            AOBuffer = creator.GetTexture2D("#AOBuffer");
             var viewport = creator.Viewport;
             postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, PostProcessingFlags.HDR);
             postProcessingManager.Add<VelocityBuffer>();
@@ -56,6 +59,7 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
+            context.ClearRenderTargetView(AOBuffer.Value, Vector4.One);
             context.ClearRenderTargetView(postFxBuffer.Value.RTV, default);
             postProcessingManager.Enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoPostProcessing) == 0;
             postProcessingManager.Input = lightBuffer.Value;

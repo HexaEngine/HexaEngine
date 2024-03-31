@@ -13,14 +13,14 @@
         private readonly StructuredUavBuffer<uint> instanceOffsets;
         private readonly StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
         private readonly StructuredBuffer<TypeData> typeDataBuffer;
-        private readonly StructuredBuffer<InstanceData> instanceDataBuffer;
+        private readonly StructuredBuffer<GPUInstance> instanceDataBuffer;
         private readonly StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
         private readonly DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
         private uint currentType;
         private int count;
         private int typeCount;
 
-        public CullingContext(StructuredBuffer<uint> instanceOffsetsNoCull, StructuredBuffer<Matrix4x4> instanceDataNoCull, StructuredUavBuffer<uint> instanceOffsets, StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer, StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<InstanceData> instanceDataBuffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs)
+        public CullingContext(StructuredBuffer<uint> instanceOffsetsNoCull, StructuredBuffer<Matrix4x4> instanceDataNoCull, StructuredUavBuffer<uint> instanceOffsets, StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer, StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<GPUInstance> instanceDataBuffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs)
         {
             this.instanceOffsetsNoCull = instanceOffsetsNoCull;
             this.instanceDataNoCull = instanceDataNoCull;
@@ -92,25 +92,15 @@
             AppendType(new(indexCountPerInstance, startIndexLocation, baseVertexLocation, startInstanceLocation));
         }
 
-        public void AppendInstance(InstanceData instance)
+        public void AppendInstance(GPUInstance instance)
         {
             instanceDataNoCull.Add(instance.World);
             instanceDataBuffer.Add(instance);
         }
 
-        public void AppendInstance(Matrix4x4 world, Vector3 min, Vector3 max, Vector3 center, float radius)
+        public void AppendInstance(Matrix4x4 world, Vector3 center, float radius)
         {
-            AppendInstance(new(currentType, world, min, max, center, radius));
-        }
-
-        public void AppendInstance(Matrix4x4 world, BoundingBox boundingBox, Vector3 center, float radius)
-        {
-            AppendInstance(new(currentType, world, boundingBox, center, radius));
-        }
-
-        public void AppendInstance(Matrix4x4 world, BoundingBox boundingBox, BoundingSphere boundingSphere)
-        {
-            AppendInstance(new(currentType, world, boundingBox, boundingSphere));
+            AppendInstance(new(currentType, world, center, radius));
         }
 
         public void AppendInstance(Matrix4x4 world, BoundingBox boundingBox)

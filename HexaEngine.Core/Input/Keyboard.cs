@@ -89,7 +89,6 @@
             keyboardTextInputEventArgs.Handled = false;
             keyboardTextInputEventArgs.Text = textInputEvent.Text;
             TextInput?.Invoke(null, keyboardTextInputEventArgs);
-            Debug.WriteLine($"TextInputEvent {ToStringFromUTF8(textInputEvent.Text)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -101,7 +100,6 @@
             keyboardTextEditingEventArgs.Start = textInputEvent.Start;
             keyboardTextEditingEventArgs.Length = textInputEvent.Length;
             TextEditing?.Invoke(null, keyboardTextEditingEventArgs);
-            Debug.WriteLine($"TextEditingEvent {ToStringFromUTF8(textInputEvent.Text)}, {textInputEvent.Start}, {textInputEvent.Length}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,7 +111,6 @@
             keyboardTextEditingEventArgs.Start = textInputEvent.Start;
             keyboardTextEditingEventArgs.Length = textInputEvent.Length;
             TextEditing?.Invoke(null, keyboardTextEditingEventArgs);
-            Debug.WriteLine($"TextEditingExtEvent {ToStringFromUTF8(textInputEvent.Text)}, {textInputEvent.Start}, {textInputEvent.Length}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -34,13 +34,13 @@
             algorithm.PreserveBorders = true;
             algorithm.PreserveSeams = true;
 
-            int targetTri = (int)(mesh.TriangleCount * (1 / (float)(j + 2)));
+            uint targetTri = (uint)(mesh.TriangleCount * (1 / (float)(j + 2)));
 
-            var outputMesh = MeshDecimation.DecimateMesh(algorithm, mesh, (int)(targetTri));
+            var outputMesh = MeshDecimation.DecimateMesh(algorithm, mesh, targetTri);
 
             MeshLODData outputData = new(0, (uint)outputMesh.VertexCount, (uint)outputMesh.Indices.Length, default, default, default, default, default, default, default, default, default);
 
-            outputData.Indices = outputMesh.Indices.Select(x => (uint)x).ToArray();
+            outputData.Indices = outputMesh.Indices.Select(x => x).ToArray();
             outputData.Colors = outputMesh.Colors;
             outputData.Positions = new Vector3[outputMesh.VertexCount];
             outputData.Normals = outputMesh.Normals;

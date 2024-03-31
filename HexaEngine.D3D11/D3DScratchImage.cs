@@ -3,10 +3,13 @@
 namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.DirectXTex;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System.IO;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
+    using System.Runtime.InteropServices;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using TexCompressFlags = TexCompressFlags;
     using TexFilterFlags = TexFilterFlags;
@@ -272,6 +275,39 @@ namespace HexaEngine.D3D11
             Span<byte> buffer = new(blob.GetBufferPointer(), (int)blob.GetBufferSize());
             stream.Write(buffer);
             blob.Release();
+        }
+
+        public void SaveToMemory(byte** ppData, nuint* pSize, TexFileFormat format, int flags)
+        {
+            ScratchImage image = scImage;
+            HexaEngine.DirectXTex.Blob blobInternal = DirectXTex.CreateBlob();
+
+            var meta = image.GetMetadata();
+            switch (format)
+            {
+                case TexFileFormat.DDS:
+                    DirectXTex.SaveToDDSMemory2(image.GetImages(), image.GetImageCount(), meta, (DDSFlags)flags, blobInternal).ThrowHResult();
+                    break;
+
+                case TexFileFormat.TGA:
+                    DirectXTex.SaveToTGAMemory(image.GetImages()[0], (TGAFlags)flags, blobInternal, ref meta).ThrowHResult();
+                    break;
+
+                case TexFileFormat.HDR:
+                    DirectXTex.SaveToHDRMemory(image.GetImages()[0], blobInternal).ThrowHResult();
+                    break;
+
+                default:
+                    DirectXTex.SaveToWICMemory2(image.GetImages(), image.GetImageCount(), (WICFlags)flags, DirectXTex.GetWICCodec(Helper.Convert(format)), blobInternal, null, default).ThrowHResult();
+                    break;
+            }
+
+            nuint size = blobInternal.GetBufferSize();
+            byte* pData = (byte*)Alloc(size);
+            Buffer.MemoryCopy(blobInternal.GetBufferPointer(), pData, size, size);
+            blobInternal.Release();
+            *ppData = pData;
+            *pSize = size;
         }
 
         public IImage[] GetImages()

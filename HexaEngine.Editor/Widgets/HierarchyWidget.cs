@@ -15,14 +15,14 @@
     /// <summary>
     ///
     /// </summary>
-    public class LayoutWidget : EditorWindow
+    public class HierarchyWidget : EditorWindow
     {
         private readonly Dictionary<string, EditorGameObjectAttribute> cache = new();
         private bool showHidden;
         private bool focused;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
-        public LayoutWidget()
+        public HierarchyWidget()
         {
             IsShown = true;
 
@@ -47,7 +47,7 @@
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        protected override string Name => "Layout";
+        protected override string Name => "\xE71D Hierarchy";
 
         private void DrawSettingsMenu()
         {
@@ -119,29 +119,53 @@
             ImGui.PopID();
         }
 
-        private void DisplayNode(GameObject element)
+        private void DisplayNode(GameObject element, bool searchHidden)
         {
             if (element.IsHidden && !showHidden)
             {
                 return;
             }
-            else if (element.IsHidden)
+
+            if (element.IsHidden || searchHidden)
             {
                 ImGui.BeginDisabled(true);
             }
 
+            uint colHovered = ImGui.GetColorU32(ImGuiCol.HeaderHovered);
+            uint colActive = ImGui.GetColorU32(ImGuiCol.HeaderActive);
+
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
             if (element.IsEditorSelected)
             {
-                flags |= ImGuiTreeNodeFlags.Selected;
+                ImGui.PushStyleColor(ImGuiCol.TableRowBg, colActive);
+                ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, colActive);
             }
+            bool hovered = ImGui.IsItemHovered();
+            if (hovered)
+            {
+                ImGui.PushStyleColor(ImGuiCol.TableRowBg, colHovered);
+                ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, colHovered);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
 
             if (element.Children.Count == 0)
             {
                 flags |= ImGuiTreeNodeFlags.Leaf;
             }
 
+            bool colorText = !searchHidden && !string.IsNullOrEmpty(searchString);
+            if (colorText)
+                ImGui.PushStyleColor(ImGuiCol.Text, 0xff0099ff);
+            uint col = 0x0;
+            ImGui.PushStyleColor(ImGuiCol.HeaderHovered, col);
+            ImGui.PushStyleColor(ImGuiCol.HeaderActive, col);
             bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
+            ImGui.PopStyleColor();
+            ImGui.PopStyleColor();
+            if (colorText)
+                ImGui.PopStyleColor();
             element.IsEditorOpen = isOpen;
             element.IsEditorVisible = true;
 
@@ -218,7 +242,8 @@
             {
                 for (int j = 0; j < element.Children.Count; j++)
                 {
-                    DisplayNode(element.Children[j]);
+                    var child = element.Children[j];
+                    DisplayNode(child, !child.Name.Contains(searchString));
                 }
                 ImGui.TreePop();
             }
@@ -230,11 +255,29 @@
                 }
             }
 
-            if (element.IsHidden)
+            ImGui.TableSetColumnIndex(1);
+            bool enabled = element.IsEnabled;
+            if (ImGui.Checkbox($"##{element.Guid}", ref enabled))
+            {
+                element.IsEnabled = enabled;
+            }
+
+            if (element.IsHidden || searchHidden)
             {
                 ImGui.EndDisabled();
             }
+
+            if (element.IsEditorSelected)
+            {
+                ImGui.PopStyleColor(); ImGui.PopStyleColor();
+            }
+            if (hovered)
+            {
+                ImGui.PopStyleColor(); ImGui.PopStyleColor();
+            }
         }
+
+        private string searchString = string.Empty;
 
         public override void DrawContent(IGraphicsContext context)
         {
@@ -247,17 +290,23 @@
                 return;
             }
 
+            ImGui.InputTextWithHint("##SearchBar", "\xE721 Search...", ref searchString, 1024);
+
+            ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff1c1c1c);
+
             ImGui.BeginChild("LayoutContent");
 
             DisplayContextMenu();
 
-            bool rootIsOpen = ImGui.TreeNodeEx("Scene", ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.Framed);
+            ImGui.BeginTable("Table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths);
+            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("\xE73E/\xE711", ImGuiTableColumnFlags.None);
+            ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
+            ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff2c2c2c);
 
-            if (!rootIsOpen)
-            {
-                ImGui.EndChild();
-                return;
-            }
+            ImGui.Indent();
+            ImGui.TableHeadersRow();
+            ImGui.Unindent();
 
             if (ImGui.BeginDragDropTarget())
             {
@@ -281,11 +330,16 @@
             {
                 var element = scene.Root.Children[i];
 
-                DisplayNode(element);
+                DisplayNode(element, !element.Name.Contains(searchString));
             }
 
-            ImGui.TreePop();
+            ImGui.PopStyleColor();
+            ImGui.PopStyleColor();
+            ImGui.EndTable();
+
             ImGui.EndChild();
+
+            ImGui.PopStyleColor();
         }
     }
 }

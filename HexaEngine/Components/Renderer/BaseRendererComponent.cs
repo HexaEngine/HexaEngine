@@ -1,9 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
-    using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
@@ -52,9 +49,9 @@
 
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
-        public abstract void Load(IGraphicsDevice device);
+        protected abstract void LoadCore(IGraphicsDevice device);
 
-        public abstract void Unload();
+        protected abstract void UnloadCore();
 
         public void Awake()
         {
@@ -77,20 +74,20 @@
 
         public abstract void VisibilityTest(CullingContext context);
 
-        void IRendererComponent.Load(IGraphicsDevice device)
+        public void Load(IGraphicsDevice device)
         {
             if (!loaded)
             {
-                Load(device);
+                LoadCore(device);
                 loaded = true;
             }
         }
 
-        void IRendererComponent.Unload()
+        public void Unload()
         {
             if (loaded)
             {
-                Unload();
+                UnloadCore();
                 loaded = false;
             }
         }

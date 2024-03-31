@@ -111,7 +111,7 @@
             return model?.Bones;
         }
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             modelManager = GameObject.GetScene().ModelManager;
             materialManager = GameObject.GetScene().MaterialManager;
@@ -121,7 +121,7 @@
             UpdateModel();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
             renderer.Dispose();
             model?.Dispose();
@@ -189,6 +189,11 @@
                 }
 
                 if (component.modelManager == null)
+                {
+                    return;
+                }
+
+                if (component.modelAsset.Guid == Guid.Empty)
                 {
                     return;
                 }

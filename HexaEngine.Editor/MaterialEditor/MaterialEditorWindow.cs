@@ -27,7 +27,7 @@
         private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
 
-        private string Version = "1.0.0.0";
+        private string Version = "1.0.0.1";
 
         private IGraphicsDevice device;
 
@@ -150,13 +150,15 @@
 
                 var path = sourceMetadata.GetFullPath();
                 FileStream? stream = null;
+
+                stream = File.OpenRead(path);
+                MaterialFile materialFile = MaterialFile.Read(stream);
+                this.path = path;
+                MaterialFile = materialFile;
+                assetRef = value;
+
                 try
                 {
-                    stream = File.OpenRead(path);
-                    MaterialFile materialFile = MaterialFile.Read(stream);
-                    this.path = path;
-                    MaterialFile = materialFile;
-                    assetRef = value;
                 }
                 catch (Exception ex)
                 {

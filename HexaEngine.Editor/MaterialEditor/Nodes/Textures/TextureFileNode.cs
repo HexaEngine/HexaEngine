@@ -16,7 +16,7 @@
     {
         private IGraphicsDevice device = Application.GraphicsDevice;
         private AssetRef path = AssetRef.Empty;
-        private IShaderResourceView? image;
+        private Ref<Texture2D>? image;
         private ISamplerState? sampler;
         private bool changed;
 
@@ -71,9 +71,6 @@
         public Pin InUV { get; private set; }
 
         [JsonIgnore]
-        public IShaderResourceView? Image { get => image; set => image = value; }
-
-        [JsonIgnore]
         public ISamplerState? Sampler { get => sampler; set => sampler = value; }
 
         [JsonIgnore]
@@ -81,32 +78,29 @@
 
         public void Reload(bool samplerOnly = false)
         {
-            sampler?.Dispose();
-            image?.Dispose();
-
             var path = Path.GetPath();
 
             if (File.Exists(path) && device != null)
             {
-                try
-                {
-                    if (samplerOnly)
-                    {
-                        sampler = device.CreateSamplerState(samplerDescription);
-                        return;
-                    }
-                    var scratchImage = device.TextureLoader.LoadFormFile(path);
-                    scratchImage.Resize(128, 128, 0);
-                    var tmp = scratchImage.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
-                    scratchImage.Dispose();
-                    image = device.CreateShaderResourceView(tmp);
-                    tmp.Dispose();
+                sampler?.Dispose();
 
-                    sampler = device.CreateSamplerState(samplerDescription);
-                }
-                catch
+                if (samplerOnly)
                 {
+                    sampler = device.CreateSamplerState(samplerDescription);
+                    return;
                 }
+                var cache = SourceAssetsDatabase.ThumbnailCache;
+                if (!cache.TryGet(Path.Guid, out var texture))
+                {
+                    var scratchImage = device.TextureLoader.LoadFormFile(path);
+                    cache.GenerateAndSetThumbnail(Path.Guid, scratchImage);
+                    scratchImage.Dispose();
+                    cache.Get(Path.Guid, out texture);
+                }
+
+                image = texture;
+
+                sampler = device.CreateSamplerState(samplerDescription);
             }
         }
 
@@ -117,7 +111,7 @@
 
         protected override void DrawContent()
         {
-            ImGui.Image(image?.NativePointer ?? 0, Size);
+            ImGui.Image(image?.Value?.SRV?.NativePointer ?? 0, Size);
 
             ImGui.PushItemWidth(100);
 

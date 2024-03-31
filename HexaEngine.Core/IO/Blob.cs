@@ -8,6 +8,16 @@
     /// </summary>
     public unsafe class Blob : IDisposable
     {
+        private nint bufferPointer;
+        private PointerSize pointerSize;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Blob"/> class.
+        /// </summary>
+        public Blob()
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Blob"/> class with a pointer to a buffer and its size.
         /// </summary>
@@ -15,8 +25,8 @@
         /// <param name="pointerSize">The size of the data buffer.</param>
         public Blob(nint bufferPointer, PointerSize pointerSize)
         {
-            BufferPointer = bufferPointer;
-            PointerSize = pointerSize;
+            this.bufferPointer = bufferPointer;
+            this.pointerSize = pointerSize;
         }
 
         /// <summary>
@@ -26,8 +36,8 @@
         /// <param name="pointerSize">The size of the data buffer.</param>
         public Blob(void* bufferPointer, nuint pointerSize)
         {
-            BufferPointer = new(bufferPointer);
-            PointerSize = (int)pointerSize;
+            this.bufferPointer = new(bufferPointer);
+            this.pointerSize = (int)pointerSize;
         }
 
         /// <summary>
@@ -36,9 +46,9 @@
         /// <param name="data">The byte array containing data for the blob.</param>
         public Blob(byte[] data)
         {
-            BufferPointer = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, 0, BufferPointer, data.Length);
-            PointerSize = data.Length;
+            bufferPointer = Marshal.AllocHGlobal(data.Length);
+            Marshal.Copy(data, 0, bufferPointer, data.Length);
+            pointerSize = data.Length;
         }
 
         /// <summary>
@@ -47,23 +57,23 @@
         /// <param name="data">The span of bytes containing data for the blob.</param>
         public Blob(Span<byte> data)
         {
-            BufferPointer = Marshal.AllocHGlobal(data.Length);
-            PointerSize = data.Length;
+            bufferPointer = Marshal.AllocHGlobal(data.Length);
+            pointerSize = data.Length;
             fixed (byte* ptr = data)
             {
-                Buffer.MemoryCopy(ptr, (void*)BufferPointer, PointerSize, PointerSize);
+                Buffer.MemoryCopy(ptr, (void*)bufferPointer, pointerSize, pointerSize);
             }
         }
 
         /// <summary>
         /// Gets the pointer to the data buffer.
         /// </summary>
-        public nint BufferPointer { get; }
+        public nint BufferPointer => bufferPointer;
 
         /// <summary>
         /// Gets the size of the data buffer.
         /// </summary>
-        public PointerSize PointerSize { get; }
+        public PointerSize PointerSize => pointerSize;
 
         /// <summary>
         /// Converts the blob's data to a string (assumes ANSI encoding).
@@ -71,7 +81,7 @@
         /// <returns>The data as a string.</returns>
         public string AsString()
         {
-            return Marshal.PtrToStringAnsi(BufferPointer) ?? string.Empty;
+            return Marshal.PtrToStringAnsi(bufferPointer) ?? string.Empty;
         }
 
         /// <summary>
@@ -80,7 +90,7 @@
         /// <returns>The data as a byte array.</returns>
         public byte[] AsBytes()
         {
-            return new Span<byte>((void*)BufferPointer, PointerSize).ToArray();
+            return new Span<byte>((void*)bufferPointer, pointerSize).ToArray();
         }
 
         /// <summary>
@@ -89,7 +99,21 @@
         /// <returns>The data as a span of bytes.</returns>
         public Span<byte> AsSpan()
         {
-            return new Span<byte>((void*)BufferPointer, PointerSize);
+            return new Span<byte>((void*)bufferPointer, pointerSize);
+        }
+
+        public void CopyFrom(Span<byte> source)
+        {
+            if (bufferPointer != 0)
+            {
+                Marshal.FreeHGlobal(bufferPointer);
+            }
+            bufferPointer = Marshal.AllocHGlobal(source.Length);
+            pointerSize = source.Length;
+            fixed (byte* ptr = source)
+            {
+                Buffer.MemoryCopy(ptr, (void*)bufferPointer, pointerSize, pointerSize);
+            }
         }
 
         /// <summary>
@@ -97,7 +121,9 @@
         /// </summary>
         public void Dispose()
         {
-            Marshal.FreeHGlobal(BufferPointer);
+            Marshal.FreeHGlobal(bufferPointer);
+            bufferPointer = IntPtr.Zero;
+            pointerSize = 0;
             GC.SuppressFinalize(this);
         }
     }

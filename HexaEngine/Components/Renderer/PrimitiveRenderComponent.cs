@@ -45,14 +45,14 @@
             }
         }
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             renderer = new(device);
 
             UpdateModel();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
             renderer.Dispose();
             primitive?.Dispose();

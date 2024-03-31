@@ -9,7 +9,6 @@ namespace HexaEngine.Core.Assets.Importer
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Animations;
@@ -40,7 +39,7 @@ namespace HexaEngine.Core.Assets.Importer
 
     public class ModelImporterSettings
     {
-        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData | PostProcessSteps.FindDegenerates | PostProcessSteps.FindInstances | PostProcessSteps.ImproveCacheLocality;
+        public PostProcessSteps PostProcessSteps = PostProcessSteps.FlipUVs | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData | PostProcessSteps.FindDegenerates | PostProcessSteps.ImproveCacheLocality | PostProcessSteps.Triangulate | PostProcessSteps.FindInstances;
 
         public TexPostProcessSteps TexPostProcessSteps = TexPostProcessSteps.None;
 
@@ -141,6 +140,8 @@ namespace HexaEngine.Core.Assets.Importer
         {
             ModelImporterSettings settings = context.GetOrCreateAdditionalMetadata<ModelImporterSettings>("ModelImportSettings");
 
+            Logger.Info($"Importing model '{Path.GetFileName(context.SourcePath)}'.");
+
             AssimpScene* scene = null;
             if (!Load(targetPlatform, context, settings, &scene))
             {
@@ -157,13 +158,19 @@ namespace HexaEngine.Core.Assets.Importer
                 assimp.ReleaseImport(scene);
             }
 
-            Logger.Info("Import Done!");
+            Logger.Info($"Imported model '{Path.GetFileName(context.SourcePath)}'.");
         }
 
         public unsafe bool Load(TargetPlatform targetPlatform, ImportContext context, ModelImporterSettings settings, AssimpScene** outScene)
         {
             var modelName = Path.GetFileNameWithoutExtension(context.SourcePath);
-            var sourceDir = Path.GetDirectoryName(context.SourcePath);
+            var importDir = Path.GetDirectoryName(context.SourcePath);
+            var sourceDir = context.ImportSourcePath != null ? Path.GetDirectoryName(context.ImportSourcePath) : Path.GetDirectoryName(context.SourcePath);
+
+            if (Path.GetExtension(context.SourcePath) == ".gltf")
+            {
+                SourceAssetsDatabase.ImportFile(Path.Combine(sourceDir, $"{modelName}.bin"), new DefaultGuidProvider(context.AssetMetadata.Guid));
+            }
 
             var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
             *outScene = scene;
@@ -194,44 +201,55 @@ namespace HexaEngine.Core.Assets.Importer
             List<string>? texturePaths = null;
             Dictionary<string, Guid>? texturePathToGuid = null;
 
+            ProgressContext progressContext = new(context, 4);
+
             if (settings.ImportMaterials)
             {
-                if (!LoadMaterials(modelName, scene, context, out materialIds, out materials, out texturePaths, out texturePathToGuid))
+                progressContext.BeginSubStep((int)scene->MNumMaterials);
+                if (!LoadMaterials(modelName, importDir, scene, context, progressContext, out materialIds, out materials, out texturePaths, out texturePathToGuid))
                 {
                     return false;
                 }
             }
+            progressContext.EndSubStep();
 
-            if (!LoadMeshes(modelName, scene, context, root, pToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
+            progressContext.BeginSubStep((int)scene->MNumMeshes);
+            if (!LoadMeshes(modelName, scene, context, progressContext, root, pToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
             {
                 return false;
             }
+            progressContext.EndSubStep();
 
             if (CheckForProblems(meshes))
             {
                 return false;
             }
 
-            if (!LoadAnimations(modelName, scene, context, pToMesh))
+            progressContext.BeginSubStep((int)scene->MNumAnimations);
+            if (!LoadAnimations(modelName, scene, context, progressContext, pToMesh))
             {
                 return false;
             }
+            progressContext.EndSubStep();
 
             if (settings.ImportTextures)
             {
-                if (!LoadTextures(targetPlatform, settings, sourceDir, scene, context, texturePaths, texturePathToGuid))
+                progressContext.BeginSubStep(texturePaths.Count);
+                if (!LoadTextures(targetPlatform, settings, sourceDir, scene, context, progressContext, texturePaths, texturePathToGuid))
                 {
                     return false;
                 }
             }
+            progressContext.EndSubStep();
 
             return true;
         }
 
-        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, AssimpScene* scene, ImportContext context, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
             var device = Application.GraphicsDevice;
             var loader = device.TextureLoader;
+
             for (int i = 0; i < texturePaths.Count; i++)
             {
                 var texturePath = texturePaths[i];
@@ -276,129 +294,24 @@ namespace HexaEngine.Core.Assets.Importer
                     {
                         TextureImporter.ExportImage(device, targetPlatform, context, guid, fileName, new(), image);
                     });
-                }
-            }
-
-            /*
-            for (int i = 0; i < texturePaths.Count; i++)
-            {
-                var srcFile = Path.Combine(sourceDir, texturePaths[i]);
-                if (!System.IO.File.Exists(srcFile))
-                    continue;
-
-                if (settings.TexPostProcessSteps == TexPostProcessSteps.None)
-                {
-                    try
-                    {
-                        var destFile = Path.Combine(outputPath, texturePaths[i]);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destFile));
-                        System.IO.File.Copy(srcFile, destFile, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex);
-                        MessageBox.Show("Failed to copy file", ex.Message);
-                        return false;
-                    }
+                    progressContext.AddProgress();
                 }
                 else
                 {
-                    IScratchImage image;
+                    string filePath = Path.Combine(sourceDir, texturePath);
 
-                    try
+                    if (!System.IO.File.Exists(filePath))
                     {
-                        image = loader.LoadFormFile(srcFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex);
-                        MessageBox.Show("Failed to load texture", ex.Message);
-                        return false;
+                        Logger.Warn($"Failed to import texture {filePath}, importer couldn't locate file.");
+                        continue;
                     }
 
-                    if ((settings.TexPostProcessSteps & TexPostProcessSteps.Scale) != 0)
-                    {
-                        try
-                        {
-                            var newWidth = Math.Min(image.Metadata.Width, settings.MaxWidth);
-                            var newHeight = Math.Min(image.Metadata.Height, settings.MaxHeight);
+                    DictionaryGuidProvider provider = new(context.AssetMetadata.Guid, texturePathToGuid, GuidNotFoundBehavior.Throw);
 
-                            SwapImage(ref image, image.Resize(newWidth, newHeight, TexFilterFlags.Default));
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Log(ex);
-                            MessageBox.Show("Failed to scale texture", ex.Message);
-                            return false;
-                        }
-                    }
-
-                    if ((settings.TexPostProcessSteps & TexPostProcessSteps.GenerateMips) != 0)
-                    {
-                        try
-                        {
-                            SwapImage(ref image, image.GenerateMipMaps(TexFilterFlags.Default));
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Log(ex);
-                            MessageBox.Show("Failed to generate mips texture", ex.Message);
-                            return false;
-                        }
-                    }
-
-                    if ((settings.TexPostProcessSteps & TexPostProcessSteps.Convert) != 0)
-                    {
-                        try
-                        {
-                            if (FormatHelper.IsCompressed(settings.TexFormat))
-                            {
-                                SwapImage(ref image, image.Compress(device, settings.TexFormat, settings.TexCompressFlags));
-                            }
-                            else
-                            {
-                                SwapImage(ref image, image.Convert(settings.TexFormat, TexFilterFlags.Default));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Log(ex);
-                            MessageBox.Show("Failed to convert texture", ex.Message);
-                            return false;
-                        }
-                    }
-
-                    try
-                    {
-                        var newName = Path.GetFileNameWithoutExtension(texturePaths[i]) + $".{settings.TexFileFormat.ToString().ToLowerInvariant()}";
-                        //ChangeNameOfTexture(texturePaths[i], newName);
-                        var destFile = Path.Combine(outputPath, newName);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destFile));
-
-                        switch (targetPlatform)
-                        {
-                            case TargetPlatform.Windows:
-                                image.SaveToFile(destFile, TexFileFormat.DDS, 0);
-                                break;
-
-                            case TargetPlatform.Linux:
-                            case TargetPlatform.Android:
-                            case TargetPlatform.Other:
-                                image.SaveToFile(destFile, TexFileFormat.TGA, 0);
-                                break;
-                        }
-
-                        image.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex);
-                        MessageBox.Show("Failed to save texture", ex.Message);
-                        return false;
-                    }
+                    SourceAssetsDatabase.ImportFile(filePath, provider);
+                    progressContext.AddProgress();
                 }
             }
-            */
 
             return true;
         }
@@ -416,7 +329,7 @@ namespace HexaEngine.Core.Assets.Importer
             return false;
         }
 
-        private unsafe bool LoadMaterials(string modelName, AssimpScene* scene, ImportContext context, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths, [MaybeNullWhen(false)] out Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths, [MaybeNullWhen(false)] out Dictionary<string, Guid> texturePathToGuid)
         {
             try
             {
@@ -429,6 +342,7 @@ namespace HexaEngine.Core.Assets.Importer
                     Material* mat = scene->MMaterials[i];
 
                     var material = materials[i] = new MaterialFile();
+                    material.Guid = Guid.NewGuid();
 
                     List<MaterialProperty> properties = [];
                     List<MaterialTexture> textures = [];
@@ -682,7 +596,11 @@ namespace HexaEngine.Core.Assets.Importer
                                 break;
 
                             case Assimp.MatkeyTexflagsBase:
-                                FindOrCreate(textures, (TextureType)semantic).Flags = Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                var flags = FindOrCreate(textures, (TextureType)semantic).Flags = Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                if (flags == IO.Binary.Materials.TextureFlags.UseAlpha)
+                                {
+                                    material.Flags |= MaterialFlags.AlphaTest;
+                                }
                                 break;
 
                             case Assimp.MatkeyShaderVertex:
@@ -722,8 +640,13 @@ namespace HexaEngine.Core.Assets.Importer
                     try
                     {
                         var guid = materialIds[i] = Guid.NewGuid();
-                        context.EmitArtifact(material.Name, guid, AssetType.Material, out string path);
+                        GuidProvider guidProvider = new(guid, context.AssetMetadata.Guid);
+
+                        string path = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
+
                         material.Save(path, Encoding.UTF8);
+                        SourceAssetsDatabase.ImportFile(path, guidProvider);
+                        progressContext.AddProgress();
                     }
                     catch (Exception ex)
                     {
@@ -747,7 +670,7 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe bool LoadAnimations(string modelName, AssimpScene* scene, ImportContext context, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadAnimations(string modelName, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             try
             {
@@ -825,6 +748,7 @@ namespace HexaEngine.Core.Assets.Importer
                         //AnimationLibrary animationLibrary = new(animations);
                         //context.EmitArtifact(AssetType.Animation, out string path);
                         //animationLibrary.Save(path, Encoding.UTF8);
+                        progressContext.AddProgress();
                     }
                     catch (Exception ex)
                     {
@@ -843,7 +767,7 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             try
             {
@@ -938,11 +862,19 @@ namespace HexaEngine.Core.Assets.Importer
                     {
                         int lod = (int)Math.Pow(2, j);
                         Logger.Info($"Generating LOD: {lod}, {mesh.Name}");
-                        var lodLower = SimplifyProcess.Simplify(data, j);
-                        lodLower.LODLevel = (uint)lod;
-                        lock (mesh.LODs)
+                        try
                         {
-                            mesh.LODs.Add(lodLower);
+                            var lodLower = SimplifyProcess.Simplify(data, j);
+                            lodLower.LODLevel = (uint)lod;
+                            lock (mesh.LODs)
+                            {
+                                mesh.LODs.Add(lodLower);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Failed to generate LOD Level {lod} for '{mesh.Name}'");
+                            Logger.Log(ex);
                         }
                     });
 
@@ -959,6 +891,7 @@ namespace HexaEngine.Core.Assets.Importer
                         ModelFile modelFile = new(string.Empty, meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
                         modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
+                        progressContext.AddProgress();
                     }
                     catch (Exception ex)
                     {

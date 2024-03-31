@@ -65,6 +65,10 @@
 
         public void Build()
         {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                nodes[i].Reset(true);
+            }
             ResolveDependencies();
             TopologicalSort();
         }
@@ -74,12 +78,11 @@
             for (int i = 0; i < nodes.Count; i++)
             {
                 var node = nodes[i];
-                node.Dependencies.Clear();
                 for (int j = 0; j < node.Bindings.Count; j++)
                 {
                     var binding = node.Bindings[j];
                     var name = binding.Name;
-                    if (!name.StartsWith("#"))
+                    if (!name.StartsWith('#'))
                     {
                         continue;
                     }
@@ -93,7 +96,7 @@
                 {
                     var binding = node.Writes[j];
                     var name = binding.Name;
-                    if (!name.StartsWith("#"))
+                    if (!name.StartsWith('#'))
                     {
                         continue;
                     }
@@ -109,7 +112,7 @@
         private RenderGraphNode? ResolveDependency(ResourceBinding binding)
         {
             var name = binding.Name;
-            if (name.StartsWith("#"))
+            if (name.StartsWith('#'))
             {
                 for (int i = 0; i < globalResources.Count; i++)
                 {
@@ -154,7 +157,6 @@
             for (int i = 0; i < nodes.Count; i++)
             {
                 var node = nodes[i];
-                node.Dependencies.Clear();
                 for (int j = 0; j < node.Bindings.Count; j++)
                 {
                     var binding = node.Bindings[j];
@@ -168,15 +170,11 @@
                 {
                     var binding = node.Writes[j];
                     var name = binding.Name;
-                    if (name.StartsWith("#"))
+                    if (name.StartsWith('#'))
                     {
-                        if (globalResourcesLastWrite.ContainsKey(binding))
+                        if (!globalResourcesLastWrite.TryAdd(binding, node))
                         {
                             globalResourcesLastWrite[binding] = node;
-                        }
-                        else
-                        {
-                            globalResourcesLastWrite.Add(binding, node);
                         }
                     }
                 }

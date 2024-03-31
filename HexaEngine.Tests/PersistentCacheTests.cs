@@ -1,6 +1,7 @@
 namespace HexaEngine.Tests
 {
     using HexaEngine.Core.IO.Caching;
+    using HexaEngine.Core.Unsafes;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 
@@ -46,7 +47,7 @@ namespace HexaEngine.Tests
 
             cache.Get(keyName, &retrievedData, &retrievedSize);
 
-            Assert.IsTrue(retrievedData != null);
+            Assert.That((Pointer)retrievedData, Is.Not.EqualTo(new Pointer(null)));
             Assert.That(retrievedSize, Is.EqualTo((uint)testData.Length));
 
             byte[] retrievedBytes = new byte[retrievedSize];
@@ -60,7 +61,7 @@ namespace HexaEngine.Tests
                 Marshal.FreeHGlobal((nint)retrievedData);
             }
 
-            CollectionAssert.AreEqual(testData, retrievedBytes);
+            Assert.That(testData, Is.EqualTo(retrievedBytes));
         }
 
         [Test]
@@ -106,9 +107,9 @@ namespace HexaEngine.Tests
 
             bool result = cache.TryGet("InvalidKey", &data, &size);
 
-            Assert.IsFalse(result);
-            Assert.IsTrue(data == null);
-            Assert.AreEqual(0, size);
+            Assert.That(result, Is.False);
+            Assert.That((Pointer)data, Is.EqualTo(new Pointer(null)));
+            Assert.That(size, Is.EqualTo(0));
 
             cache.Dispose();
         }

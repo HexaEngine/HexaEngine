@@ -4,6 +4,7 @@
 	<Icon theme="Light" name="Folder" path="assets/icons/light/folder.png" target="/" priority="-1" />
 	<Icon theme="Light" name="Material" path="assets/icons/light/material.png" target="*.material" />
 	<Icon theme="Light" name="Model" path="assets/icons/light/model.png" target="*.model" />
+	<Icon theme="Light" name="gltf" path="assets/icons/light/model.png" target="*.gltf" />
 	<Icon theme="Light" name="Scene" path="assets/icons/light/scene.png" target="*.hexlvl" />
 	<Icon theme="Light" name="Animation" path="assets/icons/light/animation.png" target="*.anim" />
 
@@ -23,6 +24,7 @@
 	<Icon theme="Dark" name="Folder" path="assets/icons/dark/folder.png" target="/" priority="-1" />
 	<Icon theme="Dark" name="Material" path="assets/icons/dark/material.png" target="*.material" />
 	<Icon theme="Dark" name="Model" path="assets/icons/dark/model.png" target="*.model" />
+	<Icon theme="Dark" name="gltf" path="assets/icons/dark/model.png" target="*.gltf" />
 	<Icon theme="Dark" name="Scene" path="assets/icons/dark/scene.png" target="*.hexlvl" />
 	<Icon theme="Dark" name="Animation" path="assets/icons/dark/animation.png" target="*.anim" />
 

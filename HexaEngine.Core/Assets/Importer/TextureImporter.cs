@@ -32,7 +32,15 @@
 
         public void Import(TargetPlatform targetPlatform, ImportContext context)
         {
-            var name = Path.GetFileNameWithoutExtension(context.SourcePath);
+            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+            {
+                Import(device, targetPlatform, context);
+            });
+        }
+
+        public static void Import(IGraphicsDevice device, TargetPlatform targetPlatform, ImportContext context)
+        {
+            var name = Path.GetFileName(context.SourcePath);
             var settings = context.GetOrCreateAdditionalMetadata<TextureImporterSettings>("TextureImportSettings");
 
             IScratchImage? image = null;
@@ -48,11 +56,15 @@
                 return;
             }
 
+            SourceAssetsDatabase.ThumbnailCache.GenerateAndSetThumbnail(context.AssetMetadata.Guid, image);
+
             ExportImage(device, targetPlatform, context, name, settings, image);
         }
 
         internal static void ExportImage(IGraphicsDevice device, TargetPlatform targetPlatform, ImportContext context, string name, TextureImporterSettings settings, IScratchImage image)
         {
+            Logger.Info($"Importing texture '{Path.GetFileName(context.SourcePath)}'");
+
             var metadata = image.Metadata;
 
             var width = Math.Min(metadata.Width, settings.MaxWidth);
@@ -62,6 +74,7 @@
             {
                 try
                 {
+                    Logger.Info($"Resizing texture ({image.Metadata.Width}, {image.Metadata.Height}) -> ({width}, {height})");
                     SwapImage(ref image, image.Resize(width, height, TexFilterFlags.Default));
                 }
                 catch (Exception ex)
@@ -80,6 +93,7 @@
             {
                 try
                 {
+                    Logger.Info($"Decompressing texture ({metadata.Format}) -> ({Format.R32G32B32A32Float})");
                     SwapImage(ref image, image.Decompress(Format.R32G32B32A32Float));
                     metadata = image.Metadata;
                 }
@@ -96,6 +110,7 @@
             {
                 try
                 {
+                    Logger.Info($"Generating mip-maps");
                     SwapImage(ref image, image.GenerateMipMaps(TexFilterFlags.Default));
                 }
                 catch (Exception ex)
@@ -115,6 +130,7 @@
                     {
                         try
                         {
+                            Logger.Info($"Compressing texture ({image.Metadata.Format}) -> ({settings.Format})");
                             SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
                         }
                         catch (Exception ex)
@@ -130,6 +146,7 @@
                 {
                     try
                     {
+                        Logger.Info($"Converting texture ({image.Metadata.Format}) -> ({settings.Format})");
                         SwapImage(ref image, image.Convert(settings.Format, TexFilterFlags.Default));
                     }
                     catch (Exception ex)
@@ -183,6 +200,8 @@
                 fs?.Close();
                 image.Dispose();
             }
+
+            Logger.Info($"Imported texture '{Path.GetFileName(context.SourcePath)}'");
         }
 
         internal static void ExportImage(IGraphicsDevice device, TargetPlatform targetPlatform, ImportContext context, Guid guid, string name, TextureImporterSettings settings, IScratchImage image)
@@ -249,7 +268,7 @@
                     {
                         try
                         {
-                            SwapImage(ref image, image.Compress(settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                            SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
                         }
                         catch (Exception ex)
                         {

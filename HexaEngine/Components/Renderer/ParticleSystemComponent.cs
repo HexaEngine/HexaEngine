@@ -97,7 +97,7 @@
             emitter.ResetEmitter = true;
         }
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             renderer = new(device, emitter);
 
@@ -106,7 +106,7 @@
             UpdateTextureAsync();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
             renderer.Dispose();
             particleTexture?.Dispose();

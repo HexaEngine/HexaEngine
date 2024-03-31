@@ -51,7 +51,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="assets\shared\fonts\arial.ttf">
+		<None Update="assets\shared\fonts\ARIAL.TTF">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\ARIALBD.TTF">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\dark\animation.png">

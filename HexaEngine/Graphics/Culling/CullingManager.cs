@@ -2,20 +2,20 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public class CullingManager
     {
 #nullable disable
         private readonly IGraphicsDevice device;
-        private CullingFlags cullingFlags = CullingFlags.All;
+        private CullingFlags cullingFlags = CullingFlags.All | CullingFlags.Debug;
 
         private IComputePipeline occlusion;
 
@@ -23,7 +23,7 @@
         private StructuredUavBuffer<uint> instanceOffsets;
         private StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
         private StructuredBuffer<TypeData> typeDataBuffer;
-        private StructuredBuffer<InstanceData> instanceDataBuffer;
+        private StructuredBuffer<GPUInstance> instanceDataBuffer;
         private StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
         private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
 
@@ -57,7 +57,7 @@
             instanceDataBuffer = new(device, CpuAccessFlags.Write);
             swapBuffer = new(device, CpuAccessFlags.RW);
             drawIndirectArgs = new(device, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
+            sampler = device.CreateSamplerState(new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp));
             occlusionCbs = AllocArray(2);
             occlusionCbs[0] = (void*)occlusionParamBuffer.Buffer.NativePointer;
             occlusionCbs[1] = (void*)occlusionCameraBuffer.Buffer.NativePointer;
@@ -86,7 +86,7 @@
 
         public StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
 
-        public StructuredBuffer<InstanceData> InstanceDataBuffer => instanceDataBuffer;
+        public StructuredBuffer<GPUInstance> InstanceDataBuffer => instanceDataBuffer;
 
         public StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
 
@@ -95,6 +95,22 @@
         public void UpdateCamera(IGraphicsContext context, Camera camera, Viewport viewport)
         {
             occlusionCameraBuffer.Update(context, new(camera, new(viewport.Width, viewport.Height)));
+        }
+
+        private static Vector3 ExtractScale(Matrix4x4 matrix)
+        {
+            Vector3 scale;
+            scale.X = new Vector3(matrix.M11, matrix.M12, matrix.M13).Length();
+            scale.Y = new Vector3(matrix.M21, matrix.M22, matrix.M23).Length();
+            scale.Z = new Vector3(matrix.M31, matrix.M32, matrix.M33).Length();
+
+            float det = matrix.GetDeterminant();
+            if (det < 0)
+            {
+                scale.X = -scale.X;
+            }
+
+            return scale;
         }
 
         public unsafe void ExecuteCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
@@ -120,8 +136,8 @@
                 MaxMipLevel = (uint)mipChain.MipLevels,
 
                 Frustum = new(frustumX.X, frustumX.Z, frustumY.Y, frustumY.Z),
-                P00 = camera.Transform.Projection.M11,
-                P11 = camera.Transform.Projection.M22,
+                P00 = projectionT.M11,
+                P11 = projectionT.M22,
             };
             occlusionParamBuffer.Update(context);
 
@@ -141,41 +157,60 @@
             context.ClearState();
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
-            /*
-            swapBuffer.Read(context);
 
-            uint drawCalls = 0;
-            uint drawInstanceCount = 0;
-            uint vertexCount = 0;
-
-            for (int i = 0; i < this.context.TypeCount; i++)
+            if ((cullingFlags & CullingFlags.Debug) != 0)
             {
-                vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
-                drawInstanceCount += swapBuffer[i].InstanceCount;
-                drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
+                swapBuffer.Read(context);
+
+                uint drawCalls = 0;
+                uint drawInstanceCount = 0;
+                uint vertexCount = 0;
+
+                ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
+
+                if (drawBoundingSpheres)
+                {
+                    for (int i = 0; i < instanceCount; i++)
+                    {
+                        var instance = instanceDataBuffer[i];
+                        var world = Matrix4x4.Transpose(instance.World);
+
+                        var center = Vector3.Transform(instance.BoundingSphere.Center, world);
+                        var radius = instance.BoundingSphere.Radius * ExtractScale(world).Length();
+                        DebugDraw.DrawSphere(center, default, radius, Colors.White);
+                    }
+                }
+
+                for (int i = 0; i < this.context.TypeCount; i++)
+                {
+                    vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
+                    drawInstanceCount += swapBuffer[i].InstanceCount;
+                    drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
+                }
+
+                uint fmt = 0;
+                while (vertexCount > 1000)
+                {
+                    vertexCount /= 1000;
+                    fmt++;
+                }
+                char suffix = fmt switch
+                {
+                    0 => ' ',
+                    1 => 'K',
+                    _ => 'M',
+                };
+
+                ImGui.Text($"Draw Calls: {drawCalls}, Instances: {drawInstanceCount}, Vertices: {vertexCount}{suffix}");
+
+                var flags = (int)cullingFlags;
+                ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
+                ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
+                cullingFlags = (CullingFlags)flags;
             }
-
-            uint fmt = 0;
-            while (vertexCount > 1000)
-            {
-                vertexCount /= 1000;
-                fmt++;
-            }
-            char suffix = fmt switch
-            {
-                0 => ' ',
-                1 => 'K',
-                _ => 'M',
-            };
-
-            ImGui.Text($"Draw Calls: {drawCalls}, Instances: {drawInstanceCount}, Vertices: {vertexCount}{suffix}");
-
-            var flags = (int)cullingFlags;
-            ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
-            ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
-            cullingFlags = (CullingFlags)flags;
-            */
         }
+
+        private bool drawBoundingSpheres = false;
 
         public unsafe void Release()
         {

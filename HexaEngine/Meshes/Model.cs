@@ -22,7 +22,7 @@
         private readonly Node[] nodes;
         private readonly Mesh[] meshes;
         private readonly Material[] materials;
-        private readonly MeshDrawType[] drawTypes;
+        private readonly DrawType[] drawTypes;
         private readonly Matrix4x4[] locals;
         private readonly Matrix4x4[] globals;
         private readonly PlainNode[] plainNodes;
@@ -62,9 +62,9 @@
 
             materials = new Material[modelFile.Header.MeshCount];
             meshes = new Mesh[modelFile.Header.MeshCount];
-            drawTypes = new MeshDrawType[modelFile.Header.MeshCount];
+            drawTypes = new DrawType[modelFile.Header.MeshCount];
 
-            List<MeshDrawInstance> meshDrawInstances = new();
+            List<DrawInstance> meshDrawInstances = new();
             for (uint i = 0; i < modelFile.Header.MeshCount; i++)
             {
                 MeshData mesh = modelFile.Meshes[(int)i];
@@ -92,7 +92,7 @@
 
         public Material[] Materials => materials;
 
-        public MeshDrawType[] DrawTypes => drawTypes;
+        public DrawType[] DrawTypes => drawTypes;
 
         public Matrix4x4[] Locals => locals;
 
@@ -105,6 +105,8 @@
         public int LODLevels => lodLevels;
 
         public bool Loaded => loaded;
+
+        public event Action? OnLoaded;
 
         public void ReloadMaterials()
         {
@@ -131,6 +133,7 @@
                 tmp.Dispose();
                 shaderFlags |= flags;
             }
+            OnLoaded?.Invoke();
         }
 
         public void ReloadMaterial(MaterialAssetMapping mapping)
@@ -164,6 +167,7 @@
                 tmp.Dispose();
                 shaderFlags |= flags;
             }
+            OnLoaded?.Invoke();
         }
 
         public void SetLOD(int level)
@@ -199,6 +203,7 @@
                     }
                     model.boundingBox = boundingBox;
                     stream.Close();
+                    OnLoaded?.Invoke();
                 }
             }, ComputeLODJobPriority(level));
         }
@@ -236,6 +241,7 @@
                     shaderFlags |= flags;
                 }
                 stream.Close();
+                OnLoaded?.Invoke();
             }
 
             loaded = true;
@@ -265,6 +271,7 @@
                 shaderFlags |= flags;
             }
             stream.Close();
+            OnLoaded?.Invoke();
 
             loaded = true;
         }
@@ -302,8 +309,11 @@
                 }
             }
 
+            material.TryGetTexture(MaterialTextureType.Diffuse, out Core.IO.Binary.Materials.MaterialTexture textureDiffuse);
+            material.TryGetTexture(MaterialTextureType.BaseColor, out Core.IO.Binary.Materials.MaterialTexture textureBaseColor);
+
             alphaTest = false;
-            if ((material.Flags & MaterialFlags.AlphaTest) != 0)
+            if ((textureDiffuse.Flags & TextureFlags.UseAlpha) != 0 || (textureBaseColor.Flags & TextureFlags.UseAlpha) != 0 || true)
             {
                 flags |= ModelMaterialShaderFlags.AlphaTest;
                 alphaTest = true;

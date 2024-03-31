@@ -5,10 +5,11 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
+    using Octokit;
     using System;
     using System.Numerics;
 
-    public class OpenProjectWindow : Modal
+    public class LauncherWindow : Modal
     {
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
@@ -18,7 +19,9 @@
         private HistoryEntry historyEntry;
         private bool first = false;
 
-        public OpenProjectWindow()
+        private bool createProjectDialog;
+
+        public LauncherWindow()
         {
         }
 
@@ -67,20 +70,22 @@
 
             if (first)
             {
-                ImGui.SetNextWindowSize(new(800, 500));
-                var size = ImGui.GetWindowSize();
+                Vector2 size = new(800, 500);
                 Vector2 mainViewportPos = ImGui.GetMainViewport().Pos;
-                var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+                Vector2 s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
 
+                ImGui.SetNextWindowSize(size);
                 ImGui.SetNextWindowPos(mainViewportPos + (s / 2 - size / 2));
                 first = false;
             }
+
             base.Draw();
         }
 
         public override void Show()
         {
             first = true;
+            CreateProjectDialogReset();
             base.Show();
         }
 
@@ -99,6 +104,12 @@
             Vector2 trueEntrySize = entrySize - new Vector2(ImGui.GetStyle().IndentSpacing, 0);
 
             Icon icon = IconManager.GetIconByName("Logo") ?? throw new();
+
+            if (createProjectDialog)
+            {
+                CreateProjectDialog(icon, avail);
+                return;
+            }
 
             var entries = ProjectHistory.Entries;
 
@@ -196,16 +207,7 @@
 
             if (ImGui.Button("\xE710 New Project", new(childSize.X, 50)))
             {
-                fileSaverCallback = (e, r) =>
-                {
-                    if (e == SaveFileResult.Ok)
-                    {
-                        Directory.CreateDirectory(r.FullPath);
-                        ProjectManager.Create(r.FullPath);
-                        Close();
-                    }
-                };
-                fileSaver.Show();
+                createProjectDialog = true;
             }
             if (ImGui.Button("\xF78B Open Project", new(childSize.X, 50)))
             {
@@ -233,6 +235,100 @@
             }
 
             ImGui.EndChild();
+        }
+
+        private string newProjectName = "New Project";
+        private string newProjectPath = "";
+        private bool canCreateProject = false;
+
+        private static bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
+
+        private static bool IsValidProjectDir(string path)
+        {
+            return !Directory.Exists(path) || IsDirectoryEmpty(path);
+        }
+
+        private void CreateProjectDialog(Icon icon, Vector2 avail)
+        {
+            const float footerHeight = 40;
+            avail.Y -= footerHeight;
+            ImGui.BeginChild("Content", avail);
+
+            ImGui.Image(icon, new(48));
+            ImGui.SameLine();
+            ImGui.Text("Create a new Project");
+
+            ImGui.Dummy(new(0, 20));
+
+            ImGui.Indent(48);
+
+            ImGui.Text("Project Name:");
+
+            if (ImGui.InputText("##ProjectName", ref newProjectName, 1024))
+            {
+                newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder, newProjectName);
+                canCreateProject = IsValidProjectDir(newProjectPath);
+            }
+
+            ImGui.TextDisabled(newProjectPath);
+
+            if (!canCreateProject)
+            {
+                ImGui.Dummy(new(0, 20));
+
+                ImGui.TextColored(new(1, 0, 0, 1), "\xE7BA Project already exists.");
+            }
+
+            ImGui.Unindent();
+
+            ImGui.EndChild();
+
+            ImGui.BeginTable("#Table", 2, ImGuiTableFlags.SizingFixedFit);
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("");
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(1);
+
+            if (ImGui.Button("Cancel"))
+            {
+                CreateProjectDialogReset();
+            }
+            ImGui.SameLine();
+
+            ImGui.BeginDisabled(!canCreateProject);
+
+            if (ImGui.Button("Create"))
+            {
+                Directory.CreateDirectory(newProjectPath);
+                ProjectManager.Create(newProjectPath);
+                CreateProjectDialogReset();
+                Close();
+            }
+            ImGui.EndDisabled();
+
+            ImGui.EndTable();
+        }
+
+        private void CreateProjectDialogReset()
+        {
+            newProjectName = "New Project";
+            newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder ?? string.Empty, newProjectName);
+
+            string newName = newProjectName;
+            int i = 1;
+            while (Directory.Exists(newProjectPath))
+            {
+                newName = $"{newProjectName} {i++}";
+                newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder ?? string.Empty, newName);
+            }
+            newProjectName = newName;
+            canCreateProject = true;
+
+            createProjectDialog = false;
         }
 
         private void DisplayEntry(HistoryEntry entry, Icon icon, Vector2 padding, Vector2 spacing, float lineHeight, Vector2 entrySize)
@@ -298,7 +394,7 @@
             ImGui.SetCursorPosY(pos.Y + entrySize.Y + spacing.Y);
         }
 
-        private void DisplayEntryContextMenu(HistoryEntry entry)
+        private static void DisplayEntryContextMenu(HistoryEntry entry)
         {
             if (ImGui.BeginPopupContextItem($"##{entry.Path}"))
             {
@@ -325,6 +421,7 @@
 
         public override void Reset()
         {
+            CreateProjectDialogReset();
         }
     }
 }

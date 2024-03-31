@@ -42,14 +42,14 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <param name="originalTris">The original count of triangles.</param>
         /// <param name="currentTris">The current count of triangles.</param>
         /// <param name="targetTris">The target count of triangles.</param>
-        public delegate void StatusReportCallback(int iteration, int originalTris, int currentTris, int targetTris);
+        public delegate void StatusReportCallback(int iteration, uint originalTris, uint currentTris, uint targetTris);
 
         #endregion
 
         #region Fields
 
         private bool preserveBorders = false;
-        private int maxVertexCount = 0;
+        private uint maxVertexCount = 0;
         private bool verbose = false;
 
         private StatusReportCallback? statusReportInvoker;
@@ -72,7 +72,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// Gets or sets the maximum vertex count. Set to zero for no limitation.
         /// Default value: 0 (no limitation)
         /// </summary>
-        public int MaxVertexCount
+        public uint MaxVertexCount
         {
             get { return maxVertexCount; }
             set { maxVertexCount = Math.Max(value, 0); }
@@ -112,7 +112,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <param name="originalTris">The original count of triangles.</param>
         /// <param name="currentTris">The current count of triangles.</param>
         /// <param name="targetTris">The target count of triangles.</param>
-        protected void ReportStatus(int iteration, int originalTris, int currentTris, int targetTris)
+        protected void ReportStatus(int iteration, uint originalTris, uint currentTris, uint targetTris)
         {
             statusReportInvoker?.Invoke(iteration, originalTris, currentTris, targetTris);
         }
@@ -131,7 +131,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// Decimates the mesh.
         /// </summary>
         /// <param name="targetTrisCount">The target triangle count.</param>
-        public abstract void DecimateMesh(int targetTrisCount);
+        public abstract void DecimateMesh(uint targetTrisCount);
 
         /// <summary>
         /// Decimates the mesh without losing any quality.

@@ -278,7 +278,7 @@
             }
         }
 
-        public unsafe void Dispose()
+        public void Destroy()
         {
             GlobalProbes.Dispose();
             LightBuffer.Dispose();

@@ -29,7 +29,7 @@
             Flags = ImGuiWindowFlags.MenuBar;
         }
 
-        protected override string Name => "SceneProfiler";
+        protected override string Name => "Scene Profiler";
 
         public RingBuffer<double> Frame = new(SampleBufferSize);
 

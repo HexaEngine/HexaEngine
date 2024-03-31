@@ -32,7 +32,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         private Viewport viewport;
 
-        private float samplingRadius = 0.5f;
+        private float samplingRadius = 0.02f;
         private uint numSamplingDirections = 8;
         private float samplingStep = 0.004f;
         private uint numSamplingSteps = 4;
@@ -55,7 +55,7 @@ namespace HexaEngine.PostFx.BuildIn
 
             public HBAOParams()
             {
-                SamplingRadius = 0.5f;
+                SamplingRadius = 0.02f;
                 SamplingRadiusToScreen = 0;
                 NumSamplingDirections = 8;
                 SamplingStep = 0.004f;
@@ -126,7 +126,18 @@ namespace HexaEngine.PostFx.BuildIn
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+
+            var cameraObj = CameraManager.Current;
+            HBAOParams hbaoParams = default;
+            hbaoParams.SamplingRadius = samplingRadius;
+            hbaoParams.SamplingRadiusToScreen = samplingRadius * 0.5f * viewport.Height / (MathF.Tan(cameraObj.Fov.ToRad() * 0.5f) * 2.0f); ;
+            hbaoParams.SamplingStep = samplingStep;
+            hbaoParams.NumSamplingSteps = numSamplingSteps;
+            hbaoParams.NumSamplingDirections = numSamplingDirections;
+            hbaoParams.Power = power;
+            hbaoParams.NoiseScale = viewport.Size / NoiseSize;
+
+            paramsBuffer = new(device, hbaoParams, CpuAccessFlags.Write);
             intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "HBAO", Format.R32Float);
 

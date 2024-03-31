@@ -13,11 +13,11 @@
         private Texture2D? buffer;
         private ITexture2D? selected;
 
-        protected override string Name => "Post Process";
+        protected override string Name => "Post Processing";
 
         protected override void DisposeCore()
         {
-            buffer?.Dispose();
+            Unselect();
         }
 
         private void Select(IGraphicsContext context, IResource? resource)

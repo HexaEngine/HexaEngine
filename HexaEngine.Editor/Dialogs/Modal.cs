@@ -21,7 +21,7 @@
             if (signalShow)
             {
                 shown = true;
-                ImGui.OpenPopup(Name);
+                ImGui.OpenPopup(Name, ImGuiPopupFlags.None);
                 signalShow = false;
             }
 
@@ -59,7 +59,6 @@
         public virtual void Close()
         {
             signalClose = true;
-            shown = false;
         }
 
         public abstract void Reset();

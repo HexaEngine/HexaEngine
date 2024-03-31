@@ -194,6 +194,7 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSet<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
+            if (target.Equals(value)) return;
             target = value;
             NotifyPropertyChanged(name);
         }
@@ -207,6 +208,7 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSetAndReload<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
+            if (target.Equals(value)) return;
             target = value;
             NotifyPropertyChanged(name);
             NotifyReload();

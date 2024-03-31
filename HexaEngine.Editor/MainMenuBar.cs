@@ -7,6 +7,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Projects;
+    using HexaEngine.Editor.Widgets;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
@@ -30,6 +31,7 @@
         private static string? progressOverlay;
         private static long progressOverlayTime;
         private static bool showImGuiDemo;
+        private static IPopup? popup;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -48,6 +50,11 @@
 
         internal static unsafe void Draw()
         {
+            if (ImGui.IsAnyMouseDown())
+            {
+                popup?.Close();
+            }
+
             if (filePicker.Draw())
             {
                 filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
@@ -311,6 +318,26 @@
                     if (ImGui.MenuItem("ImGui Demo"))
                     {
                         showImGuiDemo = !showImGuiDemo;
+                    }
+
+                    if (ImGui.MenuItem("Progress Modal Test"))
+                    {
+                        popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress"));
+                    }
+
+                    ImGui.EndMenu();
+                }
+
+                if (ImGui.BeginMenu("Help"))
+                {
+                    if (ImGui.MenuItem("\xE734 HexaEngine on GitHub")) Designer.OpenLink("https://github.com/HexaEngine/HexaEngine");
+                    if (ImGui.MenuItem("\xE82D HexaEngine Documentation")) Designer.OpenLink("https://hexaengine.github.io/HexaEngine/");
+                    if (ImGui.MenuItem("\xEBE8 Report a bug")) Designer.OpenLink("https://github.com/HexaEngine/HexaEngine/issues");
+                    if (ImGui.MenuItem("\xE939 Join our Discord")) Designer.OpenLink("https://discord.gg/VawN5d8HMh");
+                    ImGui.Separator();
+                    if (ImGui.MenuItem("About"))
+                    {
+                        PopupManager.Show<AboutWindow>();
                     }
 
                     ImGui.EndMenu();

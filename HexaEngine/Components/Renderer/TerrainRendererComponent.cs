@@ -73,13 +73,13 @@
             return terrain.terrainAsset.Exists();
         }
 
-        public override void Load(IGraphicsDevice device)
+        protected override void LoadCore(IGraphicsDevice device)
         {
             renderer = new(device);
             UpdateTerrain();
         }
 
-        public override void Unload()
+        protected override void UnloadCore()
         {
             terrain?.Dispose();
             renderer.Dispose();

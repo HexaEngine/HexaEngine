@@ -10,5 +10,9 @@
         {
             return Task.Run(() => Import(targetPlatform, context));
         }
+
+        public void GenerateThumbnail(ThumbnailCache cache, ImportContext context)
+        {
+        }
     }
 }

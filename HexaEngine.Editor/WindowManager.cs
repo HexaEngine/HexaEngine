@@ -26,7 +26,7 @@
             Register<PipelineWidget>();
             Register<AssetExplorer>();
             Register<GitWidget>();
-            Register<LayoutWidget>();
+            Register<HierarchyWidget>();
             Register<PropertiesWidget>();
 
             Register<MixerWidget>();

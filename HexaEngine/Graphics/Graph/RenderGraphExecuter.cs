@@ -5,7 +5,6 @@
 
     public class RenderGraphExecuter
     {
-        private readonly IGraphicsDevice device;
         private readonly GraphResourceBuilder resourceCreator;
         private readonly GraphPipelineBuilder pipelineCreator;
         private readonly RenderGraph renderGraph;
@@ -16,7 +15,6 @@
 
         public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph, RenderPass[] renderPasses)
         {
-            this.device = device;
             this.renderGraph = renderGraph;
             this.renderPasses = renderPasses;
             renderPassesSorted = new RenderPass[renderPasses.Length];
@@ -35,9 +33,12 @@
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
             {
                 var idx = renderGraph.SortedNodeIndices[i];
+                var node = renderGraph.Nodes[idx];
                 var pass = renderPasses[idx];
                 renderPassesSorted[idx] = pass;
+                resourceCreator.Container = node.Container;
                 pass.Init(resourceCreator, profiler);
+                resourceCreator.Container = null;
             }
             resourceCreator.CreateResources();
         }

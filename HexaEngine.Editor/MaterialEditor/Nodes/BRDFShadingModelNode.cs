@@ -25,7 +25,7 @@
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Roughness", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, new(0.5f), 1, PinFlags.Slider));
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Metallic", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, new(0), 1, PinFlags.Slider));
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Reflectance", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, new(0.5f), 1, PinFlags.Slider));
-            AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "AO", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, new(1), 1, PinFlags.Slider));
+            AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "AO", "AmbientOcclusion", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, new(1), 1, PinFlags.Slider));
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Emissive", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float4, 1, PinFlags.ColorEdit));
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Displacement", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, 1, PinFlags.None));
             AddOrGetPin(new PropertyPin(editor.GetUniqueId(), "Displacement Factor", "DisplacementFactor", ImNodesPinShape.QuadFilled, PinKind.Input, PinType.Float, 1, PinFlags.None));

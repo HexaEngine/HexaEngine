@@ -41,7 +41,6 @@
         {
             gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
             Pointer = GCHandle.ToIntPtr(gcHandle);
-            Transform.Updated += TransformUpdated;
         }
 
         ~GameObject()
@@ -371,6 +370,7 @@
 
         public virtual void Initialize()
         {
+            Transform.Updated += TransformUpdated;
             Transform.Parent = parent?.Transform;
             scene = GetScene();
             scene.RegisterChild(this);
@@ -390,6 +390,7 @@
 
         public virtual void Uninitialize()
         {
+            Transform.Updated -= TransformUpdated;
             for (int i = 0; i < components.Count; i++)
             {
                 components[i].Destroy();

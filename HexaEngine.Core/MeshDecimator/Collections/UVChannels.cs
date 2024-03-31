@@ -77,6 +77,14 @@
             }
         }
 
+        public void Resize(uint capacity, bool trimExess = false)
+        {
+            for (int i = 0; i < Mesh.UVChannelCount; i++)
+            {
+                channels[i]?.Resize(capacity, trimExess);
+            }
+        }
+
         #endregion Public Methods
     }
 }

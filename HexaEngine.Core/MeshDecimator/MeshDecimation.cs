@@ -84,7 +84,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// <param name="mesh">The mesh to decimate.</param>
         /// <param name="targetTriangleCount">The target triangle count.</param>
         /// <returns>The decimated mesh.</returns>
-        public static Mesh DecimateMesh(Mesh mesh, int targetTriangleCount)
+        public static Mesh DecimateMesh(Mesh mesh, uint targetTriangleCount)
         {
             return DecimateMesh(Algorithm.Default, mesh, targetTriangleCount);
         }
@@ -96,7 +96,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// <param name="mesh">The mesh to decimate.</param>
         /// <param name="targetTriangleCount">The target triangle count.</param>
         /// <returns>The decimated mesh.</returns>
-        public static Mesh DecimateMesh(Algorithm algorithm, Mesh mesh, int targetTriangleCount)
+        public static Mesh DecimateMesh(Algorithm algorithm, Mesh mesh, uint targetTriangleCount)
         {
             ArgumentNullException.ThrowIfNull(mesh);
 
@@ -111,7 +111,7 @@ namespace HexaEngine.Core.MeshDecimator
         /// <param name="mesh">The mesh to decimate.</param>
         /// <param name="targetTriangleCount">The target triangle count.</param>
         /// <returns>The decimated mesh.</returns>
-        public static Mesh DecimateMesh(DecimationAlgorithm algorithm, Mesh mesh, int targetTriangleCount)
+        public static Mesh DecimateMesh(DecimationAlgorithm algorithm, Mesh mesh, uint targetTriangleCount)
         {
             if (algorithm == null)
             {
@@ -119,7 +119,7 @@ namespace HexaEngine.Core.MeshDecimator
             }
             else ArgumentNullException.ThrowIfNull(mesh);
 
-            int currentTriangleCount = mesh.TriangleCount;
+            uint currentTriangleCount = mesh.TriangleCount;
             if (targetTriangleCount > currentTriangleCount)
             {
                 targetTriangleCount = currentTriangleCount;

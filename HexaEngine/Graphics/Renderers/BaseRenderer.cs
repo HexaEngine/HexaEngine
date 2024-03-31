@@ -1,74 +1,105 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
+    using System.Numerics;
 
-    public abstract class BaseRenderer<T> : IRenderer1<T> where T : IRendererInstance
+    public abstract class BaseRenderer<T> : IRenderer1<T>, IRenderer1
     {
-        protected readonly RendererInstanceQueueCollection<T> queueCollection = new();
         private bool disposedValue;
 
-        public void Clear()
+        void IRenderer1.Initialize(IGraphicsDevice device, CullingContext cullingContext)
         {
-            queueCollection.Clear();
+            Initialize(device, cullingContext);
         }
 
-        public void AddInstance(T instance)
+        protected abstract void Initialize(IGraphicsDevice device, CullingContext cullingContext);
+
+        public bool CanRender(object instance)
         {
-            queueCollection.AddInstance(instance);
+            return instance is T;
         }
 
-        public bool ContainsInstance(T instance)
-        {
-            return queueCollection.ContainsInstance(instance);
-        }
+        public abstract void Bake(IGraphicsContext context, T instance);
 
-        public bool RemoveInstance(T instance)
-        {
-            return queueCollection.RemoveInstance(instance);
-        }
-
-        public bool AddInstance(IRendererInstance instance)
+        public void Bake(IGraphicsContext context, object instance)
         {
             if (instance is T t)
             {
-                AddInstance(t);
-                return true;
+                Bake(context, t);
             }
-            return false;
         }
 
-        public bool RemoveInstance(IRendererInstance instance)
+        public abstract void DrawDeferred(IGraphicsContext context, T instance);
+
+        public void DrawDeferred(IGraphicsContext context, object instance)
         {
             if (instance is T t)
             {
-                return RemoveInstance(t);
+                DrawDeferred(context, t);
             }
-            return false;
         }
 
-        public bool ContainsInstance(IRendererInstance instance)
+        public abstract void DrawDepth(IGraphicsContext context, T instance);
+
+        public abstract void DrawDepth(IGraphicsContext context, T instance, IBuffer camera);
+
+        public void DrawDepth(IGraphicsContext context, object instance)
         {
             if (instance is T t)
             {
-                return ContainsInstance(t);
+                DrawDepth(context, t);
             }
-            return false;
         }
 
-        public abstract void DrawDeferred(IGraphicsContext context);
+        public void DrawDepth(IGraphicsContext context, object instance, IBuffer camera)
+        {
+            if (instance is T t)
+            {
+                DrawDepth(context, t, camera);
+            }
+        }
 
-        public abstract void DrawDepth(IGraphicsContext context);
+        public abstract void DrawForward(IGraphicsContext context, T instance);
 
-        public abstract void DrawForward(IGraphicsContext context);
+        public void DrawForward(IGraphicsContext context, object instance)
+        {
+            if (instance is T t)
+            {
+                DrawForward(context, t);
+            }
+        }
 
-        public abstract void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type);
+        public abstract void DrawShadowMap(IGraphicsContext context, T instance, IBuffer light, ShadowType type);
 
-        public abstract void Update(IGraphicsContext context);
+        public void DrawShadowMap(IGraphicsContext context, object instance, IBuffer light, ShadowType type)
+        {
+            if (instance is T t)
+            {
+                DrawShadowMap(context, t, light, type);
+            }
+        }
 
-        public abstract void VisibilityTest(CullingContext context);
+        public abstract void Update(IGraphicsContext context, Matrix4x4 transform, T instance);
+
+        public void Update(IGraphicsContext context, Matrix4x4 transform, object instance)
+        {
+            if (instance is T t)
+            {
+                Update(context, transform, t);
+            }
+        }
+
+        public abstract void VisibilityTest(CullingContext context, T instance);
+
+        public void VisibilityTest(CullingContext context, object instance)
+        {
+            if (instance is T t)
+            {
+                VisibilityTest(context, t);
+            }
+        }
 
         protected abstract void DisposeCore();
 
@@ -76,10 +107,15 @@
         {
             if (!disposedValue)
             {
-                Clear();
                 DisposeCore();
                 disposedValue = true;
             }
+        }
+
+        ~BaseRenderer()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
         }
 
         public void Dispose()

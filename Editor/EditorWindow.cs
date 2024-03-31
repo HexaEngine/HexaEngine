@@ -32,7 +32,7 @@
         }
 
         private bool firstTime = true;
-        private readonly EditorConfig config = EditorConfig.Load();
+        private readonly EditorConfig config = EditorConfig.Default;
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -42,6 +42,14 @@
                 Y = config.Y;
                 Width = config.Width;
                 Height = config.Height;
+                if (!config.SetupDone)
+                {
+                    State = WindowState.Maximized;
+                }
+                if (config.State == WindowState.Normal || config.State == WindowState.Maximized)
+                {
+                    State = config.State;
+                }
 
                 firstTime = false;
             }

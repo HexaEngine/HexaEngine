@@ -37,8 +37,9 @@
         }
 
         [JsonConstructor]
-        public DirectionalLight(Vector4 color) : base(color)
+        public DirectionalLight(CameraTransform transform, Vector4 color) : base(color)
         {
+            Transform = transform;
             for (int i = 0; i < 8; i++)
             {
                 shadowFrustra[i] = new();

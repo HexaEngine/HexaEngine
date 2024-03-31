@@ -640,7 +640,9 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             io.ConfigViewportsNoTaskBarIcon = false;
 
             var config = ImGui.ImFontConfig();
-            io.Fonts.AddFontDefault(config);
+            var fonts = io.Fonts;
+
+            fonts.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15, config);
 
             config.MergeMode = true;
             config.GlyphMinAdvanceX = 18;
@@ -659,7 +661,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
 
                 // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
                 // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
-                io.Fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
+                fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
             }
 
             var style = ImGui.GetStyle();
@@ -722,14 +724,14 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0.10f, 0.10f, 0.10f, 0.00f);
 
             style.WindowPadding = new Vector2(8.00f, 8.00f);
-            style.FramePadding = new Vector2(5.00f, 2.00f);
+            style.FramePadding = new Vector2(8.00f, 6.00f);
             style.CellPadding = new Vector2(6.00f, 6.00f);
             style.ItemSpacing = new Vector2(6.00f, 6.00f);
             style.ItemInnerSpacing = new Vector2(6.00f, 6.00f);
             style.TouchExtraPadding = new Vector2(0.00f, 0.00f);
             style.IndentSpacing = 25;
             style.ScrollbarSize = 15;
-            style.GrabMinSize = 10;
+            style.GrabMinSize = 12;
             style.WindowBorderSize = 1;
             style.ChildBorderSize = 1;
             style.PopupBorderSize = 1;
@@ -737,7 +739,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             style.TabBorderSize = 1;
             style.WindowRounding = 7;
             style.ChildRounding = 4;
-            style.FrameRounding = 3;
+            style.FrameRounding = 12;
             style.PopupRounding = 4;
             style.ScrollbarRounding = 9;
             style.GrabRounding = 3;

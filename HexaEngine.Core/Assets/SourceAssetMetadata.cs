@@ -7,19 +7,21 @@
     public class SourceAssetMetadata
     {
         [JsonConstructor]
-        public SourceAssetMetadata(string filePath, Guid guid, DateTime lastModified, uint crc32, Dictionary<string, object> additional)
+        public SourceAssetMetadata(string filePath, Guid guid, Guid parentGuid, DateTime lastModified, uint crc32, Dictionary<string, object> additional)
         {
             FilePath = filePath;
             Guid = guid;
+            ParentGuid = parentGuid;
             LastModified = lastModified;
             CRC32 = crc32;
             Additional = additional;
         }
 
-        public SourceAssetMetadata(string filePath, DateTime lastModified, uint crc32)
+        public SourceAssetMetadata(string filePath, Guid parentGuid, DateTime lastModified, uint crc32)
         {
             FilePath = filePath;
             Guid = Guid.NewGuid();
+            ParentGuid = parentGuid;
             LastModified = lastModified;
             CRC32 = crc32;
             Additional = [];
@@ -31,6 +33,8 @@
         public string FilePath { get; internal set; }
 
         public Guid Guid { get; }
+
+        public Guid ParentGuid { get; }
 
         public DateTime LastModified { get; internal set; }
 
@@ -163,9 +167,9 @@
             }
         }
 
-        internal static SourceAssetMetadata Create(string filename, DateTime lastModified, uint crc32, string outputPath)
+        internal static SourceAssetMetadata Create(string filename, Guid parentGuid, DateTime lastModified, uint crc32, string outputPath)
         {
-            SourceAssetMetadata metadata = new(filename, lastModified, crc32);
+            SourceAssetMetadata metadata = new(filename, parentGuid, lastModified, crc32);
             metadata.Save(outputPath);
 
             metadata.MetadataFilePath = outputPath;

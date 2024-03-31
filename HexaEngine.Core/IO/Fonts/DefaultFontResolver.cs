@@ -3,7 +3,6 @@
     using Hexa.NET.FreeType;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Binary.Fonts;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 

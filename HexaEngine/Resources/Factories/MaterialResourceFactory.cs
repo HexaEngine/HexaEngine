@@ -75,6 +75,7 @@
                 MaterialTextureType.AmbientOcclusion => true,
                 MaterialTextureType.RoughnessMetallic => true,
                 MaterialTextureType.AmbientOcclusionRoughnessMetallic => true,
+                MaterialTextureType.Emissive => true,
                 MaterialTextureType.Displacement => true,
                 _ => false,
             }))

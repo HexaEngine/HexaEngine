@@ -8,6 +8,7 @@
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.Factories;
     using HexaEngine.Editor.Icons;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Editor.Tools;
@@ -25,7 +26,12 @@
             MainMenuBar.Init(device);
             IconManager.Init(device);
             WindowManager.Init(device);
-            PopupManager.Show<OpenProjectWindow>();
+            PopupManager.Show<LauncherWindow>();
+
+            if (!EditorConfig.Default.SetupDone)
+            {
+                PopupManager.Show<SetupWindow>();
+            }
 
             ObjectEditorFactory.AddFactory<GameObjectReferenceEditorFactory>();
             ObjectEditorFactory.AddFactory<MaterialMappingPropertyEditorFactory>();
@@ -35,6 +41,7 @@
             ObjectEditorFactory.AddFactory(new EnumPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new FloatPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new IntPropertyEditorFactory());
+            ObjectEditorFactory.AddFactory(new UIntPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new StringPropertyEditorFactory());
             ObjectEditorFactory.AddFactory(new TypePropertyFactory());
             ObjectEditorFactory.AddFactory(new Vector2PropertyEditorFactory());
@@ -52,6 +59,7 @@
 
         public static void Dispose()
         {
+            ProjectManager.Unload();
             WindowManager.Dispose();
             IconManager.Dispose();
             PopupManager.Dispose();
@@ -78,6 +86,11 @@
         {
             if (path == null)
                 return;
+        }
+
+        public static void OpenLink(string? path)
+        {
+            OpenDirectory(path);
         }
 
         public static void OpenDirectory(string? path)

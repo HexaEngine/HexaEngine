@@ -4,10 +4,11 @@
     {
         private string name;
 
-        public Artifact(string name, Guid sourceGuid, Guid guid, AssetType type, string path)
+        public Artifact(string name, Guid parentGuid, Guid sourceGuid, Guid guid, AssetType type, string path)
         {
             DisplayName = $"{name}##{guid}";
             this.name = name;
+            ParentGuid = parentGuid;
             SourceGuid = sourceGuid;
             Guid = guid;
             Type = type;
@@ -19,6 +20,8 @@
 
         public string Name
         { get => name; set { name = value; DisplayName = $"{name}##{Guid}"; } }
+
+        public Guid ParentGuid { get; }
 
         public Guid SourceGuid { get; }
 
@@ -37,6 +40,11 @@
         public SourceAssetMetadata? GetSourceMetadata()
         {
             return SourceAssetsDatabase.GetMetadata(SourceGuid);
+        }
+
+        public override string ToString()
+        {
+            return $"GUID: {Guid}, Source GUID {SourceGuid}, Type {Type}, Path {Path}";
         }
     }
 }

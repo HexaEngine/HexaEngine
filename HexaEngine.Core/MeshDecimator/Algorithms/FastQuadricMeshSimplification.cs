@@ -67,14 +67,14 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         {
             #region Fields
 
-            public int V0;
-            public int V1;
-            public int V2;
+            public uint V0;
+            public uint V1;
+            public uint V2;
             public int SubMeshIndex;
 
-            public int VA0;
-            public int VA1;
-            public int VA2;
+            public uint VA0;
+            public uint VA1;
+            public uint VA2;
 
             public double Err0;
             public double Err1;
@@ -89,7 +89,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
             #region Properties
 
-            public int this[int index]
+            public uint this[uint index]
             {
                 readonly get
                 {
@@ -121,7 +121,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
             #region Constructor
 
-            public Triangle(int v0, int v1, int v2, int subMeshIndex)
+            public Triangle(uint v0, uint v1, uint v2, int subMeshIndex)
             {
                 V0 = v0;
                 V1 = v1;
@@ -141,14 +141,14 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
             #region Public Methods
 
-            public readonly void GetAttributeIndices(int[] attributeIndices)
+            public readonly void GetAttributeIndices(uint[] attributeIndices)
             {
                 attributeIndices[0] = VA0;
                 attributeIndices[1] = VA1;
                 attributeIndices[2] = VA2;
             }
 
-            public void SetAttributeIndex(int index, int value)
+            public void SetAttributeIndex(uint index, uint value)
             {
                 switch (index)
                 {
@@ -186,8 +186,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         private struct Vertex
         {
             public Vector3D p;
-            public int tstart;
-            public int tcount;
+            public uint tstart;
+            public uint tcount;
             public SymmetricMatrix q;
             public bool border;
             public bool seam;
@@ -211,10 +211,10 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
         private struct Ref
         {
-            public int tid;
-            public int tvertex;
+            public uint tid;
+            public uint tvertex;
 
-            public void Set(int tid, int tvertex)
+            public void Set(uint tid, uint tvertex)
             {
                 this.tid = tid;
                 this.tvertex = tvertex;
@@ -227,10 +227,10 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
         private struct BorderVertex
         {
-            public int index;
+            public uint index;
             public int hash;
 
-            public BorderVertex(int index, int hash)
+            public BorderVertex(uint index, int hash)
             {
                 this.index = index;
                 this.hash = hash;
@@ -283,7 +283,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         // Pre-allocated buffers
         private readonly double[] errArr = new double[3];
 
-        private readonly int[] attributeIndexArr = new int[3];
+        private readonly uint[] attributeIndexArr = new uint[3];
 
         #endregion
 
@@ -457,9 +457,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <summary>
         /// Check if a triangle flips when this edge is removed
         /// </summary>
-        private bool Flipped(ref Vector3D p, int i0, int i1, ref Vertex v0, bool[] deleted)
+        private bool Flipped(ref Vector3D p, uint i0, uint i1, ref Vertex v0, bool[] deleted)
         {
-            int tcount = v0.tcount;
+            uint tcount = v0.tcount;
             Ref[] refs = this.refs.Data;
             Triangle[] triangles = this.triangles.Data;
             Vertex[] vertices = this.vertices.Data;
@@ -471,9 +471,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     continue;
                 }
 
-                int s = r.tvertex;
-                int id1 = triangles[r.tid][(s + 1) % 3];
-                int id2 = triangles[r.tid][(s + 2) % 3];
+                uint s = r.tvertex;
+                uint id1 = triangles[r.tid][(s + 1) % 3];
+                uint id2 = triangles[r.tid][(s + 2) % 3];
                 if (id1 == i1 || id2 == i1)
                 {
                     deleted[k] = true;
@@ -510,15 +510,15 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <summary>
         /// Update triangle connections and edge error after a edge is collapsed.
         /// </summary>
-        private void UpdateTriangles(int i0, int ia0, ref Vertex v, ResizableArray<bool> deleted, ref int deletedTriangles)
+        private void UpdateTriangles(uint i0, uint ia0, ref Vertex v, ResizableArray<bool> deleted, ref uint deletedTriangles)
         {
-            int tcount = v.tcount;
+            uint tcount = v.tcount;
             Triangle[] triangles = this.triangles.Data;
             Vertex[] vertices = this.vertices.Data;
             for (int k = 0; k < tcount; k++)
             {
                 Ref r = refs[v.tstart + k];
-                int tid = r.tid;
+                uint tid = r.tid;
                 Triangle t = triangles[tid];
                 if (t.Deleted)
                 {
@@ -533,7 +533,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 }
 
                 t[r.tvertex] = i0;
-                if (ia0 != -1)
+                if (ia0 != unchecked((uint)-1))
                 {
                     t.SetAttributeIndex(r.tvertex, ia0);
                 }
@@ -552,7 +552,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
         #region Are UVs The Same
 
-        private bool AreUVsTheSame(int channel, int indexA, int indexB)
+        private bool AreUVsTheSame(int channel, uint indexA, uint indexB)
         {
             if (vertUV2D != null)
             {
@@ -597,20 +597,20 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <summary>
         /// Remove vertices and mark deleted triangles
         /// </summary>
-        private void RemoveVertexPass(int startTrisCount, int targetTrisCount, double threshold, ResizableArray<bool> deleted0, ResizableArray<bool> deleted1, ref int deletedTris)
+        private void RemoveVertexPass(uint startTrisCount, uint targetTrisCount, double threshold, ResizableArray<bool> deleted0, ResizableArray<bool> deleted1, ref uint deletedTris)
         {
             Triangle[] triangles = this.triangles.Data;
-            int triangleCount = this.triangles.Length;
+            uint triangleCount = this.triangles.Length;
             Vertex[] vertices = this.vertices.Data;
 
             bool preserveBorders = PreserveBorders;
-            int maxVertexCount = MaxVertexCount;
+            uint maxVertexCount = MaxVertexCount;
             if (maxVertexCount <= 0)
             {
                 maxVertexCount = int.MaxValue;
             }
 
-            for (int tid = 0; tid < triangleCount; tid++)
+            for (uint tid = 0; tid < triangleCount; tid++)
             {
                 if (triangles[tid].Dirty || triangles[tid].Deleted || triangles[tid].Err3 > threshold)
                 {
@@ -619,16 +619,16 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
                 triangles[tid].GetErrors(errArr);
                 triangles[tid].GetAttributeIndices(attributeIndexArr);
-                for (int edgeIndex = 0; edgeIndex < 3; edgeIndex++)
+                for (uint edgeIndex = 0; edgeIndex < 3; edgeIndex++)
                 {
                     if (errArr[edgeIndex] > threshold)
                     {
                         continue;
                     }
 
-                    int nextEdgeIndex = (edgeIndex + 1) % 3;
-                    int i0 = triangles[tid][edgeIndex];
-                    int i1 = triangles[tid][nextEdgeIndex];
+                    uint nextEdgeIndex = (edgeIndex + 1) % 3;
+                    uint i0 = triangles[tid][edgeIndex];
+                    uint i1 = triangles[tid][nextEdgeIndex];
 
                     // Border check
                     if (vertices[i0].border != vertices[i1].border)
@@ -678,29 +678,29 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     }
 
                     // Calculate the barycentric coordinates within the triangle
-                    int nextNextEdgeIndex = (edgeIndex + 2) % 3;
-                    int i2 = triangles[tid][nextNextEdgeIndex];
+                    uint nextNextEdgeIndex = (edgeIndex + 2) % 3;
+                    uint i2 = triangles[tid][nextNextEdgeIndex];
                     CalculateBarycentricCoords(ref p, ref vertices[i0].p, ref vertices[i1].p, ref vertices[i2].p, out Vector3 barycentricCoord);
 
                     // Not flipped, so remove edge
                     vertices[i0].p = p;
                     vertices[i0].q += vertices[i1].q;
 
-                    int ia0 = attributeIndexArr[edgeIndex];
-                    int ia1 = attributeIndexArr[nextEdgeIndex];
-                    int ia2 = attributeIndexArr[nextNextEdgeIndex];
+                    uint ia0 = attributeIndexArr[edgeIndex];
+                    uint ia1 = attributeIndexArr[nextEdgeIndex];
+                    uint ia2 = attributeIndexArr[nextNextEdgeIndex];
                     InterpolateVertexAttributes(ia0, ia0, ia1, ia2, ref barycentricCoord);
 
                     if (vertices[i0].seam)
                     {
-                        ia0 = -1;
+                        ia0 = unchecked((uint)-1);
                     }
 
-                    int tstart = refs.Length;
+                    uint tstart = refs.Length;
                     UpdateTriangles(i0, ia0, ref vertices[i0], deleted0, ref deletedTris);
                     UpdateTriangles(i0, ia0, ref vertices[i1], deleted1, ref deletedTris);
 
-                    int tcount = refs.Length - tstart;
+                    uint tcount = refs.Length - tstart;
                     if (tcount <= vertices[i0].tcount)
                     {
                         // save ram
@@ -757,7 +757,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
         #region Interpolate Vertex Attributes
 
-        private void InterpolateVertexAttributes(int dst, int i0, int i1, int i2, ref Vector3 barycentricCoord)
+        private void InterpolateVertexAttributes(uint dst, uint i0, uint i1, uint i2, ref Vector3 barycentricCoord)
         {
             if (vertNormals != null)
             {
@@ -823,11 +823,11 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             Triangle[] triangles = this.triangles.Data;
             Vertex[] vertices = this.vertices.Data;
 
-            int triangleCount = this.triangles.Length;
-            int vertexCount = this.vertices.Length;
+            uint triangleCount = this.triangles.Length;
+            uint vertexCount = this.vertices.Length;
             if (iteration > 0) // compact triangles
             {
-                int dst = 0;
+                uint dst = 0;
                 for (int i = 0; i < triangleCount; i++)
                 {
                     if (!triangles[i].Deleted)
@@ -852,7 +852,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 Ref[] refs = this.refs.Data;
 
                 List<int> vcount = new(8);
-                List<int> vids = new(8);
+                List<uint> vids = new(8);
                 for (int i = 0; i < vertexCount; i++)
                 {
                     vertices[i].border = false;
@@ -861,22 +861,22 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 }
 
                 int ofs;
-                int id;
+                uint id;
                 int borderVertexCount = 0;
                 double borderMinX = double.MaxValue;
                 double borderMaxX = double.MinValue;
-                for (int i = 0; i < vertexCount; i++)
+                for (uint i = 0; i < vertexCount; i++)
                 {
-                    int tstart = vertices[i].tstart;
-                    int tcount = vertices[i].tcount;
+                    uint tstart = vertices[i].tstart;
+                    uint tcount = vertices[i].tcount;
                     vcount.Clear();
                     vids.Clear();
                     int vsize = 0;
 
-                    for (int j = 0; j < tcount; j++)
+                    for (uint j = 0; j < tcount; j++)
                     {
-                        int tid = refs[tstart + j].tid;
-                        for (int k = 0; k < 3; k++)
+                        uint tid = refs[tstart + j].tid;
+                        for (uint k = 0; k < 3; k++)
                         {
                             ofs = 0;
                             id = triangles[tid][k];
@@ -930,9 +930,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 {
                     // First find all border vertices
                     BorderVertex[] borderVertices = new BorderVertex[borderVertexCount];
-                    int borderIndexCount = 0;
+                    uint borderIndexCount = 0;
                     double borderAreaWidth = borderMaxX - borderMinX;
-                    for (int i = 0; i < vertexCount; i++)
+                    for (uint i = 0; i < vertexCount; i++)
                     {
                         if (vertices[i].border)
                         {
@@ -943,7 +943,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     }
 
                     // Sort the border vertices by hash
-                    Array.Sort(borderVertices, 0, borderIndexCount, BorderVertexComparer.instance);
+                    Array.Sort(borderVertices, BorderVertexComparer.instance);
 
                     // Calculate the maximum hash distance based on the maximum vertex link distance
                     double vertexLinkDistance = Math.Sqrt(vertexLinkDistanceSqr);
@@ -952,8 +952,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     // Then find identical border vertices and bind them together as one
                     for (int i = 0; i < borderIndexCount; i++)
                     {
-                        int myIndex = borderVertices[i].index;
-                        if (myIndex == -1)
+                        uint myIndex = borderVertices[i].index;
+                        if (myIndex == unchecked((uint)-1))
                         {
                             continue;
                         }
@@ -961,8 +961,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                         Vector3D myPoint = vertices[myIndex].p;
                         for (int j = i + 1; j < borderIndexCount; j++)
                         {
-                            int otherIndex = borderVertices[j].index;
-                            if (otherIndex == -1)
+                            uint otherIndex = borderVertices[j].index;
+                            if (otherIndex == unchecked((uint)-1))
                             {
                                 continue;
                             }
@@ -979,7 +979,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
                             if (sqrMagnitude <= vertexLinkDistanceSqr)
                             {
-                                borderVertices[j].index = -1; // NOTE: This makes sure that the "other" vertex is not processed again
+                                borderVertices[j].index = unchecked((uint)-1); // NOTE: This makes sure that the "other" vertex is not processed again
                                 vertices[myIndex].border = false;
                                 vertices[otherIndex].border = false;
 
@@ -994,9 +994,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                                     vertices[otherIndex].seam = true;
                                 }
 
-                                int otherTriangleCount = vertices[otherIndex].tcount;
-                                int otherTriangleStart = vertices[otherIndex].tstart;
-                                for (int k = 0; k < otherTriangleCount; k++)
+                                uint otherTriangleCount = vertices[otherIndex].tcount;
+                                uint otherTriangleStart = vertices[otherIndex].tstart;
+                                for (uint k = 0; k < otherTriangleCount; k++)
                                 {
                                     Ref r = refs[otherTriangleStart + k];
                                     triangles[r.tid][r.tvertex] = myIndex;
@@ -1019,7 +1019,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     vertices[i].q = new SymmetricMatrix();
                 }
 
-                int v0, v1, v2;
+                uint v0, v1, v2;
                 Vector3D p0, p1, p2, p10, p20;
                 SymmetricMatrix sm;
                 for (int i = 0; i < triangleCount; i++)
@@ -1061,28 +1061,28 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
         private void UpdateReferences()
         {
-            int triangleCount = this.triangles.Length;
-            int vertexCount = this.vertices.Length;
+            uint triangleCount = this.triangles.Length;
+            uint vertexCount = this.vertices.Length;
             Triangle[] triangles = this.triangles.Data;
             Vertex[] vertices = this.vertices.Data;
 
             // Init Reference ID list
-            for (int i = 0; i < vertexCount; i++)
+            for (uint i = 0; i < vertexCount; i++)
             {
                 vertices[i].tstart = 0;
                 vertices[i].tcount = 0;
             }
 
-            for (int i = 0; i < triangleCount; i++)
+            for (uint i = 0; i < triangleCount; i++)
             {
                 ++vertices[triangles[i].V0].tcount;
                 ++vertices[triangles[i].V1].tcount;
                 ++vertices[triangles[i].V2].tcount;
             }
 
-            int tstart = 0;
+            uint tstart = 0;
             remainingVertices = 0;
-            for (int i = 0; i < vertexCount; i++)
+            for (uint i = 0; i < vertexCount; i++)
             {
                 vertices[i].tstart = tstart;
                 if (vertices[i].tcount > 0)
@@ -1096,17 +1096,17 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             // Write References
             this.refs.Resize(tstart);
             Ref[] refs = this.refs.Data;
-            for (int i = 0; i < triangleCount; i++)
+            for (uint i = 0; i < triangleCount; i++)
             {
-                int v0 = triangles[i].V0;
-                int v1 = triangles[i].V1;
-                int v2 = triangles[i].V2;
-                int start0 = vertices[v0].tstart;
-                int count0 = vertices[v0].tcount;
-                int start1 = vertices[v1].tstart;
-                int count1 = vertices[v1].tcount;
-                int start2 = vertices[v2].tstart;
-                int count2 = vertices[v2].tcount;
+                uint v0 = triangles[i].V0;
+                uint v1 = triangles[i].V1;
+                uint v2 = triangles[i].V2;
+                uint start0 = vertices[v0].tstart;
+                uint count0 = vertices[v0].tcount;
+                uint start1 = vertices[v1].tstart;
+                uint count1 = vertices[v1].tcount;
+                uint start2 = vertices[v2].tstart;
+                uint count2 = vertices[v2].tcount;
 
                 refs[start0 + count0].Set(i, 0);
                 refs[start1 + count1].Set(i, 1);
@@ -1127,10 +1127,10 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// </summary>
         private void CompactMesh()
         {
-            int dst = 0;
+            uint dst = 0;
             Vertex[] vertices = this.vertices.Data;
-            int vertexCount = this.vertices.Length;
-            for (int i = 0; i < vertexCount; i++)
+            uint vertexCount = this.vertices.Length;
+            for (uint i = 0; i < vertexCount; i++)
             {
                 vertices[i].tcount = 0;
             }
@@ -1144,16 +1144,16 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             BoneWeight[]? vertBoneWeights = this.vertBoneWeights?.Data;
 
             Triangle[] triangles = this.triangles.Data;
-            int triangleCount = this.triangles.Length;
-            for (int i = 0; i < triangleCount; i++)
+            uint triangleCount = this.triangles.Length;
+            for (uint i = 0; i < triangleCount; i++)
             {
                 Triangle triangle = triangles[i];
                 if (!triangle.Deleted)
                 {
                     if (triangle.VA0 != triangle.V0)
                     {
-                        int iDest = triangle.VA0;
-                        int iSrc = triangle.V0;
+                        uint iDest = triangle.VA0;
+                        uint iSrc = triangle.V0;
                         vertices[iDest].p = vertices[iSrc].p;
                         if (vertBoneWeights != null)
                         {
@@ -1163,8 +1163,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     }
                     if (triangle.VA1 != triangle.V1)
                     {
-                        int iDest = triangle.VA1;
-                        int iSrc = triangle.V1;
+                        uint iDest = triangle.VA1;
+                        uint iSrc = triangle.V1;
                         vertices[iDest].p = vertices[iSrc].p;
                         if (vertBoneWeights != null)
                         {
@@ -1174,8 +1174,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                     }
                     if (triangle.VA2 != triangle.V2)
                     {
-                        int iDest = triangle.VA2;
-                        int iSrc = triangle.V2;
+                        uint iDest = triangle.VA2;
+                        uint iSrc = triangle.V2;
                         vertices[iDest].p = vertices[iSrc].p;
                         if (vertBoneWeights != null)
                         {
@@ -1197,7 +1197,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             triangles = this.triangles.Data;
 
             dst = 0;
-            for (int i = 0; i < vertexCount; i++)
+            for (uint i = 0; i < vertexCount; i++)
             {
                 Vertex vert = vertices[i];
                 if (vert.tcount > 0)
@@ -1265,7 +1265,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 }
             }
 
-            for (int i = 0; i < triangleCount; i++)
+            for (uint i = 0; i < triangleCount; i++)
             {
                 Triangle triangle = triangles[i];
                 triangle.V0 = vertices[triangle.V0].tstart;
@@ -1302,7 +1302,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             ArgumentNullException.ThrowIfNull(mesh);
 
             int meshSubMeshCount = mesh.SubMeshCount;
-            int meshTriangleCount = mesh.TriangleCount;
+            uint meshTriangleCount = mesh.TriangleCount;
             Vector3D[] meshVertices = mesh.Vertices;
             Vector3[]? meshNormals = mesh.Normals;
             Vector3[]? meshTangents = mesh.Tangents;
@@ -1310,9 +1310,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             BoneWeight[]? meshBoneWeights = mesh.BoneWeights;
             subMeshCount = meshSubMeshCount;
 
-            vertices.Resize(meshVertices.Length);
+            vertices.Resize((uint)meshVertices.LongLength);
             Vertex[] vertArr = vertices.Data;
-            for (int i = 0; i < meshVertices.Length; i++)
+            for (uint i = 0; i < meshVertices.LongLength; i++)
             {
                 vertArr[i] = new Vertex(meshVertices[i]);
             }
@@ -1322,14 +1322,14 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             int triangleIndex = 0;
             for (int subMeshIndex = 0; subMeshIndex < meshSubMeshCount; subMeshIndex++)
             {
-                int[] subMeshIndices = mesh.GetIndices(subMeshIndex);
+                uint[] subMeshIndices = mesh.GetIndices(subMeshIndex);
                 int subMeshTriangleCount = subMeshIndices.Length / 3;
                 for (int i = 0; i < subMeshTriangleCount; i++)
                 {
                     int offset = i * 3;
-                    int v0 = subMeshIndices[offset];
-                    int v1 = subMeshIndices[offset + 1];
-                    int v2 = subMeshIndices[offset + 2];
+                    uint v0 = subMeshIndices[offset];
+                    uint v1 = subMeshIndices[offset + 1];
+                    uint v2 = subMeshIndices[offset + 2];
                     trisArr[triangleIndex++] = new Triangle(v0, v1, v2, subMeshIndex);
                 }
             }
@@ -1375,18 +1375,18 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// Decimates the mesh.
         /// </summary>
         /// <param name="targetTrisCount">The target triangle count.</param>
-        public override void DecimateMesh(int targetTrisCount)
+        public override void DecimateMesh(uint targetTrisCount)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(targetTrisCount);
 
-            int deletedTris = 0;
+            uint deletedTris = 0;
             ResizableArray<bool> deleted0 = new(20);
             ResizableArray<bool> deleted1 = new(20);
             Triangle[] triangles = this.triangles.Data;
-            int triangleCount = this.triangles.Length;
-            int startTrisCount = triangleCount;
+            uint triangleCount = this.triangles.Length;
+            uint startTrisCount = triangleCount;
 
-            int maxVertexCount = MaxVertexCount;
+            uint maxVertexCount = MaxVertexCount;
             if (maxVertexCount <= 0)
             {
                 maxVertexCount = int.MaxValue;
@@ -1441,14 +1441,14 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// </summary>
         public override void DecimateMeshLossless()
         {
-            int deletedTris = 0;
+            uint deletedTris = 0;
             ResizableArray<bool> deleted0 = new(0);
             ResizableArray<bool> deleted1 = new(0);
             Triangle[] triangles;
-            int triangleCount = this.triangles.Length;
-            int startTrisCount = triangleCount;
+            uint triangleCount = this.triangles.Length;
+            uint startTrisCount = triangleCount;
 
-            ReportStatus(0, startTrisCount, startTrisCount, -1);
+            ReportStatus(0, startTrisCount, startTrisCount, unchecked((uint)-1));
             for (int iteration = 0; iteration < 9999; iteration++)
             {
                 // Update mesh constantly
@@ -1456,7 +1456,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
                 triangles = this.triangles.Data;
                 triangleCount = this.triangles.Length;
 
-                ReportStatus(iteration, startTrisCount, triangleCount, -1);
+                ReportStatus(iteration, startTrisCount, triangleCount, unchecked((uint)-1));
 
                 // Clear dirty flag
                 for (int i = 0; i < triangleCount; i++)
@@ -1499,10 +1499,10 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <returns>The resulting mesh.</returns>
         public override Mesh ToMesh()
         {
-            int vertexCount = this.vertices.Length;
-            int triangleCount = triangles.Length;
+            uint vertexCount = this.vertices.Length;
+            uint triangleCount = triangles.Length;
             Vector3D[] vertices = new Vector3D[vertexCount];
-            int[][] indices = new int[subMeshCount][];
+            uint[][] indices = new uint[subMeshCount][];
 
             Vertex[] vertArr = this.vertices.Data;
             for (int i = 0; i < vertexCount; i++)
@@ -1512,9 +1512,9 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
 
             // First get the sub-mesh offsets
             Triangle[] triArr = triangles.Data;
-            int[] subMeshOffsets = new int[subMeshCount];
+            uint[] subMeshOffsets = new uint[subMeshCount];
             int lastSubMeshOffset = -1;
-            for (int i = 0; i < triangleCount; i++)
+            for (uint i = 0; i < triangleCount; i++)
             {
                 Triangle triangle = triArr[i];
                 if (triangle.SubMeshIndex != lastSubMeshOffset)
@@ -1535,22 +1535,22 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             // Then setup the sub-meshes
             for (int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
             {
-                int startOffset = subMeshOffsets[subMeshIndex];
+                uint startOffset = subMeshOffsets[subMeshIndex];
                 if (startOffset < triangleCount)
                 {
-                    int endOffset = subMeshIndex + 1 < subMeshCount ? subMeshOffsets[subMeshIndex + 1] : triangleCount;
-                    int subMeshTriangleCount = endOffset - startOffset;
+                    uint endOffset = subMeshIndex + 1 < subMeshCount ? subMeshOffsets[subMeshIndex + 1] : triangleCount;
+                    uint subMeshTriangleCount = endOffset - startOffset;
                     if (subMeshTriangleCount < 0)
                     {
                         subMeshTriangleCount = 0;
                     }
 
-                    int[] subMeshIndices = new int[subMeshTriangleCount * 3];
+                    uint[] subMeshIndices = new uint[subMeshTriangleCount * 3];
 
-                    for (int triangleIndex = startOffset; triangleIndex < endOffset; triangleIndex++)
+                    for (uint triangleIndex = startOffset; triangleIndex < endOffset; triangleIndex++)
                     {
                         Triangle triangle = triArr[triangleIndex];
-                        int offset = (triangleIndex - startOffset) * 3;
+                        uint offset = (triangleIndex - startOffset) * 3;
                         subMeshIndices[offset] = triangle.V0;
                         subMeshIndices[offset + 1] = triangle.V1;
                         subMeshIndices[offset + 2] = triangle.V2;

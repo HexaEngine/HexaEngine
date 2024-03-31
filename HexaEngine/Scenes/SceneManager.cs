@@ -305,70 +305,73 @@
             SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
-            return window.Dispatcher.InvokeAsync(async state =>
+            return Task.Factory.StartNew(async () =>
             {
-                var values = (Tuple<ICoreWindow, Scene>)state;
-                var window = values.Item1;
-                var scene = values.Item2;
-
-                await semaphore.WaitAsync();
-
-                if (Current == null)
+                await window.Dispatcher.InvokeAsync(async state =>
                 {
-                    await scene.InitializeAsync();
-                    scene.Load(window.GraphicsDevice);
+                    var values = (Tuple<ICoreWindow, Scene>)state;
+                    var window = values.Item1;
+                    var scene = values.Item2;
 
-                    lock (_lock)
+                    await semaphore.WaitAsync();
+
+                    if (Current == null)
                     {
-                        Current = scene;
+                        await scene.InitializeAsync();
+                        scene.Load(window.GraphicsDevice);
+
+                        lock (_lock)
+                        {
+                            Current = scene;
+                        }
+
+                        SceneChanged?.Invoke(null, new(null, scene));
+                        semaphore.Release();
+                        return;
                     }
 
-                    SceneChanged?.Invoke(null, new(null, scene));
-                    semaphore.Release();
-                    return;
-                }
+                    var old = Current;
 
-                var old = Current;
-
-                lock (_lock)
-                {
-                    Current = null;
-                }
-
-                if (scene == null)
-                {
-                    old?.Unload();
-                    old?.Uninitialize();
-
-                    ResourceManager.Shared.Release();
                     lock (_lock)
                     {
                         Current = null;
                     }
-                }
-                else
-                {
-                    old?.Unload();
-                    old?.Uninitialize();
 
-                    ResourceManager.Shared.Release();
-
-                    await scene.InitializeAsync();
-                    scene.Load(window.GraphicsDevice);
-
-                    lock (_lock)
+                    if (scene == null)
                     {
-                        Current = scene;
+                        old?.Unload();
+                        old?.Uninitialize();
+
+                        ResourceManager.Shared.Release();
+                        lock (_lock)
+                        {
+                            Current = null;
+                        }
                     }
-                }
+                    else
+                    {
+                        old?.Unload();
+                        old?.Uninitialize();
 
-                semaphore.Release();
+                        ResourceManager.Shared.Release();
 
-                SceneChanged?.Invoke(null, new(old, scene));
+                        await scene.InitializeAsync();
+                        scene.Load(window.GraphicsDevice);
 
-                GC.WaitForPendingFinalizers();
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<ICoreWindow, Scene>(window, scene));
+                        lock (_lock)
+                        {
+                            Current = scene;
+                        }
+                    }
+
+                    semaphore.Release();
+
+                    SceneChanged?.Invoke(null, new(old, scene));
+
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                }, new Tuple<ICoreWindow, Scene>(window, scene));
+            });
         }
 
         /// <summary>

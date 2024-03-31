@@ -44,11 +44,11 @@
 
     public class GraphResourceContainer
     {
-        private readonly List<ResourceRef> resources = new();
-        private readonly List<ResourceRef> sharedResources = new();
-        private readonly Dictionary<string, ResourceRef> nameToResource = new();
-        private readonly Dictionary<string, ResourceRef> nameToSharedResource = new();
-        private readonly List<ResourceEntry> entries = new();
+        private readonly List<ResourceRef> resources = [];
+        private readonly List<ResourceRef> sharedResources = [];
+        private readonly Dictionary<string, ResourceRef> nameToResource = [];
+        private readonly Dictionary<string, ResourceRef> nameToSharedResource = [];
+        private readonly List<ResourceEntry> entries = [];
         private readonly object _lock = new();
 
         private long size;
