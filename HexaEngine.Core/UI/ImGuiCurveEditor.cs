@@ -50,7 +50,7 @@ namespace HexaEngine.Core.UI
             ImDrawList* DrawList = ImGui.GetWindowDrawList();
 
             int id = ImGui.ImGuiWindowGetID(parent_window, label, (byte*)null);
-            if (!ImGui.BeginChildFrame(id, size, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+            if (!ImGui.BeginChild(id, size, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
                 ImGui.EndChild();
                 return -1;
@@ -434,7 +434,7 @@ namespace HexaEngine.Core.UI
                 }
             }
 
-            ImGui.EndChildFrame();
+            ImGui.EndChild();
             ImGui.RenderText(new Vector2(frame_bb.Max.X + style.ItemInnerSpacing.X, inner_bb.Min.Y), label, (byte*)null, true);
             return changed_idx;
         }

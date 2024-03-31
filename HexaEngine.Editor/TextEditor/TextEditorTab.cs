@@ -60,7 +60,7 @@
 
                 SyntaxHighlightDefaults.CSharp.Analyse(text, spans);
 
-                ImGui.BeginChild("LineNumbers", new Vector2(40, 0), false, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+                ImGui.BeginChild("LineNumbers", new Vector2(40, 0), ImGuiChildFlags.None, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
                 ImGui.SetScrollY(scroll);
 

@@ -324,9 +324,9 @@
             return link;
         }
 
-        public string SaveState()
+        public unsafe string SaveState()
         {
-            return ImNodes.SaveEditorStateToIniStringS(context);
+            return ImNodes.SaveEditorStateToIniStringS(context, null);
         }
 
         public void RestoreState(string state)
@@ -364,14 +364,15 @@
                 Links[i].Draw();
             }
             if (Minimap)
-                ImNodes.MiniMap(Location);
+                ImNodes.MiniMap(1, Location, null, default);
             ImNodes.EndNodeEditor();
 
             int idNode1 = 0;
             int idNode2 = 0;
             int idpin1 = 0;
             int idpin2 = 0;
-            if (ImNodes.IsLinkCreated(ref idNode1, ref idpin1, ref idNode2, ref idpin2))
+            bool createdFromSpan = false;
+            if (ImNodes.IsLinkCreatedIntPtr(ref idNode1, ref idpin1, ref idNode2, ref idpin2, ref createdFromSpan))
             {
                 var pino = GetNode(idNode1).GetOutput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);

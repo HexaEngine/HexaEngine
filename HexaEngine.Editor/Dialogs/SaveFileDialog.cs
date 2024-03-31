@@ -180,7 +180,7 @@
                 Vector2 contentRegion = default;
                 ImGui.GetContentRegionAvail(ref contentRegion);
                 float width = contentRegion.X - ImGui.GetStyle().ItemSpacing.X - widthDrives;
-                if (ImGui.BeginChild(1, new Vector2(widthDrives, -footerHeightToReserve), false, ImGuiWindowFlags.HorizontalScrollbar))
+                if (ImGui.BeginChild(1, new Vector2(widthDrives, -footerHeightToReserve), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar))
                 {
                     void Display(string? rel, string str)
                     {
@@ -223,7 +223,7 @@
                 ImGui.EndChild();
 
                 ImGui.SameLine();
-                if (ImGui.BeginChild(2, new Vector2(width, -footerHeightToReserve), true, 0))
+                if (ImGui.BeginChild(2, new Vector2(width, -footerHeightToReserve), ImGuiChildFlags.Border, 0))
                 {
                     if (currentDir.Exists)
                     {

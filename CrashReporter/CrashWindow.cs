@@ -83,7 +83,7 @@
             ImGui.SetWindowSize(Viewport.Size);
 
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
-            if (ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve), false, ImGuiWindowFlags.HorizontalScrollbar))
+            if (ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar))
             {
                 ImGui.TextColored(new(1, 0, 0, 1), "Oops something went wrong!");
                 ImGui.Text(reportFile ?? string.Empty);

@@ -144,7 +144,7 @@
             return default;
         }
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             var renderer = SceneRenderer.Current;
             if (renderer == null)
@@ -161,7 +161,7 @@
                             ImNodes.LoadEditorStateFromIniString(nodeContext, viewSettings, (nuint)viewSettings.Length);
                         }
                         viewMode = ViewMode.NodeTree;
-                        viewSettings = ImNodes.SaveEditorStateToIniStringS(nodeContext);
+                        viewSettings = ImNodes.SaveEditorStateToIniStringS(nodeContext, null);
                     }
                     if (ImGui.MenuItem("Waterfall"))
                     {
@@ -398,7 +398,7 @@
                 }
             }*/
 
-            ImNodes.MiniMap(ImNodesMiniMapLocation.TopRight);
+            ImNodes.MiniMap(1, ImNodesMiniMapLocation.TopRight, null, default);
             ImNodes.EndNodeEditor();
         }
 

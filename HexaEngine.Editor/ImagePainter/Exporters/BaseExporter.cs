@@ -41,7 +41,7 @@
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             float width = ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X;
 
-            if (ImGui.BeginChild(1, new(width, -footerHeightToReserve), false, ImGuiWindowFlags.HorizontalScrollbar))
+            if (ImGui.BeginChild(1, new(width, -footerHeightToReserve), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar))
             {
                 DrawExporterSettings();
             }

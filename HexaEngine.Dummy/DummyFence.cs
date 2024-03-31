@@ -4,6 +4,15 @@
 
     public class DummyFence : DummyObject, IFence
     {
+        private ulong initialValue;
+        private FenceFlags flags;
+
+        public DummyFence(ulong initialValue, FenceFlags flags)
+        {
+            this.initialValue = initialValue;
+            this.flags = flags;
+        }
+
         public ulong GetCompletedValue()
         {
             throw new NotImplementedException();
