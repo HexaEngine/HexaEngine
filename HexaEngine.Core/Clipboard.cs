@@ -7,7 +7,7 @@
     /// </summary>
     public static unsafe class Clipboard
     {
-        private static readonly Sdl Sdl = Application.sdl;
+        private static readonly Sdl Sdl = Application.Sdl;
 
         /// <summary>
         /// Retrieves the clipboard text as an unsafe pointer to a character array.

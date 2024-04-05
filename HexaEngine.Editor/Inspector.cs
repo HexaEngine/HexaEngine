@@ -94,13 +94,19 @@
 
             if ((drawLights & EditorDrawLightsFlags.DrawLights) != 0)
             {
+                var lightIcon = IconManager.GetIconByName("Light");
+                var lightUVStart = lightIcon?.UVStart ?? default;
+                var lightUVEnd = lightIcon?.UVEnd ?? default;
+                var lightTint = lightIcon?.Tint ?? default;
+                var lightIconPtr = lightIcon?.Texture.SRV?.NativePointer ?? default;
+
                 for (int i = 0; i < scene.LightManager.Count; i++)
                 {
-                    Light light = scene.LightManager.Lights[i];
+                    LightSource light = scene.LightManager.Lights[i];
                     if ((drawLights & EditorDrawLightsFlags.NoDirectionalLights) == 0 && light is DirectionalLight directional)
                     {
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
-                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), lightUVStart, lightUVEnd, lightTint, lightIconPtr);
 
                         if (drawLightBounds)
                         {
@@ -116,7 +122,7 @@
 
                     if ((drawLights & EditorDrawLightsFlags.NoSpotLights) == 0 && light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), lightUVStart, lightUVEnd, Vector4.One, lightIconPtr);
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
 
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
@@ -131,7 +137,7 @@
 
                     if ((drawLights & EditorDrawLightsFlags.NoPointLights) == 0 && light is PointLight pointLight)
                     {
-                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Light"));
+                        DebugDraw.DrawQuadBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), lightUVStart, lightUVEnd, Vector4.One, lightIconPtr);
                         DebugDraw.DrawRingBillboard(light.Transform.GlobalPosition, pos, Vector3.UnitY, forward, (new(0, 0.5f, 0), new(0.5f, 0, 0)), Vector4.One);
 
                         if (drawLightBounds)
@@ -144,6 +150,12 @@
 
             if (drawCameras)
             {
+                var cameraIcon = IconManager.GetIconByName("Camera");
+                var cameraUVStart = cameraIcon?.UVStart ?? default;
+                var cameraUVEnd = cameraIcon?.UVEnd ?? default;
+                var cameraTint = cameraIcon?.Tint ?? default;
+                var cameraIconPtr = cameraIcon?.Texture.SRV?.NativePointer ?? default;
+
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
@@ -151,7 +163,7 @@
                     {
                         continue;
                     }
-                    DebugDraw.DrawQuadBillboard(cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), Vector2.Zero, Vector2.One, Vector4.One, (nint)IconManager.GetIconByName("Camera"));
+                    DebugDraw.DrawQuadBillboard(cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), cameraUVStart, cameraUVEnd, cameraTint, cameraIconPtr);
                     DebugDraw.DrawFrustum(cam.Transform.NormalizedFrustum, Vector4.One);
                 }
             }

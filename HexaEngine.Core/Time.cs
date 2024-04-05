@@ -8,7 +8,7 @@
     /// </summary>
     public static class Time
     {
-        private static readonly Sdl sdl = Application.sdl;
+        private static readonly Sdl sdl = Application.Sdl;
         private static long frame;
         private static ulong last;
         private static ulong lastFixed;

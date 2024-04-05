@@ -98,7 +98,11 @@ namespace HexaEngine.PostFx.BuildIn
 
             for (int i = 0; i < lightView.Active.Count; i++)
             {
-                var light = lightView.Active[i];
+                var lightSource = lightView.Active[i];
+                if (lightSource is not Light light)
+                {
+                    continue;
+                }
                 LightData lightData = default;
                 lightData.Color = light.Color * light.Intensity;
                 lightData.Position = new(light.Position, 1);

@@ -14,16 +14,18 @@
         private readonly IGraphicsDevice device;
 
         private readonly List<Probe> probes = [];
-        private readonly List<Light> lights = [];
-        private readonly List<Light> activeLights = [];
+        private readonly List<LightSource> lights = [];
+        private readonly List<LightSource> activeLights = [];
 
         private readonly ConcurrentQueue<Probe> probeUpdateQueue = new();
-        private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
+        private readonly ConcurrentQueue<LightSource> lightUpdateQueue = new();
         public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
 
         public readonly StructuredUavBuffer<ProbeData> GlobalProbes;
         public readonly StructuredUavBuffer<LightData> LightBuffer;
         public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
+
+        private bool isDirty = false;
 
         public LightManager(IGraphicsDevice device)
         {
@@ -37,9 +39,9 @@
 
         public IReadOnlyList<Probe> Probes => probes;
 
-        public IReadOnlyList<Light> Lights => lights;
+        public IReadOnlyList<LightSource> Lights => lights;
 
-        public IReadOnlyList<Light> Active => activeLights;
+        public IReadOnlyList<LightSource> Active => activeLights;
 
         public int Count => lights.Count;
 
@@ -54,6 +56,7 @@
             if (gameObject is Light light)
             {
                 lightUpdateQueue.Enqueue(light);
+                isDirty = true;
             }
         }
 
@@ -62,6 +65,7 @@
             if (sender is Light light)
             {
                 lightUpdateQueue.Enqueue(light);
+                isDirty = true;
             }
         }
 
@@ -70,12 +74,13 @@
             lock (lights)
             {
                 lights.Clear();
+                isDirty = true;
             }
         }
 
         public unsafe void Register(GameObject gameObject)
         {
-            if (gameObject is Light light)
+            if (gameObject is LightSource light)
             {
                 AddLight(light);
             }
@@ -98,14 +103,18 @@
             }
         }
 
-        public unsafe void AddLight(Light light)
+        public unsafe void AddLight(LightSource lightSource)
         {
             lock (lights)
             {
-                lights.Add(light);
-                lightUpdateQueue.Enqueue(light);
-                light.OnTransformed += LightTransformed;
-                light.PropertyChanged += LightPropertyChanged;
+                lights.Add(lightSource);
+                lightUpdateQueue.Enqueue(lightSource);
+                if (lightSource is Light light)
+                {
+                    light.OnTransformed += LightTransformed;
+                    light.PropertyChanged += LightPropertyChanged;
+                    isDirty = true;
+                }
             }
         }
 
@@ -118,14 +127,19 @@
             }
         }
 
-        public unsafe void RemoveLight(Light light)
+        public unsafe void RemoveLight(LightSource lightSource)
         {
             lock (lights)
             {
-                light.PropertyChanged -= LightPropertyChanged;
-                light.OnTransformed -= LightTransformed;
-                lights.Remove(light);
-                activeLights.Remove(light);
+                if (lightSource is Light light)
+                {
+                    light.PropertyChanged -= LightPropertyChanged;
+                    light.OnTransformed -= LightTransformed;
+                    isDirty = true;
+                }
+
+                lights.Remove(lightSource);
+                activeLights.Remove(lightSource);
             }
         }
 
@@ -137,37 +151,40 @@
             }
         }
 
-        public readonly Queue<Light> UpdateShadowLightQueue = new();
+        public readonly Queue<LightSource> UpdateShadowLightQueue = new();
 
         public unsafe void Update(IGraphicsContext context, ShadowAtlas shadowAtlas, Camera camera)
         {
-            while (lightUpdateQueue.TryDequeue(out var light))
+            while (lightUpdateQueue.TryDequeue(out var lightSource))
             {
-                if (light.IsEnabled)
+                if (lightSource.IsEnabled)
                 {
-                    if (!activeLights.Contains(light))
+                    if (!activeLights.Contains(lightSource))
                     {
-                        activeLights.Add(light);
+                        activeLights.Add(lightSource);
                     }
 
-                    if (light.ShadowMapEnable)
+                    if (lightSource is Light light)
                     {
-                        light.CreateShadowMap(context.Device, shadowAtlas);
-                    }
-                    else
-                    {
-                        light.DestroyShadowMap();
-                    }
+                        if (light.ShadowMapEnable)
+                        {
+                            light.CreateShadowMap(context.Device, shadowAtlas);
+                        }
+                        else
+                        {
+                            light.DestroyShadowMap();
+                        }
 
-                    if (!light.InUpdateQueue)
-                    {
-                        light.InUpdateQueue = true;
-                        UpdateShadowLightQueue.Enqueue(light);
+                        if (!light.InUpdateQueue)
+                        {
+                            light.InUpdateQueue = true;
+                            UpdateShadowLightQueue.Enqueue(light);
+                        }
                     }
                 }
                 else
                 {
-                    activeLights.Remove(light);
+                    activeLights.Remove(lightSource);
                 }
             }
 
@@ -177,7 +194,10 @@
             {
                 for (int i = 0; i < activeLights.Count; i++)
                 {
-                    var light = activeLights[i];
+                    var lightSource = activeLights[i];
+                    if (lightSource is not Light light)
+                        continue;
+
                     if (!light.ShadowMapEnable || light.ShadowMapUpdateMode != ShadowUpdateMode.OnDemand)
                     {
                         continue;
@@ -193,7 +213,10 @@
 
             for (int i = 0; i < activeLights.Count; i++)
             {
-                var light = activeLights[i];
+                var lightSource = activeLights[i];
+                if (lightSource is not Light light)
+                    continue;
+
                 if (light.ShadowMapEnable && !light.InUpdateQueue)
                 {
                     if (light is DirectionalLight || light.ShadowMapUpdateMode == ShadowUpdateMode.EveryFrame | light.UpdateShadowMapSize(camera, shadowAtlas))
@@ -207,6 +230,12 @@
 
         private unsafe void UpdateLights(Camera camera)
         {
+            if (!isDirty)
+            {
+                return;
+            }
+            isDirty = false;
+
             GlobalProbes.ResetCounter();
             LightBuffer.ResetCounter();
             ShadowDataBuffer.ResetCounter();
@@ -224,7 +253,9 @@
 
             for (int i = 0; i < activeLights.Count; i++)
             {
-                var light = activeLights[i];
+                var lightSource = activeLights[i];
+                if (lightSource is not Light light)
+                    continue;
 
                 if (light.ShadowMapEnable)
                 {

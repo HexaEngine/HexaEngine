@@ -2,6 +2,7 @@
 {
     public enum Theme
     {
+        Any = -1,
         Light,
         Dark,
         Custom,

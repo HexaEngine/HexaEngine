@@ -11,6 +11,7 @@
     using HexaEngine.OpenAL;
     using HexaEngine.OpenGL;
     using HexaEngine.Scripts;
+    using HexaEngine.Vulkan;
     using HexaEngine.Windows;
 
     /// <summary>
@@ -24,17 +25,12 @@
         /// Initializes the platform-specific components based on the provided window, graphics backend, and optional editor mode.
         /// </summary>
         /// <param name="window">The window interface.</param>
-        /// <param name="backend">The graphics backend to use.</param>
         /// <param name="editor">Optional parameter to specify whether the application is running in editor mode.</param>
-        public static void Init(IWindow window, GraphicsBackend backend, bool editor = false)
+        public static void Init(IWindow window, bool editor = false)
         {
-            Application.GraphicsBackend = backend;
-#if DEBUG
-            Application.GraphicsDebugging = true;
-#endif
             Platform.editor = editor;
 
-            switch (backend)
+            switch (Application.GraphicsBackend)
             {
                 case GraphicsBackend.D3D12:
                     DXGIAdapterD3D12.Init(window, Application.GraphicsDebugging);
@@ -49,7 +45,7 @@
                     break;
 
                 case GraphicsBackend.Vulkan:
-
+                    VulkanAdapter.Init(window, Application.GraphicsDebugging);
                     break;
 
                 case GraphicsBackend.OpenGL:

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Tools
 {
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
@@ -25,9 +26,21 @@
 
             AddTool(new Tool("Material Editor", ".material", path =>
             {
-                if (WindowManager.TryGetWindow<MaterialLibraryEditorWindow>(out var materialEditorWindow))
+                if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditorWindow))
                 {
-                    materialEditorWindow.Open($"assets/{FileSystem.GetRelativePath(path)}");
+                    var metadata = SourceAssetsDatabase.GetMetadata(path);
+                    if (metadata == null)
+                    {
+                        return;
+                    }
+
+                    var artifactGUID = ArtifactDatabase.GetArtifactForSource(metadata.Guid)?.Guid ?? default;
+                    if (artifactGUID == default)
+                    {
+                        return;
+                    }
+
+                    materialEditorWindow.Material = artifactGUID;
                     materialEditorWindow.Focus();
                 }
             }));

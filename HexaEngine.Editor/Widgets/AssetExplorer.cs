@@ -70,7 +70,7 @@
         private AssetExplorerDisplayMode displayMode = AssetExplorerDisplayMode.Pretty;
         private AssetExplorerIconSize iconSize = AssetExplorerIconSize.Medium;
 
-        private Vector2 chipSize = new(72, 86);
+        private Vector2 chipSize = new(86, 92);
         private Vector2 imageSize = new(64, 64);
 
         private PasteMode pasteMode;
@@ -80,6 +80,7 @@
         {
             public string Path = path;
             public string Name = name;
+            public List<Item> GroupItems = [];
             public string NameNoExtension = System.IO.Path.GetFileNameWithoutExtension(path);
             public SourceAssetMetadata? Metadata = metadata;
             public readonly Ref<Texture2D>? Thumbnail = thumbnail;
@@ -273,6 +274,29 @@
                     }
                 }
 
+                for (int i = 0; i < files.Count; i++)
+                {
+                    var file = files[i];
+                    if (file.Metadata == null || file.Metadata.ParentGuid == default)
+                    {
+                        continue;
+                    }
+
+                    Guid parentGuid = file.Metadata.ParentGuid;
+
+                    for (int j = 0; j < files.Count; j++)
+                    {
+                        var item = files[j];
+                        if (item.Metadata != null && item.Metadata.Guid == parentGuid)
+                        {
+                            item.GroupItems.Add(file);
+                            files.RemoveAt(i);
+                            i--;
+                            break;
+                        }
+                    }
+                }
+
                 files.Sort(new ItemGroupComparer(groups));
             }
         }
@@ -356,7 +380,7 @@
                     ImGui.BeginChild(dir.Path, chipSize);
 
                     var icon = IconManager.GetIconForDirectory(dir.Path);
-                    ImageHelper.ImageCenteredH(icon, imageSize);
+                    icon.ImageCenteredH(imageSize);
                     TextHelper.TextCenteredH(dir.Name);
 
                     if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(0))
@@ -508,7 +532,7 @@
             Refresh();
         }
 
-        private unsafe void DisplayFile(Item file, Guid guid)
+        private unsafe void DisplayFileBody(Item file, Guid guid)
         {
             bool isSelected = SelectedFile == file.Path;
             switch (displayMode)
@@ -540,8 +564,9 @@
                     else
                     {
                         var icon = IconManager.GetIconForFile(file.Name);
-                        ImageHelper.ImageCenteredH(icon, imageSize);
+                        icon.ImageCenteredH(imageSize);
                     }
+                    TooltipHelper.Tooltip(file.Name);
 
                     TextHelper.TextCenteredH(showExtensions ? file.Name : file.NameNoExtension);
 
@@ -935,34 +960,41 @@
 
                     for (int i = 0; i < files.Count; i++)
                     {
-                        var file = files[i];
-                        Guid guid = default;
-                        Guid parentGuid = default;
-                        if (file.Metadata != null)
-                        {
-                            guid = file.Metadata.Guid;
-                            parentGuid = file.Metadata.ParentGuid;
-                        }
-
-                        if (parentGuid != default && !openGroups.Contains(parentGuid))
-                        {
-                            continue;
-                        }
-
-                        DisplayFile(file, guid);
-                        x += size;
-                        if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
-                        {
-                            ImGui.SameLine();
-                        }
-                        else
-                        {
-                            x = 0;
-                        }
+                        DisplayFile(size, windowSize, ref x, files[i]);
                     }
                 }
 
                 ImGui.EndChild();
+            }
+        }
+
+        private void DisplayFile(float size, Vector2 windowSize, ref float x, Item file)
+        {
+            Guid guid = default;
+
+            if (file.Metadata != null)
+            {
+                guid = file.Metadata.Guid;
+            }
+
+            DisplayFileBody(file, guid);
+
+            x += size;
+            if (x + size < windowSize.X && displayMode == AssetExplorerDisplayMode.Pretty)
+            {
+                ImGui.SameLine();
+            }
+            else
+            {
+                x = 0;
+            }
+
+            if (openGroups.Contains(guid))
+            {
+                for (int j = 0; j < file.GroupItems.Count; j++)
+                {
+                    DisplayFile(size, windowSize, ref x, file.GroupItems[j]);
+                }
             }
         }
 

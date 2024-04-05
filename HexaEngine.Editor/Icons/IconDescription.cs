@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
+    using System.ComponentModel;
+    using System.Numerics;
     using System.Xml.Serialization;
 
     [XmlRoot(ElementName = "Icon")]
@@ -19,5 +21,9 @@
 
         [XmlAttribute(AttributeName = "priority")]
         public int Priority { get; set; }
+
+        [DefaultValue(null)]
+        [XmlAttribute(AttributeName = "tint")]
+        public string? Tint { get; set; }
     }
 }

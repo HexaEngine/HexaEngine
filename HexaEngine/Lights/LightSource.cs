@@ -8,13 +8,31 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
-    public abstract class Light : GameObject
+    public abstract class LightSource : GameObject
     {
         internal bool InUpdateQueue;
         internal uint QueueIndex;
         protected Vector4 color = Vector4.One;
-        private float range = 50;
         private float intensity = 1;
+
+        public abstract LightType LightType { get; }
+
+        #region General
+
+        [EditorCategory("General")]
+        [EditorProperty("Color", EditorPropertyMode.Colorpicker)]
+        public Vector4 Color { get => color; set => SetAndNotifyWithEqualsTest(ref color, value); }
+
+        [EditorCategory("General")]
+        [EditorProperty("Intensity")]
+        public float Intensity { get => intensity; set => SetAndNotifyWithEqualsTest(ref intensity, value); }
+
+        #endregion General
+    }
+
+    public abstract class Light : LightSource
+    {
+        private float range = 50;
         private bool shadowMapEnable;
         private ShadowResolution shadowMapResolution;
         private ShadowUpdateMode shadowMapUpdateMode = ShadowUpdateMode.OnDemand;
@@ -40,21 +58,11 @@
             this.color = color;
         }
 
-        public abstract LightType LightType { get; }
-
         #region General
-
-        [EditorCategory("General")]
-        [EditorProperty("Color", EditorPropertyMode.Colorpicker)]
-        public Vector4 Color { get => color; set => SetAndNotifyWithEqualsTest(ref color, value); }
 
         [EditorCategory("General")]
         [EditorProperty("Range")]
         public float Range { get => range; set => SetAndNotifyWithEqualsTest(ref range, value); }
-
-        [EditorCategory("General")]
-        [EditorProperty("Intensity")]
-        public float Intensity { get => intensity; set => SetAndNotifyWithEqualsTest(ref intensity, value); }
 
         #endregion General
 

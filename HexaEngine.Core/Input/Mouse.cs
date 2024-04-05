@@ -34,7 +34,7 @@
         /// </summary>
         internal static void Init()
         {
-            sdl = Application.sdl;
+            sdl = Application.Sdl;
             pos = default;
             sdl.GetMouseState(ref pos.X, ref pos.Y);
 

@@ -1,0 +1,42 @@
+﻿<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="Package">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Id" type="xs:string" />
+				<xs:element name="Name" type="xs:string" />
+				<xs:element name="Version" type="xs:string" />
+				<xs:element name="IsPreRelease" type="xs:boolean" />
+				<xs:element name="IsDeprecated" type="xs:boolean" />
+				<xs:element name="DeprecationReason" type="xs:string" />
+				<xs:element name="Description" type="xs:string" />
+				<xs:element name="Author" type="xs:string" />
+				<xs:element name="Copyright" type="xs:string" />
+				<xs:element name="LicenceUrl" type="xs:anyURI" />
+				<xs:element name="Licence" type="xs:string" />
+				<xs:element name="ReadmeUrl" type="xs:anyURI" />
+				<xs:element name="DatePublished" type="xs:dateTime" />
+				<xs:element name="ProjectUrl" type="xs:anyURI" />
+				<xs:element name="Tags" type="xs:string" />
+				<xs:element name="Dependencies" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Dependency" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="packageId" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="SupportedVersions" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Version" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

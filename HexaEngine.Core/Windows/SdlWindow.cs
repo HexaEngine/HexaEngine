@@ -25,7 +25,7 @@
         /// <summary>
         /// The SDL instance
         /// </summary>
-        protected static readonly Sdl sdl = Application.sdl;
+        protected static readonly Sdl sdl = Application.Sdl;
 
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();

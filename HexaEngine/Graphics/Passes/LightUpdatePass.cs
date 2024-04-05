@@ -53,7 +53,9 @@
 
             for (int i = 0; i < activeLights.Count; i++)
             {
-                var light = activeLights[i];
+                var lightSource = activeLights[i];
+                if (lightSource is not Light light)
+                    continue;
 
                 if (light.ShadowMapEnable)
                 {

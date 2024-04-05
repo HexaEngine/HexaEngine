@@ -64,7 +64,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIApp", "UIApp\UIApp.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaExporter", "SchemaExporter\SchemaExporter.csproj", "{4BD0A832-A3A9-427F-98B3-FCA58125B5C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Dummy", "HexaEngine.Dummy\HexaEngine.Dummy.csproj", "{4C863186-27E9-4B4F-BEF1-7856255A8DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Dummy", "HexaEngine.Dummy\HexaEngine.Dummy.csproj", "{4C863186-27E9-4B4F-BEF1-7856255A8DE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

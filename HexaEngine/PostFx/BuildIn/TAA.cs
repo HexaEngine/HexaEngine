@@ -19,7 +19,7 @@
         private ResourceRef<Texture2D> Previous;
 
         private float alpha = 0.1f;
-        private float colorBoxSigma = 1f;
+        private float colorBoxSigma = 0.3f;
         private bool antiFlicker = true;
 
         public override string Name => "TAA";

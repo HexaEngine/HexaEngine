@@ -8,7 +8,7 @@
     /// </summary>
     public static unsafe class Display
     {
-        private static readonly Sdl Sdl = Application.sdl;
+        private static readonly Sdl Sdl = Application.Sdl;
 
         /// <summary>
         /// Gets the number of video displays available.

@@ -39,6 +39,7 @@
 #nullable restore
         private bool isDirty = true;
         private bool hasSun = false;
+        private bool hasAmbient = false;
 
         /// <summary>
         /// Gets the current instance of the WeatherManager if available in the current scene.
@@ -301,6 +302,7 @@
 
             CBWeather weather = default;
             weather.LightDir = new(0, 1, 0, 1);
+
             hasSun = false;
             for (int i = 0; i < manager.ActiveCount; i++)
             {
@@ -310,7 +312,10 @@
                     weather.LightDir = new Vector4(-directional.Transform.Forward, 1);
                     weather.LightColor = directional.Color * directional.Intensity;
                     hasSun = true;
-                    break;
+                }
+                if (light is AmbientLight ambient)
+                {
+                    ambientColor = new Vector3(ambient.Color.X, ambient.Color.Y, ambient.Color.Z) * ambient.Intensity;
                 }
             }
 

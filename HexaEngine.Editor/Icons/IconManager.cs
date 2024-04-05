@@ -3,9 +3,15 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Textures;
+    using HexaEngine.Core.Security.Cryptography;
     using HexaEngine.Core.UI;
+    using HexaEngine.D3D11;
+    using HexaEngine.D3D12;
     using HexaEngine.Editor.Themes;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -13,16 +19,24 @@
     /// </summary>
     public static class IconManager
     {
-        private static readonly List<Icon> icons = new();
+        private static readonly List<Icon> icons = [];
+        private static IGraphicsDevice device;
         private static Icon Default;
+        private static readonly AtlasBuilder atlasBuilder = new(256 * 8 + 2, 2048, Format.R8G8B8A8UNorm);
+        private static Texture2D iconAtlas;
+        private static readonly List<IconGlyphTileInfo> tiles = new();
+        private static readonly Dictionary<Guid, IconGlyphTileInfo> keyToTile = new();
 
         /// <summary>
         /// Initializes the IconManager, loads icons from XML, and sets up default icons.
         /// </summary>
         /// <param name="device">The graphics device for rendering icons.</param>
-        internal static void Init(IGraphicsDevice device)
+        internal static unsafe void Init(IGraphicsDevice device)
         {
-            Default = new Icon(device);
+            IconManager.device = device;
+
+            Default = new Icon(device, atlasBuilder);
+
             try
             {
                 var serializer = new XmlSerializer(typeof(IconsDescription));
@@ -33,14 +47,16 @@
 
                 for (int i = 0; i < desc.Icons.Count; i++)
                 {
-                    var icon = desc.Icons[i];
+                    var iconDesc = desc.Icons[i];
 
-                    if (icon.Theme != theme)
+                    if (iconDesc.Theme != "any" && iconDesc.Theme != theme)
                     {
                         continue;
                     }
 
-                    icons.Add(new Icon(device, icon));
+                    Icon icon = new(iconDesc);
+                    AddToAtlas(icon);
+                    icons.Add(icon);
                 }
             }
             catch (Exception ex)
@@ -50,23 +66,117 @@
                 MessageBox.Show("Failed to load icons", ex.Message);
             }
 
+            UpdateAtlas();
+
             icons.Sort(IconPriorityComparer.Default);
+        }
+
+        private static unsafe void UpdateAtlas()
+        {
+            byte* data;
+            int width;
+            int height;
+            int rowPitch;
+            atlasBuilder.Build(&data, &width, &height, &rowPitch);
+
+            Texture2DDescription description = new(Format.R8G8B8A8UNorm, width, height, 1, 1, GpuAccessFlags.Read);
+
+            iconAtlas = new Texture2D(device, description, new SubresourceData(data, rowPitch));
+
+            Default.SetAtlas(iconAtlas);
+            for (int i = 0; i < icons.Count; i++)
+            {
+                icons[i].SetAtlas(iconAtlas);
+            }
+        }
+
+        private static unsafe void RebuildAtlas()
+        {
+            keyToTile.Clear();
+            tiles.Clear();
+            atlasBuilder.Reset();
+            Default.CreateDefault(device, atlasBuilder);
+
+            try
+            {
+                var theme = ThemeManager.ThemeName;
+
+                for (int i = 0; i < icons.Count; i++)
+                {
+                    var icon = icons[i];
+
+                    var desc = icon.Description;
+
+                    if (desc.Theme != "any" && desc.Theme != theme)
+                    {
+                        continue;
+                    }
+
+                    AddToAtlas(icon);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to load icons");
+                Logger.Log(ex);
+                MessageBox.Show("Failed to load icons", ex.Message);
+            }
+
+            UpdateAtlas();
+        }
+
+        private static unsafe bool AddToAtlas(Icon icon)
+        {
+            bool updated = false;
+            var desc = icon.Description;
+            var key = new Guid(MD5.HashData(MemoryMarshal.AsBytes(desc.Path.AsSpan())));
+
+            if (!keyToTile.TryGetValue(key, out var info))
+            {
+                var image = device.TextureLoader.LoadFormAssets(desc.Path);
+                var pos = atlasBuilder.Append(image, 256, 256);
+                info = new(key, pos, new(256));
+                keyToTile.Add(key, info);
+                tiles.Add(info);
+                image.Dispose();
+                updated = true;
+            }
+
+            icon.AtlasPos = info.Pos;
+            icon.Size = info.Size;
+            return updated;
         }
 
         /// <summary>
         /// Adds an icon to the manager, replacing any existing icon with the same name.
         /// </summary>
         /// <param name="icon">The icon to add.</param>
-        public static void AddIcon(Icon icon)
+        public static void AddIcon(IconDescription iconDesc)
         {
-            var old = GetIconByName(icon.Name);
+            var old = GetIconByName(iconDesc.Name);
+            var removedOld = false;
             if (old != null)
             {
-                icons.Remove(old);
-                old.Dispose();
+                removedOld = icons.Remove(old);
             }
 
-            icons.Add(icon);
+            if (!removedOld)
+            {
+                Icon icon = new(iconDesc);
+                bool updated = AddToAtlas(icon);
+                icons.Add(icon);
+                if (updated)
+                {
+                    UpdateAtlas();
+                }
+            }
+            else
+            {
+                Icon icon = new(iconDesc);
+                icons.Add(icon);
+                RebuildAtlas();
+            }
+
             icons.Sort(IconPriorityComparer.Default);
         }
 
@@ -74,10 +184,23 @@
         /// Removes an icon from the manager and releases associated resources.
         /// </summary>
         /// <param name="icon">The icon to remove.</param>
-        public static void RemoveIcon(Icon icon)
+        public static bool RemoveIcon(IconDescription iconDesc)
         {
-            icons.Remove(icon);
-            icon.Dispose();
+            var icon = GetIconByName(iconDesc.Name);
+
+            if (icon == null)
+            {
+                return false;
+            }
+
+            if (!icons.Remove(icon))
+            {
+                return false;
+            }
+
+            RebuildAtlas();
+
+            return true;
         }
 
         /// <summary>
@@ -151,11 +274,8 @@
         /// </summary>
         internal static void Dispose()
         {
-            Default.Dispose();
-            for (int i = 0; i < icons.Count; i++)
-            {
-                icons[i].Dispose();
-            }
+            iconAtlas.Dispose();
+            atlasBuilder.Dispose();
         }
     }
 }

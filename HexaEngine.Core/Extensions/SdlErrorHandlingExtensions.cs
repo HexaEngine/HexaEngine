@@ -19,7 +19,7 @@
 #if DEBUG
             if (result == 0)
             {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -38,7 +38,7 @@
 #if DEBUG
             if (result < 0)
             {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -56,7 +56,7 @@
         {
             if (result == 0)
             {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
         }
@@ -67,7 +67,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SdlCheckError()
         {
-            Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+            Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
         {
             if (ptr == null)
             {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return ptr;
         }
@@ -97,7 +97,7 @@
 #if DEBUG
             if (ptr == null)
             {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
+                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return ptr;
 #else

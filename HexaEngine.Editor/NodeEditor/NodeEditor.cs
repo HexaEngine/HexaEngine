@@ -364,7 +364,7 @@
                 Links[i].Draw();
             }
             if (Minimap)
-                ImNodes.MiniMap(1, Location, null, default);
+                ImNodes.MiniMap(0.4f, Location, null, default);
             ImNodes.EndNodeEditor();
 
             int idNode1 = 0;

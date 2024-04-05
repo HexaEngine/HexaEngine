@@ -19,7 +19,7 @@
     /// </summary>
     public unsafe class Joystick : IDisposable
     {
-        private static readonly Sdl sdl = Application.sdl;
+        private static readonly Sdl sdl = Application.Sdl;
         private readonly int id;
         internal readonly Silk.NET.SDL.Joystick* joystick;
         private readonly Dictionary<int, short> axes = new();

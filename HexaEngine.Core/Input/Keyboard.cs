@@ -43,7 +43,7 @@
         /// </summary>
         internal static unsafe void Init()
         {
-            sdl = Application.sdl;
+            sdl = Application.Sdl;
             int numkeys;
             byte* pKeys = sdl.GetKeyboardState(&numkeys);
 

@@ -134,7 +134,7 @@
             }
         }
 
-        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdateSpot");
             var spotlight = (Spotlight)light;
@@ -170,7 +170,7 @@
             profiler?.End("ShadowMap.UpdateSpot");
         }
 
-        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdatePoint");
             var pointLight = (PointLight)light;
@@ -207,7 +207,7 @@
             profiler?.End("ShadowMap.UpdatePoint");
         }
 
-        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, Light light)
+        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdateDirectional");
             var directionalLight = (DirectionalLight)light;

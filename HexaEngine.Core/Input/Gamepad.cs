@@ -39,7 +39,7 @@
 
         static Gamepad()
         {
-            var sdl = Application.sdl;
+            var sdl = Application.Sdl;
             for (int i = 0; i < axes.Length; i++)
             {
                 axisNames[i] = sdl.GameControllerGetStringForAxisS(Helper.ConvertBack(axes[i]));
@@ -56,7 +56,7 @@
         /// <param name="id">The unique identifier for the gamepad.</param>
         public Gamepad(int id)
         {
-            sdl = Application.sdl;
+            sdl = Application.Sdl;
             controller = sdl.GameControllerOpen(id);
             if (controller == null)
                 SdlCheckError();

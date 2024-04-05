@@ -18,7 +18,7 @@
     /// </summary>
     public unsafe class GamepadSensor : IDisposable
     {
-        private readonly Sdl sdl = Application.sdl;
+        private readonly Sdl sdl = Application.Sdl;
         private readonly GameController* controller;
         private readonly GamepadSensorType type;
         private readonly float* buffer;

@@ -11,6 +11,7 @@
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using YamlDotNet.Core.Tokens;
     using static Extensions.SdlErrorHandlingExtensions;
 
     /// <summary>
@@ -43,7 +44,7 @@
     /// </summary>
     public static unsafe class Application
     {
-        internal static readonly Sdl sdl = Sdl.GetApi();
+        public static readonly Sdl Sdl = Sdl.GetApi();
 
         private static bool initialized = false;
         private static bool exiting = false;
@@ -265,18 +266,22 @@
         /// <summary>
         /// Initializes the application and necessary subsystems.
         /// </summary>
-        public static void Boot()
+        public static void Boot(GraphicsBackend backend)
         {
+            GraphicsBackend = backend;
+#if DEBUG
+            GraphicsDebugging = true;
+#endif
             CrashLogger.Initialize();
             FileSystem.Initialize();
             ImGuiConsole.Initialize();
 
-            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
-            sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
-            sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
-            sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
-            sdl.SetHint(Sdl.HintJoystickRawinput, "0");
-            sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
+            Sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            Sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
+            Sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
+            Sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
+            Sdl.SetHint(Sdl.HintJoystickRawinput, "0");
+            Sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
 
             SdlCheckError();
 
@@ -386,8 +391,8 @@
 
             while (!exiting)
             {
-                sdl.PumpEvents();
-                while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
+                Sdl.PumpEvents();
+                while (Sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
                     for (int j = 0; j < hooks.Count; j++)
                     {
@@ -417,23 +422,23 @@
             graphicsDevice.Dispose();
 
             SdlCheckError();
-            sdl.Quit();
+            Sdl.Quit();
             //SdlCheckError();
         }
 
         public static void StartTextInput()
         {
-            sdl.StartTextInput();
+            Sdl.StartTextInput();
         }
 
         public static void StopTextInput()
         {
-            sdl.StopTextInput();
+            Sdl.StopTextInput();
         }
 
         public static void SetTextInputRect(Rectangle rect)
         {
-            sdl.SetTextInputRect((Silk.NET.Maths.Rectangle<int>*)&rect);
+            Sdl.SetTextInputRect((Silk.NET.Maths.Rectangle<int>*)&rect);
         }
 
         private static void HandleEvent(Event evnt)

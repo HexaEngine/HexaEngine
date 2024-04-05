@@ -467,6 +467,9 @@
 		<None Update="FileName.txt">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="packageMetadata.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Sample_BeeMoved_96kHz24bit.flac">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

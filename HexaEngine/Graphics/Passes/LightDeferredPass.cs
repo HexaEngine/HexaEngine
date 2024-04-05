@@ -120,7 +120,7 @@ namespace HexaEngine.Graphics.Passes
                 var light = lights.Active[i];
                 if (light is DirectionalLight directional && directional.ShadowMapEnable)
                 {
-                    deferredSrvs[8] = (void*)(light.GetShadowMap()?.NativePointer ?? 0);
+                    deferredSrvs[8] = (void*)(directional.GetShadowMap()?.NativePointer ?? 0);
                 }
             }
 

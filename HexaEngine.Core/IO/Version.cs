@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.IO
 {
+    using System.Numerics;
+    using System.Runtime.CompilerServices;
+
     /// <summary>
     /// Represents a version number with major, minor, patch, and build components.
     /// </summary>
@@ -56,6 +59,11 @@
         /// Gets the combined version value of this <see cref="Version"/>.
         /// </summary>
         public readonly ulong Value => ((ulong)Build << 48) | ((ulong)Patch << 32) | ((ulong)Minor << 16) | Major;
+
+        /// <summary>
+        /// If all components are equals 0 then version is considered as any.
+        /// </summary>
+        public readonly bool IsAny => Value == 0;
 
         /// <summary>
         /// Converts a <see cref="Version"/> to an unsigned long integer.
@@ -122,6 +130,75 @@
         public override readonly int GetHashCode()
         {
             return HashCode.Combine(Major, Minor, Patch, Build);
+        }
+
+        public static Version Parse(string s)
+        {
+            Unsafe.SkipInit(out Version version);
+            int start = 0;
+            int index = 0;
+
+            if (s == "*")
+                return version;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '.')
+                {
+                    if (index >= 4)
+                        throw new FormatException();
+
+                    ReadOnlySpan<char> chars = s.AsSpan(start, i - start);
+                    var value = ushort.Parse(chars);
+                    unsafe
+                    {
+                        ((ushort*)&version)[index++] = value;
+                    }
+                    start = i + 1;
+                }
+            }
+
+            return version;
+        }
+
+        public static bool TryParse(string s, out Version version)
+        {
+            Unsafe.SkipInit(out Version version1);
+            int start = 0;
+            int index = 0;
+            if (s == "*")
+            {
+                version = default;
+                return true;
+            }
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '.')
+                {
+                    if (index >= 4)
+                    {
+                        version = default;
+                        return false;
+                    }
+
+                    ReadOnlySpan<char> chars = s.AsSpan(start, i - start);
+                    if (!ushort.TryParse(chars, out ushort value))
+                    {
+                        version = default;
+                        return false;
+                    }
+                    unsafe
+                    {
+                        ((ushort*)&version1)[index++] = value;
+                    }
+                    start = i + 1;
+                }
+            }
+
+            version = version1;
+
+            return true;
         }
     }
 }

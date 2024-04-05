@@ -118,7 +118,7 @@
                 var light = lights.Active[i];
                 if (light is DirectionalLight directional && directional.ShadowMapEnable)
                 {
-                    forwardSRVs[8] = (void*)(light.GetShadowMap()?.NativePointer ?? 0);
+                    forwardSRVs[8] = (void*)(directional.GetShadowMap()?.NativePointer ?? 0);
                 }
             }
 

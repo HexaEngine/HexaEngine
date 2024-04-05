@@ -1,0 +1,23 @@
+﻿<Package version="1.0">
+	<Id>hexaengine.core</Id>
+	<Name>Core</Name>
+	<Version>1.0.0.0</Version>
+	<IsPreRelease>false</IsPreRelease>
+	<IsDeprecated>false</IsDeprecated>
+	<DeprecationReason />
+	<Description>The core package of the engine.</Description>
+	<Author>The HexaEngine Team</Author>
+	<Copyright>The HexaEngine Team (c) 2024</Copyright>
+	<LicenceUrl>https://github.com/HexaEngine/HexaEngine/blob/main/LICENSE.txt</LicenceUrl>
+	<Licence>MIT</Licence>
+	<ReadmeUrl>https://github.com/HexaEngine/HexaEngine/blob/main/README.md</ReadmeUrl>
+	<DatePublished>2009-06-15T03:21:10</DatePublished>
+	<ProjectUrl>https://github.com/HexaEngine/HexaEngine</ProjectUrl>
+	<Tags>Core HexaEngine</Tags>
+	<Dependencies>
+		<Dependency packageId="hexaengine.core" version="1.0.0.0" />
+	</Dependencies>
+	<SupportedVersions>
+		<Version>*</Version>
+	</SupportedVersions>
+</Package>

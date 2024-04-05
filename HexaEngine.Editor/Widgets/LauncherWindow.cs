@@ -257,7 +257,7 @@
             avail.Y -= footerHeight;
             ImGui.BeginChild("Content", avail);
 
-            ImGui.Image(icon, new(48));
+            icon.Image(new(48));
             ImGui.SameLine();
             ImGui.Text("Create a new Project");
 
@@ -371,7 +371,7 @@
 
             Vector2 imageSize = new(entrySize.Y - padding.Y * 2);
 
-            ImGui.Image(icon, imageSize);
+            icon.Image(imageSize);
 
             Vector2 nextPos = new(pos.X + padding.X + imageSize.X + spacing.X, pos.Y + padding.Y);
 

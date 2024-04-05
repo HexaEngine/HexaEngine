@@ -16,7 +16,7 @@
     /// </summary>
     public unsafe class TouchDevice
     {
-        private static readonly Sdl sdl = Application.sdl;
+        private static readonly Sdl sdl = Application.Sdl;
         private readonly long id;
         private readonly string name;
         private readonly TouchDeviceType type;

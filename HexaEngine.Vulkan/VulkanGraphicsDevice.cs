@@ -1,56 +1,25 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
-    using Silk.NET.Vulkan.Extensions.KHR;
     using System;
-    using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
     using Format = Core.Graphics.Format;
 
-    public unsafe class VulkanGraphicsDevice : IGraphicsDevice
+    public unsafe class VulkanGraphicsDevice : DeviceChildBase, IGraphicsDevice
     {
-        public readonly Vk Vk;
-        public readonly Sdl Sdl;
-
-        private static readonly string[] DeviceExtensions = new string[]
-        {
-            "VK_KHR_swapchain"
-        };
-
-        private static readonly string[] ValidationLayers = new string[]
-        {
-            "VK_LAYER_KHRONOS_validation"
-        };
-
-        private readonly IWindow window;
-        public KhrSwapchain KhrSwapchain;
-        public KhrSurface KhrSurface;
-
-        public Instance Instance;
-        public PhysicalDevice PhysicalDevice;
+        public readonly Vk Vk = VulkanAdapter.Vk;
+        private readonly VulkanAdapter vulkanAdapter;
         public Device Device;
-        public SurfaceKHR Surface;
         public Queue Queue;
-        public VulkanSwapChain swapChain;
 
-        private bool validationLayersEnabled;
-
-        public VulkanGraphicsDevice(IWindow window)
+        public VulkanGraphicsDevice(VulkanAdapter vulkanAdapter, Device device, Queue queue)
         {
-            Sdl = Sdl.GetApi();
-            Vk = Vk.GetApi();
-            KhrSwapchain = new(Vk.Context);
-            KhrSurface = new(Vk.Context);
-            InitializeInstance();
-            InitializePhysicalDevice();
-            InitializeLogicalDevice();
-            this.window = window;
+            this.vulkanAdapter = vulkanAdapter;
+            Device = device;
+            Queue = queue;
         }
 
         public GraphicsBackend Backend => GraphicsBackend.Vulkan;
@@ -59,401 +28,29 @@
 
         public ITextureLoader TextureLoader { get; }
 
-        public string? DebugName { get; set; }
-
-        public bool IsDisposed { get; }
-
-        public nint NativePointer { get; }
         public IGPUProfiler Profiler { get; }
 
-        public event EventHandler? OnDisposed;
+        public PhysicalDevice PhysicalDevice => vulkanAdapter.PhysicalDevice;
 
-        #region Helpers
-
-        private byte** GetRequiredInstanceExtensions(out uint count)
+        public ISwapChain CreateSwapChain(SdlWindow window)
         {
-            Sdl sdl = Sdl.GetApi();
-            uint rcount = 0;
-            sdl.VulkanGetInstanceExtensions(window.GetWindow(), &rcount, (byte**)null);
-
-            byte** extensions = (byte**)AllocArray(rcount);
-            sdl.VulkanGetInstanceExtensions(window.GetWindow(), &rcount, extensions);
-
-            Trace.WriteLine("#### Required Extensions ####");
-            for (int i = 0; i < rcount; i++)
-            {
-                Trace.WriteLine(Marshal.PtrToStringUTF8(new IntPtr(extensions[i])));
-            }
-            count = rcount;
-            return extensions;
+            return CreateSwapChain(window.GetWindow());
         }
 
-        private byte** GetRequiredDeviceExtensions(out uint count)
+        public ISwapChain CreateSwapChain(Window* window)
         {
-            byte** ptrs = (byte**)AllocArray((uint)DeviceExtensions.Length);
-            for (int i = 0; i < DeviceExtensions.Length; i++)
-            {
-                ptrs[i] = DeviceExtensions[i].ToUTF8Ptr();
-            }
-
-            count = (uint)DeviceExtensions.Length;
-            return ptrs;
+            return vulkanAdapter.CreateSwapChain(this, window);
         }
 
-        private byte** GetValidationLayers(out uint count)
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            byte** ptrs = (byte**)AllocArray((uint)ValidationLayers.Length);
-            for (int i = 0; i < ValidationLayers.Length; i++)
-            {
-                ptrs[i] = ValidationLayers[i].ToUTF8Ptr();
-            }
-
-            count = (uint)ValidationLayers.Length;
-            return ptrs;
+            return CreateSwapChain(window.GetWindow(), swapChainDescription, fullscreenDescription);
         }
 
-        private bool CheckValidationLayerSupport()
+        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            uint count;
-            Vk.EnumerateInstanceLayerProperties(&count, null);
-
-            LayerProperties[] layers = new LayerProperties[count];
-            Vk.EnumerateInstanceLayerProperties(&count, layers);
-
-            fixed (LayerProperties* p = layers)
-            {
-                for (int i = 0; i < ValidationLayers.Length; i++)
-                {
-                    bool found = false;
-
-                    for (int j = 0; j < count; j++)
-                    {
-                        string? str = Marshal.PtrToStringUTF8(new IntPtr(p[j].LayerName));
-                        if (str?.Equals(ValidationLayers[i]) ?? false)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+            throw new NotImplementedException();
         }
-
-        private int RateDeviceSuitability(PhysicalDevice device)
-        {
-            PhysicalDeviceProperties properties;
-            Vk.GetPhysicalDeviceProperties(device, &properties);
-            PhysicalDeviceFeatures features;
-            Vk.GetPhysicalDeviceFeatures(device, &features);
-
-            int score = 0;
-
-            if (properties.DeviceType == PhysicalDeviceType.DiscreteGpu)
-            {
-                score += 1000;
-            }
-
-            score += (int)properties.Limits.MaxImageDimension2D;
-
-            if (!features.GeometryShader)
-            {
-                return 0;
-            }
-
-            return score;
-        }
-
-        private PhysicalDevice PickPhysicalDevice(PhysicalDevice[] devices)
-        {
-            Dictionary<int, PhysicalDevice> candidates = new();
-
-            for (int i = 0; i < devices.Length; i++)
-            {
-                candidates.Add(RateDeviceSuitability(devices[i]), devices[i]);
-            }
-
-            int scoreMax = candidates.Max(x => x.Key);
-            return candidates[scoreMax];
-        }
-
-        public struct QueueFamilyIndices
-        {
-            public uint? GraphicsFamily;
-            public uint? PresentFamily;
-
-            public bool IsComplete => GraphicsFamily is not null && PresentFamily is not null;
-        }
-
-        internal QueueFamilyIndices FindQueueFamilies(PhysicalDevice device, SurfaceKHR surface)
-        {
-            QueueFamilyIndices indices = default;
-
-            uint queueFamilyCount = 0;
-            Vk.GetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, null);
-
-            QueueFamilyProperties[] properties = new QueueFamilyProperties[queueFamilyCount];
-            Vk.GetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, properties);
-
-            for (uint i = 0; i < queueFamilyCount; i++)
-            {
-                var queueFamily = properties[i];
-                if (queueFamily.QueueFlags.HasFlag(QueueFlags.GraphicsBit))
-                {
-                    indices.GraphicsFamily = i;
-                }
-
-                bool presentSupport = false;
-                KhrSurface.GetPhysicalDeviceSurfaceSupport(device, i, surface, (Silk.NET.Core.Bool32*)&presentSupport);
-
-                if (presentSupport)
-                {
-                    indices.PresentFamily = i;
-                }
-
-                if (indices.IsComplete)
-                {
-                    break;
-                }
-            }
-
-            return indices;
-        }
-
-        internal SurfaceFormatKHR ChooseSwapSurfaceFormat(SurfaceFormatKHR[] availableFormats)
-        {
-            foreach (var availableFormat in availableFormats)
-            {
-                if (availableFormat.Format == Silk.NET.Vulkan.Format.B8G8R8A8Srgb && availableFormat.ColorSpace == ColorSpaceKHR.SpaceSrgbNonlinearKhr)
-                {
-                    return availableFormat;
-                }
-            }
-
-            return availableFormats[0];
-        }
-
-        internal static PresentModeKHR ChooseSwapPresentMode(PresentModeKHR[] availablePresentModes)
-        {
-            foreach (PresentModeKHR availablePresentMode in availablePresentModes)
-            {
-                if (availablePresentMode == PresentModeKHR.MailboxKhr)
-                {
-                    return availablePresentMode;
-                }
-            }
-
-            return PresentModeKHR.FifoKhr;
-        }
-
-        internal Extent2D ChooseSwapExtent(SurfaceCapabilitiesKHR capabilities)
-        {
-            return new()
-            {
-                // TODO: Window size instead of 0
-                Width = Math.Clamp(0, capabilities.MinImageExtent.Width, capabilities.MaxImageExtent.Width),
-                Height = Math.Clamp(0, capabilities.MinImageExtent.Height, capabilities.MaxImageExtent.Height)
-            };
-        }
-
-        #endregion Helpers
-
-        #region Instance
-
-        private void InitializeInstance()
-        {
-            Result result;
-
-            ApplicationInfo info = new()
-            {
-                SType = StructureType.ApplicationInfo,
-                ApiVersion = Vk.Version10,
-                ApplicationVersion = 0,
-                EngineVersion = 0,
-                PEngineName = null,
-                PApplicationName = null,
-                PNext = null
-            };
-
-            var extension_names = GetRequiredInstanceExtensions(out uint enabled_extension_count);
-
-            if (validationLayersEnabled && !CheckValidationLayerSupport())
-            {
-                throw new NotSupportedException();
-            }
-
-            InstanceCreateInfo createInfo = new()
-            {
-                SType = StructureType.InstanceCreateInfo,
-                PNext = null,
-                PApplicationInfo = &info,
-                EnabledExtensionCount = enabled_extension_count,
-                PpEnabledExtensionNames = extension_names,
-                PpEnabledLayerNames = null,
-                EnabledLayerCount = 0,
-            };
-
-            if (validationLayersEnabled)
-            {
-                createInfo.PpEnabledLayerNames = GetValidationLayers(out uint enabled_layer_count);
-                createInfo.EnabledLayerCount = enabled_layer_count;
-            }
-
-            Instance instance;
-            result = Vk.CreateInstance(&createInfo, null, &instance);
-            if (result != Result.Success)
-            {
-                throw new VulkanException(result);
-            }
-
-            this.Instance = instance;
-
-            uint extensionCount = 0;
-            Vk.EnumerateInstanceExtensionProperties((byte*)null, &extensionCount, (ExtensionProperties*)null);
-
-            ExtensionProperties[] extensionProperties = new ExtensionProperties[extensionCount];
-            Vk.EnumerateInstanceExtensionProperties((byte*)null, &extensionCount, (ExtensionProperties*)Unsafe.AsPointer(ref extensionProperties[0]));
-
-            Trace.WriteLine("#### Instance Extensions ####");
-            for (int i = 0; i < extensionCount; i++)
-            {
-                fixed (ExtensionProperties* extensionProperties_ptr = extensionProperties)
-                {
-                    Trace.WriteLine(Marshal.PtrToStringUTF8(new IntPtr(extensionProperties_ptr[i].ExtensionName)));
-                }
-            }
-        }
-
-        private void ShutdownInstance()
-        {
-            Vk.DestroyInstance(Instance, null);
-        }
-
-        #endregion Instance
-
-        #region Physical Device
-
-        private void InitializePhysicalDevice()
-        {
-            Result result;
-
-            uint count;
-            result = Vk.EnumeratePhysicalDevices(Instance, &count, null);
-            if (result != Result.Success)
-            {
-                throw new VulkanException(result);
-            }
-
-            PhysicalDevice[] physicalDevices = new PhysicalDevice[count];
-            result = Vk.EnumeratePhysicalDevices(Instance, &count, (PhysicalDevice*)Unsafe.AsPointer(ref physicalDevices[0]));
-            if (result != Result.Success)
-            {
-                throw new VulkanException(result);
-            }
-
-            PhysicalDevice = PickPhysicalDevice(physicalDevices);
-
-            if (PhysicalDevice.Handle is 0)
-            {
-                throw new Exception();
-            }
-
-            uint devExtensionCount = 0;
-            Vk.EnumerateDeviceExtensionProperties(PhysicalDevice, (byte*)null, &devExtensionCount, (ExtensionProperties*)null);
-
-            ExtensionProperties[] devExtensionProperties = new ExtensionProperties[devExtensionCount];
-            Vk.EnumerateDeviceExtensionProperties(PhysicalDevice, (byte*)null, &devExtensionCount, devExtensionProperties);
-        }
-
-        #endregion Physical Device
-
-        #region Logical Device
-
-        private void InitializeLogicalDevice()
-        {
-            Result result;
-
-            uint queue_count;
-            Vk.GetPhysicalDeviceQueueFamilyProperties(PhysicalDevice, &queue_count, null);
-
-            QueueFamilyProperties[] queue_props = new QueueFamilyProperties[queue_count];
-            Vk.GetPhysicalDeviceQueueFamilyProperties(PhysicalDevice, &queue_count, queue_props);
-
-            PhysicalDeviceFeatures features;
-            Vk.GetPhysicalDeviceFeatures(PhysicalDevice, &features);
-
-            uint graphicsQueueNodeIndex = uint.MaxValue;
-            for (uint i = 0; i < queue_count; i++)
-            {
-                if ((queue_props[i].QueueFlags & QueueFlags.GraphicsBit) != 0)
-                {
-                    if (graphicsQueueNodeIndex == uint.MaxValue)
-                    {
-                        graphicsQueueNodeIndex = i;
-                    }
-                }
-            }
-            uint graphics_queue_node_index = graphicsQueueNodeIndex;
-
-            float priority = 0;
-            DeviceQueueCreateInfo queueInfo = new()
-            {
-                SType = StructureType.DeviceQueueCreateInfo,
-                PNext = null,
-                QueueFamilyIndex = graphics_queue_node_index,
-                QueueCount = 1,
-                PQueuePriorities = &priority,
-            };
-
-            var enabledExtensionNames = GetRequiredDeviceExtensions(out uint enabledExtensionCount);
-
-            DeviceCreateInfo deviceInfo = new()
-            {
-                SType = StructureType.DeviceCreateInfo,
-                PNext = null,
-                QueueCreateInfoCount = 1,
-                PQueueCreateInfos = &queueInfo,
-                EnabledLayerCount = 0,
-                PpEnabledLayerNames = null,
-                EnabledExtensionCount = enabledExtensionCount,
-                PpEnabledExtensionNames = enabledExtensionNames,
-                PEnabledFeatures = &features
-            };
-
-            Device device = default;
-            result = Vk.CreateDevice(PhysicalDevice, &deviceInfo, null, &device);
-            if (result != Result.Success)
-            {
-                throw new VulkanException(result);
-            }
-
-            Device = device;
-
-            Queue queue;
-            Vk.GetDeviceQueue(Device, graphics_queue_node_index, 0, &queue);
-            Queue = queue;
-        }
-
-        private void ShutdownLogicalDevice()
-        {
-            Vk.DestroyDevice(Device, null);
-        }
-
-        private void CreateSurface()
-        {
-            SurfaceKHR surface;
-            VkHandle handle = new(Instance.Handle);
-            Sdl.VulkanCreateSurface(window.GetWindow(), handle, (VkNonDispatchableHandle*)&surface);
-            Surface = surface;
-        }
-
-        #endregion Logical Device
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
@@ -697,11 +294,6 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(SdlWindow window)
-        {
-            throw new NotImplementedException();
-        }
-
         public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
         {
             throw new NotImplementedException();
@@ -792,21 +384,6 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
         public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
@@ -845,6 +422,11 @@
         public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
         {
             throw new NotImplementedException();
+        }
+
+        protected override void DisposeCore()
+        {
+            Vk.DestroyDevice(Device, null);
         }
     }
 }

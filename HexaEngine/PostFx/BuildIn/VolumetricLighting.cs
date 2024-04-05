@@ -228,7 +228,10 @@
             volumetricLightBuffer.ResetCounter();
             for (int i = 0; i < lights.ActiveCount; i++)
             {
-                var light = lights.Active[i];
+                var lightSource = lights.Active[i];
+                if (lightSource is not Light light)
+                    continue;
+
                 if (!light.VolumetricsEnable)
                 {
                     continue;

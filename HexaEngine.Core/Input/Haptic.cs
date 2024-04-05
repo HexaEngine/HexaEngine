@@ -8,7 +8,7 @@
     /// </summary>
     public unsafe class Haptic
     {
-        private static readonly Sdl sdl = Application.sdl;
+        private static readonly Sdl sdl = Application.Sdl;
         private readonly int id;
         private readonly Silk.NET.SDL.Haptic* haptic;
 
