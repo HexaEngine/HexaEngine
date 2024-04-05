@@ -8,7 +8,7 @@
     {
         public static void Main(string[] args)
         {
-            Application.Boot(GraphicsBackend.Vulkan);
+            Application.Boot(GraphicsBackend.D3D11);
             EditorWindow window = new();
             Platform.Init(window, true);
             Application.Run(window);
