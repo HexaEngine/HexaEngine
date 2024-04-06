@@ -11,6 +11,8 @@
 	<ItemGroup>
 		<PackageReference Include="Silk.NET.Vulkan" Version="2.21.0" />
 		<PackageReference Include="Silk.NET.Vulkan.Extensions.KHR" Version="2.21.0" />
+		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
+		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
