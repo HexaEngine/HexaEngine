@@ -492,6 +492,11 @@
 	  <ProjectReference Include="..\HexaEngine.Editor\HexaEngine.Editor.csproj" />
 	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="SimpleScript.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Compile>
+	</ItemGroup>
 
 
 </Project>

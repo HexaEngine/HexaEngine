@@ -2,10 +2,10 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Components;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Scripts;
 
     public class ScriptBehaviourEditor : IObjectEditor
     {
@@ -37,43 +37,20 @@
                 return false;
             }
 
-            var types = AssemblyManager.GetAssignableTypes(typeof(IScriptBehaviour));
-            var names = AssemblyManager.GetAssignableTypeNames(typeof(IScriptBehaviour));
+            AssetRef val = component.ScriptRef;
 
-            if (types.Count == 0)
+            bool changed = ComboHelper.ComboForAssetRef(guiName.Id, ref val, AssetType.Script);
+            if (changed)
             {
-                return false;
+                component.ScriptRef = val;
             }
 
-            bool changed = false;
+            Type? type = component.ScriptType;
 
-            var type = component.ScriptType != null ? AssemblyManager.GetType(component.ScriptType) : null;
-
-            int index = type != null ? types.IndexOf(type) : -1;
-
-            if (ImGui.Combo(guiName.Id, ref index, names, names.Length))
-            {
-                if (editor != null)
-                    editor.Instance = null;
-                component.ScriptType = types[index].FullName;
-                editor = null;
-                type = types[index];
-                changed = true;
-            }
-
-            if (editor == null && type != null)
+            if (type != null)
             {
                 editor = ObjectEditorFactory.CreateEditor(type);
                 editor.Instance = component.Instance;
-            }
-
-            if (editor != null && editor.Instance == null)
-            {
-                editor.Instance = component.Instance;
-            }
-
-            if (editor != null && editor.Instance != null && !editor.IsEmpty)
-            {
                 ImGui.Separator();
                 changed |= editor.Draw(context);
             }

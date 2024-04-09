@@ -15,7 +15,6 @@
                 ".model" => true,
                 ".matlib" => true,
                 ".hexlvl" => true,
-                ".cs" => true,
                 _ => false,
             };
         }
@@ -32,7 +31,6 @@
                 ".model" => AssetType.Model,
                 ".matlib" => AssetType.MaterialLibrary,
                 ".hexlvl" => AssetType.Scene,
-                ".cs" => AssetType.Script,
                 _ => AssetType.Unknown,
             };
 

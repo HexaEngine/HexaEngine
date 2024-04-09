@@ -2,8 +2,10 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
     using System.Reflection;
@@ -15,15 +17,20 @@
         private ScriptFlags flags;
         private IScriptBehaviour? instance;
         private PropertyInfo[] properties;
-        private string? scriptType;
+        private AssetRef scriptRef;
+        private string? scriptTypeName;
+        private Type? scriptType;
         private Dictionary<string, object?> propertyValues = new();
 
-        public string? ScriptType
+        [EditorProperty("Script", AssetType.Script)]
+        public AssetRef ScriptRef
         {
-            get => scriptType;
+            get => scriptRef;
             set
             {
-                scriptType = value;
+                scriptRef = value;
+                scriptTypeName = value.GetMetadata()?.Name;
+
                 DestroyInstance();
                 CreateInstance();
             }
@@ -111,10 +118,15 @@
             }
         }
 
+        [JsonIgnore]
+        public Type? ScriptType => scriptType;
+
         public event Action<IHasFlags<ScriptFlags>, ScriptFlags>? FlagsChanged;
 
         public void Awake()
         {
+            AssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
+            AssemblyManager.AssemblyLoaded += AssemblyLoaded;
             CreateInstance();
             if (Application.InEditMode)
                 return;
@@ -130,6 +142,23 @@
                     Logger.Log(e);
                 }
             }
+        }
+
+        private void AssembliesUnloaded(object? sender, EventArgs? e)
+        {
+            if (scriptType == null)
+            {
+                return;
+            }
+
+            ObjectEditorFactory.DestroyEditor(scriptType);
+            scriptType = null;
+            DestroyInstance();
+        }
+
+        private void AssemblyLoaded(object? sender, Assembly e)
+        {
+            CreateInstance();
         }
 
         public void Update()
@@ -168,6 +197,8 @@
 
         public void Destroy()
         {
+            AssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
+            AssemblyManager.AssemblyLoaded -= AssemblyLoaded;
             if (Application.InEditMode || instance == null)
             {
                 instance = null;
@@ -188,21 +219,21 @@
 
         public void CreateInstance()
         {
-            if (ScriptType == null)
+            if (scriptTypeName == null)
             {
                 return;
             }
 
-            Type? type = AssemblyManager.GetType(ScriptType);
-            if (type == null)
+            scriptType = AssemblyManager.GetType(scriptTypeName);
+            if (scriptType == null)
             {
-                Logger.Error($"Couldn't load script: {ScriptType}");
+                Logger.Error($"Couldn't load script: {scriptTypeName}");
                 return;
             }
 
             try
             {
-                var methods = type.GetMethods();
+                var methods = scriptType.GetMethods();
                 flags = ScriptFlags.None;
                 for (int i = 0; i < methods.Length; i++)
                 {
@@ -232,8 +263,10 @@
 
                 FlagsChanged?.Invoke(this, flags);
 
-                instance = Activator.CreateInstance(type) as IScriptBehaviour;
-                properties = type.GetProperties();
+                instance = Activator.CreateInstance(scriptType) as IScriptBehaviour;
+                properties = scriptType.GetProperties();
+
+                List<string> toRemove = new(propertyValues.Keys);
 
                 for (int i = 0; i < properties.Length; i++)
                 {
@@ -242,13 +275,44 @@
                     {
                         if (propertyValues.TryGetValue(prop.Name, out object? value))
                         {
+                            if (prop.PropertyType.IsInstanceOfType(value))
+                            {
+                                value = propertyValues[prop.Name] = value;
+                            }
+                            else if (prop.PropertyType == typeof(float))
+                            {
+                                value = propertyValues[prop.Name] = (float)(double)value;
+                            }
+                            else if (prop.PropertyType == typeof(uint))
+                            {
+                                value = propertyValues[prop.Name] = (uint)(long)value;
+                            }
+                            else if (prop.PropertyType == typeof(int))
+                            {
+                                value = propertyValues[prop.Name] = (int)(long)value;
+                            }
+                            else if (prop.PropertyType.IsEnum)
+                            {
+                                value = propertyValues[prop.Name] = Enum.ToObject(prop.PropertyType, (int)(long)value);
+                            }
+                            else if (!prop.PropertyType.IsInstanceOfType(value))
+                            {
+                                value = propertyValues[prop.Name] = prop.GetValue(value);
+                            }
+
                             prop.SetValue(instance, value);
+                            toRemove.Remove(prop.Name);
                         }
                         else
                         {
                             propertyValues.Add(prop.Name, prop.GetValue(instance));
                         }
                     }
+                }
+
+                for (int i = 0; i < toRemove.Count; i++)
+                {
+                    propertyValues.Remove(toRemove[i]);
                 }
             }
             catch (Exception e)

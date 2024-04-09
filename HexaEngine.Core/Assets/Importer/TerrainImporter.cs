@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
+    using System;
     using System.IO;
 
     public class TerrainImporter : IAssetImporter
@@ -11,7 +12,7 @@
 
         public bool CanImport(ReadOnlySpan<char> fileExtension)
         {
-            return fileExtension == ".terrain";
+            return fileExtension.SequenceEqual(".terrain");
         }
 
         public void Import(TargetPlatform targetPlatform, ImportContext context)

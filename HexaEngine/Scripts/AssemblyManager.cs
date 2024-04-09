@@ -2,6 +2,9 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Runtime.Loader;
@@ -78,13 +81,14 @@
                 _typeCache.Add(type.GUID, type);
             }
 
-            assemblies.Add(assembly);
-            AssemblyLoaded?.Invoke(null, assembly);
-
             _typeToTypeCache.Clear();
             _typeNameCache.Clear();
 
+            assemblies.Add(assembly);
+
             loadLock.Set();
+
+            AssemblyLoaded?.Invoke(null, assembly);
 
             return assembly;
         }
@@ -110,7 +114,7 @@
                     Logger.Error("Failed to get assignable types");
                     Logger.Log(ex);
                     MessageBox.Show("Failed to get assignable types", ex.Message);
-                    return Array.Empty<Type>();
+                    return [];
                 }
             }
             return result;
@@ -127,7 +131,7 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
-                return Array.Empty<Type>();
+                return [];
 
             if (!_typeToTypeCache.TryGetValue(type, out var result))
             {

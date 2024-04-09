@@ -12,6 +12,7 @@ namespace HexaEngine.Core.Assets
 
         static AssetImporterRegistry()
         {
+            RegisterImporter<ScriptImporter>();
             RegisterImporter<TextureImporter>();
             RegisterImporter<ModelImporter>();
             RegisterImporter<AnimationImporter>();

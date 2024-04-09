@@ -80,6 +80,32 @@
         }
 
         /// <summary>
+        /// Destroys an object editor for a specified type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        public static void DestroyEditor(Type type)
+        {
+            lock (editors)
+            {
+                if (editors.TryGetValue(type, out var editor))
+                {
+                    editors.Remove(type);
+                    editor.Dispose();
+                    editor.Instance = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Destroys an object editor for a specified type.
+        /// </summary>
+        /// <typeparam name="T">The generic type.</typeparam>
+        public static void DestroyEditor<T>()
+        {
+            DestroyEditor(typeof(T));
+        }
+
+        /// <summary>
         /// Creates an object editor for a specified type.
         /// </summary>
         /// <param name="type">The type for which an object editor is created.</param>
