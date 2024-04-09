@@ -3,8 +3,9 @@
     public class Artifact
     {
         private string name;
+        private string path;
 
-        public Artifact(string name, Guid parentGuid, Guid sourceGuid, Guid guid, AssetType type, string path)
+        public Artifact(string name, Guid parentGuid, Guid sourceGuid, Guid guid, AssetType type)
         {
             DisplayName = $"{name}##{guid}";
             this.name = name;
@@ -12,7 +13,6 @@
             SourceGuid = sourceGuid;
             Guid = guid;
             Type = type;
-            Path = path;
         }
 
         [JsonIgnore]
@@ -29,7 +29,8 @@
 
         public AssetType Type { get; }
 
-        public string Path { get; }
+        [JsonIgnore]
+        public string Path => path ??= System.IO.Path.Combine(ArtifactDatabase.CacheFolder, Guid.ToString());
 
         public Stream OpenRead()
         {

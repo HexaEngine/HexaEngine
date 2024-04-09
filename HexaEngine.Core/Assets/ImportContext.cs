@@ -58,10 +58,9 @@
             else
             {
                 Guid guid = GetGuid(name);
-                string outputPath = Path.Combine(ArtifactDatabase.CacheFolder, guid.ToString());
-                Artifact artifact = new(name, ParentGuid, sourceAsset.Guid, guid, type, outputPath);
+                Artifact artifact = new(name, ParentGuid, sourceAsset.Guid, guid, type);
                 ArtifactDatabase.AddArtifact(artifact);
-                path = outputPath;
+                path = artifact.Path;
                 return artifact;
             }
         }
@@ -78,10 +77,9 @@
             }
             else
             {
-                string outputPath = Path.Combine(ArtifactDatabase.CacheFolder, guid.ToString());
-                Artifact artifact = new(name, ParentGuid, sourceAsset.Guid, guid, type, outputPath);
+                Artifact artifact = new(name, ParentGuid, sourceAsset.Guid, guid, type);
                 ArtifactDatabase.AddArtifact(artifact);
-                path = outputPath;
+                path = artifact.Path;
                 return artifact;
             }
         }
