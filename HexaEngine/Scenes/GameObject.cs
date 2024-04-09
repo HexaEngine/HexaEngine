@@ -25,7 +25,7 @@
         private InternalEditorFlags editorFlags = InternalEditorFlags.None;
         private Type? type;
 
-        public Transform Transform = new();
+        private Transform transform = new();
         private Guid guid = Guid.NewGuid();
         private string name = string.Empty;
         private string? fullName;
@@ -212,6 +212,8 @@
             set => SetFlagAndNotify(InternalGameObjectFlags.Hidden, value);
         }
 
+        public Transform Transform { get => transform; set => OverwriteTransform(transform); }
+
         [JsonIgnore]
         public bool IsVisible => Application.InEditMode ? IsEditorVisible && IsEnabled : IsEnabled;
 
@@ -354,8 +356,8 @@
 
         protected void OverwriteTransform(Transform transform)
         {
-            Transform.Updated -= TransformUpdated;
-            Transform = transform;
+            this.transform.Updated -= TransformUpdated;
+            this.transform = transform;
             transform.Updated += TransformUpdated;
         }
 

@@ -115,12 +115,14 @@ namespace HexaEngine.Graphics.Passes
             deferredSrvs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
             deferredSrvs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
             deferredSrvs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            deferredSrvs[8] = null;
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
                 if (light is DirectionalLight directional && directional.ShadowMapEnable)
                 {
                     deferredSrvs[8] = (void*)(directional.GetShadowMap()?.NativePointer ?? 0);
+                    break;
                 }
             }
 

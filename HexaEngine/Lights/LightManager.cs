@@ -25,8 +25,6 @@
         public readonly StructuredUavBuffer<LightData> LightBuffer;
         public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
-        private bool isDirty = false;
-
         public LightManager(IGraphicsDevice device)
         {
             this.device = device;
@@ -56,7 +54,6 @@
             if (gameObject is Light light)
             {
                 lightUpdateQueue.Enqueue(light);
-                isDirty = true;
             }
         }
 
@@ -65,7 +62,6 @@
             if (sender is Light light)
             {
                 lightUpdateQueue.Enqueue(light);
-                isDirty = true;
             }
         }
 
@@ -74,7 +70,6 @@
             lock (lights)
             {
                 lights.Clear();
-                isDirty = true;
             }
         }
 
@@ -113,7 +108,6 @@
                 {
                     light.OnTransformed += LightTransformed;
                     light.PropertyChanged += LightPropertyChanged;
-                    isDirty = true;
                 }
             }
         }
@@ -135,7 +129,6 @@
                 {
                     light.PropertyChanged -= LightPropertyChanged;
                     light.OnTransformed -= LightTransformed;
-                    isDirty = true;
                 }
 
                 lights.Remove(lightSource);
@@ -230,12 +223,6 @@
 
         private unsafe void UpdateLights(Camera camera)
         {
-            if (!isDirty)
-            {
-                return;
-            }
-            isDirty = false;
-
             GlobalProbes.ResetCounter();
             LightBuffer.ResetCounter();
             ShadowDataBuffer.ResetCounter();

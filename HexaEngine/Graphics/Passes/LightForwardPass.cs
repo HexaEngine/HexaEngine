@@ -113,12 +113,14 @@
             forwardSRVs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
             forwardSRVs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
             forwardSRVs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
+            forwardSRVs[8] = null;
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
                 if (light is DirectionalLight directional && directional.ShadowMapEnable)
                 {
                     forwardSRVs[8] = (void*)(directional.GetShadowMap()?.NativePointer ?? 0);
+                    break;
                 }
             }
 

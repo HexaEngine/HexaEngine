@@ -17,14 +17,12 @@
     {
         private DepthStencil? csmDepthBuffer;
         private Texture2D? csmBuffer;
-        public new CameraTransform Transform = new();
 
         private readonly BoundingFrustum[] shadowFrustra = new BoundingFrustum[8];
 
         private int cascadeCount = 4;
         private CascadesSplitMode splitMode = CascadesSplitMode.Log;
         private float splitLambda = 0.85f;
-
         public const int MaxCascadeCount = 8;
 
         public DirectionalLight() : base()
@@ -33,18 +31,6 @@
             {
                 shadowFrustra[i] = new();
             }
-            OverwriteTransform(Transform);
-        }
-
-        [JsonConstructor]
-        public DirectionalLight(CameraTransform transform, Vector4 color) : base(color)
-        {
-            Transform = transform;
-            for (int i = 0; i < 8; i++)
-            {
-                shadowFrustra[i] = new();
-            }
-            OverwriteTransform(Transform);
         }
 
         [JsonIgnore]

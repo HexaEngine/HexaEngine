@@ -16,8 +16,6 @@
     [EditorGameObject<Spotlight>("Spotlight")]
     public class Spotlight : Light
     {
-        public new CameraTransform Transform = new();
-
         private float coneAngle;
         private float blend;
         private Matrix4x4 view;
@@ -35,14 +33,6 @@
 
         public Spotlight()
         {
-            OverwriteTransform(Transform);
-        }
-
-        [JsonConstructor]
-        public Spotlight(CameraTransform transform, Vector4 color) : base(color)
-        {
-            Transform = transform;
-            OverwriteTransform(Transform);
         }
 
         [JsonIgnore]

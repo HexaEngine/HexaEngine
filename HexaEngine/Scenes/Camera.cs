@@ -30,33 +30,28 @@
     [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject
     {
-        public new CameraTransform Transform = new();
         private float focalLength = 50;
         private float sensorSize = 36;
+        private CameraTransform transform = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
         /// </summary>
         public Camera()
         {
+            OverwriteTransform(transform);
             focalLength = FovToFocalLength(Transform.Fov, sensorSize);
-            OverwriteTransform(Transform);
             AddComponentSingleton<SphereSelectionComponent>();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Camera"/> class.
-        /// </summary>
-        [JsonConstructor]
-        public Camera(ProjectionType projectionType, float fov, float far, float near, float width, float height)
+        public new CameraTransform Transform
         {
-            OverwriteTransform(Transform);
-            ProjectionType = projectionType;
-            Fov = fov;
-            Far = far;
-            Near = near;
-            Width = width;
-            Height = height;
+            get => transform;
+            set
+            {
+                transform = value;
+                OverwriteTransform(value);
+            }
         }
 
         [EditorProperty("Visible Layers")]
