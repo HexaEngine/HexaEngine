@@ -64,7 +64,7 @@
             isFocused = ImGui.IsWindowFocused();
             isHovered = ImGui.IsWindowHovered();
 
-            if (isHovered || EditorCameraController.CapturedMouse)
+            if (isHovered || EditorCameraController.CapturedMouse || EditorCameraController.FirstFrame)
             {
                 EditorCameraController.UpdateEditorCamera();
             }

@@ -106,6 +106,8 @@
 
         public static bool CapturedMouse => capturedMouse;
 
+        public static bool FirstFrame => first;
+
         public static Vector2 UpdateMouse(bool leftCtrl)
         {
             Vector2 delta = Vector2.Zero;

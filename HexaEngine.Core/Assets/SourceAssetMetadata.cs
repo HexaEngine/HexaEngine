@@ -259,7 +259,7 @@
 
         public void SetValue<T>(string key, T value)
         {
-            GetOrCreateKey(key, value);
+            Additional[key] = value;
         }
 
         public T? GetAdditionalMetadata<T>(string key) where T : class
