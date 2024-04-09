@@ -14,7 +14,7 @@
     {
 #nullable disable
         private IGraphicsPipelineState pipeline;
-        private ResourceRef<ConstantBuffer<GrainParams>> paramsBuffer;
+        private ConstantBuffer<GrainParams> paramsBuffer;
         private ResourceRef<ISamplerState> samplerState;
         private float grainIntensity = 0.05f;
         private float grainSize = 1.6f;
@@ -80,7 +80,7 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            paramsBuffer = creator.CreateConstantBuffer<GrainParams>("GRAIN_CONSTANT_BUFFER", CpuAccessFlags.Write);
+            paramsBuffer = new(device, CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
@@ -93,7 +93,7 @@
 
         public override void Update(IGraphicsContext context)
         {
-            paramsBuffer.Value.Update(context, new(Viewport.Width, Viewport.Height, Time.CumulativeFrameTime, grainIntensity, grainSize, grainColored, grainColorAmount, grainLumaAmount));
+            paramsBuffer.Update(context, new(Viewport.Width, Viewport.Height, Time.CumulativeFrameTime, grainIntensity, grainSize, grainColored, grainColorAmount, grainLumaAmount));
         }
 
         /// <inheritdoc/>
@@ -102,7 +102,7 @@
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetShaderResource(0, Input);
-            context.PSSetConstantBuffer(0, paramsBuffer.Value);
+            context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, samplerState.Value);
             context.SetPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
@@ -117,6 +117,7 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
+            paramsBuffer.Dispose();
         }
     }
 }
