@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
@@ -456,10 +457,32 @@
                     var oldVal = val;
                     if (ImGui.InputFloat3("##Scale", ref val))
                     {
+                        if (transform.UniformScale)
+                        {
+                            val = new(oldVal.X != val.X ? val.X : oldVal.Y != val.Y ? val.Y : val.Z);
+                        }
                         History.Default.Do("Set Scale", transform, oldVal, val, SetScale, RestoreScale);
                         changed = true;
                     }
                 }
+
+                ImGui.SameLine();
+
+                if (ImGui.SmallButton(transform.UniformScale ? "\xF19F##UniformScale" : "\xF19E##UniformScale"))
+                {
+                    if (!transform.UniformScale)
+                    {
+                        flags |= (int)TransformFlags.UniformScale;
+                    }
+                    else
+                    {
+                        flags &= ~(int)TransformFlags.UniformScale;
+                    }
+
+                    History.Default.Do("Uniform Scale On/Off", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
+                    changed = true;
+                }
+                TooltipHelper.Tooltip("Uniform Scale On/Off");
 
                 ImGui.EndTable();
             }

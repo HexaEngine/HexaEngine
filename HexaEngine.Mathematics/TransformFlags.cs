@@ -77,5 +77,10 @@
         /// Flag indicating the transformation is dirty and needs recalculation.
         /// </summary>
         IsDirty = 512,
+
+        /// <summary>
+        /// Flag indicating that scale should be uniform on all axes.
+        /// </summary>
+        UniformScale = 1024,
     }
 }

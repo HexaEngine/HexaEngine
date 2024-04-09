@@ -557,6 +557,32 @@
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether all scale axes are uniform.
+        /// </summary>
+        [JsonIgnore]
+        public bool UniformScale
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return (flags & TransformFlags.UniformScale) == TransformFlags.UniformScale;
+            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+            set
+            {
+                if (value)
+                {
+                    flags |= TransformFlags.UniformScale;
+                }
+                else
+                {
+                    flags &= ~TransformFlags.UniformScale;
+                }
+                OnFlagsChanged(flags);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the X-axis position is locked.
         /// </summary>
         [JsonIgnore]
@@ -1082,6 +1108,10 @@
             scale.X = (flags & TransformFlags.LockScaleX) != 0 ? this.scale.X : scale.X;
             scale.Y = (flags & TransformFlags.LockScaleY) != 0 ? this.scale.Y : scale.Y;
             scale.Z = (flags & TransformFlags.LockScaleZ) != 0 ? this.scale.Z : scale.Z;
+            if ((flags & TransformFlags.UniformScale) != 0)
+            {
+                scale = new(scale.X != this.scale.X ? scale.X : scale.Y != this.scale.Y ? scale.Y : scale.Z);
+            }
             return scale;
         }
 
