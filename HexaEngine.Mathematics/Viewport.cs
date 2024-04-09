@@ -9,7 +9,7 @@
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public readonly struct Viewport : IEquatable<Viewport>
+    public struct Viewport : IEquatable<Viewport>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Viewport"/> struct.
@@ -108,32 +108,32 @@
         /// <summary>
         /// Position of the pixel coordinate of the upper-left corner of the viewport.
         /// </summary>
-        public float X { get; }
+        public float X;
 
         /// <summary>
         /// Position of the pixel coordinate of the upper-left corner of the viewport.
         /// </summary>
-        public float Y { get; }
+        public float Y;
 
         /// <summary>
         /// Width dimension of the viewport.
         /// </summary>
-        public float Width { get; }
+        public float Width;
 
         /// <summary>
         /// Height dimension of the viewport.
         /// </summary>
-        public float Height { get; }
+        public float Height;
 
         /// <summary>
         /// Gets or sets the minimum depth of the clip volume.
         /// </summary>
-        public float MinDepth { get; }
+        public float MinDepth;
 
         /// <summary>
         /// Gets or sets the maximum depth of the clip volume.
         /// </summary>
-        public float MaxDepth { get; }
+        public float MaxDepth;
 
         /// <summary>
         /// Gets the aspect ratio used by the viewport.

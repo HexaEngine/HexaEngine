@@ -18,6 +18,8 @@
         private static Vector3 orbitPosition = new(10, 0, 0);
         private static bool first = true;
         private static EditorCameraDimension dimension;
+        private static int ignoreMouseInputFrames;
+        private static bool capturedMouse;
         public const float Speed = 10F;
         public const float AngularSpeed = 1F;
 
@@ -102,19 +104,79 @@
             }
         }
 
+        public static bool CapturedMouse => capturedMouse;
+
+        public static Vector2 UpdateMouse(bool leftCtrl)
+        {
+            Vector2 delta = Vector2.Zero;
+            bool mouseDown = ImGui.IsMouseDown(ImGuiMouseButton.Right);
+            if (mouseDown && !leftCtrl)
+            {
+                capturedMouse = true;
+                ImGui.SetNextFrameWantCaptureMouse(true);
+                ImGui.SetMouseCursor(ImGuiMouseCursor.None);
+                delta = Mouse.Delta;
+
+                if (ignoreMouseInputFrames != 0 && delta != Vector2.Zero)
+                {
+                    delta = Vector2.Zero;
+                    ignoreMouseInputFrames--;
+                }
+                else
+                {
+                    Vector2 mousePos = ImGui.GetMousePos();
+
+                    Vector2 newMousePos = mousePos;
+
+                    Viewport viewport = SceneWindow.ImGuiViewport;
+
+                    const float padding = 20;
+
+                    Vector2 viewportMin = viewport.Offset + new Vector2(padding);
+                    Vector2 viewportMax = viewportMin + viewport.Size - new Vector2(padding * 2);
+
+                    if (mousePos.X >= viewportMax.X)
+                    {
+                        newMousePos.X = viewportMin.X + mousePos.X % viewportMax.X;
+                    }
+                    else if (mousePos.X < viewportMin.X)
+                    {
+                        newMousePos.X = viewportMax.X;
+                    }
+
+                    if (mousePos.Y >= viewportMax.Y)
+                    {
+                        newMousePos.Y = viewportMin.Y + mousePos.Y % viewportMax.Y;
+                    }
+                    else if (mousePos.Y < viewportMin.Y)
+                    {
+                        newMousePos.Y = viewportMax.Y;
+                    }
+
+                    if (newMousePos != mousePos)
+                    {
+                        ImGui.TeleportMousePos(newMousePos);
+                        ignoreMouseInputFrames = 2;
+                    }
+                }
+            }
+            else if (!mouseDown)
+            {
+                capturedMouse = false;
+                ImGui.SetNextFrameWantCaptureMouse(false);
+            }
+
+            return delta;
+        }
+
         public static void UpdateEditorCamera()
         {
             var leftCtrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
+            var delta = UpdateMouse(leftCtrl);
             if (dimension == EditorCameraDimension.Dim3D)
             {
                 if (editorCameraMode == EditorCameraMode.Orbit)
                 {
-                    Vector2 delta = Vector2.Zero;
-                    if (ImGui.IsMouseDown(ImGuiMouseButton.Right) && !leftCtrl)
-                    {
-                        delta = Mouse.Delta;
-                    }
-
                     float wheel = 0;
                     if (leftCtrl)
                     {
@@ -148,12 +210,6 @@
                 }
                 if (editorCameraMode == EditorCameraMode.Free && !leftCtrl)
                 {
-                    Vector2 delta = Vector2.Zero;
-                    if (ImGui.IsMouseDown(ImGuiMouseButton.Right))
-                    {
-                        delta = Mouse.Delta;
-                    }
-
                     var position = editorCamera.Transform.Position;
                     var rotation = editorCamera.Transform.Orientation.ToYawPitchRoll();
 
@@ -161,15 +217,20 @@
                     {
                         var deltaT = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
                         rotation += deltaT;
-                        if (rotation.Y <= 4.7123889804f & rotation.Y >= MathUtil.PI)
+
+                        const float maxAngle = 1.5690509975f; // 89.9° (90° would cause nan values.)
+
+                        if (rotation.Y < -maxAngle)
                         {
-                            rotation = new Vector3(rotation.X, 4.7123889804f, rotation.Z);
+                            rotation = new Vector3(rotation.X, -maxAngle, rotation.Z);
                         }
-                        if (rotation.Y >= MathUtil.PIDIV2 & rotation.Y <= 4.7123889804f)
+                        if (rotation.Y > maxAngle)
                         {
-                            rotation = new Vector3(rotation.X, MathUtil.PIDIV2, rotation.Z);
+                            rotation = new Vector3(rotation.X, maxAngle, rotation.Z);
                         }
                     }
+
+                    ImGui.Text(rotation.ToString());
 
                     var speedMult = Speed;
                     if (ImGui.IsKeyDown(ImGuiKey.LeftShift))
@@ -217,12 +278,6 @@
             }
             else if (dimension == EditorCameraDimension.Dim2D && !leftCtrl)
             {
-                Vector2 delta = Vector2.Zero;
-                if (ImGui.IsMouseDown(ImGuiMouseButton.Right))
-                {
-                    delta = Mouse.Delta;
-                }
-
                 var position = editorCamera.Transform.Position;
 
                 if (delta.X != 0 | delta.Y != 0 || first)
