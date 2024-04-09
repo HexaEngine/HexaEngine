@@ -204,6 +204,26 @@
         event EventHandler<TakeFocusEventArgs>? TakeFocus;
 
         /// <summary>
+        /// Event triggered when the user drops a file/text onto the window.
+        /// </summary>
+        event EventHandler<DropEventArgs>? DropBegin;
+
+        /// <summary>
+        /// Event triggered when the user drops a file onto the window.
+        /// </summary>
+        event EventHandler<DropFileEventArgs>? DropFile;
+
+        /// <summary>
+        /// Event triggered when the user drops a text onto the window.
+        /// </summary>
+        event EventHandler<DropTextEventArgs>? DropText;
+
+        /// <summary>
+        /// Event triggered when the user drops a file/text onto the window and it's completed.
+        /// </summary>
+        event EventHandler<DropEventArgs>? DropComplete;
+
+        /// <summary>
         /// Shows the window.
         /// </summary>
         void Show();

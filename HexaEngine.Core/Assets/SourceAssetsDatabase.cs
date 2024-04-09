@@ -771,6 +771,30 @@
             await ImportInternalAsync(null, targetLocation, newMetadata, null, null);
         }
 
+        public static void DeleteLeftovers(string file, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
+        {
+            initLock.Wait();
+
+            SourceAssetMetadata? metaToDelete;
+
+            if (file.StartsWith(rootFolder))
+            {
+                string relative = Path.GetRelativePath(rootFolder, file);
+                metaToDelete = GetMetadata(relative);
+            }
+            else
+            {
+                metaToDelete = GetMetadata(file);
+            }
+
+            if (metaToDelete == null)
+            {
+                throw new MetadataNotFoundException(file);
+            }
+
+            DeleteLeftovers(metaToDelete, behavior);
+        }
+
         public static void Delete(string file, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
         {
             initLock.Wait();
@@ -832,6 +856,40 @@
             }
 
             File.Delete(fileToDelete);
+            File.Delete(metaToDelete.MetadataFilePath);
+        }
+
+        public static void DeleteLeftovers(SourceAssetMetadata metaToDelete, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
+        {
+            initLock.Wait();
+
+            string fileToDelete = metaToDelete.GetFullPath();
+
+            ArtifactDatabase.RemoveArtifactsBySource(metaToDelete.Guid);
+
+            lock (_lock)
+            {
+                if (behavior == DeleteBehavior.DeleteChildren)
+                {
+                    for (int i = 0; i < sourceAssets.Count; i++)
+                    {
+                        var asset = sourceAssets[i];
+                        if (asset.ParentGuid == metaToDelete.Guid)
+                        {
+                            Delete(asset);
+                            // needs to be a full reset, since we recursively remove files.
+                            i = 0;
+                        }
+                    }
+                }
+                Remove(metaToDelete, behavior == DeleteBehavior.UnlinkChildren);
+            }
+
+            if (File.Exists(fileToDelete))
+            {
+                File.Delete(fileToDelete);
+            }
+
             File.Delete(metaToDelete.MetadataFilePath);
         }
 

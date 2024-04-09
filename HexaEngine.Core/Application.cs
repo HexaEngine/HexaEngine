@@ -281,6 +281,7 @@
             Sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
             Sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
             Sdl.SetHint(Sdl.HintJoystickRawinput, "0");
+
             Sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
 
             SdlCheckError();
@@ -728,15 +729,37 @@
                     break;
 
                 case EventType.Dropfile:
+                    {
+                        var even = evnt.Drop;
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessDropFile(even);
+                        Sdl.Free(evnt.Drop.File);
+                    }
                     break;
 
                 case EventType.Droptext:
+                    {
+                        var even = evnt.Drop;
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessDropText(even);
+                        Sdl.Free(evnt.Drop.File);
+                    }
                     break;
 
                 case EventType.Dropbegin:
+                    {
+                        var even = evnt.Drop;
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessDropBegin(even);
+                    }
                     break;
 
                 case EventType.Dropcomplete:
+                    {
+                        var even = evnt.Drop;
+                        if (even.WindowID == mainWindow.WindowID)
+                            ((SdlWindow)mainWindow).ProcessDropComplete(even);
+                    }
                     break;
 
                 case EventType.Audiodeviceadded:

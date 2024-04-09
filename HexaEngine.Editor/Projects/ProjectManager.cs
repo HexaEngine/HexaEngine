@@ -177,10 +177,12 @@
 
         private static void FileSystemFileDeleted(Core.IO.FileSystemEventArgs args)
         {
+            SourceAssetsDatabase.DeleteLeftovers(args.FullPath);
         }
 
         private static void FileSystemFileCreated(Core.IO.FileSystemEventArgs args)
         {
+            SourceAssetsDatabase.ImportFileAsync(args.FullPath);
         }
 
         private static void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)

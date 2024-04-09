@@ -50,6 +50,9 @@
         private readonly MouseWheelEventArgs mouseWheelEventArgs = new();
         private readonly TouchEventArgs touchEventArgs = new();
         private readonly TouchMoveEventArgs touchMotionEventArgs = new();
+        private readonly DropEventArgs dropEventArgs = new();
+        private readonly DropFileEventArgs dropFileEventArgs = new();
+        private readonly DropTextEventArgs dropTextEventArgs = new();
 
         private Window* window;
         private bool created;
@@ -691,6 +694,26 @@
         public event EventHandler<TouchMoveEventArgs>? TouchMotionInput;
 
         /// <summary>
+        /// Event triggered when the user drops a file/text onto the window.
+        /// </summary>
+        public event EventHandler<DropEventArgs>? DropBegin;
+
+        /// <summary>
+        /// Event triggered when the user drops a file onto the window.
+        /// </summary>
+        public event EventHandler<DropFileEventArgs>? DropFile;
+
+        /// <summary>
+        /// Event triggered when the user drops a text onto the window.
+        /// </summary>
+        public event EventHandler<DropTextEventArgs>? DropText;
+
+        /// <summary>
+        /// Event triggered when the user drops a file/text onto the window and it's completed.
+        /// </summary>
+        public event EventHandler<DropEventArgs>? DropComplete;
+
+        /// <summary>
         /// Raises the <see cref="Shown"/> event.
         /// </summary>
         /// <param name="args">The event arguments.</param>
@@ -914,6 +937,42 @@
         protected virtual void OnTouchMotionInput(TouchMoveEventArgs args)
         {
             TouchMotionInput?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DropBegin"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnDropBegin(DropEventArgs args)
+        {
+            DropBegin?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DropFile"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnDropFile(DropFileEventArgs args)
+        {
+            DropFile?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DropText"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnDropText(DropTextEventArgs args)
+        {
+            DropText?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DropComplete"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnDropComplete(DropEventArgs args)
+        {
+            DropComplete?.Invoke(this, args);
         }
 
         #endregion Events
@@ -1252,6 +1311,44 @@
             touchEventArgs.Y = evnt.Y;
             touchEventArgs.State = FingerState.Down;
             OnTouchInput(touchEventArgs);
+        }
+
+        internal void ProcessDropBegin(DropEvent evnt)
+        {
+            dropEventArgs.Timestamp = evnt.Timestamp;
+            dropEventArgs.Handled = false;
+            OnDropBegin(dropEventArgs);
+        }
+
+        internal void ProcessDropFile(DropEvent evnt)
+        {
+            int x, y;
+            sdl.GetMouseState(&x, &y);
+            dropFileEventArgs.Timestamp = evnt.Timestamp;
+            dropFileEventArgs.File = evnt.File;
+            dropFileEventArgs.X = x;
+            dropFileEventArgs.Y = y;
+            dropFileEventArgs.Handled = false;
+            OnDropFile(dropFileEventArgs);
+        }
+
+        internal void ProcessDropText(DropEvent evnt)
+        {
+            int x, y;
+            sdl.GetMouseState(&x, &y);
+            dropTextEventArgs.Timestamp = evnt.Timestamp;
+            dropTextEventArgs.Text = evnt.File;
+            dropTextEventArgs.X = x;
+            dropTextEventArgs.Y = y;
+            dropTextEventArgs.Handled = false;
+            OnDropText(dropTextEventArgs);
+        }
+
+        internal void ProcessDropComplete(DropEvent evnt)
+        {
+            dropEventArgs.Timestamp = evnt.Timestamp;
+            dropEventArgs.Handled = false;
+            OnDropComplete(dropEventArgs);
         }
 
         /// <summary>

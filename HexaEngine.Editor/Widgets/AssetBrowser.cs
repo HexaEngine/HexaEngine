@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Configuration;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
@@ -153,6 +154,9 @@
 
         private PasteMode pasteMode;
         private string? pasteTarget;
+        private Vector2 windowPos;
+        private Vector2 windowSize;
+        private bool isWindowHovered;
 
         private struct Directory(string name, string path) : IEquatable<Directory>
         {
@@ -245,6 +249,7 @@
         public AssetBrowser()
         {
             IsShown = true;
+            Application.MainWindow.DropFile += DropFile;
             FileSystem.Changed += FileSystemChanged;
             Refresh();
             currentDir = null;
@@ -253,6 +258,13 @@
             IconSize = config.GetOrAddValue("Icon Size", AssetExplorerIconSize.Medium);
             ShowExtensions = config.GetOrAddValue("Show Extensions", false);
             Flags |= ImGuiWindowFlags.MenuBar;
+        }
+
+        protected override void DisposeCore()
+        {
+            Application.MainWindow.DropFile -= DropFile;
+            FileSystem.Changed -= FileSystemChanged;
+            ProjectManager.ProjectLoaded -= ProjectLoaded;
         }
 
         private void FileSystemChanged(Core.IO.FileSystemEventArgs obj)
@@ -938,6 +950,10 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            windowPos = ImGui.GetWindowPos();
+            windowSize = ImGui.GetWindowSize();
+
+            isWindowHovered = ImGui.IsWindowHovered();
             DrawMenuBar();
 
             if (currentDir == null)
@@ -1135,6 +1151,38 @@
             }
 
             return result;
+        }
+
+        private void DropFile(object? sender, Core.Windows.Events.DropFileEventArgs e)
+        {
+            Vector2 pos = new(e.X, e.Y);
+
+            if (pos.X < windowPos.X || pos.Y < windowPos.Y || pos.X > windowPos.X + windowSize.X || pos.Y > windowPos.Y + windowSize.Y)
+            {
+                return;
+            }
+
+            string? file = e.GetString();
+
+            if (file == null)
+            {
+                return;
+            }
+
+            Logger.Info($"Dropped file '{file}'");
+
+            Task.Factory.StartNew(async file =>
+            {
+                var popup = PopupManager.Show(new ProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ...", ProgressType.Bar));
+                try
+                {
+                    await SourceAssetsDatabase.ImportFileAsync((string)file, progress: popup);
+                }
+                finally
+                {
+                    popup.Dispose();
+                }
+            }, file);
         }
 
         private void DrawMenuBar()
