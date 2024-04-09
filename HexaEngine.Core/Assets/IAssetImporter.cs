@@ -2,7 +2,13 @@
 {
     public interface IAssetImporter
     {
-        bool CanImport(string fileExtension);
+        Type? SettingsType { get; }
+
+        string? SettingsKey { get; }
+
+        string? SettingsDisplayName { get; }
+
+        bool CanImport(ReadOnlySpan<char> fileExtension);
 
         void Import(TargetPlatform targetPlatform, ImportContext context);
 

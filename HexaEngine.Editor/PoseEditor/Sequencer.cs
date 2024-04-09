@@ -19,7 +19,7 @@
 
         public Sequencer()
         {
-            Animation = new("test", 10, 10);
+            Animation = new(Guid.NewGuid(), "test", 10, 10, null);
         }
 
         public float TimeToFrame(float time)

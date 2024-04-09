@@ -41,7 +41,7 @@
             Name = description.Name;
             Target = description.Target;
             Priority = description.Priority;
-            Regex = new(Regex.Escape(description.Target).Replace("\\*", ".*"), RegexOptions.Compiled);
+            Regex = new(Regex.Escape(description.Target).Replace("\\*", ".*").Replace("\\^", "^").Replace("\\$", "$"), RegexOptions.Compiled);
         }
 
         private static Vector4 ParseColor(string s)
@@ -126,7 +126,7 @@
             Name = description.Name;
             Target = description.Target;
             Priority = description.Priority;
-            Regex = new(Regex.Escape(description.Target).Replace("\\*", ".*"), RegexOptions.Compiled);
+            Regex = new(Regex.Escape(description.Target).Replace("\\*", ".*").Replace("\\^", "^").Replace("\\$", "$"), RegexOptions.Compiled);
         }
 
         public string Name { get; }

@@ -4,7 +4,11 @@
 
     public class DummyImporter : IAssetImporter
     {
-        public bool CanImport(string fileExtension)
+        public Type? SettingsType { get; }
+        public string? SettingsKey { get; }
+        public string? SettingsDisplayName { get; }
+
+        public bool CanImport(ReadOnlySpan<char> fileExtension)
         {
             return fileExtension switch
             {

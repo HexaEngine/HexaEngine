@@ -4,6 +4,7 @@ using HexaEngine.Core.IO.Binary.Meshes;
 
 namespace HexaEngine.Core.Assets.Importer
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
@@ -25,7 +26,6 @@ namespace HexaEngine.Core.Assets.Importer
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
-    using AnimationData = AnimationClip;
     using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
@@ -37,30 +37,15 @@ namespace HexaEngine.Core.Assets.Importer
     using TextureOp = Silk.NET.Assimp.TextureOp;
     using TextureType = Silk.NET.Assimp.TextureType;
 
-    public class ModelImporterSettings
-    {
-        public PostProcessSteps PostProcessSteps = PostProcessSteps.FlipUVs | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData | PostProcessSteps.FindDegenerates | PostProcessSteps.ImproveCacheLocality | PostProcessSteps.Triangulate | PostProcessSteps.FindInstances;
-
-        public TexPostProcessSteps TexPostProcessSteps = TexPostProcessSteps.None;
-
-        public TexFileFormat TexFileFormat;
-
-        public Format TexFormat;
-
-        public int MaxWidth;
-
-        public int MaxHeight;
-
-        public bool ImportMaterials = true;
-
-        public bool ImportTextures = true;
-
-        public TexCompressFlags TexCompressFlags = TexCompressFlags.Parallel;
-    }
-
     public class ModelImporter : IAssetImporter
     {
         private static readonly Assimp assimp = Assimp.GetApi();
+
+        public Type? SettingsType { get; } = typeof(ModelImporterSettings);
+
+        public string SettingsKey { get; } = "ModelImportSettings";
+
+        public string? SettingsDisplayName { get; } = "Model Import Settings";
 
         static unsafe ModelImporter()
         {
@@ -71,7 +56,7 @@ namespace HexaEngine.Core.Assets.Importer
 #endif
         }
 
-        public bool CanImport(string fileExtension)
+        public bool CanImport(ReadOnlySpan<char> fileExtension)
         {
             return fileExtension switch
             {
@@ -138,7 +123,7 @@ namespace HexaEngine.Core.Assets.Importer
 
         public unsafe void Import(TargetPlatform targetPlatform, ImportContext context)
         {
-            ModelImporterSettings settings = context.GetOrCreateAdditionalMetadata<ModelImporterSettings>("ModelImportSettings");
+            ModelImporterSettings settings = context.GetOrCreateAdditionalMetadata<ModelImporterSettings>(SettingsKey);
 
             Logger.Info($"Importing model '{Path.GetFileName(context.SourcePath)}'.");
 
@@ -169,7 +154,12 @@ namespace HexaEngine.Core.Assets.Importer
 
             if (Path.GetExtension(context.SourcePath) == ".gltf")
             {
-                SourceAssetsDatabase.ImportFile(Path.Combine(sourceDir, $"{modelName}.bin"), new DefaultGuidProvider(context.AssetMetadata.Guid));
+                string path = Directory.EnumerateFiles(sourceDir, $"{modelName}*.bin").First();
+
+                if (System.IO.File.Exists(path))
+                {
+                    SourceAssetsDatabase.ImportFile(path, new DefaultGuidProvider(context.AssetMetadata.Guid));
+                }
             }
 
             var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
@@ -226,9 +216,12 @@ namespace HexaEngine.Core.Assets.Importer
             }
 
             progressContext.BeginSubStep((int)scene->MNumAnimations);
-            if (!LoadAnimations(modelName, scene, context, progressContext, pToMesh))
+            if (settings.ImportAnimationClips)
             {
-                return false;
+                if (!LoadAnimations(modelName, importDir, scene, context, progressContext, pToMesh))
+                {
+                    return false;
+                }
             }
             progressContext.EndSubStep();
 
@@ -670,21 +663,24 @@ namespace HexaEngine.Core.Assets.Importer
             return true;
         }
 
-        private unsafe bool LoadAnimations(string modelName, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadAnimations(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             try
             {
-                AnimationData[] animations = new AnimationData[scene->MNumAnimations];
+                AnimationFile[] animations = new AnimationFile[scene->MNumAnimations];
+                Guid[] animationsIds = new Guid[scene->MNumAnimations];
                 for (int i = 0; i < scene->MNumAnimations; i++)
                 {
                     var anim = scene->MAnimations[i];
-                    AnimationData animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
+                    AnimationFile animation = animations[i] = new AnimationFile(Guid.NewGuid(), anim->MName, anim->MDuration, anim->MTicksPerSecond, null);
                     for (int j = 0; j < anim->MNumChannels; j++)
                     {
                         var chan = anim->MChannels[j];
-                        NodeChannel channel = new(chan->MNodeName);
-                        channel.PreState = (AnimationBehavior)chan->MPreState;
-                        channel.PostState = (AnimationBehavior)chan->MPostState;
+                        NodeChannel channel = new(chan->MNodeName)
+                        {
+                            PreState = (AnimationBehavior)chan->MPreState,
+                            PostState = (AnimationBehavior)chan->MPostState
+                        };
                         for (int x = 0; x < chan->MNumPositionKeys; x++)
                         {
                             var key = chan->MPositionKeys[x];
@@ -738,22 +734,21 @@ namespace HexaEngine.Core.Assets.Importer
                         animation.MorphMeshChannels.Add(channel);
                     }
 
-                    animations[i] = animation;
-                }
-
-                if (animations.Length > 0)
-                {
                     try
                     {
-                        //AnimationLibrary animationLibrary = new(animations);
-                        //context.EmitArtifact(AssetType.Animation, out string path);
-                        //animationLibrary.Save(path, Encoding.UTF8);
+                        var guid = animationsIds[i] = Guid.NewGuid();
+                        GuidProvider guidProvider = new(guid, context.AssetMetadata.Guid);
+
+                        string path = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
+
+                        animation.Save(path, Encoding.UTF8);
+                        SourceAssetsDatabase.ImportFile(path, guidProvider);
                         progressContext.AddProgress();
                     }
                     catch (Exception ex)
                     {
                         Logger.Log(ex);
-                        MessageBox.Show("Failed to save animation library", ex.Message);
+                        MessageBox.Show("Failed to save animation file", ex.Message);
                         return false;
                     }
                 }

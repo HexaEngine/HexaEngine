@@ -10,7 +10,13 @@
     {
         private readonly IGraphicsDevice device = Application.GraphicsDevice;
 
-        public bool CanImport(string fileExtension)
+        public Type? SettingsType { get; } = typeof(TextureImporterSettings);
+
+        public string SettingsKey { get; } = "TextureImportSettings";
+
+        public string? SettingsDisplayName { get; } = "Texture Import Settings";
+
+        public bool CanImport(ReadOnlySpan<char> fileExtension)
         {
             return fileExtension switch
             {

@@ -6,9 +6,15 @@
 
     public class MaterialImporter : IAssetImporter
     {
-        public bool CanImport(string fileExtension)
+        public Type? SettingsType { get; }
+
+        public string? SettingsKey { get; }
+
+        public string? SettingsDisplayName { get; }
+
+        public bool CanImport(ReadOnlySpan<char> fileExtension)
         {
-            return fileExtension == ".material";
+            return fileExtension.SequenceEqual(".material");
         }
 
         public void Import(TargetPlatform targetPlatform, ImportContext context)

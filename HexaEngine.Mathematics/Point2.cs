@@ -341,5 +341,46 @@
 
             stream.Write(dst);
         }
+
+        /// <summary>
+        /// Reads a <see cref="Point2"/> from a <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{T}"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        /// <returns>The read <see cref="Point2"/>.</returns>
+        public static Point2 Read(ReadOnlySpan<byte> src, Endianness endianness)
+        {
+            Point2 point;
+            if (endianness == Endianness.LittleEndian)
+            {
+                point.X = BinaryPrimitives.ReadInt32LittleEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32LittleEndian(src[4..]);
+            }
+            else
+            {
+                point.X = BinaryPrimitives.ReadInt32BigEndian(src);
+                point.Y = BinaryPrimitives.ReadInt32BigEndian(src[4..]);
+            }
+            return point;
+        }
+
+        /// <summary>
+        /// Writes a <see cref="Point2"/> to a <see cref="Span{T}"/>.
+        /// </summary>
+        /// <param name="dst">The destination <see cref="Span{T}"/>.</param>
+        /// <param name="endianness">The endianness.</param>
+        public readonly void Write(Span<byte> dst, Endianness endianness)
+        {
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteInt32LittleEndian(dst, X);
+                BinaryPrimitives.WriteInt32LittleEndian(dst[4..], Y);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt32BigEndian(dst, X);
+                BinaryPrimitives.WriteInt32BigEndian(dst[4..], Y);
+            }
+        }
     }
 }

@@ -669,7 +669,7 @@
                         break;
                     }
                 }
-                if (collect && current.IsEditorVisible)
+                if (collect && current.IsEditorDisplayed)
                 {
                     yield return current;
                 }

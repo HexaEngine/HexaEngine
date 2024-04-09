@@ -5,6 +5,7 @@
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.PoseEditor;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
     using System.Diagnostics.CodeAnalysis;
@@ -22,9 +23,8 @@
             categories.Add(Default);
 
             Register<PreferencesWidget>();
-            Register<ProjectExplorer>();
             Register<PipelineWidget>();
-            Register<AssetExplorer>();
+            Register<AssetBrowser>();
             Register<GitWidget>();
             Register<HierarchyWidget>();
             Register<PropertiesWidget>();
@@ -47,6 +47,7 @@
             Register<MemoryWidget>();
             Register<NativeMemoryWidget>();
             Register<InputManagerWindow>();
+            Register<PackageManagerWidget>();
 
             Register<BakeWindow>();
         }

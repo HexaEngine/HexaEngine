@@ -34,16 +34,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="assets\shared\fonts\SEGMDL2.TTF" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="assets\shared\fonts\SEGMDL2.TTF">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="MagicPhysX" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -57,6 +47,9 @@
 		<None Update="assets\shared\fonts\ARIALBD.TTF">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\fonts\SEGOEICONS.TTF">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\icons\animation.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -66,8 +59,11 @@
 		<None Update="assets\shared\icons\camera.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\icons\csharp.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\icons\file.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\icons.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

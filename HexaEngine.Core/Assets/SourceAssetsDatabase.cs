@@ -5,6 +5,12 @@
     using System;
     using System.IO;
 
+    public enum DeleteBehavior
+    {
+        UnlinkChildren,
+        DeleteChildren,
+    }
+
     public interface IGuidProvider
     {
         public Guid ParentGuid { get; }
@@ -143,7 +149,7 @@
                     {
                         tasks.Add(new(async () =>
                         {
-                            await UpdateFileAsync(file, asset);
+                            await UpdateFileAsync(file, asset, false);
                             progress.Report(Interlocked.Increment(ref progressValue) / (float)progressMax);
                         }));
 
@@ -189,8 +195,20 @@
             guidToSourceAsset.Add(metadata.Guid, metadata);
         }
 
-        private static void Remove(SourceAssetMetadata metadata)
+        private static void Remove(SourceAssetMetadata metadata, bool unlinkChildren)
         {
+            if (unlinkChildren)
+            {
+                for (int i = 0; i < sourceAssets.Count; i++)
+                {
+                    var asset = sourceAssets[i];
+                    if (asset.ParentGuid == metadata.Guid)
+                    {
+                        asset.ParentGuid = default;
+                    }
+                }
+            }
+
             sourceAssets.Remove(metadata);
             guidToSourceAsset.Remove(metadata.Guid);
         }
@@ -216,10 +234,10 @@
             }
         }
 
-        private static void UpdateFile(string file, SourceAssetMetadata asset)
+        private static void UpdateFile(string file, SourceAssetMetadata asset, bool force)
         {
             var crc = FileSystem.GetCrc32HashExtern(file);
-            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32)
+            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
             {
                 var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
                 ImportInternal(null, file, asset, artifacts, null, null);
@@ -229,10 +247,10 @@
             asset.Save();
         }
 
-        private static async Task UpdateFileAsync(string file, SourceAssetMetadata asset)
+        private static async Task UpdateFileAsync(string file, SourceAssetMetadata asset, bool force)
         {
             var crc = FileSystem.GetCrc32HashExtern(file);
-            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32)
+            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
             {
                 var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
                 await ImportInternalAsync(null, file, asset, artifacts, null, null);
@@ -263,7 +281,7 @@
             ArtifactDatabase.Clear();
             sourceAssets.Clear();
             guidToSourceAsset.Clear();
-            thumbnailCache.Dispose();
+            thumbnailCache?.Dispose();
             if (watcher != null)
             {
                 watcher.Changed -= WatcherChanged;
@@ -528,7 +546,7 @@
             return metadata;
         }
 
-        public static void Update(string path)
+        public static void Update(string path, bool force)
         {
             SourceAssetMetadata? metadata;
 
@@ -551,10 +569,10 @@
                 throw new MetadataNotFoundException(path);
             }
 
-            UpdateFile(fileToUpdate, metadata);
+            UpdateFile(fileToUpdate, metadata, force);
         }
 
-        public static Task UpdateAsync(string path)
+        public static Task UpdateAsync(string path, bool force)
         {
             SourceAssetMetadata? metadata;
 
@@ -577,17 +595,17 @@
                 throw new MetadataNotFoundException(path);
             }
 
-            return UpdateFileAsync(fileToUpdate, metadata);
+            return UpdateFileAsync(fileToUpdate, metadata, force);
         }
 
-        public static void Update(SourceAssetMetadata metadata)
+        public static void Update(SourceAssetMetadata metadata, bool force)
         {
-            UpdateFile(Path.Combine(rootFolder, metadata.FilePath), metadata);
+            UpdateFile(Path.Combine(rootFolder, metadata.FilePath), metadata, force);
         }
 
-        public static Task UpdateAsync(SourceAssetMetadata metadata)
+        public static Task UpdateAsync(SourceAssetMetadata metadata, bool force)
         {
-            return UpdateFileAsync(Path.Combine(rootFolder, metadata.FilePath), metadata);
+            return UpdateFileAsync(Path.Combine(rootFolder, metadata.FilePath), metadata, force);
         }
 
         public static string GetFreeName(string filename)
@@ -753,7 +771,7 @@
             await ImportInternalAsync(null, targetLocation, newMetadata, null, null);
         }
 
-        public static void Delete(string file)
+        public static void Delete(string file, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
         {
             initLock.Wait();
 
@@ -762,32 +780,55 @@
                 throw new FileNotFoundException(file);
             }
 
-            string fileToDelete;
             SourceAssetMetadata? metaToDelete;
 
             if (file.StartsWith(rootFolder))
             {
-                fileToDelete = file;
                 string relative = Path.GetRelativePath(rootFolder, file);
                 metaToDelete = GetMetadata(relative);
             }
             else
             {
-                fileToDelete = Path.Combine(rootFolder, file);
                 metaToDelete = GetMetadata(file);
             }
 
             if (metaToDelete == null)
             {
-                return;
+                throw new MetadataNotFoundException(file);
+            }
+
+            Delete(metaToDelete, behavior);
+        }
+
+        public static void Delete(SourceAssetMetadata metaToDelete, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
+        {
+            initLock.Wait();
+
+            string fileToDelete = metaToDelete.GetFullPath();
+
+            if (!File.Exists(fileToDelete))
+            {
+                throw new FileNotFoundException(fileToDelete);
             }
 
             ArtifactDatabase.RemoveArtifactsBySource(metaToDelete.Guid);
 
             lock (_lock)
             {
-                Remove(metaToDelete);
-                sourceAssets.Remove(metaToDelete);
+                if (behavior == DeleteBehavior.DeleteChildren)
+                {
+                    for (int i = 0; i < sourceAssets.Count; i++)
+                    {
+                        var asset = sourceAssets[i];
+                        if (asset.ParentGuid == metaToDelete.Guid)
+                        {
+                            Delete(asset);
+                            // needs to be a full reset, since we recursively remove files.
+                            i = 0;
+                        }
+                    }
+                }
+                Remove(metaToDelete, behavior == DeleteBehavior.UnlinkChildren);
             }
 
             File.Delete(fileToDelete);

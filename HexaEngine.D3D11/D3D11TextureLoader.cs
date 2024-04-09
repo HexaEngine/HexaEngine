@@ -12,7 +12,7 @@
     public unsafe class D3D11TextureLoader : ITextureLoader
     {
         private readonly IGraphicsDevice device;
-        private TextureLoaderFlags flags = TextureLoaderFlags.GenerateMipMaps | TextureLoaderFlags.Scale;
+        private TextureLoaderFlags flags = TextureLoaderFlags.None;
         private float scalingFactor = 1;
 
         public D3D11TextureLoader(IGraphicsDevice device)

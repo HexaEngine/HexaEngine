@@ -110,6 +110,8 @@
         /// Gets an array of disallowed types for the editor component.
         /// </summary>
         public Type[]? DisallowedTypes { get; }
+
+        public string Icon { get; init; }
     }
 
     /// <summary>

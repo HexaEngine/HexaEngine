@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Core.Assets
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
@@ -13,6 +14,7 @@ namespace HexaEngine.Core.Assets
         {
             RegisterImporter<TextureImporter>();
             RegisterImporter<ModelImporter>();
+            RegisterImporter<AnimationImporter>();
             RegisterImporter<MaterialImporter>();
             RegisterImporter<DummyImporter>();
             RegisterImporter<TerrainImporter>();
@@ -42,7 +44,7 @@ namespace HexaEngine.Core.Assets
             throw new KeyNotFoundException($"Importer ({nameof(T)}) not found");
         }
 
-        public static IAssetImporter GetImporterForFile(string fileExtension)
+        public static IAssetImporter GetImporterForFile(ReadOnlySpan<char> fileExtension)
         {
             for (var i = 0; i < importers.Count; i++)
             {
@@ -56,7 +58,7 @@ namespace HexaEngine.Core.Assets
             throw new KeyNotFoundException($"No importer for {fileExtension} found");
         }
 
-        public static bool TryGetImporterForFile(string fileExtension, [NotNullWhen(true)] out IAssetImporter? importer)
+        public static bool TryGetImporterForFile(ReadOnlySpan<char> fileExtension, [NotNullWhen(true)] out IAssetImporter? importer)
         {
             for (var i = 0; i < importers.Count; i++)
             {

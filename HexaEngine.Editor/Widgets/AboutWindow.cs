@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.Icons;
     using System.Numerics;
     using System.Reflection;
 
@@ -29,6 +30,10 @@
 
         protected override void DrawContent()
         {
+            Icon icon = IconManager.GetIconByName("Logo") ?? throw new();
+
+            icon.ImageCenteredH(new(64));
+
             ImGui.Text($"HexaEngine {Assembly.GetExecutingAssembly().GetName().Version}");
 
             ImGui.Dummy(new(0, 20));

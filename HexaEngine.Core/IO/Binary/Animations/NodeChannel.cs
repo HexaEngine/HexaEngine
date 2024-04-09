@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using System;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -268,6 +269,15 @@
             NodeChannel channel = default;
             channel.Read(stream, encoding, endianness);
             return channel;
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="NodeChannel"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="NodeChannel"/> instance.</returns>
+        public NodeChannel Clone()
+        {
+            return new NodeChannel((string)NodeName.Clone()) { Local = Local, PositionKeyframes = new(PositionKeyframes), RotationKeyframes = new(RotationKeyframes), ScaleKeyframes = new(ScaleKeyframes), PostState = PostState, PreState = PreState };
         }
     }
 }

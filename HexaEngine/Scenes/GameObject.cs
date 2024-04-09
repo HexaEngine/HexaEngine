@@ -1,11 +1,13 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Editor;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
     public delegate void GameObjectOnEnabledChanged(GameObject gameObject, bool enabled);
@@ -15,24 +17,68 @@
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public partial class GameObject : EntityNotifyBase, IHierarchyObject, IEditorSelectable
     {
-        private readonly List<GameObject> children = new();
-        private readonly List<IComponent> components = new();
+        private readonly List<GameObject> children = [];
+        private readonly List<IComponent> components = [];
         private Scene? scene;
         private GameObject? parent;
-        private bool initialized;
-        private bool isEditorVisible;
+        private InternalGameObjectFlags gameObjectFlags = InternalGameObjectFlags.Default;
+        private InternalEditorFlags editorFlags = InternalEditorFlags.None;
         private Type? type;
-        private bool isEnabled = true;
-        private bool isHidden = false;
 
         public Transform Transform = new();
         private Guid guid = Guid.NewGuid();
         private string name = string.Empty;
         private string? fullName;
-        private bool isEditorSelected;
 
         private GCHandle gcHandle;
         private object? tag;
+
+        private enum InternalGameObjectFlags : byte
+        {
+            None = 0,
+
+            /// <summary>
+            /// The GameObject is enabled.
+            /// </summary>
+            Enabled = 1 << 0,
+
+            /// <summary>
+            /// The GameObject is visible in editor mode.
+            /// </summary>
+            EditorVisible = 1 << 1,
+
+            /// <summary>
+            /// The GameObject is hidden.
+            /// </summary>
+            Hidden = 1 << 2,
+
+            /// <summary>
+            /// The GameObject is initialized.
+            /// </summary>
+            Initialized = 1 << 3,
+
+            Default = Enabled | EditorVisible
+        }
+
+        private enum InternalEditorFlags : byte
+        {
+            None = 0,
+
+            /// <summary>
+            /// Is selected in the scene hierarchy widget.
+            /// </summary>
+            Selected = 1 << 0,
+
+            /// <summary>
+            /// Is open in the scene hierarchy widget.
+            /// </summary>
+            Open = 1 << 1,
+
+            /// <summary>
+            /// Is displayed in the scene hierarchy widget.
+            /// </summary>
+            Displayed = 1 << 2,
+        }
 
         [JsonIgnore]
         public readonly nint Pointer;
@@ -110,20 +156,46 @@
         /// </value>
         public bool IsEnabled
         {
-            get => isEnabled;
+            get => (gameObjectFlags & InternalGameObjectFlags.Enabled) != 0;
             set
             {
-                if (isEnabled == value)
+                if (IsEnabled == value)
                 {
                     return;
                 }
 
-                SetAndNotify(ref isEnabled, value);
+                SetFlagAndNotify(InternalGameObjectFlags.Enabled, value);
+
                 OnEnabledChanged?.Invoke(this, value);
 
                 for (int i = 0; i < Children.Count; i++)
                 {
                     Children[i].IsEnabled = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is visible in edit mode.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is visible in edit mode; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsEditorVisible
+        {
+            get => (gameObjectFlags & InternalGameObjectFlags.EditorVisible) != 0;
+            set
+            {
+                if (IsEditorVisible == value)
+                {
+                    return;
+                }
+
+                SetFlagAndNotify(InternalGameObjectFlags.EditorVisible, value);
+
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    Children[i].IsEditorVisible = value;
                 }
             }
         }
@@ -136,8 +208,27 @@
         /// </value>
         public bool IsHidden
         {
-            get => isHidden;
-            set => SetAndNotify(ref isHidden, value);
+            get => (gameObjectFlags & InternalGameObjectFlags.Hidden) != 0;
+            set => SetFlagAndNotify(InternalGameObjectFlags.Hidden, value);
+        }
+
+        [JsonIgnore]
+        public bool IsVisible => Application.InEditMode ? IsEditorVisible && IsEnabled : IsEnabled;
+
+        private void SetFlagAndNotify(InternalGameObjectFlags flag, bool value, [CallerMemberName] string propertyName = "")
+        {
+            OnPropertyChanging(propertyName);
+
+            if (value)
+            {
+                gameObjectFlags |= flag;
+            }
+            else
+            {
+                gameObjectFlags &= ~flag;
+            }
+
+            OnPropertyChanged(propertyName);
         }
 
         [JsonIgnore]
@@ -154,31 +245,57 @@
         }
 
         [JsonIgnore]
-        public bool Initialized => initialized;
-
-        [JsonIgnore]
-        public bool IsEditorSelected => isEditorSelected;
-
-        [JsonIgnore]
-        public bool IsEditorOpen { get; set; }
-
-        [JsonIgnore]
-        public bool IsEditorVisible
+        public bool Initialized
         {
-            get => isEditorVisible;
+            get => (gameObjectFlags & InternalGameObjectFlags.Initialized) != 0;
+            internal set => SetFlagAndNotify(InternalGameObjectFlags.Initialized, value);
+        }
+
+        [JsonIgnore]
+        public bool IsEditorSelected => (editorFlags & InternalEditorFlags.Selected) != 0;
+
+        [JsonIgnore]
+        public bool IsEditorOpen
+        {
+            get => (editorFlags & InternalEditorFlags.Open) != 0;
             set
             {
-                if (isEditorVisible == value)
+                if (value)
+                {
+                    editorFlags |= InternalEditorFlags.Open;
+                }
+                else
+                {
+                    editorFlags &= ~InternalEditorFlags.Open;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsEditorDisplayed
+        {
+            get => (editorFlags & InternalEditorFlags.Displayed) != 0;
+            set
+            {
+                if (IsEditorDisplayed == value)
                 {
                     return;
                 }
 
-                isEditorVisible = value;
+                if (value)
+                {
+                    editorFlags |= InternalEditorFlags.Displayed;
+                }
+                else
+                {
+                    editorFlags &= ~InternalEditorFlags.Displayed;
+                }
+
                 if (!value)
                 {
                     for (int i = 0; i < Children.Count; i++)
                     {
-                        Children[i].IsEditorVisible = false;
+                        Children[i].IsEditorDisplayed = false;
                     }
                 }
             }
@@ -205,7 +322,21 @@
 
         IHierarchyObject? IHierarchyObject.Parent => parent;
 
-        bool IEditorSelectable.IsEditorSelected { get => isEditorSelected; set => isEditorSelected = value; }
+        bool IEditorSelectable.IsEditorSelected
+        {
+            get => (editorFlags & InternalEditorFlags.Selected) != 0;
+            set
+            {
+                if (value)
+                {
+                    editorFlags |= InternalEditorFlags.Selected;
+                }
+                else
+                {
+                    editorFlags &= ~InternalEditorFlags.Selected;
+                }
+            }
+        }
 
         public event GameObjectOnEnabledChanged? OnEnabledChanged;
 
@@ -263,7 +394,7 @@
             {
                 var childs = node.children.ToArray();
                 var comps = node.components.ToArray();
-                if (node.initialized)
+                if (node.Initialized)
                 {
                     for (int i = 0; i < childs.Length; i++)
                     {
@@ -304,7 +435,7 @@
             node.parent?.RemoveChild(node);
             node.parent = this;
             children.Add(node);
-            if (initialized)
+            if (Initialized)
             {
                 node.Initialize();
             }
@@ -312,7 +443,7 @@
 
         public virtual void RemoveChild(GameObject node)
         {
-            if (initialized)
+            if (Initialized)
             {
                 node.Uninitialize();
             }
@@ -323,7 +454,7 @@
         public virtual void AddComponent(IComponent component)
         {
             components.Add(component);
-            if (initialized)
+            if (Initialized)
             {
                 component.GameObject = this;
                 component.Awake();
@@ -335,7 +466,7 @@
         {
             T component = new();
             components.Add(component);
-            if (initialized)
+            if (Initialized)
             {
                 component.GameObject = this;
                 component.Awake();
@@ -349,7 +480,7 @@
                 return;
             T component = new();
             components.Add(component);
-            if (initialized)
+            if (Initialized)
             {
                 component.GameObject = this;
                 component.Awake();
@@ -359,7 +490,7 @@
 
         public virtual void RemoveComponent(IComponent component)
         {
-            if (initialized)
+            if (Initialized)
             {
                 component.Destroy();
             }
@@ -375,7 +506,7 @@
             scene = GetScene();
             scene.RegisterChild(this);
 
-            initialized = true;
+            Initialized = true;
             for (int i = 0; i < components.Count; i++)
             {
                 var component = components[i];
@@ -400,7 +531,7 @@
                 children[i].Uninitialize();
             }
             scene?.UnregisterChild(this);
-            initialized = false;
+            Initialized = false;
             scene = null;
             tag = null;
         }

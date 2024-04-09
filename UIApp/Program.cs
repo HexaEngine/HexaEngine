@@ -8,9 +8,9 @@
     {
         private static void Main(string[] args)
         {
-            Application.Boot();
+            Application.Boot(GraphicsBackend.D3D11);
             TestWindow window = new();
-            Platform.Init(window, GraphicsBackend.D3D11);
+            Platform.Init(window);
             Application.Run(window);
             Platform.Shutdown();
         }

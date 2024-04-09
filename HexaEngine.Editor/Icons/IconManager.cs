@@ -4,11 +4,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Textures;
-    using HexaEngine.Core.Security.Cryptography;
     using HexaEngine.Core.UI;
-    using HexaEngine.D3D11;
-    using HexaEngine.D3D12;
     using HexaEngine.Editor.Themes;
+    using HexaEngine.Mathematics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
@@ -24,8 +22,9 @@
         private static Icon Default;
         private static readonly AtlasBuilder atlasBuilder = new(256 * 8 + 2, 2048, Format.R8G8B8A8UNorm);
         private static Texture2D iconAtlas;
-        private static readonly List<IconGlyphTileInfo> tiles = new();
-        private static readonly Dictionary<Guid, IconGlyphTileInfo> keyToTile = new();
+        private static readonly List<IconGlyphTileInfo> glyphs = new();
+        private static readonly Dictionary<Guid, IconGlyphTileInfo> keyToGlyph = new();
+        private static readonly IconCache iconCache = new("cache/iconcache.bin");
 
         /// <summary>
         /// Initializes the IconManager, loads icons from XML, and sets up default icons.
@@ -45,6 +44,7 @@
 
                 var theme = ThemeManager.ThemeName;
 
+                List<Guid> iconGuids = new();
                 for (int i = 0; i < desc.Icons.Count; i++)
                 {
                     var iconDesc = desc.Icons[i];
@@ -54,9 +54,53 @@
                         continue;
                     }
 
-                    Icon icon = new(iconDesc);
-                    AddToAtlas(icon);
-                    icons.Add(icon);
+                    var key = new Guid(MD5.HashData(MemoryMarshal.AsBytes(iconDesc.Path.AsSpan())));
+                    iconGuids.Add(key);
+                    icons.Add(new(iconDesc));
+                }
+
+                if (iconCache.TryGet(iconGuids, out int width, out int height, out Format format, out byte* data, out int rowPitch, out var iconGlyphs))
+                {
+                    Point2 pen = default;
+                    int maxHeight = 0;
+                    int lastHeight = 0;
+
+                    for (int i = 0; i < iconGlyphs.Length; i++)
+                    {
+                        var glyph = iconGlyphs[i];
+                        glyphs.Add(glyph);
+                        keyToGlyph.Add(glyph.Key, glyph);
+                        if (glyph.Pos.Y != lastHeight)
+                        {
+                            pen.Y += maxHeight;
+                            pen.X = 0;
+                            maxHeight = 0;
+                            lastHeight = glyph.Pos.Y;
+                        }
+                        else
+                        {
+                            maxHeight = Math.Max(maxHeight, glyph.Size.Y);
+                        }
+                        pen.X += glyph.Size.X;
+                    }
+
+                    for (int i = 0; i < icons.Count; i++)
+                    {
+                        AddToAtlas(icons[i]);
+                    }
+
+                    atlasBuilder.SetBuffer(format, width, height, data, pen, maxHeight);
+
+                    UpdateAtlas();
+                }
+                else
+                {
+                    for (int i = 0; i < icons.Count; i++)
+                    {
+                        AddToAtlas(icons[i]);
+                    }
+
+                    UpdateAtlas();
                 }
             }
             catch (Exception ex)
@@ -65,8 +109,6 @@
                 Logger.Log(ex);
                 MessageBox.Show("Failed to load icons", ex.Message);
             }
-
-            UpdateAtlas();
 
             icons.Sort(IconPriorityComparer.Default);
         }
@@ -78,6 +120,8 @@
             int height;
             int rowPitch;
             atlasBuilder.Build(&data, &width, &height, &rowPitch);
+
+            iconCache.Set(glyphs, width, height, Format.R8G8B8A8UNorm, data, rowPitch * height);
 
             Texture2DDescription description = new(Format.R8G8B8A8UNorm, width, height, 1, 1, GpuAccessFlags.Read);
 
@@ -92,8 +136,8 @@
 
         private static unsafe void RebuildAtlas()
         {
-            keyToTile.Clear();
-            tiles.Clear();
+            keyToGlyph.Clear();
+            glyphs.Clear();
             atlasBuilder.Reset();
             Default.CreateDefault(device, atlasBuilder);
 
@@ -131,13 +175,13 @@
             var desc = icon.Description;
             var key = new Guid(MD5.HashData(MemoryMarshal.AsBytes(desc.Path.AsSpan())));
 
-            if (!keyToTile.TryGetValue(key, out var info))
+            if (!keyToGlyph.TryGetValue(key, out var info))
             {
                 var image = device.TextureLoader.LoadFormAssets(desc.Path);
                 var pos = atlasBuilder.Append(image, 256, 256);
                 info = new(key, pos, new(256));
-                keyToTile.Add(key, info);
-                tiles.Add(info);
+                keyToGlyph.Add(key, info);
+                glyphs.Add(info);
                 image.Dispose();
                 updated = true;
             }

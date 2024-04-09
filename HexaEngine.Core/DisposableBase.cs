@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Security
+﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Debugging;
 

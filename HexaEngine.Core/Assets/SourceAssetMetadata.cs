@@ -34,7 +34,7 @@
 
         public Guid Guid { get; }
 
-        public Guid ParentGuid { get; }
+        public Guid ParentGuid { get; internal set; }
 
         public DateTime LastModified { get; internal set; }
 
@@ -262,14 +262,35 @@
             GetOrCreateKey(key, value);
         }
 
-        public void Update()
+        public T? GetAdditionalMetadata<T>(string key) where T : class
         {
-            SourceAssetsDatabase.Update(this);
+            if (Additional.TryGetValue(key, out var metadata) && metadata is T t)
+            {
+                return t;
+            }
+
+            return null;
         }
 
-        public Task UpdateAsync()
+        public T GetOrCreateAdditionalMetadata<T>(string key) where T : class, new()
         {
-            return SourceAssetsDatabase.UpdateAsync(this);
+            if (Additional.TryGetValue(key, out var metadata) && metadata is T t)
+            {
+                return t;
+            }
+            t = new();
+            Additional.TryAdd(key, t);
+            return t;
+        }
+
+        public void Update(bool force = false)
+        {
+            SourceAssetsDatabase.Update(this, force);
+        }
+
+        public Task UpdateAsync(bool force = false)
+        {
+            return SourceAssetsDatabase.UpdateAsync(this, force);
         }
 
         public void Delete()

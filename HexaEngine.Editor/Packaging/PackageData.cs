@@ -6,7 +6,7 @@
     {
         public Version TargetVersion { get; set; }
 
-        public FileTree FileTree { get; set; }
+        public PackageFileTree FileTree { get; set; }
 
         public byte[] Data { get; set; }
     }

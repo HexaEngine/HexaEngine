@@ -51,6 +51,7 @@
             ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
 
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
+            PropertyObjectEditorRegistry.RegisterEditor<AssetFileEditor>();
 
             ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());

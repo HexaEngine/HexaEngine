@@ -95,11 +95,20 @@
             A = col.W;
         }
 
+        public static Color FromABGR(uint color)
+        {
+            var a = (float)((color >> 24) & 0xff) / byte.MaxValue;
+            var b = (float)((color >> 16) & 0xff) / byte.MaxValue;
+            var g = (float)((color >> 8) & 0xff) / byte.MaxValue;
+            var r = (float)(color & 0xff) / byte.MaxValue;
+            return new Color(r, g, b, a);
+        }
+
         /// <summary>
         /// Converts the color to an unsigned integer representation.
         /// </summary>
         /// <returns>The color as an unsigned integer.</returns>
-        public readonly uint ToUInt()
+        public readonly uint ToUIntRGBA()
         {
             var col = Saturate(this);
             byte r = (byte)(col.R * byte.MaxValue);
@@ -107,6 +116,20 @@
             byte b = (byte)(col.B * byte.MaxValue);
             byte a = (byte)(col.A * byte.MaxValue);
             return ((uint)r << 24) | ((uint)g << 16) | ((uint)b << 8) | a;
+        }
+
+        /// <summary>
+        /// Converts the color to an unsigned integer representation.
+        /// </summary>
+        /// <returns>The color as an unsigned integer.</returns>
+        public readonly uint ToUIntABGR()
+        {
+            var col = Saturate(this);
+            byte r = (byte)(col.R * byte.MaxValue);
+            byte g = (byte)(col.G * byte.MaxValue);
+            byte b = (byte)(col.B * byte.MaxValue);
+            byte a = (byte)(col.A * byte.MaxValue);
+            return ((uint)a << 24) | ((uint)b << 16) | ((uint)g << 8) | r;
         }
 
         /// <summary>
@@ -268,7 +291,7 @@
         /// <returns>The unsigned integer representation of the <see cref="Color"/>.</returns>
         public static implicit operator uint(Color color)
         {
-            return color.ToUInt();
+            return color.ToUIntRGBA();
         }
 
         /// <summary>

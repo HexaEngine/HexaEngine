@@ -2,6 +2,9 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using Microsoft.VisualBasic;
+    using Silk.NET.SDL;
+    using System;
     using System.Collections.Generic;
     using System.Text;
 
@@ -74,6 +77,15 @@
             MeshChannel channel = default;
             channel.Read(stream, encoding, endianness);
             return channel;
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="MeshChannel"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MeshChannel"/> instance.</returns>
+        public MeshChannel Clone()
+        {
+            return new MeshChannel() { Keyframes = new(Keyframes), MeshName = MeshName };
         }
     }
 }

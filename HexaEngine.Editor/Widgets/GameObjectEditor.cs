@@ -274,11 +274,10 @@
 
         private static bool TreeNode(IObjectEditor editor, string id, ImGuiTreeNodeFlags flags)
         {
-            bool enabled = false;
             bool open = ImGui.TreeNodeEx(id, flags);
-            ImGui.SameLine();
+            ImGui.SameLine(0, 30);
             ImGui.Text(editor.Symbol);
-            ImGui.SameLine();
+            ImGui.SameLine(0, 5);
             ImGui.Text(editor.Name);
             return open;
         }

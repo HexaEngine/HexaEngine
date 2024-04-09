@@ -6,9 +6,9 @@
     public class EditorConfig
     {
         private const string configFile = "editorConfig.json";
-        private static readonly string configPath = Path.Combine(DetermineBasePath(), configFile);
+        private static readonly string configPath = Path.Combine(DetermineAppBasePath(), configFile);
 
-        public static readonly string BasePath = DetermineBasePath();
+        public static readonly string BasePath = DetermineAppBasePath();
 
         public bool SetupDone { get; set; }
 
@@ -46,16 +46,20 @@
             return config;
         }
 
-        private static string DetermineBasePath()
+        private static string DetermineAppBasePath()
         {
             string projectsPath;
             if (OperatingSystem.IsWindows())
             {
-                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HexaEngine");
+                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HexaEngine");
             }
-            else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsLinux())
             {
-                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "HexaEngine");
+                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HexaEngine");
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HexaEngine");
             }
             else
             {

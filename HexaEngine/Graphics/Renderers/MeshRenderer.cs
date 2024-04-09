@@ -51,7 +51,7 @@
             for (int i = 0; i < drawTypes.Length; i++)
             {
                 DrawType drawType = drawTypes[i];
-                BoundingSphere sphere = meshes[drawType.MeshId].BoundingSphere;
+                BoundingSphere sphere = meshes[drawType.MeshId]?.BoundingSphere ?? default;
                 for (int j = 0; j < drawType.Instances.Length; j++)
                 {
                     DrawInstance instance = drawType.Instances[j];
@@ -72,6 +72,8 @@
             {
                 DrawType drawType = drawTypes[i];
                 Mesh mesh = meshes[drawType.MeshId];
+                if (mesh == null)
+                    continue;
                 context.AppendType(mesh.IndexCount);
                 drawTypes[i].TypeId = context.CurrentType;
                 drawTypes[i].DrawIndirectOffset = context.GetDrawArgsOffset();

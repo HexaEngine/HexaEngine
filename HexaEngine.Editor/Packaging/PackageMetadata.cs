@@ -50,39 +50,55 @@
         public string Id { get; set; } = id;
 
         public Version Version { get; set; } = version;
+
+        public static implicit operator PackageIdentifier(PackageDependency dependency)
+        {
+            return new(dependency.Id, dependency.Version);
+        }
     }
 
-    public class PackageMetadataParser
+    public class PackageMetadataReader : IDisposable
     {
-        public static PackageMetadata ParseFrom(string path)
+        private readonly XmlReader xmlReader;
+        private readonly bool leaveOpen;
+
+        public PackageMetadataReader(string path, bool leaveOpen)
         {
-            return Parse(File.OpenText(path));
+            this.leaveOpen = leaveOpen;
+            xmlReader = XmlReader.Create(File.OpenText(path));
         }
 
-        public static PackageMetadata Parse(string text)
+        public PackageMetadataReader(Stream stream, bool leaveOpen)
         {
-            return Parse(new StringReader(text));
+            this.leaveOpen = leaveOpen;
+            xmlReader = XmlReader.Create(stream);
         }
 
-        public static PackageMetadata Parse(TextReader textReader)
+        public PackageMetadataReader(TextReader textReader, bool leaveOpen)
         {
-            return Parse(XmlReader.Create(textReader));
+            this.leaveOpen = leaveOpen;
+            xmlReader = XmlReader.Create(textReader);
         }
 
-        public static PackageMetadata Parse(XmlReader reader)
+        public void Close()
+        {
+            Dispose();
+        }
+
+        public PackageMetadata Parse()
         {
             PackageMetadata metadata = new();
 
-            reader.Read();
+            xmlReader.Read();
 
             string? version = null;
 
-            while (reader.MoveToNextAttribute())
+            while (xmlReader.MoveToNextAttribute())
             {
-                switch (reader.Name)
+                switch (xmlReader.Name)
                 {
                     case "version":
-                        version = reader.Value;
+                        version = xmlReader.Value;
                         break;
                 }
             }
@@ -90,7 +106,7 @@
             switch (version)
             {
                 case "1.0":
-                    Parse1(metadata, reader);
+                    Parse1(metadata, xmlReader);
                     break;
 
                 default:
@@ -220,6 +236,136 @@
                             break;
                     }
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!leaveOpen)
+            {
+                ((IDisposable)xmlReader).Dispose();
+            }
+        }
+    }
+
+    public class PackageMetadataWriter : IDisposable
+    {
+        private readonly XmlWriter xmlWriter;
+        private readonly bool leaveOpen;
+
+        public PackageMetadataWriter(string path)
+        {
+            leaveOpen = false;
+            xmlWriter = XmlWriter.Create(File.CreateText(path));
+        }
+
+        public PackageMetadataWriter(Stream stream, bool leaveOpen)
+        {
+            this.leaveOpen = leaveOpen;
+            xmlWriter = XmlWriter.Create(stream);
+        }
+
+        public PackageMetadataWriter(TextWriter textWriter, bool leaveOpen)
+        {
+            this.leaveOpen = leaveOpen;
+            xmlWriter = XmlWriter.Create(textWriter);
+        }
+
+        public void Write(PackageMetadata metadata)
+        {
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("PackageMetadata");
+
+            xmlWriter.WriteStartElement("Id");
+            xmlWriter.WriteString(metadata.Id);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Name");
+            xmlWriter.WriteString(metadata.Name);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Version");
+            xmlWriter.WriteString(metadata.Version.ToString());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("IsPreRelease");
+            xmlWriter.WriteString(metadata.IsPreRelease.ToString());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("IsDeprecated");
+            xmlWriter.WriteString(metadata.IsDeprecated.ToString());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("DeprecationReason");
+            xmlWriter.WriteString(metadata.DeprecationReason);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Description");
+            xmlWriter.WriteString(metadata.Description);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Author");
+            xmlWriter.WriteString(metadata.Author);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Copyright");
+            xmlWriter.WriteString(metadata.Copyright);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("LicenceUrl");
+            xmlWriter.WriteString(metadata.LicenceUrl);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Licence");
+            xmlWriter.WriteString(metadata.Licence);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("DatePublished");
+            xmlWriter.WriteString(metadata.DatePublished.ToString("yyyy-MM-ddThh:mm:ss"));
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("ProjectUrl");
+            xmlWriter.WriteString(metadata.ProjectUrl);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Tags");
+            xmlWriter.WriteString(string.Join(" ", metadata.Tags));
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Dependencies");
+            foreach (var dependency in metadata.Dependencies)
+            {
+                xmlWriter.WriteStartElement("Dependency");
+                xmlWriter.WriteAttributeString("packageId", dependency.Id);
+                xmlWriter.WriteAttributeString("version", dependency.Version.ToString());
+                xmlWriter.WriteEndElement();
+            }
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("SupportedVersions");
+            foreach (var version in metadata.SupportedVersions)
+            {
+                xmlWriter.WriteStartElement("Version");
+                xmlWriter.WriteString(version.ToString());
+                xmlWriter.WriteEndElement();
+            }
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+        }
+
+        public void Close()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            xmlWriter.Flush();
+            if (!leaveOpen)
+            {
+                ((IDisposable)xmlWriter).Dispose();
             }
         }
     }

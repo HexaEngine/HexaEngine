@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Security.Credentials
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.IO;
-    using HexaEngine.Security;
 
     public class BinaryCredentials : DisposableBase, ICredentials
     {

@@ -240,6 +240,7 @@
         private string newProjectName = "New Project";
         private string newProjectPath = "";
         private bool canCreateProject = false;
+        private string? canCreateFailReason;
 
         private static bool IsDirectoryEmpty(string path)
         {
@@ -253,7 +254,7 @@
 
         private void CreateProjectDialog(Icon icon, Vector2 avail)
         {
-            const float footerHeight = 40;
+            const float footerHeight = 50;
             avail.Y -= footerHeight;
             ImGui.BeginChild("Content", avail);
 
@@ -270,7 +271,8 @@
             if (ImGui.InputText("##ProjectName", ref newProjectName, 1024))
             {
                 newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder, newProjectName);
-                canCreateProject = IsValidProjectDir(newProjectPath);
+                canCreateProject = IsValidProjectDir(newProjectPath) && !string.IsNullOrWhiteSpace(newProjectName);
+                canCreateFailReason = canCreateProject ? null : string.IsNullOrWhiteSpace(newProjectName) ? "\xE7BA Project name cannot be empty." : "\xE7BA Project already exists.";
             }
 
             ImGui.TextDisabled(newProjectPath);
@@ -278,8 +280,7 @@
             if (!canCreateProject)
             {
                 ImGui.Dummy(new(0, 20));
-
-                ImGui.TextColored(new(1, 0, 0, 1), "\xE7BA Project already exists.");
+                ImGui.TextColored(new(1, 0, 0, 1), canCreateFailReason ?? string.Empty);
             }
 
             ImGui.Unindent();

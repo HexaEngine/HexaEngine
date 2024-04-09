@@ -77,6 +77,7 @@
             {
                 guiName = new(componentNameAttr.Name);
                 isHidden = componentNameAttr.IsHidden;
+                Symbol = componentNameAttr.Icon ?? "\xe9ce";
             }
 
             var nodeNameAttr = type.GetCustomAttribute<EditorGameObjectAttribute>();
@@ -207,7 +208,7 @@
         /// <summary>
         /// Gets the symbol associated with the object editor.
         /// </summary>
-        public string Symbol { get; } = "?";
+        public string Symbol { get; } = "\xe9ce";
 
         /// <summary>
         /// Gets the name associated with the object editor.

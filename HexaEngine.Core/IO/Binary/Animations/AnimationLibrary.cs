@@ -134,7 +134,7 @@
             library.animations.Capacity = header.AnimationCount;
             for (int i = 0; i < header.AnimationCount; i++)
             {
-                library.animations.Add(AnimationClip.ReadFrom(stream, header.Encoding, header.Endianness));
+                library.animations.Add(AnimationClip.Read(stream, header.Encoding, header.Endianness));
             }
 
             stream.Close();

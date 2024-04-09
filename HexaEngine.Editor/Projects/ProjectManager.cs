@@ -11,6 +11,7 @@
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Scripts;
+    using Octokit;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -97,7 +98,10 @@
                     loaded = true;
 
                     CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath);
-                    CurrentProject = HexaProject.Load(path) ?? throw new FileNotFoundException($"Couldn't find project file '{path}'");
+
+                    HexaProjectReader reader = new(path);
+
+                    CurrentProject = reader.Read() ?? throw new FileNotFoundException($"Couldn't find project file '{path}'");
 
                     ProjectVersionControl.TryInit();
 
@@ -224,8 +228,11 @@
 
             string projectName = Path.GetFileName(path);
             string projectFilePath = Path.Combine(path, $"{projectName}.hexproj");
-            HexaProject project = new(projectFilePath);
-            project.Save();
+            HexaProject project = HexaProject.CreateNew();
+
+            HexaProjectWriter writer = new(projectFilePath);
+            writer.Write(project);
+            writer.Close();
 
             var currentProjectAssetsFolder = Path.Combine(path, "assets");
             Directory.CreateDirectory(currentProjectAssetsFolder);
@@ -245,6 +252,15 @@
             string projectFilePath = Path.Combine(path, solutionName, $"{solutionName}.csproj");
             Dotnet.Sln(SlnCommand.Add, solutionPath, projectPath);
             Dotnet.AddDlls(projectFilePath, ReferencedAssemblies.ConvertAll(x => x.Location));
+        }
+
+        public static void SaveProjectFile()
+        {
+            if (CurrentProject == null || CurrentProjectFilePath == null)
+                return;
+            HexaProjectWriter writer = new(CurrentProjectFilePath);
+            writer.Write(CurrentProject);
+            writer.Close();
         }
 
         public static void OpenVisualStudio()
@@ -608,6 +624,32 @@
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
+        }
+
+        public static bool IsIgnored(string file)
+        {
+            var subDirName = Path.GetFileName(file.AsSpan());
+
+            if (subDirName.StartsWith(".") || subDirName.SequenceEqual("bin") || subDirName.SequenceEqual("obj"))
+            {
+                return true;
+            }
+
+            var extension = Path.GetExtension(subDirName);
+
+            if (extension.SequenceEqual(".meta"))
+            {
+                return true;
+            }
+
+            var attributes = File.GetAttributes(file);
+
+            if ((attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly | FileAttributes.Device)) != 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private const string PublishProgram =

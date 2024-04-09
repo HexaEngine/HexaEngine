@@ -1,6 +1,6 @@
 namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics.Shaders;
+    using HexaEngine.Core.Security.Cryptography;
     using System;
     using System.Buffers.Binary;
     using System.Linq;
@@ -9,27 +9,16 @@ namespace HexaEngine.Core.Graphics
     /// <summary>
     /// Represents an entry in the shader cache.
     /// </summary>
-    public unsafe struct ShaderCacheEntry : IEquatable<ShaderCacheEntry>
+    public unsafe class ShaderCacheEntry
     {
-        /// <summary>
-        /// Gets or sets the name of the shader.
-        /// </summary>
-        public string Name;
+        private readonly SemaphoreSlim _semaphore = new(1);
+
+        public SHA256Signature Key;
 
         /// <summary>
         /// Gets or sets the CRC32 hash of the shader.
         /// </summary>
         public uint Crc32Hash;
-
-        /// <summary>
-        /// Gets or sets the source language of the shader.
-        /// </summary>
-        public SourceLanguage Language;
-
-        /// <summary>
-        /// Gets or sets the macros used in the shader.
-        /// </summary>
-        public ShaderMacro[] Macros;
 
         /// <summary>
         /// Gets or sets the input elements of the shader.
@@ -44,20 +33,30 @@ namespace HexaEngine.Core.Graphics
         /// <summary>
         /// Initializes a new instance of the <see cref="ShaderCacheEntry"/> struct.
         /// </summary>
-        /// <param name="name">The name of the shader.</param>
+        /// <param name="key"></param>
         /// <param name="crc32Hash">The CRC32 hash of the shader.</param>
-        /// <param name="language">The source language of the shader.</param>
-        /// <param name="macros">The macros used in the shader.</param>
         /// <param name="inputElements">The input elements of the shader.</param>
         /// <param name="bytecode">The pointer to the shader bytecode.</param>
-        public ShaderCacheEntry(string name, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* bytecode)
+        public ShaderCacheEntry(SHA256Signature key, uint crc32Hash, InputElementDescription[] inputElements, Shader* bytecode)
         {
-            Name = name;
+            Key = key;
             Crc32Hash = crc32Hash;
-            Language = language;
-            Macros = macros;
             InputElements = inputElements;
             Shader = bytecode;
+        }
+
+        internal ShaderCacheEntry()
+        {
+        }
+
+        public void Lock()
+        {
+            _semaphore.Wait();
+        }
+
+        public void ReleaseLock()
+        {
+            _semaphore.Release();
         }
 
         /// <summary>
@@ -68,18 +67,9 @@ namespace HexaEngine.Core.Graphics
         /// <returns>The number of bytes written to the destination span.</returns>
         public int Write(Span<byte> dest, Encoder encoder)
         {
-            int idx = 0;
-            idx += WriteString(dest[idx..], Name, encoder);
+            int idx = 32;
+            Key.TryWriteBytes(dest);
             idx += WriteUInt32(dest[idx..], Crc32Hash);
-            idx += WriteInt32(dest[idx..], (int)Language);
-            idx += WriteInt32(dest[idx..], Macros.Length);
-
-            for (int i = 0; i < Macros.Length; i++)
-            {
-                var macro = Macros[i];
-                idx += WriteString(dest[idx..], macro.Name, encoder);
-                idx += WriteString(dest[idx..], macro.Definition, encoder);
-            }
             idx += WriteInt32(dest[idx..], InputElements.Length);
             for (int i = 0; i < InputElements.Length; i++)
             {
@@ -92,6 +82,7 @@ namespace HexaEngine.Core.Graphics
                 idx += WriteInt32(dest[idx..], (int)element.Classification);
                 idx += WriteInt32(dest[idx..], element.InstanceDataStepRate);
             }
+
             if (Shader != null)
             {
                 BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Shader->Length);
@@ -124,23 +115,10 @@ namespace HexaEngine.Core.Graphics
         /// <returns>The number of bytes read from the source span.</returns>
         public int Read(ReadOnlySpan<byte> src, Decoder decoder)
         {
-            int idx = 0;
-            idx += ReadString(src, out Name, decoder);
+            int idx = 32;
+            Key = new(src, false);
             idx += ReadUInt32(src[idx..], out var crc32Hash);
             Crc32Hash = crc32Hash;
-            idx += ReadInt32(src[idx..], out var lang);
-            Language = (SourceLanguage)lang;
-
-            // read macros
-            int count = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
-            idx += 4;
-            Macros = new ShaderMacro[count];
-            for (var i = 0; i < count; i++)
-            {
-                idx += ReadString(src[idx..], out string name, decoder);
-                idx += ReadString(src[idx..], out string definition, decoder);
-                Macros[i] = new ShaderMacro(name, definition);
-            }
 
             int countElements = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
@@ -267,20 +245,14 @@ namespace HexaEngine.Core.Graphics
         /// <returns>The size of the shader cache entry in bytes.</returns>
         public int SizeOf(Encoder encoder)
         {
+            // 44 = sizeof(SHA256Signature) (32 Bytes) + uint (CRC32Hash) (4 Bytes) + int (InputElement.Length) (4 Bytes) + int (Shader->Length) (4 Bytes)
             if (Shader != null)
             {
-                return 28 +
-                    SizeOf(Name, encoder) +
-                    Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
-                    InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) +
-                    (int)Shader->Length;
+                return 44 + InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) + (int)Shader->Length;
             }
             else
             {
-                return 28 +
-                    SizeOf(Name, encoder) +
-                    Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
-                    InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24);
+                return 44 + InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24);
             }
         }
 
@@ -294,84 +266,15 @@ namespace HexaEngine.Core.Graphics
         }
 
         /// <inheritdoc/>
-        public readonly bool Equals(ShaderCacheEntry other)
+        public override int GetHashCode()
         {
-            if (Name != other.Name)
-            {
-                return false;
-            }
-
-            if (Language != other.Language)
-            {
-                return false;
-            }
-
-            if (Macros == other.Macros && Macros == null && other.Macros == null)
-            {
-                return true;
-            }
-
-            if (Macros != other.Macros && (Macros == null || other.Macros == null))
-            {
-                return false;
-            }
-
-            if (Macros.Length != (other.Macros?.Length ?? 0))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < Macros.Length; i++)
-            {
-#nullable disable
-                if (Macros[i].Name != other.Macros[i].Name ||
-                    Macros[i].Definition != other.Macros[i].Definition)
-                {
-                    return false;
-                }
-#nullable enable
-            }
-            return true;
+            return Key.GetHashCode();
         }
 
         /// <inheritdoc/>
-        public override readonly bool Equals(object? obj)
+        public override string ToString()
         {
-            return obj is ShaderCacheEntry entry && Equals(entry);
-        }
-
-        /// <summary>
-        /// Indicates whether two shader cache entries are equal.
-        /// </summary>
-        /// <param name="left">The first shader cache entry to compare.</param>
-        /// <param name="right">The second shader cache entry to compare.</param>
-        /// <returns>true if the two shader cache entries are equal; otherwise, false.</returns>
-        public static bool operator ==(ShaderCacheEntry left, ShaderCacheEntry right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        /// Indicates whether two shader cache entries are not equal.
-        /// </summary>
-        /// <param name="left">The first shader cache entry to compare.</param>
-        /// <param name="right">The second shader cache entry to compare.</param>
-        /// <returns>true if the two shader cache entries are not equal; otherwise, false.</returns>
-        public static bool operator !=(ShaderCacheEntry left, ShaderCacheEntry right)
-        {
-            return !(left == right);
-        }
-
-        /// <inheritdoc/>
-        public override readonly int GetHashCode()
-        {
-            return HashCode.Combine(Name, Macros);
-        }
-
-        /// <inheritdoc/>
-        public override readonly string ToString()
-        {
-            return Name;
+            return Key.ToString();
         }
     }
 }

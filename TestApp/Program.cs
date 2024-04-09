@@ -1,8 +1,5 @@
 ﻿namespace TestApp
 {
-    using HexaEngine;
-    using HexaEngine.Core.IO;
-    using HexaEngine.Core.Windows;
     using HexaEngine.Editor.Packaging;
     using HexaEngine.Editor.Projects;
 
@@ -10,7 +7,14 @@
     {
         public static void Main()
         {
-            PackageMetadata metadata = PackageMetadataParser.ParseFrom("packageMetadata.xml");
+            HexaProject project = HexaProject.CreateNew();
+
+            ItemGroup itemGroup = [new PackageReference("HexaEngine.Core", "1.0.0.0")];
+            project.Items.Add(itemGroup);
+
+            HexaProjectWriter writer = new("Project.hexaproj");
+            writer.Write(project);
+            writer.Close();
         }
     }
 }

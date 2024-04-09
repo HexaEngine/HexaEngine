@@ -13,12 +13,12 @@
         /// <summary>
         /// Current version of the material file format.
         /// </summary>
-        public static readonly Version Version = 2;
+        public static readonly Version Version = 1;
 
         /// <summary>
         /// Minimum supported version of the material file format.
         /// </summary>
-        public static readonly Version MinVersion = 2;
+        public static readonly Version MinVersion = 1;
 
         /// <summary>
         /// The endianness of the material file.

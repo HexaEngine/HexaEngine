@@ -14,11 +14,10 @@
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
-    using System.Collections.Generic;
     using System.Numerics;
 
     [EditorCategory("Renderer")]
-    [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
+    [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
     public class MeshRendererComponent : BaseRendererComponent, ILODRendererComponent, ISelectableRayTest
     {
         private ModelManager modelManager;

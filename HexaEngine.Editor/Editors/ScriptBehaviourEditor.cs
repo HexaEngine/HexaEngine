@@ -12,7 +12,7 @@
         private ImGuiName guiName = new("Script Behaviour");
         private IObjectEditor? editor;
 
-        public string Name => guiName.UniqueName;
+        public string Name => guiName.Name;
 
         public Type Type => typeof(ScriptBehaviour);
 
@@ -24,7 +24,7 @@
 
         public bool NoTable { get; set; }
 
-        public string Symbol { get; } = "\xE9F5";
+        public string Symbol { get; } = "\xf000";
 
         public void Dispose()
         {

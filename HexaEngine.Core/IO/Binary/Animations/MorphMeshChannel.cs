@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using System;
     using System.Text;
 
     /// <summary>
@@ -73,6 +74,15 @@
             MorphMeshChannel channel = default;
             channel.Read(stream, encoding, endianness);
             return channel;
+        }
+
+        /// <summary>
+        /// Deep clones a <see cref="MorphMeshChannel"/> instance.
+        /// </summary>
+        /// <returns>The deep cloned <see cref="MorphMeshChannel"/> instance.</returns>
+        public MorphMeshChannel Clone()
+        {
+            return new MorphMeshChannel() { Keyframes = new(Keyframes), MeshName = MeshName };
         }
     }
 }

@@ -2,12 +2,15 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics.Shaders;
+    using HexaEngine.Core.Security.Cryptography;
     using System;
     using System.Buffers.Binary;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
 
@@ -18,12 +21,14 @@
     {
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = [];
-        private static readonly int MaxReadThreads = Environment.ProcessorCount - 1 == 1 ? 2 : Environment.ProcessorCount - 1;
-        private static readonly SemaphoreSlim readSemaphore = new(MaxReadThreads);
+        private static readonly Dictionary<SHA256Signature, ShaderCacheEntry> keyToEntry = [];
+        private static readonly int MaxConcurrentReaders = 64;
+        private static readonly SemaphoreSlim readSemaphore = new(MaxConcurrentReaders);
         private static readonly SemaphoreSlim writeSemaphore = new(1);
         private static readonly SemaphoreSlim fileSemaphore = new(1);
         private static readonly ManualResetEvent writeHandle = new(true);
-        private const int Version = 2;
+        private static readonly ManualResetEvent readHandle = new(true);
+        private const int Version = 3;
 
         static ShaderCache()
         {
@@ -51,6 +56,36 @@
         /// </summary>
         public static IReadOnlyList<ShaderCacheEntry> Entries => entries;
 
+        public static SHA256Signature GetKey(string name, SourceLanguage language, ShaderMacro[] macros)
+        {
+            Span<SHA256Signature> signature = stackalloc SHA256Signature[2];
+            Span<byte> hash0 = MemoryMarshal.AsBytes(signature);
+            Span<byte> hash1 = MemoryMarshal.AsBytes(signature[1..]);
+
+            SHA256.HashData(MemoryMarshal.AsBytes(name.AsSpan()), hash0);
+
+            SHA256.HashData(MemoryMarshal.AsBytes([language]), hash1);
+
+            signature[0] ^= signature[1];
+
+            for (int i = 0; i < macros.Length; i++)
+            {
+                var macro = macros[i];
+
+                SHA256.HashData(MemoryMarshal.AsBytes(macro.Name.AsSpan()), hash1);
+                signature[0] ^= signature[1];
+                SHA256.HashData(MemoryMarshal.AsBytes(macro.Definition.AsSpan()), hash1);
+                signature[0] ^= signature[1];
+            }
+
+            return signature[0];
+        }
+
+        private static bool TryGetEntry(SHA256Signature key, [MaybeNullWhen(false)] out ShaderCacheEntry? entry)
+        {
+            return keyToEntry.TryGetValue(key, out entry);
+        }
+
         /// <summary>
         /// Caches a shader in the shader cache.
         /// </summary>
@@ -67,41 +102,64 @@
                 return;
             }
 
-            var entry = new ShaderCacheEntry(path, crc32Hash, language, macros, inputElements, shader->Clone());
+            var key = GetKey(path, language, macros);
+
+            CacheShader(key, crc32Hash, inputElements, shader);
+        }
+
+        public static unsafe void CacheShader(SHA256Signature key, uint crc32Hash, InputElementDescription[] inputElements, Shader* shader)
+        {
+            if (DisableCache)
+            {
+                return;
+            }
 
             BeginRead();
 
-            int index = entries.IndexOf(entry);
-
-            EndRead();
-
-            BeginWrite();
-
-            if (index == -1)
+            if (TryGetEntry(key, out ShaderCacheEntry? entry))
             {
-                entries.Add(entry);
+                entry.Lock();
+
+                entry.Free();
+                entry.Crc32Hash = crc32Hash;
+                entry.Shader = shader->Clone();
+
+                entry.ReleaseLock();
+
+                EndRead();
             }
             else
             {
-                entries[index].Free();
-                entries[index] = entry;
-            }
+                EndRead();
 
-            EndWrite();
+                BeginWrite();
+
+                entry = new(key, crc32Hash, inputElements, shader->Clone());
+                entries.Add(entry);
+                keyToEntry.Add(key, entry);
+
+                EndWrite();
+            }
 
             SaveAsync();
         }
 
-        /// <summary>
-        /// Returns true if successfully found a matching shader
-        /// </summary>
-        /// <param filename="path"></param>
-        /// <param filename="language"></param>
-        /// <param filename="macros"></param>
-        /// <param filename="shader"></param>
-        /// <param filename="inputElements"></param>
-        /// <returns></returns>
         public static unsafe bool GetShader(string path, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
+        {
+            *shader = default;
+            inputElements = null;
+
+            if (DisableCache)
+            {
+                return false;
+            }
+
+            var key = GetKey(path, language, macros);
+
+            return GetShader(key, crc32Hash, shader, out inputElements);
+        }
+
+        public static unsafe bool GetShader(SHA256Signature key, uint crc32Hash, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
             *shader = default;
             inputElements = null;
@@ -113,18 +171,23 @@
 
             BeginRead();
 
-            ShaderCacheEntry vEntry = default;
-            vEntry.Name = path;
-            vEntry.Crc32Hash = crc32Hash;
-            vEntry.Language = language;
-            vEntry.Macros = macros;
-
-            var entry = entries.FirstOrDefault(x => x.Equals(vEntry));
-            if (entry != default && entry.Crc32Hash == crc32Hash)
+            if (TryGetEntry(key, out ShaderCacheEntry? entry))
             {
+                entry.Lock();
+
+                if (entry.Crc32Hash != crc32Hash)
+                {
+                    entry.ReleaseLock();
+                    EndRead();
+                    return false;
+                }
+
                 inputElements = entry.InputElements;
                 *shader = entry.Shader->Clone();
+
+                entry.ReleaseLock();
                 EndRead();
+
                 return true;
             }
 
@@ -144,6 +207,7 @@
                 entries[i].Free();
             }
             entries.Clear();
+            keyToEntry.Clear();
             Logger.Info("Clearing shader cache ... done");
             EndWrite();
         }
@@ -185,6 +249,7 @@
                 var entry = new ShaderCacheEntry();
                 idx += entry.Read(span[idx..], decoder);
                 entries.Add(entry);
+                keyToEntry.Add(entry.Key, entry);
             }
 
             EndWrite();
@@ -223,30 +288,7 @@
         /// </summary>
         public static Task SaveAsync()
         {
-            return Task.Run(() =>
-            {
-                BeginRead();
-
-                var encoder = Encoding.UTF8.GetEncoder();
-                var size = 8 + entries.Sum(x => x.SizeOf(encoder));
-                var span = size < 4096 ? stackalloc byte[size] : new byte[size];
-
-                BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
-                BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
-
-                int idx = 8;
-                for (var i = 0; i < entries.Count; i++)
-                {
-                    var entry = entries[i];
-                    idx += entry.Write(span[idx..], encoder);
-                }
-
-                EndRead();
-
-                fileSemaphore.Wait();
-                File.WriteAllBytes(file, span.ToArray());
-                fileSemaphore.Release();
-            });
+            return Task.Run(Save);
         }
 
         private static void BeginWrite()
@@ -255,24 +297,34 @@
 
             // block all read threads and wait for completion.
             writeHandle.Reset();
-            SpinWait.SpinUntil(() => readSemaphore.CurrentCount == MaxReadThreads);
+
+            readHandle.WaitOne();
         }
 
         private static void EndWrite()
         {
             writeHandle.Set();
+
             writeSemaphore.Release();
         }
 
         private static void BeginRead()
         {
             writeHandle.WaitOne();
+
+            readHandle.Reset();
+
             readSemaphore.Wait();
         }
 
         private static void EndRead()
         {
             readSemaphore.Release();
+
+            if (readSemaphore.CurrentCount == MaxConcurrentReaders)
+            {
+                readHandle.Set();
+            }
         }
     }
 }

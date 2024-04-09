@@ -25,7 +25,7 @@
         public string Name = string.Empty;
 
         /// <summary>
-        /// Gets or sets the GUID of the material;
+        /// Gets or sets the GUID of the material. (Do not use, unless you know what you are doing. Used for internal resource management.)
         /// </summary>
         public Guid Guid;
 

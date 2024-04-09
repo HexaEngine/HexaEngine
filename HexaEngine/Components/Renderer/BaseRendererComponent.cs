@@ -94,7 +94,7 @@
 
         void IRendererComponent.Update(IGraphicsContext context)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 Update(context);
             }
@@ -102,7 +102,7 @@
 
         void IRendererComponent.VisibilityTest(CullingContext context)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 VisibilityTest(context);
             }
@@ -110,7 +110,7 @@
 
         void IRendererComponent.DrawDepth(IGraphicsContext context)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 DrawDepth(context);
             }
@@ -118,7 +118,7 @@
 
         void IRendererComponent.DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 DrawShadowMap(context, light, type);
             }
@@ -126,7 +126,7 @@
 
         void IRendererComponent.Draw(IGraphicsContext context, RenderPath path)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 Draw(context, path);
             }
@@ -134,7 +134,7 @@
 
         void IRendererComponent.Bake(IGraphicsContext context)
         {
-            if (loaded && GameObject.IsEnabled)
+            if (loaded && GameObject.IsVisible)
             {
                 Bake(context);
             }

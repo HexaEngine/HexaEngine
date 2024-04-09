@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Security.Credentials
 {
-    using HexaEngine.Security;
+    using HexaEngine.Core;
 
     public class UnknownCredentials : DisposableBase, ICredentials
     {

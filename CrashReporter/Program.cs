@@ -3,8 +3,8 @@ using HexaEngine;
 using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
 
-Application.Boot();
+Application.Boot(GraphicsBackend.D3D11);
 CrashWindow window = new();
-Platform.Init(window, GraphicsBackend.D3D11, true);
+Platform.Init(window, true);
 Application.Run(window);
 Platform.Shutdown();

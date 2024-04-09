@@ -22,6 +22,13 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MaterialFile"/> class from a <see cref="MaterialData"/>.
+        /// </summary>
+        public MaterialFile(MaterialData material) : this(material.Name, material.Guid, material.Properties, material.Textures, material.Shaders, material.Metadata.Clone())
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MaterialData"/> class from another MaterialData.
         /// </summary>
         /// <param name="name">The name of the material.</param>
@@ -151,38 +158,14 @@
                 Endianness = endianness
             };
             header.Write(dst);
-
-            dst.WriteString(Name, encoding, endianness);
-            dst.WriteGuid(Guid, endianness);
-
-            dst.WriteInt32(Properties.Count, endianness);
-            for (int i = 0; i < Properties.Count; i++)
-            {
-                Properties[i].Write(dst, encoding, endianness);
-            }
-
-            dst.WriteInt32((int)Flags, endianness);
-
-            dst.WriteInt32(Textures.Count, endianness);
-            for (int i = 0; i < Textures.Count; i++)
-            {
-                Textures[i].Write(dst, encoding, endianness);
-            }
-
-            dst.WriteInt32(Shaders.Count, endianness);
-            for (int i = 0; i < Shaders.Count; i++)
-            {
-                Shaders[i].Write(dst, encoding, endianness);
-            }
-
-            Metadata.Write(dst, encoding, endianness);
+            base.Write(dst, encoding, endianness);
         }
 
         /// <summary>
         /// Deep clones a <see cref="MaterialFile"/> instance.
         /// </summary>
         /// <returns>The deep cloned <see cref="MaterialFile"/> instance.</returns>
-        public MaterialFile Clone()
+        public new MaterialFile Clone()
         {
             MaterialFile materialData = new()
             {

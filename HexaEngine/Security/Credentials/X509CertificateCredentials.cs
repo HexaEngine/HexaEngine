@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Security.Credentials
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.IO;
-    using HexaEngine.Security;
     using System.Security.Cryptography.X509Certificates;
 
     public class X509CertificateCredentials : DisposableBase, ICredentials

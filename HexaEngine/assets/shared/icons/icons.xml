@@ -8,6 +8,7 @@
 	<Icon theme="Light" name="Scene" path="assets/icons/scene.png" target="*.hexlvl" tint="#000" />
 	<Icon theme="Light" name="Animation" path="assets/icons/animation.png" target="*.anim" tint="#000" />
 	<Icon theme="Light" name="Terrain" path="assets/icons/terrain.png" target="*.terrain" tint="#000" />
+	<Icon theme="Light" name="CSharp" path="assets/icons/csharp.png" target="^*.cs$" tint="#000" />
 
 	<Icon theme="Light" name="AudioWav" path="assets/icons/audio.png" target="*.wav" tint="#000" />
 
@@ -28,6 +29,7 @@
 	<Icon theme="Dark" name="Scene" path="assets/icons/scene.png" target="*.hexlvl" tint="#FFF" />
 	<Icon theme="Dark" name="Animation" path="assets/icons/animation.png" target="*.anim" tint="#FFF" />
 	<Icon theme="Dark" name="Terrain" path="assets/icons/terrain.png" target="*.terrain" tint="#FFF" />
+	<Icon theme="Dark" name="CSharp" path="assets/icons/csharp.png" target="^*.cs$" tint="#FFF" />
 
 	<Icon theme="Dark" name="AudioWav" path="assets/icons/audio.png" target="*.wav" tint="#FFF" />
 

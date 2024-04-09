@@ -403,14 +403,14 @@
 
                 AllocateMemory(entry, oldSize, false);
 
+                entry.Data = data;
+                entry.LastAccess = DateTime.Now;
+
                 if (!entry.Texture.IsNull)
                 {
                     entry.Texture.Dispose();
                     LoadTexture(entry, entry.VideoMemSize);
                 }
-
-                entry.Data = data;
-                entry.LastAccess = DateTime.Now;
 
                 entry.ReleaseLock();
 

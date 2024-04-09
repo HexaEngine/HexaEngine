@@ -15,7 +15,7 @@
     {
 #nullable disable
         private readonly IGraphicsDevice device;
-        private CullingFlags cullingFlags = CullingFlags.All | CullingFlags.Debug;
+        private CullingFlags cullingFlags = CullingFlags.All;
 
         private IComputePipeline occlusion;
 
@@ -158,56 +158,57 @@
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
 
-            if ((cullingFlags & CullingFlags.Debug) != 0)
+            if ((cullingFlags & CullingFlags.Debug) == 0)
             {
-                swapBuffer.Read(context);
-
-                uint drawCalls = 0;
-                uint drawInstanceCount = 0;
-                uint vertexCount = 0;
-
-                ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
-
-                if (drawBoundingSpheres)
-                {
-                    for (int i = 0; i < instanceCount; i++)
-                    {
-                        var instance = instanceDataBuffer[i];
-                        var world = Matrix4x4.Transpose(instance.World);
-
-                        var center = Vector3.Transform(instance.BoundingSphere.Center, world);
-                        var radius = instance.BoundingSphere.Radius * ExtractScale(world).Length();
-                        DebugDraw.DrawSphere(center, default, radius, Colors.White);
-                    }
-                }
-
-                for (int i = 0; i < this.context.TypeCount; i++)
-                {
-                    vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
-                    drawInstanceCount += swapBuffer[i].InstanceCount;
-                    drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
-                }
-
-                uint fmt = 0;
-                while (vertexCount > 1000)
-                {
-                    vertexCount /= 1000;
-                    fmt++;
-                }
-                char suffix = fmt switch
-                {
-                    0 => ' ',
-                    1 => 'K',
-                    _ => 'M',
-                };
-
-                ImGui.Text($"Draw Calls: {drawCalls}, Instances: {drawInstanceCount}, Vertices: {vertexCount}{suffix}");
-
-                var flags = (int)cullingFlags;
-                ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
-                ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
-                cullingFlags = (CullingFlags)flags;
+                return;
             }
+            swapBuffer.Read(context);
+
+            uint drawCalls = 0;
+            uint drawInstanceCount = 0;
+            uint vertexCount = 0;
+
+            ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
+
+            if (drawBoundingSpheres)
+            {
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var instance = instanceDataBuffer[i];
+                    var world = Matrix4x4.Transpose(instance.World);
+
+                    var center = Vector3.Transform(instance.BoundingSphere.Center, world);
+                    var radius = instance.BoundingSphere.Radius * ExtractScale(world).Length();
+                    DebugDraw.DrawSphere(center, default, radius, Colors.White);
+                }
+            }
+
+            for (int i = 0; i < this.context.TypeCount; i++)
+            {
+                vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
+                drawInstanceCount += swapBuffer[i].InstanceCount;
+                drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
+            }
+
+            uint fmt = 0;
+            while (vertexCount > 1000)
+            {
+                vertexCount /= 1000;
+                fmt++;
+            }
+            char suffix = fmt switch
+            {
+                0 => ' ',
+                1 => 'K',
+                _ => 'M',
+            };
+
+            ImGui.Text($"Draw Calls: {drawCalls}, Instances: {drawInstanceCount}, Vertices: {vertexCount}{suffix}");
+
+            var flags = (int)cullingFlags;
+            ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
+            ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
+            cullingFlags = (CullingFlags)flags;
         }
 
         private bool drawBoundingSpheres = false;

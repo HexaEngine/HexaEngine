@@ -183,56 +183,6 @@
         }
 
         /// <summary>
-        /// Copies the bytes of a value of an unmanaged type to a destination byte pointer.
-        /// </summary>
-        /// <typeparam name="T">The type of the value to copy.</typeparam>
-        /// <param name="t">The value to copy.</param>
-        /// <param name="offset">The offset in the destination byte array.</param>
-        /// <param name="dst">The destination byte pointer.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
-        {
-            var size = sizeof(T);
-            var p = (byte*)&t;
-            var dst_ptr = &dst[*offset];
-            for (int i = 0; i < size; i++)
-            {
-                dst_ptr[i] = p[i];
-            }
-            *offset += size;
-        }
-
-        /// <summary>
-        /// Copies the bytes of an array of values of an unmanaged type to a destination byte pointer.
-        /// </summary>
-        /// <typeparam name="T">The type of the values in the array.</typeparam>
-        /// <param name="t">The array of values to copy.</param>
-        /// <param name="dst">The destination byte pointer.</param>
-        /// <param name="stride">The stride between copied elements in bytes.</param>
-        /// <param name="offset">The offset in the destination byte array.</param>
-        /// <param name="count">The number of elements to copy.</param>
-        public static void CopyTo<T>(this T[] t, byte* dst, int stride, int* offset, int count) where T : unmanaged
-        {
-            var size = sizeof(T);
-            fixed (T* src = t)
-            {
-                var dst_ptr = dst;
-                var src_ptr = (byte*)src;
-                for (int i = 0; i < count; i++)
-                {
-                    var srcByteOffset = i * size;
-                    var dstByteOffset = i * stride + *offset;
-
-                    for (int j = 0; j < size; j++)
-                    {
-                        dst_ptr[j + dstByteOffset] = src_ptr[j + srcByteOffset];
-                    }
-                }
-            }
-            *offset += size;
-        }
-
-        /// <summary>
         /// Converts to utf16 pointer.
         /// </summary>
         /// <param name="str">The string.</param>
@@ -274,7 +224,7 @@
         public static byte* ToUTF8Ptr(this string str)
         {
             var byteCount = Encoding.UTF8.GetByteCount(str);
-            byte* dst = AllocT<byte>(Encoding.UTF8.GetByteCount(str) + 1);
+            byte* dst = AllocT<byte>(byteCount + 1);
             fixed (char* src = str)
             {
                 Encoding.UTF8.GetBytes(src, str.Length, dst, byteCount);
@@ -612,6 +562,27 @@
         /// <returns>A pointer to the allocated memory for the array.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* AllocT<T>(uint count
+#if TRACELEAK
+            , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
+#endif
+            ) where T : unmanaged
+        {
+            T* result = (T*)allocator.Alloc((nint)(sizeof(T) * count)
+#if TRACELEAK
+                , $"File: {file}, Line: {line}"
+#endif
+                );
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates and returns a pointer to memory for an array of elements of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements to allocate.</typeparam>
+        /// <param name="count">The number of elements to allocate.</param>
+        /// <returns>A pointer to the allocated memory for the array.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocT<T>(nint count
 #if TRACELEAK
             , [CallerFilePath] string file = "", [CallerLineNumber] int line = 0
 #endif

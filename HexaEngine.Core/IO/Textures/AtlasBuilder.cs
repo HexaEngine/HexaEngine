@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
+    using System.Numerics;
 
     /// <summary>
     /// Represents a class for building texture atlases.
@@ -10,10 +11,10 @@
     public unsafe class AtlasBuilder : IDisposable
     {
         private byte* data;
-        private readonly int baseHeight;
-        private readonly Format format;
-        private readonly int byteStride;
-        private readonly int atlasWidth;
+        private int baseHeight;
+        private Format format;
+        private int byteStride;
+        private int atlasWidth;
         private int atlasHeight;
         private int penX;
         private int penY;
@@ -210,6 +211,25 @@
                     }
                 }
             }
+        }
+
+        public void SetBuffer(Format format, int width, int height, byte* data, Point2 pen, int maxHeightInRow)
+        {
+            baseHeight = height;
+            atlasWidth = width;
+            atlasHeight = height;
+            this.format = format;
+            byteStride = (int)MathF.Ceiling(FormatHelper.BitsPerPixel(format) / 8f);
+            if (this.data != null)
+            {
+                Free(this.data);
+            }
+
+            this.data = AllocT<byte>(width * baseHeight * byteStride);
+            new Span<byte>(data, width * baseHeight * byteStride).CopyTo(new Span<byte>(this.data, width * baseHeight * byteStride));
+            penX = pen.X;
+            penY = pen.Y;
+            this.maxHeightInRow = maxHeightInRow;
         }
 
         protected virtual void Dispose(bool disposing)

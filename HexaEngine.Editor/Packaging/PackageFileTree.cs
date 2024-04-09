@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class FileTree
+    public class PackageFileTree
     {
         public List<PackageFileMetadata> Files { get; set; }
     }
