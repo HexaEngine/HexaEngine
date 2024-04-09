@@ -4,7 +4,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Configuration;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
@@ -13,6 +12,7 @@
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Scenes.Serialization;
+    using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
@@ -251,7 +251,7 @@
             IsShown = true;
             Application.MainWindow.DropFile += DropFile;
             FileSystem.Changed += FileSystemChanged;
-            Refresh();
+            Refresh(true);
             currentDir = null;
             parentDir = currentDir?.Parent;
             ProjectManager.ProjectLoaded += ProjectLoaded;
@@ -269,11 +269,7 @@
 
         private void FileSystemChanged(Core.IO.FileSystemEventArgs obj)
         {
-            Refresh();
-            if (!File.Exists(obj.FullPath))
-            {
-                RefreshDirs();
-            }
+            Refresh(!File.Exists(obj.FullPath));
         }
 
         private void ProjectLoaded(HexaProject? obj)
@@ -330,12 +326,17 @@
                 showHidden = value;
                 config.SetValue("Show Hidden", showHidden);
                 Config.Global.Save();
-                Refresh();
+                Refresh(true);
             }
         }
 
         public void RefreshDirs()
         {
+            if (ProjectManager.CurrentProjectFolder == null)
+            {
+                return;
+            }
+
             lock (this)
             {
                 rootDir = TraverseDir(ProjectManager.CurrentProjectFolder);
@@ -358,8 +359,12 @@
             return directory;
         }
 
-        public void Refresh()
+        public void Refresh(bool all)
         {
+            if (all)
+            {
+                RefreshDirs();
+            }
             lock (this)
             {
                 files.Clear();
@@ -438,13 +443,13 @@
 
             CurrentFolder = path;
             forwardHistory.Clear();
-            Refresh();
+            Refresh(false);
         }
 
         public void GoHome()
         {
             CurrentFolder = Paths.CurrentProjectFolder;
-            Refresh();
+            Refresh(false);
         }
 
         public void TryGoBack()
@@ -457,7 +462,7 @@
                 }
 
                 CurrentFolder = historyItem;
-                Refresh();
+                Refresh(false);
             }
         }
 
@@ -471,7 +476,7 @@
                 }
 
                 CurrentFolder = historyItem;
-                Refresh();
+                Refresh(false);
             }
         }
 
@@ -500,7 +505,6 @@
             if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(0))
             {
                 SetFolder(dir.Path);
-                Designer.OpenFile(SelectionCollection.Global[0] as string);
             }
 
             ImGui.EndChild();
@@ -584,7 +588,7 @@
                         if (x.Result != MessageBoxResult.Yes)
                             return;
                         System.IO.Directory.Delete((string)c, true);
-                        Refresh();
+                        Refresh(true);
                     }, MessageBoxType.YesCancel);
                 }
 
@@ -641,7 +645,7 @@
                 }
             }
 
-            Refresh();
+            Refresh(true);
         }
 
         private unsafe bool DisplayFileBody(Item file, Guid guid)
@@ -771,7 +775,7 @@
                         if (x.Result != MessageBoxResult.Yes)
                             return;
                         SourceAssetsDatabase.Delete((string)c, DeleteBehavior.DeleteChildren);
-                        Refresh();
+                        Refresh(false);
                     }, MessageBoxType.YesCancel);
                 }
 
@@ -816,7 +820,7 @@
                     if (ImGui.MenuItem("\xE948 New Folder"))
                     {
                         System.IO.Directory.CreateDirectory(GetNewFolderName(Path.Combine(currentDir.FullName, "New Folder")));
-                        Refresh();
+                        Refresh(true);
                     }
 
                     ImGui.Separator();
@@ -835,7 +839,7 @@
                     {
                         var path = GetNewFileName(Path.Combine(currentDir.FullName, "New Scene.hexlvl"));
                         SceneSerializer.Serialize(new(), path);
-                        Refresh();
+                        Refresh(false);
                     }
 
                     ImGui.EndMenu();
@@ -850,7 +854,7 @@
 
                 if (ImGui.MenuItem("\xE72C Refresh"))
                 {
-                    Refresh();
+                    Refresh(true);
                 }
 
                 ImGui.Separator();
@@ -963,28 +967,17 @@
 
             if (renameFileDialog.Draw())
             {
-                Refresh();
+                Refresh(false);
             }
             if (renameDirectoryDialog.Draw())
             {
-                Refresh();
+                Refresh(true);
             }
             if (importFileDialog.Draw())
             {
                 if (importFileDialog.Result == OpenFileResult.Ok)
                 {
-                    Task.Run(async () =>
-                    {
-                        var popup = PopupManager.Show(new ProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ...", ProgressType.Bar));
-                        try
-                        {
-                            await SourceAssetsDatabase.ImportFileAsync(importFileDialog.FullPath, progress: popup);
-                        }
-                        finally
-                        {
-                            popup.Dispose();
-                        }
-                    });
+                    ImportAsync(importFileDialog.FullPath);
                 }
             }
 
@@ -1162,27 +1155,32 @@
                 return;
             }
 
-            string? file = e.GetString();
+            ImportAsync(e.GetString());
+        }
 
-            if (file == null)
+        private void ImportAsync(string? file)
+        {
+            if (file == null || currentDir == null)
             {
                 return;
             }
 
-            Logger.Info($"Dropped file '{file}'");
-
-            Task.Factory.StartNew(async file =>
+            Task.Factory.StartNew(async args =>
             {
+                if (args is not (string file, DirectoryInfo currentDir))
+                {
+                    return;
+                }
                 var popup = PopupManager.Show(new ProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ...", ProgressType.Bar));
                 try
                 {
-                    await SourceAssetsDatabase.ImportFileAsync((string)file, progress: popup);
+                    await SourceAssetsDatabase.ImportFileAsync(file, currentDir.FullName, null, popup);
                 }
                 finally
                 {
                     popup.Dispose();
                 }
-            }, file);
+            }, (file, currentDir));
         }
 
         private void DrawMenuBar()

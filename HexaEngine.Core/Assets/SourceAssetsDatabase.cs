@@ -483,6 +483,12 @@
         public static async Task ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
         {
             initLock.Wait();
+
+            if (!outputDir.StartsWith(rootFolder))
+            {
+                throw new ArgumentException($"Argument '{nameof(outputDir)}' must be located in '{rootFolder}', but was in '{outputDir}'");
+            }
+
             var filename = Path.GetFileName(path);
 
             if (!path.StartsWith(rootFolder))
