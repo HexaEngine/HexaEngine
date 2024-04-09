@@ -230,8 +230,6 @@
                         }
                     }
 
-                    ImGui.Text(rotation.ToString());
-
                     var speedMult = Speed;
                     if (ImGui.IsKeyDown(ImGuiKey.LeftShift))
                     {
