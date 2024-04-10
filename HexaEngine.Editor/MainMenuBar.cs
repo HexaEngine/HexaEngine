@@ -140,30 +140,24 @@
                         for (int i = 0; i < entries.Count; i++)
                         {
                             var entry = entries[i];
-                            if (ImGui.MenuItem(entry.FullName))
+                            if (ImGui.MenuItem(entry.Name))
                             {
                                 ProjectManager.Load(entry.Path);
                             }
+                            ImGui.SameLine();
+                            ImGui.TextDisabled(entry.Path);
                         }
                         ImGui.EndMenu();
                     }
 
-                    ImGui.EndMenu();
-                }
+                    ImGui.SeparatorText("Scripts");
 
-                if (ImGui.BeginMenu("Build"))
-                {
-                    if (ImGui.MenuItem("Build Scripts"))
+                    if (ImGui.MenuItem("Build Project"))
                     {
                         Task.Run(ProjectManager.BuildScripts);
                     }
 
-                    if (ImGui.MenuItem("Rebuild Scripts"))
-                    {
-                        Task.Run(ProjectManager.RebuildScripts);
-                    }
-
-                    if (ImGui.MenuItem("Clean Scripts"))
+                    if (ImGui.MenuItem("Clean Project"))
                     {
                         Task.Run(ProjectManager.CleanScripts);
                     }

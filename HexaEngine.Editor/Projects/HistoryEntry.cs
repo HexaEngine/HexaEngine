@@ -2,7 +2,6 @@
 {
     public struct HistoryEntry
     {
-        private string? cache;
         private string? lastAccessCache;
 
         public HistoryEntry(string name, string path)
@@ -39,8 +38,5 @@
         public DateTime LastAccess { get; set; }
 
         public string LastAccessString => lastAccessCache ??= LastAccess.ToLocalTime().ToString("dd/MM/yyyy HH:mm");
-
-        [JsonIgnore]
-        public string FullName => cache ??= $"{Name}, {Path}";
     }
 }

@@ -24,6 +24,7 @@
     public static class ProjectManager
     {
         private static bool loaded;
+        private static string scriptProjectPath;
         private static FileSystemWatcher? watcher;
         private static bool scriptProjectChanged;
 
@@ -114,17 +115,18 @@
 
                     SourceAssetsDatabase.Init(CurrentProjectFolder, popup);
 
-                    string projectPath = Path.Combine(CurrentProjectFolder, solutionName);
+                    scriptProjectPath = Path.Combine(CurrentProjectFolder, solutionName);
 
-                    watcher = new(projectPath);
+                    watcher = new(CurrentProjectFolder);
                     watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
                     watcher.Changed += Watcher_Changed;
+                    watcher.Created += Watcher_Changed;
+                    watcher.Deleted += Watcher_Changed;
+                    watcher.Renamed += Watcher_Changed;
+                    watcher.IncludeSubdirectories = true;
+
                     watcher.EnableRaisingEvents = true;
                     _ = Task.Factory.StartNew(BuildScripts);
-
-                    FileSystem.FileCreated += FileSystemFileCreated;
-                    FileSystem.FileDeleted += FileSystemFileDeleted;
-                    FileSystem.FileRenamed += FileSystemFileRenamed;
                 }
                 catch (Exception ex)
                 {
@@ -171,23 +173,27 @@
             }
         }
 
-        private static void FileSystemFileRenamed(Core.IO.RenamedEventArgs args)
-        {
-        }
-
-        private static void FileSystemFileDeleted(Core.IO.FileSystemEventArgs args)
-        {
-            SourceAssetsDatabase.DeleteLeftovers(args.FullPath);
-        }
-
-        private static void FileSystemFileCreated(Core.IO.FileSystemEventArgs args)
-        {
-            SourceAssetsDatabase.ImportFileAsync(args.FullPath);
-        }
-
         private static void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
-            scriptProjectChanged = true;
+            bool fileExist = File.Exists(e.FullPath);
+            if (fileExist && IsIgnored(e.FullPath))
+            {
+                return;
+            }
+
+            if (e.ChangeType == WatcherChangeTypes.Created && fileExist)
+            {
+                SourceAssetsDatabase.ImportFileAsync(e.FullPath);
+            }
+
+            if (e.ChangeType == WatcherChangeTypes.Deleted)
+            {
+            }
+
+            if (e.FullPath.StartsWith(scriptProjectPath))
+            {
+                scriptProjectChanged = true;
+            }
         }
 
         public static Task Create(string path)
