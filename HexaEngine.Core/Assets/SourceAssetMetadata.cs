@@ -42,7 +42,7 @@
 
         public Dictionary<string, object> Additional { get; internal set; }
 
-        private static readonly JsonSerializer serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
+        private static readonly JsonSerializer serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented });
 
         internal static SourceAssetMetadata? GetMetadata(string path)
         {

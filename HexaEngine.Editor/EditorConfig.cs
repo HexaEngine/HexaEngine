@@ -22,6 +22,8 @@
 
         public int Y { get; set; } = SdlWindow.WindowPosCentered;
 
+        public float MouseSensitivity { get; set; } = 1;
+
         public WindowState State { get; set; } = WindowState.Normal;
 
         public static EditorConfig Default { get; } = Load();

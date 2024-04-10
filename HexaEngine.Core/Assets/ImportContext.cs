@@ -8,6 +8,7 @@
         private readonly List<Guid> toRemove = [];
         private readonly string? importSourcePath;
         private readonly IProgress<float>? progress;
+        private readonly List<string> children = new();
 
         public ImportContext(IGuidProvider provider, SourceAssetMetadata sourceAsset, string? importSourcePath, IProgress<float>? progress)
         {
@@ -89,6 +90,19 @@
             var artifact = EmitArtifact(name, type, out string path);
             stream = File.Create(path);
             return artifact;
+        }
+
+        public SourceAssetMetadata ImportChild(string path, Guid childGuid)
+        {
+            children.Add(path);
+            GuidProvider guidProvider = new(childGuid, sourceAsset.Guid);
+            return SourceAssetsDatabase.ImportFile(path, guidProvider);
+        }
+
+        public SourceAssetMetadata ImportChild(string path, IGuidProvider provider)
+        {
+            children.Add(path);
+            return SourceAssetsDatabase.ImportFile(path, provider);
         }
 
         public T? GetAdditionalMetadata<T>(string key) where T : class

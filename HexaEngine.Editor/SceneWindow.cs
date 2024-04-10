@@ -66,7 +66,7 @@
 
             if (isHovered || EditorCameraController.CapturedMouse || EditorCameraController.FirstFrame)
             {
-                EditorCameraController.UpdateEditorCamera();
+                EditorCameraController.UpdateEditorCamera(isHovered);
             }
 
             if (isFocused)
@@ -188,9 +188,33 @@
                     {
                         ImGui.Checkbox("Fullscreen", ref Fullframe);
 
-                        ImGui.Separator();
+                        ImGui.SeparatorText("Camera Settings");
 
-                        ImGui.Text("Shading Mode");
+                        float fov = EditorCameraController.Fov;
+                        if (ImGui.SliderAngle("Fov", ref fov, 0, 180))
+                        {
+                            EditorCameraController.Fov = fov;
+                        }
+
+                        float far = EditorCameraController.Far;
+                        if (ImGui.InputFloat("Far", ref far))
+                        {
+                            EditorCameraController.Far = far;
+                        }
+
+                        float speed = EditorCameraController.Speed;
+                        if (ImGui.InputFloat("Speed", ref speed))
+                        {
+                            EditorCameraController.Speed = speed;
+                        }
+
+                        float sensitivity = EditorCameraController.MouseSensitivity;
+                        if (ImGui.InputFloat("Sensitivity", ref sensitivity))
+                        {
+                            EditorCameraController.MouseSensitivity = sensitivity;
+                        }
+
+                        ImGui.SeparatorText("Shading Mode");
 
                         SceneRenderer? renderer = SceneRenderer.Current;
 

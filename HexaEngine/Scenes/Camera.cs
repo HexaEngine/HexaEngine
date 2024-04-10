@@ -69,6 +69,7 @@
             get => Transform.Fov;
             set
             {
+                value = MathUtil.Clamp(value, 0f, float.Pi - 0.0174532925f);
                 Transform.Fov = value;
                 focalLength = FovToFocalLength(value, sensorSize);
             }
@@ -89,7 +90,7 @@
 
         [EditorCategory("Lens")]
         [EditorProperty<LensUnit>("Lens Unit")]
-        public LensUnit LensUnit { get; set; } = LensUnit.Millimeters;
+        public LensUnit LensUnit { get; set; } = LensUnit.FieldOfView;
 
         [EditorCategory("Lens")]
         [EditorProperty("Far")]

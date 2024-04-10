@@ -1,10 +1,5 @@
-﻿using HexaEngine.Core.IO.Binary.Animations;
-using HexaEngine.Core.IO.Binary.Materials;
-using HexaEngine.Core.IO.Binary.Meshes;
-
-namespace HexaEngine.Core.Assets.Importer
+﻿namespace HexaEngine.Core.Assets.Importer
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
@@ -30,8 +25,8 @@ namespace HexaEngine.Core.Assets.Importer
     using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
-    using MaterialProperty = MaterialProperty;
-    using Node = Node;
+    using MaterialProperty = IO.Binary.Materials.MaterialProperty;
+    using Node = IO.Binary.Meshes.Node;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;
@@ -301,7 +296,7 @@ namespace HexaEngine.Core.Assets.Importer
 
                     DictionaryGuidProvider provider = new(context.AssetMetadata.Guid, texturePathToGuid, GuidNotFoundBehavior.Throw);
 
-                    SourceAssetsDatabase.ImportFile(filePath, provider);
+                    context.ImportChild(filePath, provider);
                     progressContext.AddProgress();
                 }
             }
@@ -633,12 +628,11 @@ namespace HexaEngine.Core.Assets.Importer
                     // try
                     {
                         var guid = materialIds[i] = Guid.NewGuid();
-                        GuidProvider guidProvider = new(guid, context.AssetMetadata.Guid);
 
                         string path = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
 
                         material.Save(path, Encoding.UTF8);
-                        SourceAssetsDatabase.ImportFile(path, guidProvider);
+                        context.ImportChild(path, guid);
                         progressContext.AddProgress();
                     }
                     //catch (Exception ex)
@@ -737,12 +731,11 @@ namespace HexaEngine.Core.Assets.Importer
                     try
                     {
                         var guid = animationsIds[i] = Guid.NewGuid();
-                        GuidProvider guidProvider = new(guid, context.AssetMetadata.Guid);
 
                         string path = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
 
                         animation.Save(path, Encoding.UTF8);
-                        SourceAssetsDatabase.ImportFile(path, guidProvider);
+                        context.ImportChild(path, guid);
                         progressContext.AddProgress();
                     }
                     catch (Exception ex)
