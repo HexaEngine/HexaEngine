@@ -37,6 +37,21 @@
 
             SceneManager.SceneChanged += SceneChanged;
             Application.OnApplicationClose += OnApplicationClose;
+            Application.OnEditorPlayStateTransition += OnEditorPlayStateTransition;
+        }
+
+        private static void OnEditorPlayStateTransition(EditorPlayStateTransitionEventArgs args)
+        {
+            if (config == null)
+            {
+                return;
+            }
+
+            EditorCameraMode = config.GetOrAddValue("Mode", EditorCameraMode.Orbit);
+            Dimension = config.GetOrAddValue("Dimension", EditorCameraDimension.Dim3D);
+            editorCamera.Transform.Position = config.GetOrAddValue("Position", Vector3.Zero);
+            editorCamera.Transform.Rotation = config.GetOrAddValue("Rotation", Vector3.Zero);
+            orbitPosition = config.GetOrAddValue("OrbitPosition", new Vector3(10, 0, 0));
         }
 
         private static void OnApplicationClose()
