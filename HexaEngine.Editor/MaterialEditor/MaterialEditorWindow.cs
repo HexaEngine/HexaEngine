@@ -5,6 +5,7 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Core.UI;
@@ -27,7 +28,7 @@
         private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
 
-        private string Version = "1.0.0.1";
+        private const string Version = "1.0.0.1";
 
         private IGraphicsDevice device;
 
@@ -559,7 +560,7 @@
                 if (metadata != null)
                 {
                     material.Save(metadata.GetFullPath(), Encoding.UTF8);
-                    assetRef.GetSourceMetadata()?.Update();
+                    metadata.Update();
                     if (nameChanged)
                     {
                         metadata.Rename(material.Name);
@@ -580,11 +581,14 @@
             material.Name = "New Material";
             MaterialFile = material;
 
-            var metadata = SourceAssetsDatabase.CreateFile(SourceAssetsDatabase.GetFreeName("New Material.material"));
-            path = metadata.GetFullPath();
+            path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, SourceAssetsDatabase.GetFreeName("New Material.material"));
+
             material.Save(path, Encoding.UTF8);
+            var metadata = SourceAssetsDatabase.ImportFile(path);
+
             var artifact = ArtifactDatabase.GetArtifactForSource(metadata.Guid);
             assetRef = artifact?.Guid ?? Guid.Empty;
+            unsavedData = true;
         }
 
         protected override void InitWindow(IGraphicsDevice device)
@@ -638,9 +642,9 @@
 
         protected override void DisposeCore()
         {
+            Unload();
             if (editor != null && material != null)
             {
-                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
                 editor.Destroy();
                 editor = null;
             }

@@ -292,6 +292,8 @@
 
         public static string RootFolder => rootFolder;
 
+        public static string RootAssetsFolder => rootAssetsFolder;
+
         public static string CacheFolder => cacheFolder;
 
         internal static SourceAssetMetadata AddFile(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IProgress<float>? progress)
@@ -689,6 +691,27 @@
             File.Move(fileToMove, targetLocation);
             File.Move(oldMetadataLocation, metadataLocation);
             metadata.Save();
+        }
+
+        public static void MoveFolder(string folder, string newPath)
+        {
+            initLock.Wait();
+
+            foreach (var subFolder in Directory.EnumerateDirectories(folder))
+            {
+                var newSubPath = Path.Combine(newPath, Path.GetFileName(subFolder));
+                Directory.CreateDirectory(newSubPath);
+                MoveFolder(subFolder, newSubPath);
+            }
+
+            foreach (var file in Directory.EnumerateFiles(folder))
+            {
+                if (Path.GetExtension(file.AsSpan()).SequenceEqual(".meta"))
+                    continue;
+                Move(file, Path.Combine(newPath, Path.GetFileName(file)));
+            }
+
+            Directory.Delete(folder);
         }
 
         public static void Copy(string path, string target, bool overwrite)

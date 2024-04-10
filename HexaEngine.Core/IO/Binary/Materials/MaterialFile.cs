@@ -119,6 +119,13 @@
                 material.Shaders.Add(MaterialShader.Read(src, encoding, endianness));
             }
 
+            var passCount = src.ReadInt32(endianness);
+            material.Passes.Capacity = passCount;
+            for (int i = 0; i < passCount; i++)
+            {
+                material.Passes.Add(MaterialShaderPass.Read(src, encoding, endianness));
+            }
+
             material.Metadata = Metadata.ReadFrom(src, encoding, endianness);
 
             return material;

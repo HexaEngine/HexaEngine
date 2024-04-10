@@ -56,6 +56,10 @@
         {
             Name = name;
             Type = type;
+            if (data.Length != length)
+            {
+                Array.Resize(ref data, length);
+            }
             Data = data;
             Length = length;
             ValueType = valueType;

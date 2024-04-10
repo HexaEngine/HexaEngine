@@ -294,6 +294,8 @@
             SdlCheckError();
             TouchDevices.Init();
             SdlCheckError();
+
+            Sdl.EventState((uint)EventType.Dropfile, Sdl.Enable);
         }
 
         /// <summary>

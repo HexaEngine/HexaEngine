@@ -5,6 +5,8 @@
 	<Icon theme="Light" name="Material" path="assets/icons/material.png" target="*.material" tint="#000" />
 	<Icon theme="Light" name="Model" path="assets/icons/model.png" target="*.model" tint="#000" />
 	<Icon theme="Light" name="gltf" path="assets/icons/model.png" target="*.gltf" tint="#000" />
+	<Icon theme="Light" name="glb" path="assets/icons/model.png" target="*.glb" tint="#000" />
+	<Icon theme="Light" name="fbx" path="assets/icons/model.png" target="*.fbx" tint="#000" />
 	<Icon theme="Light" name="Scene" path="assets/icons/scene.png" target="*.hexlvl" tint="#000" />
 	<Icon theme="Light" name="Animation" path="assets/icons/animation.png" target="*.anim" tint="#000" />
 	<Icon theme="Light" name="Terrain" path="assets/icons/terrain.png" target="*.terrain" tint="#000" />
@@ -26,6 +28,8 @@
 	<Icon theme="Dark" name="Material" path="assets/icons/material.png" target="*.material" tint="#FFF" />
 	<Icon theme="Dark" name="Model" path="assets/icons/model.png" target="*.model" tint="#FFF" />
 	<Icon theme="Dark" name="gltf" path="assets/icons/model.png" target="*.gltf" tint="#FFF" />
+	<Icon theme="Dark" name="glb" path="assets/icons/model.png" target="*.glb" tint="#FFF" />
+	<Icon theme="Dark" name="fbx" path="assets/icons/model.png" target="*.fbx" tint="#FFF" />
 	<Icon theme="Dark" name="Scene" path="assets/icons/scene.png" target="*.hexlvl" tint="#FFF" />
 	<Icon theme="Dark" name="Animation" path="assets/icons/animation.png" target="*.anim" tint="#FFF" />
 	<Icon theme="Dark" name="Terrain" path="assets/icons/terrain.png" target="*.terrain" tint="#FFF" />

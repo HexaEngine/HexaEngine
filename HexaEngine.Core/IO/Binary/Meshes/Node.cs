@@ -3,6 +3,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Mathematics;
+    using System;
     using System.IO;
     using System.Numerics;
     using System.Text;
@@ -82,12 +83,14 @@
         public Metadata Metadata;
 
 #nullable disable
+
         /// <summary>
         /// Private constructor for creating an instance of the <see cref="Node"/> class.
         /// </summary>
         private Node()
         {
         }
+
 #nullable restore
 
         /// <summary>
@@ -382,6 +385,25 @@
         public override string ToString()
         {
             return Name;
+        }
+
+        public Node? FindNode(string name)
+        {
+            if (Name == name)
+            {
+                return this;
+            }
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var node = Children[i].FindNode(name);
+                if (node != null)
+                {
+                    return node;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -324,7 +324,7 @@ namespace HexaEngine.Core.Assets.Importer
 
         private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths, [MaybeNullWhen(false)] out Dictionary<string, Guid> texturePathToGuid)
         {
-            try
+            //try
             {
                 texturePaths = [];
                 texturePathToGuid = new();
@@ -630,7 +630,7 @@ namespace HexaEngine.Core.Assets.Importer
                     material.Properties = properties;
                     material.Textures = textures;
 
-                    try
+                    // try
                     {
                         var guid = materialIds[i] = Guid.NewGuid();
                         GuidProvider guidProvider = new(guid, context.AssetMetadata.Guid);
@@ -641,16 +641,16 @@ namespace HexaEngine.Core.Assets.Importer
                         SourceAssetsDatabase.ImportFile(path, guidProvider);
                         progressContext.AddProgress();
                     }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex);
-                        MessageBox.Show("Failed to save material file", ex.Message);
-                        return false;
-                    }
+                    //catch (Exception ex)
+                    //{
+                    //    Logger.Log(ex);
+                    //    MessageBox.Show("Failed to save material file", ex.Message);
+                    //    return false;
+                    //}
                 }
             }
-            catch (Exception ex)
-            {
+            //catch (Exception ex)
+            /*{
                 materials = null;
                 materialIds = null;
                 texturePaths = null;
@@ -658,7 +658,7 @@ namespace HexaEngine.Core.Assets.Importer
                 Logger.Log(ex);
                 MessageBox.Show("Failed to load materials", ex.Message);
                 return false;
-            }
+            }*/
 
             return true;
         }
@@ -764,7 +764,7 @@ namespace HexaEngine.Core.Assets.Importer
 
         private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
-            try
+            //try
             {
                 meshes = new MeshData[scene->MNumMeshes];
                 nameToMesh = [];
@@ -803,7 +803,23 @@ namespace HexaEngine.Core.Assets.Importer
                         for (int j = 0; j < bones.Length; j++)
                         {
                             Bone* bn = msh->MBones[j];
-                            pToNode[bn->MNode].Flags |= NodeFlags.Bone;
+
+                            if (bn->MNode == null)
+                            {
+                                var node = root.FindNode(bn->MName);
+                                if (node != null)
+                                {
+                                    node.Flags |= NodeFlags.Bone;
+                                }
+                                else
+                                {
+                                    Logger.Warn($"Failed to find node for bone '{bn->MName}'");
+                                }
+                            }
+                            else
+                            {
+                                pToNode[bn->MNode].Flags |= NodeFlags.Bone;
+                            }
 
                             IO.Binary.Meshes.VertexWeight[] w = new IO.Binary.Meshes.VertexWeight[bn->MNumWeights];
                             for (int x = 0; x < w.Length; x++)
@@ -896,7 +912,8 @@ namespace HexaEngine.Core.Assets.Importer
                     }
                 }
             }
-            catch (Exception ex)
+            //catch (Exception ex)
+            /*
             {
                 meshes = null;
                 nameToMesh = null;
@@ -905,6 +922,7 @@ namespace HexaEngine.Core.Assets.Importer
                 MessageBox.Show("Failed to load meshes", ex.Message);
                 return false;
             }
+            */
             return true;
         }
 
