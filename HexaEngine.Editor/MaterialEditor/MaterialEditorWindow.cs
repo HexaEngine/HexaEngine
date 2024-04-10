@@ -574,14 +574,14 @@
 
         public void CreateNew()
         {
-            MaterialFile material = new("New Material", Guid.NewGuid(), MaterialData.Empty);
+            string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
+            MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
             material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Mathematics.Endianness.LittleEndian, 0f));
             material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Mathematics.Endianness.LittleEndian, 0.4f));
             material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Mathematics.Endianness.LittleEndian, 1f));
-            material.Name = "New Material";
             MaterialFile = material;
 
-            path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, SourceAssetsDatabase.GetFreeName("New Material.material"));
+            path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);
 
             material.Save(path, Encoding.UTF8);
             var metadata = SourceAssetsDatabase.ImportFile(path);
