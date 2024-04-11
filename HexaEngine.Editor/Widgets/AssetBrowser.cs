@@ -353,7 +353,7 @@
             Directory directory = new(Path.GetFileName(dir), dir);
             foreach (string subDir in System.IO.Directory.EnumerateDirectories(dir))
             {
-                if (ProjectManager.IsIgnored(subDir))
+                if (SourceAssetsDatabase.IsIgnored(subDir))
                 {
                     continue;
                 }
@@ -392,7 +392,7 @@
                         continue;
                     }
 
-                    if (ProjectManager.IsIgnored(fse))
+                    if (SourceAssetsDatabase.IsIgnored(fse))
                     {
                         continue;
                     }

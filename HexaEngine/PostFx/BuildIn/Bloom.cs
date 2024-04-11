@@ -235,7 +235,7 @@
                 catch (Exception ex)
                 {
                     MessageBox.Show("Failed to load lens dirt tex", ex.Message);
-                    Logger.Log(ex);
+                    LoggerFactory.GetLogger(nameof(Resources)).Log(ex);
                 }
             }
 

@@ -2,6 +2,7 @@
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Configuration;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Materials;
@@ -18,6 +19,7 @@
         private readonly ReusableFileStream stream;
         private readonly ModelFile modelFile;
         private readonly MaterialAssetMappingCollection materialAssets;
+        private readonly ILogger logger;
 
         private readonly Node[] nodes;
         private readonly Mesh[] meshes;
@@ -35,11 +37,11 @@
 
         private bool disposedValue;
 
-        public Model(ReusableFileStream stream, MaterialAssetMappingCollection materialAssets)
+        public Model(ReusableFileStream stream, MaterialAssetMappingCollection materialAssets, ILogger logger)
         {
             this.stream = stream;
             this.materialAssets = materialAssets;
-
+            this.logger = logger;
             modelFile = ModelFile.Load(stream, MeshLoadMode.Streaming);
             materialAssets.Update(modelFile);
 
@@ -126,7 +128,7 @@
 
                 Material material = materials[i];
                 var tmp = material;
-                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name);
+                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name, logger);
                 MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
                 material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
                 materials[i] = material;
@@ -160,7 +162,7 @@
                 }
 
                 var tmp = material;
-                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name);
+                MaterialData materialDesc = materialAssets.GetMaterial(mesh.Data.Name, logger);
                 MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
                 material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
                 materials[i] = material;
@@ -231,7 +233,7 @@
                     MeshLODData lod = data.LoadLODData(0, stream);
 
                     Mesh mesh = ResourceManager.Shared.LoadMesh(data, lod);
-                    MaterialData materialDesc = materialAssets.GetMaterial(data.Name);
+                    MaterialData materialDesc = materialAssets.GetMaterial(data.Name, logger);
                     MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
                     Material material = ResourceManager.Shared.LoadMaterial<Model>(shaderDesc, materialDesc);
 
@@ -261,7 +263,7 @@
                 MeshLODData lod = data.LoadLODData(0, stream);
 
                 Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data, lod);
-                MaterialData materialDesc = materialAssets.GetMaterial(data.Name);
+                MaterialData materialDesc = materialAssets.GetMaterial(data.Name, logger);
                 MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(mesh, materialDesc, true, out ModelMaterialShaderFlags flags);
                 Material material = await ResourceManager.Shared.LoadMaterialAsync<Model>(shaderDesc, materialDesc);
 

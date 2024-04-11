@@ -7,6 +7,7 @@
 
     public class AnimationManager : IDisposable
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(AnimationManager));
         private readonly List<AnimationLibrary> libraries = new();
         private readonly Dictionary<string, AnimationLibrary> pathToLib = new();
 

@@ -6,6 +6,9 @@
 
     public class SourceAssetMetadata
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
+        private readonly SemaphoreSlim _semaphore = new(1);
+
         [JsonConstructor]
         public SourceAssetMetadata(string filePath, Guid guid, Guid parentGuid, DateTime lastModified, uint crc32, Dictionary<string, object> additional)
         {
@@ -43,6 +46,16 @@
         public Dictionary<string, object> Additional { get; internal set; }
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented });
+
+        public void Lock()
+        {
+            _semaphore.Wait();
+        }
+
+        public void ReleaseLock()
+        {
+            _semaphore.Release();
+        }
 
         internal static SourceAssetMetadata? GetMetadata(string path)
         {

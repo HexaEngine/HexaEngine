@@ -196,11 +196,6 @@
             return Execute($"build \"{path}\" -o \"{outputDirectory}\" -a AMD64");
         }
 
-        public static string Rebuild(string path, string outputDirectory)
-        {
-            return Execute($"rebuild \"{path}\" -o \"{outputDirectory}\" -a AMD64");
-        }
-
         public static string Clean(string path)
         {
             return Execute($"clean \"{path}\"");

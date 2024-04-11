@@ -20,12 +20,14 @@
         /// <summary>
         /// Gets the file log writer used for crash logging.
         /// </summary>
-        public static readonly FileLogWriter FileLogWriter = new($"logs/app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log");
+        public static readonly FileLogWriter FileLogWriter = new("logs");
 
 #nullable disable
         private static HardwareInfo info;
         private static Task task;
 #nullable restore
+
+        private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(CrashLogger));
 
         /// <summary>
         /// Initializes the CrashLogger, setting up crash handling and logging.
@@ -40,18 +42,18 @@
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                logger.Log(ex);
             }
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Logger.Writers.Add(FileLogWriter);
+            LoggerFactory.AddGlobalWriter(FileLogWriter);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.IsTerminating)
             {
-                Logger.Close();
+                LoggerFactory.CloseAll();
                 var exception = (Exception)e.ExceptionObject;
 
                 task?.Wait();

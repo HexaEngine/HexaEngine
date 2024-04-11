@@ -6,6 +6,8 @@
 
     public class AnimationImporter : IAssetImporter
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(AnimationImporter));
+
         public Type? SettingsType { get; }
 
         public string? SettingsKey { get; }

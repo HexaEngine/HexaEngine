@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
     using HexaEngine.Core.Debugging;
+    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -19,7 +20,7 @@
 #if DEBUG
             if (result == 0)
             {
-                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -38,7 +39,7 @@
 #if DEBUG
             if (result < 0)
             {
-                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -56,7 +57,7 @@
         {
             if (result == 0)
             {
-                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return result;
         }
@@ -67,7 +68,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SdlCheckError()
         {
-            Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+            LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
         }
 
         /// <summary>
@@ -80,7 +81,7 @@
         {
             if (ptr == null)
             {
-                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return ptr;
         }
@@ -97,7 +98,7 @@
 #if DEBUG
             if (ptr == null)
             {
-                Logger.ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
             }
             return ptr;
 #else

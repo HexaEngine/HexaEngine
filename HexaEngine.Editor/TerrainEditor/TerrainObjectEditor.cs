@@ -28,6 +28,7 @@ namespace HexaEngine.Editor.TerrainEditor
 
     public class TerrainObjectEditor : IObjectEditor
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TerrainEditor));
         private IGraphicsPipelineState brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
         private ConstantBuffer<Matrix4x4> worldBuffer;

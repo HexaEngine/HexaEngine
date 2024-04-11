@@ -11,6 +11,7 @@
 
     public unsafe class PhysicsSystem : ISceneSystem
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger("PhysX");
         private static readonly PersistentCache cookingCache = new("./cache/cookingcache.bin", "./cache/cookingcache.index");
         private static readonly PxFoundation* foundation;
         private static readonly PxTolerancesScale tolerancesScale;

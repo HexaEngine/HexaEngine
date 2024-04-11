@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO.Binary.Materials;
@@ -26,7 +27,7 @@
                 cube?.Dispose();
                 cube = new(device);
 
-                var materialData = MaterialData.GetMaterial(component.materialAsset);
+                var materialData = MaterialData.GetMaterial(component.materialAsset, LoggerFactory.General);
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
     }

@@ -393,7 +393,7 @@
                 }
                 if (ProjectManager.ScriptProjectChanged)
                 {
-                    ProjectManager.BuildScripts().Wait();
+                    ProjectManager.BuildScripts();
                 }
                 SceneManager.Save();
                 scene.IsSimulating = false;

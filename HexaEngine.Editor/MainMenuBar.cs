@@ -154,12 +154,12 @@
 
                     if (ImGui.MenuItem("Build Project"))
                     {
-                        Task.Run(ProjectManager.BuildScripts);
+                        ProjectManager.BuildScriptsAsync(true);
                     }
 
                     if (ImGui.MenuItem("Clean Project"))
                     {
-                        Task.Run(ProjectManager.CleanScripts);
+                        ProjectManager.CleanScriptsAsync();
                     }
 
                     ImGui.Separator();
@@ -292,7 +292,7 @@
                         {
                             string fileName = $"screenshot-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.png";
                             win.Renderer.TakeScreenshot(win.GraphicsContext, fileName);
-                            Logger.Info($"Saved screenshot: {Path.GetFullPath(fileName)}");
+                            LoggerFactory.General.Info($"Saved screenshot: {Path.GetFullPath(fileName)}");
                         });
                     }
                     if (ImGui.MenuItem("Clear Shader Cache"))

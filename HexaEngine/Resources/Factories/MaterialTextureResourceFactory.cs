@@ -7,6 +7,7 @@
 
     public class MaterialTextureResourceFactory : ResourceFactory<MaterialTexture, Core.IO.Binary.Materials.MaterialTexture>
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Resources));
         private readonly IGraphicsDevice device;
 
         public MaterialTextureResourceFactory(ResourceManager resourceManager, IGraphicsDevice device) : base(resourceManager)

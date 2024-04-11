@@ -157,7 +157,7 @@
                 }
                 else
                 {
-                    Logger.Error($"Couldn't load terrain {terrainAsset}");
+                    LoggerFactory.General.Error($"Couldn't load terrain {terrainAsset}");
                 }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }

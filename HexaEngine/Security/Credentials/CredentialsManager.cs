@@ -6,6 +6,7 @@
 
     public static class CredentialsManager
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(CredentialsManager));
         private static CredentialsContainer? container;
         private static bool isOpen = false;
         private static SecureString? password;

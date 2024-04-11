@@ -67,7 +67,7 @@
             {
                 LogSeverity.Trace => ConsoleColor.DarkGray,
                 LogSeverity.Debug => ConsoleColor.DarkCyan,
-                LogSeverity.Information => ConsoleColor.White,
+                LogSeverity.Info => ConsoleColor.White,
                 LogSeverity.Warning => ConsoleColor.Yellow,
                 LogSeverity.Error => ConsoleColor.Red,
                 LogSeverity.Critical => ConsoleColor.Magenta,
@@ -81,7 +81,7 @@
         /// <param name="message">The log message to convert.</param>
         public static implicit operator ConsoleMessage(LogMessage message)
         {
-            return new(GetForegroundFromSeverity(message.Severity), ImGuiConsole.BackgroundColor, message.Message, message.Timestamp);
+            return new(GetForegroundFromSeverity(message.Severity), ImGuiConsole.BackgroundColor, message.Message, message.Timestamp.ToShortTimeString());
         }
     }
 }

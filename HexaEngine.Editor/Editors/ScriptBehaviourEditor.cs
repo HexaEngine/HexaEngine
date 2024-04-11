@@ -5,12 +5,14 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Properties;
 
     public class ScriptBehaviourEditor : IObjectEditor
     {
         private ImGuiName guiName = new("Script Behaviour");
         private IObjectEditor? editor;
+        private bool changing;
 
         public string Name => guiName.Name;
 
@@ -37,19 +39,47 @@
                 return false;
             }
 
+            if (changing)
+            {
+                return false;
+            }
+
             AssetRef val = component.ScriptRef;
 
             bool changed = ComboHelper.ComboForAssetRef(guiName.Id, ref val, AssetType.Script);
             if (changed)
             {
-                component.ScriptRef = val;
+                if (editor != null)
+                {
+                    ObjectEditorFactory.DestroyEditor(editor.Type);
+                    editor = null;
+                }
+
+                Volatile.Write(ref changing, true);
+
+                Task.Run(async () =>
+                {
+                    if (ProjectManager.ScriptProjectChanged)
+                    {
+                        await ProjectManager.BuildScriptsAsync();
+                    }
+
+                    component.ScriptRef = val;
+                    Volatile.Write(ref changing, false);
+                });
+
+                return true;
             }
 
             Type? type = component.ScriptType;
 
-            if (type != null)
+            if (editor == null && type != null)
             {
                 editor = ObjectEditorFactory.CreateEditor(type);
+            }
+
+            if (editor != null)
+            {
                 editor.Instance = component.Instance;
                 ImGui.Separator();
                 changed |= editor.Draw(context);

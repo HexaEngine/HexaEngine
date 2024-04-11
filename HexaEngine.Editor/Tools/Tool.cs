@@ -8,12 +8,14 @@
 
     public class Tool : ITool
     {
+        private readonly ILogger logger;
         private readonly string name;
         private readonly string filter;
         private readonly Action<string> open;
 
         public Tool(string name, string filter, Action<string> open)
         {
+            logger = LoggerFactory.GetLogger($"Tool - {name}");
             this.name = name;
             this.filter = filter;
             this.open = open;
@@ -31,8 +33,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to open file with Tool: {Name}");
-                Logger.Log(ex);
+                logger.Error($"Failed to open file with Tool: {Name}");
+                logger.Log(ex);
                 MessageBox.Show($"Failed to open file with Tool: {Name}", ex.Message);
             }
 

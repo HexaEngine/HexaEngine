@@ -121,12 +121,12 @@
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    Logger.Info("Renderer: Initialized");
+                    LoggerFactory.General.Info("Renderer: Initialized");
                 }
                 if (x.IsFaulted)
                 {
-                    Logger.Error("Renderer: Failed Initialize");
-                    Logger.Log(x.Exception);
+                    LoggerFactory.General.Error("Renderer: Failed Initialize");
+                    LoggerFactory.General.Log(x.Exception);
                 }
 
                 // Set the render viewport based on the initialized scene renderer

@@ -18,7 +18,7 @@
         /// <summary>
         /// Information severity, used for general information.
         /// </summary>
-        Information = 2,
+        Info = 2,
 
         /// <summary>
         /// Warning severity, used for warning messages.

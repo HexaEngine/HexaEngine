@@ -29,8 +29,8 @@
 
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            var types = AssemblyManager.GetAssignableTypes(targetType);
-            var names = AssemblyManager.GetAssignableTypeNames(targetType);
+            var types = ScriptAssemblyManager.GetAssignableTypes(targetType);
+            var names = ScriptAssemblyManager.GetAssignableTypeNames(targetType);
 
             int index;
             if (value == null)

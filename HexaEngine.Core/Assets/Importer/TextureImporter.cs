@@ -8,6 +8,7 @@
 
     public class TextureImporter : IAssetImporter
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TextureImporter));
         private readonly IGraphicsDevice device = Application.GraphicsDevice;
 
         public Type? SettingsType { get; } = typeof(TextureImporterSettings);

@@ -107,7 +107,7 @@
                 case ImGuiInputTextFlags.CallbackResize:
                     // Resize string callback
                     StdString* str = (StdString*)data->UserData;
-                    Logger.Assert(str->Data == data->Buf);
+                    TextEditorWindow.Logger.Assert(str->Data == data->Buf);
                     str->Resize(data->BufTextLen);
                     data->Buf = str->CStr();
                     break;

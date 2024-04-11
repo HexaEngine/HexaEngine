@@ -134,6 +134,7 @@
 
     public static class ProjectVersionControl
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ProjectVersionControl));
         private static readonly object _lock = new();
         private static readonly Identity identity;
 

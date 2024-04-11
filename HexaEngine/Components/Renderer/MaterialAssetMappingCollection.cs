@@ -50,7 +50,7 @@
             return default;
         }
 
-        public MaterialData GetMaterial(string data)
+        public MaterialData GetMaterial(string data, ILogger logger)
         {
             var mapping = Find(data);
             if (mapping.Material == AssetRef.Empty)
@@ -62,12 +62,12 @@
                 Artifact? artifact = ArtifactDatabase.GetArtifact(mapping.Material);
                 if (artifact == null)
                 {
-                    Logger.Warn($"Failed to load material {mapping.Material}");
+                    logger.Warn($"Failed to load material {mapping.Material}");
                     return MaterialData.Empty;
                 }
                 if (artifact.Type != AssetType.Material)
                 {
-                    Logger.Warn($"Failed to load material {mapping.Material}, asset was {artifact.Type} but needs to be {AssetType.Material}");
+                    logger.Warn($"Failed to load material {mapping.Material}, asset was {artifact.Type} but needs to be {AssetType.Material}");
                     return MaterialData.Empty;
                 }
 
@@ -81,8 +81,8 @@
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
-                    Logger.Warn($"Failed to load material {mapping.Material}");
+                    logger.Log(e);
+                    logger.Warn($"Failed to load material {mapping.Material}");
                     return MaterialData.Empty;
                 }
                 finally

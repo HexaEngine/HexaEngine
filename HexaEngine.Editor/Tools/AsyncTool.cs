@@ -8,12 +8,14 @@
 
     public class AsyncTool : ITool
     {
+        private readonly ILogger logger;
         private readonly string name;
         private readonly string filter;
         private readonly Func<string, Task> open;
 
         public AsyncTool(string name, string filter, Func<string, Task> open)
         {
+            logger = LoggerFactory.GetLogger($"Tool - {name}");
             this.name = name;
             this.filter = filter;
             this.open = open;
@@ -29,8 +31,8 @@
             {
                 if (!task.IsCompletedSuccessfully && task.Exception != null)
                 {
-                    Logger.Error($"Failed to open file with Tool: {Name}");
-                    Logger.Log(task.Exception);
+                    logger.Error($"Failed to open file with Tool: {Name}");
+                    logger.Log(task.Exception);
                     MessageBox.Show($"Failed to open file with Tool: {Name}", task.Exception.Message);
                 }
                 task.Dispose();

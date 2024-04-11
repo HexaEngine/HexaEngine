@@ -100,7 +100,7 @@
 
             if (actor == null)
             {
-                Logger.Error($"{GameObject.FullName}: Couldn't create actor");
+                PhysicsSystem.Logger.Error($"{GameObject.FullName}: Couldn't create actor");
                 return null;
             }
 

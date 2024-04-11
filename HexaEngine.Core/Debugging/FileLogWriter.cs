@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using HexaEngine.Core.Graphics;
     using System;
     using System.Collections.Concurrent;
     using System.IO;
+    using System.IO.Compression;
     using System.Text;
 
     /// <summary>
@@ -10,6 +12,7 @@
     /// </summary>
     public class FileLogWriter : ILogWriter
     {
+        private const int MaxLogFileCount = 5;
         private readonly BufferedStream stream;
         private readonly ConcurrentQueue<string> queue = new();
         private readonly Task logWriterTask;
@@ -19,14 +22,57 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="FileLogWriter"/> class and creates or opens the specified log file.
         /// </summary>
-        /// <param name="file">The path to the log file.</param>
-        public FileLogWriter(string file)
+        /// <param name="folder">The path to the log folder.</param>
+        public FileLogWriter(string folder)
         {
+            string fileName = $"app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log";
+            string file = Path.Combine(folder, fileName);
+
+            EnsureFolderExists(folder);
+            CompressOldLogFiles(folder);
+            RemoveOldLogFiles(folder);
+
+            int i = 0;
+            while (File.Exists(file))
+            {
+                file = Path.Combine(folder, $"fileName-{i++}");
+            }
+
             var fileInfo = new FileInfo(file);
+
             fileInfo.Directory?.Create();
             stream = new(File.Create(file));
             logWriterTask = new(LogWriterTaskVoid, TaskCreationOptions.LongRunning);
             logWriterTask.Start();
+        }
+
+        private static void EnsureFolderExists(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+        }
+
+        private static void CompressOldLogFiles(string folder)
+        {
+            foreach (var logFile in Directory.EnumerateFiles(folder, "app-*.log"))
+            {
+                using FileStream fs = File.Create(Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(logFile)}.zip"));
+                using ZipArchive archive = new(fs, ZipArchiveMode.Create);
+                archive.CreateEntryFromFile(logFile, Path.GetFileName(logFile));
+                File.Delete(logFile);
+            }
+        }
+
+        private static void RemoveOldLogFiles(string folder)
+        {
+            var logZipFiles = Directory.EnumerateFiles(folder, "app-*.zip").OrderByDescending(f => new FileInfo(f).CreationTime).ToArray();
+
+            foreach (var file in logZipFiles.Skip(MaxLogFileCount - 1))
+            {
+                File.Delete(file);
+            }
         }
 
         // The method that runs in the background task to write log messages

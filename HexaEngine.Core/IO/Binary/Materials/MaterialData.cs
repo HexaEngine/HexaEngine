@@ -468,7 +468,7 @@
             return materialData;
         }
 
-        public static MaterialData GetMaterial(AssetRef assetRef)
+        public static MaterialData GetMaterial(AssetRef assetRef, ILogger logger)
         {
             if (assetRef == AssetRef.Empty)
             {
@@ -479,12 +479,12 @@
                 Artifact? artifact = ArtifactDatabase.GetArtifact(assetRef);
                 if (artifact == null)
                 {
-                    Logger.Warn($"Failed to load material {assetRef}");
+                    logger.Warn($"Failed to load material {assetRef}");
                     return Empty;
                 }
                 if (artifact.Type != AssetType.Material)
                 {
-                    Logger.Warn($"Failed to load material {assetRef}, asset was {artifact.Type} but needs to be {AssetType.Material}");
+                    logger.Warn($"Failed to load material {assetRef}, asset was {artifact.Type} but needs to be {AssetType.Material}");
                     return Empty;
                 }
 
@@ -498,8 +498,8 @@
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
-                    Logger.Warn($"Failed to load material {assetRef}");
+                    logger.Log(e);
+                    logger.Warn($"Failed to load material {assetRef}");
                     return Empty;
                 }
                 finally

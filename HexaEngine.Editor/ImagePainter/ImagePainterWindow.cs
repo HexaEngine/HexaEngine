@@ -15,6 +15,7 @@
     [EditorWindowCategory("Tools")]
     public class ImagePainterWindow : EditorWindow
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ImagePainter));
         private IGraphicsDevice device;
         private readonly OpenFileDialog openDialog = new();
         private readonly ModalCollection<Modal> modals = new();

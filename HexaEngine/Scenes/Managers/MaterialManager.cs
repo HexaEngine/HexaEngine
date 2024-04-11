@@ -12,6 +12,7 @@
 
     public class MaterialManager : IDisposable
     {
+        private readonly ILogger Logger = LoggerFactory.GetLogger(nameof(MaterialManager));
         private readonly List<MaterialFile> materials = [];
         private readonly Dictionary<Guid, MaterialFile> guidToMaterial = [];
         private readonly object _lock = new();

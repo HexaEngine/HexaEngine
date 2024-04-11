@@ -359,7 +359,7 @@
 
                     if (!capsuleControllerDesc->IsValid())
                     {
-                        Logger.Error("Couldn't create character controller, invalid parameters.");
+                        PhysicsSystem.Logger.Error("Couldn't create character controller, invalid parameters.");
                         capsuleControllerDesc->Delete();
                         return;
                     }
@@ -389,7 +389,7 @@
 
                     if (!boxControllerDesc->IsValid())
                     {
-                        Logger.Error("Couldn't create character controller, invalid parameters.");
+                        PhysicsSystem.Logger.Error("Couldn't create character controller, invalid parameters.");
                         boxControllerDesc->Delete();
                         return;
                     }
@@ -399,7 +399,7 @@
                     break;
 
                 default:
-                    Logger.Error($"CharacterControllerShape ({Shape}) is not supported.");
+                    PhysicsSystem.Logger.Error($"CharacterControllerShape ({Shape}) is not supported.");
                     return;
             }
         }

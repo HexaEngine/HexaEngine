@@ -64,7 +64,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    PluginManager.Logger.Log(ex);
                     MessageBox.Show("Failed to enable plugin", ex.Message);
                 }
             }
@@ -103,7 +103,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    PluginManager.Logger.Log(ex);
                     MessageBox.Show("Failed to initialize plugin", ex.Message);
                 }
             }

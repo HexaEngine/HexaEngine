@@ -197,7 +197,7 @@
             {
                 job.Exception = ex;
                 job.state = JobState.Faulted;
-                Logger.Log(ex);
+                LoggerFactory.General.Log(ex);
             }
 
             job.SignalCompletion();
@@ -253,7 +253,7 @@
                     {
                         job.Exception = ex;
                         job.state = JobState.Faulted;
-                        Logger.Log(ex);
+                        LoggerFactory.General.Log(ex);
 
                         if (Debugger.IsAttached)
                         {

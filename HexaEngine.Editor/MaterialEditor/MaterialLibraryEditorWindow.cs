@@ -35,8 +35,8 @@
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to load material library: {filename}", ex.Message);
-                Logger.Error($"Failed to load material library: {filename}");
-                Logger.Log(ex);
+                MaterialEditorWindow.Logger.Error($"Failed to load material library: {filename}");
+                MaterialEditorWindow.Logger.Log(ex);
             }
         }
 
@@ -72,8 +72,8 @@
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to save material library: {filename}", ex.Message);
-                Logger.Error($"Failed to save material library: {filename}");
-                Logger.Log(ex);
+                MaterialEditorWindow.Logger.Error($"Failed to save material library: {filename}");
+                MaterialEditorWindow.Logger.Log(ex);
             }
         }
 

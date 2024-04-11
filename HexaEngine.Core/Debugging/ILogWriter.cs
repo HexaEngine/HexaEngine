@@ -45,7 +45,7 @@
         /// <param name="message">The log message to log.</param>
         public void Log(LogMessage message)
         {
-            WriteLine($"{message.Timestamp} [{message.Severity}] {message.Message}");
+            WriteLine($"{message.Timestamp.ToShortTimeString()} [{message.Severity}] [{message.Logger.Name}] {message.Message}");
         }
 
         /// <summary>
@@ -55,7 +55,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LogAsync(LogMessage message)
         {
-            await WriteLineAsync($"{message.Timestamp} [{message.Severity}] {message.Message}");
+            await WriteLineAsync($"{message.Timestamp.ToShortTimeString()} [{message.Severity}] [{message.Logger.Name}] {message.Message}");
         }
 
         /// <summary>

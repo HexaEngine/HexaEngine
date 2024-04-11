@@ -34,6 +34,7 @@
 
     public class ModelImporter : IAssetImporter
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ModelImporter));
         private static readonly Assimp assimp = Assimp.GetApi();
 
         public Type? SettingsType { get; } = typeof(ModelImporterSettings);
@@ -868,7 +869,7 @@
                         Logger.Info($"Generating LOD: {lod}, {mesh.Name}");
                         try
                         {
-                            var lodLower = SimplifyProcess.Simplify(data, j);
+                            var lodLower = SimplifyProcess.Simplify(data, j, Logger);
                             lodLower.LODLevel = (uint)lod;
                             lock (mesh.LODs)
                             {

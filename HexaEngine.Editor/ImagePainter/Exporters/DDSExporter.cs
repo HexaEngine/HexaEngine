@@ -141,8 +141,8 @@
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to export image to: {Path}", ex.Message);
-                Logger.Error($"Failed to export image to: {Path}");
-                Logger.Log(ex);
+                ImagePainterWindow.Logger.Error($"Failed to export image to: {Path}");
+                ImagePainterWindow.Logger.Log(ex);
             }
         }
     }

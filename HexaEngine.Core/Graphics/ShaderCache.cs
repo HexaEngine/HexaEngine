@@ -201,14 +201,14 @@
         public static void Clear()
         {
             BeginWrite();
-            Logger.Info("Clearing shader cache ...");
+            LoggerFactory.General.Info("Clearing shader cache ...");
             for (int i = 0; i < entries.Count; i++)
             {
                 entries[i].Free();
             }
             entries.Clear();
             keyToEntry.Clear();
-            Logger.Info("Clearing shader cache ... done");
+            LoggerFactory.General.Info("Clearing shader cache ... done");
             EndWrite();
         }
 

@@ -9,6 +9,7 @@
 
     public static class PluginManager
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(PluginManager));
         private static PluginLoader? loader;
         private static readonly List<Plugin> plugins = new();
         private static readonly ConfigKey config;

@@ -17,6 +17,7 @@
     /// </summary>
     public static class IconManager
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(IconManager));
         private static readonly List<Icon> icons = [];
         private static IGraphicsDevice device;
         private static Icon Default;

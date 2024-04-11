@@ -106,6 +106,15 @@
         }
 
         /// <summary>
+        /// Destroys an object editor.
+        /// </summary>
+        /// <param name="editor">The editor.</param>
+        public static void DestroyEditor(IObjectEditor editor)
+        {
+            DestroyEditor(editor.Type);
+        }
+
+        /// <summary>
         /// Creates an object editor for a specified type.
         /// </summary>
         /// <param name="type">The type for which an object editor is created.</param>

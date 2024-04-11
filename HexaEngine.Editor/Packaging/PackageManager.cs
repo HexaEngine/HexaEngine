@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
+    using HexaEngine.Core.Debugging;
     using System.Collections.Generic;
 
     public class PackageManager
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(PackageManager));
         private readonly List<IPackageSource> packageSources;
         private readonly PackageResolver resolver;
         private readonly PackageCache cache;

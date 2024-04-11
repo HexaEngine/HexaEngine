@@ -12,6 +12,7 @@
 
     public class BakeWindow : EditorWindow
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger("Baking");
         private MeshBaker2 baker;
         private Task? task;
         private CancellationTokenSource cancellationToken = new();

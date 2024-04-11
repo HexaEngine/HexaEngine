@@ -8,6 +8,8 @@
 
     public class DefaultFontResolver : IFontResolver
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(DefaultFontResolver));
+
         private readonly FTLibrary library;
         private readonly List<FontFamily> fontFamilies = [];
         private readonly Dictionary<string, FontFamily> nameToFamily = [];

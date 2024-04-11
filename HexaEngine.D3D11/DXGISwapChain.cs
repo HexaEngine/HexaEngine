@@ -190,7 +190,7 @@
             {
                 var reason = device.Device.GetDeviceRemovedReason();
                 DeviceRemovedEventArgs e = new($"Device removed! DXGI_ERROR code: {(ResultCode)reason}", reason);
-                Logger.Error(e);
+                LoggerFactory.GetLogger(nameof(DXGI)).Error(e);
                 DeviceRemoved?.Invoke(this, e);
                 return true;
             }

@@ -15,7 +15,9 @@
         /// Simplifies the given mesh data.
         /// </summary>
         /// <param name="data">The mesh data to be simplified.</param>
-        public static MeshLODData Simplify(MeshLODData data, int j)
+        /// <param name="j"></param>
+        /// <param name="logger"></param>
+        public static MeshLODData Simplify(MeshLODData data, int j, ILogger logger)
         {
             Mesh mesh;
             mesh = new(data.Positions, data.Indices);
@@ -25,7 +27,7 @@
             mesh.SetUVs(0, data.UVs);
             mesh.BoneWeights = data.BoneWeights?.Select(x => new BoneWeight(x.BoneIds, x.Weights)).ToArray();
 
-            Logger.Info($"Simplify Input: Vertices {data.VertexCount}, Indices {data.IndexCount}, Tris: {mesh.TriangleCount}");
+            logger.Info($"Simplify Input: Vertices {data.VertexCount}, Indices {data.IndexCount}, Tris: {mesh.TriangleCount}");
 
             uint faceCount = data.IndexCount / 3;
 
@@ -57,7 +59,7 @@
 
             outputData.GenerateBounds();
 
-            Logger.Info($"Simplify Done: Vertices {outputData.VertexCount}, Indices {outputData.IndexCount}, Tris: {outputMesh.TriangleCount}, Ratio: {outputMesh.TriangleCount / (float)mesh.TriangleCount}");
+            logger.Info($"Simplify Done: Vertices {outputData.VertexCount}, Indices {outputData.IndexCount}, Tris: {outputMesh.TriangleCount}, Ratio: {outputMesh.TriangleCount / (float)mesh.TriangleCount}");
 
             return outputData;
         }

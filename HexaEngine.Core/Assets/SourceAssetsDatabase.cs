@@ -79,6 +79,7 @@
 
     public static class SourceAssetsDatabase
     {
+        private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
         private static readonly object _lock = new();
         private static string rootFolder;
         private static string rootAssetsFolder;
@@ -105,6 +106,9 @@
 
             watcher = new(path);
             watcher.Changed += WatcherChanged;
+            watcher.Created += WatcherChanged;
+            watcher.Deleted += WatcherChanged;
+            watcher.Renamed += WatcherChanged;
             watcher.EnableRaisingEvents = true;
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.Security;
@@ -167,7 +171,7 @@
                         continue;
                     }
 
-                    Logger.Warn($"Couldn't find metadata for file, {file}");
+                    logger.Warn($"Couldn't find metadata for file, '{file}'");
                     AddFile(null, file, metadataFile, null, null);
                 }
             }
@@ -182,6 +186,7 @@
 
             Task.WhenAll(tasks).ContinueWith(x =>
             {
+                logger.Info($"Initialized '{path}'");
                 initLock.Set();
                 ArtifactDatabase.Cleanup();
             });
@@ -215,27 +220,46 @@
 
         private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
         {
+            if (IsIgnored(e.FullPath))
+            {
+                logger.Trace($"Ignored {e.ChangeType} event for '{e.FullPath}'");
+                return;
+            }
+
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Created:
+                    if (!File.Exists(e.FullPath))
+                        return;
+                    logger.Trace($"Created '{e.FullPath}'");
+                    ImportFileAsync(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Deleted:
+                    logger.Trace($"Deleted '{e.FullPath}'");
+                    DeleteLeftovers(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Changed:
+                    if (!File.Exists(e.FullPath))
+                        return;
+                    logger.Trace($"Updated '{e.FullPath}'");
+                    UpdateAsync(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Renamed:
-                    break;
-
-                case WatcherChangeTypes.All:
+                    if (!File.Exists(e.FullPath))
+                        return;
+                    logger.Trace($"Renamed '{e.FullPath}'");
+                    System.IO.RenamedEventArgs renamedEvent = (System.IO.RenamedEventArgs)e;
+                    Rename(renamedEvent.OldFullPath, renamedEvent.FullPath);
                     break;
             }
         }
 
         private static void UpdateFile(string file, SourceAssetMetadata asset, bool force)
         {
+            asset.Lock();
             var crc = FileSystem.GetCrc32HashExtern(file);
             if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
             {
@@ -245,10 +269,12 @@
 
             asset.CRC32 = crc;
             asset.Save();
+            asset.ReleaseLock();
         }
 
         private static async Task UpdateFileAsync(string file, SourceAssetMetadata asset, bool force)
         {
+            asset.Lock();
             var crc = FileSystem.GetCrc32HashExtern(file);
             if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
             {
@@ -258,12 +284,57 @@
 
             asset.CRC32 = crc;
             asset.Save();
+            asset.ReleaseLock();
         }
 
         private static bool IgnoreFile(ReadOnlySpan<char> span)
         {
             var extension = Path.GetExtension(span);
             return extension == ".meta";
+        }
+
+        public static bool IsIgnored(string file)
+        {
+            var subDirName = Path.GetFileName(file.AsSpan());
+
+            if (subDirName.StartsWith(".") || subDirName.SequenceEqual("bin") || subDirName.SequenceEqual("obj") || subDirName.EndsWith("~"))
+            {
+                return true;
+            }
+
+            var dir = Path.GetDirectoryName(file.AsSpan());
+            while (!dir.IsEmpty)
+            {
+                var dirName = Path.GetFileName(dir);
+                if (dirName.IsEmpty)
+                    break;
+
+                if (dirName.StartsWith(".") || dirName.SequenceEqual("bin") || dirName.SequenceEqual("obj"))
+                {
+                    return true;
+                }
+
+                dir = Path.GetDirectoryName(dir);
+            }
+
+            var extension = Path.GetExtension(subDirName);
+
+            if (extension.SequenceEqual(".meta", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance))
+            {
+                return true;
+            }
+
+            if (!File.Exists(file))
+                return false;
+
+            var attributes = File.GetAttributes(file);
+
+            if ((attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly | FileAttributes.Device)) != 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static bool Exists(Guid guid)
@@ -333,7 +404,7 @@
 
             if (!AssetImporterRegistry.TryGetImporterForFile(extension, out var importer))
             {
-                Logger.Trace($"Unrecognised file format, {extension} ({path})");
+                logger.Trace($"Unrecognised file format, {extension} '{path}'");
                 return;
             }
 
@@ -352,7 +423,7 @@
 
             if (!AssetImporterRegistry.TryGetImporterForFile(extension, out var importer))
             {
-                Logger.Trace($"Unrecognised file format, {extension} ({path})");
+                logger.Trace($"Unrecognised file format, {extension} '{path}'");
                 return;
             }
 
@@ -371,7 +442,7 @@
 
             if (!AssetImporterRegistry.TryGetImporterForFile(extension, out var importer))
             {
-                Logger.Trace($"Unrecognised file format, {extension} ({path})");
+                logger.Trace($"Unrecognised file format, {extension} '{path}'");
                 return;
             }
 
@@ -388,7 +459,7 @@
 
             if (!AssetImporterRegistry.TryGetImporterForFile(extension, out var importer))
             {
-                Logger.Trace($"Unrecognised file format, {extension} ({path})");
+                logger.Trace($"Unrecognised file format, {extension} '{path}'");
                 return;
             }
 
@@ -415,7 +486,7 @@
                 if (metadataFile == null)
                 {
                     File.Delete(newPath);
-                    throw new($"Failed to import file {path}, couldn't create metadata.");
+                    throw new($"Failed to import file '{path}', couldn't create metadata.");
                 }
 
                 return AddFile(path, newPath, metadataFile, provider, progress);
@@ -426,7 +497,7 @@
 
                 if (metadataFile == null)
                 {
-                    throw new($"Failed to import file {path}, couldn't create metadata.");
+                    throw new($"Failed to import file '{path}', couldn't create metadata.");
                 }
 
                 return AddFile(null, path, metadataFile, provider, progress);
@@ -580,7 +651,7 @@
             UpdateFile(fileToUpdate, metadata, force);
         }
 
-        public static Task UpdateAsync(string path, bool force)
+        public static async Task UpdateAsync(string path, bool force = false)
         {
             SourceAssetMetadata? metadata;
 
@@ -603,7 +674,7 @@
                 throw new MetadataNotFoundException(path);
             }
 
-            return UpdateFileAsync(fileToUpdate, metadata, force);
+            await UpdateFileAsync(fileToUpdate, metadata, force);
         }
 
         public static void Update(SourceAssetMetadata metadata, bool force)
@@ -818,7 +889,7 @@
 
             if (metaToDelete == null)
             {
-                throw new MetadataNotFoundException(file);
+                return;
             }
 
             DeleteLeftovers(metaToDelete, behavior);
@@ -875,7 +946,7 @@
                         var asset = sourceAssets[i];
                         if (asset.ParentGuid == metaToDelete.Guid)
                         {
-                            Delete(asset);
+                            Delete(asset, behavior);
                             // needs to be a full reset, since we recursively remove files.
                             i = 0;
                         }
@@ -905,7 +976,7 @@
                         var asset = sourceAssets[i];
                         if (asset.ParentGuid == metaToDelete.Guid)
                         {
-                            Delete(asset);
+                            Delete(asset, behavior);
                             // needs to be a full reset, since we recursively remove files.
                             i = 0;
                         }
@@ -920,6 +991,25 @@
             }
 
             File.Delete(metaToDelete.MetadataFilePath);
+        }
+
+        public static void Rename(string oldPath, string newPath)
+        {
+            SourceAssetMetadata? metadata = GetMetadata(oldPath);
+            if (metadata == null)
+            {
+                return;
+            }
+
+            string oldMetadataLocation = metadata.MetadataFilePath;
+            string? metadataLocation = SourceAssetMetadata.GetMetadataFilePath(newPath) ?? throw new MetadataPathNotFoundException(newPath);
+            string relativeTargetLocation = Path.GetRelativePath(rootFolder, newPath);
+
+            metadata.MetadataFilePath = metadataLocation;
+            metadata.FilePath = relativeTargetLocation;
+
+            File.Move(oldMetadataLocation, metadataLocation);
+            metadata.Save();
         }
 
         public static SourceAssetMetadata? GetMetadata(Guid guid)

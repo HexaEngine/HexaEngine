@@ -53,6 +53,8 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
     /// </summary>
     public sealed class FastQuadricMeshSimplification : DecimationAlgorithm
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(FastQuadricMeshSimplification));
+
         #region Consts
 
         private const double DoubleEpsilon = 1.0E-3;

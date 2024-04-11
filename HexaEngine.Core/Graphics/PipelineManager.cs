@@ -47,19 +47,19 @@
             {
                 OnRecompile?.Invoke();
 
-                Logger.Info("recompiling graphics pipelines ...");
+                LoggerFactory.General.Info("recompiling graphics pipelines ...");
                 for (int i = 0; i < graphicsPipelines.Count; i++)
                 {
                     graphicsPipelines[i].Recompile();
                 }
-                Logger.Info("recompiling graphics pipelines ... done!");
+                LoggerFactory.General.Info("recompiling graphics pipelines ... done!");
 
-                Logger.Info("recompiling compute pipelines ...");
+                LoggerFactory.General.Info("recompiling compute pipelines ...");
                 for (int i = 0; i < computePipelines.Count; i++)
                 {
                     computePipelines[i].Recompile();
                 }
-                Logger.Info("recompiling compute pipelines ... done!");
+                LoggerFactory.General.Info("recompiling compute pipelines ... done!");
             }
         }
 

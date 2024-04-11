@@ -50,7 +50,7 @@
 
             if (pipeline.signature == null)
             {
-                Logger.Error("Failed to create input layout, signature was null.");
+                LoggerFactory.GetLogger(nameof(D3D11)).Error("Failed to create input layout, signature was null.");
             }
             else
             {
@@ -130,7 +130,7 @@
 
             if (inputElements == null)
             {
-                Logger.Error("Failed to create input layout, InputElements was null or Reflection failed.");
+                LoggerFactory.GetLogger(nameof(D3D11)).Error("Failed to create input layout, InputElements was null or Reflection failed.");
                 return;
             }
 

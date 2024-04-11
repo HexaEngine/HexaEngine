@@ -31,8 +31,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            Logger.Info("Backend: Using Graphics API: D3D11On12");
-            Logger.Info($"Backend: Using Graphics Device: {name}");
+            LoggerFactory.General.Info("Backend: Using Graphics API: D3D11On12");
+            LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");
             return new D3D11On12GraphicsDevice(this, debug);
         }
     }

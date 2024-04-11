@@ -137,6 +137,7 @@
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             sunMask = creator.CreateBuffer("VOLUMETRIC_SCATTERING_SUN_MASK");
 
+            // TODO: Integrate in new asset system.
             if (!string.IsNullOrEmpty(sunSpriteTexPath))
             {
                 try
@@ -146,7 +147,7 @@
                 catch (Exception ex)
                 {
                     MessageBox.Show("Failed to load lens dirt tex", ex.Message);
-                    Logger.Log(ex);
+                    LoggerFactory.General.Log(ex);
                 }
             }
 

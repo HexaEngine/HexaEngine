@@ -17,6 +17,8 @@
     /// </summary>
     public static unsafe class CrossCompiler
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(CrossCompiler));
+
         /// <summary>
         /// Gets the source language based on the file extension.
         /// </summary>

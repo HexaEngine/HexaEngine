@@ -27,6 +27,10 @@
                 File.Delete(newPath);
                 File.CreateSymbolicLink(newPath, path);
             }
+            else
+            {
+                ArtifactDatabase.RemoveArtifactsBySource(context.AssetMetadata.Guid);
+            }
         }
     }
 }

@@ -9,6 +9,7 @@
 
     public class D3D11GPUProfiler : IGPUProfiler
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(D3D11));
         private readonly ComPtr<ID3D11Device5> device;
         private readonly List<string> blockNames = new();
         private readonly Dictionary<string, QueryData>[] queries = new Dictionary<string, QueryData>[FrameCount];

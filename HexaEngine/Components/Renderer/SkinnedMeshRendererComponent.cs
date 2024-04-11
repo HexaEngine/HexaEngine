@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
@@ -202,7 +203,7 @@
                 if (stream != null)
                 {
                     component.Materials.OnChanged -= component.OnChanged;
-                    component.model = new(stream, component.materials);
+                    component.model = new(stream, component.materials, LoggerFactory.General);
                     component.Materials.OnChanged += component.OnChanged;
                     component.model.LoadAsync().Wait();
 

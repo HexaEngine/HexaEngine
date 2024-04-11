@@ -11,6 +11,7 @@
     [EditorWindowCategory("Tools")]
     public class TextEditorWindow : EditorWindow
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TextEditor));
         private readonly OpenFileDialog openDialog = new();
         private readonly SaveFileDialog saveDialog = new();
 

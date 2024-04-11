@@ -22,13 +22,13 @@
             var prefabArtifact = ArtifactDatabase.GetArtifact(prefabAsset.Guid);
             if (prefabArtifact == null || prefabArtifact.Type != AssetType.Prefab)
             {
-                Logger.Error($"Failed to load prefab, {prefabAsset.Guid}");
+                LoggerFactory.General.Error($"Failed to load prefab, {prefabAsset.Guid}");
                 return;
             }
 
             if (!Scenes.Prefab.TryDeserialize(prefabArtifact.Path, out prefab, out _))
             {
-                Logger.Error($"Failed to load prefab, {prefabAsset.Guid}");
+                LoggerFactory.General.Error($"Failed to load prefab, {prefabAsset.Guid}");
                 return;
             }
 

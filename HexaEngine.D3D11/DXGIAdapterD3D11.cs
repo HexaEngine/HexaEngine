@@ -102,6 +102,9 @@
             };
         }
 
+        private static readonly ILogger D3D11Logger = LoggerFactory.GetLogger(nameof(D3D11));
+        private static readonly ILogger DXGILogger = LoggerFactory.GetLogger(nameof(DXGI));
+
         public void PumpDebugMessages()
         {
             if (!debug)
@@ -124,13 +127,13 @@
                         string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(message->PDescription));
 
                         if (message->Producer == DXGI_DEBUG_DX)
-                            Logger.Log($"DX {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            D3D11Logger.Log($"DX {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_DXGI)
-                            Logger.Log($"DXGI {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            DXGILogger.Log($"DXGI {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_APP)
-                            Logger.Log($"APP {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            D3D11Logger.Log($"APP {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_D3D11)
-                            Logger.Log($"D3D11 {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            D3D11Logger.Log($"D3D11 {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
 
                         Free(message);
                     }
@@ -182,8 +185,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            Logger.Info("Backend: Using Graphics API: D3D11");
-            Logger.Info($"Backend: Using Graphics Device: {name}");
+            LoggerFactory.General.Info("Backend: Using Graphics API: D3D11");
+            LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");
 
             return new D3D11GraphicsDevice(this, debug);
         }

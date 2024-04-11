@@ -23,8 +23,8 @@
             _components = new(assembly.GetTypes().AsParallel().Where(x => x.IsClass && !x.IsGenericType && x.GetInterface(nameof(IComponent)) != null));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             Components = new((IEnumerable<Type>)_components);
-            AssemblyManager.AssemblyLoaded += AssemblyLoaded;
-            AssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
+            ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
+            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
         }
 
         private static void AssembliesUnloaded(object? sender, EventArgs? e)
@@ -41,7 +41,7 @@
                 Components.Add(type);
             }
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
+            foreach (var type in ScriptAssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }
@@ -54,7 +54,7 @@
         public static void RegisterAssembly(string path)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            Assembly assembly = AssemblyManager.Load(path);
+            Assembly assembly = ScriptAssemblyManager.Load(path);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var type in assembly.GetTypes().AsParallel().Where(x => x.IsClass && !x.IsGenericType && x.GetInterface(nameof(IComponent)) != null))
@@ -63,7 +63,7 @@
             }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
+            foreach (var type in ScriptAssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }
@@ -71,7 +71,7 @@
 
         public static IEnumerable<Type> GetAssignableTypes<T>()
         {
-            return AssemblyManager.GetAssignableTypes<T>();
+            return ScriptAssemblyManager.GetAssignableTypes<T>();
         }
     }
 }

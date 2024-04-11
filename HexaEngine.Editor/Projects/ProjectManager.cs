@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
-    using Hexa.NET.ImGui;
     using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
@@ -11,20 +10,18 @@
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Scripts;
-    using Octokit;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
-    using System.Numerics;
     using System.Reflection;
 
     public static class ProjectManager
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ProjectManager));
         private static bool loaded;
-        private static string scriptProjectPath;
         private static FileSystemWatcher? watcher;
         private static bool scriptProjectChanged;
 
@@ -115,18 +112,16 @@
 
                     SourceAssetsDatabase.Init(CurrentProjectFolder, popup);
 
-                    scriptProjectPath = Path.Combine(CurrentProjectFolder, solutionName);
-
-                    watcher = new(CurrentProjectFolder);
+                    watcher = new(Path.Combine(CurrentProjectFolder, solutionName));
                     watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
-                    watcher.Changed += Watcher_Changed;
-                    watcher.Created += Watcher_Changed;
-                    watcher.Deleted += Watcher_Changed;
-                    watcher.Renamed += Watcher_Changed;
+                    watcher.Changed += WatcherChanged;
+                    watcher.Created += WatcherChanged;
+                    watcher.Deleted += WatcherChanged;
+                    watcher.Renamed += WatcherChanged;
                     watcher.IncludeSubdirectories = true;
-
                     watcher.EnableRaisingEvents = true;
-                    _ = Task.Factory.StartNew(BuildScripts);
+
+                    BuildScriptsAsync(true);
                 }
                 catch (Exception ex)
                 {
@@ -142,6 +137,7 @@
                     popup.Close();
                 }
 
+                Logger.Info($"Loaded Project '{path}'");
                 ProjectLoaded?.Invoke(CurrentProject);
 
                 semaphore.Release();
@@ -173,27 +169,23 @@
             }
         }
 
-        private static void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
+        private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
         {
-            bool fileExist = File.Exists(e.FullPath);
-            if (fileExist && IsIgnored(e.FullPath))
-            {
+            ReadOnlySpan<char> extension = Path.GetExtension(e.Name.AsSpan());
+
+            if (extension.SequenceEqual(".meta", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance))
                 return;
+
+            ReadOnlySpan<char> currentDir = Path.GetDirectoryName(e.FullPath.AsSpan());
+            while (!currentDir.IsEmpty)
+            {
+                var name = Path.GetFileName(currentDir);
+                if (name.SequenceEqual("bin", CharComparerIgnoreCase.Instance) || name.SequenceEqual(".obj", CharComparerIgnoreCase.Instance))
+                    return;
+                currentDir = Path.GetDirectoryName(currentDir);
             }
 
-            if (e.ChangeType == WatcherChangeTypes.Created && fileExist)
-            {
-                SourceAssetsDatabase.ImportFileAsync(e.FullPath);
-            }
-
-            if (e.ChangeType == WatcherChangeTypes.Deleted)
-            {
-            }
-
-            if (e.FullPath.StartsWith(scriptProjectPath))
-            {
-                scriptProjectChanged = true;
-            }
+            scriptProjectChanged = true;
         }
 
         public static Task Create(string path)
@@ -290,66 +282,68 @@
             semaphore.Release();
         }
 
-        public static Task BuildScripts()
+        public static void BuildScripts(bool force = false)
         {
             semaphore.Wait();
-            AssemblyManager.Unload();
+
+            if (!scriptProjectChanged && !force)
+            {
+                semaphore.Release();
+                return;
+            }
+
+            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner);
+            PopupManager.Show(modal);
+
+            ScriptAssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
                 semaphore.Release();
-                return Task.CompletedTask;
+                modal.Close();
+                return;
             }
 
             if (!Build())
             {
                 semaphore.Release();
-                return Task.CompletedTask;
+                modal.Close();
+                return;
             }
 
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
-            AssemblyManager.Load(outputFilePath);
+            ScriptAssemblyManager.Load(outputFilePath);
+
+            modal.Close();
+
             semaphore.Release();
-            return Task.CompletedTask;
         }
 
-        public static Task RebuildScripts()
+        public static Task BuildScriptsAsync(bool force = false)
+        {
+#nullable disable
+            return Task.Factory.StartNew(obj => BuildScripts((bool)obj), force);
+#nullable enable
+        }
+
+        public static Task CleanScriptsAsync()
+        {
+            return Task.Run(CleanScripts);
+        }
+
+        public static void CleanScripts()
         {
             semaphore.Wait();
-            AssemblyManager.Unload();
+            ScriptAssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
                 semaphore.Release();
-                return Task.CompletedTask;
-            }
-
-            if (!Rebuild())
-            {
-                semaphore.Release();
-                return Task.CompletedTask;
-            }
-
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
-            AssemblyManager.Load(outputFilePath);
-            semaphore.Release();
-            return Task.CompletedTask;
-        }
-
-        public static Task CleanScripts()
-        {
-            semaphore.Wait();
-            AssemblyManager.Unload();
-            if (CurrentProjectFolder == null)
-            {
-                semaphore.Release();
-                return Task.CompletedTask;
+                return;
             }
 
             Clean();
 
             semaphore.Release();
-            return Task.CompletedTask;
         }
 
         private static bool Build()
@@ -362,17 +356,6 @@
             AnalyseLog(output);
             scriptProjectChanged = false;
 
-            return !failed;
-        }
-
-        private static bool Rebuild()
-        {
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
-            string output = Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
-            bool failed = output.Contains("FAILED");
-            AnalyseLog(output);
-            scriptProjectChanged = false;
             return !failed;
         }
 
@@ -391,15 +374,15 @@
             {
                 if (line.Contains("0 Warning(s)"))
                 {
-                    Logger.Info(line);
+                    LoggerFactory.General.Info(line);
                 }
                 else if (line.Contains("0 Error(s)"))
                 {
-                    Logger.Info(line);
+                    LoggerFactory.General.Info(line);
                 }
                 else
                 {
-                    Logger.Log(line);
+                    LoggerFactory.General.Log(line);
                 }
             }
         }
@@ -632,32 +615,6 @@
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
-        }
-
-        public static bool IsIgnored(string file)
-        {
-            var subDirName = Path.GetFileName(file.AsSpan());
-
-            if (subDirName.StartsWith(".") || subDirName.SequenceEqual("bin") || subDirName.SequenceEqual("obj"))
-            {
-                return true;
-            }
-
-            var extension = Path.GetExtension(subDirName);
-
-            if (extension.SequenceEqual(".meta"))
-            {
-                return true;
-            }
-
-            var attributes = File.GetAttributes(file);
-
-            if ((attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly | FileAttributes.Device)) != 0)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private const string PublishProgram =

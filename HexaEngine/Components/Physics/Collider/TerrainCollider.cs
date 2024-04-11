@@ -7,6 +7,7 @@
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Physics;
     using MagicPhysX;
     using System.Numerics;
 
@@ -41,14 +42,14 @@
                 }
                 else
                 {
-                    Logger.Error($"Couldn't load terrain {terrainAsset}");
+                    LoggerFactory.General.Error($"Couldn't load terrain {terrainAsset}");
                     return;
                 }
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
-                Logger.Error($"Couldn't load terrain {terrainAsset}");
+                LoggerFactory.General.Log(ex);
+                LoggerFactory.General.Error($"Couldn't load terrain {terrainAsset}");
                 stream?.Dispose();
                 return;
             }
@@ -101,7 +102,7 @@
 
                 if (!success)
                 {
-                    Logger.Error($"Failed to cook height field, cell {cell.Position}");
+                    PhysicsSystem.Logger.Error($"Failed to cook height field, cell {cell.Position}");
                     continue;
                 }
 
@@ -121,7 +122,7 @@
 
                 if (heightField == null)
                 {
-                    Logger.Error($"PxHeightField* is null, cell {cell.Position}");
+                    PhysicsSystem.Logger.Error($"PxHeightField* is null, cell {cell.Position}");
                     continue;
                 }
 

@@ -10,6 +10,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
+    using Silk.NET.Direct3D11;
     using System.Numerics;
 
     /// <summary>
@@ -17,6 +18,7 @@
     /// </summary>
     public sealed class EditorWindow : Window
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Editor));
         private ImGuiManager imGuiRenderer;
         private Task initEditorTask;
         private bool editorInitialized;
@@ -81,12 +83,12 @@
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    Logger.Info("Editor: Initialized");
+                    LoggerFactory.General.Info("Editor: Initialized");
                 }
                 if (x.IsFaulted)
                 {
-                    Logger.Error("Editor: Failed Initialize");
-                    Logger.Log(x.Exception);
+                    LoggerFactory.General.Error("Editor: Failed Initialize");
+                    LoggerFactory.General.Log(x.Exception);
                 }
 
                 editorInitialized = true;

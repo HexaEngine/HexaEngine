@@ -10,38 +10,9 @@
     using System.Runtime.InteropServices;
     using Buffer = Silk.NET.Direct3D.Compilers.Buffer;
 
-    public unsafe class IncludeHandler
-    {
-        private string basePath;
-
-        public IncludeHandler(string basePath)
-        {
-            this.basePath = basePath;
-        }
-
-        public int QueryInterface(Guid* riid, void** ppvObject)
-        {
-            return (int)ResultCode.E_NOINTERFACE;
-        }
-
-        public uint AddRef()
-        {
-            return 0;
-        }
-
-        public uint Release()
-        {
-            return 0;
-        }
-
-        public HResult LoadSource(char* fileName, IDxcBlob** ppIncludeSource)
-        {
-            return 0;
-        }
-    }
-
     public unsafe class ShaderCompiler
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ShaderCompiler));
         private static readonly DXC DXC = DXC.GetApi();
 
         private static Guid CLSID_DxcUtils = new(0x6245d6af, 0x66e0, 0x48fd, 0x80, 0xb4, 0x4d, 0x27, 0x17, 0x96, 0x74, 0x8c);

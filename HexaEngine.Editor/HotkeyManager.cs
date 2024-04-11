@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
@@ -11,12 +9,10 @@
     {
         private static readonly List<Key> keys = new();
         private static readonly List<Hotkey> hotkeys = new();
-        private static readonly ConfigKey config;
         private const string Filename = "hotkeys.json";
 
         static HotkeyManager()
         {
-            config = Config.Global.GetOrCreateKey("Hotkeys");
             if (File.Exists(Filename))
             {
                 JsonConvert.DeserializeObject(File.ReadAllText(Filename));
@@ -25,6 +21,8 @@
             Keyboard.KeyDown += KeyboardPressed;
             Keyboard.KeyUp += KeyboardReleased;
         }
+
+        public static object SyncObject => hotkeys;
 
         public static IReadOnlyList<Hotkey> Hotkeys => hotkeys;
 
@@ -81,17 +79,14 @@
         {
             lock (hotkeys)
             {
-                config.TryGetOrAddKeyValue(name, "", DataType.Keys, false, out var value);
                 if (TryFind(name, out var hotkey))
                 {
                     hotkey.Callback = callback;
-                    hotkey.Value = value;
                 }
                 else
                 {
                     hotkey = new(name, callback);
                     hotkeys.Add(hotkey);
-                    hotkey.Value = value;
                 }
 
                 Save();
@@ -104,17 +99,14 @@
         {
             lock (hotkeys)
             {
-                config.TryGetOrAddKeyValue(name, "", DataType.Keys, false, out var value);
                 if (TryFind(name, out var hotkey))
                 {
                     hotkey.Callback = callback;
-                    hotkey.Value = value;
                 }
                 else
                 {
                     hotkey = new(name, callback, defaults);
                     hotkeys.Add(hotkey);
-                    hotkey.Value = value;
                 }
 
                 Save();

@@ -116,7 +116,7 @@
                     }
                     catch (Exception e)
                     {
-                        Logger.Log(e);
+                        ImagePainterWindow.Logger.Log(e);
                     }
                 }
             }

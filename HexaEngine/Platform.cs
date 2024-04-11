@@ -67,7 +67,7 @@
             else if (window is Window window1)
             {
                 AppConfig = AppConfig.Load();
-                AssemblyManager.Load(AppConfig.ScriptAssembly);
+                ScriptAssemblyManager.Load(AppConfig.ScriptAssembly);
                 window1.StartupScene = StartupScene;
             }
         }
@@ -94,7 +94,7 @@
 
             JobScheduler.Default.Dispose();
             PluginManager.Unload();
-            Logger.Close();
+            LoggerFactory.CloseAll();
         }
     }
 }

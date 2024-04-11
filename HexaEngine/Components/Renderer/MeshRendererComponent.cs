@@ -246,7 +246,7 @@
                 if (stream != null)
                 {
                     component.Materials.OnChanged -= component.OnChanged;
-                    component.model = new(stream, component.Materials);
+                    component.model = new(stream, component.Materials, LoggerFactory.General);
                     component.maxLODLevel = MathUtil.Clamp(component.maxLODLevel, 0, component.model.LODLevels - 1);
                     component.minLODLevel = MathUtil.Clamp(component.minLODLevel, 0, component.model.LODLevels - 1);
                     component.Materials.OnChanged += component.OnChanged;
@@ -270,7 +270,7 @@
                 }
                 else
                 {
-                    Logger.Error($"Couldn't load model {modelAsset}");
+                    LoggerFactory.General.Error($"Couldn't load model {modelAsset}");
                 }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }

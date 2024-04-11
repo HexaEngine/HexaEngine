@@ -33,8 +33,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to read package ({fullPath})");
-                Logger.Log(ex);
+                PackageManager.Logger.Error($"Failed to read package ({fullPath})");
+                PackageManager.Logger.Log(ex);
                 return false;
             }
             finally

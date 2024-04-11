@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using HexaEngine.Core.Assets.Importer;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -22,6 +23,8 @@
     /// </summary>
     public unsafe class SdlWindow : IWindow, INativeWindow
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Sdl));
+
         /// <summary>
         /// The SDL instance
         /// </summary>

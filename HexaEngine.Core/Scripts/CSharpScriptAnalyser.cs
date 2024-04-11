@@ -8,6 +8,8 @@
 
     public static class CSharpScriptAnalyser
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(CSharpScriptAnalyser));
+
         /// <summary>
         /// This must match the actual interface in "HexaEngine.Scripts.IScriptBehaviour"
         /// </summary>

@@ -1,16 +1,17 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Mathematics;
     using System.Text;
-    using YamlDotNet.Core.Tokens;
 
     /// <summary>
     /// Represents a layer in a terrain.
     /// </summary>
     public class TerrainLayer
     {
+        private static readonly ILogger Logger = LoggerFactory.General;
         private string name;
         private AssetRef material;
         private MaterialData? data;
@@ -28,7 +29,7 @@
             get => material;
             set
             {
-                data = MaterialData.GetMaterial(value);
+                data = MaterialData.GetMaterial(value, Logger);
                 material = value;
             }
         }
@@ -40,7 +41,7 @@
         {
             get
             {
-                return data ??= MaterialData.GetMaterial(material);
+                return data ??= MaterialData.GetMaterial(material, Logger);
             }
         }
 

@@ -16,6 +16,8 @@
     /// </summary>
     public static class SceneManager
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(SceneManager));
+
         /// <summary>
         /// Read lock
         /// </summary>

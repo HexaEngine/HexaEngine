@@ -6,6 +6,8 @@
 
     public class MaterialImporter : IAssetImporter
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(MaterialImporter));
+
         public Type? SettingsType { get; }
 
         public string? SettingsKey { get; }

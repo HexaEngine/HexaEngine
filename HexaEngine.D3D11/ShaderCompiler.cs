@@ -17,6 +17,7 @@ namespace HexaEngine.D3D11
 
     public class ShaderCompiler
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ShaderCompiler));
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)

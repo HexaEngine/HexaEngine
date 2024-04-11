@@ -120,8 +120,9 @@
         /// Gets the material with the specified name from the library.
         /// </summary>
         /// <param name="name">The name of the material to retrieve.</param>
+        /// <param name="logger"></param>
         /// <returns>The material with the specified name or an empty material if not found.</returns>
-        public MaterialData GetMaterial(string name)
+        public MaterialData GetMaterial(string name, ILogger logger)
         {
             for (int i = 0; i < materials.Count; i++)
             {
@@ -131,7 +132,7 @@
                 }
             }
 
-            Logger.Warn($"Warning couldn't find material {name} in library");
+            logger.Warn($"Warning couldn't find material {name} in library");
 
             return MaterialData.Empty;
         }

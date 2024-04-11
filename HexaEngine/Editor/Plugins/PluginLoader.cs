@@ -81,7 +81,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                PluginManager.Logger.Log(ex);
                 MessageBox.Show("Failed to load plugin", ex.Message);
             }
 

@@ -4,64 +4,58 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Runtime.CompilerServices;
-    using System.Text;
 
     public class PreferencesWidget : EditorWindow
     {
-        private ConfigKey? displayedKey;
-        private List<Key> keyCodes = new();
+        private object? displayedKey;
 
-        private string? recodingId;
+        private Hotkey? recodingHotkey;
         private string? filter = string.Empty;
 
         private bool unsavedChanges;
 
-        protected override string Name => "Preferences";
+        protected override string Name => "\xE713 Preferences";
 
         public PreferencesWidget()
         {
-            Core.Input.Keyboard.KeyUp += Keyboard;
+            Core.Input.Keyboard.KeyDown += Keyboard;
         }
 
         ~PreferencesWidget()
         {
-            Core.Input.Keyboard.KeyUp -= Keyboard;
+            Core.Input.Keyboard.KeyDown -= Keyboard;
         }
 
         private void Keyboard(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
-            if (recodingId != null)
-            {
-                keyCodes.Add(e.KeyCode);
-            }
+            recodingHotkey?.Add(e.KeyCode);
         }
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
             Config config = Config.Global;
             List<ConfigKey> keys = config.Keys;
-            ImGui.BeginTable("Config", 2, ImGuiTableFlags.SizingStretchProp);
-
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 1);
+            ImGui.BeginTable("Config", 2, ImGuiTableFlags.SizingFixedFit);
+            ImGui.TableSetupColumn("");
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextColumn();
 
             for (int i = 0; i < keys.Count; i++)
             {
                 DisplayKeyNode(keys[i]);
             }
+            DisplayKey("Hotkeys");
 
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 5);
             ImGui.TableNextColumn();
 
-            if (displayedKey != null)
-            {
-                ImGui.InputText("Search", ref filter, 256);
+            ImGui.InputText("Search", ref filter, 256);
 
+            if (displayedKey is ConfigKey configKey)
+            {
                 ImGui.SameLine();
 
                 ImGui.BeginDisabled(!unsavedChanges);
@@ -75,11 +69,11 @@
 
                 ImGui.Separator();
 
-                ImGui.Text(displayedKey.Name);
+                ImGui.Text(configKey.Name);
 
-                for (int j = 0; j < displayedKey.Values.Count; j++)
+                for (int j = 0; j < configKey.Values.Count; j++)
                 {
-                    var value = displayedKey.Values[j];
+                    var value = configKey.Values[j];
 
                     if (!string.IsNullOrEmpty(filter) && !value.Name.Contains(filter, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -297,45 +291,6 @@
 
                         case DataType.Keys:
                             {
-                                ImGui.Text(value.Name);
-
-                                if (recodingId == null)
-                                {
-                                    ImGui.SameLine();
-                                    if (ImGui.SmallButton($"\uE7C8##{value.Name}"))
-                                    {
-                                        recodingId = value.Name;
-                                        val = string.Empty;
-                                        changed = true;
-                                    }
-                                }
-                                else if (recodingId == value.Name)
-                                {
-                                    ImGui.SameLine();
-                                    if (ImGui.SmallButton("\uEA3F"))
-                                    {
-                                        StringBuilder sb = new();
-                                        keyCodes.Reverse();
-                                        for (int i = 0; i < keyCodes.Count; i++)
-                                        {
-                                            if (sb.Length > 0)
-                                            {
-                                                sb.Append("+" + keyCodes[i]);
-                                            }
-                                            else
-                                            {
-                                                sb.Append(keyCodes[i]);
-                                            }
-                                        }
-                                        val = sb.ToString();
-                                        changed = true;
-                                        recodingId = null;
-                                        keyCodes.Clear();
-                                    }
-                                }
-
-                                ImGui.SameLine();
-                                ImGui.InputText($"##{value.Name}", ref val, 256, ImGuiInputTextFlags.ReadOnly);
                             }
                             break;
 
@@ -372,7 +327,61 @@
                 }
             }
 
+            if (displayedKey is string key)
+            {
+                ImGui.Separator();
+
+                switch (key)
+                {
+                    case "Hotkeys":
+                        lock (HotkeyManager.SyncObject)
+                        {
+                            for (int i = 0; i < HotkeyManager.Count; i++)
+                            {
+                                EditHotkey(HotkeyManager.Hotkeys[i]);
+                            }
+                        }
+
+                        break;
+                }
+            }
+
             ImGui.EndTable();
+        }
+
+        private void EditHotkey(Hotkey hotkey)
+        {
+            if (ImGui.SmallButton($"\uE777##{hotkey.Name}"))
+            {
+                hotkey.SetToDefault();
+            }
+
+            ImGui.SameLine();
+
+            ImGui.Text(hotkey.Name);
+
+            ImGui.SameLine();
+
+            string val = hotkey.ToString();
+            ImGui.InputText($"##{hotkey.Name}", ref val, 256, ImGuiInputTextFlags.ReadOnly);
+
+            if (recodingHotkey == null)
+            {
+                ImGui.SameLine();
+                if (ImGui.SmallButton($"\uE7C8##{hotkey.Name}"))
+                {
+                    recodingHotkey = hotkey;
+                    hotkey.Clear();
+                }
+            }
+            else if (recodingHotkey == hotkey)
+            {
+                ImGui.SameLine();
+                if (ImGui.SmallButton("\uEA3F"))
+                {
+                    recodingHotkey = null;
+                }
+            }
         }
 
         private void DisplayKeyNode(ConfigKey key)
@@ -399,6 +408,27 @@
                 {
                     DisplayKeyNode(key.Keys[j]);
                 }
+                ImGui.TreePop();
+            }
+        }
+
+        private void DisplayKey(string key)
+        {
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
+            if (displayedKey is string other && other == key)
+            {
+                flags |= ImGuiTreeNodeFlags.Selected;
+            }
+
+            flags |= ImGuiTreeNodeFlags.Leaf;
+
+            bool isOpen = ImGui.TreeNodeEx(key, flags);
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+            {
+                displayedKey = key;
+            }
+            if (isOpen)
+            {
                 ImGui.TreePop();
             }
         }

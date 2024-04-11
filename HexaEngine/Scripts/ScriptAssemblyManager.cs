@@ -9,8 +9,9 @@
     using System.Reflection;
     using System.Runtime.Loader;
 
-    public static class AssemblyManager
+    public static class ScriptAssemblyManager
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ScriptAssemblyManager));
         private static AssemblyLoadContext assemblyLoadContext;
         private static readonly List<Assembly> assemblies = new();
         private static readonly Dictionary<Guid, Type> _typeCache = new();
@@ -22,9 +23,9 @@
 
         private static ManualResetEventSlim loadLock = new(false);
 
-        static AssemblyManager()
+        static ScriptAssemblyManager()
         {
-            assemblyLoadContext = new AssemblyLoadContext(nameof(AssemblyManager), true);
+            assemblyLoadContext = new AssemblyLoadContext(nameof(ScriptAssemblyManager), true);
         }
 
         public static IReadOnlyList<Assembly> Assemblies => assemblies;
@@ -327,7 +328,7 @@
             _enumNameCache.Clear();
             assemblies.Clear();
             assemblyLoadContext.Unload();
-            assemblyLoadContext = new(nameof(AssemblyManager), true);
+            assemblyLoadContext = new(nameof(ScriptAssemblyManager), true);
             AssembliesUnloaded?.Invoke(null, null);
         }
     }

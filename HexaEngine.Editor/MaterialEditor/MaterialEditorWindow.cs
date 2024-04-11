@@ -25,6 +25,7 @@
     [EditorWindowCategory("Tools")]
     public class MaterialEditorWindow : EditorWindow
     {
+        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(MaterialEditor));
         private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
 

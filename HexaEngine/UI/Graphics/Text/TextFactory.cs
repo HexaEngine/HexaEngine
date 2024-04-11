@@ -114,7 +114,7 @@
                 {
                     if (!disposing)
                     {
-                        Logger.Warn($"Live Instance: {nameof(TextFactory)}, outstanding references {refCounter}");
+                        LoggerFactory.GetLogger(nameof(LeakTracer)).Warn($"Live Instance: {nameof(TextFactory)}, outstanding references {refCounter}");
                     }
                     return;
                 }

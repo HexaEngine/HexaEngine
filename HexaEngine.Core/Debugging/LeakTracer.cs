@@ -17,6 +17,8 @@ namespace HexaEngine.Core.Debugging
     /// </summary>
     public static class LeakTracer
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(LeakTracer));
+
 #if TRACELEAK
         private static readonly ConcurrentDictionary<object, StackTrace> Instances = new();
 #endif

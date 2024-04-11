@@ -5,6 +5,7 @@
 
     public static class ArtifactDatabase
     {
+        private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(ArtifactDatabase));
         private static readonly object _lock = new();
         private static readonly HashSet<Guid> importedSourceAssets = [];
         private static List<Artifact> artifacts = [];
@@ -47,6 +48,7 @@
                 }
             }
 
+            logger.Info($"Initialized '{path}'");
             initLock.Set();
         }
 
@@ -73,8 +75,8 @@
                         }
                         catch (Exception ex)
                         {
-                            Logger.Error($"Failed to cleanup artifact '{artifact}'");
-                            Logger.Log(ex);
+                            logger.Error($"Failed to cleanup artifact '{artifact}'");
+                            logger.Log(ex);
                         }
                     }
                 }

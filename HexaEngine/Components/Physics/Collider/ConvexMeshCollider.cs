@@ -42,7 +42,7 @@
 
             if (!FileSystem.Exists(path))
             {
-                Logger.Error("Failed to load model, model file not found!");
+                LoggerFactory.General.Error("Failed to load model, model file not found!");
                 return;
             }
 
@@ -54,7 +54,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to load model, {ex}");
+                LoggerFactory.General.Error($"Failed to load model, {ex}");
                 return;
             }
 
@@ -113,7 +113,7 @@
 
                 if (!success)
                 {
-                    Logger.Error("Failed to cook mesh");
+                    PhysicsSystem.Logger.Error("Failed to cook mesh");
                     return;
                 }
 
@@ -141,7 +141,7 @@
 
             if (pxConvexMesh == null)
             {
-                Logger.Error("PxTriangleMesh* is null");
+                PhysicsSystem.Logger.Error("PxTriangleMesh* is null");
                 return;
             }
 

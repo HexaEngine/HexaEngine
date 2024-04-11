@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.Collections;
-    using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Input;
-    using HexaEngine.Editor.Extensions;
     using System;
     using System.Collections.Generic;
     using System.Text;
 
     public class Hotkey
     {
-        private string? tostring;
+        private string? cache;
         private readonly List<Key> keys = new();
         private readonly List<Key> defaults = new();
         public readonly string Name;
@@ -21,26 +18,7 @@
         [JsonIgnore]
         public Action Callback;
 
-        private ConfigValue? confValue;
-
-        [JsonIgnore]
-        internal ConfigValue? Value
-        {
-            get => confValue; set
-            {
-                if (value == null)
-                {
-                    return;
-                }
-                confValue = value;
-                confValue.DefaultValue = defaults.ToFormattedString();
-                confValue.ValueChanged += ValueChanged;
-                keys.Clear();
-                keys.AddRange(value.GetKeys());
-            }
-        }
-
-        public ObservableList<Key> Keys { get; private set; }
+        public List<Key> Keys { get; private set; }
 
         public List<Key> Defaults => defaults;
 
@@ -50,7 +28,6 @@
             Callback = callback;
             keys = new();
             Keys = new(keys);
-            Keys.CollectionChanged += CollectionChanged;
         }
 
         public Hotkey(string name, Action callback, List<Key> defaults)
@@ -60,7 +37,6 @@
             this.defaults.AddRange(defaults);
             keys = defaults;
             Keys = new(keys);
-            Keys.CollectionChanged += CollectionChanged;
         }
 
         public Hotkey(string name, Action callback, IEnumerable<Key> defaults)
@@ -70,24 +46,6 @@
             this.defaults.AddRange(defaults);
             keys = new(defaults);
             Keys = new(keys);
-            Keys.CollectionChanged += CollectionChanged;
-        }
-
-        private void CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (confValue == null)
-            {
-                return;
-            }
-
-            tostring = null;
-            confValue.Value = ToString();
-        }
-
-        private void ValueChanged(ConfigValue v, string? a)
-        {
-            keys.Clear();
-            keys.AddRange(v.GetKeys());
         }
 
         public bool IsConflicting(Hotkey other)
@@ -134,7 +92,7 @@
 
         public override string ToString()
         {
-            if (tostring == null)
+            if (cache == null)
             {
                 StringBuilder sb = new();
                 for (int i = 0; i < Keys.Count; i++)
@@ -148,9 +106,38 @@
                         sb.Append(Keys[i]);
                     }
                 }
-                tostring = sb.ToString();
+                cache = sb.ToString();
             }
-            return tostring;
+            return cache;
+        }
+
+        public void Clear()
+        {
+            Keys.Clear();
+            cache = null;
+        }
+
+        public void Add(Key key)
+        {
+            if (Keys.Contains(key))
+                return;
+            Keys.Add(key);
+            cache = null;
+        }
+
+        public void AddRange(IEnumerable<Key> keys)
+        {
+            foreach (var key in keys)
+            {
+                Keys.Add(key);
+            }
+            cache = null;
+        }
+
+        public void SetToDefault()
+        {
+            Clear();
+            Keys.AddRange(defaults);
         }
     }
 }

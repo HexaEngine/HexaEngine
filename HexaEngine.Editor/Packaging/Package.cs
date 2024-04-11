@@ -100,8 +100,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to read metadata from package ({file})");
-                Logger.Log(ex);
+                PackageManager.Logger.Error($"Failed to read metadata from package ({file})");
+                PackageManager.Logger.Log(ex);
                 return null;
             }
             finally
@@ -125,8 +125,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to read metadata from package.");
-                Logger.Log(ex);
+                PackageManager.Logger.Error($"Failed to read metadata from package.");
+                PackageManager.Logger.Log(ex);
                 return null;
             }
             finally
@@ -155,8 +155,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to read metadata from package.");
-                Logger.Log(ex);
+                PackageManager.Logger.Error($"Failed to read metadata from package.");
+                PackageManager.Logger.Log(ex);
                 return;
             }
             finally

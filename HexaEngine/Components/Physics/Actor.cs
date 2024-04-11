@@ -153,7 +153,7 @@
                 bool wasAdded = scene->AddActorMut(actor, null);
                 if (!wasAdded)
                 {
-                    Logger.Error($"{GameObject.FullName}: Actor couldn't be added");
+                    PhysicsSystem.Logger.Error($"{GameObject.FullName}: Actor couldn't be added");
                 }
             }
             isUpdating = false;
