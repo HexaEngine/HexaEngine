@@ -17,15 +17,7 @@
     public static class SceneManager
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(SceneManager));
-
-        /// <summary>
-        /// Read lock
-        /// </summary>
         private static readonly object _lock = new();
-
-        /// <summary>
-        /// Write lock
-        /// </summary>
         private static readonly SemaphoreSlim semaphore = new(1);
 
         /// <summary>
@@ -39,9 +31,14 @@
         public static object SyncObject => _lock;
 
         /// <summary>
-        /// Occurs when [scene changed].
+        /// Occurs when <see cref="Current"/> changed.
         /// </summary>
         public static event EventHandler<SceneChangedEventArgs>? SceneChanged;
+
+        /// <summary>
+        /// Occurs when <see cref="Current"/> changing.
+        /// </summary>
+        public static event EventHandler<SceneChangingEventArgs>? SceneChanging;
 
         public static void Lock()
         {
@@ -69,6 +66,7 @@
             {
                 if (SceneSerializer.TrySerialize(Current, Current.Path, out var ex))
                 {
+                    Current.UnsavedChanged = false;
                     return;
                 }
                 else if (Application.InEditorMode)
@@ -106,26 +104,36 @@
         /// <summary>
         /// Loads the specified scene and disposes the old Scene automatically.<br/>
         /// Calls <see cref="Scene.Initialize"/> from <paramref dbgName="scene"/><br/>
-        /// Calls <see cref="Scene.Dispose"/> if <see cref="Current"/> != <see langword="null"/><br/>
         /// Notifies <see cref="SceneChanged"/><br/>
         /// Forces the GC to Collect.<br/>
         /// </summary>
-        /// <param dbgName="scene">The scene.</param>
+        /// <param name="scene">The scene.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Load(Scene scene)
+        public static void Load(Scene? scene)
         {
+            // Early exit nothing to do.
+            if (Current == null && scene == null)
+            {
+                return;
+            }
+
+            if (OnSceneChanging(scene == null ? SceneChangeType.Unload : SceneChangeType.Load, scene))
+            {
+                return;
+            }
+
             SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
             window.Dispatcher.InvokeBlocking(state =>
             {
-                var values = (Tuple<ICoreWindow, Scene>)state;
+                var values = (Tuple<ICoreWindow, Scene?>)state;
                 var window = values.Item1;
                 var scene = values.Item2;
 
                 semaphore.Wait();
 
-                if (Current == null)
+                if (Current == null && scene != null)
                 {
                     scene.Initialize();
                     scene.Load(window.GraphicsDevice);
@@ -133,7 +141,7 @@
                     {
                         Current = scene;
                     }
-                    SceneChanged?.Invoke(null, new(null, scene));
+                    OnSceneChanged(SceneChangeType.Load, null, scene);
                     semaphore.Release();
                     return;
                 }
@@ -156,6 +164,10 @@
                     {
                         Current = null;
                     }
+
+                    semaphore.Release();
+
+                    OnSceneChanged(SceneChangeType.Unload, old, scene);
                 }
                 else
                 {
@@ -170,20 +182,25 @@
                     {
                         Current = scene;
                     }
+
+                    semaphore.Release();
+
+                    OnSceneChanged(SceneChangeType.Load, old, scene);
                 }
-
-                semaphore.Release();
-
-                SceneChanged?.Invoke(null, new(old, scene));
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<ICoreWindow, Scene>(window, scene));
+            }, new Tuple<ICoreWindow, Scene?>(window, scene));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Reload()
+        public static bool Reload()
         {
+            if (OnSceneChanging(SceneChangeType.Reload, Current))
+            {
+                return false;
+            }
+
             SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
             window.Dispatcher.InvokeBlocking(state =>
@@ -207,7 +224,7 @@
                 Current.Initialize();
                 Current.Load(window.GraphicsDevice);
 
-                SceneChanged?.Invoke(null, new(Current, Current));
+                OnSceneChanged(SceneChangeType.Reload, Current, Current);
 
                 semaphore.Release();
 
@@ -216,11 +233,18 @@
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             }, window);
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void BeginReload()
+        public static bool BeginReload()
         {
+            if (OnSceneChanging(SceneChangeType.Reload, Current))
+            {
+                return false;
+            }
+
             SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
@@ -245,6 +269,8 @@
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
                 semaphore.Release();
             });
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -269,7 +295,7 @@
                 Current.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
-                SceneChanged?.Invoke(null, new(Current, Current));
+                OnSceneChanged(SceneChangeType.Reload, Current, Current);
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -302,8 +328,19 @@
         /// <param dbgName="scene">The scene.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task AsyncLoad(Scene scene)
+        public static Task AsyncLoad(Scene? scene)
         {
+            // Early exit nothing to do.
+            if (Current == null && scene == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (OnSceneChanging(scene == null ? SceneChangeType.Unload : SceneChangeType.Load, scene))
+            {
+                return Task.CompletedTask;
+            }
+
             SelectionCollection.Global.ClearSelection();
             var window = Application.MainWindow;
 
@@ -311,13 +348,13 @@
             {
                 await window.Dispatcher.InvokeAsync(async state =>
                 {
-                    var values = (Tuple<ICoreWindow, Scene>)state;
+                    var values = (Tuple<ICoreWindow, Scene?>)state;
                     var window = values.Item1;
                     var scene = values.Item2;
 
                     await semaphore.WaitAsync();
 
-                    if (Current == null)
+                    if (Current == null && scene != null)
                     {
                         await scene.InitializeAsync();
                         scene.Load(window.GraphicsDevice);
@@ -327,7 +364,7 @@
                             Current = scene;
                         }
 
-                        SceneChanged?.Invoke(null, new(null, scene));
+                        OnSceneChanged(SceneChangeType.Load, null, scene);
                         semaphore.Release();
                         return;
                     }
@@ -345,10 +382,15 @@
                         old?.Uninitialize();
 
                         ResourceManager.Shared.Release();
+
                         lock (_lock)
                         {
                             Current = null;
                         }
+
+                        semaphore.Release();
+
+                        OnSceneChanged(SceneChangeType.Unload, old, scene);
                     }
                     else
                     {
@@ -364,15 +406,15 @@
                         {
                             Current = scene;
                         }
+
+                        semaphore.Release();
+
+                        OnSceneChanged(SceneChangeType.Load, old, scene);
                     }
-
-                    semaphore.Release();
-
-                    SceneChanged?.Invoke(null, new(old, scene));
 
                     GC.WaitForPendingFinalizers();
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-                }, new Tuple<ICoreWindow, Scene>(window, scene));
+                }, new Tuple<ICoreWindow, Scene?>(window, scene));
             });
         }
 
@@ -394,6 +436,19 @@
             }
 
             semaphore.Release();
+        }
+
+        private static bool OnSceneChanging(SceneChangeType changeType, Scene? newScene)
+        {
+            SceneChangingEventArgs sceneChangingEventArgs = new(changeType, Current, newScene);
+            SceneChanging?.Invoke(null, sceneChangingEventArgs);
+            return sceneChangingEventArgs.Handled;
+        }
+
+        private static void OnSceneChanged(SceneChangeType changeType, Scene? oldScene, Scene? newScene)
+        {
+            SceneChangedEventArgs sceneChangedEventArgs = new(changeType, oldScene, newScene);
+            SceneChanged?.Invoke(null, sceneChangedEventArgs);
         }
     }
 }

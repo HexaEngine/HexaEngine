@@ -88,27 +88,30 @@
             components.Clear();
         }
 
-        public void Draw(GameObject gameObject)
+        public bool Draw(GameObject gameObject)
         {
+            bool changed = false;
             if (CategoryName == string.Empty)
             {
-                DrawComponents(gameObject);
+                changed |= DrawComponents(gameObject);
             }
             else if (ImGui.BeginMenu(guiName.UniqueName))
             {
-                DrawComponents(gameObject);
+                changed |= DrawComponents(gameObject);
                 ImGui.EndMenu();
             }
 
             for (int i = 0; i < childCategories.Count; i++)
             {
                 var category = childCategories[i];
-                category.Draw(gameObject);
+                changed |= category.Draw(gameObject);
             }
+            return changed;
         }
 
-        private void DrawComponents(GameObject gameObject)
+        private bool DrawComponents(GameObject gameObject)
         {
+            bool changed = false;
             for (int i = 0; i < components.Count; i++)
             {
                 EditorComponentAttribute editorComponent = components[i];
@@ -116,8 +119,10 @@
                 {
                     IComponent component = editorComponent.Constructor();
                     gameObject.AddComponent(component);
+                    changed = true;
                 }
             }
+            return changed;
         }
     }
 }

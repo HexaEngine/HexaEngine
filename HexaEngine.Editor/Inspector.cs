@@ -276,6 +276,7 @@
                     {
                         var oldValue = gimbalBefore;
                         History.Default.Push("Transform Object", gameObject.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
+                        scene.UnsavedChanged = true;
                     }
                     gimbalGrabbed = false;
                     gimbalBefore = gameObject.Transform.Local;

@@ -208,6 +208,7 @@
                             var name = scene.GetAvailableName(item.Key);
                             node.Name = name;
                             scene.AddChild(node);
+                            scene.UnsavedChanged = true;
                         }
                     }
 
@@ -416,6 +417,7 @@
                         Guid id = *(Guid*)payload.Data;
                         var gameObject = SceneManager.Current.FindByGuid(id);
                         SelectionCollection.Global.MoveSelection(element);
+                        SceneManager.Current.UnsavedChanged = true;
                     }
                 }
                 ImGui.EndDragDropTarget();
@@ -474,6 +476,7 @@
                 }
                 if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
                 {
+                    SceneManager.Current.UnsavedChanged = true;
                     SelectionCollection.Global.PurgeSelection();
                 }
                 if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))

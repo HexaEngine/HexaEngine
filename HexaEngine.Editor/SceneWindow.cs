@@ -21,6 +21,73 @@
         private static bool isFocused;
         private static bool isHovered;
         private static bool focus;
+        private static bool unsavedDataDialogIsOpen;
+
+        static SceneWindow()
+        {
+            SceneManager.SceneChanging += SceneChanging;
+            Application.MainWindow.Closing += MainWindowClosing;
+        }
+
+        private static void SceneChanging(object? sender, SceneChangingEventArgs e)
+        {
+            // Do not handle reloads, no data is lost, editor saves automatically.
+            if (e.ChangeType == SceneChangeType.Reload)
+                return;
+
+            if (UnsavedChanges)
+            {
+                e.Handled = true;
+                if (!unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("Unsaved Changes Detected!", $"Do you want to save the changes in Scene?", null, (messageBox, state) =>
+                    {
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            SceneManager.Save();
+                            SceneManager.AsyncLoad(e.NewScene);
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            UnsavedChanges = false;
+                            SceneManager.AsyncLoad(e.NewScene);
+                        }
+
+                        unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
+        }
+
+        private static void MainWindowClosing(object? sender, Core.Windows.Events.CloseEventArgs e)
+        {
+            if (UnsavedChanges)
+            {
+                e.Handled = true;
+                if (!unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("Unsaved Changes Detected!", $"Do you want to save the changes in Scene?", null, (messageBox, state) =>
+                    {
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            SceneManager.Save();
+                            Application.MainWindow.Close();
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            UnsavedChanges = false;
+                            Application.MainWindow.Close();
+                        }
+
+                        unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
+        }
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -36,6 +103,21 @@
 
         public static bool Fullframe;
 
+        public static bool UnsavedChanges
+        {
+            get
+            {
+                return SceneManager.Current?.UnsavedChanged ?? false;
+            }
+            set
+            {
+                if (SceneManager.Current != null)
+                {
+                    SceneManager.Current.UnsavedChanged = value;
+                }
+            }
+        }
+
         public static void Update()
         {
             ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
@@ -50,7 +132,14 @@
 
         public static unsafe void Draw()
         {
-            if (!ImGui.Begin("Scene", ref isShown, ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
+            ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar;
+
+            if (UnsavedChanges)
+            {
+                flags |= ImGuiWindowFlags.UnsavedDocument;
+            }
+
+            if (!ImGui.Begin("Scene", ref isShown, flags))
             {
                 if (focus)
                 {

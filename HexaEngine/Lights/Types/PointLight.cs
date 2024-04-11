@@ -17,19 +17,6 @@
     {
         private ShadowAtlasRangeHandle? atlasHandle;
 
-        public PointLight() : base()
-        {
-            ShadowMapNormalBias = 0;
-            ShadowMapSlopeScaleDepthBias = 0;
-        }
-
-        [JsonConstructor]
-        public PointLight(Vector4 color) : base(color)
-        {
-            ShadowMapNormalBias = 0;
-            ShadowMapSlopeScaleDepthBias = 0;
-        }
-
         [JsonIgnore]
         public override int ShadowMapSize => GraphicsSettings.GetSMSizePointLight(ShadowMapResolution);
 

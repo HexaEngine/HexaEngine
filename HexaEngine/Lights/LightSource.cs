@@ -52,12 +52,6 @@
             AddComponentSingleton<SphereSelectionComponent>();
         }
 
-        [JsonConstructor]
-        public Light(Vector4 color)
-        {
-            this.color = color;
-        }
-
         #region General
 
         [EditorCategory("General")]

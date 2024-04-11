@@ -14,6 +14,7 @@
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
+    using System.Threading.Channels;
 
     // TODO: Needs major overhaul.
     // TODO: Bug fix, context menus.
@@ -88,13 +89,14 @@
             ctx.Target.Flags = ctx.OldValue;
         }
 
-        private void DrawContextMenu(Type type, GameObject element)
+        private bool DrawContextMenu(Type type, GameObject element)
         {
+            bool changed = false;
             if (ImGui.BeginPopupContextWindow())
             {
                 if (typeFilterComponentCache.TryGetValue(type, out EditorComponentCacheEntry? cacheEntry))
                 {
-                    cacheEntry.Draw(element);
+                    changed |= cacheEntry.Draw(element);
                     ImGui.Separator();
                 }
                 else
@@ -106,6 +108,7 @@
 
                 ImGui.EndPopup();
             }
+            return changed;
         }
 
         private void DoRemoveComponent(object context)
@@ -155,15 +158,16 @@
 
         public void Edit(IGraphicsContext context, GameObject gameObject)
         {
+            bool changed = false;
             Scene scene = gameObject.GetScene();
             var type = gameObject.Type;
 
-            DrawContextMenu(type, gameObject);
+            changed |= DrawContextMenu(type, gameObject);
 
             bool isEnabled = gameObject.IsEnabled;
             if (ImGui.Checkbox("##Enabled", ref isEnabled))
             {
-                gameObject.IsEnabled = isEnabled;
+                gameObject.IsEnabled = isEnabled; changed = true;
             }
 
             ImGui.SameLine();
@@ -171,18 +175,18 @@
             string name = gameObject.Name;
             if (ImGui.InputText("##Name", ref name, TextBufSize, ImGuiInputTextFlags.EnterReturnsTrue))
             {
-                gameObject.Name = name;
+                gameObject.Name = name; changed = true;
             }
             ImGui.Separator();
 
-            DrawObjectEditor(context, gameObject, type);
+            changed |= DrawObjectEditor(context, gameObject, type);
 
             ImGui.Separator();
 
             ImGui.PushID(name);
             ImGui.BeginGroup();
 
-            DrawComponents(context, gameObject, scene);
+            changed |= DrawComponents(context, gameObject, scene);
 
             Vector2 avail = ImGui.GetContentRegionAvail();
             avail.Y = 0;
@@ -197,7 +201,7 @@
             {
                 if (typeFilterComponentCache.TryGetValue(type, out EditorComponentCacheEntry? cacheEntry))
                 {
-                    cacheEntry.DrawContent(gameObject);
+                    changed |= cacheEntry.DrawContent(gameObject);
                 }
                 else
                 {
@@ -214,6 +218,11 @@
             ImGui.EndGroup();
 
             ImGui.PopID();
+
+            if (changed)
+            {
+                scene.UnsavedChanged = true;
+            }
         }
 
         private bool DrawComponents(IGraphicsContext context, GameObject element, Scene scene)
@@ -231,7 +240,6 @@
 
                 string name = $"{editor.Name}##{i}";
                 string id = $"##{i}";
-                string idCheckbox = $"##Checkbox{i}";
 
                 ImGui.PushID(name);
 

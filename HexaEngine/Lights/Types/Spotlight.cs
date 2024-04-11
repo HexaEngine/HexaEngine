@@ -31,10 +31,6 @@
         [JsonIgnore]
         public override LightType LightType => LightType.Spot;
 
-        public Spotlight()
-        {
-        }
-
         [JsonIgnore]
         public override int ShadowMapSize => GraphicsSettings.GetSMSizeSpotlight(ShadowMapResolution);
 

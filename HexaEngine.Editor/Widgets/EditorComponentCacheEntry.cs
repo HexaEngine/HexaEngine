@@ -124,26 +124,30 @@
             category.Components.Add(componentAttribute);
         }
 
-        public void Draw(GameObject gameObject)
+        public bool Draw(GameObject gameObject)
         {
+            bool changed = false;
             if (ImGui.BeginMenu("\xE710 Add Component"))
             {
                 for (int i = 0; i < categories.Count; i++)
                 {
                     var category = categories[i];
-                    category.Draw(gameObject);
+                    changed |= category.Draw(gameObject);
                 }
                 ImGui.EndMenu();
             }
+            return changed;
         }
 
-        public void DrawContent(GameObject gameObject)
+        public bool DrawContent(GameObject gameObject)
         {
+            bool changed = false;
             for (int i = 0; i < categories.Count; i++)
             {
                 var category = categories[i];
-                category.Draw(gameObject);
+                changed |= category.Draw(gameObject);
             }
+            return changed;
         }
     }
 }
