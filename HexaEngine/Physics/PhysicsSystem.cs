@@ -299,7 +299,7 @@
                 actors[i].EndUpdate();
             }
 
-            for (int i = 0; i < actors.Count; i++)
+            for (int i = 0; i < characterControllers.Count; i++)
             {
                 characterControllers[i].Update();
             }

@@ -56,9 +56,9 @@ namespace HexaEngine.Mathematics.Noise
             }
         }
 
-        private static float Fade(float t)
+        private static float Fade(float x)
         {
-            return t * t * t * (t * (t * 6 - 15) + 10);
+            return x * x * (3 - 2 * x);
         }
 
         private static float Lerp(float a, float b, float v)
@@ -285,7 +285,7 @@ namespace HexaEngine.Mathematics.Noise
             float frequency = 1;
             for (int i = 0; i < octaves; i++)
             {
-                total += SaturateClamp01(Noise(x * frequency, y * frequency)) * amplitude;
+                total += Noise(x * frequency, y * frequency) * amplitude;
 
                 amplitude *= persistence;
                 frequency *= 2;

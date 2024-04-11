@@ -19,6 +19,7 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Mathematics;
+    using HexaEngine.Mathematics.Noise;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using System;
@@ -141,6 +142,7 @@ namespace HexaEngine.Editor.TerrainEditor
 
             ToolsMenu();
             CellsMenu(terrain);
+            GenerationMenu(terrain);
             DrawEdit(context, component, terrain);
 
             if (updateQueue.Count > 0)
@@ -529,6 +531,56 @@ namespace HexaEngine.Editor.TerrainEditor
                 }
 
                 init = true;
+            }
+        }
+
+        private PerlinNoise perlinNoise = new();
+        private int seed = 0;
+        private int octaves = 10;
+        private float persistence = 0.4f;
+        private float amplitude = 2;
+        private Vector2 scale = new(0.002f);
+        private float min = 0f;
+        private float max = 10f;
+
+        private void GenerationMenu(TerrainGrid terrain)
+        {
+            if (ImGui.CollapsingHeader("Generation"))
+            {
+                if (ImGui.InputInt("Seed", ref seed))
+                {
+                    perlinNoise = new(seed);
+                }
+                ImGui.InputInt("Octaves", ref octaves);
+                ImGui.InputFloat("Persistence", ref persistence);
+                ImGui.InputFloat("Amplitude", ref amplitude);
+                ImGui.InputFloat2("Scale", ref scale, "%.8g");
+                ImGui.InputFloat("Min", ref min);
+                ImGui.InputFloat("Max", ref max);
+                if (ImGui.Button("Generate"))
+                {
+                    for (int i = 0; i < terrain.Count; i++)
+                    {
+                        var cell = terrain[i];
+                        var heightMap = cell.CellData.HeightMap;
+                        var height = heightMap.Height;
+                        var width = heightMap.Width;
+                        var offset = (Vector2)cell.ID * new Vector2(width - 1, height - 1);
+
+                        for (uint y = 0; y < height; y++)
+                        {
+                            for (uint x = 0; x < width; x++)
+                            {
+                                uint index = height * y + x;
+
+                                heightMap[index] = MathUtil.Lerp(min, max, (perlinNoise.OctaveNoise((x + offset.X) * scale.X, (y + offset.Y) * scale.Y, octaves, persistence, amplitude) + 1) / 2);
+                            }
+                        }
+
+                        cell.Generate();
+                        updateQueue.Enqueue(cell);
+                    }
+                }
             }
         }
 

@@ -2,16 +2,16 @@
 {
     using Silk.NET.SDL;
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// Represents the time management system of the engine.
     /// </summary>
     public static class Time
     {
-        private static readonly Sdl sdl = Application.Sdl;
         private static long frame;
-        private static ulong last;
-        private static ulong lastFixed;
+        private static long last;
+        private static long lastFixed;
         private static float fixedTime;
         private static volatile float cumulativeFrameTime;
         private static volatile float gameTime;
@@ -83,16 +83,16 @@
         {
             Interlocked.Increment(ref frame);
 
-            ulong now = sdl.GetPerformanceCounter();
+            long now = Stopwatch.GetTimestamp();
 
             if (last == 0)
             {
                 last = now;
-                delta = 1 / sdl.GetPerformanceFrequency();
+                delta = 1 / Stopwatch.Frequency;
                 return;
             }
 
-            double deltaTime = (double)(now - last) / sdl.GetPerformanceFrequency();
+            double deltaTime = (double)(now - last) / Stopwatch.Frequency;
             last = now;
 
             delta = (float)deltaTime;
@@ -101,7 +101,7 @@
             if (deltaTime == 0 || deltaTime < 0)
             {
                 // To prevent problems set the delta to the minimum time possible.
-                delta = 1 / sdl.GetPerformanceFrequency();
+                delta = 1 / Stopwatch.Frequency;
                 return;
             }
 
@@ -119,7 +119,7 @@
         /// <exception cref="InvalidOperationException">Thrown when the delta time is 0 or less than 0.</exception>
         public static void FixedUpdateTick()
         {
-            ulong now = sdl.GetPerformanceCounter();
+            long now = Stopwatch.GetTimestamp();
 
             if (lastFixed == 0)
             {
@@ -127,7 +127,7 @@
                 return;
             }
 
-            double deltaTime = (double)(now - lastFixed) / sdl.GetPerformanceFrequency();
+            double deltaTime = (double)(now - lastFixed) / Stopwatch.Frequency;
             lastFixed = now;
 
             fixedTime += (float)deltaTime;
