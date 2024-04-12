@@ -83,9 +83,9 @@
                 return;
             }
 
-            csmBuffer = new(device, GraphicsSettings.ShadowMapFormat, ShadowMapSize, ShadowMapSize, cascadeCount - 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            csmBuffer.CreateArraySlices(device);
-            csmDepthBuffer = new(device, Format.D32Float, ShadowMapSize, ShadowMapSize, cascadeCount - 1);
+            csmBuffer = new(GraphicsSettings.ShadowMapFormat, ShadowMapSize, ShadowMapSize, cascadeCount - 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            csmBuffer.CreateArraySlices();
+            csmDepthBuffer = new(Format.D32Float, ShadowMapSize, ShadowMapSize, cascadeCount - 1);
         }
 
         /// <inheritdoc/>

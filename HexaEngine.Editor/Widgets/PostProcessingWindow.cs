@@ -43,7 +43,7 @@
             desc.BindFlags = BindFlags.ShaderResource;
 
             buffer?.Dispose();
-            buffer = new(context.Device, desc);
+            buffer = new(desc);
         }
 
         private void Unselect()

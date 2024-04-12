@@ -16,9 +16,9 @@
 
         uint VertexCount { get; }
 
-        IIndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None);
+        IIndexBuffer CreateIndexBuffer(CpuAccessFlags accessFlags = CpuAccessFlags.None);
 
-        IVertexBuffer CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None);
+        IVertexBuffer CreateVertexBuffer(CpuAccessFlags accessFlags = CpuAccessFlags.None);
 
         bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib);
 

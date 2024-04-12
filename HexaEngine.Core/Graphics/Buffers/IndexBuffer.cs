@@ -11,7 +11,6 @@
     {
         private const int DefaultCapacity = 8;
 
-        private readonly IGraphicsDevice device;
         private readonly string dbgName;
 
         private IBuffer buffer;
@@ -31,12 +30,11 @@
         /// <summary>
         /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, CPU access flags, filename, and line number.
         /// </summary>
-        /// <param name="device">The graphics device associated with the index buffer.</param>
         /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
         /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) == typeof(uint))
             {
@@ -51,7 +49,6 @@
                 throw new("Index buffers can only be type of uint or ushort");
             }
 
-            this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             items = AllocT<T>(DefaultCapacity);
@@ -74,6 +71,7 @@
 
             format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
+            var device = Application.GraphicsDevice;
             buffer = device.CreateBuffer(description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -82,13 +80,12 @@
         /// <summary>
         /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, indices, CPU access flags, filename, and line number.
         /// </summary>
-        /// <param name="device">The graphics device associated with the index buffer.</param>
         /// <param name="indices">The initial indices to populate the buffer with.</param>
         /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
         /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(IGraphicsDevice device, T[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(T[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) == typeof(uint))
             {
@@ -103,12 +100,12 @@
                 throw new("Index buffers can only be type of uint or ushort");
             }
 
-            this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = (uint)indices.Length;
             count = capacity;
 
+            var device = Application.GraphicsDevice;
             description = new(sizeof(T) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
 
             if ((flags & CpuAccessFlags.None) != 0)
@@ -140,14 +137,13 @@
         /// <summary>
         /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, indices pointer, count, CPU access flags, filename, and line number.
         /// </summary>
-        /// <param name="device">The graphics device associated with the index buffer.</param>
         /// <param name="indices">The pointer to the initial indices to populate the buffer with.</param>
         /// <param name="count">The number of indices pointed to by the indices pointer.</param>
         /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
         /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(IGraphicsDevice device, T* indices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(T* indices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) == typeof(uint))
             {
@@ -162,12 +158,12 @@
                 throw new("Index buffers can only be type of uint or ushort");
             }
 
-            this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = count;
             this.count = count;
 
+            var device = Application.GraphicsDevice;
             description = new(sizeof(T) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
 
             if ((flags & CpuAccessFlags.None) != 0)
@@ -196,13 +192,12 @@
         /// <summary>
         /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, capacity, CPU access flags, filename, and line number.
         /// </summary>
-        /// <param name="device">The graphics device associated with the index buffer.</param>
         /// <param name="capacity">The initial capacity of the index buffer.</param>
         /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
         /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) == typeof(uint))
             {
@@ -217,7 +212,6 @@
                 throw new("Index buffers can only be type of uint or ushort");
             }
 
-            this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             this.capacity = capacity;
@@ -238,6 +232,7 @@
 
             format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
+            var device = Application.GraphicsDevice;
             items = AllocT<T>(capacity);
             ZeroMemoryT(items, capacity);
             buffer = device.CreateBuffer(items, capacity, description);
@@ -292,6 +287,7 @@
                 count = capacity < count ? capacity : count;
                 MemoryManager.Unregister(buffer);
                 buffer.Dispose();
+                var device = Application.GraphicsDevice;
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
                 MemoryManager.Register(buffer);

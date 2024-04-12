@@ -268,17 +268,17 @@ namespace HexaEngine.PostFx.BuildIn
                 BlendFactor = Vector4.One
             });
 
-            bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
+            bokehBuffer = new((uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
 
             buffer = creator.CreateBuffer("DOF_BUFFER");
             cocBuffer = creator.CreateBufferHalfRes("DOF_COC_BUFFER", Format.R16UNorm);
 
-            bokehIndirectBuffer = new(device, new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
+            bokehIndirectBuffer = new(new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
 
-            cbBokeh = new(device, CpuAccessFlags.Write);
-            cbDof = new(device, CpuAccessFlags.Write);
+            cbBokeh = new(CpuAccessFlags.Write);
+            cbDof = new(CpuAccessFlags.Write);
 
-            bokehTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
+            bokehTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
 
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
         }

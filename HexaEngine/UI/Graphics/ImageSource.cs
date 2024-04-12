@@ -48,7 +48,7 @@
 
         public static ImageSource CreateFromFile(string path)
         {
-            Texture2D texture = new(Application.GraphicsDevice, new TextureFileDescription(path, mipLevels: 1, usage: Usage.Immutable, bindFlags: BindFlags.ShaderResource));
+            Texture2D texture = new(new TextureFileDescription(path, mipLevels: 1, usage: Usage.Immutable, bindFlags: BindFlags.ShaderResource));
             return new(texture, true);
         }
 
@@ -57,7 +57,7 @@
             ulong rowPitch = 0;
             ulong slicePitch = 0;
             FormatHelper.ComputePitch(format, (ulong)width, (ulong)height, ref rowPitch, ref slicePitch, Core.Graphics.Textures.CPFlags.None);
-            Texture2D texture = new(Application.GraphicsDevice, new Texture2DDescription(format, width, height, 1, 1, GpuAccessFlags.Read), new SubresourceData((nint)data, (int)rowPitch));
+            Texture2D texture = new(new Texture2DDescription(format, width, height, 1, 1, GpuAccessFlags.Read), new SubresourceData((nint)data, (int)rowPitch));
             return new(texture, true);
         }
 
@@ -69,7 +69,7 @@
             FormatHelper.ComputePitch(format, (ulong)width, (ulong)height, ref rowPitch, ref slicePitch, Core.Graphics.Textures.CPFlags.None);
             fixed (byte* dataPtr = data)
             {
-                texture = new(Application.GraphicsDevice, new Texture2DDescription(format, width, height, 1, 1, GpuAccessFlags.Read), new SubresourceData((nint)dataPtr, (int)rowPitch));
+                texture = new(new Texture2DDescription(format, width, height, 1, 1, GpuAccessFlags.Read), new SubresourceData((nint)dataPtr, (int)rowPitch));
             }
             return new(texture, true);
         }
@@ -84,7 +84,7 @@
             stream.Position = 0;
 
             var image = Application.GraphicsDevice.TextureLoader.LoadFromMemory(Path.GetFileName(uri.AbsolutePath), stream);
-            Texture2D texture = new(Application.GraphicsDevice, image, new Texture2DDescription(Format.R32G32B32A32Float, 1, 1, 1, 1, GpuAccessFlags.Read));
+            Texture2D texture = new(new Texture2DDescription(Format.R32G32B32A32Float, 1, 1, 1, 1, GpuAccessFlags.Read), image);
             image.Dispose();
 
             return new ImageSource(texture, true);
@@ -100,7 +100,7 @@
             var data = stream.ToArray();
 
             var image = Application.GraphicsDevice.TextureLoader.LoadFromMemory(Path.GetFileName(uri.AbsolutePath), stream);
-            Texture2D texture = new(Application.GraphicsDevice, image, new Texture2DDescription(Format.R32G32B32A32Float, 1, 1, 1, 1, GpuAccessFlags.Read));
+            Texture2D texture = new(new Texture2DDescription(Format.R32G32B32A32Float, 1, 1, 1, 1, GpuAccessFlags.Read), image);
             image.Dispose();
 
             return new ImageSource(texture, true);

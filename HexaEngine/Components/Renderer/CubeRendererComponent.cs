@@ -25,7 +25,7 @@
                 }
 
                 cube?.Dispose();
-                cube = new(device);
+                cube = new();
 
                 var materialData = MaterialData.GetMaterial(component.materialAsset, LoggerFactory.General);
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);

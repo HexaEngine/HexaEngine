@@ -11,7 +11,7 @@
         public SpriteAtlas(IGraphicsDevice device, SamplerStateDescription description, string path)
         {
             samplerState = device.CreateSamplerState(description);
-            texture = new(device, new TextureFileDescription(path, TextureDimension.Texture2D, 0, Usage.Immutable));
+            texture = new(new TextureFileDescription(path, TextureDimension.Texture2D, 0, Usage.Immutable));
         }
 
         public Vector2 Size => new(texture.Width, texture.Height);

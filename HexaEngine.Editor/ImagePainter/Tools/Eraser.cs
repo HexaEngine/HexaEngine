@@ -43,7 +43,7 @@
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleStrip,
             });
-            opacityBuffer = new(device, CpuAccessFlags.Write);
+            opacityBuffer = new(CpuAccessFlags.Write);
         }
 
         public override void DrawSettings()

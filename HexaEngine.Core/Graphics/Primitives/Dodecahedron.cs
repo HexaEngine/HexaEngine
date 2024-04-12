@@ -13,8 +13,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Dodecahedron"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
-        public Dodecahedron(IGraphicsDevice device) : base(device)
+        public Dodecahedron() : base()
         {
         }
 
@@ -25,9 +24,9 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the dodecahedron mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateDodecahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateDodecahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -36,7 +35,7 @@
         private const float c = 0.934172358962715696451f; // sqrt( ( 3 + sqrt(5) ) / 6 );
 
         private static readonly Vector3[] verts =
-        {
+        [
             new(  a,  a,  a),
             new(  a,  a, -a),
             new(  a, -a,  a),
@@ -57,10 +56,10 @@
             new(  0, -b,  c),
             new(  0,  b, -c),
             new(  0, -b, -c),
-        };
+        ];
 
         private static readonly uint[] faces =
-        {
+        [
             0, 8, 9, 4, 16,
             0, 16, 17, 2, 12,
             12, 2, 10, 3, 13,
@@ -73,41 +72,40 @@
             6, 11, 10, 2, 17,
             7, 15, 5, 18, 19,
             7, 19, 3, 10, 11,
-        };
+        ];
 
         private static readonly Vector2[] textureCoordinates =
-        {
+        [
             new(  0.654508f, 0.0244717f),
             new( 0.0954915f,  0.206107f),
             new( 0.0954915f,  0.793893f),
             new(  0.654508f,  0.975528f),
             new(       1.0f,       0.5f)
-        };
+        ];
 
         private static readonly uint[][] textureIndex =
-        {
-            new uint[] { 0, 1, 2, 3, 4 },
-            new uint[] { 2, 3, 4, 0, 1 },
-            new uint[] { 4, 0, 1, 2, 3 },
-            new uint[] { 1, 2, 3, 4, 0 },
-            new uint[] { 2, 3, 4, 0, 1 },
-            new uint[] { 0, 1, 2, 3, 4 },
-            new uint[] { 1, 2, 3, 4, 0 },
-            new uint[] { 4, 0, 1, 2, 3 },
-            new uint[] { 4, 0, 1, 2, 3 },
-            new uint[] { 1, 2, 3, 4, 0 },
-            new uint[] { 0, 1, 2, 3, 4 },
-            new uint[] { 2, 3, 4, 0, 1 },
-        };
+        [
+            [0, 1, 2, 3, 4],
+            [2, 3, 4, 0, 1],
+            [4, 0, 1, 2, 3],
+            [1, 2, 3, 4, 0],
+            [2, 3, 4, 0, 1],
+            [0, 1, 2, 3, 4],
+            [1, 2, 3, 4, 0],
+            [4, 0, 1, 2, 3],
+            [4, 0, 1, 2, 3],
+            [1, 2, 3, 4, 0],
+            [0, 1, 2, 3, 4],
+            [2, 3, 4, 0, 1],
+        ];
 
         /// <summary>
         /// Generates vertices and indices for a dodecahedron mesh.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <param name="vertexBuffer">The vertex buffer of the dodecahedron mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the dodecahedron mesh.</param>
         /// <param name="size">The size of the dodecahedron.</param>
-        public static void CreateDodecahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateDodecahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[5 * 12];
             uint[] indices = new uint[9 * 12];
@@ -159,8 +157,8 @@
                 vcounter += 5;
             }
 
-            vertexBuffer = new(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new(vertices, CpuAccessFlags.None);
+            indexBuffer = new(indices, CpuAccessFlags.None);
         }
     }
 }

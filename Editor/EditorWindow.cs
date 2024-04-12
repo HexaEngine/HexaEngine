@@ -1,5 +1,6 @@
 ﻿namespace Editor
 {
+    using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;

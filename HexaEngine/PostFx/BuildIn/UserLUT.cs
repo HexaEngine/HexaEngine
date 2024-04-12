@@ -69,11 +69,11 @@
                 PixelShader = "effects/lut/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            paramsBuffer = new(device, new LUTParams(), CpuAccessFlags.Write);
+            paramsBuffer = new(new LUTParams(), CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             lutSamplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            LUT = Texture2D.LoadFromAssets(device, lutTexPath, false);
+            LUT = Texture2D.LoadFromAssets(lutTexPath);
         }
 
         public override unsafe void Draw(IGraphicsContext context)

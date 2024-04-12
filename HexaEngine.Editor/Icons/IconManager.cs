@@ -126,7 +126,7 @@
 
             Texture2DDescription description = new(Format.R8G8B8A8UNorm, width, height, 1, 1, GpuAccessFlags.Read);
 
-            iconAtlas = new Texture2D(device, description, new SubresourceData(data, rowPitch));
+            iconAtlas = new Texture2D(description, new SubresourceData(data, rowPitch));
 
             Default.SetAtlas(iconAtlas);
             for (int i = 0; i < icons.Count; i++)

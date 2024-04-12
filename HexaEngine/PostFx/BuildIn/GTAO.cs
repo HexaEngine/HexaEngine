@@ -84,7 +84,7 @@ namespace HexaEngine.PostFx.BuildIn
                 VertexShader = "effects/gato/vs.hlsl",
                 PixelShader = "effects/gato/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(CpuAccessFlags.Write);
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

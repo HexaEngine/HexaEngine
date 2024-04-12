@@ -126,13 +126,13 @@
         {
             if (tex == null)
             {
-                tex = new(context.Device, GraphicsSettings.ShadowMapFormat, light.ShadowMapSize, light.ShadowMapSize, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-                depth = new(context.Device, Format.D32Float, light.ShadowMapSize, light.ShadowMapSize, CpuAccessFlags.None, GpuAccessFlags.Write);
+                tex = new(GraphicsSettings.ShadowMapFormat, light.ShadowMapSize, light.ShadowMapSize, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+                depth = new(Format.D32Float, light.ShadowMapSize, light.ShadowMapSize, CpuAccessFlags.None, GpuAccessFlags.Write);
             }
             else if (tex.Format != GraphicsSettings.ShadowMapFormat || tex.Width != light.ShadowMapSize || tex.Height != light.ShadowMapSize)
             {
-                tex.Resize(context.Device, GraphicsSettings.ShadowMapFormat, light.ShadowMapSize, light.ShadowMapSize, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-                depth.Resize(context.Device, light.ShadowMapSize, light.ShadowMapSize);
+                tex.Resize(GraphicsSettings.ShadowMapFormat, light.ShadowMapSize, light.ShadowMapSize, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+                depth.Resize(light.ShadowMapSize, light.ShadowMapSize);
             }
         }
 

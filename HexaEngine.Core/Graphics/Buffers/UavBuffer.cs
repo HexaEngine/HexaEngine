@@ -9,7 +9,6 @@
     /// </summary>
     public unsafe class UavBuffer : IBuffer, IUavBuffer
     {
-        private readonly IGraphicsDevice device;
         private readonly Format format;
         private readonly bool canWrite;
         private readonly bool canRead;
@@ -30,7 +29,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="UavBuffer"/> class.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="stride">The size, in bytes, of each element in the buffer.</param>
         /// <param name="length">The length of the buffer.</param>
         /// <param name="format">The format of the buffer elements.</param>
@@ -40,9 +38,9 @@
         /// <param name="srvFlags">Flags for extended shader resource views of the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
-        public UavBuffer(IGraphicsDevice device, int stride, uint length, Format format, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavflags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public UavBuffer(int stride, uint length, Format format, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavflags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             this.format = format;
             this.canWrite = canWrite;
             this.canRead = canRead;
@@ -147,6 +145,7 @@
                     return;
                 }
 
+                var device = Application.GraphicsDevice;
                 length = value;
                 srv.Dispose();
                 uav.Dispose();

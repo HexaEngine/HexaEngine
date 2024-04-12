@@ -18,25 +18,24 @@
         /// Initializes a new instance of the <see cref="GeodesicSphere"/> class.
         /// </summary>
         /// <param name="device">The graphics device used for mesh creation.</param>
-        public GeodesicSphere(IGraphicsDevice device) : base(device)
+        public GeodesicSphere() : base()
         {
         }
 
         /// <summary>
         /// Initializes the geodesic sphere mesh with vertices and indices.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the geodesic sphere mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateGeodesicSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateGeodesicSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
         private static readonly Vector3[] OctahedronVertices =
-        {
+        [
             // when looking down the negative z-axis (into the screen)
             new(0,  1,  0), // 0 top
             new(0,  0, -1), // 1 front
@@ -44,10 +43,10 @@
             new(0,  0,  1), // 3 back
             new(-1,  0,  0), // 4 left
             new(0, -1,  0), // 5 bottom
-        };
+        ];
 
         private static readonly uint[] OctahedronIndices =
-        {
+        [
             0, 1, 2, // top front-right face
             0, 2, 3, // top back-right face
             0, 3, 4, // top back-left face
@@ -56,17 +55,16 @@
             5, 4, 3, // bottom back-left face
             5, 3, 2, // bottom back-right face
             5, 2, 1, // bottom front-right face
-        };
+        ];
 
         /// <summary>
         /// Generates vertices and indices for a geodesic sphere mesh.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <param name="vertexBuffer">The vertex buffer of the geodesic sphere mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the geodesic sphere mesh.</param>
         /// <param name="diameter">The diameter of the geodesic sphere.</param>
         /// <param name="tessellation">The level of tessellation for the geodesic sphere.</param>
-        public static unsafe void CreateGeodesicSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 3)
+        public static unsafe void CreateGeodesicSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 3)
         {
             float radius = diameter / 2.0f;
 
@@ -335,8 +333,8 @@
             fixPole(northPoleIndex);
             fixPole(southPoleIndex);
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(device, vertices.Data, vertices.Size, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(device, indices.Data, indices.Size, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices.Data, vertices.Size, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices.Data, indices.Size, CpuAccessFlags.None);
 
             vertices.Release();
             indices.Release();

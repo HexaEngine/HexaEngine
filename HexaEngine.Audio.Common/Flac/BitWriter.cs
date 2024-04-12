@@ -269,256 +269,140 @@
         {
             Span<byte> buffer = stackalloc byte[2];
             BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
+            Write(buffer);
         }
 
         public void WriteUInt16LittleEndian(ushort value)
         {
             Span<byte> buffer = stackalloc byte[2];
             BinaryPrimitives.WriteUInt16LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
+            Write(buffer);
         }
 
         public void WriteUInt24BigEndian(UInt24 value)
         {
             Span<byte> buffer = stackalloc byte[3];
             UInt24.WriteBigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
+            Write(buffer);
         }
 
         public void WriteUInt24LittleEndian(UInt24 value)
         {
             Span<byte> buffer = stackalloc byte[3];
             UInt24.WriteLittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
+            Write(buffer);
         }
 
         public void WriteUInt32BigEndian(uint value)
         {
             Span<byte> buffer = stackalloc byte[4];
             BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
+            Write(buffer);
         }
 
         public void WriteUInt32LittleEndian(uint value)
         {
             Span<byte> buffer = stackalloc byte[4];
             BinaryPrimitives.WriteUInt32LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
+            Write(buffer);
         }
 
         public void WriteUInt64BigEndian(ulong value)
         {
             Span<byte> buffer = stackalloc byte[8];
             BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
+            Write(buffer);
         }
 
         public void WriteUInt64LittleEndian(ulong value)
         {
             Span<byte> buffer = stackalloc byte[8];
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
+            Write(buffer);
         }
 
         public void WriteUInt128BigEndian(UInt128 value)
         {
             Span<byte> buffer = stackalloc byte[16];
             BinaryPrimitives.WriteUInt128BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
-
-            WriteRawUInt8(buffer[8], 8);
-            WriteRawUInt8(buffer[9], 8);
-            WriteRawUInt8(buffer[10], 8);
-            WriteRawUInt8(buffer[11], 8);
-            WriteRawUInt8(buffer[12], 8);
-            WriteRawUInt8(buffer[13], 8);
-            WriteRawUInt8(buffer[14], 8);
-            WriteRawUInt8(buffer[15], 8);
+            Write(buffer);
         }
 
         public void WriteUInt128LittleEndian(UInt128 value)
         {
             Span<byte> buffer = stackalloc byte[16];
             BinaryPrimitives.WriteUInt128LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
-
-            WriteRawUInt8(buffer[8], 8);
-            WriteRawUInt8(buffer[9], 8);
-            WriteRawUInt8(buffer[10], 8);
-            WriteRawUInt8(buffer[11], 8);
-            WriteRawUInt8(buffer[12], 8);
-            WriteRawUInt8(buffer[13], 8);
-            WriteRawUInt8(buffer[14], 8);
-            WriteRawUInt8(buffer[15], 8);
+            Write(buffer);
         }
 
         public void WriteInt16BigEndian(short value)
         {
             Span<byte> buffer = stackalloc byte[2];
             BinaryPrimitives.WriteInt16BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
+            Write(buffer);
         }
 
         public void WriteInt16LittleEndian(short value)
         {
             Span<byte> buffer = stackalloc byte[2];
             BinaryPrimitives.WriteInt16LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
+            Write(buffer);
         }
 
         public void WriteInt24BigEndian(Int24 value)
         {
             Span<byte> buffer = stackalloc byte[3];
             Int24.WriteBigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
+            Write(buffer);
         }
 
         public void WriteInt24LittleEndian(Int24 value)
         {
             Span<byte> buffer = stackalloc byte[3];
             Int24.WriteLittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
+            Write(buffer);
         }
 
         public void WriteInt32BigEndian(int value)
         {
             Span<byte> buffer = stackalloc byte[4];
             BinaryPrimitives.WriteInt32BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
+            Write(buffer);
         }
 
         public void WriteInt32LittleEndian(int value)
         {
             Span<byte> buffer = stackalloc byte[4];
             BinaryPrimitives.WriteInt32LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
+            Write(buffer);
         }
 
         public void WriteInt64BigEndian(long value)
         {
             Span<byte> buffer = stackalloc byte[8];
             BinaryPrimitives.WriteInt64BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
+            Write(buffer);
         }
 
         public void WriteInt64LittleEndian(long value)
         {
             Span<byte> buffer = stackalloc byte[8];
             BinaryPrimitives.WriteInt64LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
+            Write(buffer);
         }
 
         public void WriteInt128BigEndian(Int128 value)
         {
             Span<byte> buffer = stackalloc byte[16];
             BinaryPrimitives.WriteInt128BigEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
-
-            WriteRawUInt8(buffer[8], 8);
-            WriteRawUInt8(buffer[9], 8);
-            WriteRawUInt8(buffer[10], 8);
-            WriteRawUInt8(buffer[11], 8);
-            WriteRawUInt8(buffer[12], 8);
-            WriteRawUInt8(buffer[13], 8);
-            WriteRawUInt8(buffer[14], 8);
-            WriteRawUInt8(buffer[15], 8);
+            Write(buffer);
         }
 
         public void WriteInt128LittleEndian(Int128 value)
         {
             Span<byte> buffer = stackalloc byte[16];
             BinaryPrimitives.WriteInt128LittleEndian(buffer, value);
-            WriteRawUInt8(buffer[0], 8);
-            WriteRawUInt8(buffer[1], 8);
-            WriteRawUInt8(buffer[2], 8);
-            WriteRawUInt8(buffer[3], 8);
-            WriteRawUInt8(buffer[4], 8);
-            WriteRawUInt8(buffer[5], 8);
-            WriteRawUInt8(buffer[6], 8);
-            WriteRawUInt8(buffer[7], 8);
-
-            WriteRawUInt8(buffer[8], 8);
-            WriteRawUInt8(buffer[9], 8);
-            WriteRawUInt8(buffer[10], 8);
-            WriteRawUInt8(buffer[11], 8);
-            WriteRawUInt8(buffer[12], 8);
-            WriteRawUInt8(buffer[13], 8);
-            WriteRawUInt8(buffer[14], 8);
-            WriteRawUInt8(buffer[15], 8);
+            Write(buffer);
         }
 
         public void WriteStdString(StdString str, Endianness endianness)

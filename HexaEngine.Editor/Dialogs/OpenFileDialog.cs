@@ -28,50 +28,15 @@
             public string Name = name;
         }
 
-        public OpenFileDialog()
+        public OpenFileDialog() : this(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), null)
         {
-            string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            if (File.Exists(startingPath))
-            {
-                startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
-            }
-            else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
-            {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
-            }
-
-            currentDir = new DirectoryInfo(startingPath);
-            RootFolder = startingPath;
-            CurrentFolder = startingPath;
-            OnlyAllowFolders = false;
         }
 
-        public OpenFileDialog(string startingPath)
+        public OpenFileDialog(string startingPath) : this(startingPath, null)
         {
-            if (File.Exists(startingPath))
-            {
-                startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
-            }
-            else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
-            {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
-            }
-
-            currentDir = new DirectoryInfo(startingPath);
-            RootFolder = startingPath;
-            CurrentFolder = startingPath;
-            OnlyAllowFolders = false;
         }
 
-        public OpenFileDialog(string? startingPath = null, string? searchFilter = null)
+        public OpenFileDialog(string? startingPath, string? searchFilter)
         {
             if (File.Exists(startingPath))
             {

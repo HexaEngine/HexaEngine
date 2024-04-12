@@ -23,7 +23,7 @@
         private int heightTiles;
         private int tileCount;
 
-        public VirtualTexture(IGraphicsDevice device, Format format, int width, int height, int mipLevels, int tileSize, VirtualTextureFlags flags = VirtualTextureFlags.UseCache)
+        public VirtualTexture(Format format, int width, int height, int mipLevels, int tileSize, VirtualTextureFlags flags = VirtualTextureFlags.UseCache)
         {
             if (width % tileSize != 0 || height % tileSize != 0)
             {
@@ -41,7 +41,7 @@
             this.mipLevels = mipLevels;
             this.tileSize = tileSize;
             this.flags = flags;
-            texture = new(device, format, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
+            texture = new(format, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
 
             widthTiles = width / tileSize;
             heightTiles = height / tileSize;

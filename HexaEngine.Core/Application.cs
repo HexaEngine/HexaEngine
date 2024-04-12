@@ -425,7 +425,6 @@
 
             SdlCheckError();
             Sdl.Quit();
-            //SdlCheckError();
         }
 
         public static void StartTextInput()
@@ -813,6 +812,8 @@
 
                 case EventType.Lastevent:
                     break;
+                default:
+                    return;
             }
         }
     }

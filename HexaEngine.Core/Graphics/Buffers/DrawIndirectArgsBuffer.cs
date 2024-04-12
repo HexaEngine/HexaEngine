@@ -1,7 +1,9 @@
-﻿namespace HexaEngine.Core.Graphics
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using System;
     using System.Runtime.CompilerServices;
+    using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
 
     /// <summary>
     /// Represents a buffer for draw indirect arguments in graphics rendering.
@@ -11,7 +13,6 @@
     {
         private const int DefaultCapacity = 64;
         private readonly string dbgName;
-        private readonly IGraphicsDevice device;
 
         private BufferDescription description;
 
@@ -27,11 +28,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsBuffer{T}"/> class with default capacity and specified CPU access flags.
         /// </summary>
-        /// <param name="device">The graphics device associated with this buffer.</param>
         /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called (optional).</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called (optional).</param>
-        public DrawIndirectArgsBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsBuffer(CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
@@ -44,7 +44,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            this.device = device;
+            var device = Application.GraphicsDevice;
 
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
@@ -61,12 +61,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsBuffer{T}"/> class with specified initial capacity and CPU access flags.
         /// </summary>
-        /// <param name="device">The graphics device associated with this buffer.</param>
         /// <param name="initialCapacity">The initial capacity of the buffer.</param>
         /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called (optional).</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called (optional).</param>
-        public DrawIndirectArgsBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsBuffer(uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
@@ -79,7 +78,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            this.device = device;
+            var device = Application.GraphicsDevice;
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = initialCapacity;
@@ -95,12 +94,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsBuffer{T}"/> class with a single initial data element and specified CPU access flags.
         /// </summary>
-        /// <param name="device">The graphics device associated with this buffer.</param>
         /// <param name="initialData">The initial data to populate the buffer.</param>
         /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called (optional).</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called (optional).</param>
-        public DrawIndirectArgsBuffer(IGraphicsDevice device, T initialData, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsBuffer(T initialData, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
@@ -113,7 +111,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            this.device = device;
+            var device = Application.GraphicsDevice;
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = 1;
@@ -138,7 +136,7 @@
         /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called (optional).</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called (optional).</param>
-        public DrawIndirectArgsBuffer(IGraphicsDevice device, T* initialData, uint count, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsBuffer(T* initialData, uint count, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
@@ -151,7 +149,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            this.device = device;
+            var device = Application.GraphicsDevice;
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = count;
@@ -222,6 +220,7 @@
 
                 MemoryManager.Unregister(buffer);
                 buffer.Dispose();
+                var device = Application.GraphicsDevice;
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
                 MemoryManager.Register(buffer);

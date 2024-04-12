@@ -157,10 +157,10 @@
                 State = GraphicsPipelineStateDesc.DefaultFullscreen
             });
 
-            volumeParamsBuffer = new(device, CpuAccessFlags.Write);
-            fogParamsBuffer = new(device, CpuAccessFlags.Write);
+            volumeParamsBuffer = new(CpuAccessFlags.Write);
+            fogParamsBuffer = new(CpuAccessFlags.Write);
 
-            densityTex = new(device, Format.R32Float, 160, 90, 128, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
+            densityTex = new(Format.R32Float, 160, 90, 128, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");

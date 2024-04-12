@@ -81,7 +81,7 @@
                 ConfigKey? key = Find(Keys, path);
                 if (key != null)
                 {
-                    throw new("Key already exists");
+                    throw new InvalidOperationException($"Key '{path}' already exists");
                 }
 
                 key = new(path);

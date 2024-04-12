@@ -129,7 +129,7 @@
             modelManager = GameObject.GetScene().ModelManager;
             materialManager = GameObject.GetScene().MaterialManager;
 
-            renderer = new(device);
+            renderer = new();
 
             UpdateModel();
         }

@@ -1,7 +1,9 @@
-﻿namespace HexaEngine.Core.Graphics
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using System;
     using System.Runtime.CompilerServices;
+    using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
 
     /// <summary>
     /// Represents a buffer designed for unordered access (UAV) and shader resource view (SRV) usage
@@ -11,7 +13,6 @@
     public unsafe class DrawIndirectArgsUavBuffer<T> : IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
-        private readonly IGraphicsDevice device;
         private readonly bool canWrite;
         private readonly bool canRead;
         private readonly BufferUnorderedAccessViewFlags uavFlags;
@@ -34,15 +35,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsUavBuffer{T}"/> class with default capacity and specified access flags.
         /// </summary>
-        /// <param name="device">The graphics device to create the buffer on.</param>
         /// <param name="accessFlags">The CPU access flags for the buffer.</param>
         /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
         /// <param name="srvFlags">The shader resource view (SRV) flags for the buffer.</param>
         /// <param name="filename">The file name of the caller (automatically generated).</param>
         /// <param name="lineNumber">The line number in the source code of the caller (automatically generated).</param>
-        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsUavBuffer(CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
             canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
@@ -76,16 +76,15 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsUavBuffer{T}"/> class with a specified initial capacity and access flags.
         /// </summary>
-        /// <param name="device">The graphics device to create the buffer on.</param>
         /// <param name="initialCapacity">The initial capacity of the buffer.</param>
         /// <param name="accessFlags">The CPU access flags for the buffer.</param>
         /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
         /// <param name="srvFlags">The shader resource view (SRV) flags for the buffer.</param>
         /// <param name="filename">The file name of the caller (automatically generated).</param>
         /// <param name="lineNumber">The line number in the source code of the caller (automatically generated).</param>
-        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsUavBuffer(uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
             canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
@@ -226,6 +225,7 @@
                 buffer.Dispose();
                 copyBuffer?.Dispose();
                 bufferDescription.ByteWidth = sizeof(T) * (int)capacity;
+                var device = Application.GraphicsDevice;
                 buffer = device.CreateBuffer(items, capacity, bufferDescription);
                 buffer.DebugName = dbgName;
                 if (canWrite || canRead)

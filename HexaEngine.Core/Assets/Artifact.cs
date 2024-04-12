@@ -3,7 +3,7 @@
     public class Artifact
     {
         private string name;
-        private string path;
+        private string? path;
 
         public Artifact(string name, Guid parentGuid, Guid sourceGuid, Guid guid, AssetType type)
         {
@@ -34,8 +34,7 @@
 
         public Stream OpenRead()
         {
-            var path = Path;
-            return File.OpenRead(path);
+            return File.OpenRead(Path);
         }
 
         public SourceAssetMetadata? GetSourceMetadata()

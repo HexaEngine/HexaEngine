@@ -11,7 +11,6 @@
     public unsafe class StructuredUavBuffer<T> : IStructuredUavBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
-        private readonly IGraphicsDevice device;
         private readonly bool canWrite;
         private readonly bool canRead;
         private readonly BufferUnorderedAccessViewFlags uavFlags;
@@ -34,15 +33,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="StructuredUavBuffer{T}"/> class with default capacity.
         /// </summary>
-        /// <param name="device">The graphics device used to create the buffer.</param>
         /// <param name="accessFlags">The CPU access flags for the buffer.</param>
         /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
         /// <param name="srvFlags">The extended shader resource view flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called.</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called.</param>
-        public StructuredUavBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredUavBuffer(CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
             canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
@@ -78,16 +76,15 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="StructuredUavBuffer{T}"/> class with a specified initial capacity.
         /// </summary>
-        /// <param name="device">The graphics device used to create the buffer.</param>
         /// <param name="initialCapacity">The initial capacity of the buffer.</param>
         /// <param name="accessFlags">The CPU access flags for the buffer.</param>
         /// <param name="uavFlags">The unordered access view (UAV) flags for the buffer.</param>
         /// <param name="srvFlags">The extended shader resource view flags for the buffer.</param>
         /// <param name="filename">The name of the source file where the constructor is called.</param>
         /// <param name="lineNumber">The line number in the source file where the constructor is called.</param>
-        public StructuredUavBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredUavBuffer(uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
             canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
@@ -252,6 +249,8 @@
                     Free(items);
                     items = tmp;
                 }
+
+                var device = Application.GraphicsDevice;
 
                 capacity = value;
                 count = capacity < count ? capacity : count;

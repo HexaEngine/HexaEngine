@@ -299,7 +299,7 @@ namespace HexaEngine.Core.Debugging
         #region Sphere Data
 
         private static readonly Vector3[] spherePositions =
-        {
+        [
             new Vector3(-0.195090f,0.000000f,0.980785f),
             new Vector3(-0.382683f,0.000000f,0.923880f),
             new Vector3(-0.555570f,0.000000f,0.831470f),
@@ -390,10 +390,10 @@ namespace HexaEngine.Core.Debugging
             new Vector3(-0.000000f,0.831470f,0.555570f),
             new Vector3(-0.000000f,0.923880f,0.382683f),
             new Vector3(-0.000000f,0.980785f,0.195090f),
-        };
+        ];
 
-        private static uint[] sphereIndices = new uint[]
-                {
+        private static uint[] sphereIndices =
+                [
 0,1,
 1,2,
 2,3,
@@ -490,7 +490,7 @@ namespace HexaEngine.Core.Debugging
 31,82,
 75,74,
 32,61,
-            };
+            ];
 
         #endregion Sphere Data
 
@@ -835,7 +835,7 @@ namespace HexaEngine.Core.Debugging
         }
 
         private static readonly Vector3[] boxPositions =
-{
+[
 new Vector3(-1, +1, -1),
 new Vector3(-1, -1, -1),
 new Vector3(+1, -1, -1),
@@ -844,7 +844,7 @@ new Vector3(-1, +1, +1),
 new Vector3(-1, -1, +1),
 new Vector3(+1, -1, +1),
 new Vector3(+1, +1, +1),
-            };
+            ];
 
         private static readonly uint[] boxIndices = [0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4];
 
@@ -879,7 +879,7 @@ new Vector3(+1, +1, +1),
         #region Capsule Data
 
         private static readonly Vector3[] capsulePositions =
-        {
+        [
             new Vector3(0.000000f,-0.500000f,1.000000f),
             new Vector3(-0.195090f,-0.500000f,0.980785f),
             new Vector3(-0.382683f,-0.500000f,0.923879f),
@@ -1004,10 +1004,10 @@ new Vector3(+1, +1, +1),
             new Vector3(0.555570f,0.915735f,-0.000000f),
             new Vector3(0.382683f,0.961940f,-0.000000f),
             new Vector3(0.195090f,0.990393f,-0.000000f),
-        };
+        ];
 
         private static readonly uint[] capsuleIndices =
-                {
+                [
 1,0,
 3,2,
 5,4,
@@ -1140,7 +1140,7 @@ new Vector3(+1, +1, +1),
 120,119,
 122,121,
 109,123,
-            };
+            ];
 
         #endregion Capsule Data
 
@@ -1161,7 +1161,7 @@ new Vector3(+1, +1, +1),
         #region Cylinder Data
 
         private static readonly Vector3[] cylinderPositions =
-        {
+        [
             new Vector3(0.000000f,1.000000f,1.000000f),
             new Vector3(0.195090f,1.000000f,0.980785f),
             new Vector3(0.382683f,1.000000f,0.923880f),
@@ -1226,10 +1226,10 @@ new Vector3(+1, +1, +1),
             new Vector3(-0.555570f,-1.000000f,0.831470f),
             new Vector3(-0.382683f,-1.000000f,0.923880f),
             new Vector3(-0.195090f,-1.000000f,0.980785f),
-        };
+        ];
 
         private static readonly uint[] cylinderIndices =
-        {
+        [
 1,0,
 2,1,
 3,2,
@@ -1298,7 +1298,7 @@ new Vector3(+1, +1, +1),
 0,31,
 32,63,
 24,56,
-            };
+            ];
 
         public static Vector2 WhiteUV { get; private set; } = Vector2.One / 2;
 

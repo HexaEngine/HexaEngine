@@ -41,7 +41,7 @@
             switch (mode)
             {
                 case EditorPropertyMode.Default:
-                    if (ImGui.InputFloat4(guiName.Id, ref val))
+                    if (ImGui.DragFloat4(guiName.Id, ref val))
                     {
                         value = val;
                         ImGui.PopItemWidth();

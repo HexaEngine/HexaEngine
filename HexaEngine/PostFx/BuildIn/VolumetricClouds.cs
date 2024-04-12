@@ -73,11 +73,11 @@
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
             pointWrapSampler = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
-            weatherTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
-            cloudTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
-            worleyTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
+            weatherTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
+            cloudTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
+            worleyTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
 
-            intermediateTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex = new(Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);
         }
 
@@ -112,7 +112,7 @@
 
         public override void Resize(int width, int height)
         {
-            intermediateTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex.Resize(Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur.Resize(Format.R16G16B16A16Float, width, height);
         }
 

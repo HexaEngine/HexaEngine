@@ -1,6 +1,7 @@
 ﻿namespace CrashReporter
 {
     using Hexa.NET.ImGui;
+    using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
@@ -17,12 +18,14 @@
     public sealed class CrashWindow : CoreWindow
     {
         private ImGuiManager? imGuiRenderer;
+#nullable disable
         private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
+#nullable restore
         private bool resize;
         private bool firstFrame;
-        private string? reportFile;
-        private string reportMessage;
+        private readonly string? reportFile;
+        private readonly string reportMessage;
 
         public CrashWindow() : base(WindowPosCentered, WindowPosCentered, 700, 400, Silk.NET.SDL.WindowFlags.Borderless)
         {
@@ -39,11 +42,11 @@
             }
         }
 
-        public override sealed Viewport WindowViewport => throw new NotSupportedException();
+        public override Viewport WindowViewport => throw new NotSupportedException();
 
         public ISceneRenderer Renderer => throw new NotSupportedException();
 
-        public override sealed Viewport RenderViewport => throw new NotSupportedException();
+        public override Viewport RenderViewport => throw new NotSupportedException();
 
         public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {

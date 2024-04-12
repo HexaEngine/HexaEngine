@@ -520,8 +520,8 @@ namespace HexaEngine.Editor.TerrainEditor
                     InputElements = inputElements
                 });
 
-                brushBuffer = new(device, CpuAccessFlags.Write);
-                worldBuffer = new(device, CpuAccessFlags.Write);
+                brushBuffer = new(CpuAccessFlags.Write);
+                worldBuffer = new(CpuAccessFlags.Write);
 
                 camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
 

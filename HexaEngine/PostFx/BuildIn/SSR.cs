@@ -242,7 +242,7 @@
                 ssrParams.RaySteps = raySteps;
                 ssrParams.RayStep = rayStep;
                 ssrParams.RayHitThreshold = rayHitThreshold;
-                ssrParamsBuffer = new(device, ssrParams, CpuAccessFlags.Write);
+                ssrParamsBuffer = new(ssrParams, CpuAccessFlags.Write);
             }
 
             pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()

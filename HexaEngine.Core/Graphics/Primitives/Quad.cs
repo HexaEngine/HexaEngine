@@ -17,23 +17,21 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Quad"/> class.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="size">The size of the plane.</param>
-        public Quad(IGraphicsDevice device, float size)
+        public Quad(float size)
         {
-            CreateQuad(device, out vertexBuffer, out indexBuffer, size);
+            CreateQuad(out vertexBuffer, out indexBuffer, size);
         }
 
         /// <summary>
         /// Creates a plane mesh.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="vertexBuffer">The vertex buffer.</param>
         /// <param name="indexBuffer">The index buffer.</param>
         /// <param name="size">The size of the plane.</param>
-        public static void CreateQuad(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<ushort> indexBuffer, float size = 1)
+        public static void CreateQuad(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<ushort> indexBuffer, float size = 1)
         {
-            vertexBuffer = new(device,
+            vertexBuffer = new(
             [
                 new(new(-1 * size, 1 * size, 0), new Vector2(0, 0), new(0, 0, -1), new(1, 0, 0)),
                 new(new(-1 * size, -1 * size, 0), new Vector2(0, 1), new(0, 0, -1), new(1, 0, 0)),
@@ -41,7 +39,7 @@
                 new(new(1 * size, -1 * size, 0), new Vector2(1, 1), new(0, 0, -1), new(1, 0, 0))
             ], CpuAccessFlags.None);
 
-            indexBuffer = new(device,
+            indexBuffer = new(
             [
                 0,
                 3,

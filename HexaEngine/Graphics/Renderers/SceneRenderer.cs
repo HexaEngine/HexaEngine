@@ -266,7 +266,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            Texture2D tempTexture = new(context.Device, Format.R8G8B8A8UNorm, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            Texture2D tempTexture = new(Format.R8G8B8A8UNorm, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
             graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;

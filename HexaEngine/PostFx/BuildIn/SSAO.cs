@@ -106,8 +106,8 @@ namespace HexaEngine.PostFx.BuildIn
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/ssao/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            paramsBuffer = new(device, CpuAccessFlags.Write);
-            intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            paramsBuffer = new(CpuAccessFlags.Write);
+            intermediateTex = new(Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "SSAO", Format.R32Float);
 
             unsafe
@@ -129,7 +129,7 @@ namespace HexaEngine.PostFx.BuildIn
                     pixelData[idx++] = 1.0f;
                 }
 
-                noiseTex = new(device, description, initialData);
+                noiseTex = new(description, initialData);
             }
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -138,7 +138,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override void Resize(int width, int height)
         {
-            intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex.Resize(Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             viewport = new(width, height);
         }
 

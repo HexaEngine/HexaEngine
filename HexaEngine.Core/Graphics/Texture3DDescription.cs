@@ -114,5 +114,45 @@
             CPUAccessFlags = cpuAccessFlags;
             MiscFlags = miscFlags;
         }
+
+        public Texture3DDescription(
+         Format format,
+         int width,
+         int height,
+         int depth,
+         int mipLevels = 0,
+         GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read,
+         CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None,
+         ResourceMiscFlag miscFlags = ResourceMiscFlag.None)
+        {
+            if (format == Format.Unknown)
+            {
+                throw new ArgumentException($"format need to be valid", nameof(format));
+            }
+
+            if (width < 1 || width > IResource.MaximumTexture3DSize)
+            {
+                throw new ArgumentException($"Width need to be in range 1-{IResource.MaximumTexture3DSize}", nameof(width));
+            }
+
+            if (height < 1 || height > IResource.MaximumTexture3DSize)
+            {
+                throw new ArgumentException($"Height need to be in range 1-{IResource.MaximumTexture3DSize}", nameof(height));
+            }
+
+            if (depth < 1 || depth > IResource.MaximumTexture3DSize)
+            {
+                throw new ArgumentException($"Depth need to be in range 1-{IResource.MaximumTexture3DSize}", nameof(depth));
+            }
+
+            Width = width;
+            Height = height;
+            Depth = depth;
+            MipLevels = mipLevels;
+            Format = format;
+            AccessHelper.Convert(cpuAccessFlags, gpuAccessFlags, out Usage, out BindFlags);
+            CPUAccessFlags = cpuAccessFlags;
+            MiscFlags = miscFlags;
+        }
     }
 }

@@ -107,7 +107,7 @@
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.GetTexture2D("VelocityBuffer");

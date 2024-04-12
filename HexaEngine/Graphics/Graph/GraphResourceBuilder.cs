@@ -379,7 +379,7 @@
 
         public void UpdateShadowAtlas(string name, ShadowAtlasDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas);
+            UpdateResource(name, description, (dev, desc) => new ShadowAtlas(description), shadowAtlas);
         }
 
         public ShadowAtlas GetShadowAtlas(int index)
@@ -394,7 +394,7 @@
 
         public void UpdateDepthMipChain(string name, DepthStencilBufferDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains);
+            UpdateResource(name, description, (dev, desc) => new DepthMipChain(description), depthMipChains);
         }
 
         public ResourceRef<DepthMipChain> GetDepthMipChain(string name)
@@ -404,7 +404,7 @@
 
         public void UpdateDepthStencilBuffer(string name, DepthStencilBufferDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers);
+            UpdateResource(name, description, (dev, desc) => new DepthStencil(description, name), depthStencilBuffers);
         }
 
         public ResourceRef<DepthStencil> GetDepthStencilBuffer(string name)
@@ -414,7 +414,7 @@
 
         public void UpdateGBuffer(string name, GBufferDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers);
+            UpdateResource(name, description, (dev, desc) => new GBuffer(description, name), gBuffers);
         }
 
         public ResourceRef<GBuffer> GetGBuffer(string name)
@@ -424,7 +424,7 @@
 
         public void UpdateTexture1D(string name, Texture1DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d);
+            UpdateResource(name, description, (dev, desc) => new Texture1D(description, name), textures1d);
         }
 
         public ResourceRef<Texture1D> GetTexture1D(string name)
@@ -434,7 +434,7 @@
 
         public void UpdateTexture2D(string name, Texture2DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d);
+            UpdateResource(name, description, (dev, desc) => new Texture2D(description, name), textures2d);
         }
 
         public ResourceRef<Texture2D> GetTexture2D(string name)
@@ -444,7 +444,7 @@
 
         public void UpdateTexture3D(string name, Texture3DDescription description)
         {
-            UpdateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d);
+            UpdateResource(name, description, (dev, desc) => new Texture3D(description, name), textures3d);
         }
 
         public ResourceRef<Texture3D> GetTexture3D(string name)
@@ -513,7 +513,7 @@
         public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            ConstantBuffer<T> constantBuffer = new(device, accessFlags, name);
+            ConstantBuffer<T> constantBuffer = new(accessFlags, name);
             constantBuffers.Add(constantBuffer);
 
             var resource = GetOrAddResource<ConstantBuffer<T>>(name);
@@ -525,7 +525,7 @@
         public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            ConstantBuffer<T> constantBuffer = new(device, value, accessFlags, name);
+            ConstantBuffer<T> constantBuffer = new(value, accessFlags, name);
             constantBuffers.Add(constantBuffer);
 
             var resource = GetOrAddResource<ConstantBuffer<T>>(name);
@@ -536,17 +536,17 @@
 
         public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new DepthMipChain(device, description), depthMipChains, depthMipChainDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new DepthMipChain(description), depthMipChains, depthMipChainDescriptors, flags);
         }
 
         public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new DepthStencil(device, description, name), depthStencilBuffers, depthStencilBufferDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new DepthStencil(description, name), depthStencilBuffers, depthStencilBufferDescriptors, flags);
         }
 
         public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new GBuffer(device, description, name), gBuffers, gBufferDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new GBuffer(description, name), gBuffers, gBufferDescriptors, flags);
         }
 
         public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
@@ -567,13 +567,13 @@
 
         public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(device, description), shadowAtlas, shadowAtlasDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new ShadowAtlas(description), shadowAtlas, shadowAtlasDescriptors, flags);
         }
 
         public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            StructuredBuffer<T> structuredBuffer = new(device, accessFlags, name);
+            StructuredBuffer<T> structuredBuffer = new(accessFlags, name);
             structuredBuffers.Add(structuredBuffer);
 
             var resource = GetOrAddResource<StructuredBuffer<T>>(name);
@@ -585,7 +585,7 @@
         public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            StructuredBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, name);
+            StructuredBuffer<T> structuredBuffer = new(initialCapacity, accessFlags, name);
             structuredBuffers.Add(structuredBuffer);
 
             var resource = GetOrAddResource<StructuredBuffer<T>>(name);
@@ -597,7 +597,7 @@
         public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            StructuredUavBuffer<T> structuredBuffer = new(device, accessFlags, uavFlags, srvFlags, name);
+            StructuredUavBuffer<T> structuredBuffer = new(accessFlags, uavFlags, srvFlags, name);
             structuredUavBuffers.Add(structuredBuffer);
 
             var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
@@ -609,7 +609,7 @@
         public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
-            StructuredUavBuffer<T> structuredBuffer = new(device, initialCapacity, accessFlags, uavFlags, srvFlags, name);
+            StructuredUavBuffer<T> structuredBuffer = new(initialCapacity, accessFlags, uavFlags, srvFlags, name);
             structuredUavBuffers.Add(structuredBuffer);
 
             var resource = GetOrAddResource<StructuredUavBuffer<T>>(name);
@@ -620,17 +620,17 @@
 
         public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture1D(device, description, name), textures1d, textures1dDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture1D(description, name), textures1d, textures1dDescriptors, flags);
         }
 
         public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture2D(device, description, name), textures2d, textures2dDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture2D(description, name), textures2d, textures2dDescriptors, flags);
         }
 
         public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => new Texture3D(device, description, name), textures3d, textures3dDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => new Texture3D(description, name), textures3d, textures3dDescriptors, flags);
         }
 
         public ResourceRef<TType> CreateResource<TType, TDesc>(string name, TDesc description, Func<IGraphicsDevice, TDesc, TType> constructor, IList<TType> group, IList<ResourceDescriptor<TDesc>> descriptors, ResourceCreationFlags flags) where TDesc : struct where TType : class, IDisposable

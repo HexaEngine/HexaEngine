@@ -33,7 +33,7 @@
 
         public DecalRenderer(IGraphicsDevice device)
         {
-            cube = new Cube(device);
+            cube = new Cube();
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
@@ -53,8 +53,8 @@
             });
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
             pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-            worldBuffer = new(device, CpuAccessFlags.Write);
-            decalBuffer = new(device, CpuAccessFlags.Write);
+            worldBuffer = new(CpuAccessFlags.Write);
+            decalBuffer = new(CpuAccessFlags.Write);
 
             depth = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
         }

@@ -125,7 +125,7 @@ namespace HexaEngine.PostFx.BuildIn
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/assao/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(CpuAccessFlags.Write);
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

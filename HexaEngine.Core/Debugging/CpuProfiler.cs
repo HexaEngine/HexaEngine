@@ -45,6 +45,7 @@
         /// <param name="name">The name of the stage to create.</param>
         public void CreateStage(string name)
         {
+            // Nothing to do here since stages are dynamically created/destroyed on the fly.
         }
 
         /// <summary>
@@ -53,6 +54,7 @@
         /// <param name="name">The name of the stage to destroy.</param>
         public void DestroyStage(string name)
         {
+            // Nothing to do here since stages are dynamically created/destroyed on the fly.
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core
 {
+    using Hardware.Info;
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Collections.Concurrent;
+    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -1337,6 +1339,111 @@
         public static void Memset(void* ptr, byte value, uint length)
         {
             new Span<byte>(ptr, (int)length).Fill(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Contains<T>(T* data, int size, T* str, int length) where T : unmanaged, IEquatable<T>
+        {
+            int cmp = 0;
+            for (int i = 0; i < size; i++)
+            {
+                if (data[i].Equals(str[cmp]))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return cmp == length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Contains<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, Func<TDst, TSrc> convert) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
+        {
+            if (length > size)
+            {
+                return false;
+            }
+
+            int cmp = 0;
+            for (int i = 0; i < size; i++)
+            {
+                if (data[i].Equals(convert(str[cmp])))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return cmp == length;
+        }
+
+        public static int Find<T>(T* data, int size, T* str, int length, int pos) where T : unmanaged, IEquatable<T>
+        {
+            if (length > size - pos)
+            {
+                return -1;
+            }
+
+            int cmp = 0;
+            for (int i = pos; i < size; i++)
+            {
+                if (data[i].Equals(str[cmp]))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return i - cmp + 1;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return -1;
+        }
+
+        public static int Find<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, int pos, Func<TDst, TSrc> convert) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
+        {
+            if (length > size - pos)
+            {
+                return -1;
+            }
+
+            int cmp = 0;
+            for (int i = pos; i < size; i++)
+            {
+                if (data[i].Equals(convert(str[cmp])))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return i - cmp + 1;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return -1;
         }
     }
 

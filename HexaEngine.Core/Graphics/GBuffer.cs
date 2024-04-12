@@ -11,7 +11,6 @@
     public unsafe class GBuffer : IDisposable
     {
         private readonly string dbgName;
-        private readonly IGraphicsDevice device;
         private readonly Format[] formats;
         private int width;
         private int height;
@@ -26,14 +25,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="GBuffer"/> class.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="description">The G-Buffer description.</param>
         /// <param name="filename">The file path where the constructor is called (automatically provided by the compiler).</param>
         /// <param name="lineNumber">The line number where the constructor is called (automatically provided by the compiler).</param>
-        public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public GBuffer(GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            this.device = device;
+            var device = Application.GraphicsDevice;
             formats = description.Formats;
             count = (uint)description.Count;
             width = description.Width;
@@ -60,16 +58,15 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="GBuffer"/> class with specified width, height, and formats.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="width">The width of the G-Buffer.</param>
         /// <param name="height">The height of the G-Buffer.</param>
         /// <param name="formats">An array of texture formats for the G-Buffer.</param>
         /// <param name="filename">The file path where the constructor is called (automatically provided by the compiler).</param>
         /// <param name="lineNumber">The line number where the constructor is called (automatically provided by the compiler).</param>
-        public GBuffer(IGraphicsDevice device, int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public GBuffer(int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            this.device = device;
+            var device = Application.GraphicsDevice;
             this.formats = formats;
             count = (uint)formats.Length;
             this.width = width;
@@ -156,6 +153,8 @@
                 rtvs[i].Dispose();
                 srvs[i].Dispose();
             }
+
+            var device = Application.GraphicsDevice;
 
             this.width = width;
             this.height = height;

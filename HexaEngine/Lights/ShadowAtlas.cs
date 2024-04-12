@@ -19,14 +19,14 @@
 
         private bool disposedValue;
 
-        public ShadowAtlas(IGraphicsDevice device, ShadowAtlasDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public ShadowAtlas(ShadowAtlasDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"ShadowAtlas: {Path.GetFileName(filename)}, Line: {lineNumber}";
             size = description.Size;
             layerCount = description.Layers;
             allocator = new(new(size), layerCount);
             cache = new(new(size), layerCount);
-            texture = new(device, description.Format, description.Size, description.Size, description.ArraySize, 1, CpuAccessFlags.None, GpuAccessFlags.RW, filename: filename, lineNumber: lineNumber);
+            texture = new(description.Format, description.Size, description.Size, description.ArraySize, 1, CpuAccessFlags.None, GpuAccessFlags.RW, filename: filename, lineNumber: lineNumber);
             texture.DebugName = dbgName;
         }
 

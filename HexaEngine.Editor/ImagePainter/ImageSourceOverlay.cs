@@ -29,7 +29,7 @@
             for (var i = 0; i < count; i++)
             {
                 var desc = image.Textures[i].Description;
-                textures[i] = new(device, desc);
+                textures[i] = new(desc);
                 srvs[i] = textures[i].SRV;
                 rtvs[i] = textures[i].RTV;
                 viewports[i] = new(desc.Width, desc.Height);
@@ -38,7 +38,7 @@
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
                 desc.Format = Format.D16UNorm;
-                depths[i] = new(device, Format.D32Float, desc.Width, desc.Height, desc.ArraySize);
+                depths[i] = new(Format.D32Float, desc.Width, desc.Height, desc.ArraySize);
                 dsvs[i] = depths[i].DSV;
             }
 

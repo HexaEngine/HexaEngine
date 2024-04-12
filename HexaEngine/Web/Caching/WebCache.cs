@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Web.Caching
 {
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.Security.Cryptography;
     using System;
     using System.Buffers.Binary;
@@ -823,7 +824,7 @@
                     var endPos = entry.Position + state.OldSize;
                     var size = diskBytes - endPos;
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     for (int i = 0; i < entries.Count; i++)
                     {
@@ -866,7 +867,7 @@
                     var endPos = entry.Position + entry.Size;
                     var size = diskBytes - endPos;
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     for (int i = 0; i < entries.Count; i++)
                     {
@@ -884,7 +885,7 @@
                     var endPos = entry.Position + state.OldSize;
                     var size = diskBytes - endPos;
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     for (int i = 0; i < entries.Count; i++)
                     {
@@ -898,34 +899,6 @@
             }
 
             entry.PersistenceState = default;
-        }
-
-        private void MoveBlock(long from, long to, long size)
-        {
-            if (from == cacheStream.Length)
-            {
-                return;
-            }
-
-            const int BufferSize = 8192;
-            Span<byte> buffer = stackalloc byte[BufferSize];
-
-            long positionFrom = from;
-            long positionTo = to;
-            while (size > 0)
-            {
-                int bytesToRead = (int)Math.Min(size, BufferSize);
-
-                cacheStream.Position = positionFrom;
-                int read = cacheStream.Read(buffer[..bytesToRead]);
-                positionFrom += read;
-
-                cacheStream.Position = to;
-                cacheStream.Write(buffer[..read]);
-                positionTo += read;
-
-                size -= read;
-            }
         }
 
         /// <summary>

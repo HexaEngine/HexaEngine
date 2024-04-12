@@ -20,7 +20,7 @@
 
         public TerrainRenderer(IGraphicsDevice device)
         {
-            worldBuffer = new(device, CpuAccessFlags.Write);
+            worldBuffer = new(CpuAccessFlags.Write);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 

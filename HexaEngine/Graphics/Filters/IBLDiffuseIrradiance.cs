@@ -30,7 +30,7 @@
         public IBLDiffuseIrradiance(IGraphicsDevice device)
         {
             Cameras = new CubeFaceCamera[6];
-            cube = new(device);
+            cube = new();
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/irradiance/vs.hlsl",
@@ -44,7 +44,7 @@
             });
 
             SetViewPoint(Vector3.Zero);
-            viewBuffer = new(device, CpuAccessFlags.Write);
+            viewBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
         }
 

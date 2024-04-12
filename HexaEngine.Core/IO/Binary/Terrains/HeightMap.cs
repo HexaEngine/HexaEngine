@@ -315,7 +315,7 @@
             Texture2D heightMap;
             fixed (float* pData = data)
             {
-                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(float))));
+                heightMap = new(desc, new SubresourceData(pData, (int)(width * sizeof(float))));
             }
 
             return heightMap;
@@ -333,7 +333,7 @@
             Texture2D heightMap;
             fixed (float* pData = data)
             {
-                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(float))));
+                heightMap = new(desc, new SubresourceData(pData, (int)(width * sizeof(float))));
             }
 
             return heightMap;
@@ -348,12 +348,17 @@
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Write) != 0)
             {
-                var pixel = (float*)texture.Local;
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
+
+                var pixel = (float*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     pixel[i] = data[i];
                 }
-                texture.Write(context);
+
+                texture.Write(context, buffer, bufferSize);
+                Free(buffer);
             }
             else
             {
@@ -372,27 +377,39 @@
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)
             {
-                texture.Read(context);
-                var pixel = (float*)texture.Local;
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
+
+                texture.Read(context, buffer, bufferSize);
+
+                var pixel = (float*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];
                 }
+
+                Free(buffer);
             }
             else
             {
                 Texture2DDescription desc = new(Format.R32Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read);
-                Texture2D staging = new(context.Device, desc);
+                Texture2D staging = new(desc);
+
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
 
                 texture.CopyTo(context, staging);
 
-                staging.Read(context);
-                var pixel = (float*)texture.Local;
+                staging.Read(context, buffer, bufferSize);
+                staging.Dispose();
+
+                var pixel = (float*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];
                 }
-                staging.Dispose();
+
+                Free(buffer);
             }
         }
     }

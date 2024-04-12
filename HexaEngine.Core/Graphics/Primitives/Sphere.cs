@@ -15,8 +15,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Sphere"/> class.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
-        public Sphere(IGraphicsDevice device) : base(device)
+        public Sphere() : base()
         {
         }
 
@@ -25,22 +24,21 @@
         /// </summary>
         /// <param name="device">The graphics device.</param>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
         /// <summary>
         /// Creates a sphere mesh with the specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="vertexBuffer">The vertex buffer of the sphere.</param>
         /// <param name="indexBuffer">The index buffer of the sphere.</param>
         /// <param name="diameter">The diameter of the sphere.</param>
         /// <param name="tessellation">The level of tessellation for the sphere.</param>
         /// <param name="invertn">A flag indicating whether to invert the normals of the sphere.</param>
-        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false)
+        public static void CreateSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false)
         {
             if (tessellation < 3)
             {
@@ -118,8 +116,8 @@
                 }
             }
 
-            vertexBuffer = new(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new(vertices, CpuAccessFlags.None);
+            indexBuffer = new(indices, CpuAccessFlags.None);
         }
     }
 }

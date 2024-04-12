@@ -11,8 +11,6 @@
 
     public partial class LightManager : ISceneSystem
     {
-        private readonly IGraphicsDevice device;
-
         private readonly List<Probe> probes = [];
         private readonly List<LightSource> lights = [];
         private readonly List<LightSource> activeLights = [];
@@ -25,12 +23,11 @@
         public readonly StructuredUavBuffer<LightData> LightBuffer;
         public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
-        public LightManager(IGraphicsDevice device)
+        public LightManager()
         {
-            this.device = device;
-            GlobalProbes = new(device, CpuAccessFlags.Write);
-            LightBuffer = new(device, CpuAccessFlags.Write);
-            ShadowDataBuffer = new(device, CpuAccessFlags.Write);
+            GlobalProbes = new(CpuAccessFlags.Write);
+            LightBuffer = new(CpuAccessFlags.Write);
+            ShadowDataBuffer = new(CpuAccessFlags.Write);
         }
 
         public static LightManager? Current => SceneManager.Current?.LightManager;

@@ -140,8 +140,8 @@
                 PixelShader = "internal/ui/vec/ps.hlsl"
             }, stateDesc);
 
-            constantBuffer = new(device, CpuAccessFlags.Write);
-            colorBuffer = new(device, CpuAccessFlags.Write);
+            constantBuffer = new(CpuAccessFlags.Write);
+            colorBuffer = new(CpuAccessFlags.Write);
 
             CreateFontsTexture(device);
         }

@@ -125,20 +125,20 @@
         {
             this.device = device;
             this.emitter = emitter;
-            deadListBuffer = new(device, MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
-            particleBufferA = new(device, MaxParticles, CpuAccessFlags.None);
-            particleBufferB = new(device, MaxParticles, CpuAccessFlags.None);
-            viewSpacePositionsBuffer = new(device, MaxParticles, CpuAccessFlags.None);
-            aliveIndexBuffer = new(device, MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Counter);
+            deadListBuffer = new(MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
+            particleBufferA = new(MaxParticles, CpuAccessFlags.None);
+            particleBufferB = new(MaxParticles, CpuAccessFlags.None);
+            viewSpacePositionsBuffer = new(MaxParticles, CpuAccessFlags.None);
+            aliveIndexBuffer = new(MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Counter);
 
-            indirectRenderArgsBuffer = new(device, 1, CpuAccessFlags.None);
-            indirectSortArgsBuffer = new(device, 1, CpuAccessFlags.None);
+            indirectRenderArgsBuffer = new(1, CpuAccessFlags.None);
+            indirectSortArgsBuffer = new(1, CpuAccessFlags.None);
 
-            deadListCountBuffer = new(device, CpuAccessFlags.None, true);
-            activeListCountBuffer = new(device, CpuAccessFlags.None, true);
-            emitterBuffer = new(device, CpuAccessFlags.Write);
-            sortDispatchInfoBuffer = new(device, CpuAccessFlags.Write);
-            simulationBuffer = new(device, CpuAccessFlags.Write);
+            deadListCountBuffer = new(CpuAccessFlags.None, true);
+            activeListCountBuffer = new(CpuAccessFlags.None, true);
+            emitterBuffer = new(CpuAccessFlags.Write);
+            sortDispatchInfoBuffer = new(CpuAccessFlags.Write);
+            simulationBuffer = new(CpuAccessFlags.Write);
 
             Texture2DDescription desc = default;
             desc.Width = 1024;
@@ -164,7 +164,7 @@
             initData.DataPointer = (nint)randomTextureData.Data;
             initData.RowPitch = desc.Width * 4 * sizeof(float);
 
-            randomTexture = new(device, desc, initData);
+            randomTexture = new(desc, initData);
             randomTextureData.Release();
 
             uint[] indices = new uint[(MaxParticles * 6)];
@@ -184,7 +184,7 @@
                 offset += 6;
             }
 
-            indexBuffer = new(device, indices, CpuAccessFlags.None);
+            indexBuffer = new(indices, CpuAccessFlags.None);
 
             particleInitDeadList = device.CreateComputePipeline(new("forward/particles/InitDeadListCS.hlsl"));
             particleReset = device.CreateComputePipeline(new("forward/particles/ParticleResetCS.hlsl"));

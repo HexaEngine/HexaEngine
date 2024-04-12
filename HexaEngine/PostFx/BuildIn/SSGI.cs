@@ -230,7 +230,7 @@
             ssgiParams.MaxRayCount = maxRayCount;
             ssgiParams.RaySteps = raySteps;
             ssgiParams.DepthBias = depthBias;
-            ssgiParamsBuffer = new(device, ssgiParams, CpuAccessFlags.Write);
+            ssgiParamsBuffer = new(ssgiParams, CpuAccessFlags.Write);
             ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER");
             blur = new(creator, "SSGI", additive: true);
         }

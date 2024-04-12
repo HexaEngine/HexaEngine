@@ -64,7 +64,7 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write, filename + "_GAUSSIAN_BLUR_CONSTANT_BUFFER", lineNumber);
+            paramsBuffer = new(CpuAccessFlags.Write, filename + "_GAUSSIAN_BLUR_CONSTANT_BUFFER", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(filename + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
@@ -103,7 +103,7 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
+            paramsBuffer = new(CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
@@ -139,7 +139,7 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
+            paramsBuffer = new(CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, creator.Width, creator.Height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
@@ -175,7 +175,7 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
+            paramsBuffer = new(CpuAccessFlags.Write, name + "_GAUSSIAN_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateBuffer(name + "_GAUSSIAN_BLUR_BUFFER", creationFlags: ResourceCreationFlags.Shared);
@@ -283,7 +283,7 @@
             Format = format;
             Width = width;
             Height = height;
-            intermediateTex.Value.Resize(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex.Value.Resize(format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
         protected virtual void Dispose(bool disposing)

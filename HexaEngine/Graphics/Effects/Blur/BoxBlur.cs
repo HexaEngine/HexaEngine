@@ -28,7 +28,7 @@
                 PixelShader = "effects/blur/box.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
+            paramsBuffer = new(CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 

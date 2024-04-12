@@ -10,17 +10,17 @@
         private static readonly HashSet<Guid> importedSourceAssets = [];
         private static List<Artifact> artifacts = [];
         private static readonly Dictionary<Guid, Artifact> guidToArtifact = [];
+#nullable disable
         private static string root;
-        private static string cacheRootFolder;
         private static string cacheFolder;
         private static string dbPath;
-
+#nullable restore
         private static readonly ManualResetEventSlim initLock = new(false);
 
         internal static void Init(string path)
         {
             root = path;
-            cacheRootFolder = Path.Combine(path, ".cache");
+            string cacheRootFolder = Path.Combine(path, ".cache");
             cacheFolder = Path.Combine(cacheRootFolder, "artifacts");
 
             Directory.CreateDirectory(cacheRootFolder);
@@ -30,7 +30,7 @@
 
             if (File.Exists(dbPath))
             {
-                artifacts = JsonConvert.DeserializeObject<List<Artifact>>(File.ReadAllText(dbPath));
+                artifacts = JsonConvert.DeserializeObject<List<Artifact>>(File.ReadAllText(dbPath)) ?? [];
                 for (int i = 0; i < artifacts.Count; i++)
                 {
                     var artifact = artifacts[i];
@@ -118,7 +118,6 @@
             {
                 return guidToArtifact.ContainsKey(guid);
             }
-            return false;
         }
 
         public static IEnumerable<Artifact> GetArtifactsForSource(Guid guid)

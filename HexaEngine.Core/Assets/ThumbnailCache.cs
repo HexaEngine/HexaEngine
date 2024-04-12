@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a cache policy interface.
@@ -60,7 +61,7 @@
         /// <summary>
         /// The size in bytes of a <see cref="ThumbnailCacheEntry"/>
         /// </summary>
-        public const int EntrySize = 40;
+        internal const int EntrySize = 40;
 
         public ThumbnailCacheEntry(Guid key, long size, long position)
         {
@@ -546,7 +547,7 @@
             entry.VideoMemSize = (uint)((uint)MathF.Ceiling(FormatHelper.BitsPerColor(metadata.Format) / 8f) * metadata.Width * metadata.Height);
             AllocateVideoMemory(entry, oldVideoMemSize);
 
-            entry.Texture.Value = new(device, image, new(metadata.Format, metadata.Width, metadata.Height, metadata.ArraySize, metadata.MipLevels, GpuAccessFlags.Read));
+            entry.Texture.Value = new(new(metadata.Format, metadata.Width, metadata.Height, metadata.ArraySize, metadata.MipLevels, GpuAccessFlags.Read), image);
         }
 
         private bool AllocateVideoMemory(ThumbnailCacheEntry entry, uint? oldSize)
@@ -691,7 +692,7 @@
                         }
                     }
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     // offset position and release lock again.
                     for (int i = 0; i < entries.Count; i++)
@@ -716,29 +717,6 @@
 
             cacheFileSemaphore.Release();
             entry.PersistenceState = default;
-        }
-
-        private void MoveBlock(long from, long to, long size)
-        {
-            const int BufferSize = 8192;
-            Span<byte> buffer = stackalloc byte[BufferSize];
-
-            long positionFrom = from;
-            long positionTo = to;
-            while (size > 0)
-            {
-                int bytesToRead = (int)Math.Min(size, BufferSize);
-
-                cacheStream.Position = positionFrom;
-                int read = cacheStream.Read(buffer[..bytesToRead]);
-                positionFrom += read;
-
-                cacheStream.Position = to;
-                cacheStream.Write(buffer[..read]);
-                positionTo += read;
-
-                size -= read;
-            }
         }
 
         public void GenerateAndSetThumbnail(Guid key, IScratchImage image)

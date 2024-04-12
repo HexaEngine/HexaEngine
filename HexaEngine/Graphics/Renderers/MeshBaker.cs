@@ -20,11 +20,11 @@
 
         public MeshBaker2(IGraphicsDevice device)
         {
-            Texture = new(device, Format.R16G16B16A16UNorm, RTWidth, RTWidth, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, ResourceMiscFlag.TextureCube);
-            Texture.CreateArraySlices(device);
+            Texture = new(Format.R16G16B16A16UNorm, RTWidth, RTWidth, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, miscFlag: ResourceMiscFlag.TextureCube);
+            Texture.CreateArraySlices();
 
-            TextureFinal = new(device, Format.R16G16B16A16UNorm, 256, 256, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, ResourceMiscFlag.TextureCube);
-            TextureFinal.CreateArraySlices(device);
+            TextureFinal = new(Format.R16G16B16A16UNorm, 256, 256, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, miscFlag: ResourceMiscFlag.TextureCube);
+            TextureFinal.CreateArraySlices();
 
             irradiance = new(device);
 

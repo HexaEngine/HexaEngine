@@ -613,7 +613,7 @@
                         }
                     }
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     // offset position and release lock again.
                     for (int i = 0; i < entries.Count; i++)
@@ -638,29 +638,6 @@
 
             cacheFileSemaphore.Release();
             entry.PersistenceState = default;
-        }
-
-        private void MoveBlock(long from, long to, long size)
-        {
-            const int BufferSize = 8192;
-            Span<byte> buffer = stackalloc byte[BufferSize];
-
-            long positionFrom = from;
-            long positionTo = to;
-            while (size > 0)
-            {
-                int bytesToRead = (int)Math.Min(size, BufferSize);
-
-                cacheStream.Position = positionFrom;
-                int read = cacheStream.Read(buffer[..bytesToRead]);
-                positionFrom += read;
-
-                cacheStream.Position = to;
-                cacheStream.Write(buffer[..read]);
-                positionTo += read;
-
-                size -= read;
-            }
         }
 
         /// <summary>
@@ -1338,7 +1315,7 @@
                         }
                     }
 
-                    MoveBlock(endPos, startPos, size);
+                    cacheStream.MoveBlock(endPos, startPos, size);
 
                     // offset position and release lock again.
                     for (int i = 0; i < entries.Count; i++)
@@ -1363,29 +1340,6 @@
 
             cacheFileSemaphore.Release();
             entry.PersistenceState = default;
-        }
-
-        private void MoveBlock(long from, long to, long size)
-        {
-            const int BufferSize = 8192;
-            Span<byte> buffer = stackalloc byte[BufferSize];
-
-            long positionFrom = from;
-            long positionTo = to;
-            while (size > 0)
-            {
-                int bytesToRead = (int)Math.Min(size, BufferSize);
-
-                cacheStream.Position = positionFrom;
-                int read = cacheStream.Read(buffer[..bytesToRead]);
-                positionFrom += read;
-
-                cacheStream.Position = to;
-                cacheStream.Write(buffer[..read]);
-                positionTo += read;
-
-                size -= read;
-            }
         }
 
         /// <summary>

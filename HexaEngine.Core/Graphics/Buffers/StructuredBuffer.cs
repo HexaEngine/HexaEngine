@@ -10,7 +10,6 @@
     public unsafe class StructuredBuffer<T> : IStructuredBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 128;
-        private readonly IGraphicsDevice device;
 
         private readonly string dbgName;
         private IBuffer buffer;
@@ -27,11 +26,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="StructuredBuffer{T}"/> class with default capacity.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="cpuAccessFlags">The CPU access flags indicating how the CPU can access the buffer.</param>
         /// <param name="filename">The name of the file calling this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the file where this constructor is called (automatically set by the compiler).</param>
-        public StructuredBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredBuffer(CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
@@ -43,6 +41,7 @@
             {
                 description.Usage = Usage.Staging;
             }
+            var device = Application.GraphicsDevice;
             capacity = DefaultCapacity;
             items = AllocT<T>(DefaultCapacity);
             ZeroMemory(items, DefaultCapacity * sizeof(T));
@@ -50,19 +49,17 @@
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
-            this.device = device;
             MemoryManager.Register(buffer);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StructuredBuffer{T}"/> class with a specified initial capacity.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="initialCapacity">The initial capacity of the buffer.</param>
         /// <param name="cpuAccessFlags">The CPU access flags indicating how the CPU can access the buffer.</param>
         /// <param name="filename">The name of the file calling this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the file where this constructor is called (automatically set by the compiler).</param>
-        public StructuredBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredBuffer(uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * (int)initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
@@ -74,6 +71,7 @@
             {
                 description.Usage = Usage.Staging;
             }
+            var device = Application.GraphicsDevice;
             capacity = initialCapacity;
             items = AllocT<T>(initialCapacity);
             ZeroMemory(items, (int)initialCapacity * sizeof(T));
@@ -81,7 +79,6 @@
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
-            this.device = device;
             MemoryManager.Register(buffer);
         }
 
@@ -137,6 +134,7 @@
                 srv.Dispose();
                 MemoryManager.Unregister(buffer);
                 buffer.Dispose();
+                var device = Application.GraphicsDevice;
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
                 MemoryManager.Register(buffer);

@@ -24,7 +24,7 @@
             buffers = new Texture2D[bufferCount];
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers[i] = new(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, filename: "PostFx.Buffer", lineNumber: i);
+                buffers[i] = new(format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, filename: "PostFx.Buffer", lineNumber: i);
             }
 
             this.format = format;
@@ -119,7 +119,7 @@
             buffers = new Texture2D[bufferCount];
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers[i] = new(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+                buffers[i] = new(format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             }
 
             this.format = format;

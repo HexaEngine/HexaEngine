@@ -46,17 +46,17 @@
                 Path = "compute/occlusion/occlusion.hlsl",
             });
 
-            instanceDataNoCull = new(device, CpuAccessFlags.Write);
-            instanceOffsetsNoCull = new(device, CpuAccessFlags.Write);
+            instanceDataNoCull = new(CpuAccessFlags.Write);
+            instanceOffsetsNoCull = new(CpuAccessFlags.Write);
 
-            occlusionCameraBuffer = new(device, CpuAccessFlags.Write);
-            occlusionParamBuffer = new(device, CpuAccessFlags.Write);
-            instanceOffsets = new(device, CpuAccessFlags.None);
-            instanceDataOutBuffer = new(device, CpuAccessFlags.Read);
-            typeDataBuffer = new(device, CpuAccessFlags.Write);
-            instanceDataBuffer = new(device, CpuAccessFlags.Write);
-            swapBuffer = new(device, CpuAccessFlags.RW);
-            drawIndirectArgs = new(device, CpuAccessFlags.Write);
+            occlusionCameraBuffer = new(CpuAccessFlags.Write);
+            occlusionParamBuffer = new(CpuAccessFlags.Write);
+            instanceOffsets = new(CpuAccessFlags.None);
+            instanceDataOutBuffer = new(CpuAccessFlags.Read);
+            typeDataBuffer = new(CpuAccessFlags.Write);
+            instanceDataBuffer = new(CpuAccessFlags.Write);
+            swapBuffer = new(CpuAccessFlags.RW);
+            drawIndirectArgs = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp));
             occlusionCbs = AllocArray(2);
             occlusionCbs[0] = (void*)occlusionParamBuffer.Buffer.NativePointer;

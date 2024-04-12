@@ -36,7 +36,7 @@
                 Path = "filter/prefilter/cs.hlsl",
             });
 
-            roughnessBuffer = new(device, CpuAccessFlags.Write);
+            roughnessBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
         }
 

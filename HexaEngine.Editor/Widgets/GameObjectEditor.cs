@@ -353,7 +353,7 @@
                     var val = transform.Position;
 
                     var oldVal = val;
-                    if (ImGui.InputFloat3("##Position", ref val))
+                    if (ImGui.DragFloat3("##Position", ref val))
                     {
                         History.Default.Do("Set Position", transform, oldVal, val, SetPosition, RestorePosition);
                         changed = true;
@@ -408,7 +408,7 @@
                 {
                     var val = transform.Rotation;
                     var oldVal = val;
-                    if (ImGui.InputFloat3("##Rotation", ref val))
+                    if (ImGui.DragFloat3("##Rotation", ref val))
                     {
                         History.Default.Do("Set Rotation", transform, oldVal, val, SetRotation, RestoreRotation);
                         changed = true;
@@ -463,7 +463,7 @@
                 {
                     var val = transform.Scale;
                     var oldVal = val;
-                    if (ImGui.InputFloat3("##Scale", ref val))
+                    if (ImGui.DragFloat3("##Scale", ref val))
                     {
                         if (transform.UniformScale)
                         {

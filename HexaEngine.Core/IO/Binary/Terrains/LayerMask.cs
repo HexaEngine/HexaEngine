@@ -229,7 +229,7 @@
 
             fixed (ulong* pData = data)
             {
-                layerMask = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
+                layerMask = new(desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
             }
 
             return layerMask;
@@ -247,7 +247,7 @@
             Texture2D heightMap;
             fixed (ulong* pData = data)
             {
-                heightMap = new(device, desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
+                heightMap = new(desc, new SubresourceData(pData, (int)(width * sizeof(ulong))));
             }
 
             return heightMap;
@@ -262,12 +262,17 @@
         {
             if ((texture.CpuAccessFlags & CpuAccessFlags.Write) != 0)
             {
-                var pixel = (float*)texture.Local;
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
+
+                var pixel = (float*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     pixel[i] = data[i];
                 }
-                texture.Write(context);
+                texture.Write(context, buffer, bufferSize);
+
+                Free(buffer);
             }
             else
             {
@@ -287,26 +292,38 @@
             data = new ulong[texture.Width * texture.Height];
             if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)
             {
-                texture.Read(context);
-                var pixel = (ulong*)texture.Local;
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
+
+                texture.Read(context, buffer, bufferSize);
+
+                var pixel = (ulong*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];
                 }
+
+                Free(buffer);
             }
             else
             {
-                Texture2D staging = new(context.Device, Format.R16G16B16A16UNorm, (int)width, (int)height, 1, 1, CpuAccessFlags.Read, GpuAccessFlags.None);
+                Texture2D staging = new(Format.R16G16B16A16UNorm, (int)width, (int)height, 1, 1, CpuAccessFlags.Read, GpuAccessFlags.None);
 
                 texture.CopyTo(context, staging);
 
-                staging.Read(context);
-                var pixel = (ulong*)staging.Local;
+                uint bufferSize = height * (uint)texture.RowPitch;
+                byte* buffer = AllocT<byte>(bufferSize);
+
+                staging.Read(context, buffer, bufferSize);
+                staging.Dispose();
+
+                var pixel = (ulong*)buffer;
                 for (int i = 0; i < data.Length; i++)
                 {
                     data[i] = pixel[i];
                 }
-                staging.Dispose();
+
+                Free(buffer);
             }
         }
     }

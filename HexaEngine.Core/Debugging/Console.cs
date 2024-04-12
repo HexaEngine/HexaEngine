@@ -102,10 +102,12 @@
 
             public void Dispose()
             {
+                // Nothing to dispose here.
             }
 
             public void Flush()
             {
+                // Nothing to flush here.
             }
 
             public void Log(LogMessage message)

@@ -13,46 +13,43 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Tetrahedron"/> class.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
-        public Tetrahedron(IGraphicsDevice device) : base(device)
+        public Tetrahedron() : base()
         {
         }
 
         /// <summary>
         /// Initializes the tetrahedron mesh by creating vertex and index buffers.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateTetrahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateTetrahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
         private static readonly Vector3[] verts =
-        {
+        [
             new(0.0f, 0.0f, 1.0f),
             new(2.0f * MathUtil.SQRT2 / 3.0f, 0.0f, -1.0f / 3.0f),
             new(-MathUtil.SQRT2 / 3.0f, MathUtil.SQRT6 / 3.0f, -1.0f / 3.0f),
             new(-MathUtil.SQRT2 / 3.0f, -MathUtil.SQRT6 / 3.0f, -1.0f / 3.0f),
-        };
+        ];
 
         private static readonly uint[] faces =
-        {
+        [
             0, 1, 2,
             0, 2, 3,
             0, 3, 1,
             1, 3, 2,
-        };
+        ];
 
         /// <summary>
         /// Creates a tetrahedron mesh with the specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="vertexBuffer">The vertex buffer of the tetrahedron.</param>
         /// <param name="indexBuffer">The index buffer of the tetrahedron.</param>
         /// <param name="size">The size of the tetrahedron.</param>
-        public static void CreateTetrahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateTetrahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[4 * 3];
             uint[] indices = new uint[4 * 3];
@@ -91,8 +88,8 @@
                 vcounter += 3;
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }
 }

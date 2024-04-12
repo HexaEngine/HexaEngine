@@ -142,7 +142,7 @@
             {
                 try
                 {
-                    sunSpriteTex = Texture2D.LoadFromAssets(device, sunSpriteTexPath);
+                    sunSpriteTex = Texture2D.LoadFromAssets(sunSpriteTexPath);
                 }
                 catch (Exception ex)
                 {
@@ -171,9 +171,9 @@
                 SampleMask = int.MaxValue
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(CpuAccessFlags.Write);
 
-            quad = new(device, sunSize);
+            quad = new(sunSize);
 
             sun = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -191,11 +191,11 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            paramsWorldBuffer = new(device, CpuAccessFlags.Write);
+            paramsWorldBuffer = new(CpuAccessFlags.Write);
 
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            noiseTex = new(device, Format.R32Float, 256, 256, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            noiseTex = new(Format.R32Float, 256, 256, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>
             {
                 Noise noise = new(device, NoiseType.Blue2D);

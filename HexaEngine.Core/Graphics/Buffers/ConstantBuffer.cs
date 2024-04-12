@@ -10,7 +10,6 @@
     public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T>, IBuffer where T : unmanaged
     {
         private readonly string dbgName;
-        private readonly IGraphicsDevice device;
         private readonly BufferDescription description;
         private IBuffer buffer;
         private T* items;
@@ -18,10 +17,9 @@
 
 #nullable disable
 
-        private ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
+        private ConstantBuffer(CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
         {
             dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
 
             if (accessFlags != CpuAccessFlags.None)
@@ -46,13 +44,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device used to create the constant buffer.</param>
         /// <param name="length">The length of the constant buffer (number of elements of type <typeparamref name="T"/>).</param>
         /// <param name="accessFlags">The CPU access flags determining how the buffer can be accessed by the CPU.</param>
         /// <param name="filename">The name of the file where the constructor is called.</param>
         /// <param name="lineNumber">The line number in the file where the constructor is called.</param>
-        public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, length, filename, lineNumber)
+        public ConstantBuffer(uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, length, filename, lineNumber)
         {
+            var device = Application.GraphicsDevice;
             buffer = device.CreateBuffer(items, length, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -61,13 +59,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with the specified values.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="values">The array of values to initialize the buffer with.</param>
         /// <param name="accessFlags">The CPU access flags.</param>
         /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
-        public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, (uint)values.Length, filename, lineNumber)
+        public ConstantBuffer(T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, (uint)values.Length, filename, lineNumber)
         {
+            var device = Application.GraphicsDevice;
             fixed (T* src = values)
             {
                 if (description.CPUAccessFlags != CpuAccessFlags.None)
@@ -85,13 +83,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with a single value.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="value">The value to initialize the buffer with.</param>
         /// <param name="accessFlags">The CPU access flags.</param>
         /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
-        public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
+        public ConstantBuffer(T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, 1, filename, lineNumber)
         {
+            var device = Application.GraphicsDevice;
             count = 1;
             T* src = &value;
             if (description.CPUAccessFlags != CpuAccessFlags.None)
@@ -108,12 +106,12 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with default values.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="accessFlags">The CPU access flags.</param>
         /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
-        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
+        public ConstantBuffer(CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, 1, filename, lineNumber)
         {
+            var device = Application.GraphicsDevice;
             buffer = device.CreateBuffer(items, 1, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -122,13 +120,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class with the specified CPU access flags and subresource update option.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="cpuAccessFlags">The CPU access flags.</param>
         /// <param name="allowSubresourceUpdate">Specifies whether subresource updates are allowed.</param>
         /// <param name="filename">The path of the source file invoking this constructor (automatically set by the compiler).</param>
         /// <param name="lineNumber">The line number in the source file where this constructor is invoked (automatically set by the compiler).</param>
-        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, bool allowSubresourceUpdate, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, cpuAccessFlags, 1, filename, lineNumber)
+        public ConstantBuffer(CpuAccessFlags cpuAccessFlags, bool allowSubresourceUpdate, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(cpuAccessFlags, 1, filename, lineNumber)
         {
+            var device = Application.GraphicsDevice;
             if (allowSubresourceUpdate)
             {
                 description.Usage = Usage.Default;
@@ -220,6 +218,7 @@
         /// <param name="length">The new length of the constant buffer.</param>
         public void Resize(uint length)
         {
+            var device = Application.GraphicsDevice;
             var result = items;
             items = ReAllocT(items, length);
             items = result;

@@ -23,11 +23,11 @@
 
         private bool disposedValue;
 
-        public PrimitiveRenderer(IGraphicsDevice device)
+        public PrimitiveRenderer()
         {
-            transformBuffer = new(device, CpuAccessFlags.Write);
-            transformOffsetBuffer = new(device, CpuAccessFlags.Write);
-            offsetBuffer = new(device, CpuAccessFlags.Write);
+            transformBuffer = new(CpuAccessFlags.Write);
+            transformOffsetBuffer = new(CpuAccessFlags.Write);
+            offsetBuffer = new(CpuAccessFlags.Write);
         }
 
         public void Initialize(Primitive<MeshVertex, ushort> primitive, Material material)

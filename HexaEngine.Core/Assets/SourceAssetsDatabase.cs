@@ -221,7 +221,7 @@
             guidToSourceAsset.Remove(metadata.Guid);
         }
 
-        private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
+        private static async void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
         {
             if (IsIgnored(e.FullPath))
             {
@@ -238,7 +238,7 @@
                     }
 
                     logger.Trace($"Created '{e.FullPath}'");
-                    ImportFileAsync(e.FullPath);
+                    await ImportFileAsync(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Deleted:
@@ -253,7 +253,7 @@
                     }
 
                     logger.Trace($"Updated '{e.FullPath}'");
-                    UpdateAsync(e.FullPath);
+                    await UpdateAsync(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Renamed:
@@ -266,6 +266,8 @@
                     System.IO.RenamedEventArgs renamedEvent = (System.IO.RenamedEventArgs)e;
                     Rename(renamedEvent.OldFullPath, renamedEvent.FullPath);
                     break;
+                default:
+                    return;
             }
         }
 

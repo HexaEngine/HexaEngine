@@ -24,7 +24,7 @@
 
         protected override void Initialize(IGraphicsDevice device, CullingContext cullingContext)
         {
-            offsetBuffer = new(device, CpuAccessFlags.Write);
+            offsetBuffer = new(CpuAccessFlags.Write);
             drawIndirectArgs = cullingContext.DrawIndirectArgs;
             transformNoBuffer = cullingContext.InstanceDataNoCull;
             transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;

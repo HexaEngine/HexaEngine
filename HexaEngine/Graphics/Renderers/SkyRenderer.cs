@@ -26,8 +26,8 @@
 
         public SkyRenderer(IGraphicsDevice device)
         {
-            cube = new(device);
-            worldBuffer = new(device, CpuAccessFlags.Write);
+            cube = new();
+            worldBuffer = new(CpuAccessFlags.Write);
 
             skybox = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {

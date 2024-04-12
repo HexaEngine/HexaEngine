@@ -34,22 +34,22 @@
         private readonly bool sharedBuffers;
         private bool disposedValue;
 
-        public SkinnedMeshRenderer(IGraphicsDevice device)
+        public SkinnedMeshRenderer()
         {
-            transformBuffer = new(device, CpuAccessFlags.Write);
-            transformOffsetBuffer = new(device, CpuAccessFlags.Write);
-            boneTransformBuffer = new(device, CpuAccessFlags.Write);
-            boneTransformOffsetBuffer = new(device, CpuAccessFlags.Write);
-            offsetBuffer = new(device, CpuAccessFlags.Write);
+            transformBuffer = new(CpuAccessFlags.Write);
+            transformOffsetBuffer = new(CpuAccessFlags.Write);
+            boneTransformBuffer = new(CpuAccessFlags.Write);
+            boneTransformOffsetBuffer = new(CpuAccessFlags.Write);
+            offsetBuffer = new(CpuAccessFlags.Write);
         }
 
-        public SkinnedMeshRenderer(IGraphicsDevice device, StructuredBuffer<Matrix4x4> transformBuffer, StructuredBuffer<uint> transformOffsetBuffer, StructuredBuffer<Matrix4x4> boneTransformBuffer, StructuredBuffer<uint> boneTransformOffsetBuffer)
+        public SkinnedMeshRenderer(StructuredBuffer<Matrix4x4> transformBuffer, StructuredBuffer<uint> transformOffsetBuffer, StructuredBuffer<Matrix4x4> boneTransformBuffer, StructuredBuffer<uint> boneTransformOffsetBuffer)
         {
             this.transformBuffer = transformBuffer;
             this.transformOffsetBuffer = transformOffsetBuffer;
             this.boneTransformBuffer = boneTransformBuffer;
             this.boneTransformOffsetBuffer = boneTransformOffsetBuffer;
-            offsetBuffer = new(device, CpuAccessFlags.Write);
+            offsetBuffer = new(CpuAccessFlags.Write);
             sharedBuffers = true;
         }
 

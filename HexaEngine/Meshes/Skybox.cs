@@ -25,13 +25,13 @@
 
         public void Load(string environmentPath)
         {
-            environment = new(device, new TextureFileDescription(environmentPath, TextureDimension.TextureCube, 0, Usage.Immutable));
+            environment = new(new TextureFileDescription(environmentPath, TextureDimension.TextureCube, 0, Usage.Immutable));
             loaded = true;
         }
 
         public async Task LoadAsync(string environmentPath)
         {
-            environment = await Texture2D.CreateTextureAsync(device, new(environmentPath, TextureDimension.TextureCube));
+            environment = await Texture2D.CreateTextureAsync(new(environmentPath, TextureDimension.TextureCube));
             loaded = true;
         }
 

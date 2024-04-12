@@ -193,7 +193,7 @@
                 PixelShader = "effects/volumetric/ps.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            constantBuffer = new(device, CpuAccessFlags.Write);
+            constantBuffer = new(CpuAccessFlags.Write);
 
             blurPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -201,9 +201,9 @@
                 PixelShader = "effects/volumetric/blur.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultAdditiveFullscreen);
-            blurParams = new(device, CpuAccessFlags.Write);
+            blurParams = new(CpuAccessFlags.Write);
 
-            volumetricLightBuffer = new(device, CpuAccessFlags.Write);
+            volumetricLightBuffer = new(CpuAccessFlags.Write);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 

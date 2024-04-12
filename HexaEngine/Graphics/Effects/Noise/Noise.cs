@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public class Noise : IDisposable
     {
@@ -71,161 +72,86 @@
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            scaleBuffer = new(device, new NoiseParams(), CpuAccessFlags.Write);
+            scaleBuffer = new(new NoiseParams(), CpuAccessFlags.Write);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InternalDraw(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport)
+        {
+            context.SetRenderTarget(rtv, null);
+            context.SetViewport(viewport);
+            context.SetPipelineState(pipeline);
+            context.PSSetConstantBuffer(0, scaleBuffer);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.PSSetConstantBuffer(0, null);
+            context.SetRenderTarget(null, null);
+            context.SetViewport(default);
+            context.SetPipelineState(null);
         }
 
         public void Draw(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport)
         {
             scaleBuffer.Update(context, new NoiseParams());
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw1D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, float scale)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1, 1)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw1D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, float scale, float offset)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1, 1), new(offset, 0, 0, 0)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw2D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector2 scale)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw2D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector2 scale, Vector2 offset)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1), new(offset, 0, 0)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw2D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector2 scale, Vector2 offset, Vector2 period)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1), new(offset, 0, 0), new(period, 0, 0)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw2D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector2 scale, Vector2 offset, Vector2 period, float rotation)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1, 1), new(offset, 0, 0), new(period, 0, 0), new(rotation, 0, 0, 0)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw3D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector3 scale)
         {
             scaleBuffer.Update(context, new NoiseParams(new(scale, 1)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw3D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector3 scale, Vector3 offset)
         {
-            scaleBuffer.Update(context, new NoiseParams(new(scale, 1), new(offset, 0)));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw4D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector4 scale)
         {
             scaleBuffer.Update(context, new NoiseParams(scale));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         public void Draw4D(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport, Vector4 scale, Vector4 offset)
         {
             scaleBuffer.Update(context, new NoiseParams(scale, offset));
-            context.SetRenderTarget(rtv, null);
-            context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
-            context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
-            context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            InternalDraw(context, rtv, viewport);
         }
 
         protected virtual void Dispose(bool disposing)

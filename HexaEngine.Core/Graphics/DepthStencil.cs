@@ -33,12 +33,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepthStencil"/> class.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="desc">The description of the depth stencil buffer.</param>
         /// <param name="filename">The name of the file that contains the calling code (automatically generated).</param>
         /// <param name="lineNumber">The line number of the calling code (automatically generated).</param>
         /// <exception cref="ArgumentException">Thrown when the format is invalid for a depth stencil.</exception>
-        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthStencil(DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (!FormatHelper.IsDepthStencil(desc.Format))
             {
@@ -121,6 +120,8 @@
                 canRead = true;
             }
 
+            var device = Application.GraphicsDevice;
+
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
 
@@ -146,7 +147,6 @@
         /// Initializes a new instance of the <see cref="DepthStencil"/> class with the specified format, width, height, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// This constructor sets the array size to 1 and the mip levels to 1.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="format">The format of the depth stencil buffer.</param>
         /// <param name="width">The width of the depth stencil buffer.</param>
         /// <param name="height">The height of the depth stencil buffer.</param>
@@ -156,8 +156,8 @@
         /// <param name="miscFlag">The miscellaneous flags for the depth stencil buffer.</param>
         /// <param name="filename">The name of the file that contains the calling code (automatically generated).</param>
         /// <param name="lineNumber">The line number of the calling code (automatically generated).</param>
-        public DepthStencil(IGraphicsDevice device, Format format, int width, int height, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
-        : this(device, format, width, height, 1, 1, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag, filename, lineNumber)
+        public DepthStencil(Format format, int width, int height, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        : this(format, width, height, 1, 1, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag, filename, lineNumber)
         {
         }
 
@@ -165,7 +165,6 @@
         /// Initializes a new instance of the <see cref="DepthStencil"/> class with the specified format, width, height, array size, and CPU and GPU access flags.
         /// This constructor sets the mip levels to 1 and uses the default depth stencil view flags and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="format">The format of the depth stencil buffer.</param>
         /// <param name="width">The width of the depth stencil buffer.</param>
         /// <param name="height">The height of the depth stencil buffer.</param>
@@ -176,15 +175,14 @@
         /// <param name="miscFlag">The miscellaneous flags for the depth stencil buffer.</param>
         /// <param name="filename">The name of the file that contains the calling code (automatically generated).</param>
         /// <param name="lineNumber">The line number of the calling code (automatically generated).</param>
-        public DepthStencil(IGraphicsDevice device, Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
-        : this(device, format, width, height, arraySize, 1, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag, filename, lineNumber)
+        public DepthStencil(Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        : this(format, width, height, arraySize, 1, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag, filename, lineNumber)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DepthStencil"/> class with the specified format, width, height, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="format">The format of the depth stencil buffer.</param>
         /// <param name="width">The width of the depth stencil buffer.</param>
         /// <param name="height">The height of the depth stencil buffer.</param>
@@ -197,7 +195,7 @@
         /// <param name="filename">The name of the file that contains the calling code (automatically generated).</param>
         /// <param name="lineNumber">The line number of the calling code (automatically generated).</param>
         /// <exception cref="ArgumentException">Thrown when the format is invalid for a depth stencil.</exception>
-        public DepthStencil(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthStencil(Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (!FormatHelper.IsDepthStencil(format))
             {
@@ -266,6 +264,8 @@
                 description.BindFlags = BindFlags.None;
                 canRead = true;
             }
+
+            var device = Application.GraphicsDevice;
 
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
@@ -458,57 +458,52 @@
         /// <summary>
         /// Resizes the depth stencil to the specified dimensions using the existing format, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
-        public void Resize(IGraphicsDevice device, int width, int height)
+        public void Resize(int width, int height)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil to the specified dimensions using the given format, keeping the existing values for array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
-        public void Resize(IGraphicsDevice device, Format format, int width, int height)
+        public void Resize(Format format, int width, int height)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil to the specified dimensions using the given format and array size, keeping the existing values for mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
         /// <param name="arraySize">The new array size of the depth stencil.</param>
-        public void Resize(IGraphicsDevice device, Format format, int width, int height, int arraySize)
+        public void Resize(Format format, int width, int height, int arraySize)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil to the specified dimensions using the given format, array size, and mip levels, keeping the existing values for CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
         /// <param name="arraySize">The new array size of the depth stencil.</param>
         /// <param name="mipLevels">The new number of mip levels of the depth stencil.</param>
-        public void Resize(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels)
+        public void Resize(Format format, int width, int height, int arraySize, int mipLevels)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil with the specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
@@ -518,15 +513,14 @@
         /// <param name="miscFlag">The new miscellaneous flags of the depth stencil.</param>
         /// <exception cref="ArgumentException">Thrown when an invalid format is specified for a depth stencil.</exception>
 
-        public void Resize(IGraphicsDevice device, Format format, int width, int height, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
+        public void Resize(Format format, int width, int height, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil with the specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
@@ -536,15 +530,14 @@
         /// <param name="depthStencilViewFlags">The new depth stencil view flags of the depth stencil.</param>
         /// <param name="miscFlag">The new miscellaneous flags of the depth stencil.</param>
         /// <exception cref="ArgumentException">Thrown when an invalid format is specified for a depth stencil.</exception>
-        public void Resize(IGraphicsDevice device, Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
+        public void Resize(Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
         {
-            Resize(device, format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
+            Resize(format, width, height, arraySize, mipLevels, cpuAccessFlags, gpuAccessFlags, depthStencilViewFlags, miscFlag);
         }
 
         /// <summary>
         /// Resizes the depth stencil with the specified parameters.
         /// </summary>
-        /// <param name="device">The graphics device used for resizing.</param>
         /// <param name="format">The new format of the depth stencil.</param>
         /// <param name="width">The new width of the depth stencil.</param>
         /// <param name="height">The new height of the depth stencil.</param>
@@ -555,7 +548,7 @@
         /// <param name="depthStencilViewFlags">The new depth stencil view flags of the depth stencil.</param>
         /// <param name="miscFlag">The new miscellaneous flags of the depth stencil.</param>
         /// <exception cref="ArgumentException">Thrown when an invalid format is specified for a depth stencil.</exception>
-        public void Resize(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
+        public void Resize(Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
         {
             if (!FormatHelper.IsDepthStencil(format))
             {
@@ -629,6 +622,8 @@
             dsv.Dispose();
             uav?.Dispose();
             srv?.Dispose();
+
+            var device = Application.GraphicsDevice;
 
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;

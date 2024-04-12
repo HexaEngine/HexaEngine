@@ -109,7 +109,7 @@
                 PixelShader = "effects/lensflare/downsample.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            downsampleCB = new(device, CpuAccessFlags.Write);
+            downsampleCB = new(CpuAccessFlags.Write);
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
             downsampleViewport = creator.ViewportHalf;
@@ -120,7 +120,7 @@
                 PixelShader = "effects/lensflare/lens.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            lensCB = new(device, CpuAccessFlags.Write);
+            lensCB = new(CpuAccessFlags.Write);
 
             accumBuffer = creator.CreateBufferHalfRes("LENS_ACCUMULATION_BUFFER");
 

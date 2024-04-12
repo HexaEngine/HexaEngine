@@ -547,11 +547,11 @@
             }
         }
 
-        public IIndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags)
+        public IIndexBuffer CreateIndexBuffer(CpuAccessFlags accessFlags)
         {
             if (IndexCount > ushort.MaxValue)
             {
-                return new IndexBuffer<uint>(device, Indices, accessFlags);
+                return new IndexBuffer<uint>(Indices, accessFlags);
             }
             else
             {
@@ -561,11 +561,11 @@
                     indices[i] = (ushort)Indices[i];
                 }
 
-                return new IndexBuffer<ushort>(device, indices, accessFlags);
+                return new IndexBuffer<ushort>(indices, accessFlags);
             }
         }
 
-        public unsafe IVertexBuffer CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public unsafe IVertexBuffer CreateVertexBuffer(CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             if ((flags & VertexFlags.Skinned) == 0)
             {
@@ -601,7 +601,7 @@
                     vertices[i] = vertex;
                 }
 
-                VertexBuffer<MeshVertex> vertexBuffer = new(device, vertices, VertexCount, accessFlags);
+                VertexBuffer<MeshVertex> vertexBuffer = new(vertices, VertexCount, accessFlags);
                 Free(vertices);
                 return vertexBuffer;
             }
@@ -644,7 +644,7 @@
                     vertices[i] = vertex;
                 }
 
-                VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(device, vertices, VertexCount, accessFlags);
+                VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(vertices, VertexCount, accessFlags);
                 Free(vertices);
                 return vertexBuffer;
             }

@@ -81,6 +81,9 @@
                             bundle.Extract("assets/");
                         }
                         break;
+
+                    default:
+                        throw new InvalidOperationException($"'{o.Mode}' is not supported.");
                 }
             });
         }

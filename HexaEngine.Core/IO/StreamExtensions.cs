@@ -866,16 +866,7 @@
             int stride = sizeof(float);
             fixed (float* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -885,25 +876,7 @@
             int stride = sizeof(float);
             fixed (float* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -913,16 +886,7 @@
             int stride = sizeof(Vector2);
             fixed (Vector2* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -932,25 +896,7 @@
             int stride = sizeof(Vector2);
             fixed (Vector2* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -960,16 +906,7 @@
             int stride = sizeof(Vector3);
             fixed (Vector3* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -979,25 +916,7 @@
             int stride = sizeof(Vector3);
             fixed (Vector3* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1007,16 +926,7 @@
             int stride = sizeof(Vector4);
             fixed (Vector4* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1026,25 +936,7 @@
             int stride = sizeof(Vector4);
             fixed (Vector4* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1054,16 +946,7 @@
             int stride = sizeof(double);
             fixed (double* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1073,25 +956,7 @@
             int stride = sizeof(double);
             fixed (double* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1101,16 +966,7 @@
             int stride = sizeof(ushort);
             fixed (ushort* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1120,25 +976,7 @@
             int stride = sizeof(ushort);
             fixed (ushort* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1148,16 +986,7 @@
             int stride = sizeof(short);
             fixed (short* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1167,25 +996,7 @@
             int stride = sizeof(short);
             fixed (short* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1195,16 +1006,7 @@
             int stride = sizeof(uint);
             fixed (uint* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1214,25 +1016,7 @@
             int stride = sizeof(uint);
             fixed (uint* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1242,16 +1026,7 @@
             int stride = sizeof(int);
             fixed (int* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1261,25 +1036,7 @@
             int stride = sizeof(int);
             fixed (int* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1289,16 +1046,7 @@
             int stride = sizeof(ulong);
             fixed (ulong* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1308,25 +1056,7 @@
             int stride = sizeof(ulong);
             fixed (ulong* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
-
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
-
-                if (reverse)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1336,16 +1066,7 @@
             int stride = sizeof(long);
             fixed (long* p = array)
             {
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Read(bytes);
-
-                if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
-                {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
-                }
+                ReadArray(stream, array, endianness, stride, p, &ReverseEndianness);
             }
         }
 
@@ -1355,24 +1076,45 @@
             int stride = sizeof(long);
             fixed (long* p = array)
             {
-                bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
-                if (reverse)
+                WriteArray(stream, array, endianness, stride, p, &ReverseEndianness);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void WriteArray<T>(Stream stream, Span<T> array, Endianness endianness, int stride, T* p, delegate*<T, T*, void> reverseEndianness) where T : unmanaged
+        {
+            bool reverse = BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian;
+            if (reverse)
+            {
+                for (int i = 0; i < array.Length; i++)
                 {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
+                    reverseEndianness(p[i], &p[i]);
                 }
+            }
 
-                Span<byte> bytes = new(p, array.Length * stride);
-                stream.Write(bytes);
+            Span<byte> bytes = new(p, array.Length * stride);
+            stream.Write(bytes);
 
-                if (reverse)
+            if (reverse)
+            {
+                for (int i = 0; i < array.Length; i++)
                 {
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        ReverseEndianness(p[i], &p[i]);
-                    }
+                    reverseEndianness(p[i], &p[i]);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void ReadArray<T>(Stream stream, T[] array, Endianness endianness, int stride, T* p, delegate*<T, T*, void> reverseEndianness) where T : unmanaged
+        {
+            Span<byte> bytes = new(p, array.Length * stride);
+            stream.Read(bytes);
+
+            if (BitConverter.IsLittleEndian && endianness == Endianness.BigEndian || !BitConverter.IsLittleEndian && endianness == Endianness.LittleEndian)
+            {
+                for (int i = 0; i < array.Length; i++)
+                {
+                    reverseEndianness(p[i], &p[i]);
                 }
             }
         }
@@ -1484,6 +1226,35 @@
             ReverseEndianness(target.Z, &target.Z);
             ReverseEndianness(target.W, &target.W);
             *output = target;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MoveBlock(this Stream stream, long from, long to, long size)
+        {
+            if (from == stream.Length)
+            {
+                return;
+            }
+
+            const int BufferSize = 8192;
+            Span<byte> buffer = stackalloc byte[BufferSize];
+
+            long positionFrom = from;
+            long positionTo = to;
+            while (size > 0)
+            {
+                int bytesToRead = (int)Math.Min(size, BufferSize);
+
+                stream.Position = positionFrom;
+                int read = stream.Read(buffer[..bytesToRead]);
+                positionFrom += read;
+
+                stream.Position = to;
+                stream.Write(buffer[..read]);
+                positionTo += read;
+
+                size -= read;
+            }
         }
     }
 }

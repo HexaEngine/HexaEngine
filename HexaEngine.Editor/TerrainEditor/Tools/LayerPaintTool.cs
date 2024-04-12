@@ -68,12 +68,12 @@
                 Path = "tools/terrain/mask/remap.hlsl",
             });
 
-            maskTexBuffer = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
+            maskTexBuffer = new(Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
             maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-            maskBuffer = new(device, CpuAccessFlags.Write);
-            brushBuffer = new(device, CpuAccessFlags.Write);
-            remapBuffer = new(device, CpuAccessFlags.Write);
-            channelBuffer = new(device, 1, CpuAccessFlags.Read);
+            maskBuffer = new(CpuAccessFlags.Write);
+            brushBuffer = new(CpuAccessFlags.Write);
+            remapBuffer = new(CpuAccessFlags.Write);
+            channelBuffer = new(1, CpuAccessFlags.Read);
         }
 
         protected override void DisposeCore()

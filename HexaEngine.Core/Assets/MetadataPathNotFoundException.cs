@@ -4,7 +4,7 @@
     using System.Runtime.Serialization;
 
     [Serializable]
-    internal class MetadataPathNotFoundException : Exception
+    public class MetadataPathNotFoundException : Exception
     {
         public MetadataPathNotFoundException()
         {

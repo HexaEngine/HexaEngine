@@ -398,262 +398,142 @@
 
         public ushort ReadUInt16BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1];
-            return BinaryPrimitives.ReadUInt16BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[2];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt16BigEndian(stackBuffer);
         }
 
         public ushort ReadUInt16LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1];
-            return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[2];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt16LittleEndian(stackBuffer);
         }
 
         public UInt24 ReadUInt24BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2];
-            return UInt24.ReadBigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[3];
+            Read(stackBuffer);
+            return UInt24.ReadBigEndian(stackBuffer);
         }
 
         public UInt24 ReadUInt24LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2];
-            return UInt24.ReadLittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[3];
+            Read(stackBuffer);
+            return UInt24.ReadLittleEndian(stackBuffer);
         }
 
         public uint ReadUInt32BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3];
-            return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[4];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt32BigEndian(stackBuffer);
         }
 
         public uint ReadUInt32LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3];
-            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[4];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt32LittleEndian(stackBuffer);
         }
 
         public ulong ReadUInt64BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7];
-            return BinaryPrimitives.ReadUInt64BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[8];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt64BigEndian(stackBuffer);
         }
 
         public ulong ReadUInt64LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7];
-            return BinaryPrimitives.ReadUInt64LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[8];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt64LittleEndian(stackBuffer);
         }
 
         public UInt128 ReadUInt128BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-
-            byte b8 = ReadRawUInt8(8);
-            byte b9 = ReadRawUInt8(8);
-            byte b10 = ReadRawUInt8(8);
-            byte b11 = ReadRawUInt8(8);
-            byte b12 = ReadRawUInt8(8);
-            byte b13 = ReadRawUInt8(8);
-            byte b14 = ReadRawUInt8(8);
-            byte b15 = ReadRawUInt8(8);
-
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15];
-            return BinaryPrimitives.ReadUInt128BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[16];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt128BigEndian(stackBuffer);
         }
 
         public UInt128 ReadUInt128LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-
-            byte b8 = ReadRawUInt8(8);
-            byte b9 = ReadRawUInt8(8);
-            byte b10 = ReadRawUInt8(8);
-            byte b11 = ReadRawUInt8(8);
-            byte b12 = ReadRawUInt8(8);
-            byte b13 = ReadRawUInt8(8);
-            byte b14 = ReadRawUInt8(8);
-            byte b15 = ReadRawUInt8(8);
-
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15];
-            return BinaryPrimitives.ReadUInt128LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[16];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadUInt128LittleEndian(stackBuffer);
         }
 
         public short ReadInt16BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1];
-            return BinaryPrimitives.ReadInt16BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[2];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt16BigEndian(stackBuffer);
         }
 
         public short ReadInt16LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1];
-            return BinaryPrimitives.ReadInt16LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[2];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt16LittleEndian(stackBuffer);
         }
 
         public Int24 ReadInt24BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2];
-            return Int24.ReadBigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[3];
+            Read(stackBuffer);
+            return Int24.ReadBigEndian(stackBuffer);
         }
 
         public Int24 ReadInt24LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2];
-            return Int24.ReadLittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[3];
+            Read(stackBuffer);
+            return Int24.ReadLittleEndian(stackBuffer);
         }
 
         public int ReadInt32BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3];
-            return BinaryPrimitives.ReadInt32BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[4];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt32BigEndian(stackBuffer);
         }
 
         public int ReadInt32LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3];
-            return BinaryPrimitives.ReadInt32LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[4];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt32LittleEndian(stackBuffer);
         }
 
         public long ReadInt64BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7];
-            return BinaryPrimitives.ReadInt64BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[8];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt64BigEndian(stackBuffer);
         }
 
         public long ReadInt64LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7];
-            return BinaryPrimitives.ReadInt64LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[8];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt64LittleEndian(stackBuffer);
         }
 
         public Int128 ReadInt128BigEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-
-            byte b8 = ReadRawUInt8(8);
-            byte b9 = ReadRawUInt8(8);
-            byte b10 = ReadRawUInt8(8);
-            byte b11 = ReadRawUInt8(8);
-            byte b12 = ReadRawUInt8(8);
-            byte b13 = ReadRawUInt8(8);
-            byte b14 = ReadRawUInt8(8);
-            byte b15 = ReadRawUInt8(8);
-
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15];
-            return BinaryPrimitives.ReadInt128BigEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[16];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt128BigEndian(stackBuffer);
         }
 
         public Int128 ReadInt128LittleEndian()
         {
-            byte b0 = ReadRawUInt8(8);
-            byte b1 = ReadRawUInt8(8);
-            byte b2 = ReadRawUInt8(8);
-            byte b3 = ReadRawUInt8(8);
-            byte b4 = ReadRawUInt8(8);
-            byte b5 = ReadRawUInt8(8);
-            byte b6 = ReadRawUInt8(8);
-            byte b7 = ReadRawUInt8(8);
-
-            byte b8 = ReadRawUInt8(8);
-            byte b9 = ReadRawUInt8(8);
-            byte b10 = ReadRawUInt8(8);
-            byte b11 = ReadRawUInt8(8);
-            byte b12 = ReadRawUInt8(8);
-            byte b13 = ReadRawUInt8(8);
-            byte b14 = ReadRawUInt8(8);
-            byte b15 = ReadRawUInt8(8);
-
-            Span<byte> buffer = [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15];
-            return BinaryPrimitives.ReadInt128LittleEndian(buffer);
+            Span<byte> stackBuffer = stackalloc byte[16];
+            Read(stackBuffer);
+            return BinaryPrimitives.ReadInt128LittleEndian(stackBuffer);
         }
 
         public StdString ReadStdString(Endianness endianness)

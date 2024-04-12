@@ -71,7 +71,7 @@
             this.device = device;
             DebugName = GameObject.Name + DebugName;
             renderer = new(device);
-            spriteBatch = new(device);
+            spriteBatch = new();
             spriteBatch.Add(sprite);
 
             UpdateAtlasAsync();

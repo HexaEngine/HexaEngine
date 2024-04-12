@@ -14,7 +14,7 @@
         /// Initializes a new instance of the <see cref="Icosahedron"/> class.
         /// </summary>
         /// <param name="device">The graphics device used for mesh creation.</param>
-        public Icosahedron(IGraphicsDevice device) : base(device)
+        public Icosahedron() : base()
         {
         }
 
@@ -25,9 +25,9 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the icosahedron mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateIcosahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateIcosahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -35,7 +35,7 @@
         private const float t2 = 1.519544995837552493271f; // sqrt( 1 + sqr( (1 + sqrt(5)) / 2 ) )
 
         private static readonly Vector3[] verts =
-         {
+         [
                 new(t / t2, 1.0f / t2, 0),
                 new(-t / t2, 1.0f / t2, 0),
                 new(t / t2, -1.0f / t2, 0),
@@ -48,10 +48,10 @@
                 new(0, -t / t2, 1.0f / t2),
                 new(0, t / t2, -1.0f / t2),
                 new(0, -t / t2, -1.0f / t2)
-        };
+        ];
 
         private static readonly uint[] faces =
-        {
+        [
                 0, 8, 4,
                 0, 5, 10,
                 2, 4, 9,
@@ -72,16 +72,15 @@
                 9, 4, 6,
                 10, 5, 7,
                 11, 7, 5
-        };
+        ];
 
         /// <summary>
         /// Generates vertices and indices for an icosahedron mesh.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <param name="vertexBuffer">The vertex buffer of the icosahedron mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the icosahedron mesh.</param>
         /// <param name="size">The size of the icosahedron.</param>
-        public static void CreateIcosahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateIcosahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[20 * 3];
             uint[] indices = new uint[20 * 3];
@@ -119,8 +118,8 @@
                 vcounter += 3;
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }
 }

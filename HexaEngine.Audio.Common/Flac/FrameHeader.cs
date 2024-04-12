@@ -10,7 +10,7 @@
 
     public struct FrameHeader
     {
-        public const ushort SyncCodeConst = 0b11111111111110;
+        internal const ushort SyncCodeConst = 0b11111111111110;
 
         public ushort SyncCode;
         public BlockingStrategy BlockingStrategy;

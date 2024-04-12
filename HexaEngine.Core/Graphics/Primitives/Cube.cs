@@ -14,22 +14,20 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Cube"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
-        public Cube(IGraphicsDevice device) : base(device)
+        public Cube() : base()
         {
         }
 
         /// <summary>
         /// Initializes the cube mesh with vertices and indices.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the cube mesh.
         /// </returns>
-        protected override (VertexBuffer<Vector3>, IndexBuffer<ushort>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vector3>, IndexBuffer<ushort>?) InitializeMesh()
         {
-            VertexBuffer<Vector3> vertexBuffer = new(device, new Vector3[]
-            {
+            VertexBuffer<Vector3> vertexBuffer = new(
+            [
                 new Vector3(-1.0f, 1.0f, -1.0f),
                 new Vector3(-1.0f, -1.0f, -1.0f),
                 new Vector3(1.0f, -1.0f, -1.0f),
@@ -38,17 +36,17 @@
                 new Vector3(-1.0f, 1.0f, 1.0f),
                 new Vector3(1.0f, -1.0f, 1.0f),
                 new Vector3(1.0f, 1.0f, 1.0f)
-            }, CpuAccessFlags.None);
+            ], CpuAccessFlags.None);
 
-            IndexBuffer<ushort> indexBuffer = new(device, new ushort[]
-            {
+            IndexBuffer<ushort> indexBuffer = new(
+            [
                 0,1,2,2,3,0,
                 4,1,0,0,5,4,
                 2,6,7,7,3,2,
                 4,5,7,7,6,4,
                 0,3,7,7,5,0,
                 1,4,2,2,4,6,
-            }, CpuAccessFlags.None);
+            ], CpuAccessFlags.None);
 
             return (vertexBuffer, indexBuffer);
         }

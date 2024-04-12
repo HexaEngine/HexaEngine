@@ -14,8 +14,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Cone"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
-        public Cone(IGraphicsDevice device) : base(device)
+        public Cone() : base()
         {
         }
 
@@ -26,22 +25,22 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the cone mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateCone(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateCone(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
         /// <summary>
         /// Generates vertices and indices for a cone mesh.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
+
         /// <param name="vertexBuffer">The vertex buffer of the cone mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the cone mesh.</param>
         /// <param name="height">The height of the cone.</param>
         /// <param name="diameter">The diameter of the cone.</param>
         /// <param name="tessellation">The level of tessellation for the cone.</param>
-        public static void CreateCone(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
+        public static void CreateCone(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)
             {
@@ -86,8 +85,8 @@
 
             CreateCylinderCap(vertices, indices, ref vcounter, ref icounter, tessellation, height, radius, false);
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
 
         private static Vector3 GetCircleVector(uint i, uint tessellation)

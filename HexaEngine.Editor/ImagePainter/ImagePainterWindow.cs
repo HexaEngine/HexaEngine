@@ -115,7 +115,7 @@
                 PixelShader = "effects/copy/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            colorCB = new(device, CpuAccessFlags.Write);
+            colorCB = new(CpuAccessFlags.Write);
 
             colorPicker.Init(device);
             toolbox.Init(device);

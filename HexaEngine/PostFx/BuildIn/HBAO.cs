@@ -137,8 +137,8 @@ namespace HexaEngine.PostFx.BuildIn
             hbaoParams.Power = power;
             hbaoParams.NoiseScale = viewport.Size / NoiseSize;
 
-            paramsBuffer = new(device, hbaoParams, CpuAccessFlags.Write);
-            intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            paramsBuffer = new(hbaoParams, CpuAccessFlags.Write);
+            intermediateTex = new(Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "HBAO", Format.R32Float);
 
             unsafe
@@ -157,7 +157,7 @@ namespace HexaEngine.PostFx.BuildIn
                     pixelData[i] = new Vector4(MathF.Sin(rand), MathF.Cos(rand), Random.Shared.NextSingle(), 1.0f);
                 }
 
-                noiseTex = new(device, description, initialData);
+                noiseTex = new(description, initialData);
             }
 
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -166,7 +166,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override void Resize(int width, int height)
         {
-            intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex.Resize(Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             viewport = new(width, height);
         }
 

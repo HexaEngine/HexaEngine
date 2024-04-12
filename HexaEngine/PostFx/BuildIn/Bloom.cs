@@ -219,9 +219,9 @@
         {
             this.creator = creator;
 
-            downsampleCBuffer = new(device, CpuAccessFlags.Write);
-            upsampleCBuffer = new(device, CpuAccessFlags.Write);
-            bloomCBuffer = new(device, CpuAccessFlags.Write);
+            downsampleCBuffer = new(CpuAccessFlags.Write);
+            upsampleCBuffer = new(CpuAccessFlags.Write);
+            bloomCBuffer = new(CpuAccessFlags.Write);
 
             linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
@@ -231,8 +231,7 @@
             {
                 try
                 {
-                    lensDirtTex = Texture2D.LoadFromAssets(device, lensDirtAsset);
-                    lensDirtTex.TextureReloaded += TextureReloaded;
+                    lensDirtTex = Texture2D.LoadFromAssets(lensDirtAsset);
                     shaderMacros.Add(new ShaderMacro("LensDirtTex", "1"));
                 }
                 catch (Exception ex)

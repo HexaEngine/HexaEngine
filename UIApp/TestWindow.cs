@@ -1,5 +1,6 @@
 ﻿namespace UIApp
 {
+    using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;

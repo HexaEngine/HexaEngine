@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace HexaEngine
 {
     using System;
     using System.Diagnostics;

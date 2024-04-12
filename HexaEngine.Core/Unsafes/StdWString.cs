@@ -383,31 +383,12 @@
         /// </summary>
         /// <param name="str">The character sequence to check for.</param>
         /// <returns><c>true</c> if the string contains the specified sequence; otherwise, <c>false</c>.</returns>
-        public bool Contains(ReadOnlySpan<char> str)
+        public readonly bool Contains(ReadOnlySpan<char> str)
         {
-            if (str.Length > size)
+            fixed (char* pStr = str)
             {
-                return false;
+                return Utils.Contains(data, size, pStr, str.Length);
             }
-
-            int cmp = 0;
-            for (int i = 0; i < size; i++)
-            {
-                if (data[i] == str[cmp])
-                {
-                    cmp++;
-                    if (cmp == str.Length)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    cmp = 0;
-                }
-            }
-
-            return cmp == str.Length;
         }
 
         /// <summary>
@@ -415,31 +396,12 @@
         /// </summary>
         /// <param name="str">The character sequence to check for.</param>
         /// <returns><c>true</c> if the string contains the specified sequence; otherwise, <c>false</c>.</returns>
-        public bool Contains(ReadOnlySpan<byte> str)
+        public readonly bool Contains(ReadOnlySpan<byte> str)
         {
-            if (str.Length > size)
+            fixed (byte* pStr = str)
             {
-                return false;
+                return Utils.Contains(data, size, pStr, str.Length, x => (char)x);
             }
-
-            int cmp = 0;
-            for (int i = 0; i < size; i++)
-            {
-                if (data[i] == str[cmp])
-                {
-                    cmp++;
-                    if (cmp == str.Length)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    cmp = 0;
-                }
-            }
-
-            return cmp == str.Length;
         }
 
         /// <summary>
@@ -606,29 +568,8 @@
         /// <returns>The index of the first occurrence of the character sequence, or -1 if it is not found.</returns>
         public int Find(ReadOnlySpan<char> str, int pos)
         {
-            if (str.Length > size - pos)
-            {
-                return -1;
-            }
-
-            int cmp = 0;
-            for (int i = pos; i < size; i++)
-            {
-                if (data[i] == str[cmp])
-                {
-                    cmp++;
-                    if (cmp == str.Length)
-                    {
-                        return i - cmp + 1;
-                    }
-                }
-                else
-                {
-                    cmp = 0;
-                }
-            }
-
-            return -1;
+            fixed (char* pStr = str)
+                return Utils.Find(data, size, pStr, str.Length, pos);
         }
 
         /// <summary>
@@ -672,29 +613,8 @@
         /// <returns>The index of the first occurrence of the character sequence, or -1 if it is not found.</returns>
         public int Find(ReadOnlySpan<byte> str, int pos)
         {
-            if (str.Length > size - pos)
-            {
-                return -1;
-            }
-
-            int cmp = 0;
-            for (int i = pos; i < size; i++)
-            {
-                if (data[i] == str[cmp])
-                {
-                    cmp++;
-                    if (cmp == str.Length)
-                    {
-                        return i - cmp + 1;
-                    }
-                }
-                else
-                {
-                    cmp = 0;
-                }
-            }
-
-            return -1;
+            fixed (byte* pStr = str)
+                return Utils.Find(data, size, pStr, str.Length, pos, x => (char)x);
         }
 
         /// <summary>

@@ -12,30 +12,29 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Octahedron"/> class.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
-        public Octahedron(IGraphicsDevice device) : base(device)
+        public Octahedron() : base()
         {
         }
 
         /// <inheritdoc/>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {
-            CreateOctahedron(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateOctahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
         private static readonly Vector3[] verts =
-        {
+        [
             new(1,  0,  0),
             new(-1,  0,  0),
             new(0,  1,  0),
             new(0, -1,  0),
             new(0,  0,  1),
             new(0,  0, -1),
-        };
+        ];
 
         private static readonly uint[] faces =
-        {
+        [
             4, 0, 2,
             4, 2, 1,
             4, 1, 3,
@@ -44,16 +43,15 @@
             5, 1, 2,
             5, 3, 1,
             5, 0, 3
-        };
+        ];
 
         /// <summary>
         /// Creates an octahedron mesh.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <param name="vertexBuffer">The vertex buffer.</param>
         /// <param name="indexBuffer">The index buffer.</param>
         /// <param name="size">The size of the octahedron.</param>
-        public static void CreateOctahedron(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateOctahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
             MeshVertex[] vertices = new MeshVertex[8 * 3];
             uint[] indices = new uint[8 * 3];
@@ -91,8 +89,8 @@
                 vcounter += 3;
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(device, vertices, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(device, indices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }
 }

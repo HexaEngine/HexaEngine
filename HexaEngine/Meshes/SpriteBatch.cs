@@ -12,9 +12,9 @@
 
         private readonly SpriteZIndexComparer comparer = new();
 
-        public SpriteBatch(IGraphicsDevice device)
+        public SpriteBatch()
         {
-            spriteBuffer = new(device, CpuAccessFlags.Write);
+            spriteBuffer = new(CpuAccessFlags.Write);
         }
 
         public StructuredBuffer<SpriteData> Buffer => spriteBuffer;

@@ -12,7 +12,6 @@
     {
         private const int DefaultCapacity = 8;
 
-        private readonly IGraphicsDevice device;
         private readonly string dbgName;
 
         private IBuffer buffer;
@@ -33,9 +32,9 @@
         /// <param name="flags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = DefaultCapacity;
@@ -64,14 +63,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with an array of vertices.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="vertices">An array of vertices to initialize the buffer.</param>
         /// <param name="flags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
-        public VertexBuffer(IGraphicsDevice device, T[] vertices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(T[] vertices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = (uint)vertices.Length;
@@ -106,15 +104,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with a pointer to vertices.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="vertices">A pointer to the vertices to initialize the buffer.</param>
         /// <param name="count">The number of vertices in the buffer.</param>
         /// <param name="flags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
-        public VertexBuffer(IGraphicsDevice device, T* vertices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(T* vertices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = count;
@@ -146,14 +143,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with a specified capacity.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="capacity">The initial capacity of the buffer.</param>
         /// <param name="flags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>
-        public VertexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            this.device = device;
+            var device = Application.GraphicsDevice;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             this.capacity = capacity;
@@ -230,6 +226,7 @@
                 count = capacity < count ? capacity : count;
                 MemoryManager.Unregister(buffer);
                 buffer.Dispose();
+                var device = Application.GraphicsDevice;
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
                 MemoryManager.Register(buffer);

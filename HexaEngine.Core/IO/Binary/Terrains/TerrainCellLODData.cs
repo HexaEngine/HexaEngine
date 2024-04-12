@@ -497,11 +497,11 @@
             return new(idx1, idx2, idx3);
         }
 
-        public IIndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags)
+        public IIndexBuffer CreateIndexBuffer(CpuAccessFlags accessFlags)
         {
             if (indexCount > ushort.MaxValue)
             {
-                return new IndexBuffer<uint>(device, indices, accessFlags);
+                return new IndexBuffer<uint>(indices, accessFlags);
             }
             else
             {
@@ -511,11 +511,11 @@
                     indices[i] = (ushort)this.indices[i];
                 }
 
-                return new IndexBuffer<ushort>(device, indices, accessFlags);
+                return new IndexBuffer<ushort>(indices, accessFlags);
             }
         }
 
-        public unsafe IVertexBuffer CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags)
+        public unsafe IVertexBuffer CreateVertexBuffer(CpuAccessFlags accessFlags)
         {
             var stride = sizeof(TerrainVertex);
             var size = stride * (int)vertexCount;
@@ -532,7 +532,7 @@
                 vertices[i] = vertex;
             }
 
-            VertexBuffer<TerrainVertex> vertexBuffer = new(device, vertices, vertexCount, accessFlags);
+            VertexBuffer<TerrainVertex> vertexBuffer = new(vertices, vertexCount, accessFlags);
             Free(vertices);
             return vertexBuffer;
         }

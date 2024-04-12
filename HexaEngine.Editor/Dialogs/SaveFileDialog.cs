@@ -28,63 +28,23 @@
             public string Name = name;
         }
 
-        public SaveFileDialog()
+        public SaveFileDialog() : this(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), null)
         {
-            string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            if (File.Exists(startingPath))
-            {
-                startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
-            }
-            else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
-            {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
-            }
-
-            currentDir = new DirectoryInfo(startingPath);
-            RootFolder = startingPath;
-            CurrentFolder = startingPath;
-            OnlyAllowFolders = false;
         }
 
-        public SaveFileDialog(string startingPath)
+        public SaveFileDialog(string startingPath) : this(startingPath, null)
         {
-            if (File.Exists(startingPath))
-            {
-                startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
-            }
-            else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
-            {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
-            }
-
-            currentDir = new DirectoryInfo(startingPath);
-            RootFolder = startingPath;
-            CurrentFolder = startingPath;
-            OnlyAllowFolders = false;
         }
 
-        public SaveFileDialog(string? startingPath, string? searchFilter = null)
+        public SaveFileDialog(string? startingPath, string? searchFilter)
         {
-            startingPath ??= Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (File.Exists(startingPath))
             {
                 startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
             }
             else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
             {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
+                startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             }
 
             if (searchFilter != null)

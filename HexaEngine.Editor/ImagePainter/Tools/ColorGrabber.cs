@@ -23,8 +23,8 @@
             {
                 Path = "tools/image/grabber/cs.hlsl"
             });
-            mousePosBuffer = new(device, CpuAccessFlags.Write);
-            resultBuffer = new(device, 1, CpuAccessFlags.Read);
+            mousePosBuffer = new(CpuAccessFlags.Write);
+            resultBuffer = new(1, CpuAccessFlags.Read);
         }
 
         public override void DrawSettings()

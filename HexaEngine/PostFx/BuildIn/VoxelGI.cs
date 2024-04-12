@@ -56,9 +56,9 @@ namespace HexaEngine.PostFx.BuildIn
             {
                 Rasterizer = RasterizerDescription.CullNone
             });
-            voxelConstantBuffer = new(device, CpuAccessFlags.Write);
-            lights = new(device, (int)VoxelizeMaxLights, CpuAccessFlags.Write);
-            voxels = new(device, VoxelResolution * VoxelResolution * VoxelResolution, CpuAccessFlags.None);
+            voxelConstantBuffer = new(CpuAccessFlags.Write);
+            lights = new((int)VoxelizeMaxLights, CpuAccessFlags.Write);
+            voxels = new(VoxelResolution * VoxelResolution * VoxelResolution, CpuAccessFlags.None);
         }
 
         public void Update(IGraphicsContext context, Camera camera)
@@ -130,7 +130,7 @@ namespace HexaEngine.PostFx.BuildIn
             lights.Update(context);
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public void Draw(IGraphicsContext context)
         {
             context.SetRenderTargetsAndUnorderedAccessViews(null, null, 0, voxels.UAV);
             context.PSSetShaderResource(1, lights.SRV);

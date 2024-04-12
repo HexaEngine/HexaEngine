@@ -16,7 +16,7 @@
         private Task outputTask;
         private Task errorTask;
         private Task inputTask;
-        private AutoResetEvent inputSignal = new(false);
+        private readonly AutoResetEvent inputSignal = new(false);
 #nullable disable
 
         /// <summary>
@@ -70,6 +70,20 @@
             get; private set;
         }
 
+        private static string EscapeMetacharacters(string input)
+        {
+            // Liste der Metazeichen, die möglicherweise in einer Shell verwendet werden können
+            string[] metacharacters = ["&", "|", "<", ">", "^", "(", ")", "%", "!", "'", ";", "{", "}", "[", "]", "$", "`", "~", "*", "?", "#", "@"];
+
+            // Durchgehen jedes Metazeichens und escapen es in der Eingabe
+            foreach (string metacharacter in metacharacters)
+            {
+                input = input.Replace(metacharacter, "\\" + metacharacter);
+            }
+
+            return input;
+        }
+
         /// <summary>
         /// Asynchronously executes the managed console application with the specified command-line arguments.
         /// </summary>
@@ -79,13 +93,12 @@
         {
             if (Running)
             {
-                throw new InvalidOperationException(
-                    "Process is still Running. Please wait for the process to complete.");
+                throw new InvalidOperationException("Process is still Running. Please wait for the process to complete.");
             }
 
             string arguments = string.Join(" ", args);
 
-            process.StartInfo.Arguments = arguments;
+            process.StartInfo.Arguments = EscapeMetacharacters(arguments);
 
             process.Start();
             process.StandardInput.AutoFlush = true;

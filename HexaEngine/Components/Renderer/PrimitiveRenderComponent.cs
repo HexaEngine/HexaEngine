@@ -47,7 +47,7 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            renderer = new(device);
+            renderer = new();
 
             UpdateModel();
         }

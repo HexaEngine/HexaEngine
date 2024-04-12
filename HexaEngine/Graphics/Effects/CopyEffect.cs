@@ -54,7 +54,7 @@
             }
 
             samplerState = device.CreateSamplerState(description);
-            paramBuffer = new(device, CpuAccessFlags.Write);
+            paramBuffer = new(CpuAccessFlags.Write);
         }
 
         public CopyEffect(IGraphResourceBuilder creator, string name, CopyFilter filter)
@@ -92,7 +92,7 @@
             }
 
             samplerState = device.CreateSamplerState(description);
-            paramBuffer = new(device, CpuAccessFlags.Write);
+            paramBuffer = new(CpuAccessFlags.Write);
         }
 
         public void Copy(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, Vector2 srcSize)

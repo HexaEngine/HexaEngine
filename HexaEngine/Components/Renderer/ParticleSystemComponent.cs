@@ -175,7 +175,7 @@
 
                 if (FileSystem.Exists(path))
                 {
-                    component.particleTexture = new(device, new TextureFileDescription(path));
+                    component.particleTexture = new(new TextureFileDescription(path));
                     component.emitter.ParticleTexture = component.particleTexture;
                     component.emitter.ResetEmitter = true;
                     component.Loaded = true;

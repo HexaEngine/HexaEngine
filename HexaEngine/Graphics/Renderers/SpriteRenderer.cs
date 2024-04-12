@@ -28,7 +28,7 @@
             {
                 Topology = PrimitiveTopology.TriangleStrip
             });
-            constantBuffer = new(device, CpuAccessFlags.Write);
+            constantBuffer = new(CpuAccessFlags.Write);
         }
 
         public void Draw(IGraphicsContext context, SpriteBatch batch, SpriteAtlas atlas, Matrix4x4 transform)

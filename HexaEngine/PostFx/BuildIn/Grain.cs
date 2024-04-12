@@ -80,7 +80,7 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",

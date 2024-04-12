@@ -162,7 +162,7 @@ namespace HexaEngine.PostFx.BuildIn
             lumaAvg.Tau = tau;
             lumaAvg.Padd = default;
 
-            lumaAvgParams = new(device, lumaAvg, CpuAccessFlags.Write);
+            lumaAvgParams = new(lumaAvg, CpuAccessFlags.Write);
 
             LumaParams luma;
             luma.MinLogLuminance = minLogLuminance;
@@ -170,7 +170,7 @@ namespace HexaEngine.PostFx.BuildIn
             luma.InputWidth = (uint)width;
             luma.InputHeight = (uint)height;
 
-            lumaParams = new(device, luma, CpuAccessFlags.Write);
+            lumaParams = new(luma, CpuAccessFlags.Write);
 
             lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
             lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));

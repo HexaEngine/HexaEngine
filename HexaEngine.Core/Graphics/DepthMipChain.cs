@@ -29,11 +29,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepthMipChain"/> class.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="desc">A description of the depth-stencil buffer.</param>
         /// <param name="filename">The name of the source file (automatically generated).</param>
         /// <param name="lineNumber">The line number in the source file (automatically generated).</param>
-        public DepthMipChain(IGraphicsDevice device, DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthMipChain(DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DepthMipChain: {Path.GetFileName(filename)}, Line: {lineNumber}";
             width = desc.Width;
@@ -41,7 +40,9 @@
 
             mipLevels = desc.MipLevels == 0 ? TextureHelper.ComputeMipLevels(desc.Width, desc.Height) : desc.MipLevels;
 
-            texture = new(device, Format.R32Float, desc.Width, desc.Height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
+            var device = Application.GraphicsDevice;
+
+            texture = new(Format.R32Float, desc.Width, desc.Height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
             texture.DebugName = dbgName;
             srv = device.CreateShaderResourceView(texture);
             srv.DebugName = dbgName + ".SRV";
@@ -74,7 +75,7 @@
         /// <param name="height">The height of the depth texture.</param>
         /// <param name="filename">The name of the source file (automatically generated).</param>
         /// <param name="lineNumber">The line number in the source file (automatically generated).</param>
-        public DepthMipChain(IGraphicsDevice device, int width, int height, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthMipChain(int width, int height, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DepthMipChain: {Path.GetFileName(filename)}, Line: {lineNumber}";
             this.width = width;
@@ -82,7 +83,9 @@
 
             mipLevels = TextureHelper.ComputeMipLevels(width, height);
 
-            texture = new(device, Format.R32Float, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
+            var device = Application.GraphicsDevice;
+
+            texture = new(Format.R32Float, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
             texture.DebugName = dbgName;
             srv = device.CreateShaderResourceView(texture);
             srv.DebugName = dbgName + ".SRV";
@@ -153,7 +156,7 @@
         /// <param name="device">The graphics device for rendering.</param>
         /// <param name="width">The new width for the depth mip chain.</param>
         /// <param name="height">The new height for the depth mip chain.</param>
-        public void Resize(IGraphicsDevice device, int width, int height)
+        public void Resize(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -171,7 +174,9 @@
 
             mipLevels = TextureHelper.ComputeMipLevels(width, height);
 
-            texture.Resize(device, Format.R32Float, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
+            var device = Application.GraphicsDevice;
+
+            texture.Resize(Format.R32Float, width, height, 1, mipLevels, CpuAccessFlags.None, GpuAccessFlags.All);
             srv = device.CreateShaderResourceView(texture);
             rtv = device.CreateRenderTargetView(texture);
 

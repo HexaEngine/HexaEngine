@@ -148,6 +148,16 @@
             var importDir = Path.GetDirectoryName(context.SourcePath);
             var sourceDir = context.ImportSourcePath != null ? Path.GetDirectoryName(context.ImportSourcePath) : Path.GetDirectoryName(context.SourcePath);
 
+            if (importDir == null)
+            {
+                throw new InvalidOperationException($"Cannot continue '{nameof(importDir)}' is null.");
+            }
+
+            if (sourceDir == null)
+            {
+                throw new InvalidOperationException($"Cannot continue '{nameof(sourceDir)}' is null.");
+            }
+
             if (Path.GetExtension(context.SourcePath) == ".gltf")
             {
                 string path = Directory.EnumerateFiles(sourceDir, $"{modelName}*.bin").First();
@@ -184,15 +194,15 @@
 
             Guid[]? materialIds = null;
             MaterialFile[]? materials = null;
-            List<string>? texturePaths = null;
-            Dictionary<string, Guid>? texturePathToGuid = null;
+            List<string>? texturePaths = [];
+            Dictionary<string, Guid>? texturePathToGuid = [];
 
             ProgressContext progressContext = new(context, 4);
 
             if (settings.ImportMaterials)
             {
                 progressContext.BeginSubStep((int)scene->MNumMaterials);
-                if (!LoadMaterials(modelName, importDir, scene, context, progressContext, out materialIds, out materials, out texturePaths, out texturePathToGuid))
+                if (!LoadMaterials(modelName, importDir, scene, context, progressContext, out materialIds, out materials, texturePaths, texturePathToGuid))
                 {
                     return false;
                 }
@@ -318,12 +328,10 @@
             return false;
         }
 
-        private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, [MaybeNullWhen(false)] out List<string> texturePaths, [MaybeNullWhen(false)] out Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
             //try
             {
-                texturePaths = [];
-                texturePathToGuid = new();
                 materials = new MaterialFile[scene->MNumMaterials];
                 materialIds = new Guid[scene->MNumMaterials];
                 for (int i = 0; i < scene->MNumMaterials; i++)
@@ -615,6 +623,8 @@
                             case Assimp.MatkeyShaderCompute:
                                 shaders.Add(new(MaterialShaderType.ComputeShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                                 break;
+                            default:
+                                continue;
                         }
                     }
 
@@ -648,8 +658,6 @@
             /*{
                 materials = null;
                 materialIds = null;
-                texturePaths = null;
-                texturePathToGuid = null;
                 Logger.Log(ex);
                 MessageBox.Show("Failed to load materials", ex.Message);
                 return false;
@@ -878,8 +886,9 @@
                             weights[j] = new(mesh.GatherBoneData(j));
                         }
                     }
-
+#nullable disable
                     MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, uvs, normals, tangents, weights);
+#nullable restore
                     mesh.LODs.Add(data);
 
                     Parallel.For(0, 4, j =>
@@ -960,7 +969,7 @@
             return true;
         }
 
-        private unsafe Node WalkNode(Dictionary<string, Node> nameToNode, Dictionary<Pointer<AssimpNode>, Node> pToNode, AssimpNode* node, Node parent)
+        private unsafe Node WalkNode(Dictionary<string, Node> nameToNode, Dictionary<Pointer<AssimpNode>, Node> pToNode, AssimpNode* node, Node? parent)
         {
             string name = node->MName;
 

@@ -18,14 +18,14 @@
         private readonly uint stride;
         private readonly Format indexFormat;
 
-        public Mesh(IResourceFactory factory, ResourceGuid id, IGraphicsDevice device, MeshDesc desc) : base(factory, id)
+        public Mesh(IResourceFactory factory, ResourceGuid id, MeshDesc desc) : base(factory, id)
         {
             data = desc.MeshData;
             lodData = desc.LODData;
             boundingBox = lodData.Box;
             boundingSphere = lodData.Sphere;
-            indexBuffer = lodData.CreateIndexBuffer(device, desc.IndexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
-            vertexBuffer = lodData.CreateVertexBuffer(device, desc.VertexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
+            indexBuffer = lodData.CreateIndexBuffer(desc.IndexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
+            vertexBuffer = lodData.CreateVertexBuffer(desc.VertexDynamic ? CpuAccessFlags.Write : CpuAccessFlags.None);
             stride = vertexBuffer.Stride;
             indexCount = lodData.IndexCount;
             vertexCount = lodData.VertexCount;
