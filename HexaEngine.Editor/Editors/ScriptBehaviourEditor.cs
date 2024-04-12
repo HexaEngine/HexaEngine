@@ -7,12 +7,18 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Scripts;
 
     public class ScriptBehaviourEditor : IObjectEditor
     {
         private ImGuiName guiName = new("Script Behaviour");
         private IObjectEditor? editor;
         private bool changing;
+
+        public ScriptBehaviourEditor()
+        {
+            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
+        }
 
         public string Name => guiName.Name;
 
@@ -30,6 +36,16 @@
 
         public void Dispose()
         {
+            ScriptAssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
+        }
+
+        private void AssembliesUnloaded(object? sender, EventArgs? e)
+        {
+            if (editor != null)
+            {
+                ObjectEditorFactory.DestroyEditor(editor.Type);
+                editor = null;
+            }
         }
 
         public bool Draw(IGraphicsContext context)
