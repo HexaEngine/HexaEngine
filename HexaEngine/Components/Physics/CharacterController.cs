@@ -427,12 +427,18 @@
 
         public void Move(Vector3 displacement, float minDistance, float elapsedTime)
         {
+            Move(displacement, minDistance, elapsedTime, default);
+        }
+
+        public void Move(Vector3 displacement, float minDistance, float elapsedTime, ControllerFilters controllerFilters)
+        {
             if (controller == null)
             {
                 return;
             }
 
-            controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, null, null);
+            PxControllerFilters filters = controllerFilters.filters;
+            controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, &filters, null);
         }
 
         public void InvalidateCache()

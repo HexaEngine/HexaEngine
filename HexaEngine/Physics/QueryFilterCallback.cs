@@ -11,22 +11,22 @@
     {
         internal PxQueryFilterCallback* queryFilterCallback;
         private bool disposedValue;
-        private readonly Func<RigidBody, Pointer<PxFilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback;
-        private readonly Func<Pointer<PxFilterData>, Pointer<PxQueryHit>, PxQueryHitType> postFilter;
+        private readonly Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback;
+        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, PxQueryHitType> postFilter;
 
         public QueryFilterCallback(RigidBody actorToIgnore)
         {
             queryFilterCallback = NativeMethods.create_raycast_filter_callback(actorToIgnore.Actor);
         }
 
-        public QueryFilterCallback(Func<RigidBody, Pointer<PxFilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback)
+        public QueryFilterCallback(Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback)
         {
             this.callback = callback;
-            delegate* unmanaged[Cdecl]<PxRigidActor*, PxFilterData*, PxShape*, uint, void*, PxQueryHitType> pCallback = (delegate* unmanaged[Cdecl]<PxRigidActor*, PxFilterData*, PxShape*, uint, void*, PxQueryHitType>)Marshal.GetFunctionPointerForDelegate(Callback);
-            queryFilterCallback = NativeMethods.create_raycast_filter_callback_func(pCallback, null);
+            delegate* unmanaged[Cdecl]<PxRigidActor*, FilterData*, PxShape*, uint, void*, PxQueryHitType> pCallback = (delegate* unmanaged[Cdecl]<PxRigidActor*, FilterData*, PxShape*, uint, void*, PxQueryHitType>)Marshal.GetFunctionPointerForDelegate(Callback);
+            queryFilterCallback = NativeMethods.create_raycast_filter_callback_func((delegate* unmanaged[Cdecl]<PxRigidActor*, PxFilterData*, PxShape*, uint, void*, PxQueryHitType>)pCallback, null);
         }
 
-        public QueryFilterCallback(Func<RigidBody, Pointer<PxFilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback, Func<Pointer<PxFilterData>, Pointer<PxQueryHit>, PxQueryHitType> postFilter)
+        public QueryFilterCallback(Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback, Func<Pointer<FilterData>, Pointer<QueryHit>, PxQueryHitType> postFilter)
         {
             this.callback = callback;
             this.postFilter = postFilter;
@@ -35,7 +35,7 @@
         }
 
         [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-        private PxQueryHitType Callback(PxRigidActor* actor, PxFilterData* filterData, PxShape* shape, PxHitFlags hitFlags, void* userdata)
+        private PxQueryHitType Callback(PxRigidActor* actor, FilterData* filterData, PxShape* shape, PxHitFlags hitFlags, void* userdata)
         {
             var act = Actor.mapper.GetManagedObject<RigidBody>(actor);
             var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(shape);
@@ -44,7 +44,7 @@
         }
 
         [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-        private PxQueryHitType PostFilter(PxFilterData* filterData, PxQueryHit* hit, void* userdata)
+        private PxQueryHitType PostFilter(FilterData* filterData, QueryHit* hit, void* userdata)
         {
             return postFilter(filterData, hit);
         }

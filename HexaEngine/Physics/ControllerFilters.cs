@@ -2,15 +2,42 @@
 {
     using MagicPhysX;
 
-    public unsafe class ControllerFilters
+    public unsafe struct ControllerFilters(FilterData* filterData, QueryFilterCallback? queryFilterCallback, ControllerFilterCallbacks? controllerFilterCallbacks)
     {
-        internal PxControllerFilters* filters;
+        private QueryFilterCallback? queryFilterCallback = queryFilterCallback;
+        private ControllerFilterCallbacks? controllerFilterCallbacks = controllerFilterCallbacks;
+        internal PxControllerFilters filters = NativeMethods.PxControllerFilters_new((PxFilterData*)filterData, queryFilterCallback == null ? null : queryFilterCallback.queryFilterCallback, controllerFilterCallbacks == null ? null : controllerFilterCallbacks.controllerFilterCallback);
 
-        public ControllerFilters(QueryFilterCallback? queryFilterCallback)
+        public QueryFlags FilterFlags
         {
-            PxFilterData* pFilterData = AllocT<PxFilterData>();
+            readonly get => Helper.Convert(filters.mFilterFlags);
+            set => filters.mFilterFlags = Helper.Convert(value);
+        }
 
-            NativeMethods.PxControllerFilters_new(pFilterData, queryFilterCallback == null ? null : queryFilterCallback.queryFilterCallback, null);
+        public FilterData* FilterData
+        {
+            readonly get => (FilterData*)filters.mFilterData;
+            set => filters.mFilterData = (PxFilterData*)value;
+        }
+
+        public QueryFilterCallback? FilterCallback
+        {
+            readonly get => queryFilterCallback;
+            set
+            {
+                queryFilterCallback = value;
+                filters.mFilterCallback = value == null ? null : value.queryFilterCallback;
+            }
+        }
+
+        public ControllerFilterCallbacks? CCTFilterCallback
+        {
+            readonly get => controllerFilterCallbacks;
+            set
+            {
+                controllerFilterCallbacks = value;
+                filters.mCCTFilterCallback = value == null ? null : value.controllerFilterCallback;
+            }
         }
     }
 }

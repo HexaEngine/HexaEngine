@@ -3,6 +3,7 @@
     using HexaEngine.Mathematics;
     using MagicPhysX;
     using System.Numerics;
+    using YamlDotNet.Core.Tokens;
 
     public static class Helper
     {
@@ -199,6 +200,90 @@
             {
                 result |= PxQueryFlags.Reserved;
             }
+            return result;
+        }
+
+        public static QueryFlags Convert(PxQueryFlags value)
+        {
+            QueryFlags result = 0;
+            if ((value & PxQueryFlags.Static) != 0)
+            {
+                result |= QueryFlags.Static;
+            }
+            if ((value & PxQueryFlags.Dynamic) != 0)
+            {
+                result |= QueryFlags.Dynamic;
+            }
+            if ((value & PxQueryFlags.Prefilter) != 0)
+            {
+                result |= QueryFlags.Prefilter;
+            }
+            if ((value & PxQueryFlags.Postfilter) != 0)
+            {
+                result |= QueryFlags.Postfilter;
+            }
+            if ((value & PxQueryFlags.AnyHit) != 0)
+            {
+                result |= QueryFlags.AnyHit;
+            }
+            if ((value & PxQueryFlags.NoBlock) != 0)
+            {
+                result |= QueryFlags.NoBlock;
+            }
+            if ((value & PxQueryFlags.DisableHardcodedFilter) != 0)
+            {
+                result |= QueryFlags.DisableHardcodedFilter;
+            }
+            if ((value & PxQueryFlags.Reserved) != 0)
+            {
+                result |= QueryFlags.Reserved;
+            }
+            return result;
+        }
+
+        public static FilterFlags Convert(PxFilterFlags filterFlags)
+        {
+            FilterFlags result = 0;
+            if ((filterFlags & PxFilterFlags.Kill) != 0)
+            {
+                result |= FilterFlags.Kill;
+            }
+            if ((filterFlags & PxFilterFlags.Suppress) != 0)
+            {
+                result |= FilterFlags.Suppress;
+            }
+            if ((filterFlags & PxFilterFlags.Notify) != 0)
+            {
+                result |= FilterFlags.Notify;
+            }
+            if ((filterFlags & PxFilterFlags.Callback) != 0)
+            {
+                result |= FilterFlags.Callback;
+            }
+
+            return result;
+        }
+
+        public static PxFilterFlags Convert(FilterFlags filterFlags)
+        {
+            PxFilterFlags result = 0;
+            if ((filterFlags & FilterFlags.Kill) != 0)
+            {
+                result |= PxFilterFlags.Kill;
+            }
+            if ((filterFlags & FilterFlags.Suppress) != 0)
+            {
+                result |= PxFilterFlags.Suppress;
+            }
+            if ((filterFlags & FilterFlags.Notify) != 0)
+            {
+                result |= PxFilterFlags.Notify;
+            }
+            if ((filterFlags & FilterFlags.Callback) != 0)
+            {
+                result |= PxFilterFlags.Callback;
+            }
+
             return result;
         }
     }
