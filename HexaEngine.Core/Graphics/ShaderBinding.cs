@@ -1,9 +1,11 @@
 namespace HexaEngine.Core.Graphics
 {
+    using System;
+
     /// <summary>
     /// Represents a shader binding with a name, type, shader stage, and slot.
     /// </summary>
-    public struct ShaderBinding
+    public struct ShaderBinding : IEquatable<ShaderBinding>
     {
         /// <summary>
         /// Gets or sets the name of the binding.
@@ -31,6 +33,33 @@ namespace HexaEngine.Core.Graphics
             Name = name;
             Stage = stage;
             Slot = slot;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ShaderBinding binding && Equals(binding);
+        }
+
+        public readonly bool Equals(ShaderBinding other)
+        {
+            return Name == other.Name &&
+                   Stage == other.Stage &&
+                   Slot == other.Slot;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Name, Stage, Slot);
+        }
+
+        public static bool operator ==(ShaderBinding left, ShaderBinding right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ShaderBinding left, ShaderBinding right)
+        {
+            return !(left == right);
         }
     }
 }

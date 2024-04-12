@@ -4,6 +4,7 @@
 
     public class Ref<T> : IDisposable where T : class, IDisposable
     {
+        private readonly object _lock = new();
         private T? value;
 
         public T? Value
@@ -11,7 +12,7 @@
             get => value;
             set
             {
-                lock (this)
+                lock (_lock)
                 {
                     if (this.value == value)
                     {
@@ -28,7 +29,7 @@
         {
             get
             {
-                lock (this)
+                lock (_lock)
                 {
                     return value == null;
                 }
@@ -39,7 +40,7 @@
 
         public virtual void Dispose()
         {
-            lock (this)
+            lock (_lock)
             {
                 var tmp = value;
                 Value = null; // Set property to raise value changed event.

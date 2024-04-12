@@ -6,12 +6,6 @@
     using System.Numerics;
     using System.Xml.Serialization;
 
-    public enum GraphicsPipelineStateFlags
-    {
-        None = 0,
-        CreateResourceBindingList,
-    }
-
     /// <summary>
     /// Represents the description of a graphics pipeline state.
     /// </summary>

@@ -1,9 +1,11 @@
 namespace HexaEngine.Core.Graphics
 {
+    using System;
+
     /// <summary>
     /// Describes a texture file.
     /// </summary>
-    public struct TextureFileDescription
+    public struct TextureFileDescription : IEquatable<TextureFileDescription>
     {
         /// <summary>
         /// The path to the texture file.
@@ -67,6 +69,37 @@ namespace HexaEngine.Core.Graphics
             BindFlags = bindFlags;
             CPUAccessFlags = cPUAccessFlags;
             ForceSRGB = forceSRGB;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is TextureFileDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(TextureFileDescription other)
+        {
+            return Path == other.Path &&
+                   Dimension == other.Dimension &&
+                   MipLevels == other.MipLevels &&
+                   Usage == other.Usage &&
+                   BindFlags == other.BindFlags &&
+                   CPUAccessFlags == other.CPUAccessFlags &&
+                   ForceSRGB == other.ForceSRGB;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Path, Dimension, MipLevels, Usage, BindFlags, CPUAccessFlags, ForceSRGB);
+        }
+
+        public static bool operator ==(TextureFileDescription left, TextureFileDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TextureFileDescription left, TextureFileDescription right)
+        {
+            return !(left == right);
         }
     }
 }

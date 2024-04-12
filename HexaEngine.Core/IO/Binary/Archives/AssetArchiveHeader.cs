@@ -99,7 +99,7 @@
         /// </summary>
         /// <param name="stream">The output stream.</param>
         /// <param name="encoding">The character encoding.</param>
-        public void Write(Stream stream, Encoding encoding)
+        public readonly void Write(Stream stream, Encoding encoding)
         {
             stream.Write(MagicNumber);
             stream.WriteByte((byte)Endianness);
@@ -125,7 +125,7 @@
         /// </summary>
         /// <param name="encoding">The character encoding.</param>
         /// <returns>The size of the header in bytes.</returns>
-        public int Size(Encoding encoding)
+        public readonly int Size(Encoding encoding)
         {
             return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + Entries.Sum(x => x.Size(encoding));
         }

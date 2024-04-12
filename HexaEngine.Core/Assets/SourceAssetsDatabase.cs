@@ -5,81 +5,6 @@
     using System;
     using System.IO;
 
-    public enum DeleteBehavior
-    {
-        UnlinkChildren,
-        DeleteChildren,
-    }
-
-    public interface IGuidProvider
-    {
-        public Guid ParentGuid { get; }
-
-        Guid GetGuid(string name);
-    }
-
-    public readonly struct DefaultGuidProvider(Guid parentGuid) : IGuidProvider
-    {
-        public static readonly DefaultGuidProvider Instance = new();
-
-        public Guid ParentGuid { get; } = parentGuid;
-
-        public readonly Guid GetGuid(string name) => Guid.NewGuid();
-    }
-
-    public readonly struct GuidProvider(Guid guid, Guid parentGuid) : IGuidProvider
-    {
-        public static readonly DefaultGuidProvider Instance = new();
-        private readonly Guid guid = guid;
-
-        public Guid ParentGuid { get; } = parentGuid;
-
-        public readonly Guid GetGuid(string name) => guid;
-    }
-
-    public enum GuidNotFoundBehavior
-    {
-        GenerateNew,
-        Throw,
-    }
-
-    public readonly struct DictionaryGuidProvider : IGuidProvider
-    {
-        private readonly Guid parent;
-        private readonly Dictionary<string, Guid> dictionary;
-        private readonly GuidNotFoundBehavior behavior;
-
-        public DictionaryGuidProvider(Guid parent, Dictionary<string, Guid> dictionary, GuidNotFoundBehavior behavior)
-        {
-            this.parent = parent;
-            this.dictionary = dictionary;
-            this.behavior = behavior;
-        }
-
-        public Guid ParentGuid => parent;
-
-        public readonly Guid GetGuid(string name)
-        {
-            if (dictionary.TryGetValue(name, out Guid guid))
-            {
-                return guid;
-            }
-
-            switch (behavior)
-            {
-                case GuidNotFoundBehavior.GenerateNew:
-                    guid = Guid.NewGuid();
-                    dictionary[name] = guid;
-                    return guid;
-
-                case GuidNotFoundBehavior.Throw:
-                    throw new KeyNotFoundException();
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-    }
-
     public static class SourceAssetsDatabase
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
@@ -266,6 +191,7 @@
                     System.IO.RenamedEventArgs renamedEvent = (System.IO.RenamedEventArgs)e;
                     Rename(renamedEvent.OldFullPath, renamedEvent.FullPath);
                     break;
+
                 default:
                     return;
             }

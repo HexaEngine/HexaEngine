@@ -135,7 +135,7 @@
         /// Writes the font file header to the specified stream.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
-        public void Write(Stream stream)
+        public readonly void Write(Stream stream)
         {
             stream.Write(MagicNumber);
             stream.WriteByte((byte)Endianness);

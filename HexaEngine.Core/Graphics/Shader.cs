@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Unsafes;
+    using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a shader with its bytecode and length.
     /// </summary>
-    public unsafe struct Shader : IFreeable
+    public unsafe struct Shader : IFreeable, IEquatable<Shader>
     {
         /// <summary>
         /// Pointer to the bytecode of the shader.
@@ -90,6 +91,31 @@
                 Memcpy(Bytecode, ptr, Length, Length);
             }
             return bytes;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is Shader shader && Equals(shader);
+        }
+
+        public readonly bool Equals(Shader other)
+        {
+            return (Bytecode == other.Bytecode);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine((nint)Bytecode);
+        }
+
+        public static bool operator ==(Shader left, Shader right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Shader left, Shader right)
+        {
+            return !(left == right);
         }
     }
 }

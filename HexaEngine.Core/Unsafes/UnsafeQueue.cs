@@ -37,7 +37,7 @@
         /// <summary>
         /// Gets the number of elements in the queue.
         /// </summary>
-        public int Size => size;
+        public readonly int Size => size;
 
         /// <summary>
         /// Gets or sets the capacity of the queue.
@@ -45,7 +45,7 @@
         public int Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => capacity;
+            readonly get => capacity;
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
@@ -178,7 +178,7 @@
         /// <param name="arrayIndex">The starting index in the destination array.</param>
         /// <param name="arraySize">The size of the destination array.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(T* array, uint arrayIndex, uint arraySize)
+        public readonly void CopyTo(T* array, uint arrayIndex, uint arraySize)
         {
             Buffer.MemoryCopy(items, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), size * sizeof(T));
         }

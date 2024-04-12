@@ -1,9 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Describes the configuration for a G-Buffer.
     /// </summary>
-    public struct GBufferDescription
+    public struct GBufferDescription : IEquatable<GBufferDescription>
     {
         /// <summary>
         /// The width of the G-Buffer textures.
@@ -38,6 +41,34 @@
             Height = height;
             Count = count;
             Formats = formats;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is GBufferDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(GBufferDescription other)
+        {
+            return Width == other.Width &&
+                   Height == other.Height &&
+                   Count == other.Count &&
+                   EqualityComparer<Format[]>.Default.Equals(Formats, other.Formats);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Width, Height, Count, Formats);
+        }
+
+        public static bool operator ==(GBufferDescription left, GBufferDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(GBufferDescription left, GBufferDescription right)
+        {
+            return !(left == right);
         }
     }
 }

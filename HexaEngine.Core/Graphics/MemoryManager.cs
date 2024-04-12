@@ -17,7 +17,7 @@
         /// <summary>
         /// Represents an entry tracking a graphics resource and its memory usage.
         /// </summary>
-        public struct MemoryEntry
+        public struct MemoryEntry : IEquatable<MemoryEntry>
         {
             /// <summary>
             /// Gets the associated graphics resource.
@@ -45,6 +45,33 @@
                 Resource = resource;
                 Name = name;
                 Size = size;
+            }
+
+            public override readonly bool Equals(object? obj)
+            {
+                return obj is MemoryEntry entry && Equals(entry);
+            }
+
+            public readonly bool Equals(MemoryEntry other)
+            {
+                return Resource.NativePointer == other.Resource.NativePointer &&
+                       Name == other.Name &&
+                       Size == other.Size;
+            }
+
+            public override readonly int GetHashCode()
+            {
+                return HashCode.Combine(Resource, Name, Size);
+            }
+
+            public static bool operator ==(MemoryEntry left, MemoryEntry right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(MemoryEntry left, MemoryEntry right)
+            {
+                return !(left == right);
             }
         }
 

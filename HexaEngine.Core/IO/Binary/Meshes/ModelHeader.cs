@@ -87,7 +87,7 @@
         /// Writes the header information to a stream.
         /// </summary>
         /// <param name="stream">The stream to which the header data will be written.</param>
-        public void Write(Stream stream)
+        public readonly void Write(Stream stream)
         {
             // Write various properties to the stream
             stream.Write(MagicNumber);

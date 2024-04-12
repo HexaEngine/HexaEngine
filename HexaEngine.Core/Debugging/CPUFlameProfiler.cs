@@ -11,7 +11,7 @@
     public unsafe class CPUFlameProfiler : ICPUFlameProfiler
     {
         private readonly ImGuiWidgetFlameGraph.ValuesGetter getter;
-        private readonly UnsafeList<Entry> entries = new(bufferSize);
+        private readonly UnsafeList<ProfilerEntry> entries = new(bufferSize);
 
         private readonly Dictionary<string, uint> nameToId = new();
         private readonly Dictionary<uint, string> idToName = new();
@@ -51,7 +51,7 @@
         /// <summary>
         /// Gets the current profiling entry.
         /// </summary>
-        public Entry* Current => &entries.Data[currentEntry - 1 < 0 ? bufferSize - 1 : currentEntry - 1];
+        public ProfilerEntry* Current => &entries.Data[currentEntry - 1 < 0 ? bufferSize - 1 : currentEntry - 1];
 
         /// <summary>
         /// Gets the number of profiling stages created.
@@ -67,7 +67,7 @@
         /// Gets or sets a scope by index.
         /// </summary>
         /// <param name="index">The index of the scope to get or set.</param>
-        public ref Scope this[int index]
+        public ref ProfilerScope this[int index]
         {
             get
             {
@@ -79,7 +79,7 @@
         /// Gets or sets a scope by name.
         /// </summary>
         /// <param name="index">The name of the scope to get or set.</param>
-        public ref Scope this[string index]
+        public ref ProfilerScope this[string index]
         {
             get
             {
@@ -116,7 +116,7 @@
         /// </summary>
         public void EndFrame()
         {
-            Entry* entry = entries.GetPointer(currentEntry);
+            ProfilerEntry* entry = entries.GetPointer(currentEntry);
 
             for (int i = 0; i < entry->Stages.Size; i++)
             {
@@ -264,7 +264,7 @@
 
         private void ProfilerValueGetter(float* startTimestamp, float* endTimestamp, byte* level, byte** caption, void* data, int idx)
         {
-            var entry = (Entry*)data;
+            var entry = (ProfilerEntry*)data;
             var stage = entry->Stages[idx];
 
             if (startTimestamp != null)

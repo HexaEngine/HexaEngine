@@ -7,7 +7,7 @@
     /// <summary>
     /// Represents a shader macro with a name and definition.
     /// </summary>
-    public struct ShaderMacro
+    public struct ShaderMacro : IEquatable<ShaderMacro>
     {
         /// <summary>
         /// Gets or sets the name of the shader macro.
@@ -48,14 +48,13 @@
         }
 
         /// <inheritdoc/>
-        public readonly override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
-
             return obj is ShaderMacro shaderMacro && Equals(shaderMacro);
         }
 
         /// <inheritdoc/>
-        public readonly override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return HashCode.Combine(Name, Definition);
         }
@@ -71,7 +70,7 @@
         public static bool operator !=(ShaderMacro left, ShaderMacro right) => !left.Equals(right);
 
         /// <inheritdoc/>
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"{Name}: {Definition}";
         }
@@ -102,7 +101,7 @@
         /// <summary>
         /// Writes the <see cref="ShaderMacro"/> to a stream.
         /// </summary>
-        public void Write(Stream stream, Encoding encoder, Endianness endianness)
+        public readonly void Write(Stream stream, Encoding encoder, Endianness endianness)
         {
             stream.WriteString(Name, encoder, endianness);
             stream.WriteString(Definition, encoder, endianness);
@@ -120,7 +119,7 @@
         /// <summary>
         /// Gets the size of the <see cref="ShaderMacro"/> in bytes.
         /// </summary>
-        public int GetSize(Encoder encoder)
+        public readonly int GetSize(Encoder encoder)
         {
             return Name.SizeOf(encoder) + Definition.SizeOf(encoder);
         }

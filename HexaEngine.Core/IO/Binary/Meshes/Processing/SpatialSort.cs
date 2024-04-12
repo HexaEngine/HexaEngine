@@ -97,7 +97,7 @@
             /// <returns>
             /// A value that indicates the relative order of the objects being compared.
             /// </returns>
-            public int CompareTo(Entry other)
+            public readonly int CompareTo(Entry other)
             {
                 if (this > other)
                 {

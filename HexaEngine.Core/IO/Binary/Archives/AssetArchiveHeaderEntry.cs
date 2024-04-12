@@ -63,7 +63,7 @@
         /// <param name="stream">The output stream.</param>
         /// <param name="encoding">The character encoding.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
-        public void Write(Stream stream, Encoding encoding, Endianness endianness)
+        public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteInt32(PartIndex, endianness);
             stream.WriteUInt64((ulong)Type, endianness);
@@ -96,7 +96,7 @@
         /// <param name="dst">The destination span of bytes.</param>
         /// <param name="encoding">The character encoding.</param>
         /// <returns>The number of bytes written.</returns>
-        public int Write(Span<byte> dst, Encoding encoding)
+        public readonly int Write(Span<byte> dst, Encoding encoding)
         {
             BinaryPrimitives.WriteInt32LittleEndian(dst, PartIndex);
             BinaryPrimitives.WriteUInt64LittleEndian(dst[4..], (ulong)Type);
@@ -111,7 +111,7 @@
         /// </summary>
         /// <param name="encoding">The character encoding.</param>
         /// <returns>The size of the header entry in bytes.</returns>
-        public int Size(Encoding encoding)
+        public readonly int Size(Encoding encoding)
         {
             return 8 + 8 + 8 + 8 + encoding.GetByteCount(Path) + 4 + 4;
         }

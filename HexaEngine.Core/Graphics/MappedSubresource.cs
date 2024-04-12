@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a mapped subresource with information about the data pointer, row pitch, and depth pitch.
     /// </summary>
-    public struct MappedSubresource
+    public unsafe struct MappedSubresource : IEquatable<MappedSubresource>
     {
         /// <summary>
         /// Gets or sets a pointer to the mapped data.
@@ -54,6 +56,33 @@
         public readonly unsafe Span<T> AsSpan<T>(int length) where T : unmanaged
         {
             return new Span<T>(PData, length);
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is MappedSubresource subresource && Equals(subresource);
+        }
+
+        public readonly bool Equals(MappedSubresource other)
+        {
+            return PData == other.PData &&
+                   RowPitch == other.RowPitch &&
+                   DepthPitch == other.DepthPitch;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine((nint)PData, RowPitch, DepthPitch);
+        }
+
+        public static bool operator ==(MappedSubresource left, MappedSubresource right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(MappedSubresource left, MappedSubresource right)
+        {
+            return !(left == right);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
     using System.Collections;
+    using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents an unsafe list of elements of type T.
     /// </summary>
     /// <typeparam name="T">The type of the elements.</typeparam>
-    public unsafe struct UnsafeList<T> : IFreeable, IEnumerable<T>, IList<T> where T : unmanaged
+    public unsafe struct UnsafeList<T> : IFreeable, IEnumerable<T>, IList<T>, IEquatable<UnsafeList<T>> where T : unmanaged
     {
         private const uint DefaultCapacity = 4;
 
@@ -709,6 +710,31 @@
         public readonly Span<T> AsSpan()
         {
             return new(pointer, (int)size);
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is UnsafeList<T> list && Equals(list);
+        }
+
+        public readonly bool Equals(UnsafeList<T> other)
+        {
+            return pointer == other.pointer;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine((nint)pointer);
+        }
+
+        public static bool operator ==(UnsafeList<T> left, UnsafeList<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(UnsafeList<T> left, UnsafeList<T> right)
+        {
+            return !(left == right);
         }
     }
 }

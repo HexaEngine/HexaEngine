@@ -1,9 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Describes a render target view.
     /// </summary>
-    public struct RenderTargetViewDescription
+    public struct RenderTargetViewDescription : IEquatable<RenderTargetViewDescription>
     {
         /// <summary>
         /// The data format of the resource.
@@ -280,6 +283,51 @@
             Texture3D.MipSlice = mipSlice;
             Texture3D.FirstWSlice = firstWSlice;
             Texture3D.WSize = wSize;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is RenderTargetViewDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(RenderTargetViewDescription other)
+        {
+            return Format == other.Format &&
+                   ViewDimension == other.ViewDimension &&
+                   Buffer.Equals(other.Buffer) &&
+                   EqualityComparer<Texture1DRenderTargetView>.Default.Equals(Texture1D, other.Texture1D) &&
+                   EqualityComparer<Texture1DArrayRenderTargetView>.Default.Equals(Texture1DArray, other.Texture1DArray) &&
+                   EqualityComparer<Texture2DRenderTargetView>.Default.Equals(Texture2D, other.Texture2D) &&
+                   EqualityComparer<Texture2DArrayRenderTargetView>.Default.Equals(Texture2DArray, other.Texture2DArray) &&
+                   EqualityComparer<Texture2DMultisampledRenderTargetView>.Default.Equals(Texture2DMS, other.Texture2DMS) &&
+                   EqualityComparer<Texture2DMultisampledArrayRenderTargetView>.Default.Equals(Texture2DMSArray, other.Texture2DMSArray) &&
+                   EqualityComparer<Texture3DRenderTargetView>.Default.Equals(Texture3D, other.Texture3D);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Format);
+            hash.Add(ViewDimension);
+            hash.Add(Buffer);
+            hash.Add(Texture1D);
+            hash.Add(Texture1DArray);
+            hash.Add(Texture2D);
+            hash.Add(Texture2DArray);
+            hash.Add(Texture2DMS);
+            hash.Add(Texture2DMSArray);
+            hash.Add(Texture3D);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(RenderTargetViewDescription left, RenderTargetViewDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(RenderTargetViewDescription left, RenderTargetViewDescription right)
+        {
+            return !(left == right);
         }
     }
 }

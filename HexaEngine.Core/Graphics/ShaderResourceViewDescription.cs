@@ -1,9 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents the description of a shader resource view.
     /// </summary>
-    public struct ShaderResourceViewDescription
+    public struct ShaderResourceViewDescription : IEquatable<ShaderResourceViewDescription>
     {
         /// <summary>
         /// The format of the resource.
@@ -355,6 +358,57 @@
             Format = format;
             Texture3D.MostDetailedMip = mostDetailedMip;
             Texture3D.MipLevels = mipLevels;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ShaderResourceViewDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(ShaderResourceViewDescription other)
+        {
+            return Format == other.Format &&
+                   ViewDimension == other.ViewDimension &&
+                   Buffer.Equals(other.Buffer) &&
+                   EqualityComparer<Texture1DShaderResourceView>.Default.Equals(Texture1D, other.Texture1D) &&
+                   EqualityComparer<Texture1DArrayShaderResourceView>.Default.Equals(Texture1DArray, other.Texture1DArray) &&
+                   EqualityComparer<Texture2DShaderResourceView>.Default.Equals(Texture2D, other.Texture2D) &&
+                   EqualityComparer<Texture2DArrayShaderResourceView>.Default.Equals(Texture2DArray, other.Texture2DArray) &&
+                   EqualityComparer<Texture2DMultisampledShaderResourceView>.Default.Equals(Texture2DMS, other.Texture2DMS) &&
+                   EqualityComparer<Texture2DMultisampledArrayShaderResourceView>.Default.Equals(Texture2DMSArray, other.Texture2DMSArray) &&
+                   EqualityComparer<Texture3DShaderResourceView>.Default.Equals(Texture3D, other.Texture3D) &&
+                   EqualityComparer<TextureCubeShaderResourceView>.Default.Equals(TextureCube, other.TextureCube) &&
+                   EqualityComparer<TextureCubeArrayShaderResourceView>.Default.Equals(TextureCubeArray, other.TextureCubeArray) &&
+                   BufferEx.Equals(other.BufferEx);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Format);
+            hash.Add(ViewDimension);
+            hash.Add(Buffer);
+            hash.Add(Texture1D);
+            hash.Add(Texture1DArray);
+            hash.Add(Texture2D);
+            hash.Add(Texture2DArray);
+            hash.Add(Texture2DMS);
+            hash.Add(Texture2DMSArray);
+            hash.Add(Texture3D);
+            hash.Add(TextureCube);
+            hash.Add(TextureCubeArray);
+            hash.Add(BufferEx);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(ShaderResourceViewDescription left, ShaderResourceViewDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ShaderResourceViewDescription left, ShaderResourceViewDescription right)
+        {
+            return !(left == right);
         }
     }
 }

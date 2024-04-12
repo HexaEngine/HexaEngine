@@ -43,7 +43,7 @@
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="endianness">The endianness to use for writing data to the stream.</param>
-        public void Write(Stream stream, Endianness endianness)
+        public readonly void Write(Stream stream, Endianness endianness)
         {
             stream.WriteUInt16(First, endianness);
             stream.WriteUInt16(Second, endianness);

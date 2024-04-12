@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using System;
+    using System.Collections.Generic;
     using System.Numerics;
 
     /// <summary>
@@ -128,7 +130,7 @@
     /// An unsafe generic ring buffer for storing and calculating averages of a specified unmanaged numeric type.
     /// </summary>
     /// <typeparam name="T">The type of values to store in the buffer. Must be an unmanaged type implementing <see cref="INumber{T}"/>.</typeparam>
-    public unsafe struct UnsafeRingBuffer<T> where T : unmanaged, INumber<T>
+    public unsafe struct UnsafeRingBuffer<T> : IEquatable<UnsafeRingBuffer<T>> where T : unmanaged, INumber<T>
     {
         private T* rawValues;
         private T* avgValues;
@@ -245,6 +247,21 @@
             return sum / countT;
         }
 
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is UnsafeRingBuffer<T> buffer && Equals(buffer);
+        }
+
+        public readonly bool Equals(UnsafeRingBuffer<T> other)
+        {
+            return rawValues == other.rawValues;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine((nint)rawValues);
+        }
+
         /// <summary>
         /// Releases the allocated memory for raw and average values and resets the buffer to its default state.
         /// </summary>
@@ -253,6 +270,16 @@
             Free(rawValues);
             Free(avgValues);
             this = default;
+        }
+
+        public static bool operator ==(UnsafeRingBuffer<T> left, UnsafeRingBuffer<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(UnsafeRingBuffer<T> left, UnsafeRingBuffer<T> right)
+        {
+            return !(left == right);
         }
     }
 }

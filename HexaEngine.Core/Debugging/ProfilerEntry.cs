@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Unsafes;
+    using System;
 
     /// <summary>
     /// Represents an entry with timing data and a list of stages.
     /// </summary>
-    public struct Entry
+    public struct ProfilerEntry : IEquatable<ProfilerEntry>
     {
         /// <summary>
         /// Gets or sets the start timestamp of the entry.
@@ -20,13 +21,30 @@
         /// <summary>
         /// Gets or sets the list of stages associated with this entry.
         /// </summary>
-        public UnsafeList<Scope> Stages = new();
+        public UnsafeList<ProfilerScope> Stages = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Entry"/> struct.
+        /// Initializes a new instance of the <see cref="ProfilerEntry"/> struct.
         /// </summary>
-        public Entry()
+        public ProfilerEntry()
         {
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ProfilerEntry entry && Equals(entry);
+        }
+
+        public readonly bool Equals(ProfilerEntry other)
+        {
+            return Start == other.Start &&
+                   End == other.End &&
+                   Stages.Equals(other.Stages);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Start, End, Stages);
         }
 
         /// <summary>
@@ -44,6 +62,16 @@
                 }
             }
             return unchecked((uint)-1);
+        }
+
+        public static bool operator ==(ProfilerEntry left, ProfilerEntry right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ProfilerEntry left, ProfilerEntry right)
+        {
+            return !(left == right);
         }
     }
 }

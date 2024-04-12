@@ -1,9 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a description of a depth-stencil view.
     /// </summary>
-    public struct DepthStencilViewDescription
+    public struct DepthStencilViewDescription : IEquatable<DepthStencilViewDescription>
     {
         /// <summary>
         /// Gets or sets the format of the depth-stencil view.
@@ -219,6 +222,49 @@
                 default:
                     break;
             }
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is DepthStencilViewDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(DepthStencilViewDescription other)
+        {
+            return Format == other.Format &&
+                   ViewDimension == other.ViewDimension &&
+                   Flags == other.Flags &&
+                   EqualityComparer<Texture1DDepthStencilView>.Default.Equals(Texture1D, other.Texture1D) &&
+                   EqualityComparer<Texture1DArrayDepthStencilView>.Default.Equals(Texture1DArray, other.Texture1DArray) &&
+                   EqualityComparer<Texture2DDepthStencilView>.Default.Equals(Texture2D, other.Texture2D) &&
+                   EqualityComparer<Texture2DArrayDepthStencilView>.Default.Equals(Texture2DArray, other.Texture2DArray) &&
+                   EqualityComparer<Texture2DMultisampledDepthStencilView>.Default.Equals(Texture2DMS, other.Texture2DMS) &&
+                   EqualityComparer<Texture2DMultisampledArrayDepthStencilView>.Default.Equals(Texture2DMSArray, other.Texture2DMSArray);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Format);
+            hash.Add(ViewDimension);
+            hash.Add(Flags);
+            hash.Add(Texture1D);
+            hash.Add(Texture1DArray);
+            hash.Add(Texture2D);
+            hash.Add(Texture2DArray);
+            hash.Add(Texture2DMS);
+            hash.Add(Texture2DMSArray);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(DepthStencilViewDescription left, DepthStencilViewDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DepthStencilViewDescription left, DepthStencilViewDescription right)
+        {
+            return !(left == right);
         }
     }
 }

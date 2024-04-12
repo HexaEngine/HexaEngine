@@ -91,17 +91,17 @@
             }
         }
 
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             return obj is AssetRef @ref && Equals(@ref);
         }
 
-        public bool Equals(AssetRef other)
+        public readonly bool Equals(AssetRef other)
         {
             return Guid.Equals(other.Guid);
         }
 
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return HashCode.Combine(Guid);
         }

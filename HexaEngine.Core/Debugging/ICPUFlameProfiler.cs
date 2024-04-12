@@ -12,12 +12,12 @@
         /// </summary>
         /// <param name="index">The index of the scope to get.</param>
         /// <returns>A reference to the profiling scope.</returns>
-        ref Scope this[int index] { get; }
+        ref ProfilerScope this[int index] { get; }
 
         /// <summary>
         /// Gets the pointer to the current entry.
         /// </summary>
-        unsafe Entry* Current { get; }
+        unsafe ProfilerEntry* Current { get; }
 
         /// <summary>
         /// Gets the values getter for an ImGui widget flame graph.

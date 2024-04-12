@@ -7,7 +7,7 @@ namespace HexaEngine.Core.Debugging
     /// <summary>
     /// Represents a command for debugging drawing, used for rendering primitives.
     /// </summary>
-    public unsafe struct DebugDrawCommand
+    public unsafe struct DebugDrawCommand : IEquatable<DebugDrawCommand>
     {
         /// <summary>
         /// Gets or sets the primitive topology used for rendering.
@@ -95,6 +95,37 @@ namespace HexaEngine.Core.Debugging
             }
 
             return Topology == other.Topology && TextureId == other.TextureId && EnableDepth == other.EnableDepth;
+        }
+
+        public override readonly bool Equals(object obj)
+        {
+            return obj is DebugDrawCommand command && Equals(command);
+        }
+
+        public readonly bool Equals(DebugDrawCommand other)
+        {
+            return Topology == other.Topology &&
+                   VertexCount == other.VertexCount &&
+                   IndexCount == other.IndexCount &&
+                   VertexOffset == other.VertexOffset &&
+                   IndexOffset == other.IndexOffset &&
+                   TextureId.Equals(other.TextureId) &&
+                   EnableDepth == other.EnableDepth;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Topology, VertexCount, IndexCount, VertexOffset, IndexOffset, TextureId, EnableDepth);
+        }
+
+        public static bool operator ==(DebugDrawCommand left, DebugDrawCommand right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DebugDrawCommand left, DebugDrawCommand right)
+        {
+            return !(left == right);
         }
     }
 }

@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents a console message with formatting and timestamp information.
     /// </summary>
-    public struct ConsoleMessage
+    public struct ConsoleMessage : IEquatable<ConsoleMessage>
     {
         /// <summary>
         /// Gets or sets the foreground color of the console message.
@@ -75,6 +75,24 @@
             };
         }
 
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ConsoleMessage message && Equals(message);
+        }
+
+        public readonly bool Equals(ConsoleMessage other)
+        {
+            return ForegroundColor == other.ForegroundColor &&
+                   BackgroundColor == other.BackgroundColor &&
+                   Message == other.Message &&
+                   Timestamp == other.Timestamp;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(ForegroundColor, BackgroundColor, Message, Timestamp);
+        }
+
         /// <summary>
         /// Implicitly converts a <see cref="LogMessage"/> to a <see cref="ConsoleMessage"/> with a foreground color based on the log message's severity.
         /// </summary>
@@ -82,6 +100,16 @@
         public static implicit operator ConsoleMessage(LogMessage message)
         {
             return new(GetForegroundFromSeverity(message.Severity), ImGuiConsole.BackgroundColor, message.Message, message.Timestamp.ToShortTimeString());
+        }
+
+        public static bool operator ==(ConsoleMessage left, ConsoleMessage right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ConsoleMessage left, ConsoleMessage right)
+        {
+            return !(left == right);
         }
     }
 }

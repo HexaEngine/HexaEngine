@@ -83,7 +83,7 @@
         /// Deep clones a <see cref="MaterialShader"/> instance.
         /// </summary>
         /// <returns>The deep cloned <see cref="MaterialShader"/> instance.</returns>
-        public MaterialShader Clone()
+        public readonly MaterialShader Clone()
         {
             MaterialShader shader;
             shader.Type = Type;

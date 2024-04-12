@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a log message with severity, message content, and timestamp.
     /// </summary>
-    public struct LogMessage
+    public struct LogMessage : IEquatable<LogMessage>
     {
         /// <summary>
         /// Gets or sets the logger of the log message.
@@ -54,6 +55,34 @@
             Severity = severity;
             Message = message;
             Timestamp = DateTime.Now;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is LogMessage message && Equals(message);
+        }
+
+        public readonly bool Equals(LogMessage other)
+        {
+            return EqualityComparer<ILogger>.Default.Equals(Logger, other.Logger) &&
+                   Severity == other.Severity &&
+                   Message == other.Message &&
+                   Timestamp == other.Timestamp;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Logger, Severity, Message, Timestamp);
+        }
+
+        public static bool operator ==(LogMessage left, LogMessage right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(LogMessage left, LogMessage right)
+        {
+            return !(left == right);
         }
     }
 }

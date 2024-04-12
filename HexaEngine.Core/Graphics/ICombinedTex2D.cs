@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
+    using System;
 
     public interface ICombinedTex2D : IDeviceChild
     {
@@ -15,7 +16,7 @@
         bool IsDSV { get; }
     }
 
-    public struct CombinedTex2DDesc
+    public struct CombinedTex2DDesc : IEquatable<CombinedTex2DDesc>
     {
         public Format Format;
         public int Width;
@@ -51,6 +52,49 @@
             GpuAccessFlags = gpuAccessFlags;
             MiscFlag = miscFlag;
             SampleDescription = SampleDescription.Default;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is CombinedTex2DDesc desc && Equals(desc);
+        }
+
+        public readonly bool Equals(CombinedTex2DDesc other)
+        {
+            return Format == other.Format &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   ArraySize == other.ArraySize &&
+                   MipLevels == other.MipLevels &&
+                   CpuAccessFlags == other.CpuAccessFlags &&
+                   GpuAccessFlags == other.GpuAccessFlags &&
+                   MiscFlag == other.MiscFlag &&
+                   SampleDescription.Equals(other.SampleDescription);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Format);
+            hash.Add(Width);
+            hash.Add(Height);
+            hash.Add(ArraySize);
+            hash.Add(MipLevels);
+            hash.Add(CpuAccessFlags);
+            hash.Add(GpuAccessFlags);
+            hash.Add(MiscFlag);
+            hash.Add(SampleDescription);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(CombinedTex2DDesc left, CombinedTex2DDesc right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CombinedTex2DDesc left, CombinedTex2DDesc right)
+        {
+            return !(left == right);
         }
     }
 }

@@ -73,7 +73,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The index of the position keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetPositionIndex(float animationTime)
+        private readonly int GetPositionIndex(float animationTime)
         {
             for (int index = 0; index < PositionKeyframes.Count - 1; ++index)
             {
@@ -91,7 +91,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The index of the rotation keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetRotationIndex(float animationTime)
+        private readonly int GetRotationIndex(float animationTime)
         {
             for (int index = 0; index < RotationKeyframes.Count - 1; ++index)
             {
@@ -109,7 +109,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The index of the scale keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetScaleIndex(float animationTime)
+        private readonly int GetScaleIndex(float animationTime)
         {
             for (int index = 0; index < ScaleKeyframes.Count - 1; ++index)
             {
@@ -143,7 +143,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The interpolated position matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Matrix4x4 InterpolatePosition(float animationTime)
+        public readonly Matrix4x4 InterpolatePosition(float animationTime)
         {
             if (1 == PositionKeyframes.Count)
             {
@@ -163,7 +163,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The interpolated rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Matrix4x4 InterpolateRotation(float animationTime)
+        public readonly Matrix4x4 InterpolateRotation(float animationTime)
         {
             if (1 == RotationKeyframes.Count)
             {
@@ -184,7 +184,7 @@
         /// <param name="animationTime">The current animation time.</param>
         /// <returns>The interpolated scaling matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Matrix4x4 InterpolateScaling(float animationTime)
+        public readonly Matrix4x4 InterpolateScaling(float animationTime)
         {
             if (1 == ScaleKeyframes.Count)
             {
@@ -204,7 +204,7 @@
         /// <param name="stream">The binary stream to write to.</param>
         /// <param name="encoding">The encoding used for writing strings.</param>
         /// <param name="endianness">The endianness of binary data.</param>
-        public void Write(Stream stream, Encoding encoding, Endianness endianness)
+        public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(NodeName, encoding, endianness);
             stream.WriteInt32((int)PreState, endianness);

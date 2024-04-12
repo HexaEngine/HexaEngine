@@ -26,7 +26,7 @@
     /// <summary>
     /// Represents the persistence state of a cache entry.
     /// </summary>
-    public struct CacheEntryPersistenceState
+    public struct CacheEntryPersistenceState : IEquatable<CacheEntryPersistenceState>
     {
         /// <summary>
         /// Indicates whether the cache entry has been modified and needs to be written back to disk.
@@ -37,6 +37,32 @@
         /// The previous size of the cache entry.
         /// </summary>
         public long OldSize;
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is CacheEntryPersistenceState state && Equals(state);
+        }
+
+        public readonly bool Equals(CacheEntryPersistenceState other)
+        {
+            return IsDirty == other.IsDirty &&
+                   OldSize == other.OldSize;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(IsDirty, OldSize);
+        }
+
+        public static bool operator ==(CacheEntryPersistenceState left, CacheEntryPersistenceState right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CacheEntryPersistenceState left, CacheEntryPersistenceState right)
+        {
+            return !(left == right);
+        }
     }
 
     public unsafe class ThumbnailCacheEntry : IDisposable

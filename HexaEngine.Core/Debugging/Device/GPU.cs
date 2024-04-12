@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Core.Debugging.Device
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a Graphics Processing Unit (GPU) with its associated properties.
     /// </summary>
-    public struct GPU
+    public readonly struct GPU : IEquatable<GPU>
     {
         /// <summary>
         /// Gets the description of the GPU.
@@ -80,6 +82,51 @@
             SharedSystemMemory = sharedSystemMemory;
             AdapterLUID = adapterLUID;
             Flags = flags;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is GPU gPU && Equals(gPU);
+        }
+
+        public bool Equals(GPU other)
+        {
+            return Description == other.Description &&
+                   VendorId == other.VendorId &&
+                   DeviceId == other.DeviceId &&
+                   SubSysId == other.SubSysId &&
+                   Revision == other.Revision &&
+                   DedicatedVideoMemory.Equals(other.DedicatedVideoMemory) &&
+                   DedicatedSystemMemory.Equals(other.DedicatedSystemMemory) &&
+                   SharedSystemMemory.Equals(other.SharedSystemMemory) &&
+                   EqualityComparer<LUID>.Default.Equals(AdapterLUID, other.AdapterLUID) &&
+                   Flags == other.Flags;
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Description);
+            hash.Add(VendorId);
+            hash.Add(DeviceId);
+            hash.Add(SubSysId);
+            hash.Add(Revision);
+            hash.Add(DedicatedVideoMemory);
+            hash.Add(DedicatedSystemMemory);
+            hash.Add(SharedSystemMemory);
+            hash.Add(AdapterLUID);
+            hash.Add(Flags);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(GPU left, GPU right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(GPU left, GPU right)
+        {
+            return !(left == right);
         }
     }
 }

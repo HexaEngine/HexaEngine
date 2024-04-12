@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Core.Debugging.Device
 {
+    using System;
+
     /// <summary>
     /// Represents a locally unique identifier (LUID) with a 64-bit value.
     /// </summary>
-    public struct LUID
+    public struct LUID : IEquatable<LUID>
     {
         /// <summary>
         /// Gets or sets the low-order part of the LUID (32 bits).
@@ -24,6 +26,32 @@
         {
             Low = low;
             High = high;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is LUID lUID && Equals(lUID);
+        }
+
+        public readonly bool Equals(LUID other)
+        {
+            return Low == other.Low &&
+                   High == other.High;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Low, High);
+        }
+
+        public static bool operator ==(LUID left, LUID right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(LUID left, LUID right)
+        {
+            return !(left == right);
         }
     }
 }

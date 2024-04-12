@@ -107,7 +107,7 @@
         /// <summary>
         /// Releases the memory associated with the UnsafeUTF8String.
         /// </summary>
-        public void Release()
+        public readonly void Release()
         {
             Utils.Free(Ptr);
         }
@@ -140,7 +140,7 @@
         /// Returns a string that represents the UnsafeUTF8String.
         /// </summary>
         /// <returns>The string representation of the UnsafeUTF8String.</returns>
-        public override string ToString()
+        public override readonly string ToString()
         {
             return this;
         }

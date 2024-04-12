@@ -26,7 +26,7 @@
         /// </summary>
         /// <typeparam name="T">The type to cast to.</typeparam>
         /// <returns>A new <see cref="Pointer{T}"/> instance.</returns>
-        public Pointer<T> Cast<T>() where T : unmanaged
+        public readonly Pointer<T> Cast<T>() where T : unmanaged
         {
             return new Pointer<T>((T*)Data);
         }
@@ -36,7 +36,7 @@
         /// </summary>
         /// <param name="obj">The <see cref="Pointer"/> to compare with the current object.</param>
         /// <returns><c>true</c> if the current <see cref="Pointer"/> is equal to the other <see cref="Pointer"/>; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             return obj is Pointer pointer && Equals(pointer);
         }
@@ -46,7 +46,7 @@
         /// </summary>
         /// <param name="other">The <see cref="Pointer"/> to compare with the current object.</param>
         /// <returns><c>true</c> if the current <see cref="Pointer"/> is equal to the other <see cref="Pointer"/>; otherwise, <c>false</c>.</returns>
-        public bool Equals(Pointer other)
+        public readonly bool Equals(Pointer other)
         {
             return Data == other.Data;
         }
@@ -105,7 +105,7 @@
         /// Returns the hash code for the <see cref="Pointer"/>.
         /// </summary>
         /// <returns>The hash code for the <see cref="Pointer"/>.</returns>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return ((IntPtr)Data).GetHashCode();
         }
@@ -142,7 +142,7 @@
         /// <summary>
         /// Gets a _value indicating whether the <see cref="Pointer{T}"/> is null.
         /// </summary>
-        public bool IsNull => Data == null;
+        public readonly bool IsNull => Data == null;
 
         /// <summary>
         /// Frees the memory allocated by the <see cref="Pointer{T}"/>.
@@ -157,7 +157,7 @@
         /// Casts the <see cref="Pointer{T}"/> to a <see cref="Pointer"/>.
         /// </summary>
         /// <returns>A new <see cref="Pointer"/> instance.</returns>
-        public Pointer Cast()
+        public readonly Pointer Cast()
         {
             return new Pointer(Data);
         }
@@ -167,7 +167,7 @@
         /// </summary>
         /// <typeparam name="CastTo">The type to cast to.</typeparam>
         /// <returns>A new <see cref="Pointer{CastTo}"/> instance.</returns>
-        public Pointer<CastTo> Cast<CastTo>() where CastTo : unmanaged
+        public readonly Pointer<CastTo> Cast<CastTo>() where CastTo : unmanaged
         {
             return new Pointer<CastTo>((CastTo*)Data);
         }
@@ -177,7 +177,7 @@
         /// </summary>
         /// <param name="obj">The <see cref="Pointer{T}"/> to compare with the current object.</param>
         /// <returns><c>true</c> if the current <see cref="Pointer{T}"/> is equal to the other <see cref="Pointer{T}"/>; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             return obj is Pointer<T> pointer && Equals(pointer);
         }
@@ -187,7 +187,7 @@
         /// </summary>
         /// <param name="other">The <see cref="Pointer{T}"/> to compare with the current object.</param>
         /// <returns><c>true</c> if the current <see cref="Pointer{T}"/> is equal to the other <see cref="Pointer{T}"/>; otherwise, <c>false</c>.</returns>
-        public bool Equals(Pointer<T> other)
+        public readonly bool Equals(Pointer<T> other)
         {
             return Data == other.Data;
         }
@@ -253,7 +253,7 @@
         /// Returns the hash code for the <see cref="Pointer{T}"/>.
         /// </summary>
         /// <returns>The hash code for the <see cref="Pointer{T}"/>.</returns>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return ((IntPtr)Data).GetHashCode();
         }

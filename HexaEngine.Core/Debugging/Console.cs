@@ -124,7 +124,7 @@
                     messages.Remove(messages[0]);
                 }
                 semaphore.Release();
-                scrollToBottom = true;
+                ScrollToBottom();
             }
 
             public async Task LogAsync(LogMessage message)
@@ -141,7 +141,7 @@
                     messages.Remove(messages[0]);
                 }
                 semaphore.Release();
-                scrollToBottom = true;
+                ScrollToBottom();
             }
 
             public void Write(string message)
@@ -175,7 +175,7 @@
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
                     {
                         messages.Add(new(foregroundColor, backgroundColor, message));
-                        scrollToBottom = true;
+                        ScrollToBottom();
                     }
                     else
                     {
@@ -189,6 +189,11 @@
                     messages.Add(new(foregroundColor, backgroundColor, message));
                 }
             }
+        }
+
+        public static void ScrollToBottom()
+        {
+            scrollToBottom = true;
         }
 
         /// <summary>

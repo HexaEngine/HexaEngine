@@ -1,12 +1,14 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Xml.Serialization;
 
     /// <summary>
     /// Represents a description of the bytecode for a graphics pipeline.
     /// </summary>
-    public unsafe struct GraphicsPipelineBytecodeDesc
+    public unsafe struct GraphicsPipelineBytecodeDesc : IEquatable<GraphicsPipelineBytecodeDesc>
     {
         /// <summary>
         /// Gets or sets the vertex shader bytecode.
@@ -104,6 +106,35 @@
         {
             VertexShader = vertexShader;
             PixelShader = pixelShader;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is GraphicsPipelineBytecodeDesc desc && Equals(desc);
+        }
+
+        public readonly bool Equals(GraphicsPipelineBytecodeDesc other)
+        {
+            return VertexShader == other.VertexShader &&
+                   HullShader == other.HullShader &&
+                   DomainShader == other.DomainShader &&
+                   GeometryShader == other.GeometryShader &&
+                   PixelShader == other.PixelShader;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine((nint)VertexShader, (nint)HullShader, (nint)DomainShader, (nint)GeometryShader, (nint)PixelShader);
+        }
+
+        public static bool operator ==(GraphicsPipelineBytecodeDesc left, GraphicsPipelineBytecodeDesc right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(GraphicsPipelineBytecodeDesc left, GraphicsPipelineBytecodeDesc right)
+        {
+            return !(left == right);
         }
     }
 }

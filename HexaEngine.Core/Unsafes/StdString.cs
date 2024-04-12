@@ -559,7 +559,7 @@
         /// <param name="str">The character sequence to search for.</param>
         /// <param name="pos">The starting position for the search.</param>
         /// <returns>The index of the first occurrence of the character sequence, or -1 if it is not found.</returns>
-        public int Find(ReadOnlySpan<char> str, int pos)
+        public readonly int Find(ReadOnlySpan<char> str, int pos)
         {
             fixed (char* pStr = str)
                 return Utils.Find(data, size, pStr, str.Length, pos, x => (byte)x);
@@ -604,7 +604,7 @@
         /// <param name="str">The byte sequence to search for.</param>
         /// <param name="pos">The starting position for the search.</param>
         /// <returns>The index of the first occurrence of the byte sequence, or -1 if it is not found.</returns>
-        public int Find(ReadOnlySpan<byte> str, int pos)
+        public readonly int Find(ReadOnlySpan<byte> str, int pos)
         {
             fixed (byte* pStr = str)
                 return Utils.Find(data, size, pStr, str.Length, pos);

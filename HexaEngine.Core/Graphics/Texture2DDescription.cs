@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents the description of a 2D texture.
     /// </summary>
-    public struct Texture2DDescription
+    public struct Texture2DDescription : IEquatable<Texture2DDescription>
     {
         /// <summary>
         /// The width of the texture.
@@ -194,7 +194,7 @@
         /// </summary>
         /// <param name="mipLevel"></param>
         /// <returns></returns>
-        public int GetWidth(int mipLevel = 0)
+        public readonly int GetWidth(int mipLevel = 0)
         {
             return (mipLevel == 0) || (mipLevel < MipLevels) ? Math.Max(1, Width >> mipLevel) : 0;
         }
@@ -204,9 +204,54 @@
         /// </summary>
         /// <param name="mipLevel"></param>
         /// <returns></returns>
-        public int GetHeight(int mipLevel = 0)
+        public readonly int GetHeight(int mipLevel = 0)
         {
             return (mipLevel == 0) || (mipLevel < MipLevels) ? Math.Max(1, Height >> mipLevel) : 0;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is Texture2DDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(Texture2DDescription other)
+        {
+            return Width == other.Width &&
+                   Height == other.Height &&
+                   MipLevels == other.MipLevels &&
+                   ArraySize == other.ArraySize &&
+                   Format == other.Format &&
+                   SampleDescription.Equals(other.SampleDescription) &&
+                   Usage == other.Usage &&
+                   BindFlags == other.BindFlags &&
+                   CPUAccessFlags == other.CPUAccessFlags &&
+                   MiscFlags == other.MiscFlags;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Width);
+            hash.Add(Height);
+            hash.Add(MipLevels);
+            hash.Add(ArraySize);
+            hash.Add(Format);
+            hash.Add(SampleDescription);
+            hash.Add(Usage);
+            hash.Add(BindFlags);
+            hash.Add(CPUAccessFlags);
+            hash.Add(MiscFlags);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(Texture2DDescription left, Texture2DDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Texture2DDescription left, Texture2DDescription right)
+        {
+            return !(left == right);
         }
     }
 }

@@ -75,12 +75,12 @@
             return new(path, family, style, weight);
         }
 
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             return obj is FontFileInfo info && Equals(info);
         }
 
-        public bool Equals(FontFileInfo other)
+        public readonly bool Equals(FontFileInfo other)
         {
             return Path == other.Path &&
                    Family == other.Family &&
@@ -88,7 +88,7 @@
                    Weight == other.Weight;
         }
 
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return HashCode.Combine(Path, Family, Style, Weight);
         }

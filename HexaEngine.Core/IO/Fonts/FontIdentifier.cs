@@ -35,7 +35,7 @@
             return !(left == right);
         }
 
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"{Family}, {Style}, {Weight}";
         }

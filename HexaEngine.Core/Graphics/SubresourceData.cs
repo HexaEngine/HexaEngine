@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents data for a subresource.
     /// </summary>
-    public struct SubresourceData
+    public struct SubresourceData : IEquatable<SubresourceData>
     {
         /// <summary>
         /// The pointer to the data.
@@ -52,9 +52,36 @@
         /// <typeparam name="T">The type of elements in the span.</typeparam>
         /// <param name="length">The length of the span.</param>
         /// <returns>A span of the specified type.</returns>
-        public unsafe Span<T> AsSpan<T>(int length) where T : unmanaged
+        public readonly unsafe Span<T> AsSpan<T>(int length) where T : unmanaged
         {
             return new Span<T>(DataPointer.ToPointer(), length);
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is SubresourceData data && Equals(data);
+        }
+
+        public readonly bool Equals(SubresourceData other)
+        {
+            return DataPointer.Equals(other.DataPointer) &&
+                   RowPitch == other.RowPitch &&
+                   SlicePitch == other.SlicePitch;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(DataPointer, RowPitch, SlicePitch);
+        }
+
+        public static bool operator ==(SubresourceData left, SubresourceData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(SubresourceData left, SubresourceData right)
+        {
+            return !(left == right);
         }
     }
 }

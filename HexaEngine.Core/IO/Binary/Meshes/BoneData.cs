@@ -63,7 +63,7 @@
         /// <param name="stream">The stream to write to.</param>
         /// <param name="encoding">The encoding used for writing strings.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
-        public void Write(Stream stream, Encoding encoding, Endianness endianness)
+        public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(Name, encoding, endianness);
             stream.WriteUInt32((uint)Weights.LongLength, endianness);

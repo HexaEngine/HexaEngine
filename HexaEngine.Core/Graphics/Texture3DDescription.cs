@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents the description of a 3D texture.
     /// </summary>
-    public struct Texture3DDescription
+    public struct Texture3DDescription : IEquatable<Texture3DDescription>
     {
         /// <summary>
         /// The width of the texture.
@@ -153,6 +153,49 @@
             AccessHelper.Convert(cpuAccessFlags, gpuAccessFlags, out Usage, out BindFlags);
             CPUAccessFlags = cpuAccessFlags;
             MiscFlags = miscFlags;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is Texture3DDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(Texture3DDescription other)
+        {
+            return Width == other.Width &&
+                   Height == other.Height &&
+                   Depth == other.Depth &&
+                   MipLevels == other.MipLevels &&
+                   Format == other.Format &&
+                   Usage == other.Usage &&
+                   BindFlags == other.BindFlags &&
+                   CPUAccessFlags == other.CPUAccessFlags &&
+                   MiscFlags == other.MiscFlags;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Width);
+            hash.Add(Height);
+            hash.Add(Depth);
+            hash.Add(MipLevels);
+            hash.Add(Format);
+            hash.Add(Usage);
+            hash.Add(BindFlags);
+            hash.Add(CPUAccessFlags);
+            hash.Add(MiscFlags);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(Texture3DDescription left, Texture3DDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Texture3DDescription left, Texture3DDescription right)
+        {
+            return !(left == right);
         }
     }
 }

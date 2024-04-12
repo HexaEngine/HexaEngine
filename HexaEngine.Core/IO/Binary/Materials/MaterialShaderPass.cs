@@ -71,7 +71,7 @@
         /// Deep clones a <see cref="MaterialShaderPass"/> instance.
         /// </summary>
         /// <returns>The deep cloned <see cref="MaterialShaderPass"/> instance.</returns>
-        public MaterialShaderPass Clone()
+        public readonly MaterialShaderPass Clone()
         {
             MaterialShaderPass pass;
             pass.Name = (string)Name.Clone();

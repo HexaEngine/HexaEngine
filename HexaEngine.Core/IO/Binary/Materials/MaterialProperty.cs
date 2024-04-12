@@ -181,7 +181,7 @@
         /// <param name="dst">The stream to write to.</param>
         /// <param name="encoding">The encoding used for writing strings.</param>
         /// <param name="endianness">The endianness to use for writing.</param>
-        public void Write(Stream dst, Encoding encoding, Endianness endianness)
+        public readonly void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteString(Name, encoding, endianness);
             dst.WriteInt32((int)Type, endianness);
@@ -194,7 +194,7 @@
         /// Gets the float value of the material property.
         /// </summary>
         /// <returns>The float value of the material property.</returns>
-        public float AsFloat()
+        public readonly float AsFloat()
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -210,7 +210,7 @@
         /// Sets the float value of the material property.
         /// </summary>
         /// <param name="value">The float value to set for the material property.</param>
-        public void SetFloat(float value)
+        public readonly void SetFloat(float value)
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -226,7 +226,7 @@
         /// Gets the Vector2 value of the material property.
         /// </summary>
         /// <returns>The Vector2 value of the material property.</returns>
-        public Vector2 AsFloat2()
+        public readonly Vector2 AsFloat2()
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -246,7 +246,7 @@
         /// Sets the Vector2 value of the material property.
         /// </summary>
         /// <param name="value">The Vector2 value to set for the material property.</param>
-        public void SetFloat2(Vector2 value)
+        public readonly void SetFloat2(Vector2 value)
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -264,7 +264,7 @@
         /// Gets the Vector3 value of the material property.
         /// </summary>
         /// <returns>The Vector3 value of the material property.</returns>
-        public Vector3 AsFloat3()
+        public readonly Vector3 AsFloat3()
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -286,7 +286,7 @@
         /// Sets the Vector3 value of the material property.
         /// </summary>
         /// <param name="value">The Vector3 value to set for the material property.</param>
-        public void SetFloat3(Vector3 value)
+        public readonly void SetFloat3(Vector3 value)
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -306,7 +306,7 @@
         /// Gets the Vector4 value of the material property.
         /// </summary>
         /// <returns>The Vector4 value of the material property.</returns>
-        public Vector4 AsFloat4()
+        public readonly Vector4 AsFloat4()
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -330,7 +330,7 @@
         /// Sets the Vector4 value of the material property.
         /// </summary>
         /// <param name="value">The Vector4 value to set for the material property.</param>
-        public void SetFloat4(Vector4 value)
+        public readonly void SetFloat4(Vector4 value)
         {
             if (Endianness == Endianness.LittleEndian)
             {
@@ -352,7 +352,7 @@
         /// Gets the boolean value of the material property.
         /// </summary>
         /// <returns>The boolean value of the material property.</returns>
-        public bool AsBool()
+        public readonly bool AsBool()
         {
             return Data[0] == 1;
         }
@@ -361,7 +361,7 @@
         /// Sets the boolean value of the material property.
         /// </summary>
         /// <param name="value">The boolean value to set for the material property.</param>
-        public void SetBool(bool value)
+        public readonly void SetBool(bool value)
         {
             Data[0] = (byte)(value ? 1 : 0);
         }
@@ -370,7 +370,7 @@
         /// Converts the material property to a <see cref="ShaderMacro"/>.
         /// </summary>
         /// <returns>The <see cref="ShaderMacro"/> representation of the material property.</returns>
-        public ShaderMacro AsShaderMacro()
+        public readonly ShaderMacro AsShaderMacro()
         {
             string definition = string.Empty;
             switch (ValueType)

@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+
     /// <summary>
     /// Describes an unordered access view.
     /// </summary>
-    public struct UnorderedAccessViewDescription
+    public struct UnorderedAccessViewDescription : IEquatable<UnorderedAccessViewDescription>
     {
         /// <summary>
         /// The resource format.
@@ -254,6 +256,38 @@
             Texture3D.MipSlice = mipSlice;
             Texture3D.FirstWSlice = firstWSlice;
             Texture3D.WSize = wSize;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is UnorderedAccessViewDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(UnorderedAccessViewDescription other)
+        {
+            return Format == other.Format &&
+                   ViewDimension == other.ViewDimension &&
+                   Buffer.Equals(other.Buffer) &&
+                   Texture1D.Equals(other.Texture1D) &&
+                   Texture1DArray.Equals(other.Texture1DArray) &&
+                   Texture2D.Equals(other.Texture2D) &&
+                   Texture2DArray.Equals(other.Texture2DArray) &&
+                   Texture3D.Equals(other.Texture3D);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Format, ViewDimension, Buffer, Texture1D, Texture1DArray, Texture2D, Texture2DArray, Texture3D);
+        }
+
+        public static bool operator ==(UnorderedAccessViewDescription left, UnorderedAccessViewDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(UnorderedAccessViewDescription left, UnorderedAccessViewDescription right)
+        {
+            return !(left == right);
         }
     }
 }

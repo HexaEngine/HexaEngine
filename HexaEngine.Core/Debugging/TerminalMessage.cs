@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using System;
     using System.Diagnostics;
 
     /// <summary>
     /// Represents a message to be displayed in a terminal with a specified text, text color, and timestamp.
     /// </summary>
-    public struct TerminalMessage
+    public struct TerminalMessage : IEquatable<TerminalMessage>
     {
         /// <summary>
         /// Gets or sets the text content of the message.
@@ -32,6 +33,33 @@
             Message = message;
             Color = color;
             Timestamp = Stopwatch.GetTimestamp();
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is TerminalMessage message && Equals(message);
+        }
+
+        public readonly bool Equals(TerminalMessage other)
+        {
+            return Message == other.Message &&
+                   Color == other.Color &&
+                   Timestamp == other.Timestamp;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Message, Color, Timestamp);
+        }
+
+        public static bool operator ==(TerminalMessage left, TerminalMessage right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TerminalMessage left, TerminalMessage right)
+        {
+            return !(left == right);
         }
     }
 }

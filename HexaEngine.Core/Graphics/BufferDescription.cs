@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// Describes a buffer resource, which represents a contiguous block of memory.
     /// </summary>
-    public struct BufferDescription
+    public struct BufferDescription : IEquatable<BufferDescription>
     {
         /// <summary>
         /// Gets or sets the size of the buffer in bytes.
@@ -65,6 +66,36 @@
             CPUAccessFlags = cpuAccessFlags;
             MiscFlags = miscFlags;
             StructureByteStride = structureByteStride;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is BufferDescription description && Equals(description);
+        }
+
+        public readonly bool Equals(BufferDescription other)
+        {
+            return ByteWidth == other.ByteWidth &&
+                   Usage == other.Usage &&
+                   BindFlags == other.BindFlags &&
+                   CPUAccessFlags == other.CPUAccessFlags &&
+                   MiscFlags == other.MiscFlags &&
+                   StructureByteStride == other.StructureByteStride;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(ByteWidth, Usage, BindFlags, CPUAccessFlags, MiscFlags, StructureByteStride);
+        }
+
+        public static bool operator ==(BufferDescription left, BufferDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(BufferDescription left, BufferDescription right)
+        {
+            return !(left == right);
         }
     }
 }

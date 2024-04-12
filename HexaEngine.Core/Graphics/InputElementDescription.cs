@@ -160,7 +160,7 @@
         /// <param name="encoding">The character encoding to use when writing the semantic name.</param>
         /// <param name="endianness">The byte order to use when writing the binary data.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(Stream stream, Encoding encoding, Endianness endianness)
+        public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(SemanticName, encoding, endianness);
             stream.WriteInt32(SemanticIndex, endianness);
