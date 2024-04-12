@@ -470,7 +470,7 @@
             {
                 return 0;
             }
-            var stream = File.OpenRead(path);
+            var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             Crc32 crc = new();
             crc.Append(stream);
             Span<byte> buffer = stackalloc byte[4];

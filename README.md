@@ -8,17 +8,18 @@
 
 # Build
 - .NET SDK 8.0
-- CMake<br/>
-Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine.Native
 
 # Features
-- BRDF (Roughness, Metallic, Reflectance, Ao workflow)
-- IBL
+- An integrated Level-Editor
+
+## Rendering
+- BRDF (Roughness, Metallic, Reflectance, AO Workflow)
 - Shadow Mapping (PSM, OSM, CSM) (note: OSM and PSM uses an shadow atlas)
 - Clustered Forward and Clustered Deferred (Hybrid renderer)
 - Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
 - Ambient Occlusion (SSAO, HBAO+, GTAO and ASSAO are comming soon)
-- Level-Editor (still in work, but it's usable)
+
+
 - Physics Engine (multiple usable collider types are already implemented)
 - Plugin System
 - Audio System (Wav-file support)
