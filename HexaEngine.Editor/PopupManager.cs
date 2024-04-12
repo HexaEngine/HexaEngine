@@ -57,14 +57,20 @@
             lock (_lock)
             {
                 if (popups.Count == 0)
+                {
                     return;
+                }
+
                 var popup = popups[^1];
                 popup.Draw();
                 if (!popup.Shown)
                 {
                     popups.RemoveAt(popups.Count - 1);
                     if (popups.Count == 0)
+                    {
                         return;
+                    }
+
                     popups[^1].Show();
                 }
             }

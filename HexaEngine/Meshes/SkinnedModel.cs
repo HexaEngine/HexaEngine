@@ -174,38 +174,53 @@
         public void SetLocal(Matrix4x4 local, uint nodeId)
         {
             if (locals != null)
+            {
                 locals[nodeId] = local;
+            }
         }
 
         public Matrix4x4 GetLocal(uint nodeId)
         {
             if (locals == null)
+            {
                 return Matrix4x4.Identity;
+            }
+
             return locals[nodeId];
         }
 
         public void SetBoneLocal(Matrix4x4 local, uint boneId)
         {
             if (boneLocals != null)
+            {
                 boneLocals[boneId] = local;
+            }
         }
 
         public Matrix4x4 GetBoneLocal(uint boneId)
         {
             if (boneLocals == null)
+            {
                 return Matrix4x4.Identity;
+            }
+
             return boneLocals[boneId];
         }
 
         public int GetNodeIdByName(string name)
         {
             if (plainNodes == null)
+            {
                 return -1;
+            }
+
             for (int i = 0; i < plainNodes.Length; i++)
             {
                 var node = plainNodes[i];
                 if (node.Name == name)
+                {
                     return node.Id;
+                }
             }
             return -1;
         }
@@ -213,12 +228,17 @@
         public int GetBoneIdByName(string name)
         {
             if (bones == null)
+            {
                 return -1;
+            }
+
             for (int i = 0; i < bones.Length; i++)
             {
                 var bone = bones[i];
                 if (bone.Name == name)
+                {
                     return bone.Id;
+                }
             }
             return -1;
         }

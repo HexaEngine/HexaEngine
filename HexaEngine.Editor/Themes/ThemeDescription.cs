@@ -113,7 +113,9 @@
             {
                 ColorEntry colorEntry = Colors[i];
                 if (colorEntry.Name == color)
+                {
                     return colorEntry;
+                }
             }
             return null;
         }

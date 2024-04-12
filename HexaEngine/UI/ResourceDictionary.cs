@@ -85,7 +85,10 @@
         public void BeginInit()
         {
             if (initialized)
+            {
                 throw new InvalidOperationException();
+            }
+
             throw new NotImplementedException();
         }
 

@@ -205,7 +205,10 @@
 
             // Calculate the contribution from the three corners
             var t0 = 0.5f - x0 * x0 - y0 * y0;
-            if (t0 < 0.0f) n0 = 0.0f;
+            if (t0 < 0.0f)
+            {
+                n0 = 0.0f;
+            }
             else
             {
                 t0 *= t0;
@@ -213,7 +216,10 @@
             }
 
             var t1 = 0.5f - x1 * x1 - y1 * y1;
-            if (t1 < 0.0f) n1 = 0.0f;
+            if (t1 < 0.0f)
+            {
+                n1 = 0.0f;
+            }
             else
             {
                 t1 *= t1;
@@ -221,7 +227,10 @@
             }
 
             var t2 = 0.5f - x2 * x2 - y2 * y2;
-            if (t2 < 0.0f) n2 = 0.0f;
+            if (t2 < 0.0f)
+            {
+                n2 = 0.0f;
+            }
             else
             {
                 t2 *= t2;

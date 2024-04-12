@@ -29,7 +29,9 @@
         {
             var scene = SceneManager.Current;
             if (scene == null)
+            {
                 return;
+            }
 
             if (task != null && !task.IsCompleted)
             {

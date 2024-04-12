@@ -620,7 +620,9 @@
                 }
 
                 if (node.Links.Count > 0)
+                {
                     sorted.Add(node);
+                }
             }
         }
 
@@ -883,7 +885,10 @@
                 {
                     var op = table.GetOperation(i);
                     if (op.CanInline && Inline)
+                    {
                         continue;
+                    }
+
                     op.Append(builder, Inline);
                 }
                 Build(root, builder);
@@ -944,7 +949,9 @@
             {
                 var def = definitions[i];
                 if (isMathFunc)
+                {
                     table.AddRef(def.Name, output);
+                }
             }
 
             return output;
@@ -968,7 +975,9 @@
             {
                 var def = definitions[i];
                 if (isMathFunc)
+                {
                     table.AddRef(def.Name, output);
+                }
             }
 
             return output;

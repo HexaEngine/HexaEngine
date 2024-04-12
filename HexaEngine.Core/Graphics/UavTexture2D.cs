@@ -50,9 +50,14 @@
             description = new(format, width, height, arraySize, mipLevels, BindFlags.UnorderedAccess, Usage.Default, CpuAccessFlags.None, 1, 0, miscFlag);
 
             if (isSRV)
+            {
                 description.BindFlags |= BindFlags.ShaderResource;
+            }
+
             if (isRTV)
+            {
                 description.BindFlags |= BindFlags.RenderTarget;
+            }
 
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
@@ -192,9 +197,15 @@
             description = new(format, width, height, arraySize, mipLevels, BindFlags.UnorderedAccess, Usage.Default, CpuAccessFlags.None, 1, 0, miscFlag);
 
             if (isSRV)
+            {
                 description.BindFlags |= BindFlags.ShaderResource;
+            }
+
             if (isRTV)
+            {
                 description.BindFlags |= BindFlags.RenderTarget;
+            }
+
             texture.Dispose();
             uav?.Dispose();
             srv?.Dispose();

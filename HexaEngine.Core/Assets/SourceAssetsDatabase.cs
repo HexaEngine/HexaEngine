@@ -61,7 +61,10 @@
         public readonly Guid GetGuid(string name)
         {
             if (dictionary.TryGetValue(name, out Guid guid))
+            {
                 return guid;
+            }
+
             switch (behavior)
             {
                 case GuidNotFoundBehavior.GenerateNew:
@@ -230,7 +233,10 @@
             {
                 case WatcherChangeTypes.Created:
                     if (!File.Exists(e.FullPath))
+                    {
                         return;
+                    }
+
                     logger.Trace($"Created '{e.FullPath}'");
                     ImportFileAsync(e.FullPath);
                     break;
@@ -242,14 +248,20 @@
 
                 case WatcherChangeTypes.Changed:
                     if (!File.Exists(e.FullPath))
+                    {
                         return;
+                    }
+
                     logger.Trace($"Updated '{e.FullPath}'");
                     UpdateAsync(e.FullPath);
                     break;
 
                 case WatcherChangeTypes.Renamed:
                     if (!File.Exists(e.FullPath))
+                    {
                         return;
+                    }
+
                     logger.Trace($"Renamed '{e.FullPath}'");
                     System.IO.RenamedEventArgs renamedEvent = (System.IO.RenamedEventArgs)e;
                     Rename(renamedEvent.OldFullPath, renamedEvent.FullPath);
@@ -307,7 +319,9 @@
             {
                 var dirName = Path.GetFileName(dir);
                 if (dirName.IsEmpty)
+                {
                     break;
+                }
 
                 if (dirName.StartsWith(".") || dirName.SequenceEqual("bin") || dirName.SequenceEqual("obj"))
                 {
@@ -325,7 +339,9 @@
             }
 
             if (!File.Exists(file))
+            {
                 return false;
+            }
 
             var attributes = File.GetAttributes(file);
 
@@ -778,7 +794,10 @@
             foreach (var file in Directory.EnumerateFiles(folder))
             {
                 if (Path.GetExtension(file.AsSpan()).SequenceEqual(".meta"))
+                {
                     continue;
+                }
+
                 Move(file, Path.Combine(newPath, Path.GetFileName(file)));
             }
 
@@ -1034,7 +1053,9 @@
                 {
                     var asset = sourceAssets[i];
                     if (asset.FilePath == file)
+                    {
                         return asset;
+                    }
                 }
             }
             return null;

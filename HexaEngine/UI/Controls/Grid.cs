@@ -218,14 +218,22 @@
             // first pass, fixed size grid columns and rows, subtract from available space.
             foreach (var column in ColumnDefinitions)
             {
-                if (column.Width.GridUnitType != GridUnitType.Pixel) continue;
+                if (column.Width.GridUnitType != GridUnitType.Pixel)
+                {
+                    continue;
+                }
+
                 float actualWidth = column.ActualWidth = column.NormalizeWidth(column.Width.Value);
                 availableSize.X -= actualWidth;
             }
 
             foreach (var row in RowDefinitions)
             {
-                if (row.Height.GridUnitType != GridUnitType.Pixel) continue;
+                if (row.Height.GridUnitType != GridUnitType.Pixel)
+                {
+                    continue;
+                }
+
                 float actualHeight = row.ActualHeight = row.NormalizeHeight(row.Height.Value);
                 availableSize.Y -= actualHeight;
             }
@@ -242,13 +250,20 @@
                     columnStarCount++;
                     continue;
                 }
-                if (unit == GridUnitType.Pixel) continue;
+                if (unit == GridUnitType.Pixel)
+                {
+                    continue;
+                }
 
                 foreach (var child in GetChildrenInColumn(i))
                 {
                     child.Measure(availableSize);
                     // skip stretch items, would cause wrong layout.
-                    if (child.HorizontalAlignment == HorizontalAlignment.Stretch) continue;
+                    if (child.HorizontalAlignment == HorizontalAlignment.Stretch)
+                    {
+                        continue;
+                    }
+
                     actualWidth = MathF.Max(child.DesiredSize.X, actualWidth);
                 }
 
@@ -269,13 +284,20 @@
                     rowStarCount++;
                     continue;
                 }
-                if (unit == GridUnitType.Pixel) continue;
+                if (unit == GridUnitType.Pixel)
+                {
+                    continue;
+                }
 
                 foreach (var child in GetChildrenInRow(i))
                 {
                     child.Measure(availableSize);
                     // skip stretch items, would cause wrong layout.
-                    if (child.VerticalAlignment == VerticalAlignment.Stretch) continue;
+                    if (child.VerticalAlignment == VerticalAlignment.Stretch)
+                    {
+                        continue;
+                    }
+
                     actualHeight = MathF.Max(child.DesiredSize.Y, actualHeight);
                 }
 
@@ -288,7 +310,9 @@
             foreach (var column in ColumnDefinitions)
             {
                 if (column.Width.GridUnitType != GridUnitType.Star)
+                {
                     continue;
+                }
 
                 column.ActualWidth = column.NormalizeWidth(availableSize.X / (column.Width.Value * columnStarCount));
             }
@@ -296,7 +320,9 @@
             foreach (var row in RowDefinitions)
             {
                 if (row.Height.GridUnitType != GridUnitType.Star)
+                {
                     continue;
+                }
 
                 row.ActualHeight = row.NormalizeHeight(availableSize.Y / (row.Height.Value * rowStarCount));
             }

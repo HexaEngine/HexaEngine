@@ -44,7 +44,9 @@
         public static void CreateCylinder(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)
+            {
                 throw new ArgumentException("tesselation parameter must be at least 3");
+            }
 
             height /= 2;
 

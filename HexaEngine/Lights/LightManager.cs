@@ -189,7 +189,9 @@
                 {
                     var lightSource = activeLights[i];
                     if (lightSource is not Light light)
+                    {
                         continue;
+                    }
 
                     if (!light.ShadowMapEnable || light.ShadowMapUpdateMode != ShadowUpdateMode.OnDemand)
                     {
@@ -208,7 +210,9 @@
             {
                 var lightSource = activeLights[i];
                 if (lightSource is not Light light)
+                {
                     continue;
+                }
 
                 if (light.ShadowMapEnable && !light.InUpdateQueue)
                 {
@@ -242,7 +246,9 @@
             {
                 var lightSource = activeLights[i];
                 if (lightSource is not Light light)
+                {
                     continue;
+                }
 
                 if (light.ShadowMapEnable)
                 {

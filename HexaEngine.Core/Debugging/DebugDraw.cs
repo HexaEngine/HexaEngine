@@ -205,7 +205,10 @@ namespace HexaEngine.Core.Debugging
         public static void ExecuteCommandList(DebugDrawCommandList commandList)
         {
             if (commandList.Type != DebugDrawCommandListType.Deferred)
+            {
                 throw new InvalidOperationException($"CommandList must be type of Deferred, but was {commandList.Type}");
+            }
+
             drawData.CmdLists.Add(commandList);
         }
 

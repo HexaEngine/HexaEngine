@@ -17,10 +17,15 @@
         {
             ArgumentNullException.ThrowIfNull(source);
             if (!source.CanRead)
+            {
                 throw new ArgumentException("Has to be readable", nameof(source));
+            }
+
             ArgumentNullException.ThrowIfNull(destination);
             if (!destination.CanWrite)
+            {
                 throw new ArgumentException("Has to be writable", nameof(destination));
+            }
 
             byte[] buffer = bufferSize >= 0 ? new byte[bufferSize] : throw new ArgumentOutOfRangeException(nameof(bufferSize));
             long totalBytesRead = 0;
@@ -36,7 +41,9 @@
                     progress?.Report(totalBytesRead);
                 }
                 else
+                {
                     break;
+                }
             }
             buffer = null;
         }

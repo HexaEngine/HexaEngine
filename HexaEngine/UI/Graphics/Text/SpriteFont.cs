@@ -45,10 +45,16 @@
             set
             {
                 if (fontSize == value)
+                {
                     return;
+                }
+
                 fontSize = value;
                 if (!hinting)
+                {
                     return;
+                }
+
                 DisposeCore();
                 ReviveCore();
             }
@@ -60,7 +66,10 @@
             set
             {
                 if (hinting == value)
+                {
                     return;
+                }
+
                 hinting = value;
                 DisposeCore();
                 ReviveCore();
@@ -206,7 +215,10 @@
             {
                 uint charcode = textSpan[i];
 
-                if (charcode == '\r') continue;
+                if (charcode == '\r')
+                {
+                    continue;
+                }
 
                 if (charcode == '\n')
                 {
@@ -279,7 +291,10 @@
             {
                 uint charcode = textSpan[i];
 
-                if (charcode == '\r') continue;
+                if (charcode == '\r')
+                {
+                    continue;
+                }
 
                 if (charcode == '\n')
                 {

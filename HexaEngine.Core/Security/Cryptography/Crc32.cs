@@ -43,7 +43,9 @@ namespace HexaEngine.Core.Security.Cryptography
         public Crc32(uint polynomial, uint seed)
         {
             if (!BitConverter.IsLittleEndian)
+            {
                 throw new PlatformNotSupportedException("Not supported on Big Endian processors");
+            }
 
             table = InitializeTable(polynomial);
             this.seed = hash = seed;
@@ -195,22 +197,33 @@ namespace HexaEngine.Core.Security.Cryptography
         private static uint[] InitializeTable(uint polynomial)
         {
             if (polynomial == DefaultPolynomial && defaultTable != null)
+            {
                 return defaultTable;
+            }
 
             var createTable = new uint[256];
             for (var i = 0; i < 256; i++)
             {
                 var entry = (uint)i;
                 for (var j = 0; j < 8; j++)
+                {
                     if ((entry & 1) == 1)
+                    {
                         entry = entry >> 1 ^ polynomial;
+                    }
                     else
+                    {
                         entry >>= 1;
+                    }
+                }
+
                 createTable[i] = entry;
             }
 
             if (polynomial == DefaultPolynomial)
+            {
                 defaultTable = createTable;
+            }
 
             return createTable;
         }
@@ -229,7 +242,10 @@ namespace HexaEngine.Core.Security.Cryptography
         {
             var hash = seed;
             for (var i = start; i < start + size; i++)
+            {
                 hash = hash >> 8 ^ table[buffer[i] ^ hash & 0xff];
+            }
+
             return hash;
         }
 
@@ -247,7 +263,10 @@ namespace HexaEngine.Core.Security.Cryptography
         {
             var hash = seed;
             for (var i = start; i < start + size; i++)
+            {
                 hash = hash >> 8 ^ table[buffer[i] ^ hash & 0xff];
+            }
+
             return hash;
         }
 
@@ -262,7 +281,9 @@ namespace HexaEngine.Core.Security.Cryptography
             var result = BitConverter.GetBytes(uint32);
 
             if (BitConverter.IsLittleEndian)
+            {
                 Array.Reverse(result);
+            }
 
             return result;
         }

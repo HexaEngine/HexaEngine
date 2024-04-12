@@ -167,7 +167,9 @@
         public MaterialData GetMaterial(Guid name)
         {
             if (name == Guid.Empty)
+            {
                 return MaterialData.Empty;
+            }
 
             lock (_lock)
             {

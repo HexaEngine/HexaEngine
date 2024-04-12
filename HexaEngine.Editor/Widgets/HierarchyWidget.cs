@@ -353,7 +353,9 @@
             bool colorText = !searchHidden && !string.IsNullOrEmpty(searchString);
 
             if (colorText)
+            {
                 ImGui.PushStyleColor(ImGuiCol.Text, 0xff0099ff);
+            }
 
             uint col = 0x0;
             ImGui.PushStyleColor(ImGuiCol.HeaderHovered, col);
@@ -366,7 +368,9 @@
             ImGui.PopStyleColor();
 
             if (colorText)
+            {
                 ImGui.PopStyleColor();
+            }
 
             element.IsEditorOpen = isOpen;
             element.IsEditorDisplayed = true;

@@ -65,7 +65,10 @@
         {
             BackendData* bd = GetBackendData();
             if (bd->ClipboardTextData != null)
+            {
                 sdl.Free(bd->ClipboardTextData);
+            }
+
             bd->ClipboardTextData = sdl.GetClipboardText();
             return bd->ClipboardTextData;
         }
@@ -236,7 +239,10 @@
                             int window_x, window_y;
                             var window = sdl.GetWindowFromID(env.Motion.WindowID);
                             if (window == null)
+                            {
                                 SdlCheckError();
+                            }
+
                             sdl.GetWindowPosition(window, &window_x, &window_y);
                             mouse_pos.X += window_x;
                             mouse_pos.Y += window_y;
@@ -269,7 +275,9 @@
                         if (env.Button.Button == Sdl.ButtonX1) { mouse_button = 3; }
                         if (env.Button.Button == Sdl.ButtonX2) { mouse_button = 4; }
                         if (mouse_button == -1)
+                        {
                             break;
+                        }
 
                         io.AddMouseSourceEvent(env.Button.Which == unchecked((uint)-1) ? ImGuiMouseSource.TouchScreen : ImGuiMouseSource.Source);
                         io.AddMouseButtonEvent(mouse_button, env.Type == (int)EventType.Mousebuttondown);
@@ -313,7 +321,10 @@
                             bd->MouseLastLeaveFrame = 0;
                         }
                         if (window_event == WindowEventID.Leave)
+                        {
                             bd->MouseLastLeaveFrame = ImGui.GetFrameCount() + 1;
+                        }
+
                         if (window_event == WindowEventID.FocusGained)
                         {
                             io.AddFocusEvent(true);
@@ -327,17 +338,29 @@
                         {
                             var window = sdl.GetWindowFromID(env.Window.WindowID);
                             if (window == null)
+                            {
                                 SdlCheckError();
+                            }
+
                             ImGuiViewport* viewport = ImGui.FindViewportByPlatformHandle(window);
 
                             if (viewport != null)
                             {
                                 if (window_event == WindowEventID.Close)
+                                {
                                     viewport->PlatformRequestClose = 1;
+                                }
+
                                 if (window_event == WindowEventID.Moved)
+                                {
                                     viewport->PlatformRequestMove = 1;
+                                }
+
                                 if (window_event == WindowEventID.SizeChanged)
+                                {
                                     viewport->PlatformRequestResize = 1;
+                                }
+
                                 return true;
                             }
                         }
@@ -367,8 +390,12 @@
             string sdl_backend = sdl.GetCurrentVideoDriverS();
             string[] global_mouse_whitelist = { "windows", "cocoa", "x11", "DIVE", "VMAN" };
             for (int n = 0; n < global_mouse_whitelist.Length; n++)
+            {
                 if (sdl_backend == global_mouse_whitelist[n])
+                {
                     mouse_can_use_global_state = true;
+                }
+            }
 
             BackendData* bd = AllocT<BackendData>();
             ZeroMemoryT(bd);
@@ -377,7 +404,9 @@
             io.BackendFlags |= ImGuiBackendFlags.HasMouseCursors | ImGuiBackendFlags.HasSetMousePos;
 
             if (mouse_can_use_global_state)
+            {
                 io.BackendFlags |= ImGuiBackendFlags.PlatformHasViewports;
+            }
 
             bd->Window = window;
             bd->Renderer = renderer;
@@ -448,7 +477,9 @@
             // We need SDL_CaptureMouse(), SDL_GetGlobalMouseState() from SDL 2.0.4+ to support multiple viewports.
             // We left the call to ImGui_ImplSDL2_InitPlatformInterface() outside of #ifdef to avoid unused-function warnings.
             if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0 && (io.BackendFlags & ImGuiBackendFlags.PlatformHasViewports) != 0)
+            {
                 InitPlatformInterface(window, sdlGLContext);
+            }
 
             return true;
         }
@@ -461,7 +492,10 @@
         public static unsafe bool InitForVulkan(Window* window)
         {
             if (!Init(window, null, null))
+            {
                 return false;
+            }
+
             BackendData* bd = GetBackendData();
             bd->UseVulkan = true;
             return true;
@@ -491,9 +525,15 @@
             ShutdownPlatformInterface();
 
             if (bd->ClipboardTextData != null)
+            {
                 sdl.Free(bd->ClipboardTextData);
+            }
+
             for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor.Count; cursor_n++)
+            {
                 sdl.FreeCursor(bd->MouseCursors[(int)cursor_n]);
+            }
+
             Free(bd->MouseCursors);
             CloseGamepads();
 
@@ -620,7 +660,9 @@
             {
                 Debug.Assert(manual_gamepads_array != null && manual_gamepads_count > 0);
                 for (int n = 0; n < manual_gamepads_count; n++)
+                {
                     bd->Gamepads.PushBack(manual_gamepads_array[n]);
+                }
             }
             else
             {
@@ -656,7 +698,9 @@
                 GameController* gamepad = bd->Gamepads[i];
                 float vn = Saturate((float)(sdl.GameControllerGetAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
                 if (merged_value < vn)
+                {
                     merged_value = vn;
+                }
             }
             io->AddKeyAnalogEvent(key, merged_value > 0.1f, merged_value);
         }
@@ -692,10 +736,16 @@
 
             // FIXME: Technically feeding gamepad shouldn't depend on this now that they are regular inputs.
             if ((io.ConfigFlags & ImGuiConfigFlags.NavEnableGamepad) == 0)
+            {
                 return;
+            }
+
             io.BackendFlags &= ~ImGuiBackendFlags.HasGamepad;
             if (bd->Gamepads.Size == 0)
+            {
                 return;
+            }
+
             io.BackendFlags |= ImGuiBackendFlags.HasGamepad;
 
             // Update gamepad inputs
@@ -779,10 +829,14 @@
 
             io.DisplaySize = new(w, h);
             if (w > 0 && h > 0)
+            {
                 io.DisplayFramebufferScale = new((float)displayW / w, (float)displayH / h);
+            }
 
             if (bd->WantUpdateMonitors)
+            {
                 UpdateMonitors();
+            }
 
             io.DeltaTime = Time.Delta;
 
@@ -796,9 +850,13 @@
             var mouseCursor = ImGui.GetIO().MouseDrawCursor ? ImGuiMouseCursor.None : ImGui.GetMouseCursor();
 
             if (bd->MouseCanReportHoveredViewport && ImGui.GetDragDropPayload().IsNull)
+            {
                 io.BackendFlags |= ImGuiBackendFlags.HasMouseHoveredViewport;
+            }
             else
+            {
                 io.BackendFlags &= ~ImGuiBackendFlags.HasMouseHoveredViewport;
+            }
 
             UpdateMouseData();
             UpdateMouseCursor();
@@ -859,7 +917,9 @@
                 sdl.GLSetSwapInterval(0).SdlThrowIfNeg();
             }
             if (use_opengl && backup_context != null)
+            {
                 sdl.GLMakeCurrent(vd->Window, backup_context).SdlThrowIfNeg();
+            }
 
             viewport->PlatformHandle = vd->Window;
             viewport->PlatformHandleRaw = null;
@@ -889,9 +949,15 @@
             if (vd != null)
             {
                 if (vd->GLContext != null && vd->WindowOwned)
+                {
                     sdl.GLDeleteContext(vd->GLContext);
+                }
+
                 if (vd->Window != null && vd->WindowOwned)
+                {
                     sdl.DestroyWindow(vd->Window);
+                }
+
                 SdlCheckError();
                 vd->GLContext = null;
                 vd->Window = null;
@@ -972,7 +1038,9 @@
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
             if (vd->GLContext != null)
+            {
                 sdl.GLMakeCurrent(vd->Window, vd->GLContext).SdlThrowIfNeg();
+            }
         }
 
         private static unsafe void SwapBuffers(ImGuiViewport* viewport, void* unknown)

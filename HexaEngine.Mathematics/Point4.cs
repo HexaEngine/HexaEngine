@@ -130,7 +130,10 @@
             get
             {
                 if (index < 0 || index >= Count)
+                {
                     throw new IndexOutOfRangeException($"Index must be smaller than {Count} and larger or equals to 0");
+                }
+
                 return ((int*)Unsafe.AsPointer(ref this))[index];
             }
 
@@ -138,8 +141,9 @@
             set
             {
                 if (index < 0 || index >= Count)
+                {
                     throw new IndexOutOfRangeException($"Index must be smaller than {Count} and larger or equals to 0");
-                ((int*)Unsafe.AsPointer(ref this))[index] = value;
+                } ((int*)Unsafe.AsPointer(ref this))[index] = value;
             }
         }
 

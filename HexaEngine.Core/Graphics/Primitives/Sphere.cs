@@ -43,7 +43,9 @@
         public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false)
         {
             if (tessellation < 3)
+            {
                 throw new ArgumentException("tesselation parameter must be at least 3");
+            }
 
             uint verticalSegments = tessellation;
             uint horizontalSegments = tessellation * 2;

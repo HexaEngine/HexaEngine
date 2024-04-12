@@ -84,7 +84,10 @@
         public string GetDefaultValue()
         {
             if (defaultExpression != null)
+            {
                 return defaultExpression;
+            }
+
             return Type switch
             {
                 PinType.Half => valueX.ToString(CultureInfo.InvariantCulture),

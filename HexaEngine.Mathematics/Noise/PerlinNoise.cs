@@ -86,7 +86,10 @@ namespace HexaEngine.Mathematics.Noise
         private int Inc(int num)
         {
             num++;
-            if (repeat > 0) num %= repeat;
+            if (repeat > 0)
+            {
+                num %= repeat;
+            }
 
             return num;
         }

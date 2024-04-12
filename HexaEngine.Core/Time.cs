@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core
 {
-    using Silk.NET.SDL;
     using System;
     using System.Diagnostics;
 
@@ -79,7 +78,7 @@
         /// Updates the Time system and calculates the delta time.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the delta time is 0 or less than 0.</exception>
-        public static void FrameUpdate()
+        internal static void FrameUpdate()
         {
             Interlocked.Increment(ref frame);
 

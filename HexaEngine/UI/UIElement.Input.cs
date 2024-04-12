@@ -211,7 +211,10 @@
 
         private static void HandleMouseUp(UIElement? sender, MouseButtonEventArgs e)
         {
-            if (sender == null) return;
+            if (sender == null)
+            {
+                return;
+            }
 
             sender.OnMouseUp(e);
 
@@ -231,7 +234,10 @@
 
         private static void HandleMouseDown(UIElement? sender, MouseButtonEventArgs e)
         {
-            if (sender == null) return;
+            if (sender == null)
+            {
+                return;
+            }
 
             if (e.Button == MouseButton.Left)
             {
@@ -256,9 +262,15 @@
 
         private static void HandleMouseEnter(UIElement? sender, MouseEventArgs e)
         {
-            if (sender == null) return;
+            if (sender == null)
+            {
+                return;
+            }
 
-            if (sender.isMouseOver) return;
+            if (sender.isMouseOver)
+            {
+                return;
+            }
 
             sender.isMouseOver = true;
             sender.OnMouseEnter(e);
@@ -266,9 +278,15 @@
 
         private static void HandleMouseLeave(UIElement? sender, MouseEventArgs e)
         {
-            if (sender == null) return;
+            if (sender == null)
+            {
+                return;
+            }
 
-            if (!sender.isMouseOver) return;
+            if (!sender.isMouseOver)
+            {
+                return;
+            }
 
             sender.isMouseOver = false;
             sender.OnMouseLeave(e);
@@ -365,7 +383,9 @@
         internal static bool SetFocus(IInputElement? element)
         {
             if (element == Focused)
+            {
                 return true;
+            }
 
             if (element != null && !element.Focusable)
             {

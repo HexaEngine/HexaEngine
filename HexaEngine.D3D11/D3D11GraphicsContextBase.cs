@@ -47,7 +47,9 @@
         public void BeginEvent(string name)
         {
             fixed (char* pName = name)
+            {
                 DeviceContext.BeginEventInt(pName, 0);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

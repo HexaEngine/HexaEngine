@@ -86,7 +86,9 @@
         public static void OpenFileWith(string? path)
         {
             if (path == null)
+            {
                 return;
+            }
         }
 
         public static void OpenLink(string? path)
@@ -97,7 +99,9 @@
         public static void OpenDirectory(string? path)
         {
             if (path == null)
+            {
                 return;
+            }
 
             if (OperatingSystem.IsWindows())
             {

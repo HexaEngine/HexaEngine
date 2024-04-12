@@ -60,7 +60,9 @@ namespace HexaEngine.Core.UI
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             if (window->SkipItems == 1)
+            {
                 return;
+            }
 
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
             ImGuiContextPtr g = ImGui.GetCurrentContext();
@@ -83,16 +85,23 @@ namespace HexaEngine.Core.UI
             float blockHeight = ImGui.GetTextLineHeight() + style.FramePadding.Y * 2;
             Vector2 labelSize = ImGui.CalcTextSize(label, (byte*)null, true);
             if (graphSize.X == 0.0f)
+            {
                 graphSize.X = ImGui.GetContentRegionAvail().X - (labelSize.X + style.FramePadding.X * 3);
+            }
+
             if (graphSize.Y == 0.0f)
+            {
                 graphSize.Y = labelSize.Y + style.FramePadding.Y * 3 + blockHeight * (maxDepth + 1);
+            }
 
             ImRect frameBB = new() { Min = window->DC.CursorPos, Max = window->DC.CursorPos + graphSize };
             ImRect innerBB = new() { Min = frameBB.Min + style.FramePadding, Max = frameBB.Max - style.FramePadding };
             ImRect totalBB = new() { Min = frameBB.Min, Max = frameBB.Max + new Vector2(labelSize.X > 0.0f ? style.ItemInnerSpacing.X + labelSize.X : 0.0f, 0) };
             ImGui.ItemSizeRect(totalBB, style.FramePadding.Y);
             if (!ImGui.ItemAdd(totalBB, 0, &frameBB, ImGuiItemFlags.None))
+            {
                 return;
+            }
 
             // Determine scale from values if not specified
             if (scaleMin == float.MaxValue || scaleMax == float.MaxValue)
@@ -104,14 +113,24 @@ namespace HexaEngine.Core.UI
                     float v_start, v_end;
                     valuesGetter(&v_start, &v_end, null, null, data, i);
                     if (!float.IsNaN(v_start)) // Check non-NaN values
+                    {
                         vMin = Math.Min(vMin, v_start);
+                    }
+
                     if (!float.IsNaN(v_end)) // Check non-NaN values
+                    {
                         vMax = Math.Max(vMax, v_end);
+                    }
                 }
                 if (scaleMin == float.MaxValue)
+                {
                     scaleMin = vMin;
+                }
+
                 if (scaleMax == float.MaxValue)
+                {
                     scaleMax = vMax;
+                }
             }
 
             ImGui.RenderFrame(frameBB.Min, frameBB.Max, ImGui.GetColorU32(ImGuiCol.FrameBg), true, style.FrameRounding);
@@ -170,9 +189,13 @@ namespace HexaEngine.Core.UI
                         if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                         {
                             if (selected == i)
+                            {
                                 selected = -1;
+                            }
                             else
+                            {
                                 selected = i;
+                            }
                         }
 #pragma warning disable CA2014 // note it's not needed to move you out of the loop the if above only allows one item
                         var args = stackalloc byte[sizeof(float*) * sizeof(byte*)];
@@ -199,10 +222,14 @@ namespace HexaEngine.Core.UI
 
                 // Text overlay
                 if (overlayText != null)
+                {
                     ImGui.RenderTextClipped(new Vector2(frameBB.Min.X, frameBB.Min.Y + style.FramePadding.Y), frameBB.Max, overlayText, (byte*)null, (Vector2*)null, new Vector2(0.5f, 0.0f), null);
+                }
 
                 if (labelSize.X > 0.0f)
+                {
                     ImGui.RenderText(new Vector2(frameBB.Max.X + style.ItemInnerSpacing.X, innerBB.Min.Y), label, (byte*)null, true);
+                }
             }
 
             if (!any_hovered && ImGui.IsItemHovered())

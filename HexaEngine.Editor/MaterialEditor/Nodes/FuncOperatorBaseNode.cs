@@ -35,7 +35,10 @@
         protected override void UpdateMode()
         {
             if (lockType)
+            {
                 return;
+            }
+
             InLeft.Type = mode;
             InRight.Type = mode;
             base.UpdateMode();

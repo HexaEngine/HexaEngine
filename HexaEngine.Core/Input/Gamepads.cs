@@ -128,7 +128,10 @@
         {
             var result = idToGamepads[even.Which].OnAxisMotion(even);
             if (result == null)
+            {
                 return;
+            }
+
             var value = result.Value;
             AxisMotion?.Invoke(value.Gamepad, value.EventArgs);
         }

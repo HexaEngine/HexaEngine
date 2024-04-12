@@ -430,7 +430,9 @@
             for (int i = selectedLineMetrics.Text.Start; i < selectedLineMetrics.Text.End; i++)
             {
                 if (i == index)
+                {
                     break;
+                }
 
                 penX += characterMetrics[i].Width;
             }
@@ -469,7 +471,10 @@
                 if (penX > position.X)
                 {
                     if (Math.Abs(penX - position.X) < Math.Abs(last - position.X))
+                    {
                         return i + 1;
+                    }
+
                     return i;
                 }
             }

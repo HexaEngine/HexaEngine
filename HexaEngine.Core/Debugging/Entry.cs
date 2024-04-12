@@ -39,7 +39,9 @@
             for (uint i = 0; i < Stages.Size; i++)
             {
                 if (Stages[i].Id == id)
+                {
                     return i;
+                }
             }
             return unchecked((uint)-1);
         }

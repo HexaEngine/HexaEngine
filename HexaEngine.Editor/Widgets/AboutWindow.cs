@@ -39,10 +39,26 @@
             ImGui.Dummy(new(0, 20));
 
             ImGui.Indent();
-            if (ImGui.MenuItem("\xE734 HexaEngine on GitHub")) Designer.OpenLink("https://github.com/HexaEngine/HexaEngine");
-            if (ImGui.MenuItem("\xE82D HexaEngine Documentation")) Designer.OpenLink("https://hexaengine.github.io/HexaEngine/");
-            if (ImGui.MenuItem("\xEBE8 Report a bug")) Designer.OpenLink("https://github.com/HexaEngine/HexaEngine/issues");
-            if (ImGui.MenuItem("\xE939 Join our Discord")) Designer.OpenLink("https://discord.gg/VawN5d8HMh");
+            if (ImGui.MenuItem("\xE734 HexaEngine on GitHub"))
+            {
+                Designer.OpenLink("https://github.com/HexaEngine/HexaEngine");
+            }
+
+            if (ImGui.MenuItem("\xE82D HexaEngine Documentation"))
+            {
+                Designer.OpenLink("https://hexaengine.github.io/HexaEngine/");
+            }
+
+            if (ImGui.MenuItem("\xEBE8 Report a bug"))
+            {
+                Designer.OpenLink("https://github.com/HexaEngine/HexaEngine/issues");
+            }
+
+            if (ImGui.MenuItem("\xE939 Join our Discord"))
+            {
+                Designer.OpenLink("https://discord.gg/VawN5d8HMh");
+            }
+
             ImGui.Unindent();
 
             ImGui.Dummy(new(0, 20));

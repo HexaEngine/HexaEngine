@@ -26,7 +26,9 @@
             while (reader.Read())
             {
                 if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "ItemGroup")
+                {
                     break;
+                }
 
                 if (reader.NodeType == XmlNodeType.Element)
                 {

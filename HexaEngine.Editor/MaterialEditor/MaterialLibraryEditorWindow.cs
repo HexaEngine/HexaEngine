@@ -50,7 +50,9 @@
         public void Save()
         {
             if (currentFile == null)
+            {
                 return;
+            }
 
             SaveAs(currentFile);
         }
@@ -63,7 +65,9 @@
         public void SaveAs(string filename)
         {
             if (materialLibrary == null)
+            {
                 return;
+            }
 
             try
             {

@@ -74,7 +74,9 @@
             get
             {
                 if ((Flags & PostFxFlags.AlwaysEnabled) != 0)
+                {
                     return true;
+                }
 
                 return enabled;
             }
@@ -82,10 +84,14 @@
             {
                 // prevent raising a reload event.
                 if ((Flags & PostFxFlags.AlwaysEnabled) != 0)
+                {
                     return;
+                }
 
                 if (value == enabled)
+                {
                     return;
+                }
 
                 enabled = value;
                 dirty = true;
@@ -105,7 +111,10 @@
         void IPostFx.Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             if (initialized)
+            {
                 return;
+            }
+
             Initialize(device, creator, width, height, macros);
             initialized = true;
             dirty = true;
@@ -194,7 +203,11 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSet<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
-            if (target.Equals(value)) return;
+            if (target.Equals(value))
+            {
+                return;
+            }
+
             target = value;
             NotifyPropertyChanged(name);
         }
@@ -208,7 +221,11 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSetAndReload<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
-            if (target.Equals(value)) return;
+            if (target.Equals(value))
+            {
+                return;
+            }
+
             target = value;
             NotifyPropertyChanged(name);
             NotifyReload();

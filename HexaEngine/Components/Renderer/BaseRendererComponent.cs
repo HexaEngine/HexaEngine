@@ -19,7 +19,10 @@
             set
             {
                 if (queueIndex == value)
+                {
                     return;
+                }
+
                 uint old = queueIndex;
                 queueIndex = value;
                 QueueIndexChanged?.Invoke(this, old, value);

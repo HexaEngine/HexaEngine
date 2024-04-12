@@ -42,7 +42,9 @@
         public static void CreateTorus(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, float thickness = 0.333f, uint tessellation = 32)
         {
             if (tessellation < 3)
+            {
                 throw new ArgumentException("tesselation parameter must be at least 3");
+            }
 
             uint stride = tessellation + 1;
 

@@ -66,7 +66,9 @@ namespace HexaEngine.PostFx.BuildIn
             var lightView = LightManager.Current;
 
             if (lightView == null)
+            {
                 return;
+            }
 
             float f = 0.05f / VoxelSize;
 

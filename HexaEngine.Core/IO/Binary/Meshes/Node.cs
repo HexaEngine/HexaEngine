@@ -238,7 +238,9 @@
         public void CountBones(ref int count)
         {
             if ((Flags & NodeFlags.Bone) != 0)
+            {
                 count++;
+            }
 
             for (int i = 0; i < Children.Count; i++)
             {
@@ -362,7 +364,10 @@
         public Matrix4x4 GetGlobalTransform()
         {
             if (Parent == null)
+            {
                 return Transform;
+            }
+
             return Transform * Parent.GetGlobalTransform();
         }
 
@@ -374,7 +379,10 @@
         public Matrix4x4 GetGlobalTransform(Matrix4x4 root)
         {
             if (Parent == null)
+            {
                 return Transform * root;
+            }
+
             return Transform * Parent.GetGlobalTransform(root);
         }
 

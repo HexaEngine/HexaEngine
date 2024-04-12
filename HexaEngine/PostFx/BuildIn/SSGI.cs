@@ -253,7 +253,9 @@
         public override void Draw(IGraphicsContext context)
         {
             if (Output == null)
+            {
                 return;
+            }
 
             context.ClearRenderTargetView(ssgiBuffer.Value, default);
 

@@ -55,7 +55,9 @@
             {
                 var lightSource = activeLights[i];
                 if (lightSource is not Light light)
+                {
                     continue;
+                }
 
                 if (light.ShadowMapEnable)
                 {

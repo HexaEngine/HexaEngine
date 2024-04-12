@@ -51,10 +51,16 @@
             set
             {
                 if (fontSize == value)
+                {
                     return;
+                }
+
                 fontSize = value;
                 if (!hinting)
+                {
                     return;
+                }
+
                 DisposeCore();
                 ReviveCore();
             }
@@ -66,7 +72,10 @@
             set
             {
                 if (hinting == value)
+                {
                     return;
+                }
+
                 hinting = value;
                 DisposeCore();
                 ReviveCore();
@@ -266,7 +275,10 @@
             // https://ttnghia.github.io/pdf/QuadraticApproximation.pdf
             // https://doi.org/10.1145/3406178
 
-            if (firstIndex == lastIndex) return;
+            if (firstIndex == lastIndex)
+            {
+                return;
+            }
 
             short dIndex = 1;
             if ((outline->Flags & FreeType.FT_OUTLINE_REVERSE_FILL) != 0)
@@ -411,7 +423,10 @@
             {
                 uint charcode = textSpan[i];
 
-                if (charcode == '\r') continue;
+                if (charcode == '\r')
+                {
+                    continue;
+                }
 
                 if (charcode == '\n')
                 {
@@ -491,7 +506,10 @@
             {
                 uint charcode = text[i];
 
-                if (charcode == '\r') continue;
+                if (charcode == '\r')
+                {
+                    continue;
+                }
 
                 if (charcode == '\n')
                 {

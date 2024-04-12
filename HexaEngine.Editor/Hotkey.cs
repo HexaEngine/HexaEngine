@@ -120,7 +120,10 @@
         public void Add(Key key)
         {
             if (Keys.Contains(key))
+            {
                 return;
+            }
+
             Keys.Add(key);
             cache = null;
         }

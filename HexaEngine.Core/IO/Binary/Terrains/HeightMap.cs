@@ -196,7 +196,10 @@
             {
                 for (uint m = row - 1; m <= row + 1; m++)
                 {
-                    if (!InBounds(m, n)) continue;
+                    if (!InBounds(m, n))
+                    {
+                        continue;
+                    }
 
                     avg += data[n * width + m];
                     num++;

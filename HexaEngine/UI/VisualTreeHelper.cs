@@ -119,10 +119,14 @@
                     var filterBehavior = filter?.Invoke(child) ?? HitTestFilterBehavior.Continue;
 
                     if (filterBehavior == HitTestFilterBehavior.Skip)
+                    {
                         continue;
+                    }
 
                     if (filterBehavior == HitTestFilterBehavior.Break)
+                    {
                         break;
+                    }
 
                     if (filterBehavior == HitTestFilterBehavior.SkipSelf)
                     {

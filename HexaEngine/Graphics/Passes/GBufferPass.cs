@@ -47,7 +47,9 @@
             context.ClearRenderTargetView(lightBuffer.RTV, Vector4.Zero);
 
             if (forceForward)
+            {
                 return;
+            }
 
             var current = SceneManager.Current;
             if (current == null)

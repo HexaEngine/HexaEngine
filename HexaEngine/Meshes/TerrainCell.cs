@@ -173,7 +173,9 @@
         public TerrainDrawLayer AddLayer(TerrainLayer terrainLayer, out ChannelMask mask)
         {
             if (ContainsLayer(terrainLayer))
+            {
                 throw new Exception();
+            }
 
             for (int i = 0; i < drawLayers.Count; i++)
             {

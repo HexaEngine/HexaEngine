@@ -78,12 +78,16 @@ namespace HexaEngine.Core.Debugging
             if (Topology != PrimitiveTopology.PointList &&
                 Topology != PrimitiveTopology.LineList &&
                 Topology != PrimitiveTopology.TriangleList)
+            {
                 return false;
+            }
 
             if (other.Topology != PrimitiveTopology.PointList &&
                 other.Topology != PrimitiveTopology.LineList &&
                 other.Topology != PrimitiveTopology.TriangleList)
+            {
                 return false;
+            }
 
             if (other.IndexCount > 8000 || other.VertexCount > 5000)
             {

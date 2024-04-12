@@ -56,7 +56,9 @@
         public override VirtualAxisBinding ReadJson(JsonReader reader, Type objectType, VirtualAxisBinding existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null)
+            {
                 return default;
+            }
 
             var virtualAxisBinding = new VirtualAxisBinding();
 
@@ -64,15 +66,21 @@
 
             var typeToken = obj["type"];
             if (typeToken == null)
+            {
                 throw new JsonSerializationException("Missing 'type' property in VirtualAxisBinding JSON.");
+            }
 
             var type = typeToken.Value<string>();
             if (!Enum.TryParse(type, out virtualAxisBinding.Type))
+            {
                 throw new JsonSerializationException($"Invalid 'type' value '{type}' for VirtualAxisBinding.");
+            }
 
             var valueToken = obj["value"];
             if (valueToken == null)
+            {
                 throw new JsonSerializationException("Missing 'value' property in VirtualAxisBinding JSON.");
+            }
 
             switch (virtualAxisBinding.Type)
             {
@@ -459,7 +467,9 @@
         {
             // doesn't need to lock here just doing filtering, early exit
             if (filter != InputEventType.None && (inputEvent.Type & filter) == 0)
+            {
                 return;
+            }
 
             lock (_lock)
             {

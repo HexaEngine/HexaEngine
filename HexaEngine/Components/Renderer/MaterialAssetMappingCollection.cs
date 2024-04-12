@@ -32,7 +32,9 @@
             {
                 var mapping = mappings[i];
                 if (mapping.Mesh == mesh)
+                {
                     return mapping;
+                }
             }
 
             return default;
@@ -44,7 +46,9 @@
             {
                 var mapping = mappings[i];
                 if (mapping.Material == material)
+                {
                     return mapping;
+                }
             }
 
             return default;

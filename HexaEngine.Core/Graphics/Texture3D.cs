@@ -1048,7 +1048,9 @@
                 rtv?.Dispose();
                 uav?.Dispose();
                 if (cpuAccessFlags != CpuAccessFlags.None)
+                {
                     Free(local);
+                }
 
                 disposedValue = true;
                 OnDisposed?.Invoke(this, EventArgs.Empty);

@@ -14,7 +14,9 @@
                 lock (this)
                 {
                     if (this.value == value)
+                    {
                         return;
+                    }
 
                     this.value = value;
                     ValueChanged?.Invoke(this, value);

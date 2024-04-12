@@ -11,7 +11,10 @@
         public static string GetName(int id)
         {
             if (typeToUsageTypeName.TryGetValue(id, out var va))
+            {
                 return va;
+            }
+
             return "<no-name>";
         }
 

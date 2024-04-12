@@ -110,7 +110,10 @@
             {
                 case SkyType.Skybox:
                     if (!initialized)
+                    {
                         return;
+                    }
+
                     context.VSSetConstantBuffer(0, worldBuffer);
                     context.PSSetShaderResource(0, environment.SRV);
                     context.PSSetSampler(0, samplerState);

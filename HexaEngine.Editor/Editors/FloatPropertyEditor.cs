@@ -12,8 +12,8 @@
     {
         private readonly ImGuiName guiName;
         private readonly EditorPropertyMode mode;
-        private readonly float min = float.MinValue;
-        private readonly float max = float.MaxValue;
+        private readonly float min = float.PositiveInfinity;
+        private readonly float max = float.NegativeInfinity;
 
         public FloatPropertyEditor(string name, PropertyInfo property, EditorPropertyMode mode, object? min, object? max)
         {
@@ -86,7 +86,7 @@
             switch (mode)
             {
                 case EditorPropertyMode.Default:
-                    if (ImGui.InputFloat(guiName.Id, ref val))
+                    if (ImGui.DragFloat(guiName.Id, ref val, 1, min, max))
                     {
                         value = val;
                         ImGui.PopItemWidth();

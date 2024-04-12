@@ -172,7 +172,9 @@
             {
                 var cell = cells[i];
                 if (cell.ID == id)
+                {
                     return cell;
+                }
             }
             return null;
         }

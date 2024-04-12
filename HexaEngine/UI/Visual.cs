@@ -65,7 +65,10 @@
             while (current != null)
             {
                 if (current == element)
+                {
                     return true;
+                }
+
                 current = current.Parent;
             }
             return false;
@@ -77,7 +80,10 @@
             while (current != null)
             {
                 if (current == this)
+                {
                     return true;
+                }
+
                 current = current.Parent;
             }
             return false;

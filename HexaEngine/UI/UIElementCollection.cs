@@ -140,14 +140,20 @@
         bool IList.Contains(object? value)
         {
             if (value is UIElement element)
+            {
                 return Contains(element);
+            }
+
             return false;
         }
 
         int IList.IndexOf(object? value)
         {
             if (value is UIElement element)
+            {
                 return IndexOf(element);
+            }
+
             return -1;
         }
 

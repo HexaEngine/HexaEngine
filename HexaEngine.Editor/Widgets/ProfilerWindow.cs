@@ -106,7 +106,10 @@
                 var renderer = SceneRenderer.Current;
 
                 if (renderer == null)
+                {
                     return;
+                }
+
                 var profiler = renderer.Profiler;
                 ImGuiWidgetFlameGraph.PlotFlame("Flame", profiler.Getter, profiler.Current, profiler.StageCount, ref selected);
             }
@@ -327,7 +330,9 @@
             var renderer = SceneRenderer.Current;
 
             if (renderer == null)
+            {
                 return;
+            }
 
             if (cpu)
             {

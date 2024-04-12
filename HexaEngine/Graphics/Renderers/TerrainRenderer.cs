@@ -41,7 +41,9 @@
         public unsafe void Update(Matrix4x4 transform)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             for (int i = 0; i < grid.Count; i++)
             {
@@ -55,7 +57,9 @@
         public void DrawForward(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             for (int i = 0; i < grid.Count; i++)
             {
@@ -68,7 +72,9 @@
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
+                {
                     continue;
+                }
 
                 context.VSSetConstantBuffer(0, worldBuffer);
                 cell.Bind(context);
@@ -92,7 +98,9 @@
         public void DrawDeferred(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             for (int i = 0; i < grid.Count; i++)
             {
@@ -105,7 +113,9 @@
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
+                {
                     continue;
+                }
 
                 context.VSSetConstantBuffer(0, worldBuffer);
 
@@ -130,7 +140,10 @@
         public void DrawDepth(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
+
             for (int i = 0; i < grid.Count; i++)
             {
                 var cell = grid[i];
@@ -142,7 +155,9 @@
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
+                {
                     continue;
+                }
 
                 context.VSSetConstantBuffer(0, worldBuffer);
                 cell.Bind(context);
@@ -168,7 +183,9 @@
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             var name = EnumHelper<ShadowType>.GetName(type);
 
@@ -186,7 +203,9 @@
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
+                {
                     continue;
+                }
 
                 context.VSSetConstantBuffer(0, worldBuffer);
 

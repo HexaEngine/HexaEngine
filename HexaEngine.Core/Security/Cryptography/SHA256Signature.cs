@@ -63,7 +63,9 @@
         public readonly bool TryWriteBytes(Span<byte> destination)
         {
             if (destination.Length < 32)
+            {
                 return false;
+            }
 
             BinaryPrimitives.WriteUInt64LittleEndian(destination, L0);
             BinaryPrimitives.WriteUInt64LittleEndian(destination[8..], L1);
@@ -75,7 +77,9 @@
         public readonly bool TryWriteBytes(Span<byte> destination, bool bigEndian)
         {
             if (destination.Length < 32)
+            {
                 return false;
+            }
 
             if (bigEndian)
             {

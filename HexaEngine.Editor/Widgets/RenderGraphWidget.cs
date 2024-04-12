@@ -148,7 +148,9 @@
         {
             var renderer = SceneRenderer.Current;
             if (renderer == null)
+            {
                 return;
+            }
 
             if (ImGui.BeginMenuBar())
             {

@@ -228,7 +228,9 @@
             yield return Name;
 
             if (Type == MaterialTextureType.Diffuse)
+            {
                 yield return MaterialTextureType.BaseColor.ToString();
+            }
         }
 
         /// <summary>

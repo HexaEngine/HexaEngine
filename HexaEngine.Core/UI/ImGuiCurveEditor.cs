@@ -58,7 +58,9 @@ namespace HexaEngine.Core.UI
 
             int hovered_idx = -1;
             if (new_count != null)
+            {
                 *new_count = points_count;
+            }
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             if (window->SkipItems != 0)
@@ -243,7 +245,9 @@ namespace HexaEngine.Core.UI
                     DrawList->AddLine(pos + new Vector2(-SIZE, 0), pos + new Vector2(0, -SIZE), col);
 
                     if (ImGui.IsItemHovered())
+                    {
                         hovered_idx = point_idx + idx;
+                    }
 
                     bool changed = false;
                     if (ImGui.IsItemActive() && ImGui.IsMouseClicked(0))
@@ -336,7 +340,10 @@ namespace HexaEngine.Core.UI
                     if (handlePoint(p, 1))
                     {
                         if (p.X <= p_prev.X)
+                        {
                             p.X = p_prev.X + 0.001f;
+                        }
+
                         if (point_idx < points_count - 2 && p.X >= points[6].X)
                         {
                             p.X = points[6].X - 0.001f;
@@ -351,7 +358,10 @@ namespace HexaEngine.Core.UI
                     if (handlePoint(p, 1))
                     {
                         if (p.X <= p_prev.X)
+                        {
                             p.X = p_prev.X + 0.001f;
+                        }
+
                         if (point_idx < points_count - 2 && p.X >= points[2].X)
                         {
                             p.X = points[2].X - 0.001f;
@@ -365,7 +375,10 @@ namespace HexaEngine.Core.UI
                     if (handlePoint(p_prev, 0))
                     {
                         if (p.X <= p_prev.X)
+                        {
                             p_prev.X = p.X - 0.001f;
+                        }
+
                         points[0] = p_prev;
                         changed_idx = point_idx;
                     }

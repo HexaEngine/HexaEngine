@@ -171,7 +171,10 @@
                     Vector3 windDir = new(wind_direction.X, wind_direction.Y, 0);
                     float windLength = windDir.Length();
                     const float windStrength = 0.1f;
-                    if (windLength > 0.0f) pb.Velocity += windDir / windLength * windStrength * delta_time;
+                    if (windLength > 0.0f)
+                    {
+                        pb.Velocity += windDir / windLength * windStrength * delta_time;
+                    }
 
                     NewPosition += pb.Velocity * delta_time;
                 }

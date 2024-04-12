@@ -257,7 +257,9 @@
         public override unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null)
+            {
                 return;
+            }
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);

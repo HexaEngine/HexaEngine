@@ -84,7 +84,9 @@
         {
             this.editor = editor;
             if (id == 0)
+            {
                 id = editor.GetUniqueId();
+            }
 
             for (int i = 0; i < pins.Count; i++)
             {
@@ -140,7 +142,9 @@
             {
                 var pin = pins[i];
                 if (pin.Id == id)
+                {
                     return pin;
+                }
             }
             return null;
         }
@@ -151,7 +155,9 @@
             {
                 var pin = pins[i];
                 if (pin.Name == name)
+                {
                     return pin;
+                }
             }
             return null;
         }
@@ -162,7 +168,9 @@
             {
                 var pin = pins[i];
                 if (pin.Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -173,7 +181,9 @@
             {
                 Link link = pin.Links[i];
                 if (link.OutputNode == other)
+                {
                     return link;
+                }
             }
             return null;
         }
@@ -184,7 +194,9 @@
             {
                 Link link = pin.Links[i];
                 if (link.InputNode == other)
+                {
                     return link;
+                }
             }
             return null;
         }
@@ -210,13 +222,19 @@
                 int index = pins.IndexOf(old);
                 old.Destroy();
                 if (editor != null)
+                {
                     pin.Initialize(editor, this);
+                }
+
                 pins[index] = pin;
             }
             else
             {
                 if (editor != null)
+                {
                     pin.Initialize(editor, this);
+                }
+
                 pins.Add(pin);
                 PinAdded?.Invoke(this, pin);
             }
@@ -235,7 +253,10 @@
             else
             {
                 if (editor != null)
+                {
                     pin.Initialize(editor, this);
+                }
+
                 pins.Add(pin);
                 PinAdded?.Invoke(this, pin);
             }
@@ -264,7 +285,11 @@
 
         public virtual void Destroy()
         {
-            if (editor == null) return;
+            if (editor == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < pins.Count; i++)
             {
                 pins[i].ValueChanged -= ValueChanged;

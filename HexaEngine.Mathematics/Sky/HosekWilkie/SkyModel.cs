@@ -3910,9 +3910,13 @@
             int tbi = (int)(MathF.Floor(turbidity));
 
             if (tbi < 1)
+            {
                 tbi = 1;
+            }
             else if (tbi > 9)
+            {
                 tbi = 9;
+            }
 
             float tbf = turbidity - tbi;
 
@@ -3952,10 +3956,12 @@
             };
 
             for (int i = 0; i < 9; i++)
+            {
                 coeffs[i] = cw[0] * ic[0][i]
                           + cw[1] * ic[1][i]
                           + cw[2] * ic[2][i]
                           + cw[3] * ic[3][i];
+            }
 
             return cw[0] * ir[0] + cw[1] * ir[1] + cw[2] * ir[2] + cw[3] * ir[3];
         }

@@ -254,11 +254,16 @@
         public bool Compare(ReadOnlySpan<char> other)
         {
             if (size != other.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < size; i++)
             {
                 if (data[i] != other[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -271,11 +276,16 @@
         public bool Compare(ReadOnlySpan<byte> other)
         {
             if (size != other.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < size; i++)
             {
                 if (data[i] != other[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -288,11 +298,16 @@
         public bool StartsWith(ReadOnlySpan<char> str)
         {
             if (size < str.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < str.Length; i++)
             {
                 if (data[i] != str[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -305,11 +320,16 @@
         public bool EndsWith(ReadOnlySpan<char> str)
         {
             if (size < str.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < str.Length; i++)
             {
                 if (data[size - 1 - i] != str[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -322,11 +342,16 @@
         public bool StartsWith(ReadOnlySpan<byte> str)
         {
             if (size < str.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < str.Length; i++)
             {
                 if (data[i] != str[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -339,11 +364,16 @@
         public bool EndsWith(ReadOnlySpan<byte> str)
         {
             if (size < str.Length)
+            {
                 return false;
+            }
+
             for (int i = 0; i < str.Length; i++)
             {
                 if (data[size - 1 - i] != str[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -356,7 +386,9 @@
         public bool Contains(ReadOnlySpan<char> str)
         {
             if (str.Length > size)
+            {
                 return false;
+            }
 
             int cmp = 0;
             for (int i = 0; i < size; i++)
@@ -386,7 +418,9 @@
         public bool Contains(ReadOnlySpan<byte> str)
         {
             if (str.Length > size)
+            {
                 return false;
+            }
 
             int cmp = 0;
             for (int i = 0; i < size; i++)
@@ -432,7 +466,9 @@
         public void Replace(ReadOnlySpan<byte> target, ReadOnlySpan<byte> replacement)
         {
             if (size < target.Length)
+            {
                 return;
+            }
 
             int cmp = 0;
 
@@ -483,7 +519,9 @@
         public void Replace(ReadOnlySpan<char> target, ReadOnlySpan<char> replacement)
         {
             if (size < target.Length)
+            {
                 return;
+            }
 
             if (target.Length == 1 && replacement.Length == 1)
             {
@@ -569,7 +607,9 @@
         public int Find(ReadOnlySpan<char> str, int pos)
         {
             if (str.Length > size - pos)
+            {
                 return -1;
+            }
 
             int cmp = 0;
             for (int i = pos; i < size; i++)
@@ -600,7 +640,9 @@
         public int FindLast(ReadOnlySpan<char> str, int pos)
         {
             if (str.Length > size - pos)
+            {
                 return -1;
+            }
 
             int cmp = str.Length - 1;
             for (int i = pos; i >= 0; i--)
@@ -631,7 +673,9 @@
         public int Find(ReadOnlySpan<byte> str, int pos)
         {
             if (str.Length > size - pos)
+            {
                 return -1;
+            }
 
             int cmp = 0;
             for (int i = pos; i < size; i++)
@@ -662,7 +706,9 @@
         public int FindLast(ReadOnlySpan<byte> str, int pos)
         {
             if (str.Length > size - pos)
+            {
                 return -1;
+            }
 
             int cmp = str.Length - 1;
             for (int i = pos; i >= 0; i--)

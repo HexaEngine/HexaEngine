@@ -91,7 +91,9 @@
                 var descriptor = descriptors[i];
 
                 if (descriptor.IsCreated || (descriptor.Flags & ResourceCreationFlags.LazyInit) == 0)
+                {
                     continue;
+                }
 
                 var shared = FindMatching<TType, TDesc>(descriptor, descriptors);
                 descriptor.IsCreated = true;
@@ -108,7 +110,10 @@
         private static ResourceDescriptor<TDesc>? FindMatching<TType, TDesc>(ResourceDescriptor<TDesc> descriptor, IList<ResourceDescriptor<TDesc>> descriptors) where TDesc : struct where TType : class, IDisposable
         {
             if ((descriptor.Flags & ResourceCreationFlags.Shared) == 0)
+            {
                 return null;
+            }
+
             for (int j = 0; j < descriptors.Count; j++)
             {
                 var descShared = descriptors[j];

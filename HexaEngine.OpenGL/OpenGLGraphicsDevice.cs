@@ -223,11 +223,20 @@
         {
             ShaderResourceViewDescription description = default;
             if (resource is ITexture1D texture1D)
+            {
                 description = new(texture1D, texture1D.Description.ArraySize > 1);
+            }
+
             if (resource is ITexture2D texture2D)
+            {
                 description = new(texture2D, ShaderResourceViewDimension.Texture2D);
+            }
+
             if (resource is ITexture3D texture3D)
+            {
                 description = new(texture3D);
+            }
+
             return new OpenGLShaderResourceView(GL, (uint)resource.NativePointer, description);
         }
 

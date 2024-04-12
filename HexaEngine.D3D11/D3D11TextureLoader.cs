@@ -52,6 +52,7 @@
             var data = fs.ReadBytes();
             string extension = Path.GetExtension(path);
             fixed (byte* p = data)
+            {
                 switch (extension)
                 {
                     case ".dds":
@@ -69,7 +70,8 @@
                     default:
                         DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default);
                         break;
-                };
+                }
+            };
             return new D3DScratchImage(image);
         }
 
@@ -85,6 +87,7 @@
             var data = fs.ReadBytes();
             string extension = Path.GetExtension(path);
             fixed (byte* p = data)
+            {
                 switch (extension)
                 {
                     case ".dds":
@@ -102,7 +105,8 @@
                     default:
                         DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default);
                         break;
-                };
+                }
+            };
             return new D3DScratchImage(image);
         }
 
@@ -194,6 +198,7 @@
             string extension = Path.GetExtension(filename);
 
             fixed (byte* p = data)
+            {
                 switch (extension)
                 {
                     case ".dds":
@@ -211,7 +216,8 @@
                     default:
                         DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default).ThrowHResult();
                         break;
-                };
+                }
+            };
 
             return new D3DScratchImage(image);
         }
@@ -223,6 +229,7 @@
             stream.Read(data, 0, data.Length);
 
             fixed (byte* p = data)
+            {
                 switch (format)
                 {
                     case Core.Graphics.Textures.TexFileFormat.DDS:
@@ -240,7 +247,8 @@
                     default:
                         DirectXTex.LoadFromWICMemory(p, (nuint)data.Length, WICFlags.None, null, image, default);
                         break;
-                };
+                }
+            };
 
             return new D3DScratchImage(image);
         }

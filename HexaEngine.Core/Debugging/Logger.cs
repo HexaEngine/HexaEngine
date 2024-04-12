@@ -94,7 +94,10 @@
         public void Log(LogMessage message)
         {
             if (message.Severity < logLevel)
+            {
                 return;
+            }
+
             semaphore.Wait();
             for (int i = 0; i < Writers.Count; i++)
             {
@@ -115,7 +118,10 @@
         public async Task LogAsync(LogMessage message)
         {
             if (message.Severity < logLevel)
+            {
                 return;
+            }
+
             await semaphore.WaitAsync();
             for (int i = 0; i < Writers.Count; i++)
             {
@@ -619,7 +625,9 @@
             var message = value?.ToString() ?? "null";
             Log(new LogMessage(this, LogSeverity.Error, message));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>
@@ -632,7 +640,9 @@
             var msg = message ?? "null";
             Log(new LogMessage(this, LogSeverity.Error, msg));
             if (throwException)
+            {
                 throw new(msg);
+            }
         }
 
         /// <summary>
@@ -645,7 +655,9 @@
             var message = value?.ToString() ?? "null";
             Log(new LogMessage(this, LogSeverity.Critical, message));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>
@@ -658,7 +670,9 @@
             var msg = message ?? "null";
             Log(new LogMessage(this, LogSeverity.Critical, msg));
             if (throwException)
+            {
                 throw new(msg);
+            }
         }
 
         /// <summary>
@@ -738,7 +752,9 @@
             var message = value?.ToString() ?? "null";
             await LogAsync(new LogMessage(this, LogSeverity.Error, message));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>
@@ -752,7 +768,9 @@
             var msg = message ?? "null";
             await LogAsync(new LogMessage(this, LogSeverity.Error, msg));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>
@@ -766,7 +784,9 @@
             var message = value?.ToString() ?? "null";
             await LogAsync(new LogMessage(this, LogSeverity.Critical, message));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>
@@ -780,7 +800,9 @@
             var msg = message ?? "null";
             await LogAsync(new LogMessage(this, LogSeverity.Critical, msg));
             if (throwException)
+            {
                 throw new(message);
+            }
         }
 
         /// <summary>

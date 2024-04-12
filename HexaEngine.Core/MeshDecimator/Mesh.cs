@@ -341,7 +341,10 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentNullException(nameof(vertices));
             }
-            else ArgumentNullException.ThrowIfNull(indices);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(indices);
+            }
 
             for (int i = 0; i < indices.Length; i++)
             {
@@ -733,7 +736,10 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentOutOfRangeException(nameof(channel));
             }
-            else ArgumentNullException.ThrowIfNull(uvs);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(uvs);
+            }
 
             uvs.Clear();
             if (uvs2D != null && uvs2D[channel] != null)
@@ -757,7 +763,10 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentOutOfRangeException(nameof(channel));
             }
-            else ArgumentNullException.ThrowIfNull(uvs);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(uvs);
+            }
 
             uvs.Clear();
             if (uvs3D != null && uvs3D[channel] != null)
@@ -781,7 +790,10 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentOutOfRangeException(nameof(channel));
             }
-            else ArgumentNullException.ThrowIfNull(uvs);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(uvs);
+            }
 
             uvs.Clear();
             if (uvs4D != null && uvs4D[channel] != null)

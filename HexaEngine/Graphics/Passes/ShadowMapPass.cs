@@ -60,7 +60,9 @@
             profiler?.End("ShadowMap.UpdateBuffer");
 
             if (lights.UpdateShadowLightQueue.Count == 0)
+            {
                 return;
+            }
 
             profiler?.Begin("ShadowMap.UpdateAtlas");
             while (lights.UpdateShadowLightQueue.TryDequeue(out var light))

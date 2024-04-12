@@ -78,11 +78,30 @@
 
         public virtual bool CanCreateLink(Pin other)
         {
-            if (id == other.id) return false;
-            if (Links.Count == MaxLinks) return false;
-            if (Type == PinType.DontCare) return true;
-            if (!IsType(other)) return false;
-            if (Kind == other.Kind) return false;
+            if (id == other.id)
+            {
+                return false;
+            }
+
+            if (Links.Count == MaxLinks)
+            {
+                return false;
+            }
+
+            if (Type == PinType.DontCare)
+            {
+                return true;
+            }
+
+            if (!IsType(other))
+            {
+                return false;
+            }
+
+            if (Kind == other.Kind)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -226,12 +245,18 @@
             this.editor = editor;
             this.parent = parent;
             if (id == 0)
+            {
                 id = editor.GetUniqueId();
+            }
         }
 
         public virtual void Destroy()
         {
-            if (editor == null) return;
+            if (editor == null)
+            {
+                return;
+            }
+
             var links = Links.ToArray();
             for (int i = 0; i < links.Length; i++)
             {

@@ -127,7 +127,10 @@
             set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.Fov = value;
                 editorCamera.Fov = value;
                 first = true;
@@ -140,7 +143,10 @@
             set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.Speed = value;
             }
         }
@@ -161,7 +167,10 @@
             set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.OrbitCenter = value;
                 first = true;
             }
@@ -173,7 +182,10 @@
             set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.Mode = value;
                 first = true;
             }
@@ -184,7 +196,10 @@
             get => editorCameraState?.Dimension ?? default; set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.Dimension = value;
                 editorCameraState.FreePosition = Vector3.Zero;
                 editorCameraState.FreeRotation = Vector3.Zero;
@@ -201,7 +216,10 @@
             set
             {
                 if (editorCameraState == null)
+                {
                     return;
+                }
+
                 editorCameraState.Far = value;
                 editorCamera.Far = value;
                 first = true;
@@ -283,7 +301,10 @@
         public static void UpdateEditorCamera(bool hovered)
         {
             if (editorCameraState == null)
+            {
                 return;
+            }
+
             var leftCtrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
             var delta = UpdateMouse(leftCtrl, hovered);
             if (editorCameraState.Dimension == EditorCameraDimension.Dim3D)

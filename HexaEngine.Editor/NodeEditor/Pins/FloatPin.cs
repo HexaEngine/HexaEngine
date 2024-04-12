@@ -94,7 +94,10 @@
         public string GetDefaultValue()
         {
             if (defaultExpression != null)
+            {
                 return defaultExpression;
+            }
+
             return Type switch
             {
                 PinType.Float => valueX.ToString(CultureInfo.InvariantCulture),

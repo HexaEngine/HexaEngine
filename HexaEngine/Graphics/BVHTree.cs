@@ -186,7 +186,10 @@
             {
                 var node = nodes[index];
                 if (node.IsLeaf)
+                {
                     break;
+                }
+
                 var child1 = node.Child1;
                 var child2 = node.Child2;
                 var box1 = nodes[child1].Box;
@@ -267,7 +270,9 @@
             for (int i = 0; i < nodeCount; i++)
             {
                 if (nodes[i].ObjectIndex == objectIndex)
+                {
                     return i;
+                }
             }
 
             return -1;

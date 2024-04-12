@@ -156,11 +156,17 @@
             if (delta != 0)
             {
                 if (max == R)
+                {
                     hue = (G - B) / delta + ((G < B) ? 6 : 0);
+                }
                 else if (max == G)
+                {
                     hue = (B - R) / delta + 2;
+                }
                 else
+                {
                     hue = (R - G) / delta + 4;
+                }
 
                 hue /= 6;
             }
@@ -193,11 +199,17 @@
 
                 // Calculate hue
                 if (R == max)
+                {
                     h = (G - B) / delta + (G < B ? 6 : 0);
+                }
                 else if (G == max)
+                {
                     h = (B - R) / delta + 2;
+                }
                 else if (B == max)
+                {
                     h = (R - G) / delta + 4;
+                }
             }
 
             // Normalize hue to the range [0, 1]

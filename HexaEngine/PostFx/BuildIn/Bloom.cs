@@ -88,7 +88,10 @@
             set
             {
                 if (passes == value)
+                {
                     return;
+                }
+
                 NotifyPropertyChangedAndSet(ref passes, value);
                 if (quality == BloomQualityPreset.Custom)
                 {

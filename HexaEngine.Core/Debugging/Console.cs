@@ -111,7 +111,10 @@
             public void Log(LogMessage message)
             {
                 if (message.Logger != LoggerFactory.General)
+                {
                     return;
+                }
+
                 semaphore.Wait();
                 messages.Add(message);
                 if (messages.Count > maxMessages)
@@ -125,7 +128,10 @@
             public async Task LogAsync(LogMessage message)
             {
                 if (message.Logger != LoggerFactory.General)
+                {
                     return;
+                }
+
                 await semaphore.WaitAsync();
                 messages.Add(message);
                 if (messages.Count > maxMessages)

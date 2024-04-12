@@ -20,7 +20,9 @@
                 {
                     var parameter = parameters[i];
                     if (parameter.Name == name)
+                    {
                         return parameter;
+                    }
                 }
                 return null;
             }

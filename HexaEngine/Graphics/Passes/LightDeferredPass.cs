@@ -95,7 +95,9 @@ namespace HexaEngine.Graphics.Passes
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
         {
             if (forceForward)
+            {
                 return;
+            }
 
             var current = SceneManager.Current;
             if (current == null)

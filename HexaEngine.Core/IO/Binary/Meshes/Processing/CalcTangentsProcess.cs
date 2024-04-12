@@ -114,7 +114,9 @@
             for (uint a = 0; a < pMesh.VertexCount; a++)
             {
                 if (vertexDone[a])
+                {
                     continue;
+                }
 
                 Vector3 origPos = pMesh.Positions[a];
                 Vector3 origNorm = pMesh.Normals[a];
@@ -132,11 +134,19 @@
                 {
                     uint idx = verticesFound[(int)b];
                     if (vertexDone[idx])
+                    {
                         continue;
+                    }
+
                     if (Vector3.Dot(meshNorm[(int)idx], origNorm) < angleEpsilon)
+                    {
                         continue;
+                    }
+
                     if (Vector3.Dot(meshTang[(int)idx], origTang) < fLimit)
+                    {
                         continue;
+                    }
 
                     // it's similar enough -> add it to the smoothing group
                     closeVertices.Add(idx);

@@ -661,7 +661,9 @@
             uint divisorDegree = divisor.Degree;
 
             if (divisorDegree == 0 && divisor[0] == 0)
+            {
                 throw new DivideByZeroException("Polynomial division by zero.");
+            }
 
             if (dividendDegree < divisorDegree)
             {

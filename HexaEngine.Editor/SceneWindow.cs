@@ -33,7 +33,9 @@
         {
             // Do not handle reloads, no data is lost, editor saves automatically.
             if (e.ChangeType == SceneChangeType.Reload)
+            {
                 return;
+            }
 
             if (UnsavedChanges)
             {
@@ -422,7 +424,9 @@
             var scene = SceneManager.Current;
 
             if (scene == null)
+            {
                 return;
+            }
 
             switch (state)
             {

@@ -55,7 +55,9 @@
             item = Array.IndexOf(modes, mode);
 
             if (lockType || lockOutputType)
+            {
                 return;
+            }
 
             if (this is IFuncCallNode funcNode)
             {
@@ -93,7 +95,10 @@
         protected override void DrawContentBeforePins()
         {
             if (lockType)
+            {
                 return;
+            }
+
             ImGui.PushItemWidth(100);
             if (ImGui.Combo("##Mode", ref item, names, names.Length))
             {

@@ -31,7 +31,10 @@
         public void Dispose()
         {
             if (valid)
+            {
                 atlas.Free(ref this);
+            }
+
             this = default;
         }
     }

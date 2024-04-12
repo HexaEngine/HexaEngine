@@ -37,7 +37,10 @@
         public override void DrawContent(IGraphicsContext context)
         {
             if (Animation == null)
+            {
                 return;
+            }
+
             ImGui.PushItemWidth(80);
 
             var frame = Frame;
@@ -70,7 +73,9 @@
                 DrawChannel(channel.NodeName, ref channel, sizeChannels);
                 Animation.NodeChannels[i] = channel;
                 if (i < Animation.NodeChannels.Count - 1)
+                {
                     ImGui.Spacing();
+                }
             }
         }
 
@@ -140,7 +145,9 @@
 
             ImGui.ItemSizeRect(bb, -1);
             if (!ImGui.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
+            {
                 return;
+            }
 
             DrawList.AddRectFilled(bb.Min, bb.Min + new Vector2(60, 70), frameCol);
             DrawList.AddText(bb.Min + new Vector2(0, 0), ImGui.GetColorU32(ImGuiCol.Text), "Position");
@@ -175,9 +182,15 @@
                 p1.X += time * itemSpacing - scroll + itemSpacing;
 
                 if (pos.X > p1.X)
+                {
                     continue;
+                }
+
                 if (bb.Max.X < p1.X)
+                {
                     break;
+                }
+
                 var p2 = p1;
                 p2.Y += itemHeight - padd.Y * 2;
                 DrawList.AddLine(p1, p2, itemCol);
@@ -204,9 +217,15 @@
                     DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), posCol);
                 }
                 if (pos.X > p1.X)
+                {
                     continue;
+                }
+
                 if ((pos + size).X < p1.X)
+                {
                     break;
+                }
+
                 DrawList.AddCircleFilled(p1, 5, posCol);
             }
 
@@ -227,9 +246,15 @@
                     DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), rotCol);
                 }
                 if (pos.X > p1.X)
+                {
                     continue;
+                }
+
                 if ((pos + size).X < p1.X)
+                {
                     break;
+                }
+
                 DrawList.AddCircleFilled(p1, 5, rotCol);
             }
 
@@ -250,9 +275,15 @@
                     DrawList.AddLine(Vector2.Clamp(p2, pos, pos + size), Vector2.Clamp(p1, pos, pos + size), sclCol);
                 }
                 if (pos.X > p1.X)
+                {
                     continue;
+                }
+
                 if ((pos + size).X < p1.X)
+                {
                     break;
+                }
+
                 DrawList.AddCircleFilled(p1, 5, sclCol);
             }
 

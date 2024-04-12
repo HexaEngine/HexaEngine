@@ -30,10 +30,13 @@ namespace HexaEngine.Meshes
                 for (int i = 0; i < 3; i++)
                 {
                     vertex[i].face.Add(this);
-                    for (int j = 0; j < 3; j++) if (i != j)
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (i != j)
                         {
                             vertex[i].neighbor.AddUnique(vertex[j]);
                         }
+                    }
                 }
             }
 
@@ -48,7 +51,11 @@ namespace HexaEngine.Meshes
                 for (i = 0; i < 3; i++)
                 {
                     int i2 = (i + 1) % 3;
-                    if (vertex[i] == null || vertex[i2] == null) continue;
+                    if (vertex[i] == null || vertex[i2] == null)
+                    {
+                        continue;
+                    }
+
                     vertex[i].RemoveIfNonNeighbor(vertex[i2]);
                     vertex[i2].RemoveIfNonNeighbor(vertex[i]);
                 }
@@ -60,7 +67,11 @@ namespace HexaEngine.Meshes
                 Vector3 v1 = vertex[1].position;
                 Vector3 v2 = vertex[2].position;
                 normal = Vector3.Cross(v1 - v0, v2 - v1);
-                if (normal.Length() == 0) return;
+                if (normal.Length() == 0)
+                {
+                    return;
+                }
+
                 normal = Vector3.Normalize(normal);
             }
 
@@ -94,10 +105,13 @@ namespace HexaEngine.Meshes
                 for (i = 0; i < 3; i++)
                 {
                     Trace.Assert(vertex[i].face.Contains(this));
-                    for (int j = 0; j < 3; j++) if (i != j)
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (i != j)
                         {
                             vertex[i].neighbor.AddUnique(vertex[j]);
                         }
+                    }
                 }
                 ComputeNormal();
             }
@@ -138,10 +152,17 @@ namespace HexaEngine.Meshes
             public void RemoveIfNonNeighbor(Vertex n)
             {
                 // removes n from neighbor list if n isn't a neighbor.
-                if (!neighbor.Contains(n)) return;
+                if (!neighbor.Contains(n))
+                {
+                    return;
+                }
+
                 for (int i = 0; i < face.Count; i++)
                 {
-                    if (face[i].HasVertex(n)) return;
+                    if (face[i].HasVertex(n))
+                    {
+                        return;
+                    }
                 }
                 neighbor.Remove(n);
             }

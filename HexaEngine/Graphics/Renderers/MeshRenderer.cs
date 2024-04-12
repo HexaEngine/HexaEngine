@@ -73,7 +73,10 @@
                 DrawType drawType = drawTypes[i];
                 Mesh mesh = meshes[drawType.MeshId];
                 if (mesh == null)
+                {
                     continue;
+                }
+
                 context.AppendType(mesh.IndexCount);
                 drawTypes[i].TypeId = context.CurrentType;
                 drawTypes[i].DrawIndirectOffset = context.GetDrawArgsOffset();
@@ -88,7 +91,9 @@
         public override void DrawDeferred(IGraphicsContext context, Model model)
         {
             if (drawIndirectArgs == null)
+            {
                 return;
+            }
 
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
@@ -107,7 +112,9 @@
                 Material material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstancedIndirect(context, "Deferred", drawIndirectArgs, drawType.DrawIndirectOffset);
@@ -138,7 +145,9 @@
                 Material material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstancedIndirect(context, "Forward", drawIndirectArgs, drawType.DrawIndirectOffset);
@@ -169,7 +178,9 @@
                 Material material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Length);
@@ -200,7 +211,9 @@
                 Material material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Length);
@@ -236,7 +249,9 @@
                 Material material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, name, mesh.IndexCount, (uint)drawType.Instances.Length);

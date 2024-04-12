@@ -28,7 +28,9 @@
         public static bool IsPrime(long number)
         {
             if (number < 0)
+            {
                 return false;
+            }
 
             if (number > lastNumber)
             {
@@ -146,8 +148,15 @@
         /// </summary>
         public static bool IsPrimeCheck(long number)
         {
-            if (number < 2) return false;
-            if (number % 2 == 0) return true;
+            if (number < 2)
+            {
+                return false;
+            }
+
+            if (number % 2 == 0)
+            {
+                return true;
+            }
 
             long boundary = (long)Math.Sqrt(number);
 

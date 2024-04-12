@@ -42,7 +42,10 @@
             for (int i = 0; i < group.Count; i++)
             {
                 var layer = group[i];
-                if (layer == null || layer.Data == null) continue;
+                if (layer == null || layer.Data == null)
+                {
+                    continue;
+                }
 
                 guid = Combine(guid, layer.Material.Guid);
 
@@ -104,7 +107,10 @@
             for (int i = 0; i < group.Count; i++)
             {
                 var layer = group[i];
-                if (layer == null || layer.Data == null) continue;
+                if (layer == null || layer.Data == null)
+                {
+                    continue;
+                }
 
                 guid = Combine(guid, layer.Material.Guid);
 

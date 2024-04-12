@@ -35,17 +35,23 @@
         public static int ComputeSubresourceIndex(TextureDimension dimension, int mipLevels, int arraySize, int depth, int mip, int item, int slice)
         {
             if (mip >= mipLevels)
+            {
                 return (-1);
+            }
 
             switch (dimension)
             {
                 case TextureDimension.Texture1D:
                 case TextureDimension.Texture2D:
                     if (slice > 0)
+                    {
                         return (-1);
+                    }
 
                     if (item >= arraySize)
+                    {
                         return (-1);
+                    }
 
                     return (item * (mipLevels) + mip);
 
@@ -64,11 +70,15 @@
                         {
                             index += d;
                             if (d > 1)
+                            {
                                 d >>= 1;
+                            }
                         }
 
                         if (slice >= d)
+                        {
                             return (-1);
+                        }
 
                         index += slice;
 
@@ -87,10 +97,14 @@
         public static int ComputeSubresourceIndex1D(int mipLevels, int arraySize, int mip, int item)
         {
             if (mip >= mipLevels)
+            {
                 return (-1);
+            }
 
             if (item >= arraySize)
+            {
                 return (-1);
+            }
 
             return (item * (mipLevels) + mip);
         }
@@ -102,10 +116,14 @@
         public static int ComputeSubresourceIndex2D(int mipLevels, int arraySize, int mip, int item)
         {
             if (mip >= mipLevels)
+            {
                 return (-1);
+            }
 
             if (item >= arraySize)
+            {
                 return (-1);
+            }
 
             return (item * (mipLevels) + mip);
         }
@@ -117,7 +135,9 @@
         public static int ComputeSubresourceIndex3D(int mipLevels, int depth, int mip, int item, int slice)
         {
             if (mip >= mipLevels)
+            {
                 return (-1);
+            }
 
             if (item > 0)
             {
@@ -133,11 +153,15 @@
                 {
                     index += d;
                     if (d > 1)
+                    {
                         d >>= 1;
+                    }
                 }
 
                 if (slice >= d)
+                {
                     return (-1);
+                }
 
                 index += slice;
 

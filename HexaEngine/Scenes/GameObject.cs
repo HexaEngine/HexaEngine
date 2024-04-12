@@ -479,7 +479,10 @@
         public virtual void AddComponentSingleton<T>() where T : IComponent, new()
         {
             if (GetComponent<T>() != null)
+            {
                 return;
+            }
+
             T component = new();
             components.Add(component);
             if (Initialized)
@@ -757,7 +760,9 @@
             for (int i = 0; i < components.Count; i++)
             {
                 if (components[i] is T)
+                {
                     return true;
+                }
             }
             return false;
         }

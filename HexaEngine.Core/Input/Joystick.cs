@@ -46,7 +46,9 @@
             this.id = id;
             joystick = sdl.JoystickOpen(id);
             if (joystick == null)
+            {
                 SdlCheckError();
+            }
 
             var axisCount = sdl.JoystickNumAxes(joystick);
             for (int i = 0; i < axisCount; i++)
@@ -103,7 +105,10 @@
             {
                 var name = sdl.JoystickNameS(joystick);
                 if (name == null)
+                {
                     SdlCheckError();
+                }
+
                 return name ?? string.Empty;
             }
         }

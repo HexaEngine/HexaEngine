@@ -253,7 +253,9 @@ namespace HexaEngine.Lights
             public void InitSubSpaces(Space* self, Vector2 endSize)
             {
                 if (Size == endSize)
+                {
                     return;
+                }
 
                 SubSpaces = AllocT<Space>(SubSpaceCount);
                 ZeroMemoryT(SubSpaces, SubSpaceCount);

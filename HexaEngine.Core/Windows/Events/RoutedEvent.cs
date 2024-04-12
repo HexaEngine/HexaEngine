@@ -137,7 +137,9 @@
                             var target = route[i];
 
                             if (target == stop)
+                            {
                                 return;
+                            }
 
                             var handlers = targetToHandler[target];
                             foreach (var handler in handlers)

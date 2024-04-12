@@ -541,25 +541,35 @@
         public void SetLocal(Matrix4x4 local, uint nodeId)
         {
             if (locals != null)
+            {
                 locals[nodeId] = local;
+            }
         }
 
         public Matrix4x4 GetLocal(uint nodeId)
         {
             if (locals == null)
+            {
                 return Matrix4x4.Identity;
+            }
+
             return locals[nodeId];
         }
 
         public int GetNodeIdByName(string name)
         {
             if (plainNodes == null)
+            {
                 return -1;
+            }
+
             for (int i = 0; i < plainNodes.Length; i++)
             {
                 PlainNode node = plainNodes[i];
                 if (node.Name == name)
+                {
                     return node.Id;
+                }
             }
             return -1;
         }

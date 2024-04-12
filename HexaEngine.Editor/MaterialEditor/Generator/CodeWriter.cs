@@ -89,7 +89,9 @@
         public void Dedent(int count = 1)
         {
             if (count > IndentLevel)
+            {
                 throw new ArgumentException("count out of range.", nameof(count));
+            }
 
             IndentLevel -= count;
             if (IndentLevel < _indentStrings.Length)

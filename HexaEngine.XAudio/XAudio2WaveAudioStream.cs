@@ -188,14 +188,20 @@
             if (!disposedValue)
             {
                 if (fullCommitBuffer != null)
+                {
                     Free(fullCommitBuffer);
+                }
+
                 for (int i = 0; i < bufferCount; i++)
                 {
                     Free(buffers[i]);
                 }
                 Free(buffers);
                 if (!leaveOpen)
+                {
                     stream.Dispose();
+                }
+
                 disposedValue = true;
             }
         }

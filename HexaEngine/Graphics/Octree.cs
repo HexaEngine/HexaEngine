@@ -183,7 +183,9 @@
         private void Insert(OctreeNode* node, OctreeObject objectIndex, BoundingBox objBounds)
         {
             if (!node->Bounds.Intersects(objBounds))
+            {
                 return;
+            }
 
             if (node->IsLeafNode() && node->Objects.Count < maxObjectsPerNode)
             {
@@ -222,7 +224,9 @@
         private bool Remove(OctreeNode* node, OctreeObject objectIndex, BoundingBox objBounds)
         {
             if (!node->Bounds.Intersects(objBounds))
+            {
                 return false;
+            }
 
             if (node->IsLeafNode() && node->Objects.Contains(objectIndex))
             {

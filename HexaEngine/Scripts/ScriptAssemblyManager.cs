@@ -132,7 +132,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return [];
+            }
 
             if (!_typeToTypeCache.TryGetValue(type, out var result))
             {
@@ -157,7 +159,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return [];
+            }
 
             if (!_typeNameCache.TryGetValue(type, out var result))
             {
@@ -182,7 +186,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return Array.Empty<Type>();
+            }
 
             if (!_enumCache.TryGetValue(type, out var result))
             {
@@ -212,7 +218,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return [];
+            }
 
             if (!_enumNameCache.TryGetValue(type, out var result))
             {
@@ -242,7 +250,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return [];
+            }
 
             try
             {
@@ -262,7 +272,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return [];
+            }
 
             try
             {
@@ -282,7 +294,9 @@
             loadLock.Wait();
 
             if (Assemblies.Count == 0)
+            {
                 return null;
+            }
 
             foreach (Assembly assembly in Assemblies)
             {

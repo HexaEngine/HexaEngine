@@ -53,7 +53,11 @@
 
         public virtual void Destroy()
         {
-            if (editor == null) return;
+            if (editor == null)
+            {
+                return;
+            }
+
             editor.RemoveLink(this);
             OutputNode.RemoveLink(this);
             Output.RemoveLink(this);

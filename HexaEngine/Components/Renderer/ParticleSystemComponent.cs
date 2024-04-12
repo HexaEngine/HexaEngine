@@ -115,7 +115,9 @@
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
             if (particleTexture == null || Application.InEditMode)
+            {
                 return;
+            }
 
             renderer.Draw(context, dsv.Value.SRV);
         }
@@ -137,7 +139,10 @@
         public override void Update(IGraphicsContext context)
         {
             if (particleTexture == null)
+            {
                 return;
+            }
+
             emitter.Position = new(GameObject.Transform.GlobalPosition, 0);
             renderer.Update();
         }

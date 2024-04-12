@@ -17,7 +17,9 @@
                 {
                     var node = nodes[i];
                     if (node.Name == name)
+                    {
                         return node.Id;
+                    }
                 }
                 return -1;
             }
@@ -27,7 +29,9 @@
                 {
                     var bone = nodes[i];
                     if (bone.Name == name)
+                    {
                         return bone.Id;
+                    }
                 }
                 return -1;
             }

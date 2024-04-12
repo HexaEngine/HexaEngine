@@ -215,7 +215,9 @@
         public override unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!sunPresent)
+            {
                 return;
+            }
         }
 
         /// <inheritdoc/>

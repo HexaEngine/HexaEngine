@@ -842,11 +842,30 @@
                     }
 
                     VertexFlags flags = VertexFlags.Positions;
-                    if (colors != null) flags |= VertexFlags.Colors;
-                    if (uvs != null) flags |= VertexFlags.UVs;
-                    if (normals != null) flags |= VertexFlags.Normals;
-                    if (tangents != null) flags |= VertexFlags.Tangents;
-                    if (bones != null) flags |= VertexFlags.Skinned;
+                    if (colors != null)
+                    {
+                        flags |= VertexFlags.Colors;
+                    }
+
+                    if (uvs != null)
+                    {
+                        flags |= VertexFlags.UVs;
+                    }
+
+                    if (normals != null)
+                    {
+                        flags |= VertexFlags.Normals;
+                    }
+
+                    if (tangents != null)
+                    {
+                        flags |= VertexFlags.Tangents;
+                    }
+
+                    if (bones != null)
+                    {
+                        flags |= VertexFlags.Skinned;
+                    }
 
                     MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, bones);
 

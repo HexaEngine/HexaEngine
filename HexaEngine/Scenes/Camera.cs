@@ -149,7 +149,10 @@
         {
             var current = CameraManager.Current;
             if (current == null)
+            {
                 return;
+            }
+
             Transform.PositionRotation = current.Transform.PositionRotation;
         }
 

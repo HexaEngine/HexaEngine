@@ -85,7 +85,9 @@
             {
                 var l = layers[i];
                 if (l == layer)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -96,7 +98,9 @@
             {
                 var l = layers[i];
                 if (l == layer)
+                {
                     return i;
+                }
             }
             return -1;
         }

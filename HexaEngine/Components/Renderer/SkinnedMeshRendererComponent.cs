@@ -66,7 +66,10 @@
         public Matrix4x4 GetLocal(uint nodeId)
         {
             if (model == null)
+            {
                 return Matrix4x4.Identity;
+            }
+
             return model.Locals[nodeId];
         }
 
@@ -79,21 +82,30 @@
         public Matrix4x4 GetBoneLocal(uint boneId)
         {
             if (model == null)
+            {
                 return Matrix4x4.Identity;
+            }
+
             return model.BoneLocals[boneId];
         }
 
         public int GetNodeIdByName(string name)
         {
             if (model == null)
+            {
                 return -1;
+            }
+
             return model.GetNodeIdByName(name);
         }
 
         public int GetBoneIdByName(string name)
         {
             if (model == null)
+            {
                 return -1;
+            }
+
             return model.GetBoneIdByName(name);
         }
 

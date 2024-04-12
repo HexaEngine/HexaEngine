@@ -130,7 +130,10 @@
             ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
             CreateInstance();
             if (Application.InEditMode)
+            {
                 return;
+            }
+
             if (instance != null)
             {
                 try

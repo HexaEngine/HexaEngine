@@ -174,14 +174,19 @@
             ReadOnlySpan<char> extension = Path.GetExtension(e.Name.AsSpan());
 
             if (extension.SequenceEqual(".meta", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance))
+            {
                 return;
+            }
 
             ReadOnlySpan<char> currentDir = Path.GetDirectoryName(e.FullPath.AsSpan());
             while (!currentDir.IsEmpty)
             {
                 var name = Path.GetFileName(currentDir);
                 if (name.SequenceEqual("bin", CharComparerIgnoreCase.Instance) || name.SequenceEqual(".obj", CharComparerIgnoreCase.Instance))
+                {
                     return;
+                }
+
                 currentDir = Path.GetDirectoryName(currentDir);
             }
 
@@ -257,7 +262,10 @@
         public static void SaveProjectFile()
         {
             if (CurrentProject == null || CurrentProjectFilePath == null)
+            {
                 return;
+            }
+
             HexaProjectWriter writer = new(CurrentProjectFilePath);
             writer.Write(CurrentProject);
             writer.Close();

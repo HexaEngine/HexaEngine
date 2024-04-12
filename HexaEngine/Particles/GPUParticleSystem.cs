@@ -418,7 +418,11 @@
         {
             bool done = true;
             uint numThreadGroups = (MaxParticles - 1 >> 9) + 1;
-            if (numThreadGroups > 1) done = false;
+            if (numThreadGroups > 1)
+            {
+                done = false;
+            }
+
             context.SetComputePipeline(particleSort512);
             context.DispatchIndirect(indirectSortArgsBuffer, 0);
             return done;
@@ -432,9 +436,17 @@
             uint num_thread_groups = 0;
             if (MaxParticles > presorted)
             {
-                if (MaxParticles > presorted * 2) done = false;
+                if (MaxParticles > presorted * 2)
+                {
+                    done = false;
+                }
+
                 uint pow2 = presorted;
-                while (pow2 < MaxParticles) pow2 *= 2;
+                while (pow2 < MaxParticles)
+                {
+                    pow2 *= 2;
+                }
+
                 num_thread_groups = pow2 >> 9;
             }
 

@@ -458,14 +458,18 @@
             get
             {
                 if (!canWrite || !canRead)
+                {
                     throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+                }
 
                 return items[index];
             }
             set
             {
                 if (!canWrite || !canRead)
+                {
                     throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+                }
 
                 items[index] = value; isDirty = true;
             }
@@ -481,14 +485,18 @@
             get
             {
                 if (!canWrite || !canRead)
+                {
                     throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+                }
 
                 return items[index];
             }
             set
             {
                 if (!canWrite || !canRead)
+                {
                     throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+                }
 
                 items[index] = value; isDirty = true;
             }
@@ -673,7 +681,9 @@
         public void ResetCounter()
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             count = 0;
         }
@@ -688,7 +698,9 @@
         public void Clear()
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             count = 0;
             isDirty = true;
@@ -750,7 +762,9 @@
         public ref T Add(T args)
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             var index = count;
             count++;
@@ -771,7 +785,9 @@
         public void RemoveAt(int index)
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
@@ -789,7 +805,9 @@
         public void RemoveAt(uint index)
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
@@ -806,7 +824,9 @@
         public void Clear(IGraphicsContext context)
         {
             if (!canWrite)
+            {
                 throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+            }
 
             context.ClearUnorderedAccessViewUint(uav, 0, 0, 0, 0);
         }

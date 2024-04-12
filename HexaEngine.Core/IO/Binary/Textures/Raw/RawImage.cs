@@ -204,11 +204,19 @@
             if (desc.Width != header.Width || desc.Height != header.Height || desc.Format != header.Format)
             {
                 if (desc.Width != header.Width)
+                {
                     throw new ArgumentException($"Texture does not match width must be {header.Width} but is given {desc.Width}", nameof(texture));
+                }
+
                 if (desc.Height != header.Height)
+                {
                     throw new ArgumentException($"Texture does not match height must be {header.Height} but is given {desc.Height}", nameof(texture));
+                }
+
                 if (desc.Format != header.Format)
+                {
                     throw new ArgumentException($"Texture does not match format must be {header.Format} but is given {desc.Format}", nameof(texture));
+                }
             }
 
             var staging = device.CreateTexture2D(desc);

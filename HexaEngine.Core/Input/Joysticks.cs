@@ -92,7 +92,10 @@
         {
             var result = idToJoystick[even.Which].OnAxisMotion(even);
             if (result == null)
+            {
                 return;
+            }
+
             var value = result.Value;
             AxisMotion?.Invoke(value.Joystick, value.AxisMotionEventArgs);
         }

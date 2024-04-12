@@ -48,14 +48,20 @@
         public void PopScope()
         {
             if (@sealed)
+            {
                 throw new InvalidOperationException("Instance was sealed");
+            }
+
             prefixToNamespace = scopeStack.Pop();
         }
 
         public void PushScope()
         {
             if (@sealed)
+            {
                 throw new InvalidOperationException("Instance was sealed");
+            }
+
             Dictionary<string, string> next = prefixToNamespace.ToDictionary();
             scopeStack.Push(prefixToNamespace);
             prefixToNamespace = next;

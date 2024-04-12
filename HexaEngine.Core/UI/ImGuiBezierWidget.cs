@@ -68,7 +68,9 @@ namespace HexaEngine.Core.UI
             ImDrawList* DrawList = ImGui.GetWindowDrawList();
             ImGuiWindow* Window = ImGui.GetCurrentWindow();
             if (Window->SkipItems != 0)
+            {
                 return false;
+            }
 
             // header and spacing
             bool changed = ImGui.SliderFloat4(label, (float*)Unsafe.AsPointer(ref P), 0, 1, "%.3f");
@@ -90,7 +92,9 @@ namespace HexaEngine.Core.UI
 
             ImGui.ItemSizeRect(bb, -1);
             if (!ImGui.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
+            {
                 return changed;
+            }
 
             int id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
             hovered |= ImGui.ItemHoverable(new ImRect() { Min = bb.Min - new Vector2(grabRadius), Max = bb.Min + new Vector2(avail, dim) + new Vector2(grabRadius) }, id, ImGuiItemFlags.None);

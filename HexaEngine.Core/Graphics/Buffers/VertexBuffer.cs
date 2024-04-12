@@ -216,7 +216,10 @@
             set
             {
                 if (capacity == value)
+                {
                     return;
+                }
+
                 var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);

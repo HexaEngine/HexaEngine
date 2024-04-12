@@ -10,7 +10,6 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
-    using Silk.NET.Direct3D11;
     using System.Numerics;
 
     /// <summary>
@@ -110,7 +109,7 @@
 #endif
 #if PROFILE
             // Signal and wait for synchronization if profiling is enabled.
-            syncBarrier.SignalAndWait();
+            //syncBarrier.SignalAndWait();
 #endif
             // Resize the swap chain if necessary.
             if (resize)
@@ -185,6 +184,7 @@
             GraphicsDevice.Profiler.Begin(GraphicsContext, "ImGui");
             sceneRenderer.Profiler.Begin("ImGui");
 #endif
+
             // End the ImGui frame rendering.
             imGuiRenderer?.EndFrame();
 #if PROFILE

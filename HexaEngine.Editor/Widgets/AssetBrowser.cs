@@ -414,7 +414,9 @@
                         {
                             SourceAssetsDatabase.ThumbnailCache.TryGet(metadata.Guid, out thumbnail);
                             if (metadata.ParentGuid != default)
+                            {
                                 groups.Add(metadata.ParentGuid);
+                            }
                         }
                         files.Add(new(Path.GetFileName(fse), fse, metadata, thumbnail));
                     }
@@ -624,7 +626,10 @@
                     MessageBox.Show("Delete directory", $"Are you sure you want to delete the directory and all containing files?\n{dir.Path}", dir.Path, (x, c) =>
                     {
                         if (x.Result != MessageBoxResult.Yes)
+                        {
                             return;
+                        }
+
                         System.IO.Directory.Delete((string)c, true);
                         Refresh(true);
                     }, MessageBoxType.YesCancel);
@@ -825,7 +830,10 @@
                     MessageBox.Show("Delete file", $"Are you sure you want to delete the file?\n{file.Path}", file.Path, (x, c) =>
                     {
                         if (x.Result != MessageBoxResult.Yes)
+                        {
                             return;
+                        }
+
                         SourceAssetsDatabase.Delete((string)c, DeleteBehavior.DeleteChildren);
                         Refresh(false);
                     }, MessageBoxType.YesCancel);

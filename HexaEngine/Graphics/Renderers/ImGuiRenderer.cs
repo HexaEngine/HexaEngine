@@ -181,7 +181,9 @@ namespace HexaEngine.Graphics.Renderers
                         Vector2 clip_min = new(cmd.ClipRect.X - clip_off.X, cmd.ClipRect.Y - clip_off.Y);
                         Vector2 clip_max = new(cmd.ClipRect.Z - clip_off.X, cmd.ClipRect.W - clip_off.Y);
                         if (clip_max.X <= clip_min.X || clip_max.Y <= clip_min.Y)
+                        {
                             continue;
+                        }
 
                         // Apply scissor/clipping rectangle
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
@@ -370,7 +372,9 @@ namespace HexaEngine.Graphics.Renderers
             CreateDeviceObjects();
 
             if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0)
+            {
                 InitPlatformInterface();
+            }
 
             return true;
         }
@@ -396,7 +400,9 @@ namespace HexaEngine.Graphics.Renderers
             Trace.Assert(bd != null, "Did you call ImGui_ImplDX11_Init()?");
 
             if (fontSampler == null)
+            {
                 CreateDeviceObjects();
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------
@@ -498,7 +504,10 @@ namespace HexaEngine.Graphics.Renderers
             ViewportData vd = viewportData[vh];
             context.SetRenderTarget(vd.RTView, null);
             if ((viewport->Flags & ImGuiViewportFlags.NoRendererClear) != 0)
+            {
                 context.ClearRenderTargetView(vd.RTView, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            }
+
             RenderDrawData(viewport->DrawData);
         }
 

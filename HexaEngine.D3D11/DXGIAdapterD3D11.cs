@@ -108,7 +108,10 @@
         public void PumpDebugMessages()
         {
             if (!debug)
+            {
                 return;
+            }
+
             ulong messageCount = IDXGIInfoQueue.GetNumStoredMessages(DXGI_DEBUG_ALL);
             for (ulong i = 0; i < messageCount; i++)
             {
@@ -127,13 +130,24 @@
                         string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(message->PDescription));
 
                         if (message->Producer == DXGI_DEBUG_DX)
+                        {
                             D3D11Logger.Log($"DX {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                        }
+
                         if (message->Producer == DXGI_DEBUG_DXGI)
+                        {
                             DXGILogger.Log($"DXGI {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                        }
+
                         if (message->Producer == DXGI_DEBUG_APP)
+                        {
                             D3D11Logger.Log($"APP {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                        }
+
                         if (message->Producer == DXGI_DEBUG_D3D11)
+                        {
                             D3D11Logger.Log($"D3D11 {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                        }
 
                         Free(message);
                     }
@@ -333,7 +347,10 @@
             }
 
             if (selected.Handle == null)
+            {
                 throw new NotSupportedException("No compatible GPU found. Please ensure your system meets the minimum requirements.");
+            }
+
             return selected;
         }
 
@@ -373,7 +390,10 @@
             }
 
             if (selected.Handle == null)
+            {
                 throw new NotSupportedException("No output found. Please connect a monitor or make sure your monitors don't run over the iGPU if you are on Mobile/Laptop.");
+            }
+
             return selected;
         }
 

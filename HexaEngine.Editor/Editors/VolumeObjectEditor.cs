@@ -111,13 +111,19 @@
                         var property = proxy.Properties[j];
 
                         if (property.Name == "Initialized")
+                        {
                             continue;
+                        }
 
                         if (property.Name == "Enabled")
+                        {
                             continue;
+                        }
 
                         if (property.Name == "Name")
+                        {
                             continue;
+                        }
 
                         var value = proxy.Data[property.Name];
 

@@ -240,7 +240,9 @@
             for (int i = 0; i < bindings.Count; i++)
             {
                 if (bindings[i].Name == name)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -302,7 +304,9 @@
                             if (node != other)
                             {
                                 if (!node.Dependencies.Contains(other))
+                                {
                                     node.Dependencies.Add(other);
+                                }
                             }
                         }
                     }
@@ -314,14 +318,18 @@
                             if (node != other && !IsReferencedBy(other))
                             {
                                 if (!node.Dependencies.Contains(other))
+                                {
                                     node.Dependencies.Add(other);
+                                }
                             }
                         }
                     }
                     continue;
                 }
                 if (!node.Dependencies.Contains(afterNode))
+                {
                     node.Dependencies.Add(afterNode);
+                }
             }
 
             for (int i = 0; i < before.Count; i++)
@@ -332,7 +340,9 @@
                     continue;
                 }
                 if (!beforeNode.Dependencies.Contains(node))
+                {
                     beforeNode.Dependencies.Add(node);
+                }
             }
         }
     }

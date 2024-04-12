@@ -12,9 +12,15 @@
         public float GetAxis(int index)
         {
             if (index == 0)
+            {
                 return X;
+            }
+
             if (index == 1)
+            {
                 return Y;
+            }
+
             return 0;
         }
     }

@@ -46,7 +46,10 @@
         public MaterialShaderPass? Find(string name)
         {
             if (!initialized)
+            {
                 return null;
+            }
+
             nameToPass.TryGetValue(name, out var pass);
             return pass;
         }
@@ -54,7 +57,9 @@
         public int IndexOf(string name)
         {
             if (!initialized)
+            {
                 return -1;
+            }
 
             for (int i = 0; i < passes.Count; i++)
             {

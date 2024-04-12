@@ -68,14 +68,20 @@
         public static void DrawRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             list.DrawRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush, thickness);
         }
 
         public static unsafe void DrawRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             Vector2 p0 = new(left, bottom); // bottom left corner
             Vector2 p1 = new(left, top); // top left corner
             Vector2 p2 = new(right, top); // top right corner
@@ -89,14 +95,20 @@
         public static void DrawRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             list.DrawRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, thickness);
         }
 
         public static unsafe void DrawRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
 
@@ -154,7 +166,10 @@
         public static unsafe void DrawLine(this UICommandList builder, Vector2 start, Vector2 end, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             Vector2* controlPoints = stackalloc Vector2[2] { start, end };
 
             builder.DrawPath(controlPoints, 2, brush, thickness, false);
@@ -163,7 +178,10 @@
         public static unsafe void DrawEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
 
@@ -199,7 +217,10 @@
         public static unsafe void DrawArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush, float thickness)
         {
             if (thickness == 0)
+            {
                 return;
+            }
+
             const int segments = 32;
             float angleRange = endAngle - startAngle;
             float step = angleRange / segments;
@@ -305,7 +326,9 @@
         {
             uint color = uint.MaxValue;
             if (pointCount < 2 || (color & COL32_A_MASK) == 0)
+            {
                 return;
+            }
 
             Vector2 uv = Vector2.Zero;
             int count = closed ? pointCount : pointCount - 1; // The number of line segments we need to draw
@@ -355,7 +378,9 @@
                     tempNormals[i1].Y = -n.X;
                 }
                 if (!closed)
+                {
                     tempNormals[pointCount - 1] = tempNormals[pointCount - 2];
+                }
 
                 float halfInnerThickness = (thickness - aaSize) * 0.5f;
 
@@ -452,7 +477,9 @@
             uint color = uint.MaxValue;
 
             if (pointCount < 3 || (color & COL32_A_MASK) == 0)
+            {
                 return;
+            }
 
             Vector2 uv = Vector2.Zero;
 

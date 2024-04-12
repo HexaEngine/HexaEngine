@@ -65,7 +65,10 @@ namespace HexaEngine.UI.Graphics.Text
             {
                 var os = FcObjectSetCreate();
                 foreach (var obj in objs)
+                {
                     FcObjectSetAdd(os, obj);
+                }
+
                 FcObjectSetAdd(os, "");
                 return os;
             }
@@ -107,9 +110,13 @@ namespace HexaEngine.UI.Graphics.Text
             var ptr = IntPtr.Zero;
             var result = FcPatternGetString(handle, obj, 0, ref ptr);
             if (result == 0)
+            {
                 return Marshal.PtrToStringAnsi(ptr);
+            }
             else
+            {
                 return null;
+            }
         }
 
         private static IEnumerable<string> ResolveFontConfig()
@@ -128,7 +135,9 @@ namespace HexaEngine.UI.Graphics.Text
                     var file = GetString(font, "file");
 
                     if (family is null || style is null || file is null)
+                    {
                         continue;
+                    }
 
                     yield return file;
                 }
@@ -157,17 +166,24 @@ namespace HexaEngine.UI.Graphics.Text
             void AddFontsToFontList(string path)
             {
                 if (!Directory.Exists(path))
+                {
                     return;
+                }
 
                 foreach (string subDir in Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories))
+                {
                     fontList.AddRange(Directory.EnumerateFiles(subDir, "*", SearchOption.AllDirectories));
+                }
             }
 
             var hs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var path in SearchPaths())
             {
                 if (hs.Contains(path))
+                {
                     continue;
+                }
+
                 hs.Add(path);
                 AddFontsToFontList(path);
             }
@@ -188,7 +204,9 @@ namespace HexaEngine.UI.Graphics.Text
                     {
                         Match match = confRegex.Match(line);
                         if (!match.Success)
+                        {
                             continue;
+                        }
 
                         string path = match.Groups["dir"].Value.Trim();
                         if (path.StartsWith("~"))

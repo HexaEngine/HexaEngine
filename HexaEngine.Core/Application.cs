@@ -11,7 +11,6 @@
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using YamlDotNet.Core.Tokens;
     using static Extensions.SdlErrorHandlingExtensions;
 
     /// <summary>
@@ -504,7 +503,9 @@
                         var even = evnt.Key;
                         Keyboard.OnKeyDown(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
+                        }
                     }
                     break;
 
@@ -513,7 +514,9 @@
                         var even = evnt.Key;
                         Keyboard.OnKeyUp(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
+                        }
                     }
                     break;
 
@@ -529,7 +532,9 @@
                         var even = evnt.Text;
                         Keyboard.OnTextInput(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputText(even);
+                        }
                     }
                     break;
 
@@ -541,7 +546,9 @@
                         var even = evnt.Motion;
                         Mouse.OnMotion(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                        }
                     }
                     break;
 
@@ -550,7 +557,9 @@
                         var even = evnt.Button;
                         Mouse.OnButtonDown(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                        }
                     }
                     break;
 
@@ -559,7 +568,9 @@
                         var even = evnt.Button;
                         Mouse.OnButtonUp(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                        }
                     }
                     break;
 
@@ -568,7 +579,9 @@
                         var even = evnt.Wheel;
                         Mouse.OnWheel(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputMouse(even);
+                        }
                     }
                     break;
 
@@ -696,7 +709,9 @@
                         var even = evnt.Tfinger;
                         TouchDevices.FingerDown(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputTouchDown(even);
+                        }
                     }
                     break;
 
@@ -705,7 +720,9 @@
                         var even = evnt.Tfinger;
                         TouchDevices.FingerUp(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputTouchUp(even);
+                        }
                     }
                     break;
 
@@ -714,7 +731,9 @@
                         var even = evnt.Tfinger;
                         TouchDevices.FingerMotion(even);
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessInputTouchMotion(even);
+                        }
                     }
                     break;
 
@@ -734,7 +753,10 @@
                     {
                         var even = evnt.Drop;
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessDropFile(even);
+                        }
+
                         Sdl.Free(evnt.Drop.File);
                     }
                     break;
@@ -743,7 +765,10 @@
                     {
                         var even = evnt.Drop;
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessDropText(even);
+                        }
+
                         Sdl.Free(evnt.Drop.File);
                     }
                     break;
@@ -752,7 +777,9 @@
                     {
                         var even = evnt.Drop;
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessDropBegin(even);
+                        }
                     }
                     break;
 
@@ -760,7 +787,9 @@
                     {
                         var even = evnt.Drop;
                         if (even.WindowID == mainWindow.WindowID)
+                        {
                             ((SdlWindow)mainWindow).ProcessDropComplete(even);
+                        }
                     }
                     break;
 

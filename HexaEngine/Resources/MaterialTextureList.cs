@@ -102,14 +102,22 @@
 
         public void BindPS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             context.PSSetShaderResources(startTextureSlot, count, shaderResourceViews);
             context.PSSetSamplers(startSamplerSlot, count, samplers);
         }
 
         public void UnbindPS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             nint* empty = stackalloc nint[(int)count];
             context.PSSetShaderResources(startTextureSlot, count, (void**)empty);
             context.PSSetSamplers(startSamplerSlot, count, (void**)empty);
@@ -117,14 +125,22 @@
 
         public void BindGS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             context.GSSetShaderResources(startTextureSlot, count, shaderResourceViews);
             context.GSSetSamplers(startSamplerSlot, count, samplers);
         }
 
         public void UnbindGS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             nint* empty = stackalloc nint[(int)count];
             context.GSSetShaderResources(startTextureSlot, count, (void**)empty);
             context.GSSetSamplers(startSamplerSlot, count, (void**)empty);
@@ -132,14 +148,22 @@
 
         public void BindDS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             context.DSSetShaderResources(startTextureSlot, count, shaderResourceViews);
             context.DSSetSamplers(startSamplerSlot, count, samplers);
         }
 
         public void UnbindDS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             nint* empty = stackalloc nint[(int)count];
             context.DSSetShaderResources(startTextureSlot, count, (void**)empty);
             context.DSSetSamplers(startSamplerSlot, count, (void**)empty);
@@ -147,14 +171,22 @@
 
         public void BindHS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             context.HSSetShaderResources(startTextureSlot, count, shaderResourceViews);
             context.HSSetSamplers(startSamplerSlot, count, samplers);
         }
 
         public void UnbindHS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             nint* empty = stackalloc nint[(int)count];
             context.HSSetShaderResources(startTextureSlot, count, (void**)empty);
             context.HSSetSamplers(startSamplerSlot, count, (void**)empty);
@@ -162,14 +194,22 @@
 
         public void BindVS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             context.VSSetShaderResources(startTextureSlot, count, shaderResourceViews);
             context.VSSetSamplers(startSamplerSlot, count, samplers);
         }
 
         public void UnbindVS(IGraphicsContext context)
         {
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
+
             nint* empty = stackalloc nint[(int)count];
             context.VSSetShaderResources(startTextureSlot, count, (void**)empty);
             context.VSSetSamplers(startSamplerSlot, count, (void**)empty);

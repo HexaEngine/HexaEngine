@@ -193,7 +193,9 @@
             if (context.IsNull)
             {
                 if (createContext)
+                {
                     context = ImNodes.EditorContextCreate();
+                }
 
                 if (!initialized)
                 {
@@ -225,7 +227,9 @@
             {
                 Node node = nodes[i];
                 if (node.Id == id)
+                {
                     return node;
+                }
             }
             throw new();
         }
@@ -236,7 +240,9 @@
             {
                 var node = nodes[i];
                 if (node is T t)
+                {
                     return t;
+                }
             }
             throw new KeyNotFoundException();
         }
@@ -247,7 +253,9 @@
             {
                 var node = nodes[i];
                 if (node is T t)
+                {
                     yield return t;
+                }
             }
         }
 
@@ -257,7 +265,9 @@
             {
                 var link = links[i];
                 if (link.Id == id)
+                {
                     return link;
+                }
             }
 
             throw new KeyNotFoundException();
@@ -352,7 +362,10 @@
         public void Draw()
         {
             if (context.IsNull)
+            {
                 Initialize();
+            }
+
             ImNodes.EditorContextSet(context);
             ImNodes.BeginNodeEditor();
             for (int i = 0; i < Nodes.Count; i++)
@@ -364,7 +377,10 @@
                 Links[i].Draw();
             }
             if (Minimap)
+            {
                 ImNodes.MiniMap(0.4f, Location, null, default);
+            }
+
             ImNodes.EndNodeEditor();
 
             int idNode1 = 0;
@@ -377,7 +393,9 @@
                 var pino = GetNode(idNode1).GetOutput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
                 if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
+                {
                     CreateLink(pini, pino);
+                }
             }
             int idLink = 0;
             if (ImNodes.IsLinkDestroyed(ref idLink))
@@ -444,7 +462,10 @@
             }
             this.nodes.Clear();
             if (!context.IsNull)
+            {
                 ImNodes.EditorContextFree(context);
+            }
+
             context = null;
             initialized = false;
         }
@@ -458,16 +479,23 @@
             {
                 (int i, node) = walkstack.Pop();
                 if (i > node.Links.Count)
+                {
                     continue;
+                }
+
                 Link link = node.Links[i];
                 i++;
                 walkstack.Push((i, node));
                 if (link.OutputNode == node)
                 {
                     if (link.Output == endPin)
+                    {
                         return true;
+                    }
                     else
+                    {
                         walkstack.Push((0, link.InputNode));
+                    }
                 }
             }
 
@@ -496,7 +524,9 @@
                     {
                         var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
+                        {
                             stack1.Push(node.Links[i].OutputNode);
+                        }
                     }
                 }
             }
@@ -533,12 +563,16 @@
                     {
                         var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
+                        {
                             stack1.Push((priority + 1, node.Links[i].OutputNode));
+                        }
                     }
                 }
 
                 if (groups < priority)
+                {
                     groups = priority;
+                }
             }
             groups++;
             Node[][] nodes = new Node[groups][];
@@ -551,7 +585,9 @@
                 for (int j = 0; j < pNodes.Length; j++)
                 {
                     if (pNodes[j].Item1 == i)
+                    {
                         group.Add(pNodes[j].Item2);
+                    }
                 }
                 nodes[i] = group.ToArray();
             }
@@ -566,7 +602,10 @@
             {
                 var val = values.Pop();
                 if (val.Equals(value))
+                {
                     break;
+                }
+
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -582,7 +621,10 @@
             {
                 var val = values.Pop();
                 if (val.Equals(value))
+                {
                     break;
+                }
+
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -598,7 +640,10 @@
             {
                 var val = values.Pop();
                 if (compare(val))
+                {
                     break;
+                }
+
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -613,7 +658,9 @@
             {
                 var value = values.ElementAt(i);
                 if (compare(value))
+                {
                     return value;
+                }
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return default;

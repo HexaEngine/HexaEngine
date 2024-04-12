@@ -638,6 +638,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             io.ConfigFlags |= flags;
             io.ConfigViewportsNoAutoMerge = false;
             io.ConfigViewportsNoTaskBarIcon = false;
+            io.ConfigDragClickToInputText = true;
 
             var config = ImGui.ImFontConfig();
             var fonts = io.Fonts;

@@ -191,7 +191,9 @@ namespace HexaEngine.Core.Debugging
         public void Compact()
         {
             if (nVerticesTotal == 0)
+            {
                 return;
+            }
 
             if (vertices.Count + vertexBufferSize < vertices.Capacity)
             {

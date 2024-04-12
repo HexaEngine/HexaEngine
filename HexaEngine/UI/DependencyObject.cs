@@ -10,7 +10,11 @@
 
         public T? ResolveObject<T>() where T : DependencyObject
         {
-            if (Parent is null) return null;
+            if (Parent is null)
+            {
+                return null;
+            }
+
             if (Parent is T t)
             {
                 return t;
@@ -21,7 +25,11 @@
 
         public DependencyObject? ResolveObject(string name)
         {
-            if (Parent is null) return null;
+            if (Parent is null)
+            {
+                return null;
+            }
+
             if (Parent.Name == name)
             {
                 return Parent;
@@ -65,9 +73,15 @@
         public T? FindFirstObject<T>() where T : DependencyObject
         {
             if (this is T tSelf)
+            {
                 return tSelf;
+            }
+
             if (Parent is null)
+            {
                 return null;
+            }
+
             if (Parent is T t)
             {
                 return t;
@@ -78,7 +92,11 @@
 
         public T? ResolveObject<T>() where T : DependencyObject
         {
-            if (Parent is null) return null;
+            if (Parent is null)
+            {
+                return null;
+            }
+
             if (Parent is T t)
             {
                 return t;
@@ -89,7 +107,11 @@
 
         public DependencyObject? ResolveObject(string name)
         {
-            if (Parent is null) return null;
+            if (Parent is null)
+            {
+                return null;
+            }
+
             if (Parent.Name == name)
             {
                 return Parent;

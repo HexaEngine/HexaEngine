@@ -174,7 +174,9 @@
                     smp->materialIndex0.structgen_pad0[0] = 0;
                     smp->materialIndex1.structgen_pad0[0] = 1;
                     if (userFlipEdge)
+                    {
                         smp->SetTessFlagMut();
+                    }
                 }
             }
 

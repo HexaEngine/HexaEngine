@@ -59,10 +59,16 @@
             sdl = Application.Sdl;
             controller = sdl.GameControllerOpen(id);
             if (controller == null)
+            {
                 SdlCheckError();
+            }
+
             joystick = sdl.GameControllerGetJoystick(controller);
             if (controller == null)
+            {
                 SdlCheckError();
+            }
+
             this.id = sdl.JoystickInstanceID(joystick).SdlThrowIfNeg();
             var axes = Enum.GetValues<GamepadAxis>();
             for (int i = 0; i < axes.Length; i++)
@@ -101,7 +107,10 @@
             {
                 var mapping = sdl.GameControllerMappingForIndexS(i);
                 if (mapping == null)
+                {
                     SdlCheckError();
+                }
+
                 mappings.Add(mapping ?? string.Empty);
             }
 
@@ -159,7 +168,10 @@
             {
                 var name = sdl.GameControllerNameS(controller);
                 if (name == null)
+                {
                     SdlCheckError();
+                }
+
                 return name ?? string.Empty;
             }
         }
@@ -228,7 +240,10 @@
             {
                 var mapping = sdl.GameControllerMappingS(controller);
                 if (mapping == null)
+                {
                     SdlCheckError();
+                }
+
                 return mapping ?? string.Empty;
             }
         }

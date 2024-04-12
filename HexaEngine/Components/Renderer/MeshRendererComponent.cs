@@ -127,42 +127,60 @@
         public override void Update(IGraphicsContext context)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.Update(context, GameObject.Transform.Global, model);
         }
 
         public void DrawDepth(IGraphicsContext context, IBuffer cam)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.DrawDepth(context, model, cam);
         }
 
         public override void DrawDepth(IGraphicsContext context)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.DrawDepth(context, model);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.DrawShadowMap(context, model, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.VisibilityTest(context, model);
         }
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
             if (model == null)
+            {
                 return;
+            }
+
             if (path == RenderPath.Deferred)
             {
                 meshRenderer1.DrawDeferred(context, model);
@@ -176,7 +194,10 @@
         public override void Bake(IGraphicsContext context)
         {
             if (model == null)
+            {
                 return;
+            }
+
             meshRenderer1.Bake(context, model);
         }
 

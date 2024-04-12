@@ -89,9 +89,15 @@
             uint i;
 
             if (br.ReadRawUInt32(ref x, 8))
+            {
                 return false;
+            }
+
             if (raw != null)
+            {
                 raw[(*rawlen)++] = (byte)x;
+            }
+
             if ((x & 0x80) == 0)
             { /* 0xxxxxxx */
                 v = x;
@@ -130,9 +136,15 @@
             for (; i != 0; i--)
             {
                 if (!br.ReadRawUInt32(ref x, 8))
+                {
                     return false;
+                }
+
                 if (raw != null)
+                {
                     raw[(*rawlen)++] = (byte)x;
+                }
+
                 if ((x & 0x80) == 0 || (x & 0x40) != 0)
                 { /* 10xxxxxx */
                     val = 0xffffffff;
@@ -152,9 +164,15 @@
             uint i;
 
             if (!br.ReadRawUInt32(ref x, 8))
+            {
                 return false;
+            }
+
             if (raw != null)
+            {
                 raw[(*rawlen)++] = (byte)x;
+            }
+
             if ((x & 0x80) != 0)
             { /* 0xxxxxxx */
                 v = x;
@@ -198,9 +216,15 @@
             for (; i != 0; i--)
             {
                 if (!br.ReadRawUInt32(ref x, 8))
+                {
                     return false;
+                }
+
                 if (raw != null)
+                {
                     raw[(*rawlen)++] = (byte)x;
+                }
+
                 if ((x & 0x80) == 0 || (x & 0x40) != 0)
                 { /* 10xxxxxx */
                     val = 0xffffffffffffffff;

@@ -222,7 +222,9 @@
             for (int i = 0; i < macros.Count; i++)
             {
                 if (macros[i].Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }

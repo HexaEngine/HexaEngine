@@ -152,7 +152,11 @@
                 {
                     if (activeNode != 0)
                     {
-                        if (activeNode != -1 && open) ImGui.TreePop();
+                        if (activeNode != -1 && open)
+                        {
+                            ImGui.TreePop();
+                        }
+
                         open = ImGui.TreeNodeEx("Today", ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 0;
                     }
@@ -161,7 +165,11 @@
                 {
                     if (activeNode != 1)
                     {
-                        if (activeNode != -1 && open) ImGui.TreePop();
+                        if (activeNode != -1 && open)
+                        {
+                            ImGui.TreePop();
+                        }
+
                         open = ImGui.TreeNodeEx("Yesterday", ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 1;
                     }
@@ -170,7 +178,11 @@
                 {
                     if (activeNode != 2)
                     {
-                        if (activeNode != -1 && open) ImGui.TreePop();
+                        if (activeNode != -1 && open)
+                        {
+                            ImGui.TreePop();
+                        }
+
                         open = ImGui.TreeNodeEx("A week ago", ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 2;
                     }
@@ -179,14 +191,22 @@
                 {
                     if (activeNode != 3)
                     {
-                        if (activeNode != -1 && open) ImGui.TreePop();
+                        if (activeNode != -1 && open)
+                        {
+                            ImGui.TreePop();
+                        }
+
                         open = ImGui.TreeNodeEx("A month ago", ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 3;
                     }
                 }
                 else if (activeNode != 4)
                 {
-                    if (activeNode != -1 && open) ImGui.TreePop();
+                    if (activeNode != -1 && open)
+                    {
+                        ImGui.TreePop();
+                    }
+
                     open = ImGui.TreeNode("Older");
                     activeNode = 4;
                 }
@@ -197,7 +217,10 @@
                 }
             }
 
-            if (activeNode != -1 && open) ImGui.TreePop();
+            if (activeNode != -1 && open)
+            {
+                ImGui.TreePop();
+            }
 
             ImGui.EndChild();
 

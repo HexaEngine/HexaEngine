@@ -96,7 +96,9 @@
         public unsafe void EndFrame(IGraphicsContext context)
         {
             if (!enabled)
+            {
                 return;
+            }
 
             if (currentFrame < FrameCount - 1)
             {
@@ -122,7 +124,10 @@
                         while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
                         {
                             if (!DisableLogging)
+                            {
                                 Logger.Info($"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                            }
+
                             Thread.Sleep(1);
                         }
 
@@ -130,7 +135,9 @@
                         if (disjoint.Disjoint)
                         {
                             if (!DisableLogging)
+                            {
                                 Logger.Warn($"Disjoint Timestamp Flag in {name}");
+                            }
                         }
                         else
                         {
@@ -142,7 +149,10 @@
                             while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
                             {
                                 if (!DisableLogging)
+                                {
                                     Logger.Info($"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                }
+
                                 Thread.Sleep(1);
                             }
                             ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
@@ -163,11 +173,17 @@
         public void Begin(IGraphicsContext context, string name)
         {
             if (!enabled)
+            {
                 return;
+            }
+
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
             if (!queries[i].ContainsKey(name))
+            {
                 return;
+            }
+
             var queryData = queries[i][name];
             ctx.Begin(queryData.DisjointQuery);
             ctx.End(queryData.TimestampQueryStart);
@@ -179,10 +195,16 @@
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
             if (!queries[i].ContainsKey(name))
+            {
                 return;
+            }
+
             var queryData = queries[i][name];
             if (!queryData.BeginCalled)
+            {
                 return;
+            }
+
             ctx.End(queryData.TimestampQueryEnd);
             ctx.End(queryData.DisjointQuery);
             queryData.EndCalled = true;

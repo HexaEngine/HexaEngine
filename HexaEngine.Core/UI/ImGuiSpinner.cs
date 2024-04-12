@@ -10,7 +10,9 @@
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             if (window->SkipItems == 1)
+            {
                 return;
+            }
 
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             ImGuiContextPtr g = ImGui.GetCurrentContext();
@@ -27,7 +29,9 @@
             ImRect bb = new() { Min = pos + cursorPos, Max = pos + cursorPos + size };
             ImGui.ItemSizeRect(bb, style.FramePadding.Y);
             if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            {
                 return;
+            }
 
             // Render
             float circleStart = size.X * 0.7f;
@@ -61,7 +65,9 @@
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             if (window->SkipItems == 1)
+            {
                 return;
+            }
 
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             var g = ImGui.GetCurrentContext();
@@ -81,7 +87,9 @@
 
             ImGui.ItemSizeRect(bb, -1);
             if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            {
                 return;
+            }
 
             // Render
             ImGui.PathClear(drawList);

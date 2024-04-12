@@ -74,7 +74,9 @@
             }
 
             if (entry == null)
+            {
                 throw new NotSupportedException($"The type {type} is not supported");
+            }
 
             entry.Read(src, encoding, endianness);
             return entry;

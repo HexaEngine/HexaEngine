@@ -13,17 +13,35 @@
         public static string Format(nuint s)
         {
             if (s > 1152921504606846976)
+            {
                 return $"{s / 1152921504606846976f}EiB";
+            }
+
             if (s > 1125899906842624)
+            {
                 return $"{s / 1125899906842624f}PiB";
+            }
+
             if (s > 1099511627776)
+            {
                 return $"{s / 1099511627776f}TiB";
+            }
+
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -35,17 +53,35 @@
         public static string Format(nint s)
         {
             if (s > 1152921504606846976)
+            {
                 return $"{s / 1152921504606846976f}EiB";
+            }
+
             if (s > 1125899906842624)
+            {
                 return $"{s / 1125899906842624f}PiB";
+            }
+
             if (s > 1099511627776)
+            {
                 return $"{s / 1099511627776f}TiB";
+            }
+
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -57,17 +93,35 @@
         public static string Format(ulong s)
         {
             if (s > 1152921504606846976)
+            {
                 return $"{s / 1152921504606846976f}EiB";
+            }
+
             if (s > 1125899906842624)
+            {
                 return $"{s / 1125899906842624f}PiB";
+            }
+
             if (s > 1099511627776)
+            {
                 return $"{s / 1099511627776f}TiB";
+            }
+
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -79,17 +133,35 @@
         public static string Format(long s)
         {
             if (s > 1152921504606846976)
+            {
                 return $"{s / 1152921504606846976f}EiB";
+            }
+
             if (s > 1125899906842624)
+            {
                 return $"{s / 1125899906842624f}PiB";
+            }
+
             if (s > 1099511627776)
+            {
                 return $"{s / 1099511627776f}TiB";
+            }
+
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -101,11 +173,20 @@
         public static string Format(uint s)
         {
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -117,11 +198,20 @@
         public static string Format(int s)
         {
             if (s > 1073741824)
+            {
                 return $"{s / 1073741824f}GiB";
+            }
+
             if (s > 1048576)
+            {
                 return $"{s / 1048576f}MiB";
+            }
+
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -133,7 +223,10 @@
         public static string Format(ushort s)
         {
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 
@@ -145,7 +238,10 @@
         public static string Format(short s)
         {
             if (s > 1024)
+            {
                 return $"{s / 1024f}KiB";
+            }
+
             return $"{s}B";
         }
 

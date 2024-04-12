@@ -54,7 +54,9 @@
         public void Update(IGraphicsContext context, Matrix4x4 transform)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             transformOffsetBuffer.ResetCounter();
             transformBuffer.ResetCounter();
@@ -71,13 +73,17 @@
         public void VisibilityTest(CullingContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
         }
 
         public void DrawDeferred(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
@@ -95,7 +101,9 @@
         public void DrawForward(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
@@ -113,7 +121,9 @@
         public void DrawDepth(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
@@ -131,7 +141,9 @@
         public void DrawDepth(IGraphicsContext context, IBuffer camera)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);
@@ -149,7 +161,9 @@
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformBuffer.SRV);

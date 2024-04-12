@@ -71,7 +71,10 @@
             }
 
             if (_objects.Contains(obj))
+            {
                 return;
+            }
+
             _objects.Add(obj);
         }
 

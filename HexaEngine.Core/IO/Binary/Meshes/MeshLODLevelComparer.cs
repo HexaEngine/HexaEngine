@@ -9,7 +9,10 @@
         public int Compare(MeshLODData? x, MeshLODData? y)
         {
             if (x == null || y == null)
+            {
                 return 0;
+            }
+
             return x.LODLevel.CompareTo(y.LODLevel);
         }
     }

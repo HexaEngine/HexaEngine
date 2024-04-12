@@ -242,7 +242,10 @@
         public IDisposable SupressReload()
         {
             if (suppressListeners)
+            {
                 return new SuppressHandle(this);
+            }
+
             semaphore.Wait();
             suppressListeners = true;
             return new SuppressHandle(this);
@@ -251,7 +254,10 @@
         public void ResumeReload()
         {
             if (!suppressListeners)
+            {
                 return;
+            }
+
             suppressListeners = false;
 
             if ((privateFlags & PrivateFlags.ReloadPending) != 0)
@@ -510,7 +516,9 @@
             for (int i = 0; i < activeEffects.Count; i++)
             {
                 if (effects[i].Enabled)
+                {
                     activeEffects[i].Resize(width, height);
+                }
             }
 
             postContext.Resize(device, width, height);

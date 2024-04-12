@@ -117,7 +117,10 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentNullException(nameof(algorithm));
             }
-            else ArgumentNullException.ThrowIfNull(mesh);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(mesh);
+            }
 
             uint currentTriangleCount = mesh.TriangleCount;
             if (targetTriangleCount > currentTriangleCount)
@@ -174,7 +177,11 @@ namespace HexaEngine.Core.MeshDecimator
             {
                 throw new ArgumentNullException(nameof(algorithm));
             }
-            else ArgumentNullException.ThrowIfNull(mesh);
+            else
+            {
+                ArgumentNullException.ThrowIfNull(mesh);
+            }
+
             _ = mesh.TriangleCount;
             algorithm.Initialize(mesh);
             algorithm.DecimateMeshLossless();

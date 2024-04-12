@@ -255,7 +255,9 @@
         private static void Shown(IEditorWindow window)
         {
             if (!window.Initialized && device != null)
+            {
                 window.Init(device);
+            }
         }
 
         public static void Init(IGraphicsDevice device)
@@ -265,7 +267,9 @@
             {
                 var window = windows[i];
                 if (window.IsShown)
+                {
                     window.Init(device);
+                }
             }
         }
 
@@ -299,7 +303,9 @@
                 window.Shown -= Shown;
                 window.Closed -= Closed;
                 if (window.Initialized)
+                {
                     window.Dispose();
+                }
             }
 
             windows.Clear();

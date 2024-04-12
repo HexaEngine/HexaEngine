@@ -100,9 +100,15 @@
             public int CompareTo(Entry other)
             {
                 if (this > other)
+                {
                     return 1;
+                }
+
                 if (this < other)
+                {
                     return -1;
+                }
+
                 return 0;
             }
 
@@ -210,11 +216,19 @@
 
             // quick check for positions outside the range
             if (mPositions.Count == 0)
+            {
                 return;
+            }
+
             if (maxDist < mPositions.First().Distance)
+            {
                 return;
+            }
+
             if (minDist > mPositions.Last().Distance)
+            {
                 return;
+            }
 
             // do a binary search for the minimal distance to start the iteration there
             uint index = (uint)mPositions.Count / 2;
@@ -222,9 +236,13 @@
             while (binaryStepSize > 1)
             {
                 if (mPositions[(int)index].Distance < minDist)
+                {
                     index += binaryStepSize;
+                }
                 else
+                {
                     index -= binaryStepSize;
+                }
 
                 binaryStepSize /= 2;
             }
@@ -232,9 +250,14 @@
             // depending on the direction of the last step we need to single step a bit back or forth
             // to find the actual beginning element of the range
             while (index > 0 && mPositions[(int)index].Distance > minDist)
+            {
                 index--;
+            }
+
             while (index < mPositions.Count - 1 && mPositions[(int)index].Distance < minDist)
+            {
                 index++;
+            }
 
             // Mow start iterating from there until the first position lays outside of the distance range.
             // Add all positions inside the distance range within the given radius to the result array
@@ -245,10 +268,15 @@
             while (it.Current.Distance < maxDist)
             {
                 if ((it.Current.Position - position).LengthSquared() < pSquared)
+                {
                     results.Add(it.Current.Index);
+                }
+
                 ++it;
                 if (it.End)
+                {
                     break;
+                }
             }
 
             // that's it
@@ -282,10 +310,14 @@
             bool OneComplement = -42 == ~42 && (binValue & mask) != 0;
 
             if (DefaultValue)
+            {
                 return mask - binValue;
+            }
             // One's complement?
             else if (OneComplement)
+            {
                 return -0 - binValue;
+            }
             // Sign-magnitude? -0 = 1000... binary
             return binValue;
         }
@@ -337,9 +369,13 @@
             {
                 // Ugly, but conditional jumps are faster with integers than with floats
                 if (minDistBinary > ToBinary(mPositions[(int)index].Distance))
+                {
                     index += binaryStepSize;
+                }
                 else
+                {
                     index -= binaryStepSize;
+                }
 
                 binaryStepSize /= 2;
             }
@@ -347,9 +383,14 @@
             // depending on the direction of the last step we need to single step a bit back or forth
             // to find the actual beginning element of the range
             while (index > 0 && minDistBinary < ToBinary(mPositions[(int)index].Distance))
+            {
                 index--;
+            }
+
             while (index < mPositions.Count - 1 && minDistBinary > ToBinary(mPositions[(int)index].Distance))
+            {
                 index++;
+            }
 
             // Now start iterating from there until the first position lays outside of the distance range.
             // Add all positions inside the distance range within the tolerance to the result array
@@ -357,10 +398,15 @@
             while (ToBinary(it.Current.Distance) < maxDistBinary)
             {
                 if (distance3DToleranceInULPs >= ToBinary((it.Current.Position - position).LengthSquared()))
+                {
                     results.Add(it.Current.Index);
+                }
+
                 ++it;
                 if (it.End)
+                {
                     break;
+                }
             }
 
             // that's it

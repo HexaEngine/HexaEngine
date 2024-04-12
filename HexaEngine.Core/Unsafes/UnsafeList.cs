@@ -375,7 +375,10 @@
         {
             var index = IndexOf(&item);
             if (index == -1)
+            {
                 return false;
+            }
+
             RemoveAt(index);
             return true;
         }

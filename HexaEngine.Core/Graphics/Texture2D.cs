@@ -1283,7 +1283,9 @@
                 rtv?.Dispose();
                 uav?.Dispose();
                 if (cpuAccessFlags != CpuAccessFlags.None)
+                {
                     Free(local);
+                }
 
                 if ((description.BindFlags & BindFlags.RenderTarget) != 0 && RTVArraySlices != null)
                 {

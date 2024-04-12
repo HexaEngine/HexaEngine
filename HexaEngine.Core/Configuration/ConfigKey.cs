@@ -80,7 +80,10 @@
             {
                 ConfigKey? key = Find(Keys, path);
                 if (key != null)
+                {
                     throw new("Key already exists");
+                }
+
                 key = new(path);
                 Keys.Add(key);
                 return key;
@@ -99,7 +102,10 @@
             {
                 key = Find(Keys, path);
                 if (key != null)
+                {
                     return false;
+                }
+
                 key = new(path);
                 Keys.Add(key);
                 return true;

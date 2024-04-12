@@ -230,7 +230,9 @@
             {
                 var lightSource = lights.Active[i];
                 if (lightSource is not Light light)
+                {
                     continue;
+                }
 
                 if (!light.VolumetricsEnable)
                 {
@@ -242,7 +244,9 @@
                 volumetricLightBuffer.Add(new(lightData, light.VolumetricsMultiplier));
 
                 if (light is DirectionalLight dir)
+                {
                     context.PSSetShaderResource(2, dir.GetShadowMap());
+                }
             }
 
             // early exit nothing to render

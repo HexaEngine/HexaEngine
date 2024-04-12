@@ -181,7 +181,9 @@
             set
             {
                 if (device == null)
+                {
                     return;
+                }
 
                 if (editor != null)
                 {
@@ -304,7 +306,9 @@
                 }
 
                 if (!Enum.TryParse<MaterialPropertyType>(propertyPin.PropertyName, true, out var type))
+                {
                     continue;
+                }
 
                 var idx = material.GetPropertyIndex(type);
                 MaterialProperty property;
@@ -477,10 +481,14 @@
                 var connection = textureNode.OutColor.FindLink<BRDFShadingModelNode>(PinKind.Input);
 
                 if (connection is not PropertyPin propertyPin)
+                {
                     continue;
+                }
 
                 if (!Enum.TryParse<MaterialTextureType>(propertyPin.PropertyName, true, out var type))
+                {
                     continue;
+                }
 
                 var desc = textureNode.SamplerDescription;
 
@@ -874,7 +882,9 @@
         private void UpdateMaterial()
         {
             if (editor == null)
+            {
                 return;
+            }
 
             if (updateMaterialTask != null && !updateMaterialTask.IsCompleted)
             {

@@ -24,14 +24,18 @@
             int index = 0;
 
             if (s == "*")
+            {
                 return version;
+            }
 
             for (int i = 0; i < s.Length; i++)
             {
                 if (s[i] == '.')
                 {
                     if (index >= 4)
+                    {
                         throw new FormatException();
+                    }
 
                     ReadOnlySpan<char> chars = s.AsSpan(start, i - start);
                     var value = int.Parse(chars);

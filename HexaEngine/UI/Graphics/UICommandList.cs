@@ -9,7 +9,9 @@
         public static void MergeSort<T>(IList<T> array) where T : IComparable<T>
         {
             if (array == null || array.Count <= 1)
+            {
                 return;
+            }
 
             T[] tempArray = new T[array.Count];
             MergeSort(array, tempArray, 0, array.Count - 1);
@@ -72,7 +74,9 @@
         public static void BlockSort<T>(IList<T> array) where T : IComparable<T>
         {
             if (array == null || array.Count <= 1)
+            {
                 return;
+            }
 
             int blockSize = (int)Math.Sqrt(array.Count);
 
@@ -138,7 +142,9 @@
         public static void BlockSort<T>(IList<T> array, IComparer<T> comparer)
         {
             if (array == null || array.Count <= 1)
+            {
                 return;
+            }
 
             int blockSize = (int)Math.Sqrt(array.Count);
 

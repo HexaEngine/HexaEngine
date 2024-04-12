@@ -43,7 +43,9 @@
         public static unsafe void QSort(void* array, int elements, int size, Func<Pointer, Pointer, int> compare)
         {
             if (elements <= 1)
+            {
                 return;
+            }
 
             int pivotIndex = Partition(array, elements, size, compare);
             QSort(array, pivotIndex, size, compare);
@@ -67,10 +69,14 @@
             while (left <= right)
             {
                 while (compare((byte*)array + left * size, pivot) < 0)
+                {
                     left++;
+                }
 
                 while (compare((byte*)array + right * size, pivot) > 0)
+                {
                     right--;
+                }
 
                 if (left <= right)
                 {
@@ -104,7 +110,9 @@
         public static unsafe void QSort<T>(T* array, int elements, Func<Pointer<T>, Pointer<T>, int> compare) where T : unmanaged
         {
             if (elements <= 1)
+            {
                 return;
+            }
 
             int pivotIndex = Partition(array, elements, compare);
             QSort(array, pivotIndex, compare);
@@ -128,10 +136,14 @@
             while (left <= right)
             {
                 while (compare(array + left, pivot) < 0)
+                {
                     left++;
+                }
 
                 while (compare(array + right, pivot) > 0)
+                {
                     right--;
+                }
 
                 if (left <= right)
                 {

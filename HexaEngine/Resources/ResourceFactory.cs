@@ -67,7 +67,10 @@
             {
                 var instance = CreateInstance(resourceManager, id, instanceData);
                 if (instance == null)
+                {
                     return instance;
+                }
+
                 instances.TryAdd(id, instance);
                 return instance;
             }
@@ -106,7 +109,10 @@
                 {
                     instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
+                    {
                         return instance;
+                    }
+
                     instances.TryAdd(id, instance);
                 }
             }
@@ -132,7 +138,9 @@
         {
             var instance = CreateInstance(resourceManager, id, instanceData);
             if (instance == null)
+            {
                 return Task.FromResult(instance ?? throw new InvalidDataException());
+            }
 
             var result = instances.TryAdd(id, instance);
             if (result)
@@ -178,7 +186,10 @@
                 {
                     instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
+                    {
                         return instance;
+                    }
+
                     var result = instances.TryAdd(id, instance);
                 }
             }

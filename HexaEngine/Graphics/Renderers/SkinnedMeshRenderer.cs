@@ -87,12 +87,17 @@
         private int GetBoneIdByName(string name)
         {
             if (bones == null)
+            {
                 return -1;
+            }
+
             for (int i = 0; i < bones.Length; i++)
             {
                 var bone = bones[i];
                 if (bone.Name == name)
+                {
                     return bone.Id;
+                }
             }
             return -1;
         }
@@ -100,7 +105,9 @@
         public void Update(IGraphicsContext context, Matrix4x4 transform)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             globals[0] = locals[0] * transform;
 
@@ -123,7 +130,10 @@
                 transformOffsetBuffer.Add(transformBuffer.Count);
                 var drawable = drawables[i];
                 if (drawable == null)
+                {
                     continue;
+                }
+
                 for (int j = 0; j < drawable.Length; j++)
                 {
                     var id = drawable[j];
@@ -138,7 +148,9 @@
             }
 
             if (bones == null)
+            {
                 return;
+            }
 
             for (int i = 0; i < bones.Length; i++)
             {
@@ -167,7 +179,10 @@
                 boneTransformOffsetBuffer.Add(boneTransformBuffer.Count);
                 var mesh = meshes[i];
                 if (mesh == null)
+                {
                     continue;
+                }
+
                 for (int j = 0; j < ((MeshData)mesh.Data).BoneCount; j++)
                 {
                     var bone = ((MeshData)mesh.Data).Bones[j];
@@ -187,7 +202,9 @@
         public void DrawForward(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             uint boneOffset = 0;
 
@@ -206,14 +223,18 @@
                 var material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, "Forward", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)
+                {
                     boneOffset++;
+                }
             }
 
             context.VSSetConstantBuffer(0, null);
@@ -226,7 +247,9 @@
         public void DrawDeferred(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             uint boneOffset = 0;
 
@@ -245,14 +268,18 @@
                 var material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, "Deferred", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)
+                {
                     boneOffset++;
+                }
             }
 
             context.VSSetConstantBuffer(0, null);
@@ -265,7 +292,9 @@
         public void DrawDepth(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             uint boneOffset = 0;
 
@@ -284,14 +313,18 @@
                 var material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)
+                {
                     boneOffset++;
+                }
             }
 
             context.VSSetConstantBuffer(0, null);
@@ -304,7 +337,9 @@
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!initialized)
+            {
                 return;
+            }
 
             uint boneOffset = 0;
 
@@ -326,14 +361,18 @@
                 var material = materials[i];
 
                 if (mesh == null || material == null)
+                {
                     continue;
+                }
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)
+                {
                     boneOffset++;
+                }
             }
 
             context.PSSetConstantBuffer(0, null);

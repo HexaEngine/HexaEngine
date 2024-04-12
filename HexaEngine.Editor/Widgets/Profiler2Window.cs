@@ -67,7 +67,9 @@
                     referencedDomainName.EnsureCapacity((int)cchReferencedDomainName);
                     err = S_OK;
                     if (!LookupAccountName(null, accountName, sid, ref cbSid, referencedDomainName, ref cchReferencedDomainName, out sidUse))
+                    {
                         err = Marshal.GetLastWin32Error();
+                    }
                 }
             }
 
@@ -264,16 +266,25 @@
                 source.Kernel.PerfInfoSample += (data) =>
                 {
                     if (data.ProcessID != Pid)
+                    {
                         return;
+                    }
 
                     if (data.TaskGuid != perfInfoTaskGuid)
+                    {
                         return;
+                    }
+
                     if ((uint)data.Opcode != profileOpcode)
+                    {
                         return;
+                    }
 
                     var callstack = data.CallStack();
                     if (callstack == null)
+                    {
                         return;
+                    }
 
                     MergeCallStack(callstack, reader);
                 };
@@ -306,7 +317,10 @@
                 KernelTraceEventParser.Keywords.Profile,
                 stackCapture: KernelTraceEventParser.Keywords.Profile
                 );
-            if (!success) return false;
+            if (!success)
+            {
+                return false;
+            }
 
             // this call always returns false  :^(
             success = session.EnableProvider(
@@ -418,7 +432,10 @@
             {
                 ImGui.Separator();
                 if (isOpen)
+                {
                     ImGui.TreePop();
+                }
+
                 return;
             }
             foreach (var nextStackFrame in stack.Stacks.OrderByDescending(s => s.CountAsNode + s.CountAsLeaf))

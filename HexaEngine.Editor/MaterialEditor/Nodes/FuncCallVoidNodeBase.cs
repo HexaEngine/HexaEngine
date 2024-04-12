@@ -59,7 +59,10 @@
         protected override void UpdateMode()
         {
             if (lockType)
+            {
                 return;
+            }
+
             for (int i = 0; i < pins.Count; i++)
             {
                 pins[i].Type = mode;
