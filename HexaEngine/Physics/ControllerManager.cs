@@ -10,6 +10,7 @@
         public ControllerManager(PhysicsSystem system)
         {
             manager = NativeMethods.phys_PxCreateControllerManager(system.PxScene, false);
+            manager->SetDebugRenderingFlagsMut(PxControllerDebugRenderFlags.All);
         }
 
         public PxController* CreateController(PxCapsuleControllerDesc* desc)

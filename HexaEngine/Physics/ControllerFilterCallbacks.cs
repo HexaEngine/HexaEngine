@@ -4,11 +4,13 @@
     using MagicPhysX;
     using System.Runtime.InteropServices;
 
+    public unsafe delegate bool ControllerFilterCallbackDelegate(PxController* a, PxController* b);
+
     public unsafe class ControllerFilterCallbacks : DisposableBase
     {
         internal PxControllerFilterCallback* controllerFilterCallback;
 
-        public ControllerFilterCallbacks(Func<PxController, PxController, bool> func)
+        public ControllerFilterCallbacks(ControllerFilterCallbackDelegate func)
         {
             controllerFilterCallback = AllocT<PxControllerFilterCallback>();
             Memset(controllerFilterCallback, 0, sizeof(PxControllerFilterCallback));

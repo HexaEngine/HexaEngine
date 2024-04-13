@@ -286,5 +286,30 @@
 
             return result;
         }
+
+        public static ControllerCollisionFlags Convert(PxControllerCollisionFlags flags)
+        {
+            ControllerCollisionFlags result = 0;
+            if ((flags & PxControllerCollisionFlags.CollisionSides) != 0)
+            {
+                result |= ControllerCollisionFlags.CollisionSides;
+            }
+            if ((flags & PxControllerCollisionFlags.CollisionUp) != 0)
+            {
+                result |= ControllerCollisionFlags.CollisionUp;
+            }
+            if ((flags & PxControllerCollisionFlags.CollisionDown) != 0)
+            {
+                result |= ControllerCollisionFlags.CollisionDown;
+            }
+            return result;
+        }
+    }
+
+    public enum ControllerCollisionFlags
+    {
+        CollisionSides = 1,
+        CollisionUp = 2,
+        CollisionDown = 4
     }
 }

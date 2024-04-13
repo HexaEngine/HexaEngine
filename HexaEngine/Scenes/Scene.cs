@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Scenes
+﻿#define PROFILE
+
+namespace HexaEngine.Scenes
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
@@ -409,7 +411,7 @@
 #if PROFILE
                 Profiler.Start(fixedUpdate[i]);
 #endif
-                fixedUpdate[i].Update(Time.FixedDelta);
+                fixedUpdate[i].FixedUpdate();
 #if PROFILE
                 Profiler.End(fixedUpdate[i]);
 #endif

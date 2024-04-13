@@ -49,7 +49,7 @@
             uirenderer = new(graphicsDevice);
             commandList = new();
 
-            compositionTexture = new(graphicsDevice, swapChain.Backbuffer.Description.Format, Width, Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            compositionTexture = new(swapChain.Backbuffer.Description.Format, Width, Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             MakeUI();
 
@@ -140,7 +140,7 @@
             {
                 window.Width = args.NewWidth;
                 window.Height = args.NewHeight;
-                compositionTexture.Resize(graphicsDevice, swapChain.Backbuffer.Description.Format, args.NewWidth, args.NewHeight, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+                compositionTexture.Resize(swapChain.Backbuffer.Description.Format, args.NewWidth, args.NewHeight, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             }
 
             resize = true;

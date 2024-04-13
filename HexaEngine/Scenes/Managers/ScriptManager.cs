@@ -51,7 +51,7 @@ namespace HexaEngine.Scenes.Managers
             var scriptList = scripts[ScriptFlags.FixedUpdate];
             for (int i = 0; i < scriptList.Count; i++)
             {
-                scriptList[i].Update();
+                scriptList[i].FixedUpdate();
             }
         }
 

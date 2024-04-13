@@ -8,6 +8,8 @@
     using HexaEngine.Scenes;
     using MagicPhysX;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     public unsafe class PhysicsSystem : ISceneSystem
     {
@@ -101,6 +103,9 @@
 
             sceneDesc.cpuDispatcher = (PxCpuDispatcher*)dispatcher;
             sceneDesc.filterShader = NativeMethods.get_default_simulation_filter_shader();
+            sceneDesc.flags |= PxSceneFlags.EnableCcd;
+            sceneDesc.staticKineFilteringMode = PxPairFilteringMode.Keep;
+            sceneDesc.EnableCustomFilterShader(&FilterShader, 0);
 
             pxScene = NativeMethods.PxPhysics_createScene_mut(physics, &sceneDesc);
 
@@ -119,6 +124,15 @@
 
             eventCallbacks = new(this);
             controllerManager = new(this);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization | MethodImplOptions.PreserveSig)]
+        [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+        private static PxFilterFlags FilterShader(FilterShaderCallbackInfo* arg)
+        {
+            PxPairFlags flags = PxPairFlags.ContactDefault | PxPairFlags.DetectCcdContact | PxPairFlags.NotifyTouchCcd;
+            *arg->pairFlags = flags;
+            return 0;
         }
 
         public object SyncObject => _lock;
@@ -298,6 +312,8 @@
             {
                 actors[i].EndUpdate();
             }
+
+            controllerManager.manager->ComputeInteractionsMut(Time.FixedDelta, null);
 
             for (int i = 0; i < characterControllers.Count; i++)
             {

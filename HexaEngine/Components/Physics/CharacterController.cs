@@ -1,11 +1,13 @@
 ﻿namespace HexaEngine.Components.Physics
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using MagicPhysX;
+    using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -330,7 +332,7 @@
         {
         }
 
-        public void CreateController(PxPhysics* physics, PxScene* scene, PxControllerManager* manager)
+        void ICharacterControllerComponent.CreateController(PxPhysics* physics, PxScene* scene, PxControllerManager* manager)
         {
             material = physics->CreateMaterialMut(staticFriction, dynamicFriction, restitution);
 
@@ -365,7 +367,7 @@
                     }
 
                     controller = manager->CreateControllerMut((PxControllerDesc*)capsuleControllerDesc);
-                    capsuleControllerDesc->Delete();
+
                     break;
 
                 case CharacterControllerShape.Box:
@@ -404,7 +406,7 @@
             }
         }
 
-        public void DestroyController()
+        void ICharacterControllerComponent.DestroyController()
         {
             if (material != null)
             {
@@ -419,26 +421,29 @@
             }
         }
 
-        public void Update()
+        void ICharacterControllerComponent.Update()
         {
             PxExtendedVec3* pos = controller->GetPosition();
             GameObject.Transform.GlobalPosition = new((float)pos->x, (float)pos->y, (float)pos->z);
         }
 
-        public void Move(Vector3 displacement, float minDistance, float elapsedTime)
+        public ControllerCollisionFlags Move(Vector3 displacement, float minDistance, float elapsedTime)
         {
-            Move(displacement, minDistance, elapsedTime, default);
+            ControllerFilters filters = default;
+            filters.FilterFlags = QueryFlags.Static | QueryFlags.Dynamic;
+            return Move(displacement, minDistance, elapsedTime, filters);
         }
 
-        public void Move(Vector3 displacement, float minDistance, float elapsedTime, ControllerFilters controllerFilters)
+        public ControllerCollisionFlags Move(Vector3 displacement, float minDistance, float elapsedTime, ControllerFilters controllerFilters)
         {
             if (controller == null)
             {
-                return;
+                return 0;
             }
 
             PxControllerFilters filters = controllerFilters.filters;
-            controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, &filters, null);
+            PxControllerCollisionFlags flags = controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, &filters, null);
+            return Helper.Convert(flags);
         }
 
         public void InvalidateCache()

@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Collections;
+    using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -366,7 +367,9 @@
                 float dummyHeight = messages.Count * lineHeight;
 
                 Vector2 cursor = ImGui.GetCursorPos();
-                ImGui.Dummy(new(0, dummyHeight));
+
+                var rect = ImGui.GetCurrentWindow().InnerClipRect;
+                ImGui.Dummy(new(0.0f, (rect.Max.Y - rect.Min.Y) - dummyHeight));
                 ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
 
                 // Display colored command output.
@@ -417,6 +420,8 @@
                         ImGui.PopStyleColor();
                     }
                 }
+
+                ImGui.SetCursorPos(cursor + new Vector2(0, dummyHeight));
 
                 // Stop wrapping since we are done displaying console items.
                 if (!timeStamps)

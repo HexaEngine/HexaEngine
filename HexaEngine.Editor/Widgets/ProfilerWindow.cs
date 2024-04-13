@@ -2,8 +2,8 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.ImPlot;
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
@@ -11,6 +11,13 @@
     using HexaEngine.Scenes;
     using System.Diagnostics;
     using System.Numerics;
+
+    public struct MemorySnapshot
+    {
+        public long Timestamp;
+        public long TotalMemory;
+        public string TotalMemText;
+    }
 
     [EditorWindowCategory("Debug")]
     public class ProfilerWindow : EditorWindow
@@ -63,12 +70,16 @@
         public RingBuffer<double> GpuDebugDraw = new(SampleBufferSize);
         public RingBuffer<double> GpuImGuiDraw = new(SampleBufferSize);
 
-        public RingBuffer<double> MemoryUsage = new(SampleBufferSize);
-        public RingBuffer<double> VideoMemoryUsage = new(SampleBufferSize);
+        public RingBuffer<double> MemoryUsage = new(SampleBufferSize) { AverageValues = false };
+        public RingBuffer<double> VideoMemoryUsage = new(SampleBufferSize) { AverageValues = false };
 
         public int SamplesPerSecond { get => samplesPerSecond; set => samplesPerSecond = value; }
 
+        public int SamplesPerSecondMem { get => samplesPerSecondMem; set => samplesPerSecondMem = value; }
+
         public float SampleLatency => 1f / SamplesPerSecond;
+
+        public float MemSampleLatency => 1f / SamplesPerSecondMem;
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
@@ -154,13 +165,44 @@
                 if (ImPlot.BeginPlot("Memory", new Vector2(-1, 0), ImPlotFlags.NoInputs))
                 {
                     ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Memory", ref MemoryUsage.Values[0], MemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, MemoryUsage.Head);
-                    ImPlot.PlotShaded("Video Memory", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, VideoMemoryUsage.Head);
+                    ImPlot.PlotShaded("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, MemoryUsage.Head);
+                    ImPlot.PlotShaded("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, VideoMemoryUsage.Head);
                     ImPlot.PopStyleVar();
 
-                    ImPlot.PlotLine("Memory", ref MemoryUsage.Values[0], MemoryUsage.Length, 1, 0, ImPlotLineFlags.None, MemoryUsage.Head);
-                    ImPlot.PlotLine("Video Memory", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, 1, 0, ImPlotLineFlags.None, VideoMemoryUsage.Head);
+                    ImPlot.PlotLine("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, 1, 0, ImPlotLineFlags.None, MemoryUsage.Head);
+                    ImPlot.PlotLine("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, 1, 0, ImPlotLineFlags.None, VideoMemoryUsage.Head);
                     ImPlot.EndPlot();
+                }
+
+                if (ImGui.BeginListBox("Snapshots"))
+                {
+                    if (memorySnapshots.Count > 0)
+                    {
+                        var baseline = memorySnapshots[0];
+                        var last = baseline;
+                        ImGui.Text($"Snapshot #0 {last.TotalMemText}");
+                        for (int i = 1; i < memorySnapshots.Count; i++)
+                        {
+                            var memorySnapshot = memorySnapshots[i];
+                            var toBaseline = memorySnapshot.TotalMemory - baseline.TotalMemory;
+                            var deltaLast = memorySnapshot.TotalMemory - last.TotalMemory;
+                            ImGui.Text($"Snapshot #{i} {memorySnapshot.TotalMemText}, {deltaLast.FormatDataSize()}, {toBaseline.FormatDataSize()}");
+                            last = memorySnapshot;
+                        }
+                    }
+
+                    ImGui.EndListBox();
+                }
+
+                if (ImGui.Button("Snapshot"))
+                {
+                    GC.Collect();
+                    GC.WaitForFullGCComplete();
+                    MemorySnapshot snapshot = new();
+                    snapshot.Timestamp = Stopwatch.GetTimestamp();
+                    snapshot.TotalMemory = Process.GetCurrentProcess().PrivateMemorySize64;
+                    snapshot.TotalMemText = snapshot.TotalMemory.FormatDataSize();
+                    memorySnapshots.Add(snapshot);
                 }
             }
 
@@ -242,19 +284,6 @@
 
             if (scene)
             {
-                ImPlot.SetNextAxesToFit();
-                if (ImPlot.BeginPlot("Systems", new Vector2(-1, 0), ImPlotFlags.NoInputs))
-                {
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
-                    // TODO: PhysX Profiler
-                    ImPlot.PopStyleVar();
-
-                    ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
-
-                    ImPlot.EndPlot();
-                }
-
                 Scene? scene = SceneManager.Current;
                 if (scene == null)
                 {
@@ -262,7 +291,7 @@
                 }
 
                 ImPlot.SetNextAxesToFit();
-                if (ImPlot.BeginPlot("Systems", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+                if (ImPlot.BeginPlot("Scene Tick", new Vector2(-1, 0)))
                 {
                     ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
                     ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
@@ -304,7 +333,11 @@
 
         private float accum = 0;
         private int samplesPerSecond = 1000;
+        private int samplesPerSecondMem = 50;
         private int selected;
+
+        private float accumMem = 0;
+        private readonly List<MemorySnapshot> memorySnapshots = new();
 
         public void SampleInterpolated(IGraphicsContext context)
         {
@@ -315,17 +348,21 @@
                 Sample(context);
                 accum -= SampleLatency;
             }
+
+            if (memory)
+            {
+                accumMem += Time.Delta;
+                while (accumMem > MemSampleLatency)
+                {
+                    SampleMem(context);
+                    accumMem = 0;
+                }
+            }
         }
 
         public void Sample(IGraphicsContext context)
         {
             Frame.Add(Time.Delta * 1000);
-
-            if (memory)
-            {
-                MemoryUsage.Add(Process.GetCurrentProcess().PrivateMemorySize64 / 1000d / 1000d);
-                VideoMemoryUsage.Add(GraphicsAdapter.Current.GetMemoryCurrentUsage() / 1000d / 1000d);
-            }
 
             var renderer = SceneRenderer.Current;
 
@@ -390,6 +427,12 @@
                     systems[system] = buffer;
                 }
             }
+        }
+
+        public void SampleMem(IGraphicsContext context)
+        {
+            MemoryUsage.Add(Process.GetCurrentProcess().PrivateMemorySize64 / 1000d / 1000d);
+            VideoMemoryUsage.Add(GraphicsAdapter.Current.GetMemoryCurrentUsage() / 1000d / 1000d);
         }
     }
 }
