@@ -7,7 +7,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<DistanceJoint>("Distance Joint")]
-    public unsafe class DistanceJoint : Joint
+    public sealed unsafe class DistanceJoint : Joint
     {
         private PxDistanceJoint* joint;
         private bool autoCalculate;

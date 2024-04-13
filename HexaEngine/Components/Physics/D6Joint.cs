@@ -10,7 +10,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<D6Joint>("D6 Joint")]
-    public unsafe class D6Joint : Joint
+    public sealed unsafe class D6Joint : Joint
     {
         private PxD6Joint* joint;
         private bool autoCalculate;

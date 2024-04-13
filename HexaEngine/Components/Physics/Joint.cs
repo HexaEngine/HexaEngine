@@ -124,12 +124,22 @@
             }
         }
 
-        public void Awake()
+        protected virtual void Awake()
         {
         }
 
-        public void Destroy()
+        protected virtual void Destroy()
         {
+        }
+
+        void IComponent.Awake()
+        {
+            Awake();
+        }
+
+        void IComponent.Destroy()
+        {
+            Destroy();
         }
 
         private void NotifyOnRecreate()
@@ -174,7 +184,12 @@
             }
         }
 
-        public void DestroyJoint()
+        void IJointComponent.DestroyJoint()
+        {
+            DestroyJoint();
+        }
+
+        protected virtual void DestroyJoint()
         {
             if (joint != null)
             {

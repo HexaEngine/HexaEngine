@@ -9,7 +9,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<HingeJoint>("Hinge Joint")]
-    public unsafe class HingeJoint : Joint
+    public sealed unsafe class HingeJoint : Joint
     {
         private PxRevoluteJoint* joint;
         private Vector3 anchor = Vector3.Zero;

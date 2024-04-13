@@ -7,7 +7,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<SliderJoint>("Slider Joint")]
-    public unsafe class SliderJoint : Joint
+    public sealed unsafe class SliderJoint : Joint
     {
         private PxPrismaticJoint* joint;
 

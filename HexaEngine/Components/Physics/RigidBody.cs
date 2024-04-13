@@ -1,13 +1,11 @@
 ﻿namespace HexaEngine.Components.Physics
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using MagicPhysX;
     using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     [EditorCategory("Physics")]
     [EditorComponent<RigidBody>("Rigid Body")]
@@ -31,15 +29,25 @@
         private float maxContactImpulse = float.MaxValue;
         private float contactSlopCoefficient = 0;
 
+        public RigidBody()
+        {
+        }
+
+        internal RigidBody(PxRigidDynamic* actor, ActorType actorType)
+        {
+            this.actor = (PxRigidActor*)actor;
+            type = actorType;
+        }
+
         internal PxRigidActor* Actor => actor;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             GameObject.Transform.FlagsChanged += GameObjectTransformFlagsChanged;
         }
 
-        public override void Destroy()
+        protected override void Destroy()
         {
             GameObject.Transform.FlagsChanged -= GameObjectTransformFlagsChanged;
             base.Destroy();
@@ -53,7 +61,7 @@
             }
         }
 
-        public override PxActor* CreateActor(PxPhysics* physics, PxScene* scene)
+        protected override PxActor* CreateActor(PxPhysics* physics, PxScene* scene)
         {
             DestroyActor();
 
@@ -113,7 +121,7 @@
             return (PxActor*)actor;
         }
 
-        public override void DestroyActor()
+        protected override void DestroyActor()
         {
             if (colliders != null)
             {
@@ -132,7 +140,7 @@
             base.DestroyActor();
         }
 
-        public override void BeginUpdate()
+        protected override void BeginUpdate()
         {
             if (type != ActorType.Static && GameObject != null)
             {
@@ -141,7 +149,7 @@
             }
         }
 
-        public override void EndUpdate()
+        protected override void EndUpdate()
         {
             if (type != ActorType.Static && GameObject != null && !IsSleeping)
             {

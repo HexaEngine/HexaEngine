@@ -1,20 +1,16 @@
 ﻿namespace HexaEngine.Components.Physics
 {
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using MagicPhysX;
-    using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
 
     [EditorCategory("Physics")]
     [EditorComponent<CharacterController>("Character Controller")]
-    public unsafe class CharacterController : ICharacterControllerComponent
+    public sealed unsafe class CharacterController : ICharacterControllerComponent
     {
         protected PxMaterial* material;
         private CharacterControllerShape shape;
@@ -39,6 +35,10 @@
         private float scaleCoeff = 0.8f;
         private CapsuleClimbingMode capsuleClimbingMode;
         private ControllerNonWalkableMode nonWalkableMode;
+
+        private PxRigidDynamic* actor;
+        private RigidBody rigidBody;
+        private bool isGrounded;
 
         [EditorProperty<CharacterControllerShape>("Shape")]
         public CharacterControllerShape Shape { get => shape; set => shape = value; }
@@ -244,7 +244,7 @@
         public CapsuleClimbingMode CapsuleClimbingMode { get => capsuleClimbingMode; set => capsuleClimbingMode = value; }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         [JsonIgnore]
         public Vector3D Position
@@ -314,21 +314,58 @@
             }
         }
 
-        protected static bool IsCapsule(CharacterController controller)
+        [JsonIgnore]
+        public RigidBody Actor => rigidBody;
+
+        [JsonIgnore]
+        public Vector3 AngularVelocity
+        {
+            get
+            {
+                if (actor == null)
+                {
+                    return Vector3.Zero;
+                }
+
+                return actor->GetAngularVelocity();
+            }
+        }
+
+        [JsonIgnore]
+        public Vector3 LinearVelocity
+        {
+            get
+            {
+                if (actor == null)
+                {
+                    return Vector3.Zero;
+                }
+
+                return actor->GetLinearVelocity();
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsGrounded
+        {
+            get => isGrounded;
+        }
+
+        public static bool IsCapsule(CharacterController controller)
         {
             return controller.shape == CharacterControllerShape.Capsule;
         }
 
-        protected static bool IsBox(CharacterController controller)
+        public static bool IsBox(CharacterController controller)
         {
             return controller.shape == CharacterControllerShape.Box;
         }
 
-        public void Awake()
+        void IComponent.Awake()
         {
         }
 
-        public void Destroy()
+        void IComponent.Destroy()
         {
         }
 
@@ -367,7 +404,7 @@
                     }
 
                     controller = manager->CreateControllerMut((PxControllerDesc*)capsuleControllerDesc);
-
+                    capsuleControllerDesc->Delete();
                     break;
 
                 case CharacterControllerShape.Box:
@@ -404,6 +441,9 @@
                     PhysicsSystem.Logger.Error($"CharacterControllerShape ({Shape}) is not supported.");
                     return;
             }
+
+            actor = controller->GetActor();
+            rigidBody = new(actor, ActorType.Kinematic);
         }
 
         void ICharacterControllerComponent.DestroyController()
@@ -416,6 +456,8 @@
 
             if (controller != null)
             {
+                rigidBody = null;
+                actor = null;
                 controller->ReleaseMut();
                 controller = null;
             }
@@ -443,6 +485,7 @@
 
             PxControllerFilters filters = controllerFilters.filters;
             PxControllerCollisionFlags flags = controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, &filters, null);
+            isGrounded = flags == PxControllerCollisionFlags.CollisionDown;
             return Helper.Convert(flags);
         }
 

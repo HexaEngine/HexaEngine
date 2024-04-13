@@ -8,7 +8,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<FixedJoint>("Fixed Joint")]
-    public unsafe class FixedJoint : Joint
+    public sealed unsafe class FixedJoint : Joint
     {
         private PxFixedJoint* joint;
 

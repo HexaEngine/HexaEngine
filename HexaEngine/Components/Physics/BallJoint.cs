@@ -7,7 +7,7 @@
 
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<BallJoint>("Ball Joint")]
-    public unsafe class BallJoint : Joint
+    public sealed unsafe class BallJoint : Joint
     {
         private PxSphericalJoint* joint;
         private bool autoCalculate;

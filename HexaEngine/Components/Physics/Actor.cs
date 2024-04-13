@@ -135,7 +135,7 @@
             OnRecreate?.Invoke(this);
         }
 
-        public abstract PxActor* CreateActor(PxPhysics* physics, PxScene* scene);
+        protected abstract PxActor* CreateActor(PxPhysics* physics, PxScene* scene);
 
         void IActorComponent.CreateActor(PxPhysics* physics, PxScene* scene)
         {
@@ -159,7 +159,7 @@
             isUpdating = false;
         }
 
-        public virtual void DestroyActor()
+        protected virtual void DestroyActor()
         {
             if (actor != null)
             {
@@ -178,20 +178,45 @@
             }
         }
 
-        public abstract void BeginUpdate();
+        void IActorComponent.DestroyActor()
+        {
+            DestroyActor();
+        }
 
-        public abstract void EndUpdate();
+        protected abstract void BeginUpdate();
 
-        public virtual void Awake()
+        protected abstract void EndUpdate();
+
+        void IActorComponent.BeginUpdate()
+        {
+            BeginUpdate();
+        }
+
+        void IActorComponent.EndUpdate()
+        {
+            EndUpdate();
+        }
+
+        protected virtual void Awake()
+        {
+        }
+
+        protected virtual void Destroy()
+        {
+        }
+
+        void IComponent.Awake()
         {
             GameObject.OnEnabledChanged += OnEnabledChanged;
             GameObject.OnNameChanged += OnNameChanged;
+            Awake();
         }
 
-        public virtual void Destroy()
+        void IComponent.Destroy()
         {
             GameObject.OnEnabledChanged -= OnEnabledChanged;
             GameObject.OnNameChanged -= OnNameChanged;
+            Destroy();
         }
 
         private void OnEnabledChanged(GameObject gameObject, bool enabled)
