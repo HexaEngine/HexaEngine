@@ -8,7 +8,13 @@
     public enum ProgressType
     {
         Spinner,
-        Bar
+        Bar,
+    }
+
+    public enum ProgressFlags
+    {
+        None = 0,
+        NoOverlay,
     }
 
     public sealed class ProgressModal : Modal, IDisposable, IProgress<float>
@@ -16,13 +22,15 @@
         private readonly string title;
         private readonly string message;
         private readonly ProgressType type;
+        private readonly ProgressFlags progressFlags;
         private float progress;
 
-        public ProgressModal(string title, string message, ProgressType type = ProgressType.Spinner)
+        public ProgressModal(string title, string message, ProgressType type = ProgressType.Spinner, ProgressFlags progressFlags = ProgressFlags.None)
         {
             this.title = title;
             this.message = message;
             this.type = type;
+            this.progressFlags = progressFlags;
         }
 
         public override string Name => title;
@@ -36,13 +44,17 @@
 
         public override unsafe void Draw()
         {
-            Vector2 main_viewport_pos = ImGui.GetMainViewport().Pos;
-            Vector2 main_viewport_size = ImGui.GetMainViewport().Size;
-            ImGui.SetNextWindowPos(main_viewport_pos);
-            ImGui.SetNextWindowSize(main_viewport_size);
-            ImGui.SetNextWindowBgAlpha(0.9f);
-            ImGui.Begin("Overlay", null, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs);
-            ImGui.End();
+            if ((progressFlags & ProgressFlags.NoOverlay) == 0)
+            {
+                Vector2 main_viewport_pos = ImGui.GetMainViewport().Pos;
+                Vector2 main_viewport_size = ImGui.GetMainViewport().Size;
+                ImGui.SetNextWindowPos(main_viewport_pos);
+                ImGui.SetNextWindowSize(main_viewport_size);
+                ImGui.SetNextWindowBgAlpha(0.9f);
+                ImGui.Begin("Overlay", null, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs);
+                ImGui.End();
+            }
+
             base.Draw();
         }
 

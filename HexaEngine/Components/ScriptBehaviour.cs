@@ -235,6 +235,7 @@
                 }
 
                 scriptType = ScriptAssemblyManager.GetType(scriptTypeName);
+
                 if (scriptType == null)
                 {
                     LoggerFactory.General.Error($"Couldn't load script: {scriptTypeName}");

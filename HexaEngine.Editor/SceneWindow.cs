@@ -488,6 +488,11 @@
                 {
                     ProjectManager.BuildScripts();
                 }
+                if (ProjectManager.ScriptProjectBuildFailed)
+                {
+                    MessageBox.Show("Script Project Build Failed", "The script project build failed. Please fix any compilation errors before playing the scene.");
+                    return;
+                }
                 SceneManager.Save();
                 scene.IsSimulating = false;
                 SceneManager.BeginReload();

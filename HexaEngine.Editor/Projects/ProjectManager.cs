@@ -24,6 +24,7 @@
         private static bool loaded;
         private static FileSystemWatcher? watcher;
         private static bool scriptProjectChanged;
+        private static bool scriptProjectBuildFailed;
 
         private static readonly SemaphoreSlim semaphore = new(1);
 
@@ -59,6 +60,10 @@
         public static HexaProject? CurrentProject { get; private set; }
 
         public static bool ScriptProjectChanged => scriptProjectChanged;
+
+        public static bool ScriptProjectValid => !scriptProjectBuildFailed;
+
+        public static bool ScriptProjectBuildFailed => scriptProjectBuildFailed;
 
         public static event ProjectUnloadedHandler? ProjectUnloaded;
 
@@ -300,12 +305,13 @@
                 return;
             }
 
-            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner);
+            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay);
             PopupManager.Show(modal);
 
             ScriptAssemblyManager.Unload();
             if (CurrentProjectFolder == null)
             {
+                ScriptAssemblyManager.SetInvalid(true);
                 semaphore.Release();
                 modal.Close();
                 return;
@@ -313,10 +319,14 @@
 
             if (!Build())
             {
+                ScriptAssemblyManager.SetInvalid(true);
+                scriptProjectBuildFailed = true;
                 semaphore.Release();
                 modal.Close();
                 return;
             }
+
+            scriptProjectBuildFailed = false;
 
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");

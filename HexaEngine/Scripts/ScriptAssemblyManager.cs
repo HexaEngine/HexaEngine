@@ -2,8 +2,6 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
     using System.Reflection;
@@ -21,7 +19,8 @@
         private static readonly Dictionary<Type, Array> _enumCache = new();
         private static readonly Dictionary<Type, string[]> _enumNameCache = new();
 
-        private static ManualResetEventSlim loadLock = new(false);
+        private static readonly ManualResetEventSlim loadLock = new(false);
+        private static volatile bool isInvalid;
 
         static ScriptAssemblyManager()
         {
@@ -30,9 +29,17 @@
 
         public static IReadOnlyList<Assembly> Assemblies => assemblies;
 
+        public static bool IsInvalid => isInvalid;
+
         public static event EventHandler<Assembly>? AssemblyLoaded;
 
         public static event EventHandler<EventArgs?>? AssembliesUnloaded;
+
+        public static void SetInvalid(bool isInvalid)
+        {
+            ScriptAssemblyManager.isInvalid = isInvalid;
+            loadLock.Set();
+        }
 
         public static Assembly? Load(string path)
         {
@@ -103,6 +110,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (!_typeToTypeCache.TryGetValue(typeof(T), out var result))
             {
                 try
@@ -131,6 +143,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (Assemblies.Count == 0)
             {
                 return [];
@@ -158,6 +175,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (Assemblies.Count == 0)
             {
                 return [];
@@ -184,6 +206,11 @@
         public static Array GetEnumValues(Type type)
         {
             loadLock.Wait();
+
+            if (isInvalid)
+            {
+                return Array.Empty<Type>();
+            }
 
             if (Assemblies.Count == 0)
             {
@@ -217,6 +244,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (Assemblies.Count == 0)
             {
                 return [];
@@ -249,6 +281,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (Assemblies.Count == 0)
             {
                 return [];
@@ -271,6 +308,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return [];
+            }
+
             if (Assemblies.Count == 0)
             {
                 return [];
@@ -291,7 +333,12 @@
 
         public static Type? GetType(string name)
         {
-            loadLock.Wait();
+            loadLock.Wait(); // where the dead lock happens when the script assembly had compiler errors.
+
+            if (isInvalid)
+            {
+                return null;
+            }
 
             if (Assemblies.Count == 0)
             {
@@ -324,6 +371,11 @@
         {
             loadLock.Wait();
 
+            if (isInvalid)
+            {
+                return null;
+            }
+
             if (_typeCache.TryGetValue(guid, out var type))
             {
                 return type;
@@ -335,6 +387,7 @@
         public static void Unload()
         {
             loadLock.Reset();
+            isInvalid = false;
             _typeCache.Clear();
             _typeToTypeCache.Clear();
             _typeNameCache.Clear();
