@@ -7,7 +7,7 @@
     /// <summary>
     /// <see cref="Transform"/> is used for hierarchical matrix calculation.
     /// </summary>
-    public class Transform : ITransform, IReadOnlyTransform
+    public class Transform : ITransform, IReadOnlyTransform, ICloneable
     {
         /// <summary>
         /// The initial state of the <see cref="Transform"/>.

@@ -89,8 +89,14 @@
 
             Type? type = component.ScriptType;
 
-            if (editor == null && type != null)
+            if ((editor == null || type != editor.Type) && type != null)
             {
+                editor = ObjectEditorFactory.CreateEditor(type);
+            }
+
+            if (editor != null && type != editor.Type && type != null)
+            {
+                ObjectEditorFactory.DestroyEditor(type);
                 editor = ObjectEditorFactory.CreateEditor(type);
             }
 

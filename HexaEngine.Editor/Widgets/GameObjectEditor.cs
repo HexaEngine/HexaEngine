@@ -14,7 +14,6 @@
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Threading.Channels;
 
     // TODO: Needs major overhaul.
     // TODO: Bug fix, context menus.
@@ -89,6 +88,24 @@
             ctx.Target.Flags = ctx.OldValue;
         }
 
+        private void DoRemoveComponent(object context)
+        {
+            if (context is not (Scene scene, GameObject element, IComponent component))
+            {
+                return;
+            }
+            scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
+        }
+
+        private void DoAddComponent(object context)
+        {
+            if (context is not (Scene scene, GameObject element, IComponent component))
+            {
+                return;
+            }
+            scene.Dispatcher.Invoke((element, component), GameObject.AddComponent);
+        }
+
         private bool DrawContextMenu(Type type, GameObject element)
         {
             bool changed = false;
@@ -111,31 +128,20 @@
             return changed;
         }
 
-        private void DoRemoveComponent(object context)
-        {
-            if (context is not (Scene scene, GameObject element, IComponent component))
-            {
-                return;
-            }
-            scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
-        }
-
-        private void UndoRemoveComponent(object context)
-        {
-            if (context is not (Scene scene, GameObject element, IComponent component))
-            {
-                return;
-            }
-            scene.Dispatcher.Invoke((element, component), GameObject.AddComponent);
-        }
-
         private void DrawContextMenuComponent(string name, Scene scene, GameObject element, IComponent component)
         {
             if (ImGui.BeginPopupContextItem(name))
             {
                 if (ImGui.MenuItem("\xE738 Delete"))
                 {
-                    History.Default.Do("Remove Component", (scene, element, component), DoRemoveComponent, UndoRemoveComponent);
+                    History.Default.Do("Remove Component", (scene, element, component), DoRemoveComponent, DoAddComponent);
+                }
+
+                ImGui.Separator();
+
+                if (ImGui.MenuItem("\xE8C8 Clone"))
+                {
+                    History.Default.Do("Clone Component", (scene, element, Instantiator.Instantiate(component)), DoAddComponent, DoRemoveComponent);
                 }
 
                 ImGui.Separator();
@@ -171,7 +177,7 @@
             }
 
             ImGui.SameLine();
-
+            string id = gameObject.FullName;
             string name = gameObject.Name;
             if (ImGui.InputText("##Name", ref name, TextBufSize, ImGuiInputTextFlags.EnterReturnsTrue))
             {
@@ -183,7 +189,7 @@
 
             ImGui.Separator();
 
-            ImGui.PushID(name);
+            ImGui.PushID(id);
             ImGui.BeginGroup();
 
             changed |= DrawComponents(context, gameObject, scene);

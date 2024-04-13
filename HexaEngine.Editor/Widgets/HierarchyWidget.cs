@@ -243,6 +243,20 @@
 
                 ImGui.Separator();
 
+                if (ImGui.MenuItem("\xE8C8 Clone"))
+                {
+                    for (int i = 0; i < SelectionCollection.Global.Count; i++)
+                    {
+                        var item = SelectionCollection.Global[i];
+                        if (item is GameObject gameObject)
+                        {
+                            element.GetScene().AddChild(Instantiator.Instantiate(gameObject));
+                        }
+                    }
+                }
+
+                ImGui.Separator();
+
                 if (ImGui.MenuItem("\xE738 Delete"))
                 {
                     SelectionCollection.Global.PurgeSelection();
