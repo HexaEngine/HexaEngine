@@ -1,16 +1,27 @@
 ﻿namespace TestApp
 {
     using HexaEngine.Core.Assets.Importer;
+    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.Intrinsics;
 
     public static unsafe partial class Program
     {
         public static void Main()
         {
-            UniformScale uniformScale = new UniformScale();
-            uniformScale.Baseline();
-            uniformScale.BitwiseMask();
+            Vector4D left = new(1, 2, 3, 4);
+            Vector4D right = new(5, 6, 7, 8);
+
+            double dot = Vector4D.Dot(left, right);
+
+            double doot = MathUtil.Dot(left, right);
+
+            var normalizedD = Vector4D.Normalize(left);
+            var normalizedD0 = MathUtil.Normalize(left);
+
+            var normalized = MathUtil.Normalize(new Vector3(1, 0, 0));
+            var normalized0 = MathUtil.Normalize(new Vector3(0, 0, 0));
         }
     }
 

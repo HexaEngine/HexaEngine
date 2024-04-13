@@ -62,9 +62,19 @@
         public static readonly Vector4 Infinity = new(BitConverter.UInt32BitsToSingle(0x7F800000));
 
         /// <summary>
+        /// Represents a constant Vector4 with all components set to positive infinity.
+        /// </summary>
+        public static readonly Vector4D InfinityDouble = new(double.PositiveInfinity);
+
+        /// <summary>
         /// Represents a quiet NaN (Not a Number) in single-precision floating-point format.
         /// </summary>
         public static readonly Vector4 QNaN = new(BitConverter.UInt32BitsToSingle(0x7FC00000));
+
+        /// <summary>
+        /// Represents a quiet NaN (Not a Number) in double-precision floating-point format.
+        /// </summary>
+        public static readonly Vector4D QNaNDouble = new(double.NaN);
 
         /// <summary>
         /// Rounds the given float to the nearest integer.
@@ -463,6 +473,7 @@
         /// <param name="a">The first 2D vector.</param>
         /// <param name="b">The second 2D vector.</param>
         /// <returns>The dot product of the two 2D vectors.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector2 a, Vector2 b)
         {
             if (Sse41.IsSupported)
@@ -483,6 +494,7 @@
         /// <param name="a">The first 3D vector.</param>
         /// <param name="b">The second 3D vector.</param>
         /// <returns>The dot product of the two 3D vectors.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector3 a, Vector3 b)
         {
             if (Sse41.IsSupported)
@@ -503,6 +515,7 @@
         /// <param name="a">The first 4D vector.</param>
         /// <param name="b">The second 4D vector.</param>
         /// <returns>The dot product of the two 4D vectors.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector4 a, Vector4 b)
         {
             if (Sse41.IsSupported)
@@ -535,7 +548,13 @@
                 return result.AsVector2();
             }
 
-            return Vector2.Normalize(vector);
+            float lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                float invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
         }
 
         /// <summary>
@@ -557,7 +576,13 @@
                 return result.AsVector3();
             }
 
-            return Vector3.Normalize(vector);
+            float lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                float invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
         }
 
         /// <summary>
@@ -579,7 +604,13 @@
                 return result.AsVector4();
             }
 
-            return Vector4.Normalize(vector);
+            float lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                float invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
         }
 
         /// <summary>
@@ -615,7 +646,21 @@
                 return vResult.AsVector2();
             }
 
-            return Vector2.Normalize(vector);
+            {
+                Vector4 vec = new(vector.X, vector.Y, 0, 0);
+                float lengthSq = Vector4.Dot(vec, vec);
+                float length = MathF.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4.Zero;
+                }
+
+                return new(vec.X, vec.Y);
+            }
         }
 
         /// <summary>
@@ -651,7 +696,21 @@
                 return vResult.AsVector3();
             }
 
-            return Vector3.Normalize(vector);
+            {
+                Vector4 vec = new(vector.X, vector.Y, vector.Z, 0);
+                float lengthSq = Vector4.Dot(vec, vec);
+                float length = MathF.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4.Zero;
+                }
+
+                return new(vec.X, vec.Y, vec.Z);
+            }
         }
 
         /// <summary>
@@ -687,7 +746,306 @@
                 return vResult.AsVector4();
             }
 
-            return Vector4.Normalize(vector);
+            {
+                Vector4 vec = new(vector.X, vector.Y, vector.Z, vector.W);
+                float lengthSq = Vector4.Dot(vec, vec);
+                float length = MathF.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4.Zero;
+                }
+
+                return new(vec.X, vec.Y, vec.Z, vec.Z);
+            }
+        }
+
+        /// <summary>
+        /// Computes the dot product of two 2D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="left">The first 2D vector.</param>
+        /// <param name="right">The second 2D vector.</param>
+        /// <returns>The dot product of the two 2D vectors.</returns>
+        public static double Dot(Vector2D left, Vector2D right)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> xy = Avx.Multiply(left.AsVector256(), right.AsVector256());
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> dotProduct = Avx.Add(swapped, blended);
+                return dotProduct.ToScalar();
+            }
+
+            return Vector2D.Dot(left, right);
+        }
+
+        /// <summary>
+        /// Computes the dot product of two 3D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="left">The first 3D vector.</param>
+        /// <param name="right">The second 3D vector.</param>
+        /// <returns>The dot product of the two 3D vectors.</returns>
+        public static double Dot(Vector3D left, Vector3D right)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> xy = Avx.Multiply(left.AsVector256(), right.AsVector256());
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> dotProduct = Avx.Add(swapped, blended);
+                return dotProduct.ToScalar();
+            }
+
+            return Vector3D.Dot(left, right);
+        }
+
+        /// <summary>
+        /// Computes the dot product of two 4D vectors. Uses SIMD instructions if supported;
+        /// otherwise, falls back to the standard non-SIMD Dot product method.
+        /// </summary>
+        /// <param name="left">The first 4D vector.</param>
+        /// <param name="right">The second 4D vector.</param>
+        /// <returns>The dot product of the two 4D vectors.</returns>
+        public static double Dot(Vector4D left, Vector4D right)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> xy = Avx.Multiply(left.AsVector256(), right.AsVector256());
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> dotProduct = Avx.Add(swapped, blended);
+                return dotProduct.ToScalar();
+            }
+
+            return Vector4D.Dot(left, right);
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 2D vector.
+        /// </summary>
+        /// <param name="vector">The 2D vector to normalize.</param>
+        /// <returns>The estimated normalized 2D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D NormalizeEst(Vector2D vector)
+        {
+            double lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                double invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 3D vector.
+        /// </summary>
+        /// <param name="vector">The 3D vector to normalize.</param>
+        /// <returns>The estimated normalized 3D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3D NormalizeEst(Vector3D vector)
+        {
+            double lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                double invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
+        }
+
+        /// <summary>
+        /// Estimates the normalized form of a 4D vector.
+        /// </summary>
+        /// <param name="vector">The 4D vector to normalize.</param>
+        /// <returns>The estimated normalized 4D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4D NormalizeEst(Vector4D vector)
+        {
+            double lengthSq = vector.LengthSquared();
+            if (lengthSq != 0)
+            {
+                double invSqrt = QRsqrt(lengthSq);
+                vector *= invSqrt;
+            }
+            return vector;
+        }
+
+        /// <summary>
+        /// Normalizes a 2D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 2D vector to normalize.</param>
+        /// <returns>The normalized 2D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D Normalize(Vector2D vector)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> vec = vector.AsVector256();
+
+                // Dot product.
+                Vector256<double> xy = Avx.Multiply(vec, vec);
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> vLengthSq = Avx.Add(swapped, blended);
+                // Prepare for the division
+                Vector256<double> vResult = Avx.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector256<double> vZeroMask = Vector256<double>.Zero;
+                // Test for a divide by zero
+                vZeroMask = Avx.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Avx.CompareNotEqual(vLengthSq, InfinityDouble.AsVector256());
+                // Divide to perform the normalization
+                vResult = Avx.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Avx.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector256<double> vTemp1 = Avx.AndNot(vLengthSq, QNaNDouble.AsVector256());
+                Vector256<double> vTemp2 = Avx.And(vResult, vLengthSq);
+                vResult = Avx.Or(vTemp1, vTemp2);
+                return vResult.AsVector2D();
+            }
+
+            {
+                Vector4D vec = new(vector.X, vector.Y, 0, 0);
+                double lengthSq = Vector4D.Dot(vec, vec);
+                double length = Math.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4D.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4D.Zero;
+                }
+
+                return new(vec.X, vec.Y);
+            }
+        }
+
+        /// <summary>
+        /// Normalizes a 3D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 3D vector to normalize.</param>
+        /// <returns>The normalized 3D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3D Normalize(Vector3D vector)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> vec = vector.AsVector256();
+
+                // Dot product.
+                Vector256<double> xy = Avx.Multiply(vec, vec);
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> vLengthSq = Avx.Add(swapped, blended);
+                // Prepare for the division
+                Vector256<double> vResult = Avx.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector256<double> vZeroMask = Vector256<double>.Zero;
+                // Test for a divide by zero
+                vZeroMask = Avx.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Avx.CompareNotEqual(vLengthSq, InfinityDouble.AsVector256());
+                // Divide to perform the normalization
+                vResult = Avx.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Avx.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector256<double> vTemp1 = Avx.AndNot(vLengthSq, QNaNDouble.AsVector256());
+                Vector256<double> vTemp2 = Avx.And(vResult, vLengthSq);
+                vResult = Avx.Or(vTemp1, vTemp2);
+                return vResult.AsVector3D();
+            }
+
+            {
+                Vector4D vec = new(vector.X, vector.Y, vector.Z, 0);
+                double lengthSq = Vector4D.Dot(vec, vec);
+                double length = Math.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4D.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4D.Zero;
+                }
+
+                return new(vec.X, vec.Y, vec.Z);
+            }
+        }
+
+        /// <summary>
+        /// Normalizes a 4D vector. This method uses SIMD instructions if supported;
+        /// otherwise, it falls back to the standard non-SIMD normalization method.
+        /// </summary>
+        /// <param name="vector">The 4D vector to normalize.</param>
+        /// <returns>The normalized 4D vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4D Normalize(Vector4D vector)
+        {
+            if (Avx.IsSupported)
+            {
+                Vector256<double> vec = vector.AsVector256();
+
+                // Dot product.
+                Vector256<double> xy = Avx.Multiply(vec, vec);
+                Vector256<double> temp = Avx.HorizontalAdd(xy, xy);
+                Vector256<double> swapped = Avx.Permute2x128(temp, temp, 0x21);
+                Vector256<double> blended = Avx.Blend(temp, temp, 0b1100);
+                Vector256<double> vLengthSq = Avx.Add(swapped, blended);
+                // Prepare for the division
+                Vector256<double> vResult = Avx.Sqrt(vLengthSq);
+                // Create zero with a single instruction
+                Vector256<double> vZeroMask = Vector256<double>.Zero;
+                // Test for a divide by zero
+                vZeroMask = Avx.CompareNotEqual(vZeroMask, vResult);
+                // Failsafe on zero (Or epsilon) length planes
+                // If the length is infinity, set the elements to zero
+                vLengthSq = Avx.CompareNotEqual(vLengthSq, InfinityDouble.AsVector256());
+                // Divide to perform the normalization
+                vResult = Avx.Divide(vec, vResult);
+                // Any that are infinity, set to zero
+                vResult = Avx.And(vResult, vZeroMask);
+                // Select qnan or result based on infinite length
+                Vector256<double> vTemp1 = Avx.AndNot(vLengthSq, QNaNDouble.AsVector256());
+                Vector256<double> vTemp2 = Avx.And(vResult, vLengthSq);
+                vResult = Avx.Or(vTemp1, vTemp2);
+                return vResult.AsVector4D();
+            }
+
+            {
+                Vector4D vec = new(vector.X, vector.Y, vector.Z, vector.W);
+                double lengthSq = Vector4D.Dot(vec, vec);
+                double length = Math.Sqrt(lengthSq);
+                if (length != 0)
+                {
+                    vec = Vector4D.Divide(vec, length);
+                }
+                else
+                {
+                    vec = Vector4D.Zero;
+                }
+
+                return new(vec.X, vec.Y, vec.Z, vec.Z);
+            }
         }
 
         /// <summary>
@@ -2342,9 +2700,50 @@
             return new Vector4(plane.X / length, plane.Y / length, plane.Z / length, plane.W / length);
         }
 
-        public static int RoundToInt(float v)
+        /// <summary>
+        /// Calculates the inverse square root approximation for a single-precision floating-point number.
+        /// </summary>
+        /// <param name="number">The number for which to calculate the inverse square root.</param>
+        /// <returns>The inverse square root approximation of the input number.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe float QRsqrt(float number)
         {
-            throw new NotImplementedException();
+            long i;
+            float x2, y;
+            const float threehalfs = 1.5F;
+
+            x2 = number * 0.5F;
+            y = number;
+            i = *(long*)&y;                                 // evil floating point bit level hacking
+            i = 0x5f3759df - (i >> 1);                      // what the fuck?
+            y = *(float*)&i;
+            y *= (threehalfs - (x2 * y * y));               // 1st iteration
+            // y  = y * ( threehalfs - ( x2 * y * y ) );    // 2nd iteration, this can be removed
+
+            return y;
+        }
+
+        /// <summary>
+        /// Calculates the inverse square root approximation for a double-precision floating-point number.
+        /// </summary>
+        /// <param name="number">The number for which to calculate the inverse square root.</param>
+        /// <returns>The inverse square root approximation of the input number.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe double QRsqrt(double number)
+        {
+            long i;
+            double x2, y;
+            const double threehalfs = 1.5D;
+
+            x2 = number * 0.5;
+            y = number;
+            i = *(long*)&y;                                 // evil floating point bit level hacking
+            i = 0x5fe6eb50c7b537a9 - (i >> 1);              // what the fuck?
+            y = *(double*)&i;
+            y *= (threehalfs - (x2 * y * y));               // 1st iteration
+            // y  = y * ( threehalfs - ( x2 * y * y ) );    // 2nd iteration, this can be removed
+
+            return y;
         }
     }
 }
