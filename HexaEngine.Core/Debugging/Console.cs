@@ -368,8 +368,7 @@
 
                 Vector2 cursor = ImGui.GetCursorPos();
 
-                var rect = ImGui.GetCurrentWindow().InnerClipRect;
-                ImGui.Dummy(new(0.0f, (rect.Max.Y - rect.Min.Y) - dummyHeight));
+                ImGui.Dummy(new(0.0f, dummyHeight));
                 ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
 
                 // Display colored command output.
@@ -432,7 +431,7 @@
                 // Auto-scroll logs.
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
                 {
-                    ImGui.SetScrollHereY(1.0f);
+                    ImGui.SetScrollY(dummyHeight);
 
                     scrollToBottom = false;
                 }
