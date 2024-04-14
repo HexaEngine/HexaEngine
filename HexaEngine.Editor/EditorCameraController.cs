@@ -325,11 +325,11 @@
                         orbitPosition.X = Math.Clamp(orbitPosition.X + orbitPosition.X / 2 * -wheel, 0.001f, float.MaxValue);
 
                         // Rotate the camera left and right
-                        orbitPosition.Y += -delta.X * Time.Delta * MouseSensitivity;
+                        orbitPosition.Y += -delta.X * MouseSensitivity;
 
                         // Rotate the camera up and down
                         // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                        orbitPosition.Z = Math.Clamp(orbitPosition.Z + delta.Y * Time.Delta * MouseSensitivity, -float.Pi / 2, float.Pi / 2);
+                        orbitPosition.Z = Math.Clamp(orbitPosition.Z + delta.Y * MouseSensitivity, -float.Pi / 2, float.Pi / 2);
 
                         // Calculate the cartesian coordinates
                         Vector3 position = SphereHelper.GetCartesianCoordinates(orbitPosition) + orbitCenter;
@@ -349,7 +349,7 @@
 
                     if (delta.X != 0 | delta.Y != 0 || first)
                     {
-                        var deltaT = new Vector3(delta.X, delta.Y, 0) * Time.Delta * MouseSensitivity;
+                        var deltaT = new Vector3(delta.X, delta.Y, 0) * MouseSensitivity;
                         rotation += deltaT;
 
                         const float maxAngle = 1.5690509975f; // 89.9° (90° would cause nan values.)
@@ -414,7 +414,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(-delta.X, delta.Y, 0) * Time.Delta;
+                    var re = new Vector3(-delta.X, delta.Y, 0);
                     position += re;
                 }
 

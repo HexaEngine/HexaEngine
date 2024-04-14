@@ -73,6 +73,7 @@
         /// <summary>
         /// Gets the mouse movement delta.
         /// </summary>
+        /// <remarks>No need to multiply by <see cref="Time.Delta"/>, this value is frame-rate independent.</remarks>
         public static Vector2 Delta => delta;
 
         /// <summary>
@@ -205,13 +206,13 @@
                 Point2 relative;
                 sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
                 sdl.GetRelativeMouseState(&relative.X, &relative.Y);
-                delta = (Vector2)relative / Time.Delta;
+                delta = (Vector2)relative;
             }
             else
             {
                 var old = pos;
                 sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
-                delta = (Vector2)(pos - old) / Time.Delta;
+                delta = (Vector2)(pos - old);
             }
         }
 
