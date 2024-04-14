@@ -54,14 +54,14 @@
 
         private static void SetRotation(object context)
         {
-            var ctx = (HistoryContext<Transform, Vector3>)context;
-            ctx.Target.SetRotationOverwrite(ctx.NewValue);
+            var ctx = (HistoryContext<Transform, Quaternion>)context;
+            ctx.Target.SetOrientationOverwrite(ctx.NewValue);
         }
 
         private static void RestoreRotation(object context)
         {
-            var ctx = (HistoryContext<Transform, Vector3>)context;
-            ctx.Target.SetRotationOverwrite(ctx.OldValue);
+            var ctx = (HistoryContext<Transform, Quaternion>)context;
+            ctx.Target.SetOrientationOverwrite(ctx.OldValue);
         }
 
         private static void SetScale(object context)
@@ -412,11 +412,11 @@
                 ImGui.SameLine();
 
                 {
-                    var val = transform.Rotation;
-                    var oldVal = val;
+                    var orientation = transform.Orientation;
+                    var val = orientation.ToYawPitchRoll().ToDeg();
                     if (ImGui.DragFloat3("##Rotation", ref val))
                     {
-                        History.Default.Do("Set Rotation", transform, oldVal, val, SetRotation, RestoreRotation);
+                        History.Default.Do("Set Rotation", transform, orientation, val.ToRad().ToQuaternion(), SetRotation, RestoreRotation);
                         changed = true;
                     }
                 }

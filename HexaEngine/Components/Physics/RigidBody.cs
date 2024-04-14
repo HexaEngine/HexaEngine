@@ -1,11 +1,13 @@
 ﻿namespace HexaEngine.Components.Physics
 {
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using MagicPhysX;
     using System.Collections.Generic;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     [EditorCategory("Physics")]
     [EditorComponent<RigidBody>("Rigid Body")]

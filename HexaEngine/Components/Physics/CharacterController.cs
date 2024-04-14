@@ -444,6 +444,7 @@
 
             actor = controller->GetActor();
             rigidBody = new(actor, ActorType.Kinematic);
+            Physics.Actor.mapper.AddMapping(actor, this);
         }
 
         void ICharacterControllerComponent.DestroyController()
@@ -456,6 +457,7 @@
 
             if (controller != null)
             {
+                Physics.Actor.mapper.RemoveMapping(actor);
                 rigidBody = null;
                 actor = null;
                 controller->ReleaseMut();

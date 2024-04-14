@@ -3,7 +3,6 @@
     using HexaEngine.Mathematics;
     using MagicPhysX;
     using System.Numerics;
-    using YamlDotNet.Core.Tokens;
 
     public static class Helper
     {
@@ -304,12 +303,124 @@
             }
             return result;
         }
-    }
 
-    public enum ControllerCollisionFlags
-    {
-        CollisionSides = 1,
-        CollisionUp = 2,
-        CollisionDown = 4
+        public static HitFlags Convert(PxHitFlags flags)
+        {
+            HitFlags result = 0;
+            if ((flags & PxHitFlags.Position) != 0)
+            {
+                result |= HitFlags.Position;
+            }
+            if ((flags & PxHitFlags.Normal) != 0)
+            {
+                result |= HitFlags.Normal;
+            }
+            if ((flags & PxHitFlags.Uv) != 0)
+            {
+                result |= HitFlags.Uv;
+            }
+            if ((flags & PxHitFlags.AssumeNoInitialOverlap) != 0)
+            {
+                result |= HitFlags.AssumeNoInitialOverlap;
+            }
+            if ((flags & PxHitFlags.AnyHit) != 0)
+            {
+                result |= HitFlags.AnyHit;
+            }
+            if ((flags & PxHitFlags.MeshMultiple) != 0)
+            {
+                result |= HitFlags.MeshMultiple;
+            }
+            if ((flags & PxHitFlags.MeshBothSides) != 0)
+            {
+                result |= HitFlags.MeshBothSides;
+            }
+            if ((flags & PxHitFlags.PreciseSweep) != 0)
+            {
+                result |= HitFlags.PreciseSweep;
+            }
+            if ((flags & PxHitFlags.Mtd) != 0)
+            {
+                result |= HitFlags.Mtd;
+            }
+            if ((flags & PxHitFlags.FaceIndex) != 0)
+            {
+                result |= HitFlags.FaceIndex;
+            }
+            if ((flags & PxHitFlags.Default) != 0)
+            {
+                result |= HitFlags.Default;
+            }
+            if ((flags & PxHitFlags.ModifiableFlags) != 0)
+            {
+                result |= HitFlags.ModifiableFlags;
+            }
+            return result;
+        }
+
+        public static PxQueryHitType Convert(QueryHitType type)
+        {
+            return type switch
+            {
+                QueryHitType.None => PxQueryHitType.None,
+                QueryHitType.Touch => PxQueryHitType.Touch,
+                QueryHitType.Block => PxQueryHitType.Block,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        internal static PxHitFlags Convert(HitFlags flags)
+        {
+            PxHitFlags result = 0;
+            if ((flags & HitFlags.Position) != 0)
+            {
+                result |= PxHitFlags.Position;
+            }
+            if ((flags & HitFlags.Normal) != 0)
+            {
+                result |= PxHitFlags.Normal;
+            }
+            if ((flags & HitFlags.Uv) != 0)
+            {
+                result |= PxHitFlags.Uv;
+            }
+            if ((flags & HitFlags.AssumeNoInitialOverlap) != 0)
+            {
+                result |= PxHitFlags.AssumeNoInitialOverlap;
+            }
+            if ((flags & HitFlags.AnyHit) != 0)
+            {
+                result |= PxHitFlags.AnyHit;
+            }
+            if ((flags & HitFlags.MeshMultiple) != 0)
+            {
+                result |= PxHitFlags.MeshMultiple;
+            }
+            if ((flags & HitFlags.MeshBothSides) != 0)
+            {
+                result |= PxHitFlags.MeshBothSides;
+            }
+            if ((flags & HitFlags.PreciseSweep) != 0)
+            {
+                result |= PxHitFlags.PreciseSweep;
+            }
+            if ((flags & HitFlags.Mtd) != 0)
+            {
+                result |= PxHitFlags.Mtd;
+            }
+            if ((flags & HitFlags.FaceIndex) != 0)
+            {
+                result |= PxHitFlags.FaceIndex;
+            }
+            if ((flags & HitFlags.Default) != 0)
+            {
+                result |= PxHitFlags.Default;
+            }
+            if ((flags & HitFlags.ModifiableFlags) != 0)
+            {
+                result |= PxHitFlags.ModifiableFlags;
+            }
+            return result;
+        }
     }
 }

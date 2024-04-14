@@ -24,6 +24,8 @@ namespace HexaEngine.Core.Debugging
         private const int vertexBufferSize = 5000;
         private const int indexBufferSize = 10000;
 
+        private readonly SemaphoreSlim semaphore = new(1);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DebugDrawCommandList"/> class.
         /// </summary>
@@ -62,6 +64,11 @@ namespace HexaEngine.Core.Debugging
         /// Gets the type of the debug draw command list.
         /// </summary>
         public DebugDrawCommandListType Type { get; }
+
+        public void BeginDraw()
+        {
+            semaphore.Wait();
+        }
 
         /// <summary>
         /// Reserves space for geometry in the debug draw command list.
@@ -183,6 +190,7 @@ namespace HexaEngine.Core.Debugging
             nIndicesTotal += nIndicesCmd;
             nIndicesCmd = 0;
             nVerticesCmd = 0;
+            semaphore.Release();
         }
 
         /// <summary>

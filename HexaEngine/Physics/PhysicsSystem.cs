@@ -1,12 +1,14 @@
 ﻿namespace HexaEngine.Physics
 {
     using HexaEngine.Components.Physics;
+    using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;
+    using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -28,7 +30,7 @@
         private readonly SimulationEventCallbacks eventCallbacks;
         private readonly ControllerManager controllerManager;
 
-        private readonly object _lock = new();
+        private static readonly object _lock = new();
 
         private PxSimulationStatistics statistics;
 
@@ -154,6 +156,133 @@
         public ControllerManager ControllerManager => controllerManager;
 
         public static bool Debug { get; internal set; }
+
+        public bool RaycastAny(Vector3 origin, Vector3 dir, float distance, QueryFlags flags)
+        {
+            return RaycastAny(pxScene, origin, dir, distance, flags, null);
+        }
+
+        public bool RaycastAny(Vector3 origin, Vector3 dir, float distance, QueryFlags flags, QueryFilterCallback? callback)
+        {
+            return RaycastAny(pxScene, origin, dir, distance, flags, callback);
+        }
+
+        internal bool RaycastAny(PxScene* pxScene, Vector3 origin, Vector3 dir, float distance, QueryFlags flags, QueryFilterCallback? callback)
+        {
+            lock (_lock)
+            {
+                PxQueryFilterData filterData;
+                filterData.flags = Helper.Convert(flags);
+                PxQueryHit queryHit;
+                PxQueryFilterCallback* filterCallback = callback == null ? null : callback.queryFilterCallback;
+
+                bool result = pxScene->QueryExtRaycastAny((PxVec3*)&origin, (PxVec3*)&dir, distance, &queryHit, &filterData, filterCallback, null);
+                return result;
+            }
+        }
+
+        public bool RaycastSingle(Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, out RaycastHit raycastHit, QueryFlags queryFlags)
+        {
+            return RaycastSingle(pxScene, origin, dir, distance, hitFlags, out raycastHit, queryFlags, null);
+        }
+
+        public bool RaycastSingle(Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, out RaycastHit raycastHit, QueryFlags queryFlags, QueryFilterCallback? callback)
+        {
+            return RaycastSingle(pxScene, origin, dir, distance, hitFlags, out raycastHit, queryFlags, callback);
+        }
+
+        internal static bool RaycastSingle(PxScene* pxScene, Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, out RaycastHit raycastHit, QueryFlags queryFlags, QueryFilterCallback? callback)
+        {
+            lock (_lock)
+            {
+                PxHitFlags pxHitFlags = Helper.Convert(hitFlags);
+                PxRaycastHit pxRaycastHit;
+                PxQueryFilterCallback* filterCallback = callback == null ? null : callback.queryFilterCallback;
+                PxQueryFilterData filterData;
+                filterData.flags = Helper.Convert(queryFlags);
+
+                bool result = pxScene->QueryExtRaycastSingle((PxVec3*)&origin, (PxVec3*)&dir, distance, pxHitFlags, &pxRaycastHit, &filterData, filterCallback, null);
+
+                if (result)
+                {
+                    var act = Actor.mapper.GetManagedObject<RigidBody>(pxRaycastHit.actor);
+                    var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(pxRaycastHit.shape);
+
+                    raycastHit = new(pxRaycastHit.faceIndex, Helper.Convert(pxRaycastHit.flags), pxRaycastHit.position, pxRaycastHit.normal, pxRaycastHit.distance, pxRaycastHit.u, pxRaycastHit.v, act, colliderShape);
+
+                    return true;
+                }
+                else
+                {
+                    raycastHit = default;
+                    return false;
+                }
+            }
+        }
+
+        public int RaycastMultiple(Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, List<RaycastHit> hits, out bool blockingHit, uint maxHits, QueryFlags queryFlags, QueryFilterCallback? callback)
+        {
+            return RaycastMultiple(pxScene, origin, dir, distance, hitFlags, hits, out blockingHit, maxHits, queryFlags, callback);
+        }
+
+        public int RaycastMultiple(Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, List<RaycastHit> hits, out bool blockingHit, uint maxHits, QueryFlags queryFlags)
+        {
+            return RaycastMultiple(pxScene, origin, dir, distance, hitFlags, hits, out blockingHit, maxHits, queryFlags, null);
+        }
+
+        internal static int RaycastMultiple(PxScene* pxScene, Vector3 origin, Vector3 dir, float distance, HitFlags hitFlags, List<RaycastHit> hits, out bool blockingHit, uint maxHits, QueryFlags queryFlags, QueryFilterCallback? callback)
+        {
+            lock (_lock)
+            {
+                PxHitFlags pxHitFlags = Helper.Convert(hitFlags);
+
+                PxQueryFilterCallback* filterCallback = callback == null ? null : callback.queryFilterCallback;
+                PxQueryFilterData filterData;
+                filterData.flags = Helper.Convert(queryFlags);
+
+                PxRaycastHit* raycastHitBuffer;
+
+                bool ownsBuffer = maxHits > 128; // PxRaycastHit == 64 Bytes * 128 = 8192 Bytes.
+                if (ownsBuffer)
+                {
+                    raycastHitBuffer = (PxRaycastHit*)Marshal.AllocHGlobal((nint)(sizeof(PxRaycastHit) * maxHits));
+                }
+                else
+                {
+                    PxRaycastHit* raycastHitBuffer1 = stackalloc PxRaycastHit[(int)maxHits];
+                    raycastHitBuffer = raycastHitBuffer1;
+                }
+
+                uint bufferSize = 128;
+                bool pxBlockingHit;
+                int result = pxScene->QueryExtRaycastMultiple((PxVec3*)&origin, (PxVec3*)&dir, distance, pxHitFlags, raycastHitBuffer, bufferSize, &pxBlockingHit, &filterData, filterCallback, null);
+                blockingHit = pxBlockingHit;
+
+                if (result == -1)
+                {
+                    result = (int)bufferSize;
+                }
+
+                for (int i = 0; i < result; i++)
+                {
+                    var hit = raycastHitBuffer[i];
+
+                    var act = Actor.mapper.GetManagedObject<RigidBody>(hit.actor);
+                    var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(hit.shape);
+
+                    RaycastHit raycastHit = new(hit.faceIndex, Helper.Convert(hit.flags), hit.position, hit.normal, hit.distance, hit.u, hit.v, act, colliderShape);
+
+                    hits.Add(raycastHit);
+                }
+
+                if (ownsBuffer)
+                {
+                    Marshal.FreeHGlobal((nint)raycastHitBuffer);
+                }
+
+                return result;
+            }
+        }
 
         public void Awake(Scene scene)
         {

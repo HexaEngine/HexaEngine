@@ -14,6 +14,7 @@
     // TODO: Dominance Group Editor.
     public abstract unsafe class Actor : IActorComponent
     {
+        protected PxScene* scene;
         private PxActor* actor;
         private byte* name;
         protected ActorType type;
@@ -139,6 +140,7 @@
 
         void IActorComponent.CreateActor(PxPhysics* physics, PxScene* scene)
         {
+            this.scene = scene;
             actor = CreateActor(physics, scene);
             if (actor != null)
             {
@@ -161,6 +163,7 @@
 
         protected virtual void DestroyActor()
         {
+            scene = null;
             if (actor != null)
             {
                 mapper.RemoveMapping(actor);

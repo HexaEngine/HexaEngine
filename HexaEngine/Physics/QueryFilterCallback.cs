@@ -7,26 +7,43 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate QueryHitType QueryFilterCallbackDelegate(RigidBody? rigidBody, Pointer<FilterData> filterData, IColliderComponent? collider, HitFlags hitFlags);
+
     public unsafe class QueryFilterCallback : IDisposable
     {
         internal PxQueryFilterCallback* queryFilterCallback;
         private bool disposedValue;
-        private readonly Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback;
-        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, PxQueryHitType> postFilter;
+        private readonly QueryFilterCallbackDelegate callback;
+        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter;
 
         public QueryFilterCallback(RigidBody actorToIgnore)
         {
             queryFilterCallback = NativeMethods.create_raycast_filter_callback(actorToIgnore.Actor);
         }
 
-        public QueryFilterCallback(Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback)
+        public QueryFilterCallback(QueryFilterCallbackDelegate callback)
         {
             this.callback = callback;
-            delegate* unmanaged[Cdecl]<PxRigidActor*, FilterData*, PxShape*, uint, void*, PxQueryHitType> pCallback = (delegate* unmanaged[Cdecl]<PxRigidActor*, FilterData*, PxShape*, uint, void*, PxQueryHitType>)Marshal.GetFunctionPointerForDelegate(Callback);
-            queryFilterCallback = NativeMethods.create_raycast_filter_callback_func((delegate* unmanaged[Cdecl]<PxRigidActor*, PxFilterData*, PxShape*, uint, void*, PxQueryHitType>)pCallback, null);
+            var pUserCallback = Marshal.GetFunctionPointerForDelegate(callback);
+            delegate* unmanaged[Cdecl]<PxRigidActor*, PxFilterData*, PxShape*, uint, void*, PxQueryHitType> pCallback = &InternalCallback;
+            queryFilterCallback = NativeMethods.create_raycast_filter_callback_func(pCallback, (void*)pUserCallback);
         }
 
-        public QueryFilterCallback(Func<RigidBody, Pointer<FilterData>, IColliderComponent, PxHitFlags, PxQueryHitType> callback, Func<Pointer<FilterData>, Pointer<QueryHit>, PxQueryHitType> postFilter)
+        [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+        private static PxQueryHitType InternalCallback(PxRigidActor* actor, PxFilterData* filterData, PxShape* shape, uint hitFlags, void* userdata)
+        {
+            var userCallback = Marshal.GetDelegateForFunctionPointer<QueryFilterCallbackDelegate>((nint)userdata);
+
+            var act = Actor.mapper.GetManagedObject<RigidBody>(actor);
+            var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(shape);
+
+            var result = userCallback(act, (FilterData*)filterData, colliderShape, Helper.Convert((PxHitFlags)hitFlags));
+
+            return Helper.Convert(result);
+        }
+
+        public QueryFilterCallback(QueryFilterCallbackDelegate callback, Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter)
         {
             this.callback = callback;
             this.postFilter = postFilter;
@@ -35,18 +52,9 @@
         }
 
         [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-        private PxQueryHitType Callback(PxRigidActor* actor, FilterData* filterData, PxShape* shape, PxHitFlags hitFlags, void* userdata)
-        {
-            var act = Actor.mapper.GetManagedObject<RigidBody>(actor);
-            var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(shape);
-
-            return callback(act, filterData, colliderShape, hitFlags);
-        }
-
-        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
         private PxQueryHitType PostFilter(FilterData* filterData, QueryHit* hit, void* userdata)
         {
-            return postFilter(filterData, hit);
+            return Helper.Convert(postFilter(filterData, hit));
         }
 
         protected virtual void Dispose(bool disposing)

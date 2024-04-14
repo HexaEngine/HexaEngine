@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes;
@@ -16,13 +17,13 @@
     [EditorComponent<MeshCollider>("Mesh Collider")]
     public unsafe class MeshCollider : ColliderShape
     {
-        private string model = string.Empty;
+        private AssetRef model;
 
         private readonly List<Pointer<PxTriangleMesh>> pxTriangleMeshes = new();
         private Node[]? nodes;
 
-        [EditorProperty("Model", startingPath: null, ".model")]
-        public string Model
+        [EditorProperty("Model", AssetType.Model)]
+        public AssetRef Model
         { get => model; set { model = value; } }
 
         [EditorButton("Cook")]
@@ -33,9 +34,14 @@
 
         private void CookShape(PxPhysics* physics, bool bypassCache = false)
         {
-            string path = Paths.CurrentAssetsPath + this.model;
+            string? path = this.model.GetPath();
 
-            if (!FileSystem.Exists(path))
+            if (this.model.Guid == Guid.Empty)
+            {
+                return;
+            }
+
+            if (path == null || !File.Exists(path))
             {
                 LoggerFactory.General.Error("Failed to load model, model file not found!");
                 return;
@@ -148,6 +154,11 @@
             CookShape(physics);
 
             if (nodes == null)
+            {
+                return;
+            }
+
+            if (pxTriangleMeshes.Count == 0)
             {
                 return;
             }

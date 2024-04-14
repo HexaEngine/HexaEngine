@@ -69,47 +69,10 @@ namespace HexaEngine.Core.Debugging
             return o;
         }
 
-        /// <summary>
-        /// Transforms an array of positions with the specified color using a transformation matrix.
-        /// </summary>
-        /// <param name="verts">The array of vertices to transform.</param>
-        /// <param name="positions">The array of positions to transform.</param>
-        /// <param name="count">The number of positions to transform.</param>
-        /// <param name="matrix">The transformation matrix to apply.</param>
-        /// <param name="color">The color to apply to the vertices.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void TransformWithColor(DebugDrawVert* verts, Vector3[] positions, uint count, Matrix4x4 matrix, uint color)
-        {
-            for (uint i = 0; i < count; i++)
-            {
-                verts[i].Position = Vector3.Transform(positions[i], matrix);
-                verts[i].Color = color;
-                verts[i].UV = WhiteUV;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void TransformWithColor(Vector3[] positions, uint count, Matrix4x4 matrix, Vector4 color)
-        {
-            TransformWithColor(positions, count, matrix, ColorConvertFloat4ToU32(color));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void TransformWithColor(Vector3[] positions, uint count, Matrix4x4 matrix, uint color)
-        {
-            immediateList.ReserveVerts(count);
-            DebugDrawVert* verts = immediateList.Vertices + immediateList.VertexCount;
-            for (uint i = 0; i < count; i++)
-            {
-                verts[i].Position = Vector3.Transform(positions[i], matrix);
-                verts[i].Color = color;
-                verts[i].UV = WhiteUV;
-            }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void DrawPreComputed(PrimitiveTopology topology, Vector3[] positions, uint[] indices, Matrix4x4 matrix, Vector4 color)
         {
+            immediateList.BeginDraw();
             immediateList.AddIndexRange(indices);
             immediateList.ReserveVerts((uint)positions.Length);
             var col = ColorConvertFloat4ToU32(color);
@@ -220,6 +183,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawFrustum(BoundingFrustum frustum, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(BoundingFrustum.CornerCount, 24);
@@ -258,6 +223,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawBoundingBox(BoundingBox box, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             const uint vertexCount = 8;
             uint color = ColorConvertFloat4ToU32(col);
 
@@ -515,6 +482,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawRay(Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(3, 4);
@@ -555,13 +524,6 @@ namespace HexaEngine.Core.Debugging
             immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
-        private static Quaternion FromTwoVectors(Vector3 from, Vector3 to)
-        {
-            Vector3 axis = Vector3.Cross(from, to);
-            float angle = (float)Math.Acos(Vector3.Dot(from, to) / (from.Length() * to.Length()));
-            return Quaternion.CreateFromAxisAngle(axis, angle);
-        }
-
         /// <summary>
         /// Draws a line from a specified origin in the given direction.
         /// </summary>
@@ -572,6 +534,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawLine(Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(2, 2);
@@ -607,6 +571,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawLine(Vector3 origin, Vector3 destination, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(2, 2);
@@ -631,6 +597,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawRing(Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
@@ -682,6 +650,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawRing(Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
@@ -732,6 +702,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawRing(Vector3 origin, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
@@ -788,6 +760,8 @@ namespace HexaEngine.Core.Debugging
         ///
         public static void DrawRingBillboard(Vector3 origin, Vector3 camPos, Vector3 camUp, Vector3 camForward, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
 
@@ -1330,6 +1304,8 @@ new Vector3(+1, +1, +1),
         ///
         public static void DrawTriangle(Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(3, 6);
@@ -1343,6 +1319,8 @@ new Vector3(+1, +1, +1),
             vertices[0] = new(Vector3.Transform(a, orientation) + origin, default, color);
             vertices[1] = new(Vector3.Transform(b, orientation) + origin, default, color);
             vertices[2] = new(Vector3.Transform(c, orientation) + origin, default, color);
+
+            immediateList.RecordCmd(PrimitiveTopology.TriangleList);
         }
 
         /// <summary>
@@ -1358,6 +1336,8 @@ new Vector3(+1, +1, +1),
         ///
         public static void DrawQuad(Vector3 origin, Quaternion orientation, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(4, 6);
@@ -1395,6 +1375,8 @@ new Vector3(+1, +1, +1),
         ///
         public static void DrawQuadBillboard(Vector3 origin, Vector3 camOrigin, Vector3 camUp, Vector3 camForward, Vector2 scale, Vector2 uv0, Vector2 uv1, Vector4 col, nint texId)
         {
+            immediateList.BeginDraw();
+
             uint color = ColorConvertFloat4ToU32(col);
 
             immediateList.ReserveGeometry(4, 6);
@@ -1428,6 +1410,8 @@ new Vector3(+1, +1, +1),
         ///
         public static void DrawGrid(Matrix4x4 matrix, int size, Vector4 col)
         {
+            immediateList.BeginDraw();
+
             uint vertexCount = 2u * (uint)size * 2u + 4;
             uint color = ColorConvertFloat4ToU32(col);
 
