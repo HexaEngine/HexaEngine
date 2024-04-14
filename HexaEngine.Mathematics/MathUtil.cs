@@ -2745,5 +2745,128 @@
 
             return y;
         }
+
+        /// <summary>
+        /// Projects a 2D vector onto another 2D vector.
+        /// </summary>
+        /// <param name="vector">The vector to project.</param>
+        /// <param name="onto">The vector onto which to project.</param>
+        /// <returns>The projected vector.</returns>
+        public static Vector2 Project(Vector2 vector, Vector2 onto)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> v = vector.AsVector128();
+                Vector128<float> o = onto.AsVector128();
+
+                Vector128<float> dotProduct = Sse41.DotProduct(v, o, 0x3f);
+                Vector128<float> vLengthSq = Sse41.DotProduct(o, o, 0x3f);
+
+                Vector128<float> vResult = Sse.Divide(dotProduct, vLengthSq);
+
+                // set nan values to zero.
+                Vector128<float> nanMask = Sse.CompareEqual(vResult, vResult);
+                vResult = Sse.And(nanMask, vResult);
+
+                vResult = Sse.Multiply(o, vResult);
+
+                return vResult.AsVector2();
+            }
+
+            {
+                float dot = Vector2.Dot(vector, onto);
+                float ontoLengthSquared = onto.LengthSquared();
+
+                // Handle edge case when onto vector is zero
+                if (ontoLengthSquared < float.Epsilon)
+                {
+                    return Vector2.Zero;
+                }
+
+                return onto * (dot / ontoLengthSquared);
+            }
+        }
+
+        /// <summary>
+        /// Projects a 3D vector onto another 3D vector.
+        /// </summary>
+        /// <param name="vector">The vector to project.</param>
+        /// <param name="onto">The vector onto which to project.</param>
+        /// <returns>The projected vector.</returns>
+        public static Vector3 Project(Vector3 vector, Vector3 onto)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> v = vector.AsVector128();
+                Vector128<float> o = onto.AsVector128();
+
+                Vector128<float> dotProduct = Sse41.DotProduct(v, o, 0x7f);
+                Vector128<float> vLengthSq = Sse41.DotProduct(o, o, 0x7f);
+
+                Vector128<float> vResult = Sse.Divide(dotProduct, vLengthSq);
+
+                // set nan values to zero.
+                Vector128<float> nanMask = Sse.CompareEqual(vResult, vResult);
+                vResult = Sse.And(nanMask, vResult);
+
+                vResult = Sse.Multiply(o, vResult);
+
+                return vResult.AsVector3();
+            }
+
+            {
+                float dot = Vector3.Dot(vector, onto);
+                float ontoLengthSquared = onto.LengthSquared();
+
+                // Handle edge case when onto vector is zero
+                if (ontoLengthSquared < float.Epsilon)
+                {
+                    return Vector3.Zero;
+                }
+
+                return onto * (dot / ontoLengthSquared);
+            }
+        }
+
+        /// <summary>
+        /// Projects a 4D vector onto another 4D vector.
+        /// </summary>
+        /// <param name="vector">The vector to project.</param>
+        /// <param name="onto">The vector onto which to project.</param>
+        /// <returns>The projected vector.</returns>
+        public static Vector4 Project(Vector4 vector, Vector4 onto)
+        {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> v = vector.AsVector128();
+                Vector128<float> o = onto.AsVector128();
+
+                Vector128<float> dotProduct = Sse41.DotProduct(v, o, 0xFF);
+                Vector128<float> vLengthSq = Sse41.DotProduct(o, o, 0xFF);
+
+                Vector128<float> vResult = Sse.Divide(dotProduct, vLengthSq);
+
+                // set nan values to zero.
+                Vector128<float> nanMask = Sse.CompareEqual(vResult, vResult);
+                vResult = Sse.And(nanMask, vResult);
+
+                vResult = Sse.Multiply(o, vResult);
+
+                return vResult.AsVector4();
+            }
+
+            {
+                float dot = Vector4.Dot(vector, onto);
+                float ontoLengthSquared = onto.LengthSquared();
+
+                // Handle edge case when onto vector is zero
+                if (ontoLengthSquared < float.Epsilon)
+                {
+                    return Vector4.Zero;
+                }
+
+                return onto * (dot / ontoLengthSquared);
+            }
+        }
     }
 }

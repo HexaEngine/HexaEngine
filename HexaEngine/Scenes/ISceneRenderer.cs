@@ -24,9 +24,9 @@
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, ICoreWindow window);
 
-        void Render(IGraphicsContext context, Viewport viewport, Scene scene, Camera camera);
+        void Render(IGraphicsContext context, Viewport viewport, IScene scene, Camera camera);
 
-        void RenderTo(IGraphicsContext context, IRenderTargetView target, Viewport viewport, Scene scene, Camera camera);
+        void RenderTo(IGraphicsContext context, IRenderTargetView target, Viewport viewport, IScene scene, Camera camera);
 
         void TakeScreenshot(IGraphicsContext context, string path);
 

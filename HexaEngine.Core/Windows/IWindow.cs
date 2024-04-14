@@ -269,11 +269,6 @@
         unsafe Window* GetWindow();
 
         /// <summary>
-        /// Clears the input state for the window.
-        /// </summary>
-        internal void ClearState();
-
-        /// <summary>
         /// Gets the mouse position inside of the window client area.
         /// </summary>
         /// <remarks>Nan signals that the window is not focused.</remarks>

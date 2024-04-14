@@ -209,7 +209,7 @@ namespace HexaEngine.Graphics.Renderers
             }
         }
 
-        public unsafe void Render(IGraphicsContext context, Mathematics.Viewport viewport, Scene scene, Camera camera)
+        public unsafe void Render(IGraphicsContext context, Mathematics.Viewport viewport, IScene scene, Camera camera)
         {
             if (!initialized)
             {
@@ -234,7 +234,7 @@ namespace HexaEngine.Graphics.Renderers
             graphExecuter.Execute(context, enableProfiling ? profiler : null);
         }
 
-        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, Scene scene, Camera camera)
+        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, IScene scene, Camera camera)
         {
             if (!initialized)
             {

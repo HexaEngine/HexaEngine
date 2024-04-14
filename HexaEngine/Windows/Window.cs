@@ -1,5 +1,8 @@
-﻿namespace HexaEngine.Windows
+﻿#define PROFILE
+
+namespace HexaEngine.Windows
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
@@ -14,6 +17,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Microsoft.Extensions.DependencyInjection;
+    using System.Diagnostics;
     using System.Numerics;
 
     /// <summary>
@@ -36,6 +40,7 @@
         protected Thread updateThread;
 
         protected readonly Barrier syncBarrier = new(2);
+        protected readonly AutoResetEvent signal = new(false);
 
         protected Viewport windowViewport;
         protected Viewport renderViewport;
@@ -155,16 +160,16 @@
         /// <summary>
         /// Continuously updates the current scene while the application is running.
         /// </summary>
-        private void UpdateScene()
+        protected virtual void UpdateScene()
         {
             while (running)
             {
-#if PROFILE
-                // Signal and wait for synchronization if profiling is enabled
-                syncBarrier.SignalAndWait();
-#endif
+                signal.WaitOne();
+
+                IScene? scene = SceneManager.Current;
+
                 // Update the current scene
-                SceneManager.Current?.Update();
+                scene?.Update();
 
                 // Do fixed update tick if necessary.
                 Time.FixedUpdateTick();
@@ -190,17 +195,15 @@
         /// <param name="context">The graphics context.</param>
         public override void Render(IGraphicsContext context)
         {
+            signal.Set();
 #if PROFILE
             // Begin profiling frame and total time if profiling is enabled.
-            Device.Profiler.BeginFrame();
-            Device.Profiler.Begin(Context, "Total");
+            graphicsDevice.Profiler.BeginFrame();
+            graphicsDevice.Profiler.Begin(context, "Total");
             sceneRenderer.Profiler.BeginFrame();
             sceneRenderer.Profiler.Begin("Total");
 #endif
-#if PROFILE
-            // Signal and wait for synchronization if profiling is enabled.
-            syncBarrier.SignalAndWait();
-#endif
+
             // Resize the swap chain if necessary.
             if (resize)
             {
@@ -231,16 +234,13 @@
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
 
-            // Check if rendering should occur based on the active scene.
-            drawing &= SceneManager.Current is not null;
+            IScene? scene = SceneManager.Current;
 
             // Render the scene if drawing is enabled.
-            if (drawing)
+            if (drawing && scene is not null)
             {
-#nullable disable // a few lines above there is a null check.
-                SceneManager.Current.GraphicsUpdate(context);
-#nullable restore
-                sceneRenderer.Render(context, windowViewport, SceneManager.Current, CameraManager.Current);
+                scene.GraphicsUpdate(context);
+                sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
             }
 
             // Invoke virtual method for post-render operations.
@@ -261,8 +261,8 @@
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.
             sceneRenderer.Profiler.End("Total");
-            Device.Profiler.End(Context, "Total");
-            Device.Profiler.EndFrame(context);
+            graphicsDevice.Profiler.End(context, "Total");
+            graphicsDevice.Profiler.EndFrame(context);
 #endif
         }
 
@@ -322,7 +322,11 @@
 
             // Remove the participant from the synchronization barrier and join the update thread.
             syncBarrier.RemoveParticipant();
+            signal.Set();
             updateThread.Join();
+
+            syncBarrier.Dispose();
+            signal.Dispose();
 
             // Invoke virtual method for disposing renderer-specific resources.
             OnRendererDispose();

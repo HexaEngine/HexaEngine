@@ -11,6 +11,42 @@
     public class MathematicsTests
     {
         [Test]
+        public void ProjectVec2()
+        {
+            Vector2 vector = new(1, 2);
+            Vector2 onto = new(10, 5);
+            Vector2 projectedVectorA = MathUtil.Project(vector, onto);
+            Vector2 projectedVectorB = Project(vector, onto);
+
+            Assert.That(projectedVectorA, Is.EqualTo(projectedVectorB));
+        }
+
+        [Test]
+        public void ProjectVec2Zero()
+        {
+            Vector2 vector = new(1, 2);
+            Vector2 onto = new(0, 0);
+            Vector2 normalizedVector = MathUtil.Project(vector, onto);
+            Vector2 normalizedVec = Project(vector, onto);
+
+            Assert.That(normalizedVector, Is.EqualTo(normalizedVec));
+        }
+
+        private static Vector2 Project(Vector2 vector, Vector2 onto)
+        {
+            float dot = Vector2.Dot(vector, onto);
+            float ontoLengthSquared = onto.LengthSquared();
+
+            // Handle edge case when onto vector is zero
+            if (ontoLengthSquared < float.Epsilon)
+            {
+                return Vector2.Zero;
+            }
+
+            return onto * (dot / ontoLengthSquared);
+        }
+
+        [Test]
         public void NormalizeVec4()
         {
             Vector4 vector = new(1, 2, 3, 4);

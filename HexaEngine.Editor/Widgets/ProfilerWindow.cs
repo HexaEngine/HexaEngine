@@ -12,11 +12,31 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public struct MemorySnapshot
+    public class MemorySnapshot
     {
         public long Timestamp;
         public long TotalMemory;
         public string TotalMemText;
+        public List<MemoryManager.MemoryEntry> GPUMemory = [];
+
+        public MemorySnapshot(long timestamp, long totalMemory)
+        {
+            Timestamp = timestamp;
+            TotalMemory = totalMemory;
+            TotalMemText = totalMemory.FormatDataSize();
+        }
+
+        public void Collect()
+        {
+            GPUMemory.AddRange(MemoryManager.Entries);
+        }
+    }
+
+    public enum ProfilerTab
+    {
+        Scene,
+        Memory,
+        Graphics,
     }
 
     [EditorWindowCategory("Debug")]
@@ -25,11 +45,13 @@
         private const int SampleBufferSize = 1000;
         private bool full = false;
         private bool memory = false;
-        private bool cpu = false;
+        private bool graphics = false;
         private bool gpu = false;
         private bool scene = false;
         private bool physics = false;
         private bool flame = false;
+
+        private ProfilerTab tab;
 
         public ProfilerWindow()
         {
@@ -89,8 +111,11 @@
                 {
                     ImGui.Checkbox("Profile (low~extreme performance impact)", ref full);
                     ImGui.Checkbox("Memory Profile (extreme performance impact 4.5ms)", ref memory);
-                    ImGui.Checkbox("CPU Profile (low~med performance impact)", ref cpu);
-                    ImGui.Checkbox("GPU Profile (heavy performance impact)", ref gpu);
+                    ImGui.Checkbox("CPU Profile (low~med performance impact)", ref graphics);
+                    if (ImGui.Checkbox("GPU Profile (heavy performance impact)", ref gpu))
+                    {
+                        context.Device.Profiler.Enabled = gpu;
+                    }
                     ImGui.Checkbox("Scene Profile (low~med performance impact)", ref scene);
                     ImGui.Checkbox("Physics Profile (low~med performance impact)", ref physics);
                     ImGui.Checkbox("Flame Graph", ref flame);
@@ -148,18 +173,95 @@
             const float fill_ref = 0;
             double fill = shade_mode == 0 ? -double.PositiveInfinity : shade_mode == 1 ? double.PositiveInfinity : fill_ref;
 
-            ImPlot.SetNextAxesToFit();
-            if (ImPlot.BeginPlot("Latency", new Vector2(-1, 0), ImPlotFlags.NoInputs))
-            {
-                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                ImPlot.PlotShaded("Latency", ref Frame.Values[0], Frame.Length, fill, 1, 0, ImPlotShadedFlags.None, Frame.Head);
-                ImPlot.PopStyleVar();
+            ImGui.BeginTabBar("Profiler", ImGuiTabBarFlags.None);
 
-                ImPlot.PlotLine("Latency", ref Frame.Values[0], Frame.Length, 1, 0, ImPlotLineFlags.None, Frame.Head);
-                ImPlot.EndPlot();
+            if (ImGui.BeginTabItem("Frame"))
+            {
+                Vector2 avail = ImGui.GetContentRegionAvail();
+
+                if (gpu)
+                {
+                    avail.X *= 0.5f;
+                }
+
+                ImPlot.SetNextAxesToFit();
+                if (ImPlot.BeginPlot("Frame (CPU Latency)", new Vector2(avail.X, 0), ImPlotFlags.NoInputs))
+                {
+                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                    ImPlot.PlotShaded("Total", ref Frame.Values[0], Frame.Length, fill, 1, 0, ImPlotShadedFlags.None, Frame.Head);
+                    ImPlot.PlotShaded("Update", ref Update.Values[0], Update.Length, fill, 1, 0, ImPlotShadedFlags.None, Update.Head);
+                    ImPlot.PlotShaded("Prepass", ref Prepass.Values[0], Prepass.Length, fill, 1, 0, ImPlotShadedFlags.None, Prepass.Head);
+                    ImPlot.PlotShaded("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, ObjectCulling.Head);
+                    ImPlot.PlotShaded("Light Culling", ref LightCulling.Values[0], LightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, LightCulling.Head);
+                    ImPlot.PlotShaded("Shadow Maps", ref ShadowMaps.Values[0], ShadowMaps.Length, fill, 1, 0, ImPlotShadedFlags.None, ShadowMaps.Head);
+                    ImPlot.PlotShaded("Geometry", ref Geometry.Values[0], Geometry.Length, fill, 1, 0, ImPlotShadedFlags.None, Geometry.Head);
+                    ImPlot.PlotShaded("AO", ref AO.Values[0], AO.Length, fill, 1, 0, ImPlotShadedFlags.None, AO.Head);
+                    ImPlot.PlotShaded("Lights Deferred", ref LightsDeferred.Values[0], LightsDeferred.Length, fill, 1, 0, ImPlotShadedFlags.None, LightsDeferred.Head);
+                    ImPlot.PlotShaded("Lights Forward", ref LightsForward.Values[0], LightsForward.Length, fill, 1, 0, ImPlotShadedFlags.None, LightsForward.Head);
+                    ImPlot.PlotShaded("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, PostProcessing.Head);
+                    ImPlot.PlotShaded("DebugDraw", ref DebugDraw.Values[0], DebugDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, DebugDraw.Head);
+                    ImPlot.PlotShaded("ImGui", ref ImGuiDraw.Values[0], ImGuiDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, ImGuiDraw.Head);
+                    ImPlot.PopStyleVar();
+
+                    ImPlot.PlotLine("Total", ref Frame.Values[0], Frame.Length, 1, 0, ImPlotLineFlags.None, Frame.Head);
+                    ImPlot.PlotLine("Update", ref Update.Values[0], Update.Length, 1, 0, ImPlotLineFlags.None, Update.Head);
+                    ImPlot.PlotLine("Prepass", ref Prepass.Values[0], Prepass.Length, 1, 0, ImPlotLineFlags.None, Prepass.Head);
+                    ImPlot.PlotLine("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, 1, 0, ImPlotLineFlags.None, ObjectCulling.Head);
+                    ImPlot.PlotLine("Light Culling", ref LightCulling.Values[0], LightCulling.Length, 1, 0, ImPlotLineFlags.None, LightCulling.Head);
+                    ImPlot.PlotLine("Shadow Maps", ref ShadowMaps.Values[0], ShadowMaps.Length, 1, 0, ImPlotLineFlags.None, ShadowMaps.Head);
+                    ImPlot.PlotLine("Geometry", ref Geometry.Values[0], Geometry.Length, 1, 0, ImPlotLineFlags.None, Geometry.Head);
+                    ImPlot.PlotLine("AO", ref AO.Values[0], AO.Length, 1, 0, ImPlotLineFlags.None, AO.Head);
+                    ImPlot.PlotLine("Lights Deferred", ref LightsDeferred.Values[0], LightsDeferred.Length, 1, 0, ImPlotLineFlags.None, LightsDeferred.Head);
+                    ImPlot.PlotLine("Lights Forward", ref LightsForward.Values[0], LightsForward.Length, 1, 0, ImPlotLineFlags.None, LightsForward.Head);
+                    ImPlot.PlotLine("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, 1, 0, ImPlotLineFlags.None, PostProcessing.Head);
+                    ImPlot.PlotLine("DebugDraw", ref DebugDraw.Values[0], DebugDraw.Length, 1, 0, ImPlotLineFlags.None, DebugDraw.Head);
+                    ImPlot.PlotLine("ImGui", ref ImGuiDraw.Values[0], ImGuiDraw.Length, 1, 0, ImPlotLineFlags.None, ImGuiDraw.Head);
+                    ImPlot.EndPlot();
+                }
+
+                if (gpu)
+                {
+                    ImGui.SameLine();
+                    ImPlot.SetNextAxesToFit();
+                    if (ImPlot.BeginPlot("Frame (GPU Latency)", new Vector2(avail.X, 0), ImPlotFlags.NoInputs))
+                    {
+                        ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                        ImPlot.PlotShaded("Total", ref GpuTotal.Values[0], GpuTotal.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuTotal.Head);
+                        ImPlot.PlotShaded("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuUpdate.Head);
+                        ImPlot.PlotShaded("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPrepass.Head);
+                        ImPlot.PlotShaded("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuObjectCulling.Head);
+                        ImPlot.PlotShaded("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightCulling.Head);
+                        ImPlot.PlotShaded("Shadow Maps", ref GpuShadowMaps.Values[0], GpuShadowMaps.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuShadowMaps.Head);
+                        ImPlot.PlotShaded("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuGeometry.Head);
+                        ImPlot.PlotShaded("AO", ref GpuAO.Values[0], GpuAO.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuAO.Head);
+                        ImPlot.PlotShaded("Lights Deferred", ref GpuLightsDeferred.Values[0], GpuLightsDeferred.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightsDeferred.Head);
+                        ImPlot.PlotShaded("Lights Forward", ref GpuLightsForward.Values[0], GpuLightsForward.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightsForward.Head);
+                        ImPlot.PlotShaded("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPostProcessing.Head);
+                        ImPlot.PlotShaded("DebugDraw", ref GpuDebugDraw.Values[0], GpuDebugDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuDebugDraw.Head);
+                        ImPlot.PlotShaded("ImGui", ref GpuImGuiDraw.Values[0], GpuImGuiDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuImGuiDraw.Head);
+                        ImPlot.PopStyleVar();
+
+                        ImPlot.PlotLine("Total", ref GpuTotal.Values[0], GpuTotal.Length, 1, 0, ImPlotLineFlags.None, GpuTotal.Head);
+                        ImPlot.PlotLine("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, 1, 0, ImPlotLineFlags.None, GpuUpdate.Head);
+                        ImPlot.PlotLine("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, 1, 0, ImPlotLineFlags.None, GpuPrepass.Head);
+                        ImPlot.PlotLine("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, 1, 0, ImPlotLineFlags.None, GpuObjectCulling.Head);
+                        ImPlot.PlotLine("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, 1, 0, ImPlotLineFlags.None, GpuLightCulling.Head);
+                        ImPlot.PlotLine("Shadow Maps", ref GpuShadowMaps.Values[0], GpuShadowMaps.Length, 1, 0, ImPlotLineFlags.None, GpuShadowMaps.Head);
+                        ImPlot.PlotLine("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, 1, 0, ImPlotLineFlags.None, GpuGeometry.Head);
+                        ImPlot.PlotLine("AO", ref GpuAO.Values[0], GpuAO.Length, 1, 0, ImPlotLineFlags.None, GpuAO.Head);
+                        ImPlot.PlotLine("Lights Deferred", ref GpuLightsDeferred.Values[0], GpuLightsDeferred.Length, 1, 0, ImPlotLineFlags.None, GpuLightsDeferred.Head);
+                        ImPlot.PlotLine("Lights Forward", ref GpuLightsForward.Values[0], GpuLightsForward.Length, 1, 0, ImPlotLineFlags.None, GpuLightsForward.Head);
+                        ImPlot.PlotLine("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, 1, 0, ImPlotLineFlags.None, GpuPostProcessing.Head);
+                        ImPlot.PlotLine("DebugDraw", ref GpuDebugDraw.Values[0], GpuDebugDraw.Length, 1, 0, ImPlotLineFlags.None, GpuDebugDraw.Head);
+                        ImPlot.PlotLine("ImGui", ref GpuImGuiDraw.Values[0], GpuImGuiDraw.Length, 1, 0, ImPlotLineFlags.None, GpuImGuiDraw.Head);
+                        ImPlot.EndPlot();
+                    }
+                }
+
+                ImGui.EndTabItem();
             }
 
-            if (memory)
+            if (ImGui.BeginTabItem("Memory"))
             {
                 ImPlot.SetNextAxesToFit();
                 if (ImPlot.BeginPlot("Memory", new Vector2(-1, 0), ImPlotFlags.NoInputs))
@@ -198,125 +300,50 @@
                 {
                     GC.Collect();
                     GC.WaitForFullGCComplete();
-                    MemorySnapshot snapshot = new();
-                    snapshot.Timestamp = Stopwatch.GetTimestamp();
-                    snapshot.TotalMemory = Process.GetCurrentProcess().PrivateMemorySize64;
-                    snapshot.TotalMemText = snapshot.TotalMemory.FormatDataSize();
+                    Thread.MemoryBarrier();
+                    MemorySnapshot snapshot = new(Stopwatch.GetTimestamp(), Process.GetCurrentProcess().PrivateMemorySize64);
+                    snapshot.Collect();
                     memorySnapshots.Add(snapshot);
                 }
+
+                ImGui.EndTabItem();
             }
 
-            if (cpu)
-            {
-                ImPlot.SetNextAxesToFit();
-                if (ImPlot.BeginPlot("Graphics (CPU Latency)", new Vector2(-1, 0), ImPlotFlags.NoInputs))
-                {
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Total", ref Frame.Values[0], Frame.Length, fill, 1, 0, ImPlotShadedFlags.None, Frame.Head);
-                    ImPlot.PlotShaded("Update", ref Update.Values[0], Update.Length, fill, 1, 0, ImPlotShadedFlags.None, Update.Head);
-                    ImPlot.PlotShaded("Prepass", ref Prepass.Values[0], Prepass.Length, fill, 1, 0, ImPlotShadedFlags.None, Prepass.Head);
-                    ImPlot.PlotShaded("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, ObjectCulling.Head);
-                    ImPlot.PlotShaded("Light Culling", ref LightCulling.Values[0], LightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, LightCulling.Head);
-                    ImPlot.PlotShaded("Shadow Maps", ref ShadowMaps.Values[0], ShadowMaps.Length, fill, 1, 0, ImPlotShadedFlags.None, ShadowMaps.Head);
-                    ImPlot.PlotShaded("Geometry", ref Geometry.Values[0], Geometry.Length, fill, 1, 0, ImPlotShadedFlags.None, Geometry.Head);
-                    ImPlot.PlotShaded("AO", ref AO.Values[0], AO.Length, fill, 1, 0, ImPlotShadedFlags.None, AO.Head);
-                    ImPlot.PlotShaded("Lights Deferred", ref LightsDeferred.Values[0], LightsDeferred.Length, fill, 1, 0, ImPlotShadedFlags.None, LightsDeferred.Head);
-                    ImPlot.PlotShaded("Lights Forward", ref LightsForward.Values[0], LightsForward.Length, fill, 1, 0, ImPlotShadedFlags.None, LightsForward.Head);
-                    ImPlot.PlotShaded("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, PostProcessing.Head);
-                    ImPlot.PlotShaded("DebugDraw", ref DebugDraw.Values[0], DebugDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, DebugDraw.Head);
-                    ImPlot.PlotShaded("ImGui", ref ImGuiDraw.Values[0], ImGuiDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, ImGuiDraw.Head);
-                    ImPlot.PopStyleVar();
-
-                    ImPlot.PlotLine("Total", ref Frame.Values[0], Frame.Length, 1, 0, ImPlotLineFlags.None, Frame.Head);
-                    ImPlot.PlotLine("Update", ref Update.Values[0], Update.Length, 1, 0, ImPlotLineFlags.None, Update.Head);
-                    ImPlot.PlotLine("Prepass", ref Prepass.Values[0], Prepass.Length, 1, 0, ImPlotLineFlags.None, Prepass.Head);
-                    ImPlot.PlotLine("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, 1, 0, ImPlotLineFlags.None, ObjectCulling.Head);
-                    ImPlot.PlotLine("Light Culling", ref LightCulling.Values[0], LightCulling.Length, 1, 0, ImPlotLineFlags.None, LightCulling.Head);
-                    ImPlot.PlotLine("Shadow Maps", ref ShadowMaps.Values[0], ShadowMaps.Length, 1, 0, ImPlotLineFlags.None, ShadowMaps.Head);
-                    ImPlot.PlotLine("Geometry", ref Geometry.Values[0], Geometry.Length, 1, 0, ImPlotLineFlags.None, Geometry.Head);
-                    ImPlot.PlotLine("AO", ref AO.Values[0], AO.Length, 1, 0, ImPlotLineFlags.None, AO.Head);
-                    ImPlot.PlotLine("Lights Deferred", ref LightsDeferred.Values[0], LightsDeferred.Length, 1, 0, ImPlotLineFlags.None, LightsDeferred.Head);
-                    ImPlot.PlotLine("Lights Forward", ref LightsForward.Values[0], LightsForward.Length, 1, 0, ImPlotLineFlags.None, LightsForward.Head);
-                    ImPlot.PlotLine("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, 1, 0, ImPlotLineFlags.None, PostProcessing.Head);
-                    ImPlot.PlotLine("DebugDraw", ref DebugDraw.Values[0], DebugDraw.Length, 1, 0, ImPlotLineFlags.None, DebugDraw.Head);
-                    ImPlot.PlotLine("ImGui", ref ImGuiDraw.Values[0], ImGuiDraw.Length, 1, 0, ImPlotLineFlags.None, ImGuiDraw.Head);
-                    ImPlot.EndPlot();
-                }
-            }
-
-            if (gpu)
-            {
-                ImPlot.SetNextAxesToFit();
-                if (ImPlot.BeginPlot("Graphics (GPU Latency)", new Vector2(-1, 0), ImPlotFlags.NoInputs))
-                {
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Total", ref GpuTotal.Values[0], GpuTotal.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuTotal.Head);
-                    ImPlot.PlotShaded("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuUpdate.Head);
-                    ImPlot.PlotShaded("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPrepass.Head);
-                    ImPlot.PlotShaded("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuObjectCulling.Head);
-                    ImPlot.PlotShaded("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightCulling.Head);
-                    ImPlot.PlotShaded("Shadow Maps", ref GpuShadowMaps.Values[0], GpuShadowMaps.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuShadowMaps.Head);
-                    ImPlot.PlotShaded("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuGeometry.Head);
-                    ImPlot.PlotShaded("AO", ref GpuAO.Values[0], GpuAO.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuAO.Head);
-                    ImPlot.PlotShaded("Lights Deferred", ref GpuLightsDeferred.Values[0], GpuLightsDeferred.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightsDeferred.Head);
-                    ImPlot.PlotShaded("Lights Forward", ref GpuLightsForward.Values[0], GpuLightsForward.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightsForward.Head);
-                    ImPlot.PlotShaded("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPostProcessing.Head);
-                    ImPlot.PlotShaded("DebugDraw", ref GpuDebugDraw.Values[0], GpuDebugDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuDebugDraw.Head);
-                    ImPlot.PlotShaded("ImGui", ref GpuImGuiDraw.Values[0], GpuImGuiDraw.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuImGuiDraw.Head);
-                    ImPlot.PopStyleVar();
-
-                    ImPlot.PlotLine("Total", ref GpuTotal.Values[0], GpuTotal.Length, 1, 0, ImPlotLineFlags.None, GpuTotal.Head);
-                    ImPlot.PlotLine("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, 1, 0, ImPlotLineFlags.None, GpuUpdate.Head);
-                    ImPlot.PlotLine("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, 1, 0, ImPlotLineFlags.None, GpuPrepass.Head);
-                    ImPlot.PlotLine("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, 1, 0, ImPlotLineFlags.None, GpuObjectCulling.Head);
-                    ImPlot.PlotLine("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, 1, 0, ImPlotLineFlags.None, GpuLightCulling.Head);
-                    ImPlot.PlotLine("Shadow Maps", ref GpuShadowMaps.Values[0], GpuShadowMaps.Length, 1, 0, ImPlotLineFlags.None, GpuShadowMaps.Head);
-                    ImPlot.PlotLine("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, 1, 0, ImPlotLineFlags.None, GpuGeometry.Head);
-                    ImPlot.PlotLine("AO", ref GpuAO.Values[0], GpuAO.Length, 1, 0, ImPlotLineFlags.None, GpuAO.Head);
-                    ImPlot.PlotLine("Lights Deferred", ref GpuLightsDeferred.Values[0], GpuLightsDeferred.Length, 1, 0, ImPlotLineFlags.None, GpuLightsDeferred.Head);
-                    ImPlot.PlotLine("Lights Forward", ref GpuLightsForward.Values[0], GpuLightsForward.Length, 1, 0, ImPlotLineFlags.None, GpuLightsForward.Head);
-                    ImPlot.PlotLine("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, 1, 0, ImPlotLineFlags.None, GpuPostProcessing.Head);
-                    ImPlot.PlotLine("DebugDraw", ref GpuDebugDraw.Values[0], GpuDebugDraw.Length, 1, 0, ImPlotLineFlags.None, GpuDebugDraw.Head);
-                    ImPlot.PlotLine("ImGui", ref GpuImGuiDraw.Values[0], GpuImGuiDraw.Length, 1, 0, ImPlotLineFlags.None, GpuImGuiDraw.Head);
-                    ImPlot.EndPlot();
-                }
-            }
-
-            if (scene)
+            if (ImGui.BeginTabItem("Scene"))
             {
                 Scene? scene = SceneManager.Current;
-                if (scene == null)
+                if (scene != null)
                 {
-                    return;
-                }
-
-                ImPlot.SetNextAxesToFit();
-                if (ImPlot.BeginPlot("Scene Tick", new Vector2(-1, 0)))
-                {
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
-                    ImPlot.PopStyleVar();
-                    ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
-                    for (int i = 0; i < scene.Systems.Count; i++)
+                    ImPlot.SetNextAxesToFit();
+                    if (ImPlot.BeginPlot("Scene Tick", new Vector2(-1, 0)))
                     {
-                        var system = scene.Systems[i];
-                        if (!systems.TryGetValue(system, out var buffer))
+                        ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                        ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
+                        ImPlot.PopStyleVar();
+                        ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
+                        for (int i = 0; i < scene.Systems.Count; i++)
                         {
-                            continue;
+                            var system = scene.Systems[i];
+                            if (!systems.TryGetValue(system, out var buffer))
+                            {
+                                continue;
+                            }
+
+                            ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                            ImPlot.PlotShaded(system.Name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
+                            ImPlot.PopStyleVar();
+
+                            ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
                         }
 
-                        ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                        ImPlot.PlotShaded(system.Name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
-                        ImPlot.PopStyleVar();
-
-                        ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
+                        ImPlot.EndPlot();
                     }
-
-                    ImPlot.EndPlot();
                 }
+
+                ImGui.EndTabItem();
             }
 
-            if (physics)
+            if (ImGui.BeginTabItem("Physics"))
             {
                 ImPlot.SetNextAxesToFit();
                 if (ImPlot.BeginPlot("Physics", new Vector2(-1, 0), ImPlotFlags.NoInputs))
@@ -328,7 +355,11 @@
 
                     ImPlot.EndPlot();
                 }
+
+                ImGui.EndTabItem();
             }
+
+            ImGui.EndTabBar();
         }
 
         private float accum = 0;
@@ -371,7 +402,7 @@
                 return;
             }
 
-            if (cpu)
+            if (graphics)
             {
                 ObjectCulling.Add(renderer.Profiler["ObjectCulling"] * 1000);
                 LightCulling.Add(renderer.Profiler["LightCulling"] * 1000);

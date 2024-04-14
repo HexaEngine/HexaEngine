@@ -265,13 +265,14 @@
         /// <summary>
         /// Initializes the application and necessary subsystems.
         /// </summary>
-        public static void Boot(GraphicsBackend backend)
+        public static void Boot(GraphicsBackend backend, bool disableLogging = false)
         {
             GraphicsBackend = backend;
 #if DEBUG
             GraphicsDebugging = true;
 #endif
-            CrashLogger.Initialize();
+            if (disableLogging)
+                CrashLogger.Initialize();
             FileSystem.Initialize();
             ImGuiConsole.Initialize();
 
@@ -280,6 +281,8 @@
             Sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
             Sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
             Sdl.SetHint(Sdl.HintJoystickRawinput, "0");
+            Sdl.SetHint(Sdl.HintWindowsDisableThreadNaming, "1");
+            Sdl.SetHint(Sdl.HintMouseNormalSpeedScale, "1");
 
             Sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
 
@@ -404,9 +407,14 @@
                     HandleEvent(evnt);
                 }
 
+                Mouse.Poll();
+
                 mainWindow.Render(graphicsContext);
-                mainWindow.ClearState();
+
                 GraphicsAdapter.Current.PumpDebugMessages();
+
+                Keyboard.Flush();
+                Mouse.Flush();
                 Time.FrameUpdate();
             }
 
@@ -812,6 +820,7 @@
 
                 case EventType.Lastevent:
                     break;
+
                 default:
                     return;
             }

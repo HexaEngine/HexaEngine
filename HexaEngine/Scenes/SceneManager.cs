@@ -103,7 +103,7 @@
 
         /// <summary>
         /// Loads the specified scene and disposes the old Scene automatically.<br/>
-        /// Calls <see cref="Scene.Initialize"/> from <paramref dbgName="scene"/><br/>
+        /// Calls <see cref="IScene.Initialize"/> from <paramref name="scene"/><br/>
         /// Notifies <see cref="SceneChanged"/><br/>
         /// Forces the GC to Collect.<br/>
         /// </summary>
@@ -127,16 +127,15 @@
 
             window.Dispatcher.InvokeBlocking(state =>
             {
-                var values = (Tuple<ICoreWindow, Scene?>)state;
-                var window = values.Item1;
-                var scene = values.Item2;
+                (ICoreWindow window, Scene? scene) = state;
+                IScene? iScene = scene;
 
                 semaphore.Wait();
 
-                if (Current == null && scene != null)
+                if (Current == null && iScene != null)
                 {
-                    scene.Initialize();
-                    scene.Load(window.GraphicsDevice);
+                    iScene.Initialize();
+                    iScene.Load(window.GraphicsDevice);
                     lock (_lock)
                     {
                         Current = scene;
@@ -146,17 +145,21 @@
                     return;
                 }
 
-                var old = Current;
+                var oldScene = Current;
+                IScene? iOldScene = oldScene;
 
                 lock (_lock)
                 {
                     Current = null;
                 }
 
-                if (scene == null)
+                if (iScene == null)
                 {
-                    old?.Unload();
-                    old?.Uninitialize();
+                    if (iOldScene != null)
+                    {
+                        iOldScene.Unload();
+                        iOldScene.Uninitialize();
+                    }
 
                     ResourceManager.Shared.Release();
 
@@ -167,16 +170,19 @@
 
                     semaphore.Release();
 
-                    OnSceneChanged(SceneChangeType.Unload, old, scene);
+                    OnSceneChanged(SceneChangeType.Unload, oldScene, scene);
                 }
                 else
                 {
-                    old?.Unload();
-                    old?.Uninitialize();
+                    if (iOldScene != null)
+                    {
+                        iOldScene.Unload();
+                        iOldScene.Uninitialize();
+                    }
 
                     ResourceManager.Shared.Release();
 
-                    scene.Initialize();
+                    iScene.Initialize();
 
                     lock (_lock)
                     {
@@ -185,12 +191,12 @@
 
                     semaphore.Release();
 
-                    OnSceneChanged(SceneChangeType.Load, old, scene);
+                    OnSceneChanged(SceneChangeType.Load, oldScene, scene);
                 }
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<ICoreWindow, Scene?>(window, scene));
+            }, (window, scene));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -215,14 +221,16 @@
 
                 semaphore.Wait();
 
-                var window = (ICoreWindow)state;
+                ICoreWindow window = state;
                 ResourceManager.Shared.BeginNoGCRegion();
 
-                Current.Unload();
-                Current.Uninitialize();
+                IScene scene = Current;
 
-                Current.Initialize();
-                Current.Load(window.GraphicsDevice);
+                scene.Unload();
+                scene.Uninitialize();
+
+                scene.Initialize();
+                scene.Load(window.GraphicsDevice);
 
                 OnSceneChanged(SceneChangeType.Reload, Current, Current);
 
@@ -262,8 +270,10 @@
 
                 ResourceManager.Shared.BeginNoGCRegion();
 
-                Current.Unload();
-                Current.Uninitialize();
+                IScene scene = Current;
+
+                scene.Unload();
+                scene.Uninitialize();
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -278,7 +288,7 @@
         {
             var window = Application.MainWindow;
 
-            window.Dispatcher.InvokeBlocking(state =>
+            window.Dispatcher.InvokeBlocking(window =>
             {
                 lock (_lock)
                 {
@@ -288,11 +298,12 @@
                     }
                 }
 
-                var window = (ICoreWindow)state;
                 semaphore.Wait();
 
-                Current.Initialize();
-                Current.Load(window.GraphicsDevice);
+                IScene scene = Current;
+
+                scene.Initialize();
+                scene.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
                 OnSceneChanged(SceneChangeType.Reload, Current, Current);
@@ -325,7 +336,7 @@
         /// <summary>
         /// Asynchronous loads the scene over <see cref="Load(Scene)"/>
         /// </summary>
-        /// <param dbgName="scene">The scene.</param>
+        /// <param name="scene">The scene.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task AsyncLoad(Scene? scene)
@@ -341,23 +352,22 @@
                 return Task.CompletedTask;
             }
 
-            SelectionCollection.Global.ClearSelection();
+            SelectionCollection.Global.ClearSelection(); // clear selection to prevent memory leaks since it holds references.
             var window = Application.MainWindow;
 
             return Task.Factory.StartNew(async () =>
             {
                 await window.Dispatcher.InvokeAsync(async state =>
                 {
-                    var values = (Tuple<ICoreWindow, Scene?>)state;
-                    var window = values.Item1;
-                    var scene = values.Item2;
+                    (ICoreWindow window, Scene? scene) = state;
+                    IScene? iScene = scene;
 
                     await semaphore.WaitAsync();
 
-                    if (Current == null && scene != null)
+                    if (Current == null && iScene != null)
                     {
-                        await scene.InitializeAsync();
-                        scene.Load(window.GraphicsDevice);
+                        await iScene.InitializeAsync();
+                        iScene.Load(window.GraphicsDevice);
 
                         lock (_lock)
                         {
@@ -369,17 +379,21 @@
                         return;
                     }
 
-                    var old = Current;
+                    var oldScene = Current;
+                    IScene? iOldScene = oldScene;
 
                     lock (_lock)
                     {
                         Current = null;
                     }
 
-                    if (scene == null)
+                    if (iScene == null)
                     {
-                        old?.Unload();
-                        old?.Uninitialize();
+                        if (iOldScene != null)
+                        {
+                            iOldScene.Unload();
+                            iOldScene.Uninitialize();
+                        }
 
                         ResourceManager.Shared.Release();
 
@@ -390,17 +404,20 @@
 
                         semaphore.Release();
 
-                        OnSceneChanged(SceneChangeType.Unload, old, scene);
+                        OnSceneChanged(SceneChangeType.Unload, oldScene, scene);
                     }
                     else
                     {
-                        old?.Unload();
-                        old?.Uninitialize();
+                        if (iOldScene != null)
+                        {
+                            iOldScene.Unload();
+                            iOldScene.Uninitialize();
+                        }
 
                         ResourceManager.Shared.Release();
 
-                        await scene.InitializeAsync();
-                        scene.Load(window.GraphicsDevice);
+                        await iScene.InitializeAsync();
+                        iScene.Load(window.GraphicsDevice);
 
                         lock (_lock)
                         {
@@ -409,12 +426,12 @@
 
                         semaphore.Release();
 
-                        OnSceneChanged(SceneChangeType.Load, old, scene);
+                        OnSceneChanged(SceneChangeType.Load, oldScene, scene);
                     }
 
                     GC.WaitForPendingFinalizers();
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-                }, new Tuple<ICoreWindow, Scene?>(window, scene));
+                }, (window, scene));
             });
         }
 
@@ -427,8 +444,16 @@
         {
             semaphore.Wait();
 
-            Current?.Unload();
-            Current?.Uninitialize();
+            IScene? scene = Current;
+
+            if (scene == null)
+            {
+                semaphore.Release();
+                return;
+            }
+
+            scene.Unload();
+            scene.Uninitialize();
 
             lock (_lock)
             {

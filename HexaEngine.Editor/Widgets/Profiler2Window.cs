@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
@@ -9,12 +10,14 @@
     using Microsoft.Diagnostics.Tracing.Etlx;
     using Microsoft.Diagnostics.Tracing.Parsers;
     using Microsoft.Diagnostics.Tracing.Parsers.Clr;
+    using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
     using Microsoft.Diagnostics.Tracing.Session;
     using System;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public static class ProfilingPermission
     {
@@ -241,6 +244,8 @@
 
         public bool StartProfiling()
         {
+            ProfilingPermission.EnableProfilerUser("juna");
+
             string sessionName = "Cpu_Profiling_Session+" + Guid.NewGuid().ToString();
             _session = new TraceEventSession(sessionName, TraceEventSessionOptions.Create);
             if (!EnableProviders(_session))
@@ -256,43 +261,68 @@
 
             _profilingTask = Task.Factory.StartNew(() =>
             {
-                using var log = File.CreateText("profile.log");
-
-                using SymbolReader reader = new(log);
-
                 using TraceLogEventSource source = TraceLog.CreateFromTraceEventSession(_session);
 
-                // CPU sampling kernel events
-                source.Kernel.PerfInfoSample += (data) =>
-                {
-                    if (data.ProcessID != Pid)
-                    {
-                        return;
-                    }
-
-                    if (data.TaskGuid != perfInfoTaskGuid)
-                    {
-                        return;
-                    }
-
-                    if ((uint)data.Opcode != profileOpcode)
-                    {
-                        return;
-                    }
-
-                    var callstack = data.CallStack();
-                    if (callstack == null)
-                    {
-                        return;
-                    }
-
-                    MergeCallStack(callstack, reader);
-                };
-
+                source.Clr.All += Clr_All;
+                source.Kernel.PerfInfoSample += Kernel_PerfInfoSample;
                 source.Process();
+
+                source.Clr.All -= Clr_All;
             });
 
             return true;
+        }
+
+        private Guid perfInfoTaskGuid = new(0xce1dbfb4, 0x137e, 0x4da6, 0x87, 0xb0, 0x3f, 0x59, 0xaa, 0x10, 0x2c, 0xbc);
+        private int profileOpcode = 46;
+
+        private void Kernel_PerfInfoSample(SampledProfileTraceData data)
+        {
+            if (data.ProcessID != Pid)
+            {
+                return;
+            }
+
+            if (data.TaskGuid != perfInfoTaskGuid)
+            {
+                return;
+            }
+
+            if ((uint)data.Opcode != profileOpcode)
+            {
+                return;
+            }
+
+            var callstack = data.CallStack();
+            if (callstack == null)
+            {
+                return;
+            }
+
+            MergeCallStack(callstack, reader);
+        }
+
+        public override void Close()
+        {
+            _session?.Dispose();
+        }
+
+        private static int Pid = Environment.ProcessId;
+        private static TextWriter log = File.CreateText("profile.log");
+        private SymbolReader reader = new(log);
+
+        private void Clr_All(TraceEvent data)
+        {
+            if (data.ProcessID != Pid || data.EventName == null)
+            {
+                return;
+            }
+
+            if (data is not ClrStackWalkTraceData walkTraceData || walkTraceData.Source is not TraceLog traceLog)
+            {
+                ImGuiConsole.WriteLine($"TID: {data.ThreadID}, {data.EventName}");
+                return;
+            }
         }
 
         public void StopProfiling()
@@ -310,29 +340,33 @@
         {
             session.BufferSizeMB = 256;
 
-            // Note: it could fail if the user does not have the required privileges
-            var success = session.EnableKernelProvider(
+            // Note: the kernel provider MUST be the first provider to be enabled
+            // If the kernel provider is not enabled, the callstacks for CLR events are still received
+            // but the symbols are not found (except for the application itself)
+            // TraceEvent implementation details triggered when a module (image) is loaded
+            /*
+            session.EnableKernelProvider(
                 KernelTraceEventParser.Keywords.ImageLoad |
                 KernelTraceEventParser.Keywords.Process |
                 KernelTraceEventParser.Keywords.Profile,
                 stackCapture: KernelTraceEventParser.Keywords.Profile
-                );
-            if (!success)
-            {
-                return false;
-            }
+            );
+            */
 
             // this call always returns false  :^(
-            success = session.EnableProvider(
-                ClrTraceEventParser.ProviderGuid,
-                TraceEventLevel.Verbose,
-                (ulong)(
-                // events related to JITed methods
-                ClrTraceEventParser.Keywords.Jit |                       // Turning on JIT events is necessary to resolve JIT compiled code
-                ClrTraceEventParser.Keywords.JittedMethodILToNativeMap | // This is needed if you want line number information in the stacks
-                ClrTraceEventParser.Keywords.Loader                      // You must include loader events as well to resolve JIT compiled code.
-                )
-            );
+            bool success = session.EnableProvider(
+                     ClrTraceEventParser.ProviderGuid,
+                     TraceEventLevel.Verbose,
+                     (ulong)(
+        // events related to JITed methods
+        ClrTraceEventParser.Keywords.GC |
+        ClrTraceEventParser.Keywords.Jit |                      // Turning on JIT events is necessary to resolve JIT compiled code
+        ClrTraceEventParser.Keywords.JittedMethodILToNativeMap |// This is needed if you want line number information in the stacks
+        ClrTraceEventParser.Keywords.Loader |                   // You must include loader events as well to resolve JIT compiled code.
+        ClrTraceEventParser.Keywords.Stack
+
+                     )
+                 );
 
             // this provider will send events of already JITed methods
             success = session.EnableProvider(
@@ -343,6 +377,7 @@
                 ClrTraceEventParser.Keywords.JittedMethodILToNativeMap | // This is needed if you want line number information in the stacks
                 ClrTraceEventParser.Keywords.Loader |           // As well as the module load events.
                 ClrTraceEventParser.Keywords.StartEnumeration   // This indicates to do the rundown now (at enable time)
+                | ClrTraceEventParser.Keywords.Default | ClrTraceEventParser.Keywords.PerfTrack
                 ));
 
             return true;
@@ -379,7 +414,7 @@
 
                 frames[--currentFrame] = new SymbolicFrame(
                     codeAddress.Address,
-                    codeAddress.FullMethodName
+                    string.IsNullOrEmpty(codeAddress.FullMethodName) ? $"{codeAddress.Address:x}" : codeAddress.FullMethodName
                     );
 
                 callStack = callStack.Caller;

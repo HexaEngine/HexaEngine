@@ -3,7 +3,6 @@
 namespace HexaEngine.Scenes
 {
     using HexaEngine.Collections;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Jobs;
@@ -20,7 +19,7 @@ namespace HexaEngine.Scenes
     using System.Runtime.CompilerServices;
     using System.Text;
 
-    public class Scene
+    public class Scene : IScene
     {
         private readonly FlaggedList<SystemFlags, ISceneSystem> systems = [];
         private readonly List<GameObject> nodes = [];
@@ -177,7 +176,7 @@ namespace HexaEngine.Scenes
 
         public GameObject Root => root;
 
-        public void Initialize()
+        void IScene.Initialize()
         {
             services = SceneSystemRegistry.GetServices(this);
             serviceProvider = services.BuildServiceProvider();
@@ -203,7 +202,7 @@ namespace HexaEngine.Scenes
             flags |= SceneFlags.Initialized;
         }
 
-        public async Task InitializeAsync()
+        async Task IScene.InitializeAsync()
         {
             services = SceneSystemRegistry.GetServices(this);
             serviceProvider = services.BuildServiceProvider();
@@ -229,7 +228,7 @@ namespace HexaEngine.Scenes
             flags |= SceneFlags.Initialized;
         }
 
-        public void Load(IGraphicsDevice device)
+        void IScene.Load(IGraphicsDevice device)
         {
             var load = systems[SystemFlags.Load];
             for (int i = 0; i < load.Count; i++)
@@ -244,7 +243,7 @@ namespace HexaEngine.Scenes
             flags |= SceneFlags.Loaded;
         }
 
-        public void Unload()
+        void IScene.Unload()
         {
             flags &= ~SceneFlags.Loaded;
 
@@ -330,7 +329,7 @@ namespace HexaEngine.Scenes
             root.RestoreState();
         }
 
-        public void GraphicsUpdate(IGraphicsContext context)
+        void IScene.GraphicsUpdate(IGraphicsContext context)
         {
             var render = systems[SystemFlags.GraphicsUpdate];
             for (int i = 0; i < render.Count; i++)
@@ -345,7 +344,7 @@ namespace HexaEngine.Scenes
             }
         }
 
-        public void Update()
+        void IScene.Update()
         {
             Profiler.Clear();
             semaphore.Wait();
@@ -421,10 +420,10 @@ namespace HexaEngine.Scenes
         }
 
         /// <summary>
-        /// Searches an GameObject by it's Guid.
+        /// Searches an <see cref="GameObject"/> by it's <see cref="GameObject.Guid"/>.
         /// </summary>
-        /// <param name="guid">The unique identifier of the GameObject.</param>
-        /// <returns>The found GameObject or null, if the name was not found.</returns>
+        /// <param name="guid">The unique identifier of the <see cref="GameObject"/>.</param>
+        /// <returns>The found <see cref="GameObject"/> or null, if the name was not found.</returns>
         public GameObject? FindByGuid(Guid? guid)
         {
             if (guid == null)
@@ -446,10 +445,10 @@ namespace HexaEngine.Scenes
         }
 
         /// <summary>
-        /// Searches an GameObject by it's name. NOTE: Names are not unique. Use Guid lookup or FullName lookups to find a specific GameObject.
+        /// Searches an <see cref="GameObject"/> by it's name. NOTE: Names are not unique. Use <see cref="GameObject.Guid"/> lookup or <see cref="GameObject.FullName"/> lookups to find a specific <see cref="GameObject"/>.
         /// </summary>
-        /// <param name="name">The name of the GameObject.</param>
-        /// <returns>The found GameObject or null, if the name was not found.</returns>
+        /// <param name="name">The name of the <see cref="GameObject"/>.</param>
+        /// <returns>The found <see cref="GameObject"/> or null, if the name was not found.</returns>
         public GameObject? FindByName(string? name)
         {
             if (string.IsNullOrEmpty(name))
@@ -622,6 +621,11 @@ namespace HexaEngine.Scenes
 
         public void AddChild(GameObject node)
         {
+            if (semaphore.CurrentCount == 0)
+            {
+                Dispatcher.Invoke(node, root.AddChild);
+                return;
+            }
             semaphore.Wait();
             root.AddChild(node);
             semaphore.Release();
@@ -629,17 +633,22 @@ namespace HexaEngine.Scenes
 
         public void RemoveChild(GameObject node)
         {
+            if (semaphore.CurrentCount == 0)
+            {
+                Dispatcher.Invoke(node, root.RemoveChild);
+                return;
+            }
             semaphore.Wait();
             root.RemoveChild(node);
             semaphore.Release();
         }
 
-        public void BuildReferences()
+        void IScene.BuildReferences()
         {
             root.BuildReferences();
         }
 
-        public void Uninitialize()
+        void IScene.Uninitialize()
         {
             flags &= ~SceneFlags.Initialized;
             semaphore.Wait();

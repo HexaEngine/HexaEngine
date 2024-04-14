@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CrashReporter": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\juna\\source\\repos\\JunaMeinhold\\HexaEngine\\Editor\\bin\\Debug\\net8.0\\logs\\crash-2024-13-4--21-00-48.log"
+    }
+  }
+}

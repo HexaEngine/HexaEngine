@@ -1376,15 +1376,5 @@
                 created = false;
             }
         }
-
-        /// <summary>
-        /// Clears the input state for the window.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearState()
-        {
-            Keyboard.Flush();
-            Mouse.Flush();
-        }
     }
 }

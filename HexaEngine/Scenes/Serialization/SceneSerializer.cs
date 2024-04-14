@@ -78,8 +78,10 @@
                 reader.Close();
             }
 
+            IScene scene1 = scene;
+
             scene.Path = path;
-            scene.BuildReferences();
+            scene1.BuildReferences();
 
             return scene;
         }

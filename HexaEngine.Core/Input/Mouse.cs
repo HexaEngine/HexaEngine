@@ -174,7 +174,6 @@
                 return;
             }
 
-            delta += new Vector2(mouseMotionEvent.Xrel, mouseMotionEvent.Yrel);
             motionEventArgs.Timestamp = mouseMotionEvent.Timestamp;
             motionEventArgs.Handled = false;
             motionEventArgs.MouseId = mouseMotionEvent.Which;
@@ -198,9 +197,16 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Poll()
+        {
+            var old = pos;
+            sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
+            delta = (Vector2)(pos - old) / Time.Delta;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Flush()
         {
-            sdl.GetMouseState(ref pos.X, ref pos.Y);
             delta = Vector2.Zero;
             deltaWheel = Vector2.Zero;
         }

@@ -478,34 +478,19 @@
 
         public ControllerCollisionFlags Move(Vector3 displacement, float minDistance, float elapsedTime, ControllerFilters controllerFilters)
         {
-            if (controller == null)
-            {
-                return 0;
-            }
-
             PxControllerFilters filters = controllerFilters.filters;
             PxControllerCollisionFlags flags = controller->MoveMut((PxVec3*)&displacement, minDistance, elapsedTime, &filters, null);
-            isGrounded = flags == PxControllerCollisionFlags.CollisionDown;
+            isGrounded = (flags & PxControllerCollisionFlags.CollisionDown) != 0;
             return Helper.Convert(flags);
         }
 
         public void InvalidateCache()
         {
-            if (controller == null)
-            {
-                return;
-            }
-
             controller->InvalidateCacheMut();
         }
 
         public void Resize(float height)
         {
-            if (controller == null)
-            {
-                return;
-            }
-
             controller->ResizeMut(height);
         }
     }

@@ -2,10 +2,8 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine;
-    using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
@@ -54,6 +52,7 @@
             graphicsContext = graphicsDevice.Context;
             swapChain = SwapChain;
             imGuiRenderer = new(this, graphicsDevice, graphicsContext, ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad | ImGuiConfigFlags.DockingEnable);
+            Show();
         }
 
         public override void Render(IGraphicsContext context)
@@ -91,7 +90,9 @@
                 ImGui.TextColored(new(1, 0, 0, 1), "Oops something went wrong!");
                 ImGui.Text(reportFile ?? string.Empty);
                 ImGui.Separator();
-                ImGui.Text(reportMessage);
+                var msg = reportMessage;
+                var avail = ImGui.GetContentRegionAvail();
+                ImGui.InputTextMultiline("##Msg", ref msg, (nuint)reportMessage.Length, avail, ImGuiInputTextFlags.ReadOnly);
             }
             ImGui.EndChild();
 

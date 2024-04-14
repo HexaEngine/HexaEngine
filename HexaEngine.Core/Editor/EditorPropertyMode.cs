@@ -38,6 +38,7 @@
         /// <summary>
         /// File picker mode for editor properties.
         /// </summary>
+        [Obsolete("Use AssetRefs instead.")]
         Filepicker,
 
         /// <summary>

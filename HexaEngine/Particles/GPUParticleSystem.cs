@@ -7,8 +7,10 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Weather;
+    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
+    using YamlDotNet.Core;
 
     //based on AMD GPU Particles Sample: https://github.com/GPUOpen-LibrariesAndSDKs/GPUParticles11
 

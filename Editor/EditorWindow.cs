@@ -1,4 +1,7 @@
-﻿namespace Editor
+﻿#define PROFILE
+//#define SINGLE_THREAD
+
+namespace Editor
 {
     using HexaEngine;
     using HexaEngine.Core;
@@ -95,12 +98,22 @@
             });
         }
 
+#if SINGLE_THREAD
+
+        protected override void UpdateScene()
+        {
+        }
+
+#endif
+
         /// <summary>
         /// Renders the content of the window using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context.</param>
         public override void Render(IGraphicsContext context)
         {
+            signal.Set();
+
 #if PROFILE
             // Begin profiling frame and total time if profiling is enabled.
             GraphicsDevice.Profiler.BeginFrame();
@@ -108,10 +121,7 @@
             sceneRenderer.Profiler.BeginFrame();
             sceneRenderer.Profiler.Begin("Total");
 #endif
-#if PROFILE
-            // Signal and wait for synchronization if profiling is enabled.
-            //syncBarrier.SignalAndWait();
-#endif
+
             // Resize the swap chain if necessary.
             if (resize)
             {
@@ -156,16 +166,25 @@
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
 
-            // Check if rendering should occur based on the active scene.
-            drawing &= SceneManager.Current is not null;
+            IScene? scene = SceneManager.Current;
 
             // Render the scene if drawing is enabled.
-            if (drawing)
+            if (drawing && scene is not null)
             {
-#nullable disable // a few lines above there is a null check.
-                SceneManager.Current.GraphicsUpdate(context);
-#nullable restore
-                sceneRenderer.Render(context, windowViewport, SceneManager.Current, CameraManager.Current);
+#if SINGLE_THREAD
+
+                updateBegin = Stopwatch.GetTimestamp();
+
+                // Update the current scene
+                scene.Update();
+
+                // Do fixed update tick if necessary.
+                Time.FixedUpdateTick();
+
+                updateEnd = Stopwatch.GetTimestamp();
+#endif
+                scene.GraphicsUpdate(context);
+                sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
             }
 
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
@@ -201,9 +220,10 @@
 
             // Wait for swap chain presentation to complete.
             swapChain.Wait();
-
+#if !SINGLE_THREAD
             // Signal and wait for synchronization with the update thread.
             syncBarrier.SignalAndWait();
+#endif
 
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.

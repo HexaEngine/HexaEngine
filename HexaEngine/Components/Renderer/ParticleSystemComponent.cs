@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
@@ -22,7 +23,7 @@
         private GPUParticleSystem renderer;
         private readonly ParticleEmitter emitter = new();
 
-        private string particleTexturePath = string.Empty;
+        private AssetRef particleTexturePath;
         private Texture2D? particleTexture;
 
         private ResourceRef<DepthStencil> dsv;
@@ -41,8 +42,8 @@
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.Draw | RendererFlags.Update | RendererFlags.NoDepthTest;
 
-        [EditorProperty("Texture", EditorPropertyMode.Filepicker)]
-        public string ParticleTexturePath
+        [EditorProperty("Texture", Core.Assets.AssetType.Texture2D)]
+        public AssetRef ParticleTexturePath
         {
             get => particleTexturePath;
             set
@@ -55,34 +56,34 @@
         [EditorProperty("Velocity")]
         public Vector4 Velocity { get => emitter.Velocity; set => emitter.Velocity = value; }
 
-        [EditorProperty("PositionVariance")]
+        [EditorProperty("Position Variance")]
         public Vector4 PositionVariance { get => emitter.PositionVariance; set => emitter.PositionVariance = value; }
 
-        [EditorProperty("ParticleLifespan")]
+        [EditorProperty("Particle Lifespan")]
         public float ParticleLifespan { get => emitter.ParticleLifespan; set => emitter.ParticleLifespan = value; }
 
-        [EditorProperty("StartSize")]
+        [EditorProperty("Start Size")]
         public float StartSize { get => emitter.StartSize; set => emitter.StartSize = value; }
 
-        [EditorProperty("EndSize")]
+        [EditorProperty("End Size")]
         public float EndSize { get => emitter.EndSize; set => emitter.EndSize = value; }
 
         [EditorProperty("Mass")]
         public float Mass { get => emitter.Mass; set => emitter.Mass = value; }
 
-        [EditorProperty("VelocityVariance")]
+        [EditorProperty("Velocity Variance")]
         public float VelocityVariance { get => emitter.VelocityVariance; set => emitter.VelocityVariance = value; }
 
-        [EditorProperty("ParticlesPerSecond")]
+        [EditorProperty("Particles Per Second")]
         public float ParticlesPerSecond { get => emitter.ParticlesPerSecond; set => emitter.ParticlesPerSecond = value; }
 
-        [EditorProperty("CollisionsEnabled")]
+        [EditorProperty("Collisions Enabled")]
         public bool CollisionsEnabled { get => emitter.CollisionsEnabled; set => emitter.CollisionsEnabled = value; }
 
-        [EditorProperty("CollisionThickness")]
+        [EditorProperty("Collision Thickness")]
         public int CollisionThickness { get => emitter.CollisionThickness; set => emitter.CollisionThickness = value; }
 
-        [EditorProperty("AlphaBlended")]
+        [EditorProperty("Alpha Blended")]
         public bool AlphaBlended { get => emitter.AlphaBlended; set => emitter.AlphaBlended = value; }
 
         [EditorProperty("Pause")]
@@ -166,7 +167,10 @@
                 var p = (Tuple<IGraphicsDevice, ParticleSystemComponent>)state;
                 var device = p.Item1;
                 var component = p.Item2;
-                var path = Paths.CurrentAssetsPath + component.particleTexturePath;
+                var path = component.particleTexturePath.GetPath();
+
+                if (path == null)
+                    return;
 
                 if (component.GameObject == null)
                 {
