@@ -243,7 +243,7 @@
             {
                 capturedMouse = true;
                 ImGui.SetNextFrameWantCaptureMouse(true);
-                //ImGui.SetMouseCursor(ImGuiMouseCursor.None);
+                ImGui.SetMouseCursor(ImGuiMouseCursor.None);
                 delta = Mouse.Delta;
 
                 if (ignoreMouseInputFrames != 0 && delta != Vector2.Zero)

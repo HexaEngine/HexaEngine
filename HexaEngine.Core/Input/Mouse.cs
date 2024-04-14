@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Security.Cryptography;
     using Point2 = Mathematics.Point2;
 
     /// <summary>
@@ -199,9 +200,19 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Poll()
         {
-            var old = pos;
-            sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
-            delta = (Vector2)(pos - old) / Time.Delta;
+            if (sdl.GetRelativeMouseMode() == SdlBool.True)
+            {
+                Point2 relative;
+                sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
+                sdl.GetRelativeMouseState(&relative.X, &relative.Y);
+                delta = (Vector2)relative / Time.Delta;
+            }
+            else
+            {
+                var old = pos;
+                sdl.GetGlobalMouseState(ref pos.X, ref pos.Y);
+                delta = (Vector2)(pos - old) / Time.Delta;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

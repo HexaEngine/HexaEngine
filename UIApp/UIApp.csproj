@@ -21,4 +21,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="assets\shared\shaders\part\" />
+  </ItemGroup>
+
 </Project>
