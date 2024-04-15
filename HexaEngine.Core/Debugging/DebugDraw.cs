@@ -93,7 +93,7 @@ namespace HexaEngine.Core.Debugging
         {
             drawData.CmdLists.Clear();
             drawData.CmdLists.Add(immediateList);
-            immediateList.Clear();
+            immediateList.NewFrame();
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace HexaEngine.Core.Debugging
             for (int i = 0; i < drawData.CmdLists.Count; i++)
             {
                 var list = drawData.CmdLists[i];
-                list.Compact();
+                list.EndFrame();
                 drawData.TotalVertices += list.VertexCount;
                 drawData.TotalIndices += list.IndexCount;
             }
