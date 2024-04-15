@@ -11,9 +11,14 @@
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(CSharpScriptAnalyser));
 
         /// <summary>
-        /// This must match the actual interface in "HexaEngine.Scripts.IScriptBehaviour"
+        /// This must match the actual class in "HexaEngine.Scripts.ScriptBehaviour"
         /// </summary>
         public const string ScriptIdentifier = "ScriptBehaviour";
+
+        /// <summary>
+        /// This must match the actual interface in "HexaEngine.Scripts.IScriptBehaviour"
+        /// </summary>
+        public const string ScriptIdentifierInterface = "IScriptBehaviour";
 
         public static string? FindScript(string? filePath)
         {
@@ -62,7 +67,7 @@
             {
                 if (baseType.Type is IdentifierNameSyntax typeSyntax)
                 {
-                    if (typeSyntax.Identifier.Text == ScriptIdentifier)
+                    if (typeSyntax.Identifier.Text == ScriptIdentifier || typeSyntax.Identifier.Text == ScriptIdentifierInterface)
                     {
                         fullName = $"{namespaceDeclaration.Name}.{classDeclaration.Identifier.Text}";
                         return true;
