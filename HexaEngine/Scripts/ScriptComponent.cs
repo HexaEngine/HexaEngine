@@ -35,6 +35,7 @@
         private FixedUpdateDelegate? fixedUpdateDelegate;
         private DestroyDelegate? destroyDelegate;
         private PropertyInfo? gameObjectProp;
+        private bool awaked;
 
         [EditorProperty("Script", AssetType.Script)]
         public AssetRef ScriptRef
@@ -140,6 +141,11 @@
 
         public void Awake()
         {
+            if (awaked)
+                return;
+
+            awaked = true;
+
             ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
             ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
             CreateInstance();
@@ -180,6 +186,10 @@
 
         public void Update()
         {
+            if (!awaked)
+            {
+                return;
+            }
             if (Application.InEditMode || updateDelegate == null)
             {
                 return;
@@ -197,6 +207,10 @@
 
         public void FixedUpdate()
         {
+            if (!awaked)
+            {
+                return;
+            }
             if (Application.InEditMode || fixedUpdateDelegate == null)
             {
                 return;
@@ -214,6 +228,11 @@
 
         public void Destroy()
         {
+            if (!awaked)
+            {
+                return;
+            }
+            awaked = false;
             ScriptAssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
             ScriptAssemblyManager.AssemblyLoaded -= AssemblyLoaded;
             if (Application.InEditMode || destroyDelegate == null)
