@@ -25,7 +25,7 @@
         {
         }
 
-        public ThreadDispatcher Dispatcher { get; private set; }
+        public IThreadDispatcher Dispatcher { get; private set; }
 
         public IAudioDevice AudioDevice { get; private set; }
 
@@ -46,7 +46,7 @@
             GraphicsContext = graphicsDevice.Context;
             SwapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             SwapChain.Active = true;
-            Dispatcher = new(System.Threading.Thread.CurrentThread);
+            Dispatcher = new ThreadDispatcher(System.Threading.Thread.CurrentThread);
         }
 
         public abstract void Render(IGraphicsContext context);

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Components;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -13,6 +12,7 @@
     using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using System.Diagnostics;
     using System.Threading.Tasks;
@@ -53,7 +53,7 @@
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
             PropertyObjectEditorRegistry.RegisterEditor<AssetFileEditor>();
 
-            ObjectEditorFactory.RegisterEditor(typeof(ScriptBehaviour), new ScriptBehaviourEditor());
+            ObjectEditorFactory.RegisterEditor(typeof(ScriptComponent), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
             ObjectEditorFactory.RegisterEditor(typeof(Volume), new VolumeObjectEditor());
         }

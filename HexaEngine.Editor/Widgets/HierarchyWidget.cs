@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Components;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
@@ -9,6 +8,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using System;
     using System.Collections.Generic;
@@ -539,7 +539,7 @@
             labelBuffer.Clear();
             labelOutBuffer.Clear();
 
-            if (element.HasComponent<ScriptBehaviour>())
+            if (element.HasComponent<ScriptComponent>())
             {
                 labelBuffer.PushBack('\xf000');
             }

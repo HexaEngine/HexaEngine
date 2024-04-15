@@ -1,5 +1,5 @@
 ﻿#define PROFILE
-//#define SINGLE_THREAD
+//#define SINGLE_THREADED
 
 namespace Editor
 {
@@ -98,13 +98,23 @@ namespace Editor
             });
         }
 
-#if SINGLE_THREAD
+#if SINGLE_THREADED
 
         protected override void UpdateScene()
         {
         }
 
 #endif
+
+        /// <summary>
+        /// Raises the <see cref="E:HexaEngine.Core.Windows.SdlWindow.Resized" /> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected override void OnResized(ResizedEventArgs args)
+        {
+            resize = true;
+            base.OnResized(args);
+        }
 
         /// <summary>
         /// Renders the content of the window using the specified graphics context.
@@ -171,17 +181,13 @@ namespace Editor
             // Render the scene if drawing is enabled.
             if (drawing && scene is not null)
             {
-#if SINGLE_THREAD
-
-                updateBegin = Stopwatch.GetTimestamp();
+#if SINGLE_THREADED
 
                 // Update the current scene
                 scene.Update();
 
                 // Do fixed update tick if necessary.
                 Time.FixedUpdateTick();
-
-                updateEnd = Stopwatch.GetTimestamp();
 #endif
                 scene.GraphicsUpdate(context);
                 sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
@@ -220,7 +226,7 @@ namespace Editor
 
             // Wait for swap chain presentation to complete.
             swapChain.Wait();
-#if !SINGLE_THREAD
+#if !SINGLE_THREADED
             // Signal and wait for synchronization with the update thread.
             syncBarrier.SignalAndWait();
 #endif
@@ -241,16 +247,6 @@ namespace Editor
             }
             imGuiRenderer.Dispose();
             Designer.Dispose();
-        }
-
-        /// <summary>
-        /// Raises the <see cref="E:HexaEngine.Core.Windows.SdlWindow.Resized" /> event.
-        /// </summary>
-        /// <param name="args">The event arguments.</param>
-        protected override void OnResized(ResizedEventArgs args)
-        {
-            resize = true;
-            base.OnResized(args);
         }
     }
 }

@@ -432,25 +432,29 @@
             }
         }
 
-        public virtual void AddChild(GameObject node)
+        public virtual void AddChild(GameObject child)
         {
-            node.parent?.RemoveChild(node);
-            node.parent = this;
-            children.Add(node);
+            child.parent?.RemoveChild(child);
+            child.parent = this;
+            children.Add(child);
             if (Initialized)
             {
-                node.Initialize();
+                child.Initialize();
             }
         }
 
-        public virtual void RemoveChild(GameObject node)
+        public virtual bool RemoveChild(GameObject child)
         {
+            if (!children.Remove(child))
+            {
+                return false;
+            }
             if (Initialized)
             {
-                node.Uninitialize();
+                child.Uninitialize();
             }
-            children.Remove(node);
-            node.parent = null;
+            child.parent = null;
+            return true;
         }
 
         public virtual void AddComponent(IComponent component)

@@ -4,7 +4,9 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
+    using System.Runtime.InteropServices;
 
+    [Guid("86689502-92C6-4401-829A-5F022C1753D9")]
     [EditorGameObject<PrefabObject>("Prefab Object")]
     public class PrefabObject : GameObject
     {

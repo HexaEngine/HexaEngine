@@ -17,8 +17,10 @@ namespace HexaEngine.Scenes
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Text;
 
+    [Guid("B7283349-D1C6-437D-99D2-A050E2DA61A6")]
     public class Scene : IScene
     {
         private readonly FlaggedList<SystemFlags, ISceneSystem> systems = [];
@@ -635,7 +637,7 @@ namespace HexaEngine.Scenes
         {
             if (semaphore.CurrentCount == 0)
             {
-                Dispatcher.Invoke(node, root.RemoveChild);
+                Dispatcher.Invoke(node, node => root.RemoveChild(node));
                 return;
             }
             semaphore.Wait();

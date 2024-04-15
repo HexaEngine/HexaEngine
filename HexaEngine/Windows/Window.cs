@@ -2,7 +2,6 @@
 
 namespace HexaEngine.Windows
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
@@ -17,7 +16,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Microsoft.Extensions.DependencyInjection;
-    using System.Diagnostics;
     using System.Numerics;
 
     /// <summary>
@@ -94,7 +92,7 @@ namespace HexaEngine.Windows
             this.graphicsDevice = graphicsDevice;
             graphicsContext = graphicsDevice.Context;
             swapChain = SwapChain;
-            renderDispatcher = Dispatcher;
+            renderDispatcher = (ThreadDispatcher)Dispatcher;
 
             if (Application.MainWindow == this)
             {

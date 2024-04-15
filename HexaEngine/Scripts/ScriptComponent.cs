@@ -1,26 +1,40 @@
-﻿namespace HexaEngine.Components
+﻿namespace HexaEngine.Scripts
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
     using HexaEngine.Scenes;
-    using HexaEngine.Scripts;
+    using System;
     using System.Reflection;
+    using System.Runtime.InteropServices;
 
-    [EditorComponent<ScriptBehaviour>("Script Behaviour")]
-    public class ScriptBehaviour : IScriptComponent
+    public delegate void AwakeDelegate();
+
+    public delegate void UpdateDelegate();
+
+    public delegate void FixedUpdateDelegate();
+
+    public delegate void DestroyDelegate();
+
+    [Guid("340856B8-4341-4615-B109-26DB6D6536DE")]
+    [EditorComponent<ScriptComponent>("Script Behaviour")]
+    public class ScriptComponent : IScriptComponent
     {
         private GameObject gameObject;
         private ScriptFlags flags;
-        private IScriptBehaviour? instance;
+        private object? instance;
         private PropertyInfo[] properties;
         private AssetRef scriptRef;
         private string? scriptTypeName;
         private Type? scriptType;
         private Dictionary<string, object?> propertyValues = new();
+        private AwakeDelegate? awakeDelegate;
+        private UpdateDelegate? updateDelegate;
+        private FixedUpdateDelegate? fixedUpdateDelegate;
+        private DestroyDelegate? destroyDelegate;
+        private PropertyInfo? gameObjectProp;
 
         [EditorProperty("Script", AssetType.Script)]
         public AssetRef ScriptRef
@@ -100,7 +114,7 @@
         }
 
         [JsonIgnore]
-        public IScriptBehaviour? Instance { get => instance; set => instance = value; }
+        public object? Instance { get => instance; set => instance = value; }
 
         [JsonIgnore]
         public ScriptFlags Flags => flags;
@@ -112,9 +126,9 @@
             set
             {
                 gameObject = value;
-                if (instance != null)
+                if (instance != null && gameObjectProp != null)
                 {
-                    instance.GameObject = value;
+                    gameObjectProp.SetValue(instance, value);
                 }
             }
         }
@@ -134,12 +148,12 @@
                 return;
             }
 
-            if (instance != null)
+            if (instance != null && gameObjectProp != null && awakeDelegate != null)
             {
                 try
                 {
-                    instance.GameObject = GameObject;
-                    instance.Awake();
+                    gameObjectProp.SetValue(instance, gameObject);
+                    awakeDelegate();
                 }
                 catch (Exception e)
                 {
@@ -166,14 +180,14 @@
 
         public void Update()
         {
-            if (Application.InEditMode || instance == null)
+            if (Application.InEditMode || updateDelegate == null)
             {
                 return;
             }
 
             try
             {
-                instance.Update();
+                updateDelegate();
             }
             catch (Exception e)
             {
@@ -183,14 +197,14 @@
 
         public void FixedUpdate()
         {
-            if (Application.InEditMode || instance == null)
+            if (Application.InEditMode || fixedUpdateDelegate == null)
             {
                 return;
             }
 
             try
             {
-                instance.FixedUpdate();
+                fixedUpdateDelegate();
             }
             catch (Exception e)
             {
@@ -202,22 +216,22 @@
         {
             ScriptAssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
             ScriptAssemblyManager.AssemblyLoaded -= AssemblyLoaded;
-            if (Application.InEditMode || instance == null)
+            if (Application.InEditMode || destroyDelegate == null)
             {
-                instance = null;
+                DestroyInstance();
                 return;
             }
 
             try
             {
-                instance.Destroy();
+                destroyDelegate();
             }
             catch (Exception e)
             {
                 LoggerFactory.General.Log(e);
             }
 
-            instance = null;
+            DestroyInstance();
         }
 
         public Task CreateInstanceAsync()
@@ -244,6 +258,7 @@
 
                 try
                 {
+                    instance = Activator.CreateInstance(scriptType);
                     var methods = scriptType.GetMethods();
                     flags = ScriptFlags.None;
                     for (int i = 0; i < methods.Length; i++)
@@ -253,28 +268,33 @@
                         {
                             case "Awake":
                                 flags |= ScriptFlags.Awake;
+                                awakeDelegate = method.CreateDelegate<AwakeDelegate>(instance);
                                 break;
 
                             case "Update":
                                 flags |= ScriptFlags.Update;
+                                updateDelegate = method.CreateDelegate<UpdateDelegate>(instance);
                                 break;
 
                             case "FixedUpdate":
                                 flags |= ScriptFlags.FixedUpdate;
+                                fixedUpdateDelegate = method.CreateDelegate<FixedUpdateDelegate>(instance);
                                 break;
 
                             case "Destroy":
                                 flags |= ScriptFlags.Destroy;
+                                destroyDelegate = method.CreateDelegate<DestroyDelegate>(instance);
                                 break;
 
                             default:
                                 continue;
                         }
+
+                        gameObjectProp = scriptType.GetProperty(nameof(GameObject));
                     }
 
                     FlagsChanged?.Invoke(this, flags);
 
-                    instance = Activator.CreateInstance(scriptType) as IScriptBehaviour;
                     properties = scriptType.GetProperties();
 
                     List<string> toRemove = new(propertyValues.Keys);
@@ -282,6 +302,10 @@
                     for (int i = 0; i < properties.Length; i++)
                     {
                         var prop = properties[i];
+
+                        if (prop == gameObjectProp) // skip
+                            continue;
+
                         if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null && prop.CanWrite && prop.CanWrite)
                         {
                             if (propertyValues.TryGetValue(prop.Name, out object? value))
@@ -338,6 +362,11 @@
             lock (this)
             {
                 instance = null;
+                awakeDelegate = null;
+                updateDelegate = null;
+                fixedUpdateDelegate = null;
+                destroyDelegate = null;
+                gameObjectProp = null;
             }
         }
     }

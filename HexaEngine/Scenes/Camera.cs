@@ -7,6 +7,7 @@
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     public enum SensorFit
     {
@@ -27,6 +28,7 @@
         Physical,
     }
 
+    [Guid("8519FD2E-7B30-4695-9B22-05167658EF3C")]
     [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject
     {

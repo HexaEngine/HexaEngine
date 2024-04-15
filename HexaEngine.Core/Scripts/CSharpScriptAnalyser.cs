@@ -13,7 +13,7 @@
         /// <summary>
         /// This must match the actual interface in "HexaEngine.Scripts.IScriptBehaviour"
         /// </summary>
-        public const string ScriptIdentifier = "IScriptBehaviour";
+        public const string ScriptIdentifier = "ScriptBehaviour";
 
         public static string? FindScript(string? filePath)
         {

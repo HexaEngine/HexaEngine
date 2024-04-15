@@ -19,6 +19,9 @@
             scene.QueryManager.AddQuery(lodRenderers);
         }
 
+        private readonly float accumulationThreshold = 1;
+        private float accumulator;
+
         public void Update(float delta)
         {
             var camera = CameraManager.Current;
@@ -27,6 +30,14 @@
             {
                 return;
             }
+
+            accumulator += delta;
+
+            if (accumulator < accumulationThreshold)
+            {
+                return;
+            }
+            accumulator -= accumulationThreshold;
 
             var cameraPosition = camera.Transform.GlobalPosition;
 

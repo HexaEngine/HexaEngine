@@ -22,7 +22,7 @@
 
         public string Name => guiName.Name;
 
-        public Type Type => typeof(ScriptBehaviour);
+        public Type Type => typeof(Scripts.ScriptBehaviour);
 
         public object? Instance { get; set; }
 
@@ -50,7 +50,7 @@
 
         public bool Draw(IGraphicsContext context)
         {
-            if (Instance is not ScriptBehaviour component)
+            if (Instance is not Scripts.ScriptComponent component)
             {
                 return false;
             }

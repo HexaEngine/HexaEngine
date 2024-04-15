@@ -14,7 +14,7 @@
         /// <summary>
         /// Gets the render dispatcher associated with the render window.
         /// </summary>
-        ThreadDispatcher Dispatcher { get; }
+        IThreadDispatcher Dispatcher { get; }
 
         /// <summary>
         /// Gets the audio device associated with the core window.

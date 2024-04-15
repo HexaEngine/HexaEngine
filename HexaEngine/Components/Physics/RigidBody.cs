@@ -35,10 +35,11 @@
         {
         }
 
-        internal RigidBody(PxRigidDynamic* actor, ActorType actorType)
+        internal RigidBody(PxRigidDynamic* actor, ActorType actorType, CharacterController characterController)
         {
             this.actor = (PxRigidActor*)actor;
             type = actorType;
+            CharacterController = characterController;
         }
 
         internal PxRigidActor* Actor => actor;
@@ -865,6 +866,13 @@
 
         [JsonIgnore]
         public IReadOnlyList<IColliderComponent> Colliders => colliders ?? throw new InvalidOperationException("Actor was not initialized!");
+
+        /// <summary>
+        /// Gets the <see cref="Physics.CharacterController"/> associated with the <see cref="RigidBody"/>.
+        /// </summary>
+        /// <remarks>Returns null if no <see cref="Physics.CharacterController"/> is associated.</remarks>
+        [JsonIgnore]
+        public CharacterController? CharacterController { get; internal set; }
 
         public event Action? OnWakeUp;
 
