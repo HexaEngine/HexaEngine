@@ -196,8 +196,10 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Compacts the debug draw command list by merging compatible commands.
         /// </summary>
-        public void Compact()
+        public void EndFrame()
         {
+            semaphore.Wait();
+
             if (nVerticesTotal == 0)
             {
                 return;
@@ -249,7 +251,7 @@ namespace HexaEngine.Core.Debugging
         /// <summary>
         /// Clears the debug draw command list.
         /// </summary>
-        public void Clear()
+        public void NewFrame()
         {
             queue.Clear();
             vertices.Clear();
@@ -258,6 +260,8 @@ namespace HexaEngine.Core.Debugging
             nVerticesCmd = 0;
             nIndicesTotal = 0;
             nIndicesCmd = 0;
+
+            semaphore.Release();
         }
     }
 }
