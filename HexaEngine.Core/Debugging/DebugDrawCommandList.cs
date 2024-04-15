@@ -253,6 +253,8 @@ namespace HexaEngine.Core.Debugging
         /// </summary>
         public void NewFrame()
         {
+            semaphore.Release();
+
             queue.Clear();
             vertices.Clear();
             indices.Clear();
