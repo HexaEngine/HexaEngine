@@ -8,23 +8,23 @@ namespace HexaEngine.Core.Debugging
     /// <summary>
     /// Represents a queue of debugging drawing commands for rendering primitives.
     /// </summary>
-    public unsafe class DebugDrawCommandList
+    public unsafe class DebugDrawCommandList : IDisposable
     {
+        private readonly SemaphoreSlim semaphore = new(1);
         private UnsafeList<DebugDrawVert> vertices = new(vertexBufferSize);
         private UnsafeList<uint> indices = new(indexBufferSize);
 
-        private List<DebugDrawCommand> queue = [];
+        private readonly List<DebugDrawCommand> queue = [];
 
         private uint nVerticesCmd;
         private uint nIndicesCmd;
 
         private uint nVerticesTotal;
         private uint nIndicesTotal;
+        private bool disposedValue;
 
         private const int vertexBufferSize = 5000;
         private const int indexBufferSize = 10000;
-
-        private readonly SemaphoreSlim semaphore = new(1);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DebugDrawCommandList"/> class.
@@ -253,8 +253,6 @@ namespace HexaEngine.Core.Debugging
         /// </summary>
         public void NewFrame()
         {
-            semaphore.Release();
-
             queue.Clear();
             vertices.Clear();
             indices.Clear();
@@ -264,6 +262,31 @@ namespace HexaEngine.Core.Debugging
             nIndicesCmd = 0;
 
             semaphore.Release();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                semaphore.Dispose();
+                vertices.Release();
+                indices.Release();
+                queue.Clear();
+                disposedValue = true;
+            }
+        }
+
+        ~DebugDrawCommandList()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
