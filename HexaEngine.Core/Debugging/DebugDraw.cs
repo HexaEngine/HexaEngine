@@ -584,6 +584,8 @@ namespace HexaEngine.Core.Debugging
 
             vertices[0] = new(origin, default, color);
             vertices[1] = new(destination, default, color);
+
+            immediateList.RecordCmd(PrimitiveTopology.LineList);
         }
 
         /// <summary>
