@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
@@ -99,7 +100,7 @@
                 return;
             }
 
-            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
+            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.GlobalPosition)));
         }
 
         public void Draw(IGraphicsContext context, SkyType type)
