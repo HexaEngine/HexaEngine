@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Queries
 {
     using HexaEngine.Collections;
+    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
 
     public class QuerySystem : ISceneSystem, IDisposable
@@ -26,12 +27,12 @@
         {
             lock (queries)
             {
-                obj.OnComponentAdded += OnComponentAdded;
-                obj.OnComponentRemoved += OnComponentRemoved;
-                obj.OnNameChanged += OnNameChanged;
-                obj.OnParentChanged += OnParentChanged;
-                obj.OnTagChanged += OnTagChanged;
-                obj.OnTransformed += OnTransformed;
+                obj.ComponentAdded += OnComponentAdded;
+                obj.ComponentRemoved += OnComponentRemoved;
+                obj.NameChanged += OnNameChanged;
+                obj.ParentChanged += OnParentChanged;
+                obj.TagChanged += OnTagChanged;
+                obj.TransformUpdated += OnTransformed;
                 obj.PropertyChanged += PropertyChanged;
 
                 var queue = queries[QueryFlags.ObjectAdded];
@@ -59,7 +60,7 @@
             }
         }
 
-        private void OnTransformed(GameObject sender)
+        private void OnTransformed(GameObject sender, Transform transform)
         {
             lock (queries)
             {
@@ -135,12 +136,12 @@
         {
             lock (queries)
             {
-                obj.OnComponentAdded -= OnComponentAdded;
-                obj.OnComponentRemoved -= OnComponentRemoved;
-                obj.OnNameChanged -= OnNameChanged;
-                obj.OnParentChanged -= OnParentChanged;
-                obj.OnTagChanged -= OnTagChanged;
-                obj.OnTransformed -= OnTransformed;
+                obj.ComponentAdded -= OnComponentAdded;
+                obj.ComponentRemoved -= OnComponentRemoved;
+                obj.NameChanged -= OnNameChanged;
+                obj.ParentChanged -= OnParentChanged;
+                obj.TagChanged -= OnTagChanged;
+                obj.TransformUpdated -= OnTransformed;
                 obj.PropertyChanged -= PropertyChanged;
 
                 var queue = queries[QueryFlags.ObjectRemoved];
@@ -155,6 +156,7 @@
         {
             lock (queries)
             {
+                query.QuerySystem = this;
                 queries.Add(query);
                 query.FlushQuery(scene.GameObjects);
             }
@@ -185,12 +187,12 @@
                 for (int i = 0; i < scene.GameObjects.Count; i++)
                 {
                     var obj = scene.GameObjects[i];
-                    obj.OnComponentAdded -= OnComponentAdded;
-                    obj.OnComponentRemoved -= OnComponentRemoved;
-                    obj.OnNameChanged -= OnNameChanged;
-                    obj.OnParentChanged -= OnParentChanged;
-                    obj.OnTagChanged -= OnTagChanged;
-                    obj.OnTransformed -= OnTransformed;
+                    obj.ComponentAdded -= OnComponentAdded;
+                    obj.ComponentRemoved -= OnComponentRemoved;
+                    obj.NameChanged -= OnNameChanged;
+                    obj.ParentChanged -= OnParentChanged;
+                    obj.TagChanged -= OnTagChanged;
+                    obj.TransformUpdated -= OnTransformed;
                     obj.PropertyChanged -= PropertyChanged;
                 }
                 queries.Clear();

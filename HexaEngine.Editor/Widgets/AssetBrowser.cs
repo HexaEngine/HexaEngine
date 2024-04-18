@@ -291,7 +291,7 @@
             {
                 iconSize = value;
                 config.SetValue("Icon Size", value);
-                Config.Global.Save();
+                Config.SaveGlobal();
                 switch (value)
                 {
                     case AssetExplorerIconSize.Small:
@@ -319,7 +319,7 @@
             {
                 showExtensions = value;
                 config.SetValue("Show Extensions", showExtensions);
-                Config.Global.Save();
+                Config.SaveGlobal();
             }
         }
 
@@ -330,7 +330,7 @@
             {
                 showHidden = value;
                 config.SetValue("Show Hidden", showHidden);
-                Config.Global.Save();
+                Config.SaveGlobal();
                 Refresh(true);
             }
         }
@@ -726,23 +726,6 @@
 
             if (ImGui.IsWindowHovered())
             {
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-                {
-                    AssetFileInfo info = new(file.Path, file.Metadata);
-                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
-                    {
-                        SelectionCollection.Global.AddSelection(info);
-                    }
-                    else
-                    {
-                        SelectionCollection.Global.AddOverwriteSelection(info);
-                    }
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                    {
-                        Designer.OpenFile(file.Path);
-                    }
-                }
-
                 isHovered = true;
             }
 
@@ -791,15 +774,50 @@
             ImGui.EndChild();
 
             FileContextMenu(file);
+            HandleInput(isHovered, file);
 
             return isHovered;
         }
 
+        private static unsafe void HandleInput(bool isHovered, Item file)
+        {
+            if (!isHovered)
+            {
+                return;
+            }
+
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            {
+                AssetFileInfo info = new(file.Path, file.Metadata);
+                if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                {
+                    SelectionCollection.Global.AddSelection(info);
+                }
+                else
+                {
+                    SelectionCollection.Global.AddOverwriteSelection(info);
+                }
+                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                {
+                    Designer.OpenFile(file.Path);
+                }
+            }
+
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            {
+                ImGui.OpenPopup(file.Path);
+
+                if (!ImGui.GetIO().KeyCtrl)
+                {
+                    AssetFileInfo info = new(file.Path, file.Metadata);
+                    SelectionCollection.Global.AddSelection(info);
+                }
+            }
+        }
+
         private void FileContextMenu(Item file)
         {
-            ImGui.PushID(file.Path);
-
-            if (ImGui.BeginPopupContextItem(file.Path))
+            if (ImGui.BeginPopupContextItem(file.Path, ImGuiPopupFlags.MouseButtonMask))
             {
                 if (ImGui.MenuItem("\xE845 Open"))
                 {
@@ -827,15 +845,23 @@
 
                 if (ImGui.MenuItem("\xE74D Delete"))
                 {
-                    MessageBox.Show("Delete file", $"Are you sure you want to delete the file?\n{file.Path}", file.Path, (x, c) =>
+                    MessageBox.Show("Delete file", $"Are you sure you want to delete the file(s)?", this, (x, c) =>
                     {
+                        AssetBrowser browser = (AssetBrowser)c;
                         if (x.Result != MessageBoxResult.Yes)
                         {
                             return;
                         }
+                        for (int i = 0; i < SelectionCollection.Global.Count; i++)
+                        {
+                            var selection = SelectionCollection.Global[i];
+                            if (selection is AssetFileInfo fileInfo)
+                            {
+                                SourceAssetsDatabase.Delete(fileInfo.Path, DeleteBehavior.DeleteChildren);
+                            }
+                        }
 
-                        SourceAssetsDatabase.Delete((string)c, DeleteBehavior.DeleteChildren);
-                        Refresh(false);
+                        browser.Refresh(false);
                     }, MessageBoxType.YesCancel);
                 }
 
@@ -859,7 +885,6 @@
 
                 ImGui.EndPopup();
             }
-            ImGui.PopID();
         }
 
         private void DisplayContextMenu()

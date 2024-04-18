@@ -43,6 +43,12 @@
             {
                 return null;
             }
+
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
             return new ReusableFileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 

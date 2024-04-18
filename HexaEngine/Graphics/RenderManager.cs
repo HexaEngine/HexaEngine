@@ -144,7 +144,7 @@
             }
         }
 
-        private void GameObjectTransformed(GameObject obj)
+        private void GameObjectTransformed(GameObject obj, Transform transform)
         {
             lights.RendererUpdateQueue.EnqueueComponentIfIs(obj);
         }
@@ -191,7 +191,7 @@
                 renderer.Unload();
             }
 
-            gameObject.OnTransformed -= GameObjectTransformed;
+            gameObject.TransformUpdated -= GameObjectTransformed;
             renderer.QueueIndexChanged -= QueueIndexChanged;
             RemoveFromQueue(renderer);
         }
@@ -206,7 +206,7 @@
                 }, device);
             }
 
-            gameObject.OnTransformed += GameObjectTransformed;
+            gameObject.TransformUpdated += GameObjectTransformed;
             renderer.QueueIndexChanged += QueueIndexChanged;
             AddToQueue(renderer);
         }

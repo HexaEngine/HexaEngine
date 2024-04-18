@@ -7,6 +7,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
+    using HexaEngine.Scripts;
     using HexaEngine.Weather;
     using System;
     using System.Collections.Generic;
@@ -95,7 +96,7 @@
         /// Initializes the scene.
         /// </summary>
         /// <remarks>Only call if you know what you are doing.</remarks>
-        void Initialize();
+        void Initialize(SceneInitFlags initFlags);
 
         /// <summary>
         /// Initializes the scene asynchronously.
@@ -103,7 +104,7 @@
         /// </summary>
         /// <remarks>Only call if you know what you are doing.</remarks>
         /// <returns></returns>
-        Task InitializeAsync();
+        Task InitializeAsync(SceneInitFlags initFlags);
 
         void Uninitialize();
 

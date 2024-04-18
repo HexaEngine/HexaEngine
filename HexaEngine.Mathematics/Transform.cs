@@ -120,20 +120,20 @@
             get => parent;
             set
             {
-                parent = value;
                 if (parent != null)
                 {
-                    parent.Updated += ParentUpdated;
+                    parent.Updated -= ParentUpdated;
+                }
+
+                parent = value;
+
+                if (value != null)
+                {
+                    value.Updated += ParentUpdated;
                 }
 
                 OnChanged();
             }
-        }
-
-        private void ParentUpdated(Transform sender)
-        {
-            IsDirty = true;
-            Recalculate();
         }
 
         /// <summary>
@@ -880,6 +880,12 @@
         protected void OnFlagsChanged(TransformFlags flags)
         {
             FlagsChanged?.Invoke(this, flags);
+        }
+
+        private void ParentUpdated(Transform sender)
+        {
+            IsDirty = true;
+            Recalculate();
         }
 
         /// <summary>

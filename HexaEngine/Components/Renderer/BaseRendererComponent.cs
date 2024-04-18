@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using HexaEngine.Animations;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
@@ -11,6 +12,12 @@
     {
         private volatile bool loaded = false;
         private uint queueIndex = (uint)RenderQueueIndex.Geometry;
+
+        /// <summary>
+        /// The GUID of the <see cref="BaseRendererComponent"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
         public uint QueueIndex

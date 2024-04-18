@@ -5,27 +5,35 @@
 
     public interface IComponent
     {
+        /// <summary>
+        /// The GUID of the <see cref="IComponent"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        Guid Guid { get; set; }
+
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        GameObject GameObject { get; set; }
 
-        public void Awake();
+        void Awake();
 
-        public void Destroy();
+        void Destroy();
     }
 
     public interface IAudioComponent : IComponent
     {
-        public void Update();
+        void Update();
     }
 
     public interface IScriptComponent : IComponent, INotifyFlagsChanged<ScriptFlags>
     {
-        public void FixedUpdate()
-        {
-        }
+        void ScriptCreate();
 
-        public void Update()
-        {
-        }
+        void ScriptLoad();
+
+        void ScriptAwake();
+
+        void FixedUpdate();
+
+        void Update();
     }
 }

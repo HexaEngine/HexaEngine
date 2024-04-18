@@ -31,6 +31,12 @@
 
         public override unsafe void Draw()
         {
+            if (!shown || signalClose)
+            {
+                base.Draw();
+                return;
+            }
+
             if (filePicker.Draw())
             {
                 filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);

@@ -26,6 +26,12 @@
         [JsonIgnore]
         internal static readonly ConcurrentNativeToManagedMapper mapper = new();
 
+        /// <summary>
+        /// The GUID of the <see cref="Actor"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         [JsonIgnore]
         public GameObject GameObject { get; set; }
 
@@ -210,15 +216,15 @@
 
         void IComponent.Awake()
         {
-            GameObject.OnEnabledChanged += OnEnabledChanged;
-            GameObject.OnNameChanged += OnNameChanged;
+            GameObject.EnabledChanged += OnEnabledChanged;
+            GameObject.NameChanged += OnNameChanged;
             Awake();
         }
 
         void IComponent.Destroy()
         {
-            GameObject.OnEnabledChanged -= OnEnabledChanged;
-            GameObject.OnNameChanged -= OnNameChanged;
+            GameObject.EnabledChanged -= OnEnabledChanged;
+            GameObject.NameChanged -= OnNameChanged;
             Destroy();
         }
 

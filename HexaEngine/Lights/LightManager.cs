@@ -5,6 +5,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -46,7 +47,7 @@
 
         public SystemFlags Flags { get; } = SystemFlags.None;
 
-        private void LightTransformed(GameObject gameObject)
+        private void LightTransformed(GameObject gameObject, Transform transform)
         {
             if (gameObject is Light light)
             {
@@ -103,7 +104,7 @@
                 lightUpdateQueue.Enqueue(lightSource);
                 if (lightSource is Light light)
                 {
-                    light.OnTransformed += LightTransformed;
+                    light.TransformUpdated += LightTransformed;
                     light.PropertyChanged += LightPropertyChanged;
                 }
             }
@@ -125,7 +126,7 @@
                 if (lightSource is Light light)
                 {
                     light.PropertyChanged -= LightPropertyChanged;
-                    light.OnTransformed -= LightTransformed;
+                    light.TransformUpdated -= LightTransformed;
                 }
 
                 lights.Remove(lightSource);

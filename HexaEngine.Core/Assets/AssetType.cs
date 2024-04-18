@@ -16,5 +16,6 @@
         Script,
         Prefab,
         Terrain,
+        GlobalScript,
     }
 }

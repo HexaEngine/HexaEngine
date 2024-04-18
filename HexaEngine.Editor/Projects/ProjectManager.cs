@@ -18,6 +18,8 @@
     using System.Linq;
     using System.Reflection;
 
+
+
     public static class ProjectManager
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ProjectManager));
@@ -305,7 +307,7 @@
                 return;
             }
 
-            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay);
+            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay | ProgressFlags.NoModal | ProgressFlags.BottomLeft, new(0.01f, 0.01f));
             PopupManager.Show(modal);
 
             ScriptAssemblyManager.Unload();
@@ -330,6 +332,7 @@
 
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
+
             ScriptAssemblyManager.Load(outputFilePath);
 
             modal.Close();

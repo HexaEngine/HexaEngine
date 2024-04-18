@@ -18,6 +18,8 @@
 
         public QueryFlags Flags { get; }
 
+        public QuerySystem QuerySystem { get; set; }
+
         public T this[int index] => ((IReadOnlyList<T>)cache)[index];
 
         public event Action? OnQueryChanged;
@@ -184,6 +186,7 @@
                 cache.Clear();
                 DisposeCore();
                 disposedValue = true;
+                QuerySystem.RemoveQuery(this);
             }
         }
 

@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
     <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+	<ProjectReference Include="..\HexaEngine.Editor\HexaEngine.Editor.csproj" />
   </ItemGroup>
 
 </Project>

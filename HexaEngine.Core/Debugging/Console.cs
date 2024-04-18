@@ -2,7 +2,6 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Collections;
-    using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -244,7 +244,7 @@
                 capturedMouse = true;
                 ImGui.SetNextFrameWantCaptureMouse(true);
                 ImGui.SetMouseCursor(ImGuiMouseCursor.None);
-                delta = Mouse.Delta;
+                delta = Mouse.Delta * 0.004f;
 
                 if (ignoreMouseInputFrames != 0 && delta != Vector2.Zero)
                 {
@@ -305,6 +305,7 @@
                 return;
             }
 
+            bool changed = false;
             var leftCtrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
             var delta = UpdateMouse(leftCtrl, hovered);
             if (editorCameraState.Dimension == EditorCameraDimension.Dim3D)
@@ -340,6 +341,7 @@
                         editorCameraState.OrbitPosition = orbitPosition;
                         editorCameraState.FreePosition = position;
                         editorCameraState.FreeRotation = editorCamera.Transform.Rotation;
+                        changed = true;
                     }
                 }
                 if (editorCameraState.Mode == EditorCameraMode.Free && !leftCtrl)
@@ -406,6 +408,7 @@
                     editorCamera.Transform.Orientation = rotation.ToQuaternion();
                     editorCameraState.FreePosition = position;
                     editorCameraState.FreeRotation = rotation;
+                    changed = true;
                 }
             }
             else if (editorCameraState.Dimension == EditorCameraDimension.Dim2D && !leftCtrl)
@@ -423,8 +426,14 @@
                 editorCamera.Transform.Rotation = Vector3.Zero;
                 editorCameraState.FreePosition = position;
                 editorCameraState.FreeRotation = Vector3.Zero;
+                changed = true;
             }
-            editorCamera.Transform.Recalculate();
+
+            if (changed)
+            {
+                editorCamera.Transform.Recalculate();
+            }
+
             first = false;
         }
     }

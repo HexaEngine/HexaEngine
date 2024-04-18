@@ -17,6 +17,8 @@
         private static float gameTimeScale = 20;
         private static volatile float delta;
 
+        public static readonly object ProfileObject = new();
+
         /// <summary>
         /// Gets how many frames have passed since the start.
         /// </summary>

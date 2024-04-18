@@ -40,6 +40,12 @@
         private RigidBody rigidBody;
         private bool isGrounded;
 
+        /// <summary>
+        /// The GUID of the <see cref="CharacterController"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         [EditorProperty<CharacterControllerShape>("Shape")]
         public CharacterControllerShape Shape { get => shape; set => shape = value; }
 

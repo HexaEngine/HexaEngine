@@ -46,7 +46,7 @@
 	<Icon theme="Dark" name="ImgIco" path="assets/icons/image.png" target="*.ico" tint="#FFF" />
 	<Icon theme="Dark" name="ImgBmp" path="assets/icons/image.png" target="*.bmp" tint="#FFF" />
 
-	<Icon theme="any" name="Logo" path="assets/icons/logo.png" target="^logo$" tint="#FFF" />
-	<Icon theme="any" name="Camera" path="assets/icons/camera.png" target="Camera" tint="#FFF" />
-	<Icon theme="any" name="Light" path="assets/icons/light.png" target="Light" tint="#FFF" />
+	<Icon theme="any" name="Logo" path="assets/icons/logo.png" target="/" tint="#FFF" />
+	<Icon theme="any" name="Camera" path="assets/icons/camera.png" target="/" tint="#FFF" />
+	<Icon theme="any" name="Light" path="assets/icons/light.png" target="/" tint="#FFF" />
 </Icons>

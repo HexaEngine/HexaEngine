@@ -57,6 +57,7 @@
         private UnsafeList<byte> labelOutBuffer = new();
         private readonly List<bool> isLastInLevel = [];
         private string searchString = string.Empty;
+        private bool windowHovered;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public HierarchyWidget()
@@ -93,7 +94,6 @@
 
             if (scene == null)
             {
-                EndWindow();
                 return;
             }
 
@@ -102,6 +102,8 @@
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff1c1c1c);
 
             ImGui.BeginChild("LayoutContent");
+
+            windowHovered = ImGui.IsWindowHovered();
 
             DisplayContextMenu();
 
@@ -329,7 +331,7 @@
             rect.Max.X = avail.X + rect.Min.X;
             rect.Max.Y += ImGui.GetTextLineHeight();
 
-            bool hovered = ImGui.IsMouseHoveringRect(rect.Min, rect.Max);
+            bool hovered = ImGui.IsMouseHoveringRect(rect.Min, rect.Max) && windowHovered;
             if (hovered)
             {
                 drawList.AddRectFilled(rect.Min, rect.Max, colHovered);
@@ -479,7 +481,7 @@
                 ImGui.OpenPopup(element.FullName);
                 if (!element.IsEditorSelected && !ImGui.GetIO().KeyCtrl)
                 {
-                    SelectionCollection.Global.AddOverwriteSelection(element);
+                    SelectionCollection.Global.AddSelection(element);
                 }
             }
             if (focused)

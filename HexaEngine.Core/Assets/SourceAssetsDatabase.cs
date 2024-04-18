@@ -5,6 +5,69 @@
     using System;
     using System.IO;
 
+    public static class FileHandleManager
+    {
+        private static readonly object _lock = new();
+        private static readonly Dictionary<string, AccessHandle> handles = [];
+        private static readonly Stack<SemaphoreSlim> pool = new();
+
+        private struct AccessHandle
+        {
+            public SemaphoreSlim Semaphore;
+            public int Refs;
+        }
+
+        public static SemaphoreSlim Open(string file)
+        {
+            Monitor.Enter(_lock);
+            if (handles.TryGetValue(file, out var accessHandle))
+            {
+                accessHandle.Refs++;
+                handles[file] = accessHandle;
+                Monitor.Exit(_lock);
+                accessHandle.Semaphore.Wait();
+                return accessHandle.Semaphore;
+            }
+            else
+            {
+                pool.TryPop(out accessHandle.Semaphore);
+                accessHandle.Semaphore ??= new(1);
+                accessHandle.Refs++;
+                handles[file] = accessHandle;
+                Monitor.Exit(_lock);
+                accessHandle.Semaphore.Wait();
+                return accessHandle.Semaphore;
+            }
+        }
+
+        public static void Close(string file, SemaphoreSlim semaphore)
+        {
+            semaphore.Release();
+            Monitor.Enter(_lock);
+
+            AccessHandle handle = handles[file];
+            handle.Refs--;
+            if (handle.Refs == 0)
+            {
+                handles.Remove(file);
+                if (pool.Count < 256)
+                {
+                    pool.Push(semaphore);
+                }
+                else
+                {
+                    semaphore.Dispose();
+                }
+            }
+            else
+            {
+                handles[file] = handle;
+            }
+
+            Monitor.Exit(_lock);
+        }
+    }
+
     public static class SourceAssetsDatabase
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
@@ -17,6 +80,7 @@
         private static FileSystemWatcher? watcher;
         private static readonly List<SourceAssetMetadata> sourceAssets = [];
         private static readonly Dictionary<Guid, SourceAssetMetadata> guidToSourceAsset = [];
+        private static readonly HashSet<string> importedFiles = [];
         private static readonly ManualResetEventSlim initLock = new(false);
 
         public static void Init(string path, IProgress<float> progress)
@@ -102,6 +166,8 @@
                     logger.Warn($"Couldn't find metadata for file, '{file}'");
                     AddFile(null, file, metadataFile, null, null);
                 }
+
+                importedFiles.Add(file);
             }
 
             progressMax = progressMax - files.Length + tasks.Count;
@@ -121,6 +187,22 @@
         }
 
         public static ThumbnailCache ThumbnailCache => thumbnailCache;
+
+        public static void Ignore(string path)
+        {
+            lock (_lock)
+            {
+                importedFiles.Add(path);
+            }
+        }
+
+        public static void Unignore(string path)
+        {
+            lock (_lock)
+            {
+                importedFiles.Remove(path);
+            }
+        }
 
         private static void Insert(SourceAssetMetadata metadata)
         {
@@ -419,33 +501,41 @@
             initLock.Wait();
             var filename = Path.GetFileName(path);
 
+            string filePath = path;
+            bool needCopy = false;
             if (!path.StartsWith(rootFolder))
             {
-                var newPath = Path.Combine(rootAssetsFolder, filename);
-
-                File.Copy(path, newPath);
-
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(newPath);
-
-                if (metadataFile == null)
-                {
-                    File.Delete(newPath);
-                    throw new($"Failed to import file '{path}', couldn't create metadata.");
-                }
-
-                return AddFile(path, newPath, metadataFile, provider, progress);
+                needCopy = true;
+                filePath = Path.Combine(rootAssetsFolder, filename);
             }
-            else
+
+            lock (_lock)
             {
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(path);
-
-                if (metadataFile == null)
+                if (importedFiles.Contains(filePath))
                 {
-                    throw new($"Failed to import file '{path}', couldn't create metadata.");
+                    return GetMetadata(filePath);
+                }
+                importedFiles.Add(filePath);
+            }
+
+            if (needCopy)
+            {
+                File.Copy(path, filePath);
+            }
+
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(filePath);
+
+            if (metadataFile == null)
+            {
+                if (needCopy)
+                {
+                    File.Delete(filePath);
                 }
 
-                return AddFile(null, path, metadataFile, provider, progress);
+                throw new($"Failed to import file '{path}', couldn't create metadata.");
             }
+
+            return AddFile(path, filePath, metadataFile, provider, progress);
         }
 
         public static void ImportFiles(params string[] files)
@@ -463,41 +553,49 @@
             ImportFiles(Directory.GetFiles(folder));
         }
 
-        public static async Task ImportFileAsync(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
 
+            string filePath = path;
+            bool needCopy = false;
             if (!path.StartsWith(rootFolder))
             {
-                var newPath = Path.Combine(rootAssetsFolder, filename);
-
-                File.Copy(path, newPath);
-
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(newPath);
-
-                if (metadataFile == null)
-                {
-                    File.Delete(newPath);
-                    return;
-                }
-
-                await AddFileAsync(path, newPath, metadataFile, provider, progress);
+                needCopy = true;
+                filePath = Path.Combine(rootAssetsFolder, filename);
             }
-            else
+
+            lock (_lock)
             {
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(path);
-
-                if (metadataFile == null)
+                if (importedFiles.Contains(filePath))
                 {
-                    return;
+                    return Task.FromResult(GetMetadata(filePath));
+                }
+                importedFiles.Add(filePath);
+            }
+
+            if (needCopy)
+            {
+                File.Copy(path, filePath);
+            }
+
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(filePath);
+
+            if (metadataFile == null)
+            {
+                if (needCopy)
+                {
+                    File.Delete(filePath);
                 }
 
-                await AddFileAsync(null, path, metadataFile, provider, progress);
+                return Task.FromResult<SourceAssetMetadata>(null);
             }
+
+            return AddFileAsync(null, filePath, metadataFile, provider, progress);
         }
 
-        public static async Task ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
         {
             initLock.Wait();
 
@@ -508,33 +606,41 @@
 
             var filename = Path.GetFileName(path);
 
+            string filePath = path;
+            bool needCopy = false;
             if (!path.StartsWith(rootFolder))
             {
-                var newPath = Path.Combine(outputDir, filename);
-
-                File.Copy(path, newPath);
-
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(newPath);
-
-                if (metadataFile == null)
-                {
-                    File.Delete(newPath);
-                    return;
-                }
-
-                await AddFileAsync(path, newPath, metadataFile, provider, progress);
+                needCopy = true;
+                filePath = Path.Combine(rootAssetsFolder, filename);
             }
-            else
+
+            lock (_lock)
             {
-                var metadataFile = SourceAssetMetadata.GetMetadataFilePath(path);
-
-                if (metadataFile == null)
+                if (importedFiles.Contains(filePath))
                 {
-                    return;
+                    return Task.FromResult(GetMetadata(filePath));
+                }
+                importedFiles.Add(filePath);
+            }
+
+            if (needCopy)
+            {
+                File.Copy(path, filePath);
+            }
+
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(filePath);
+
+            if (metadataFile == null)
+            {
+                if (needCopy)
+                {
+                    File.Delete(filePath);
                 }
 
-                await AddFileAsync(null, path, metadataFile, provider, progress);
+                return Task.FromResult<SourceAssetMetadata>(null);
             }
+
+            return AddFileAsync(path, filePath, metadataFile, provider, progress);
         }
 
         public static async Task ImportFilesAsync(params string[] files)
@@ -886,6 +992,7 @@
 
             lock (_lock)
             {
+                importedFiles.Remove(fileToDelete);
                 if (behavior == DeleteBehavior.DeleteChildren)
                 {
                     for (int i = 0; i < sourceAssets.Count; i++)
@@ -916,6 +1023,7 @@
 
             lock (_lock)
             {
+                importedFiles.Remove(fileToDelete);
                 if (behavior == DeleteBehavior.DeleteChildren)
                 {
                     for (int i = 0; i < sourceAssets.Count; i++)

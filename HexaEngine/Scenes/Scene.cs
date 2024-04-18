@@ -10,6 +10,7 @@ namespace HexaEngine.Scenes
     using HexaEngine.Mathematics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
+    using HexaEngine.Scripts;
     using HexaEngine.Weather;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
@@ -25,6 +26,8 @@ namespace HexaEngine.Scenes
     {
         private readonly FlaggedList<SystemFlags, ISceneSystem> systems = [];
         private readonly List<GameObject> nodes = [];
+        private readonly Dictionary<Guid, GameObject> guidToObject = [];
+        private readonly Dictionary<Guid, IComponent> guidToComponent = [];
         private readonly CameraContainer cameraContainer = new();
 
         private IServiceProvider serviceProvider;
@@ -33,10 +36,13 @@ namespace HexaEngine.Scenes
         private readonly SemaphoreSlim semaphore = new(1);
 
         private readonly GameObject root;
-        private readonly SceneInitFlags initFlags;
+
+        private SceneInitFlags initFlags;
 
         private string? path;
         private SceneFlags flags;
+
+        public static readonly object ProfileObject = new();
 
         public Scene()
         {
@@ -178,8 +184,9 @@ namespace HexaEngine.Scenes
 
         public GameObject Root => root;
 
-        void IScene.Initialize()
+        void IScene.Initialize(SceneInitFlags initFlags)
         {
+            this.initFlags = initFlags;
             services = SceneSystemRegistry.GetServices(this);
             serviceProvider = services.BuildServiceProvider();
             foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
@@ -204,8 +211,9 @@ namespace HexaEngine.Scenes
             flags |= SceneFlags.Initialized;
         }
 
-        async Task IScene.InitializeAsync()
+        async Task IScene.InitializeAsync(SceneInitFlags initFlags)
         {
+            this.initFlags = initFlags;
             services = SceneSystemRegistry.GetServices(this);
             serviceProvider = services.BuildServiceProvider();
             foreach (var service in serviceProvider.GetAllSystems<ISceneSystem>(services))
@@ -238,7 +246,10 @@ namespace HexaEngine.Scenes
                 load[i].Load(device);
             }
 
-            Job.WaitAll(JobScheduler.Default.GetAllJobsWithFlag(JobFlags.BlockOnSceneLoad));
+            if ((initFlags & SceneInitFlags.SkipOnLoadWait) != 0)
+            {
+                Job.WaitAll(JobScheduler.Default.GetAllJobsWithFlag(JobFlags.BlockOnSceneLoad));
+            }
 
             Time.ResetTime();
 
@@ -355,9 +366,6 @@ namespace HexaEngine.Scenes
 
             var early = systems[SystemFlags.Update];
 
-#if PROFILE
-            Profiler.Start(systems);
-#endif
             for (int i = 0; i < early.Count; i++)
             {
 #if PROFILE
@@ -381,9 +389,6 @@ namespace HexaEngine.Scenes
                 Profiler.End(late[i]);
 #endif
             }
-#if PROFILE
-            Profiler.End(systems);
-#endif
 
             semaphore.Release();
         }
@@ -422,6 +427,25 @@ namespace HexaEngine.Scenes
         }
 
         /// <summary>
+        /// Searches an <see cref="IComponent"/> by it's <see cref="IComponent.Guid"/>.
+        /// </summary>
+        /// <param name="guid">The unique identifier of the <see cref="IComponent"/>.</param>
+        /// <returns>The found <see cref="IComponent"/> or null, if the name was not found.</returns>
+        public IComponent? FindComponentByGuid(Guid? guid)
+        {
+            if (guid == null)
+            {
+                return null;
+            }
+
+            semaphore.Wait();
+            guidToComponent.TryGetValue(guid.Value, out var component);
+            semaphore.Release();
+
+            return component;
+        }
+
+        /// <summary>
         /// Searches an <see cref="GameObject"/> by it's <see cref="GameObject.Guid"/>.
         /// </summary>
         /// <param name="guid">The unique identifier of the <see cref="GameObject"/>.</param>
@@ -434,16 +458,10 @@ namespace HexaEngine.Scenes
             }
 
             semaphore.Wait();
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                if (nodes[i].Guid == guid.Value)
-                {
-                    semaphore.Release();
-                    return nodes[i];
-                }
-            }
+            guidToObject.TryGetValue(guid.Value, out var gameObject);
             semaphore.Release();
-            return null;
+
+            return gameObject;
         }
 
         /// <summary>
@@ -578,8 +596,17 @@ namespace HexaEngine.Scenes
 
         internal void RegisterChild(GameObject node)
         {
+            node.ComponentAdded += OnComponentAdded;
+            node.ComponentRemoved += OnComponentRemoved;
             nodes.Add(node);
+            guidToObject.Add(node.Guid, node);
             cameraContainer.Add(node);
+
+            for (int i = 0; i < node.Components.Count; i++)
+            {
+                var component = node.Components[i];
+                guidToComponent.Add(component.Guid, component);
+            }
 
             for (int i = 0; i < systems.Count; i++)
             {
@@ -589,13 +616,31 @@ namespace HexaEngine.Scenes
             OnGameObjectAdded?.Invoke(node);
         }
 
+        private void OnComponentRemoved(GameObject parent, IComponent component)
+        {
+            guidToComponent.Remove(component.Guid);
+        }
+
+        private void OnComponentAdded(GameObject parent, IComponent component)
+        {
+            guidToComponent.Add(component.Guid, component);
+        }
+
         internal void UnregisterChild(GameObject node)
         {
+            node.ComponentAdded -= OnComponentAdded;
+            node.ComponentRemoved -= OnComponentRemoved;
             nodes.Remove(node);
+            guidToObject.Remove(node.Guid);
             cameraContainer.Remove(node);
             for (int i = 0; i < systems.Count; i++)
             {
                 systems[i].Unregister(node);
+            }
+
+            for (int i = 0; i < node.Components.Count; i++)
+            {
+                guidToComponent.Remove(node.Components[i].Guid);
             }
 
             OnGameObjectRemoved?.Invoke(node);
@@ -661,6 +706,8 @@ namespace HexaEngine.Scenes
                 systems[i].Destroy();
             }
             systems.Clear();
+            guidToComponent.Clear();
+            guidToObject.Clear();
             semaphore.Release();
         }
 

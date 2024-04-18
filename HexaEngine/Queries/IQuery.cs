@@ -5,6 +5,8 @@
 
     public interface IQuery : IHasFlags<QueryFlags>, IDisposable
     {
+        QuerySystem QuerySystem { get; internal set; }
+
         void OnGameObjectAdded(GameObject gameObject);
 
         void OnGameObjectRemoved(GameObject gameObject);

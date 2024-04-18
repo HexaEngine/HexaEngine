@@ -1,10 +1,26 @@
 ﻿namespace TestApp
 {
-    using HexaEngine.Core.Assets.Importer;
     using HexaEngine.Mathematics;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.Intrinsics;
+
+    public static unsafe class StringExtensions
+    {
+        public static void ReverseString(this string s)
+        {
+            fixed (char* pStr = s)
+            {
+                char* pChar = pStr;
+                char* pStrEnd = pStr + s.Length - 1;
+                while (pChar < pStrEnd)
+                {
+                    (*pStrEnd, *pChar) = (*pChar, *pStrEnd);
+
+                    pChar++;
+                    pStrEnd--;
+                }
+            }
+        }
+    }
 
     public static unsafe partial class Program
     {

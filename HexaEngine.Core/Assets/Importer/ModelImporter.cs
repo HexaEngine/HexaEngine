@@ -180,6 +180,25 @@
 
             scene = assimp.ApplyPostProcessing(scene, (uint)settings.PostProcessSteps);
 
+            float unitScaleFactor = 1;
+
+            if (scene->MMetaData != null)
+            {
+                var metadata = scene->MMetaData;
+                for (int i = 0; i < metadata->MNumProperties; i++)
+                {
+                    string key = metadata->MKeys[i];
+                    if (key == "UnitScaleFactor")
+                    {
+                        var value = metadata->MValues[i];
+                        if (value.MType == MetadataType.Float)
+                        {
+                            unitScaleFactor = MemoryMarshal.Cast<byte, float>(new ReadOnlySpan<byte>(value.MData, 4))[0];
+                        }
+                    }
+                }
+            }
+
             if (scene == null)
             {
                 Logger.Error($"Failed to apply post processing {context.SourcePath}");
@@ -623,6 +642,7 @@
                             case Assimp.MatkeyShaderCompute:
                                 shaders.Add(new(MaterialShaderType.ComputeShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                                 break;
+
                             default:
                                 continue;
                         }
@@ -641,7 +661,7 @@
                         var guid = materialIds[i] = Guid.NewGuid();
 
                         string path = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
-
+                        context.BeginImportChild(path);
                         material.Save(path, Encoding.UTF8);
                         context.ImportChild(path, guid);
                         progressContext.AddProgress();
@@ -742,7 +762,7 @@
                         var guid = animationsIds[i] = Guid.NewGuid();
 
                         string path = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
-
+                        context.BeginImportChild(path);
                         animation.Save(path, Encoding.UTF8);
                         context.ImportChild(path, guid);
                         progressContext.AddProgress();

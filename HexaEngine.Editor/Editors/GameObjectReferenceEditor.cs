@@ -44,7 +44,7 @@
             }
             else
             {
-                isOpen = ImGui.BeginCombo(guiName.Id, "<null>", ImGuiComboFlags.None);
+                isOpen = ImGui.BeginCombo(guiName.Id, (byte*)null, ImGuiComboFlags.None);
             }
 
             bool result = false;

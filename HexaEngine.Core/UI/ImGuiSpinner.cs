@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
 
     public static class ImGuiBufferingBar

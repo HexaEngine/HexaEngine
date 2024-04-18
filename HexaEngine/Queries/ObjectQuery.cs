@@ -19,6 +19,8 @@
 
         public QueryFlags Flags { get; }
 
+        public QuerySystem QuerySystem { get; set; }
+
         public GameObject this[int index] => ((IReadOnlyList<GameObject>)cache)[index];
 
         public event Action? OnQueryChanged;
@@ -141,6 +143,7 @@
                 cache.Clear();
                 DisposeCore();
                 disposedValue = true;
+                QuerySystem.RemoveQuery(this);
             }
         }
 

@@ -36,6 +36,17 @@
         private DestroyDelegate? destroyDelegate;
         private PropertyInfo? gameObjectProp;
         private bool awaked;
+        private Guid guid = Guid.NewGuid();
+
+        /// <summary>
+        /// The GUID of the <see cref="ScriptComponent"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid
+        {
+            get => guid;
+            set => guid = value;
+        }
 
         [EditorProperty("Script", AssetType.Script)]
         public AssetRef ScriptRef
@@ -64,6 +75,10 @@
                         var prop = properties[i];
                         if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null)
                         {
+                            if (prop.PropertyType.IsClass)
+                            {
+                                continue;
+                            }
                             if (prop.CanWrite && prop.CanWrite)
                             {
                                 propertyValues[prop.Name] = prop.GetValue(instance);
@@ -83,9 +98,13 @@
                         var prop = properties[i];
                         if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null)
                         {
-                            if (prop.CanWrite && prop.CanWrite)
+                            if (prop.PropertyType.IsClass)
                             {
-                                prop.SetValue(instance, propertyValues[prop.Name]);
+                                continue;
+                            }
+                            if (prop.CanWrite && prop.CanWrite && propertyValues.TryGetValue(prop.Name, out var propValue))
+                            {
+                                prop.SetValue(instance, propValue);
                             }
                         }
                     }
@@ -115,7 +134,7 @@
         }
 
         [JsonIgnore]
-        public object? Instance { get => instance; set => instance = value; }
+        public object? Instance { get => instance; protected internal set => instance = value; }
 
         [JsonIgnore]
         public ScriptFlags Flags => flags;
@@ -139,16 +158,77 @@
 
         public event Action<IHasFlags<ScriptFlags>, ScriptFlags>? FlagsChanged;
 
-        public void Awake()
+        public void ScriptCreate()
         {
             if (awaked)
                 return;
 
             awaked = true;
-
-            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
-            ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
             CreateInstance();
+        }
+
+        public void ScriptLoad()
+        {
+            List<string> toRemove = new(propertyValues.Keys);
+            var scene = GameObject.GetScene();
+            for (int i = 0; i < properties.Length; i++)
+            {
+                var prop = properties[i];
+
+                if (prop == gameObjectProp) // skip
+                    continue;
+
+                if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null && prop.CanWrite && prop.CanWrite)
+                {
+                    if (propertyValues.TryGetValue(prop.Name, out object? value))
+                    {
+                        if (prop.PropertyType.IsClass && value is Guid guid)
+                        {
+                            value = ResolveReference(scene, prop.PropertyType, guid);
+                        }
+                        if (prop.PropertyType.IsInstanceOfType(value))
+                        {
+                            value = propertyValues[prop.Name] = value;
+                        }
+                        else if (prop.PropertyType == typeof(float))
+                        {
+                            value = propertyValues[prop.Name] = (float)(double)value;
+                        }
+                        else if (prop.PropertyType == typeof(uint))
+                        {
+                            value = propertyValues[prop.Name] = (uint)(long)value;
+                        }
+                        else if (prop.PropertyType == typeof(int))
+                        {
+                            value = propertyValues[prop.Name] = (int)(long)value;
+                        }
+                        else if (prop.PropertyType.IsEnum)
+                        {
+                            value = propertyValues[prop.Name] = Enum.ToObject(prop.PropertyType, (int)(long)value);
+                        }
+                        else if (!prop.PropertyType.IsInstanceOfType(value))
+                        {
+                            value = propertyValues[prop.Name] = prop.GetValue(value);
+                        }
+
+                        prop.SetValue(instance, value);
+                        toRemove.Remove(prop.Name);
+                    }
+                    else
+                    {
+                        propertyValues.Add(prop.Name, prop.GetValue(instance));
+                    }
+                }
+            }
+
+            for (int i = 0; i < toRemove.Count; i++)
+            {
+                propertyValues.Remove(toRemove[i]);
+            }
+        }
+
+        public void ScriptAwake()
+        {
             if (Application.InEditMode)
             {
                 return;
@@ -158,7 +238,6 @@
             {
                 try
                 {
-                    gameObjectProp.SetValue(instance, gameObject);
                     awakeDelegate();
                 }
                 catch (Exception e)
@@ -166,6 +245,33 @@
                     LoggerFactory.General.Log(e);
                 }
             }
+        }
+
+        private static object? ResolveReference(Scene scene, Type type, Guid guid)
+        {
+            if (guid == Guid.Empty)
+                return null;
+
+            if (type.IsAssignableTo(typeof(GameObject)))
+            {
+                return scene.FindByGuid(guid);
+            }
+            if (type.IsAssignableTo(typeof(IComponent)))
+            {
+                return scene.FindComponentByGuid(guid);
+            }
+            if (type.IsAssignableTo(typeof(ScriptBehaviour)))
+            {
+                return ((ScriptComponent?)scene.FindComponentByGuid(guid))?.Instance;
+            }
+
+            return null;
+        }
+
+        public void Awake()
+        {
+            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
+            ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
         }
 
         private void AssembliesUnloaded(object? sender, EventArgs? e)
@@ -182,6 +288,7 @@
         private void AssemblyLoaded(object? sender, Assembly e)
         {
             CreateInstance();
+            ScriptLoad();
         }
 
         public void Update()
@@ -253,11 +360,6 @@
             DestroyInstance();
         }
 
-        public Task CreateInstanceAsync()
-        {
-            return Task.Run(CreateInstance);
-        }
-
         public void CreateInstance()
         {
             lock (this)
@@ -310,64 +412,12 @@
                         }
 
                         gameObjectProp = scriptType.GetProperty(nameof(GameObject));
+                        gameObjectProp.SetValue(instance, gameObject);
                     }
 
                     FlagsChanged?.Invoke(this, flags);
 
                     properties = scriptType.GetProperties();
-
-                    List<string> toRemove = new(propertyValues.Keys);
-
-                    for (int i = 0; i < properties.Length; i++)
-                    {
-                        var prop = properties[i];
-
-                        if (prop == gameObjectProp) // skip
-                            continue;
-
-                        if (prop.GetCustomAttribute<EditorPropertyAttribute>() != null && prop.CanWrite && prop.CanWrite)
-                        {
-                            if (propertyValues.TryGetValue(prop.Name, out object? value))
-                            {
-                                if (prop.PropertyType.IsInstanceOfType(value))
-                                {
-                                    value = propertyValues[prop.Name] = value;
-                                }
-                                else if (prop.PropertyType == typeof(float))
-                                {
-                                    value = propertyValues[prop.Name] = (float)(double)value;
-                                }
-                                else if (prop.PropertyType == typeof(uint))
-                                {
-                                    value = propertyValues[prop.Name] = (uint)(long)value;
-                                }
-                                else if (prop.PropertyType == typeof(int))
-                                {
-                                    value = propertyValues[prop.Name] = (int)(long)value;
-                                }
-                                else if (prop.PropertyType.IsEnum)
-                                {
-                                    value = propertyValues[prop.Name] = Enum.ToObject(prop.PropertyType, (int)(long)value);
-                                }
-                                else if (!prop.PropertyType.IsInstanceOfType(value))
-                                {
-                                    value = propertyValues[prop.Name] = prop.GetValue(value);
-                                }
-
-                                prop.SetValue(instance, value);
-                                toRemove.Remove(prop.Name);
-                            }
-                            else
-                            {
-                                propertyValues.Add(prop.Name, prop.GetValue(instance));
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < toRemove.Count; i++)
-                    {
-                        propertyValues.Remove(toRemove[i]);
-                    }
                 }
                 catch (Exception e)
                 {

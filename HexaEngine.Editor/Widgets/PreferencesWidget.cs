@@ -61,7 +61,7 @@
                 ImGui.BeginDisabled(!unsavedChanges);
                 if (ImGui.Button("Save"))
                 {
-                    config.Save();
+                    Config.SaveGlobal();
                     unsavedChanges = false;
                     Flags &= ~ImGuiWindowFlags.UnsavedDocument;
                 }

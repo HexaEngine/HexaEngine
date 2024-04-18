@@ -24,7 +24,7 @@
                 theme = value;
                 themeName = value.ToString();
                 config.SetValue(nameof(Theme), theme);
-                Config.Global.Save();
+                Config.SaveGlobal();
                 ThemeChanged?.Invoke(theme);
             }
         }

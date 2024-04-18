@@ -94,7 +94,7 @@
             plugins.Clear();
             loader?.Unload();
 
-            Config.Global.Save();
+            Config.SaveGlobal();
         }
     }
 }

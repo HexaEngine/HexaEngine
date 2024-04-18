@@ -62,7 +62,9 @@
 
         public RingBuffer<double> Frame = new(SampleBufferSize);
 
-        public RingBuffer<double> Systems = new(SampleBufferSize);
+        public RingBuffer<double> TotalUpdate = new(SampleBufferSize);
+        public RingBuffer<double> SceneTick = new(SampleBufferSize);
+        public RingBuffer<double> FixedUpdate = new(SampleBufferSize);
         private readonly Dictionary<object, RingBuffer<double>> systems = new();
 
         public RingBuffer<double> Update = new(SampleBufferSize);
@@ -315,12 +317,18 @@
                 if (scene != null)
                 {
                     ImPlot.SetNextAxesToFit();
-                    if (ImPlot.BeginPlot("Scene Tick", new Vector2(-1, 0)))
+                    if (ImPlot.BeginPlot("Scene Update", new Vector2(-1, 0)))
                     {
                         ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                        ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
+                        ImPlot.PlotShaded("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, TotalUpdate.Head);
+                        ImPlot.PlotShaded("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, fill, 1, 0, ImPlotShadedFlags.None, SceneTick.Head);
+                        ImPlot.PlotShaded("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, FixedUpdate.Head);
                         ImPlot.PopStyleVar();
-                        ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
+
+                        ImPlot.PlotLine("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, 1, 0, ImPlotLineFlags.None, TotalUpdate.Head);
+                        ImPlot.PlotLine("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, 1, 0, ImPlotLineFlags.None, SceneTick.Head);
+                        ImPlot.PlotLine("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, 1, 0, ImPlotLineFlags.None, FixedUpdate.Head);
+
                         for (int i = 0; i < scene.Systems.Count; i++)
                         {
                             var system = scene.Systems[i];
@@ -443,7 +451,11 @@
 
             if (this.scene)
             {
-                Systems.Add(scene.Profiler[scene.Systems] * 1000);
+                var sceneTick = scene.Profiler[Scene.ProfileObject] * 1000;
+                var fixedUpdate = scene.Profiler[Time.ProfileObject] * 1000;
+                SceneTick.Add(sceneTick);
+                FixedUpdate.Add(fixedUpdate);
+                TotalUpdate.Add(sceneTick + fixedUpdate);
 
                 for (int i = 0; i < scene.Systems.Count; i++)
                 {

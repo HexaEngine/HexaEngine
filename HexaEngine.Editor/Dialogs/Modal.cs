@@ -7,17 +7,22 @@
     {
         private bool windowEnded;
         private bool signalShow;
-        private bool signalClose;
-        private bool shown;
+        protected bool signalClose;
+        protected bool shown;
 
         public abstract string Name { get; }
 
         protected abstract ImGuiWindowFlags Flags { get; }
 
-        public bool Shown => shown;
+        public bool Shown { get => shown; protected set => shown = value; }
 
         public virtual void Draw()
         {
+            if (!shown)
+            {
+                return;
+            }
+
             if (signalShow)
             {
                 shown = true;
@@ -35,6 +40,8 @@
                 ImGui.CloseCurrentPopup();
                 signalClose = false;
                 shown = false;
+                ImGui.EndPopup();
+                return;
             }
             windowEnded = false;
 

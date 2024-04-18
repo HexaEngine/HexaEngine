@@ -47,13 +47,13 @@
                         if (messageBox.Result == MessageBoxResult.Yes)
                         {
                             SceneManager.Save();
-                            SceneManager.AsyncLoad(e.NewScene);
+                            SceneManager.AsyncLoad(e.NewScene, SceneInitFlags.SkipOnLoadWait);
                         }
 
                         if (messageBox.Result == MessageBoxResult.No)
                         {
                             UnsavedChanges = false;
-                            SceneManager.AsyncLoad(e.NewScene);
+                            SceneManager.AsyncLoad(e.NewScene, SceneInitFlags.SkipOnLoadWait);
                         }
 
                         unsavedDataDialogIsOpen = false;
@@ -457,7 +457,7 @@
                 SceneManager.BeginReload();
                 scene.RestoreState();
                 Application.EditorPlayState = EditorPlayState.Edit;
-                SceneManager.EndReload();
+                SceneManager.EndReload(SceneInitFlags.SkipOnLoadWait);
             }
         }
 
@@ -499,7 +499,7 @@
                 scene.SaveState();
                 Application.EditorPlayState = EditorPlayState.Play;
                 scene.IsSimulating = true;
-                SceneManager.EndReload();
+                SceneManager.EndReload(SceneInitFlags.SkipOnLoadWait);
             }
             else if (Application.InPauseState)
             {

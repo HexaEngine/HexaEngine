@@ -214,7 +214,7 @@
                     else
                     {
                         global = new Config();
-                        global.Save();
+                        SaveGlobal();
                     }
                 }
 
@@ -225,19 +225,16 @@
         /// <summary>
         /// Saves the configuration to a "config.json" file.
         /// </summary>
-        public void Save()
+        public static void SaveGlobal()
         {
-            lock (_lock)
-            {
-                File.WriteAllText("config.json", JsonSerializer.Serialize(this, typeof(Config), SourceGenerationContext.Default));
-            }
+            Global.Save("config.json");
         }
 
         /// <summary>
         /// Saves the configuration to the specified path.
         /// </summary>
         /// <param name="path">The path to the config.</param>
-        public void SaveTo(string path)
+        public void Save(string path)
         {
             lock (_lock)
             {
@@ -259,7 +256,7 @@
             else
             {
                 config = new Config();
-                config.Save();
+                config.Save(path);
             }
 
             return config;

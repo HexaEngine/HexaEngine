@@ -2694,8 +2694,17 @@
         /// <param name="plane">The plane vector to normalize.</param>
         /// <returns>The normalized plane vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector4 NormalizePlane(Vector4 plane)
+        public static unsafe Vector4 NormalizePlane(Vector4 plane)
         {
+            if (Sse41.IsSupported)
+            {
+                Vector128<float> vec = plane.AsVector128();
+                Vector128<float> vecLenSqr = Sse41.DotProduct(vec, vec, 0x7f);
+                Vector128<float> vecLen = Sse.Sqrt(vecLenSqr);
+                Vector128<float> result = Sse.Divide(vec, vecLen);
+                return result.AsVector4();
+            }
+
             float length = (float)Math.Sqrt(plane.X * plane.X + plane.Y * plane.Y + plane.Z * plane.Z);
             return new Vector4(plane.X / length, plane.Y / length, plane.Z / length, plane.W / length);
         }
@@ -2752,6 +2761,7 @@
         /// <param name="vector">The vector to project.</param>
         /// <param name="onto">The vector onto which to project.</param>
         /// <returns>The projected vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Project(Vector2 vector, Vector2 onto)
         {
             if (Sse41.IsSupported)
@@ -2793,6 +2803,7 @@
         /// <param name="vector">The vector to project.</param>
         /// <param name="onto">The vector onto which to project.</param>
         /// <returns>The projected vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Project(Vector3 vector, Vector3 onto)
         {
             if (Sse41.IsSupported)
@@ -2834,6 +2845,7 @@
         /// <param name="vector">The vector to project.</param>
         /// <param name="onto">The vector onto which to project.</param>
         /// <returns>The projected vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Project(Vector4 vector, Vector4 onto)
         {
             if (Sse41.IsSupported)
@@ -2867,6 +2879,90 @@
 
                 return onto * (dot / ontoLengthSquared);
             }
+        }
+
+        /// <summary>
+        /// Remaps a value from one range to another.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Remap(float value, float low1, float high1, float low2, float high2)
+        {
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
+        /// <summary>
+        /// Remaps a <see cref="Vector2"/> from one range to another.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Remap(Vector2 value, Vector2 low1, Vector2 high1, Vector2 low2, Vector2 high2)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecLow1 = low1.AsVector128();
+                Vector128<float> vecLow2 = low2.AsVector128();
+
+                Vector128<float> vecMLow1 = Sse.Subtract(value.AsVector128(), vecLow1);
+                Vector128<float> high2MLow2 = Sse.Subtract(high2.AsVector128(), vecLow2);
+                Vector128<float> high1MLow1 = Sse.Subtract(high1.AsVector128(), vecLow1);
+
+                Vector128<float> result = Sse.Multiply(vecMLow1, high2MLow2);
+                result = Sse.Divide(result, high1MLow1);
+                result = Sse.Add(vecLow2, result);
+
+                return result.AsVector2();
+            }
+
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
+        /// <summary>
+        /// Remaps a <see cref="Vector3"/> from one range to another.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Remap(Vector3 value, Vector3 low1, Vector3 high1, Vector3 low2, Vector3 high2)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecLow1 = low1.AsVector128();
+                Vector128<float> vecLow2 = low2.AsVector128();
+
+                Vector128<float> vecMLow1 = Sse.Subtract(value.AsVector128(), vecLow1);
+                Vector128<float> high2MLow2 = Sse.Subtract(high2.AsVector128(), vecLow2);
+                Vector128<float> high1MLow1 = Sse.Subtract(high1.AsVector128(), vecLow1);
+
+                Vector128<float> result = Sse.Multiply(vecMLow1, high2MLow2);
+                result = Sse.Divide(result, high1MLow1);
+                result = Sse.Add(vecLow2, result);
+
+                return result.AsVector3();
+            }
+
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
+        /// <summary>
+        /// Remaps a <see cref="Vector4"/> from one range to another.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Remap(Vector4 value, Vector4 low1, Vector4 high1, Vector4 low2, Vector4 high2)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecLow1 = low1.AsVector128();
+                Vector128<float> vecLow2 = low2.AsVector128();
+
+                Vector128<float> vecMLow1 = Sse.Subtract(value.AsVector128(), vecLow1);
+                Vector128<float> high2MLow2 = Sse.Subtract(high2.AsVector128(), vecLow2);
+                Vector128<float> high1MLow1 = Sse.Subtract(high1.AsVector128(), vecLow1);
+
+                Vector128<float> result = Sse.Multiply(vecMLow1, high2MLow2);
+                result = Sse.Divide(result, high1MLow1);
+                result = Sse.Add(vecLow2, result);
+
+                return result.AsVector4();
+            }
+
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
         }
     }
 }

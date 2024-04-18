@@ -435,6 +435,57 @@
             Sdl.Quit();
         }
 
+        private class Program
+        {
+            private static bool exiting = false;
+
+            private static unsafe void PlatformRun()
+            {
+                Event evnt;
+                Time.ResetTime();
+
+                while (!exiting)
+                {
+                    Sdl.PumpEvents();
+                    while (Sdl.PollEvent(&evnt) == (int)SdlBool.True)
+                    {
+                        for (int j = 0; j < hooks.Count; j++)
+                        {
+                            hooks[j](evnt);
+                        }
+
+                        HandleEvent(evnt);
+                    }
+
+                    Mouse.Poll();
+
+                    mainWindow.Render(graphicsContext);
+
+                    GraphicsAdapter.Current.PumpDebugMessages();
+
+                    Keyboard.Flush();
+                    Mouse.Flush();
+                    Time.FrameUpdate();
+                }
+
+                for (int i = 0; i < windows.Count; i++)
+                {
+                    windows[i].Dispose();
+                }
+
+                ((SdlWindow)mainWindow).DestroyWindow();
+
+                OnApplicationClose?.Invoke();
+
+                audioDevice.Dispose();
+                graphicsContext.Dispose();
+                graphicsDevice.Dispose();
+
+                SdlCheckError();
+                Sdl.Quit();
+            }
+        }
+
         public static void StartTextInput()
         {
             Sdl.StartTextInput();

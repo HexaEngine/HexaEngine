@@ -13,51 +13,51 @@
         /// <summary>
         /// System will be called on awake.
         /// </summary>
-        Awake = 1,
+        Awake = 1 << 0,
 
         /// <summary>
         /// System will be called on graphics awake.
         /// </summary>
-        GraphicsAwake = 2,
+        GraphicsAwake = 1 << 1,
 
         /// <summary>
         /// System will be called on destroy.
         /// </summary>
-        Destroy = 4,
+        Destroy = 1 << 2,
 
         /// <summary>
         /// System will be called every frame.
         /// </summary>
-        Update = 8,
+        Update = 1 << 3,
 
         /// <summary>
         /// System will be called every fixed update.
         /// </summary>
-        FixedUpdate = 16,
+        FixedUpdate = 1 << 4,
 
         /// <summary>
         /// System will be called every physics update.
         /// </summary>
-        PhysicsUpdate = 32,
+        PhysicsUpdate = 1 << 5,
 
         /// <summary>
         /// System will be called after physics update.
         /// </summary>
-        LateUpdate = 64,
+        LateUpdate = 1 << 6,
 
         /// <summary>
         /// System will be called by the render thread.
         /// </summary>
-        GraphicsUpdate = 128,
+        GraphicsUpdate = 1 << 7,
 
         /// <summary>
         /// System will be called on load.
         /// </summary>
-        Load = 256,
+        Load = 1 << 8,
 
         /// <summary>
         /// System will be called on unload.
         /// </summary>
-        Unload = 512,
+        Unload = 1 << 9,
     }
 }

@@ -314,9 +314,15 @@
                         showImGuiDemo = !showImGuiDemo;
                     }
 
-                    if (ImGui.MenuItem("Progress Modal Test"))
+                    if (ImGui.MenuItem("Progress Modal Test (Spinner)"))
                     {
                         popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress"));
+                    }
+
+                    if (ImGui.MenuItem("Progress Modal Test (Bar)"))
+                    {
+                        popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress", ProgressType.Bar));
+                        ((ProgressModal)popup).Report(0.8f);
                     }
 
                     ImGui.EndMenu();

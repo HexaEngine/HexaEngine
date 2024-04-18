@@ -131,7 +131,7 @@ namespace HexaEngine.Graphics.Renderers
                     width = ss.GetInt32();
                     OnRendererResizeBegin();
                     OnRendererResizeEnd(width, height);
-                    Config.Global.Save();
+                    Config.SaveGlobal();
                 };
             }
             {
@@ -142,7 +142,7 @@ namespace HexaEngine.Graphics.Renderers
                     height = ss.GetInt32();
                     OnRendererResizeBegin();
                     OnRendererResizeEnd(width, height);
-                    Config.Global.Save();
+                    Config.SaveGlobal();
                 };
             }
             {
@@ -151,7 +151,7 @@ namespace HexaEngine.Graphics.Renderers
                 val.ValueChanged += (ss, ee) =>
                 {
                     swapChain.VSync = ss.GetBool();
-                    Config.Global.Save();
+                    Config.SaveGlobal();
                 };
             }
             {
@@ -160,7 +160,7 @@ namespace HexaEngine.Graphics.Renderers
                 val.ValueChanged += (ss, ee) =>
                 {
                     swapChain.LimitFPS = ss.GetBool();
-                    Config.Global.Save();
+                    Config.SaveGlobal();
                 };
             }
             {
@@ -169,11 +169,11 @@ namespace HexaEngine.Graphics.Renderers
                 val.ValueChanged += (ss, ee) =>
                 {
                     swapChain.TargetFPS = ss.GetInt32();
-                    Config.Global.Save();
+                    Config.SaveGlobal();
                 };
             }
 
-            Config.Global.Save();
+            Config.SaveGlobal();
         }
 
         private void OnRendererResizeBegin()

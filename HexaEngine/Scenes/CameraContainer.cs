@@ -7,7 +7,7 @@
     public class CameraContainer : IDisposable
     {
         private readonly List<Camera> cameras = [];
-        private UnsafeList<StdString> cameraNames = [];
+        private UnsafeList<Pointer<byte>> cameraNames = [];
         private int activeCamera;
         private bool disposedValue;
 
@@ -33,7 +33,7 @@
         }
 
         [JsonIgnore]
-        public UnsafeList<StdString> Names => cameraNames;
+        public UnsafeList<Pointer<byte>> Names => cameraNames;
 
         public int ActiveCameraIndex { get => activeCamera; set => activeCamera = value; }
 
@@ -48,19 +48,19 @@
             }
         }
 
-        public void Add(Camera camera)
+        public unsafe void Add(Camera camera)
         {
             cameras.Add(camera);
-            cameraNames.Add(camera.Name);
-            camera.OnNameChanged += OnNameChanged;
+            cameraNames.Add(camera.Name.ToUTF8Ptr());
+            camera.NameChanged += OnNameChanged;
         }
 
-        public void Clear()
+        public unsafe void Clear()
         {
             for (int i = 0; i < cameras.Count; i++)
             {
-                cameras[i].OnNameChanged -= OnNameChanged;
-                cameraNames[i].Release();
+                cameras[i].NameChanged -= OnNameChanged;
+                Free(cameraNames[i]);
             }
             cameras.Clear();
             cameraNames.Clear();
@@ -75,27 +75,26 @@
             return false;
         }
 
-        public bool Remove(Camera camera)
+        public unsafe bool Remove(Camera camera)
         {
-            camera.OnNameChanged -= OnNameChanged;
+            camera.NameChanged -= OnNameChanged;
             int index = cameras.IndexOf(camera);
             if (index != -1)
             {
                 cameras.RemoveAt(index);
-                var name = cameraNames[index];
+                Free(cameraNames[index]);
                 cameraNames.RemoveAt(index);
-                name.Release();
                 return true;
             }
             return false;
         }
 
-        private void OnNameChanged(GameObject gameObject, string name)
+        private unsafe void OnNameChanged(GameObject gameObject, string name)
         {
             int index = cameras.IndexOf((Camera)gameObject);
             var oldName = cameraNames[index];
-            cameraNames[index] = name;
-            oldName.Release();
+            cameraNames[index] = name.ToUTF8Ptr();
+            Free(oldName);
         }
 
         protected virtual void Dispose(bool disposing)

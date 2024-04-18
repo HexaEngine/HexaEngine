@@ -92,10 +92,16 @@
             return artifact;
         }
 
+        public void BeginImportChild(string path)
+        {
+            SourceAssetsDatabase.Ignore(path);
+        }
+
         public SourceAssetMetadata ImportChild(string path, Guid childGuid)
         {
             children.Add(path);
             GuidProvider guidProvider = new(childGuid, sourceAsset.Guid);
+            SourceAssetsDatabase.Unignore(path);
             return SourceAssetsDatabase.ImportFile(path, guidProvider);
         }
 

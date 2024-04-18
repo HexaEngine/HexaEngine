@@ -1,50 +1,57 @@
 ﻿namespace HexaEngine.Scenes.Systems
 {
     using HexaEngine.Mathematics;
+    using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
 
     public class TransformSystem : ISceneSystem
     {
-        private readonly List<GameObject> objects = new();
+        private readonly ObjectTypeQuery<GameObject> objects = new(Queries.QueryFlags.ObjectAdded | Queries.QueryFlags.ObjectRemoved);
         private readonly ConcurrentQueue<Transform> updateQueue = new();
 
         public string Name => "TransformUpdate";
 
-        public SystemFlags Flags => SystemFlags.LateUpdate;
+        public SystemFlags Flags => SystemFlags.LateUpdate | SystemFlags.Awake | SystemFlags.Destroy;
 
         public void Awake(Scene scene)
         {
+            scene.QueryManager.AddQuery(objects);
+            objects.OnAdded += OnAdded;
+            objects.OnRemoved += OnRemoved;
+            for (int i = 0; i < objects.Count; i++)
+            {
+                objects[i].TransformChanged += TransformChanged;
+                objects[i].Transform.Recalculate();
+            }
+        }
+
+        private void OnRemoved(GameObject gameObject)
+        {
+            gameObject.TransformChanged -= TransformChanged;
+        }
+
+        private void OnAdded(GameObject gameObject)
+        {
+            gameObject.TransformChanged += TransformChanged;
+            gameObject.Transform.Recalculate();
         }
 
         public void Destroy()
         {
-        }
-
-        public void FixedUpdate()
-        {
-        }
-
-        public void Register(GameObject gameObject)
-        {
-            objects.Add(gameObject);
-            gameObject.Transform.Changed += TransformChanged;
-            updateQueue.Enqueue(gameObject.Transform);
-        }
-
-        private void TransformChanged(Transform transform)
-        {
-            if (!updateQueue.Contains(transform))
+            objects.OnAdded -= OnAdded;
+            objects.OnRemoved -= OnRemoved;
+            for (int i = 0; i < objects.Count; i++)
             {
-                updateQueue.Enqueue(transform);
+                objects[i].TransformChanged -= TransformChanged;
             }
+            objects.Dispose();
+            updateQueue.Clear();
         }
 
-        public void Unregister(GameObject gameObject)
+        private void TransformChanged(GameObject sender, Transform e)
         {
-            objects.Remove(gameObject);
-            gameObject.Transform.Changed -= TransformChanged;
+            updateQueue.Enqueue(e);
         }
 
         public void Update(float dt)

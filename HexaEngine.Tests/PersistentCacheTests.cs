@@ -5,6 +5,9 @@ namespace HexaEngine.Tests
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 
+    using NUnit.Framework;
+
+
     public unsafe class PersistentCacheTests
     {
         [SetUp]

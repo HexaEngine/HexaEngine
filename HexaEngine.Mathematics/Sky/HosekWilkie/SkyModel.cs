@@ -3,6 +3,7 @@
     using HexaEngine.Mathematics.Sky;
     using System;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Helper class for the Hosek-Wilkie sky model calculations.
@@ -3928,9 +3929,10 @@
             nint* ix = stackalloc nint[4];
             float** ic = (float**)ix;
 
+
             for (int i = 0; i < 4; i++)
             {
-                float* ii = stackalloc float[9];
+                float* ii = (float*)Marshal.AllocHGlobal(9 * sizeof(float));
                 ic[i] = ii;
             }
 
@@ -3961,6 +3963,11 @@
                           + cw[1] * ic[1][i]
                           + cw[2] * ic[2][i]
                           + cw[3] * ic[3][i];
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Marshal.FreeHGlobal((nint)ic[i]);
             }
 
             return cw[0] * ir[0] + cw[1] * ir[1] + cw[2] * ir[2] + cw[3] * ir[3];

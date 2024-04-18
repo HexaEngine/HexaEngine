@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Animations
 {
+    using HexaEngine.Components.Physics;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -24,6 +25,12 @@
         private readonly AnimatorStateMachine stateMachine = new();
 
         private SkinnedMeshRendererComponent? renderer;
+
+        /// <summary>
+        /// The GUID of the <see cref="Animator"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
         public GameObject GameObject { get; set; }

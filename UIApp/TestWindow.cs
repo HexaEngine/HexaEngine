@@ -40,7 +40,7 @@
             this.graphicsDevice = graphicsDevice;
             graphicsContext = graphicsDevice.Context;
             swapChain = SwapChain;
-            renderDispatcher = Dispatcher;
+            renderDispatcher = (ThreadDispatcher)Dispatcher;
 
             swapChain.VSync = true;
 

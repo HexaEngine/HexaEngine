@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Physics
 {
+    using HexaEngine.Components.Audio;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
@@ -16,6 +17,12 @@
         private bool collisionEnabled;
         private float breakForce = float.PositiveInfinity;
         private float breakTorque = float.PositiveInfinity;
+
+        /// <summary>
+        /// The GUID of the <see cref="Joint"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         public GameObject GameObject { get; set; }
 

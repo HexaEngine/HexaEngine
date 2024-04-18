@@ -33,6 +33,17 @@
         private GCHandle gcHandle;
         private object? tag;
 
+        private readonly EventHandlers<GameObject, bool> enabledChangedList = new();
+        private readonly EventHandlers<GameObject, string> nameChangedList = new();
+        private readonly EventHandlers<GameObject, object?> tagChangedList = new();
+        private readonly EventHandlers<GameObject, GameObject?> parentChangedList = new();
+        private readonly EventHandlers<GameObject, Transform> transformChangedList = new();
+        private readonly EventHandlers<GameObject, Transform> transformUpdatedList = new();
+        private readonly EventHandlers<GameObject, IComponent> componentAddedList = new();
+        private readonly EventHandlers<GameObject, IComponent> componentRemovedList = new();
+        private readonly EventHandlers<GameObject, GameObject> childAddedList = new();
+        private readonly EventHandlers<GameObject, GameObject> childRemovedList = new();
+
         private enum InternalGameObjectFlags : byte
         {
             None = 0,
@@ -126,7 +137,7 @@
                 if (SetAndNotifyWithEqualsTest(ref name, value))
                 {
                     fullName = null;
-                    OnNameChanged?.Invoke(this, value);
+                    nameChangedList.Invoke(this, value);
                 }
             }
         }
@@ -166,7 +177,7 @@
 
                 SetFlagAndNotify(InternalGameObjectFlags.Enabled, value);
 
-                OnEnabledChanged?.Invoke(this, value);
+                enabledChangedList.Invoke(this, value);
 
                 for (int i = 0; i < Children.Count; i++)
                 {
@@ -241,7 +252,7 @@
             {
                 if (SetAndNotifyWithRefEqualsTest(ref parent, value))
                 {
-                    OnParentChanged?.Invoke(this, value);
+                    parentChangedList.Invoke(this, value);
                 }
             }
         }
@@ -315,7 +326,7 @@
             {
                 if (SetAndNotifyWithRefEqualsTest(ref tag, value))
                 {
-                    OnTagChanged?.Invoke(this, value);
+                    tagChangedList.Invoke(this, value);
                 }
             }
         }
@@ -340,35 +351,88 @@
             }
         }
 
-        public event GameObjectOnEnabledChanged? OnEnabledChanged;
+        public event EventHandler<GameObject, bool> EnabledChanged
+        {
+            add => enabledChangedList.AddHandler(value);
+            remove => enabledChangedList.RemoveHandler(value);
+        }
 
-        public event GameObjectOnNameChanged? OnNameChanged;
+        public event EventHandler<GameObject, string> NameChanged
+        {
+            add => nameChangedList.AddHandler(value);
+            remove => nameChangedList.RemoveHandler(value);
+        }
 
-        public event Action<GameObject, object?>? OnTagChanged;
+        public event EventHandler<GameObject, object?> TagChanged
+        {
+            add => tagChangedList.AddHandler(value);
+            remove => tagChangedList.RemoveHandler(value);
+        }
 
-        public event Action<GameObject, GameObject?>? OnParentChanged;
+        public event EventHandler<GameObject, GameObject?> ParentChanged
+        {
+            add => parentChangedList.AddHandler(value);
+            remove => parentChangedList.RemoveHandler(value);
+        }
 
-        public event Action<GameObject>? OnTransformed;
+        public event EventHandler<GameObject, Transform> TransformChanged
+        {
+            add => transformChangedList.AddHandler(value);
+            remove => transformChangedList.RemoveHandler(value);
+        }
 
-        public event Action<GameObject, IComponent>? OnComponentAdded;
+        public event EventHandler<GameObject, Transform> TransformUpdated
+        {
+            add => transformUpdatedList.AddHandler(value);
+            remove => transformUpdatedList.RemoveHandler(value);
+        }
 
-        public event Action<GameObject, IComponent>? OnComponentRemoved;
+        public event EventHandler<GameObject, IComponent> ComponentAdded
+        {
+            add => componentAddedList.AddHandler(value);
+            remove => componentAddedList.RemoveHandler(value);
+        }
+
+        public event EventHandler<GameObject, IComponent> ComponentRemoved
+        {
+            add => componentRemovedList.AddHandler(value);
+            remove => componentRemovedList.RemoveHandler(value);
+        }
+
+        public event EventHandler<GameObject, GameObject> ChildAdded
+        {
+            add => childAddedList.AddHandler(value);
+            remove => childAddedList.RemoveHandler(value);
+        }
+
+        public event EventHandler<GameObject, GameObject> ChildRemoved
+        {
+            add => childRemovedList.AddHandler(value);
+            remove => childRemovedList.RemoveHandler(value);
+        }
 
         protected void OverwriteTransform(Transform transform)
         {
-            this.transform.Updated -= TransformUpdated;
+            this.transform.Updated -= OnTransformUpdated;
+            this.transform.Changed -= OnTransformChanged;
             this.transform = transform;
-            transform.Updated += TransformUpdated;
+            transform.Updated += OnTransformUpdated;
+            transform.Changed += OnTransformChanged;
         }
 
-        protected virtual void TransformUpdated(Transform transform)
+        protected virtual void OnTransformChanged(Transform transform)
         {
-            OnTransformed?.Invoke(this);
+            transformChangedList.Invoke(this, transform);
+        }
+
+        protected virtual void OnTransformUpdated(Transform transform)
+        {
+            transformUpdatedList.Invoke(this, transform);
         }
 
         public void SendUpdateTransformed()
         {
-            OnTransformed?.Invoke(this);
+            transformUpdatedList.Invoke(this, transform);
         }
 
         public void SaveState()
@@ -441,6 +505,7 @@
             {
                 child.Initialize();
             }
+            childAddedList.Invoke(this, child);
         }
 
         public virtual bool RemoveChild(GameObject child)
@@ -454,6 +519,7 @@
                 child.Uninitialize();
             }
             child.parent = null;
+            childAddedList.Invoke(this, child);
             return true;
         }
 
@@ -465,7 +531,7 @@
                 component.GameObject = this;
                 component.Awake();
             }
-            OnComponentAdded?.Invoke(this, component);
+            componentAddedList.Invoke(this, component);
         }
 
         public virtual void AddComponent<T>() where T : IComponent, new()
@@ -477,7 +543,7 @@
                 component.GameObject = this;
                 component.Awake();
             }
-            OnComponentAdded?.Invoke(this, component);
+            componentAddedList.Invoke(this, component);
         }
 
         public virtual void AddComponentSingleton<T>() where T : IComponent, new()
@@ -494,7 +560,7 @@
                 component.GameObject = this;
                 component.Awake();
             }
-            OnComponentAdded?.Invoke(this, component);
+            componentAddedList.Invoke(this, component);
         }
 
         public virtual void RemoveComponent(IComponent component)
@@ -505,12 +571,13 @@
             }
 
             components.Remove(component);
-            OnComponentRemoved?.Invoke(this, component);
+            componentRemovedList.Invoke(this, component);
         }
 
         public virtual void Initialize()
         {
-            Transform.Updated += TransformUpdated;
+            Transform.Updated += OnTransformUpdated;
+            Transform.Changed += OnTransformChanged;
             Transform.Parent = parent?.Transform;
             scene = GetScene();
             scene.RegisterChild(this);
@@ -530,7 +597,9 @@
 
         public virtual void Uninitialize()
         {
-            Transform.Updated -= TransformUpdated;
+            Transform.Updated -= OnTransformUpdated;
+            Transform.Changed -= OnTransformChanged;
+            Transform.Parent = null;
             for (int i = 0; i < components.Count; i++)
             {
                 components[i].Destroy();
@@ -543,6 +612,17 @@
             Initialized = false;
             scene = null;
             tag = null;
+
+            // clear events to avoid leaks
+            enabledChangedList.Clear();
+            nameChangedList.Clear();
+            tagChangedList.Clear();
+            parentChangedList.Clear();
+            transformUpdatedList.Clear();
+            componentAddedList.Clear();
+            componentRemovedList.Clear();
+            childAddedList.Clear();
+            childRemovedList.Clear();
         }
 
         public virtual Scene GetScene()

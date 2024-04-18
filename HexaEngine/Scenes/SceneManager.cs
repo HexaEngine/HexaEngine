@@ -5,39 +5,25 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
+    using HexaEngine.Physics;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Contains the <see cref="Current"/> scene and informs about a change (<see cref="SceneChanged"/>) of <see cref="Current"/>
-    /// </summary>
     public static class SceneManager
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(SceneManager));
         private static readonly object _lock = new();
         private static readonly SemaphoreSlim semaphore = new(1);
 
-        /// <summary>
-        /// Gets the current scene.
-        /// </summary>
-        /// <value>
-        /// The current scene.
-        /// </value>
         public static Scene? Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; [MethodImpl(MethodImplOptions.AggressiveInlining)] private set; }
 
         public static object SyncObject => _lock;
 
-        /// <summary>
-        /// Occurs when <see cref="Current"/> changed.
-        /// </summary>
         public static event EventHandler<SceneChangedEventArgs>? SceneChanged;
 
-        /// <summary>
-        /// Occurs when <see cref="Current"/> changing.
-        /// </summary>
         public static event EventHandler<SceneChangingEventArgs>? SceneChanging;
 
         public static void Lock()
@@ -81,13 +67,13 @@
             }
         }
 
-        public static void Load(string path)
+        public static void Load(string path, SceneInitFlags initFlags)
         {
             lock (_lock)
             {
                 if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
                 {
-                    Load(scene);
+                    Load(scene, initFlags);
                 }
                 else if (Application.InEditorMode)
                 {
@@ -101,15 +87,8 @@
             }
         }
 
-        /// <summary>
-        /// Loads the specified scene and disposes the old Scene automatically.<br/>
-        /// Calls <see cref="IScene.Initialize"/> from <paramref name="scene"/><br/>
-        /// Notifies <see cref="SceneChanged"/><br/>
-        /// Forces the GC to Collect.<br/>
-        /// </summary>
-        /// <param name="scene">The scene.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Load(Scene? scene)
+        public static void Load(Scene? scene, SceneInitFlags initFlags)
         {
             // Early exit nothing to do.
             if (Current == null && scene == null)
@@ -127,14 +106,14 @@
 
             window.Dispatcher.InvokeBlocking(state =>
             {
-                (ICoreWindow window, Scene? scene) = state;
+                (ICoreWindow window, Scene? scene, SceneInitFlags flags) = state;
                 IScene? iScene = scene;
 
                 semaphore.Wait();
 
                 if (Current == null && iScene != null)
                 {
-                    iScene.Initialize();
+                    iScene.Initialize(flags);
                     iScene.Load(window.GraphicsDevice);
                     lock (_lock)
                     {
@@ -182,7 +161,7 @@
 
                     ResourceManager.Shared.Release();
 
-                    iScene.Initialize();
+                    iScene.Initialize(flags);
 
                     lock (_lock)
                     {
@@ -196,11 +175,11 @@
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, (window, scene));
+            }, (window, scene, initFlags));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Reload()
+        public static bool Reload(SceneInitFlags initFlags)
         {
             if (OnSceneChanging(SceneChangeType.Reload, Current))
             {
@@ -221,7 +200,7 @@
 
                 semaphore.Wait();
 
-                ICoreWindow window = state;
+                (ICoreWindow window, SceneInitFlags initFlags) = state;
                 ResourceManager.Shared.BeginNoGCRegion();
 
                 IScene scene = Current;
@@ -229,7 +208,7 @@
                 scene.Unload();
                 scene.Uninitialize();
 
-                scene.Initialize();
+                scene.Initialize(initFlags);
                 scene.Load(window.GraphicsDevice);
 
                 OnSceneChanged(SceneChangeType.Reload, Current, Current);
@@ -240,7 +219,7 @@
 
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, window);
+            }, (window, initFlags));
 
             return true;
         }
@@ -284,11 +263,11 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EndReload()
+        public static void EndReload(SceneInitFlags initFlags)
         {
             var window = Application.MainWindow;
 
-            window.Dispatcher.InvokeBlocking(window =>
+            window.Dispatcher.InvokeBlocking(state =>
             {
                 lock (_lock)
                 {
@@ -298,11 +277,13 @@
                     }
                 }
 
+                (ICoreWindow window, SceneInitFlags flags) = state;
+
                 semaphore.Wait();
 
                 IScene scene = Current;
 
-                scene.Initialize();
+                scene.Initialize(flags);
                 scene.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
@@ -311,14 +292,14 @@
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
                 semaphore.Release();
-            }, window);
+            }, (window, initFlags));
         }
 
-        public static Task AsyncLoad(string path)
+        public static Task AsyncLoad(string path, SceneInitFlags initFlags)
         {
             if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
             {
-                return AsyncLoad(scene);
+                return AsyncLoad(scene, initFlags);
             }
             else if (Application.InEditorMode)
             {
@@ -333,13 +314,8 @@
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Asynchronous loads the scene over <see cref="Load(Scene)"/>
-        /// </summary>
-        /// <param name="scene">The scene.</param>
-        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task AsyncLoad(Scene? scene)
+        public static Task AsyncLoad(Scene? scene, SceneInitFlags initFlags)
         {
             // Early exit nothing to do.
             if (Current == null && scene == null)
@@ -359,14 +335,14 @@
             {
                 await window.Dispatcher.InvokeAsync(async state =>
                 {
-                    (ICoreWindow window, Scene? scene) = state;
+                    (ICoreWindow window, Scene? scene, SceneInitFlags flags) = state;
                     IScene? iScene = scene;
 
                     await semaphore.WaitAsync();
 
                     if (Current == null && iScene != null)
                     {
-                        await iScene.InitializeAsync();
+                        await iScene.InitializeAsync(flags);
                         iScene.Load(window.GraphicsDevice);
 
                         lock (_lock)
@@ -416,7 +392,7 @@
 
                         ResourceManager.Shared.Release();
 
-                        await iScene.InitializeAsync();
+                        await iScene.InitializeAsync(flags);
                         iScene.Load(window.GraphicsDevice);
 
                         lock (_lock)
@@ -431,14 +407,10 @@
 
                     GC.WaitForPendingFinalizers();
                     GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-                }, (window, scene));
+                }, (window, scene, initFlags));
             });
         }
 
-        /// <summary>
-        /// Unloads <see cref="Current"/> if != <see langword="null"/><br/>
-        /// Sets <see cref="Current"/> <see langword="null"/><br/>
-        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Unload()
         {

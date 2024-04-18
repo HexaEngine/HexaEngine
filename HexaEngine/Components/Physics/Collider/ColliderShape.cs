@@ -20,6 +20,12 @@
 
         private readonly List<Pointer<PxShape>> shapes = new();
 
+        /// <summary>
+        /// The GUID of the <see cref="ColliderShape"/>.
+        /// </summary>
+        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         [JsonIgnore]
         internal static readonly ConcurrentNativeToManagedMapper mapper = new();
 

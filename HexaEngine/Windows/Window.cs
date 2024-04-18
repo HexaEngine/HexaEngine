@@ -142,7 +142,7 @@ namespace HexaEngine.Windows
             if (!string.IsNullOrEmpty(StartupScene))
             {
 #nullable disable // Scene cant be null here, unless something bad happend like corrupted files, but I dont care.
-                SceneManager.Load(StartupScene);
+                SceneManager.Load(StartupScene, SceneInitFlags.None);
                 SceneManager.Current.IsSimulating = true;
 #nullable restore
             }
@@ -166,11 +166,24 @@ namespace HexaEngine.Windows
 
                 IScene? scene = SceneManager.Current;
 
-                // Update the current scene
-                scene?.Update();
+                if (scene != null)
+                {
+                    var profiler = scene.Profiler;
 
-                // Do fixed update tick if necessary.
-                Time.FixedUpdateTick();
+                    profiler.Start(Scene.ProfileObject);
+
+                    // Update the current scene
+                    scene.Update();
+
+                    profiler.End(Scene.ProfileObject);
+
+                    profiler.Start(Time.ProfileObject);
+
+                    // Do fixed update tick if necessary.
+                    Time.FixedUpdateTick();
+
+                    profiler.End(Time.ProfileObject);
+                }
 
                 // Signal and wait for synchronization with the main thread.
                 syncBarrier.SignalAndWait();

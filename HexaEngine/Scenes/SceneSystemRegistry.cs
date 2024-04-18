@@ -1,12 +1,14 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
+    using HexaEngine.Coroutines;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Physics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;
+    using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using HexaEngine.Weather;
     using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +38,7 @@
             Register<ObjectPickerManager>();
             Register<LODSystem>();
             Register<VolumeSystem>();
+            Register<CoroutineSystem>();
         }
 
         public static void Register<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>() where T : class, ISceneSystem
