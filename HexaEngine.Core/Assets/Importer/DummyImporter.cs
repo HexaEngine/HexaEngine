@@ -53,7 +53,10 @@
 
             try
             {
-                File.Delete(newPath);
+                if (File.Exists(newPath))
+                {
+                    File.Delete(newPath);
+                }
             }
             catch (Exception ex)
             {
