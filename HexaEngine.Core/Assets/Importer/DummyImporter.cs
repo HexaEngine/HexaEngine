@@ -1,11 +1,26 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Debugging;
+
+    public enum DummyImportMethod
+    {
+        SymLink,
+        HardLink,
+        Copy,
+    }
 
     public class DummyImporter : IAssetImporter
     {
+        private static DummyImportMethod importMethod = DummyImportMethod.SymLink;
+        private static readonly ILogger Logger = LoggerFactory.GetLogger("DummyImporter");
+
+        public static DummyImportMethod ImportMethod { get => importMethod; set => importMethod = value; }
+
         public Type? SettingsType { get; }
+
         public string? SettingsKey { get; }
+
         public string? SettingsDisplayName { get; }
 
         public bool CanImport(ReadOnlySpan<char> fileExtension)
@@ -35,8 +50,47 @@
             };
 
             context.EmitArtifact(name, type, out string newPath);
-            File.Delete(newPath);
-            File.CreateSymbolicLink(newPath, path);
+
+            try
+            {
+                File.Delete(newPath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                return;
+            }
+
+            switch (importMethod)
+            {
+                case DummyImportMethod.SymLink:
+                    try
+                    {
+                        File.CreateSymbolicLink(newPath, path);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                        Logger.Info("Trying using fallback method: Copy");
+                        importMethod = DummyImportMethod.Copy;
+                        goto case DummyImportMethod.Copy;
+                    }
+                    break;
+
+                case DummyImportMethod.Copy:
+                    try
+                    {
+                        File.Copy(newPath, path);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }
