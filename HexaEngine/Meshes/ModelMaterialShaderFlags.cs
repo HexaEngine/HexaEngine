@@ -13,5 +13,6 @@
         Forward = 128,
         Deferred = 256,
         Bake = 512,
+        DepthAlways = 1024,
     }
 }

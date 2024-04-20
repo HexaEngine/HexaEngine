@@ -393,7 +393,7 @@ namespace HexaEngine.Scenes
             semaphore.Release();
         }
 
-        private void FixedUpdate(object? sender, EventArgs e)
+        private void FixedUpdate()
         {
             semaphore.Wait();
 

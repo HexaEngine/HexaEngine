@@ -29,7 +29,9 @@
             }
             else
             {
-                ArtifactDatabase.RemoveArtifactsBySource(context.AssetMetadata.Guid);
+                context.EmitArtifact(Path.GetFileNameWithoutExtension(path), AssetType.Unknown, out string newPath);
+                File.Delete(newPath);
+                File.CreateSymbolicLink(newPath, path);
             }
         }
     }

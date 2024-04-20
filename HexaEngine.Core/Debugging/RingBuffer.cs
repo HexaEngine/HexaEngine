@@ -3,6 +3,76 @@
     using System;
     using System.Collections.Generic;
     using System.Numerics;
+    using System.Runtime.Intrinsics.X86;
+
+    public class LTTBAlgorithm
+    {
+        public static void Downsample(RingBuffer<double> ringBuffer, int threshold, double[] downsampledData)
+        {
+            int count = ringBuffer.Count;
+
+            if (count <= threshold)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    downsampledData[i] = ringBuffer[i];
+                }
+                return;
+            }
+
+            double bucketSize = (count - 2) / (double)(threshold - 2);
+            int index = 0;
+
+            downsampledData[0] = ringBuffer.TailValue;
+
+            for (int i = 0; i < threshold - 2; i++)
+            {
+                double nextBucketStart = (i + 1) * bucketSize;
+                double nextBucketEnd = (i + 2) * bucketSize;
+                int start = (int)Math.Floor(nextBucketStart) + 1;
+                int end = (int)Math.Floor(nextBucketEnd) + 1;
+
+                var avgRangeLength = end - start;
+
+                double avgX = 0;
+                double avgY = 0;
+
+                for (; start < end; start++)
+                {
+                    avgX += start;
+                    avgY += ringBuffer[start] * 1; // * 1 enforces Number (value may be Date)
+                }
+
+                avgX /= avgRangeLength;
+                avgY /= avgRangeLength;
+
+                int rangeOffs = (int)Math.Floor((i + 0) * bucketSize) + 1;
+                int rangeTo = (int)Math.Floor((i + 1) * bucketSize) + 1;
+
+                double pointAx = index;
+                double pointAy = ringBuffer[index];
+
+                double maxArea = -1;
+                int maxAreaIndex = -1;
+
+                for (; rangeOffs < rangeTo; rangeOffs++)
+                {
+                    // Calculate triangle area over three buckets
+                    double area = Math.Abs((pointAx - avgX) * (ringBuffer[rangeOffs] - pointAy) - (pointAx - rangeOffs) * (avgY - pointAy)) * 0.5;
+                    if (area > maxArea)
+                    {
+                        maxArea = area;
+                        maxAreaIndex = rangeOffs; // Next a is this b
+                    }
+                }
+
+                downsampledData[i + 1] = ringBuffer[maxAreaIndex];
+                index = maxAreaIndex;
+            }
+
+            downsampledData[threshold - 1] = ringBuffer.HeadValue;
+        }
+    }
 
     /// <summary>
     /// A generic ring buffer for storing and calculating averages of a specified numeric type.
@@ -31,6 +101,12 @@
             this.length = length;
         }
 
+        public T this[int index]
+        {
+            get => rawValues[(index + tail) % length];
+            set => rawValues[(index + tail) % length] = value;
+        }
+
         /// <summary>
         /// Gets the raw values stored in the ring buffer.
         /// </summary>
@@ -46,6 +122,11 @@
                 return averageValues ? avgValues : rawValues;
             }
         }
+
+        /// <summary>
+        /// Gets the value count of the ring buffer.
+        /// </summary>
+        public int Count => count;
 
         /// <summary>
         /// Gets the maximum length of the ring buffer.
@@ -150,6 +231,8 @@
         {
             rawValues = AllocT<T>(length);
             avgValues = AllocT<T>(length);
+            Memset(rawValues, 0, length);
+            Memset(avgValues, 0, length);
             this.length = length;
         }
 

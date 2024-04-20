@@ -1,11 +1,13 @@
 ﻿namespace HexaEngine.Core.Assets
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Mathematics;
     using System.IO;
 
     public static class ArtifactDatabase
     {
-        private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(ArtifactDatabase));
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ArtifactDatabase));
         private static readonly object _lock = new();
         private static readonly HashSet<Guid> importedSourceAssets = [];
         private static List<Artifact> artifacts = [];
@@ -26,16 +28,12 @@
             Directory.CreateDirectory(cacheRootFolder);
             Directory.CreateDirectory(cacheFolder);
 
-            dbPath = Path.Combine(cacheRootFolder, "artifacts.json");
+            dbPath = Path.Combine(cacheRootFolder, "artifacts.db");
 
-            if (File.Exists(dbPath))
+            if (!File.Exists(dbPath) || !TryRead())
             {
-                artifacts = JsonConvert.DeserializeObject<List<Artifact>>(File.ReadAllText(dbPath)) ?? [];
-                for (int i = 0; i < artifacts.Count; i++)
-                {
-                    var artifact = artifacts[i];
-                    guidToArtifact.Add(artifact.Guid, artifact);
-                }
+                artifacts = [];
+                Save();
             }
 
             for (int i = 0; i < artifacts.Count; i++)
@@ -48,7 +46,7 @@
                 }
             }
 
-            logger.Info($"Initialized '{path}'");
+            Logger.Info($"Initialized '{path}'");
             initLock.Set();
         }
 
@@ -75,8 +73,8 @@
                         }
                         catch (Exception ex)
                         {
-                            logger.Error($"Failed to cleanup artifact '{artifact}'");
-                            logger.Log(ex);
+                            Logger.Error($"Failed to cleanup artifact '{artifact}'");
+                            Logger.Log(ex);
                         }
                     }
                 }
@@ -90,11 +88,91 @@
             initLock.Set();
         }
 
+        private static readonly byte[] MagicNumber = [0x54, 0x72, 0x61, 0x6E, 0x73, 0x41, 0x73, 0x73, 0x65, 0x74, 0x44, 0x42, 0x00];
+        private static readonly Version Version = new(1, 0, 0, 0);
+        private static readonly Version MinVersion = new(1, 0, 0, 0);
+
+        private static bool TryRead()
+        {
+            lock (_lock)
+            {
+                using FileStream fs = File.OpenRead(dbPath);
+                try
+                {
+                    if (!fs.Compare(MagicNumber))
+                    {
+                        Logger.Error("Magic number mismatch");
+                        fs.Close();
+                        return false;
+                    }
+
+                    if (!fs.CompareVersion(MinVersion, Version, Endianness.LittleEndian, out var version))
+                    {
+                        Logger.Error($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
+                        fs.Close();
+                        return false;
+                    }
+
+                    int artifactCount = fs.ReadInt32(Endianness.LittleEndian);
+                    if (artifactCount < 0) // indicates data corruption.
+                    {
+                        fs.Close();
+                        return false;
+                    }
+
+                    artifacts.Clear();
+                    artifacts.Capacity = artifactCount;
+
+                    for (int i = 0; i < artifactCount; i++)
+                    {
+                        Artifact artifact = Artifact.Read(fs);
+                        if (guidToArtifact.TryGetValue(artifact.Guid, out Artifact? value))
+                        {
+                            Logger.Error($"Duplicate key/data found '{artifact}' and '{value}'");
+                            continue;
+                        }
+
+                        artifacts.Add(artifact);
+                        guidToArtifact.Add(artifact.Guid, artifact);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Critical("Failed to load artifact database.");
+                    Logger.Log(ex);
+                }
+                finally
+                {
+                    fs.Close();
+                }
+                return true;
+            }
+        }
+
         public static void Save()
         {
             lock (_lock)
             {
-                File.WriteAllText(dbPath, JsonConvert.SerializeObject(artifacts));
+                using FileStream fs = File.Create(dbPath);
+                try
+                {
+                    fs.Write(MagicNumber);
+                    fs.WriteUInt64(Version, Endianness.LittleEndian);
+                    fs.WriteInt32(artifacts.Count, Endianness.LittleEndian);
+                    for (int i = 0; i < artifacts.Count; i++)
+                    {
+                        artifacts[i].Write(fs);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Critical("Failed to save artifact database.");
+                    Logger.Log(ex);
+                }
+                finally
+                {
+                    fs.Close();
+                }
             }
         }
 
@@ -194,6 +272,10 @@
                 if (!importedSourceAssets.Contains(artifact.SourceGuid))
                 {
                     importedSourceAssets.Add(artifact.SourceGuid);
+                }
+                if (guidToArtifact.ContainsKey(artifact.Guid))
+                {
+                    throw new InvalidOperationException($"Artifact with the id '{artifact.Guid}' already exists.");
                 }
                 artifacts.Add(artifact);
                 guidToArtifact.Add(artifact.Guid, artifact);

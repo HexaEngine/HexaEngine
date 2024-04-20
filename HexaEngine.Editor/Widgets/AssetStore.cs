@@ -4,7 +4,7 @@
 
     public class AssetStore : EditorWindow
     {
-        protected override string Name { get; } = "\xE719 Asset Store";
+        protected override string Name { get; } = $"{UwU.Store} Asset Store";
 
         public override void DrawContent(IGraphicsContext context)
         {

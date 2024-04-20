@@ -2,3 +2,6 @@
 
 # CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = silent
+
+# IDE0065: Misplaced using directive
+csharp_using_directive_placement = outside_namespace

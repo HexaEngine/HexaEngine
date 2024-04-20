@@ -306,9 +306,9 @@
             return SourceAssetsDatabase.UpdateAsync(this, force);
         }
 
-        public void Delete()
+        public void Delete(DeleteBehavior behavior)
         {
-            SourceAssetsDatabase.Delete(FilePath);
+            SourceAssetsDatabase.Delete(FilePath, behavior);
         }
 
         public void Rename(string newName)

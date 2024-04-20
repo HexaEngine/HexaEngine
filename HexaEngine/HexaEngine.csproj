@@ -47,7 +47,13 @@
 		<None Update="assets\shared\fonts\ARIALBD.TTF">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\fonts\SEGOEICONS.TTF">
+		<None Update="assets\shared\fonts\Font Awesome 6 Brands-Regular-400.otf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\Font Awesome 6 Free-Regular-400.otf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\Font Awesome 6 Free-Solid-900.otf">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\animation.png">

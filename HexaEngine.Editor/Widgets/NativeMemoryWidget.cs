@@ -5,8 +5,10 @@ namespace HexaEngine.Editor.Widgets
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Attributes;
     using System.Runtime.InteropServices;
 
+    [EditorWindowCategory("Debug")]
     public class NativeMemoryWidget : EditorWindow
     {
         protected override string Name { get; } = "Native Memory";

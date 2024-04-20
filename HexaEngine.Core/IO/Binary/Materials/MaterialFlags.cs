@@ -12,9 +12,9 @@
         None = 0,
 
         /// <summary>
-        /// Indicates that the material has depth properties.
+        /// Indicates that the material should do depth-testing.
         /// </summary>
-        Depth = 1,
+        DepthTest = 1,
 
         /// <summary>
         /// Indicates that the material supports tessellation.
@@ -45,5 +45,10 @@
         /// Indicates that the material supports alpha test.
         /// </summary>
         AlphaTest = 64,
+
+        /// <summary>
+        /// Indicates that the material should do depth-testing with comparison always.
+        /// </summary>
+        DepthAlways = 128
     }
 }

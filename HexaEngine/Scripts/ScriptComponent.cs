@@ -171,6 +171,7 @@
         {
             List<string> toRemove = new(propertyValues.Keys);
             var scene = GameObject.GetScene();
+            properties ??= [];
             for (int i = 0; i < properties.Length; i++)
             {
                 var prop = properties[i];

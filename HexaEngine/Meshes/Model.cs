@@ -280,9 +280,19 @@
 
         private static void Setup(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation)
         {
-            flags = ModelMaterialShaderFlags.DepthTest | ModelMaterialShaderFlags.Deferred | ModelMaterialShaderFlags.Shadow | ModelMaterialShaderFlags.Bake;
+            flags = ModelMaterialShaderFlags.Deferred | ModelMaterialShaderFlags.Shadow | ModelMaterialShaderFlags.Bake;
             macros = [];
             shadowMacros = [new("SOFT_SHADOWS", (int)GraphicsSettings.SoftShadowMode)];
+
+            if ((material.Flags & MaterialFlags.DepthTest) != 0)
+            {
+                flags |= ModelMaterialShaderFlags.DepthTest;
+            }
+
+            if ((material.Flags & MaterialFlags.DepthAlways) != 0)
+            {
+                flags |= ModelMaterialShaderFlags.DepthAlways;
+            }
 
             if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
             {
@@ -368,6 +378,26 @@
                 blend = BlendDescription.AlphaBlend;
             }
 
+            DepthStencilDescription depthStencilDesc = DepthStencilDescription.None;
+            if ((flags & ModelMaterialShaderFlags.DepthTest) != 0)
+            {
+                depthStencilDesc = DepthStencilDescription.DepthReadEquals;
+            }
+            if ((flags & ModelMaterialShaderFlags.DepthAlways) != 0)
+            {
+                depthStencilDesc = DepthStencilDescription.Always;
+            }
+
+            DepthStencilDescription depthStencilDepthOnlyDesc = DepthStencilDescription.None;
+            if ((flags & ModelMaterialShaderFlags.DepthTest) != 0)
+            {
+                depthStencilDesc = DepthStencilDescription.Default;
+            }
+            if ((flags & ModelMaterialShaderFlags.DepthAlways) != 0)
+            {
+                depthStencilDesc = DepthStencilDescription.Always;
+            }
+
             GraphicsPipelineDesc pipelineDescForward = new()
             {
                 VertexShader = $"forward/geometry/vs.hlsl",
@@ -377,7 +407,7 @@
 
             GraphicsPipelineStateDesc pipelineStateDescForward = new()
             {
-                DepthStencil = DepthStencilDescription.DepthReadEquals,
+                DepthStencil = depthStencilDesc,
                 Rasterizer = rasterizer,
                 Blend = blend,
                 Topology = PrimitiveTopology.TriangleList,
@@ -392,7 +422,7 @@
 
             GraphicsPipelineStateDesc pipelineStateDescDeferred = new()
             {
-                DepthStencil = DepthStencilDescription.DepthReadEquals,
+                DepthStencil = depthStencilDesc,
                 Rasterizer = rasterizer,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
@@ -406,7 +436,7 @@
 
             GraphicsPipelineStateDesc pipelineStateDescDepthOnly = new()
             {
-                DepthStencil = DepthStencilDescription.Default,
+                DepthStencil = depthStencilDepthOnlyDesc,
                 Rasterizer = rasterizer,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,

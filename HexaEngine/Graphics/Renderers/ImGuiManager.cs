@@ -647,22 +647,18 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
 
             config.MergeMode = true;
             config.GlyphMinAdvanceX = 18;
-            config.GlyphOffset = new(0, 4);
+            config.GlyphOffset = new(0, 0);
             var glyphRanges = new char[]
             {
-                (char)0xE700, (char)0xF800,
+                (char)0xe005, (char)0xe684,
+                (char)0xF000, (char)0xF8FF,
                 (char)0 // null terminator
             };
 
             fixed (char* pGlyphRanges = glyphRanges)
             {
-                byte[] fontBytes = File.ReadAllBytes("assets/shared/fonts/SEGOEICONS.TTF");
-                byte* pFontBytes = (byte*)Marshal.AllocHGlobal((nint)fontBytes.Length);
-                Marshal.Copy(fontBytes, 0, (nint)pFontBytes, fontBytes.Length);
-
-                // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
-                // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
-                fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
+                ImportFont(ref config, ref fonts, pGlyphRanges, "assets/shared/fonts/Font Awesome 6 Free-Solid-900.otf");
+                ImportFont(ref config, ref fonts, pGlyphRanges, "assets/shared/fonts/Font Awesome 6 Brands-Regular-400.otf");
             }
 
             var style = ImGui.GetStyle();
@@ -755,6 +751,19 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
 
             ImGuiSDL2Platform.Init(window.GetWindow(), null, null);
             ImGuiRenderer.Init(device, context);
+        }
+
+        private static unsafe void ImportFont(ref ImFontConfigPtr config, ref ImFontAtlasPtr fonts, char* pGlyphRanges, string path)
+        {
+            {
+                byte[] fontBytes = File.ReadAllBytes(path);
+                byte* pFontBytes = (byte*)Marshal.AllocHGlobal((nint)fontBytes.Length);
+                Marshal.Copy(fontBytes, 0, (nint)pFontBytes, fontBytes.Length);
+
+                // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
+                // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
+                fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
+            }
         }
 
         public unsafe void NewFrame()

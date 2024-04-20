@@ -18,8 +18,6 @@
     {
         SceneDrawFlags DrawFlags { get; set; }
 
-        ICPUFlameProfiler Profiler { get; }
-
         Vector2 Size { get; set; }
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, ICoreWindow window);

@@ -68,11 +68,16 @@
 
         public static void Draw(IGraphicsContext context)
         {
-            MainMenuBar.Draw();
-            WindowManager.Draw(context);
-            ImGuiConsole.Draw();
-            MessageBoxes.Draw();
-            PopupManager.Draw();
+            using (CPUProfiler2.Global.BeginBlock("MainMenuBar.Draw"))
+                MainMenuBar.Draw();
+            using (CPUProfiler2.Global.BeginBlock("WindowManager.Draw"))
+                WindowManager.Draw(context);
+            using (CPUProfiler2.Global.BeginBlock("ImGuiConsole.Draw"))
+                ImGuiConsole.Draw();
+            using (CPUProfiler2.Global.BeginBlock("MessageBoxes.Draw"))
+                MessageBoxes.Draw();
+            using (CPUProfiler2.Global.BeginBlock("PopupManager.Draw"))
+                PopupManager.Draw();
         }
 
         public static void OpenFile(string? path)

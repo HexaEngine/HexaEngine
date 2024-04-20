@@ -87,7 +87,7 @@
 
             Context = new D3D11GraphicsContext(this);
             TextureLoader = new D3D11TextureLoader(this);
-            Profiler = new D3D11GPUProfiler(Device);
+            Profiler = new D3D11GPUProfiler(Device, DeviceContext);
         }
 
         public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;

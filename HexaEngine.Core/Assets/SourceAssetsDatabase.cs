@@ -250,7 +250,7 @@
 
                 case WatcherChangeTypes.Deleted:
                     logger.Trace($"Deleted '{e.FullPath}'");
-                    DeleteLeftovers(e.FullPath);
+                    DeleteLeftovers(e.FullPath, DeleteBehavior.UnlinkChildren);
                     break;
 
                 case WatcherChangeTypes.Changed:
@@ -277,7 +277,11 @@
                 default:
                     return;
             }
+
+            Changed?.Invoke(e);
         }
+
+        public static event Action<System.IO.FileSystemEventArgs>? Changed;
 
         private static void UpdateFile(string file, SourceAssetMetadata asset, bool force)
         {
@@ -353,11 +357,17 @@
                 return false;
             }
 
-            var attributes = File.GetAttributes(file);
-
-            if ((attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly | FileAttributes.Device)) != 0)
+            try
             {
-                return true;
+                var attributes = File.GetAttributes(file);
+
+                if ((attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly | FileAttributes.Device)) != 0)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
             }
 
             return false;
@@ -440,6 +450,8 @@
 
             ArtifactDatabase.RemoveArtifacts(context.ToRemoveArtifacts);
 
+            context.Commit();
+
             sourceAsset.Save();
         }
 
@@ -454,10 +466,20 @@
             }
 
             ImportContext context = new(provider ?? DefaultGuidProvider.Instance, sourceAsset, artifacts, sourcePath, progress);
-
-            await importer.ImportAsync(TargetPlatform.Windows, context);
+            try
+            {
+                await importer.ImportAsync(TargetPlatform.Windows, context);
+            }
+            catch (Exception)
+            {
+                context.Rollback();
+                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                return;
+            }
 
             ArtifactDatabase.RemoveArtifacts(context.ToRemoveArtifacts);
+
+            context.Commit();
 
             sourceAsset.Save();
         }
@@ -473,8 +495,18 @@
             }
 
             ImportContext context = new(provider ?? DefaultGuidProvider.Instance, sourceAsset, sourcePath, progress);
+            try
+            {
+                importer.Import(TargetPlatform.Windows, context);
+            }
+            catch (Exception)
+            {
+                context.Rollback();
+                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                return;
+            }
 
-            importer.Import(TargetPlatform.Windows, context);
+            context.Commit();
 
             sourceAsset.Save();
         }
@@ -490,13 +522,23 @@
             }
 
             ImportContext context = new(provider ?? DefaultGuidProvider.Instance, sourceAsset, sourcePath, progress);
+            try
+            {
+                await importer.ImportAsync(TargetPlatform.Windows, context);
+            }
+            catch (Exception)
+            {
+                context.Rollback();
+                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                return;
+            }
 
-            await importer.ImportAsync(TargetPlatform.Windows, context);
+            context.Commit();
 
             sourceAsset.Save();
         }
 
-        public static SourceAssetMetadata ImportFile(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
@@ -533,6 +575,54 @@
                 }
 
                 throw new($"Failed to import file '{path}', couldn't create metadata.");
+            }
+
+            return AddFile(path, filePath, metadataFile, provider, progress);
+        }
+
+        public static SourceAssetMetadata? ImportFile(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        {
+            initLock.Wait();
+
+            if (!outputDir.StartsWith(rootFolder))
+            {
+                throw new ArgumentException($"Argument '{nameof(outputDir)}' must be located in '{rootFolder}', but was in '{outputDir}'");
+            }
+
+            var filename = Path.GetFileName(path);
+
+            string filePath = path;
+            bool needCopy = false;
+            if (!path.StartsWith(rootFolder))
+            {
+                needCopy = true;
+                filePath = Path.Combine(rootAssetsFolder, filename);
+            }
+
+            lock (_lock)
+            {
+                if (importedFiles.Contains(filePath))
+                {
+                    return GetMetadata(filePath);
+                }
+                importedFiles.Add(filePath);
+            }
+
+            if (needCopy)
+            {
+                File.Copy(path, filePath);
+            }
+
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(filePath);
+
+            if (metadataFile == null)
+            {
+                if (needCopy)
+                {
+                    File.Delete(filePath);
+                }
+
+                return null;
             }
 
             return AddFile(path, filePath, metadataFile, provider, progress);
@@ -924,7 +1014,7 @@
             await ImportInternalAsync(null, targetLocation, newMetadata, null, null);
         }
 
-        public static void DeleteLeftovers(string file, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
+        public static void DeleteLeftovers(string file, DeleteBehavior behavior)
         {
             initLock.Wait();
 
@@ -948,13 +1038,13 @@
             DeleteLeftovers(metaToDelete, behavior);
         }
 
-        public static void Delete(string file, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)
+        public static void Delete(string file, DeleteBehavior behavior)
         {
             initLock.Wait();
 
             if (!File.Exists(file))
             {
-                throw new FileNotFoundException(file);
+                return;
             }
 
             SourceAssetMetadata? metaToDelete;
@@ -983,9 +1073,10 @@
 
             string fileToDelete = metaToDelete.GetFullPath();
 
-            if (!File.Exists(fileToDelete))
+            if (File.Exists(fileToDelete))
             {
-                throw new FileNotFoundException(fileToDelete);
+                File.Delete(fileToDelete);
+                File.Delete(metaToDelete.MetadataFilePath);
             }
 
             ArtifactDatabase.RemoveArtifactsBySource(metaToDelete.Guid);
@@ -1008,9 +1099,6 @@
                 }
                 Remove(metaToDelete, behavior == DeleteBehavior.UnlinkChildren);
             }
-
-            File.Delete(fileToDelete);
-            File.Delete(metaToDelete.MetadataFilePath);
         }
 
         public static void DeleteLeftovers(SourceAssetMetadata metaToDelete, DeleteBehavior behavior = DeleteBehavior.UnlinkChildren)

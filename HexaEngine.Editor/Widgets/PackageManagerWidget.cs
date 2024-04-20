@@ -11,7 +11,7 @@
     {
         private string searchString = string.Empty;
 
-        protected override string Name { get; } = "\xE7B8 Package Manager";
+        protected override string Name { get; } = $"{UwU.Box} Package Manager";
 
         public override void DrawContent(IGraphicsContext context)
         {

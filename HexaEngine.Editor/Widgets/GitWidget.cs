@@ -11,7 +11,7 @@
         private string commitMessage = string.Empty;
         private bool commitAmend;
 
-        protected override string Name { get; } = "Git";
+        protected override string Name { get; } = $"{UwU.GitAlt} Git";
 
         public override void DrawContent(IGraphicsContext context)
         {

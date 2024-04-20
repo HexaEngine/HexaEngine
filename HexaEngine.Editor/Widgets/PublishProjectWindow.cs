@@ -17,7 +17,7 @@
 #pragma warning restore CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private readonly OpenFileDialog filePicker = new("", ".hexlvl");
 
-        protected override string Name => "Publish";
+        protected override string Name => $"{UwU.Upload} Publish";
 
         public override void DrawContent(IGraphicsContext context)
         {

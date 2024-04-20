@@ -17,7 +17,7 @@
         private Task? task;
         private CancellationTokenSource cancellationToken = new();
 
-        protected override string Name { get; } = "Bake";
+        protected override string Name { get; } = $"{UwU.BreadSlice} Bake";
 
         protected override void InitWindow(IGraphicsDevice device)
         {

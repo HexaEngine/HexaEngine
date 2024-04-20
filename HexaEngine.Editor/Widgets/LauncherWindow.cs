@@ -234,11 +234,11 @@
             ImGui.SetCursorPos(pos + new Vector2(entrySize.X + padding.X, 0));
             ImGui.BeginChild("Child", childSize);
 
-            if (ImGui.Button("\xE710 New Project", new(childSize.X, 50)))
+            if (ImGui.Button($"{UwU.SquarePlus} New Project", new(childSize.X, 50)))
             {
                 createProjectDialog = true;
             }
-            if (ImGui.Button("\xF78B Open Project", new(childSize.X, 50)))
+            if (ImGui.Button($"{UwU.MagnifyingGlass} Open Project", new(childSize.X, 50)))
             {
                 filePicker.AllowedExtensions.Add(".hexproj");
                 filePicker.OnlyAllowFilteredExtensions = true;
@@ -258,7 +258,7 @@
                 };
                 filePicker.Show();
             }
-            if (ImGui.Button("\xE896 Clone Project", new(childSize.X, 50)))
+            if (ImGui.Button($"{UwU.Clone} Clone Project", new(childSize.X, 50)))
             {
                 // TODO: Implement git clone.
             }
@@ -301,7 +301,7 @@
             {
                 newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder, newProjectName);
                 canCreateProject = IsValidProjectDir(newProjectPath) && !string.IsNullOrWhiteSpace(newProjectName);
-                canCreateFailReason = canCreateProject ? null : string.IsNullOrWhiteSpace(newProjectName) ? "\xE7BA Project name cannot be empty." : "\xE7BA Project already exists.";
+                canCreateFailReason = canCreateProject ? null : string.IsNullOrWhiteSpace(newProjectName) ? $"{UwU.Warning} Project name cannot be empty." : "{UwU.Warning} Project already exists.";
             }
 
             ImGui.TextDisabled(newProjectPath);
@@ -428,19 +428,19 @@
         {
             if (ImGui.BeginPopupContextItem($"##{entry.Path}"))
             {
-                if (ImGui.MenuItem($"\xE711 Remove from List"))
+                if (ImGui.MenuItem($"{UwU.Trash} Remove from List"))
                 {
                     ProjectHistory.RemoveEntryByPath(entry.Path);
                 }
-                if (!entry.Pinned && ImGui.MenuItem("\xE718 Pin"))
+                if (!entry.Pinned && ImGui.MenuItem($"\xE718 Pin"))
                 {
                     ProjectHistory.Pin(entry.Path);
                 }
-                if (entry.Pinned && ImGui.MenuItem("\xE77A Unpin"))
+                if (entry.Pinned && ImGui.MenuItem($"\xE77A Unpin"))
                 {
                     ProjectHistory.Unpin(entry.Path);
                 }
-                if (ImGui.MenuItem("\xE8C8 Copy Path"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy Path"))
                 {
                     Clipboard.SetClipboardText(entry.Path);
                 }

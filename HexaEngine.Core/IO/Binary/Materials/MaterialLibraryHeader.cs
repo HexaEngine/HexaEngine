@@ -16,7 +16,7 @@
         /// <summary>
         /// Current version of the material library file format.
         /// </summary>
-        public static readonly Version Version = 5;
+        public static readonly Version Version = 6;
 
         /// <summary>
         /// Minimum supported version of the material library file format.

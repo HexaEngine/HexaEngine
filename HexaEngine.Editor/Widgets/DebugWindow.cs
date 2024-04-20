@@ -6,7 +6,7 @@
 
     public class DebugWindow : EditorWindow
     {
-        protected override string Name => "Debug";
+        protected override string Name => $"{UwU.BugSlash} Debug";
 
         public DebugWindow()
         {

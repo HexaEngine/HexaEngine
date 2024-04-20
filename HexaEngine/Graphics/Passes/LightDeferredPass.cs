@@ -166,7 +166,7 @@ namespace HexaEngine.Graphics.Passes
             context.DSSetConstantBuffer(1, null);
             context.GSSetConstantBuffer(1, null);
             context.CSSetConstantBuffer(1, null);
-
+            context.Device.Profiler.Begin(context, "Light.Deferred");
             context.SetRenderTarget(lightBuffer.Value.RTV, null);
 
             var probeParamsBuffer = this.probeParamsBuffer.Value;
@@ -191,6 +191,7 @@ namespace HexaEngine.Graphics.Passes
 
             nint* null_srvs = stackalloc nint[(int)nDeferredSrvs];
             context.PSSetShaderResources(0, nDeferredSrvs, (void**)null_srvs);
+            context.Device.Profiler.End(context, "Light.Deferred");
         }
     }
 }

@@ -5,9 +5,15 @@
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.PostFx.BuildIn;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Globalization;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.Intrinsics.X86;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
+    using System.Text;
 
     public class PreferencesWidget : EditorWindow
     {
@@ -18,7 +24,7 @@
 
         private bool unsavedChanges;
 
-        protected override string Name => "\xE713 Preferences";
+        protected override string Name => $"{UwU.Gear} Preferences";
 
         public PreferencesWidget()
         {
@@ -44,10 +50,12 @@
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextColumn();
 
+            DisplayKey("Text Editor");
             for (int i = 0; i < keys.Count; i++)
             {
                 DisplayKeyNode(keys[i]);
             }
+
             DisplayKey("Hotkeys");
 
             ImGui.TableNextColumn();
@@ -333,6 +341,10 @@
 
                 switch (key)
                 {
+                    case "Text Editor":
+                        TextEditorPage();
+                        break;
+
                     case "Hotkeys":
                         lock (HotkeyManager.SyncObject)
                         {
@@ -347,6 +359,94 @@
             }
 
             ImGui.EndTable();
+        }
+
+        private static unsafe void TextEditorPage()
+        {
+            bool changed = false;
+            var type = EditorConfig.Default.ExternalTextEditorType;
+            if (ComboEnumHelper<ExternalTextEditorType>.Combo("##EditorType", ref type))
+            {
+                EditorConfig.Default.ExternalTextEditorType = type; changed = true;
+            }
+
+            if (type == ExternalTextEditorType.Custom)
+            {
+                var editors = EditorConfig.Default.ExternalTextEditors;
+                var selectedEditor = EditorConfig.Default.SelectedExternalTextEditor;
+                ImGui.SameLine();
+                if (ImGui.Button("+"))
+                {
+                    string name = "New Text Editor";
+                    string newName = name;
+                    int i = 1;
+                    while (editors.Any(x => x.Name == newName))
+                    {
+                        newName = $"{name} {i++}";
+                    }
+
+                    editors.Add(new(newName, string.Empty, string.Empty));
+                }
+
+                for (int i = 0; i < editors.Count; i++)
+                {
+                    var editor = editors[i];
+                    ImGuiChildFlags flags = ImGuiChildFlags.AlwaysUseWindowPadding;
+
+                    bool isSelected = i == selectedEditor;
+                    if (isSelected)
+                    {
+                        ImGui.PushStyleColor(ImGuiCol.ChildBg, ImGui.GetColorU32(ImGuiCol.ButtonActive));
+                    }
+
+                    ImGui.BeginChild(editor.Name, new Vector2(400, 120), flags);
+
+                    if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                    {
+                        EditorConfig.Default.SelectedExternalTextEditor = i;
+                    }
+
+                    string name = editor.Name;
+                    if (ImGui.InputText("Name", ref name, 1024))
+                    {
+                        editor.Name = name;
+                    }
+                    string programPath = editor.ProgramPath;
+                    if (ImGui.InputText("Path", ref programPath, 1024))
+                    {
+                        editor.ProgramPath = programPath;
+                    }
+                    string commandLine = editor.CommandLine;
+                    if (ImGui.InputText("Command Line", ref commandLine, 1024))
+                    {
+                        editor.CommandLine = commandLine;
+                    }
+
+                    TooltipHelper.Tooltip("Use $solutionPath to insert the path of the solution file,\n" +
+                              "$solutionName to insert the name of the solution file (without extension),\n" +
+                              "or $projectFolder to insert the path of the project folder.");
+                    if (ImGui.BeginPopupContextWindow())
+                    {
+                        if (ImGui.MenuItem("\xE74D Delete"))
+                        {
+                            editors.RemoveAt(i);
+                            i--;
+                        }
+                        ImGui.EndPopup();
+                    }
+
+                    ImGui.EndChild();
+                    if (isSelected)
+                    {
+                        ImGui.PopStyleColor();
+                    }
+                }
+            }
+
+            if (changed)
+            {
+                EditorConfig.Default.Save();
+            }
         }
 
         private void EditHotkey(Hotkey hotkey)

@@ -11,18 +11,20 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(D3D11));
         private readonly ComPtr<ID3D11Device5> device;
+        private readonly ComPtr<ID3D11DeviceContext4> deviceContext;
         private readonly List<string> blockNames = new();
         private readonly Dictionary<string, QueryData>[] queries = new Dictionary<string, QueryData>[FrameCount];
         private readonly Dictionary<string, double> results = new();
         private int currentFrame = 0;
         private bool disposedValue;
         private bool enabled;
-        private bool disableLogging = true;
+        private bool disableLogging = false;
         private const int FrameCount = 3;
 
-        public D3D11GPUProfiler(ComPtr<ID3D11Device5> device)
+        public D3D11GPUProfiler(ComPtr<ID3D11Device5> device, ComPtr<ID3D11DeviceContext4> deviceContext)
         {
             this.device = device;
+            this.deviceContext = deviceContext;
             for (int i = 0; i < FrameCount; i++)
             {
                 queries[i] = new();
@@ -32,6 +34,8 @@
         public bool Enabled { get => enabled; set => enabled = value; }
 
         public bool DisableLogging { get => disableLogging; set => disableLogging = value; }
+
+        public IReadOnlyList<string> BlockNames => blockNames;
 
         private class QueryData
         {
@@ -53,7 +57,12 @@
             }
         }
 
-        public unsafe void CreateBlock(string name)
+        void IGPUProfiler.CreateBlock(string name)
+        {
+            CreateBlock(name);
+        }
+
+        private unsafe QueryData CreateBlock(string name)
         {
             lock (blockNames)
             {
@@ -69,6 +78,8 @@
                     device.CreateQuery(desc, queryData.TimestampQueryEnd.GetAddressOf());
                     queries[i].Add(name, queryData);
                 }
+
+                return queries[currentFrame % FrameCount][name];
             }
         }
 
@@ -108,12 +119,25 @@
 
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
 
+            int index = currentFrame % FrameCount;
             int oldIndex = (currentFrame - FrameCount + 1) % FrameCount;
+            var currentQueries = queries[index];
             var oldQueries = queries[oldIndex];
 
             QueryDataTimestampDisjoint disjoint = default;
             lock (blockNames)
             {
+                // auto-cleanup stages.
+                for (int i = blockNames.Count - 1; i >= 0; i--)
+                {
+                    var name = blockNames[i];
+                    var query = currentQueries[name];
+                    if (!query.BeginCalled || !query.EndCalled)
+                    {
+                        DestroyBlock(name);
+                    }
+                }
+
                 for (int i = 0; i < blockNames.Count; i++)
                 {
                     var name = blockNames[i];
@@ -125,7 +149,7 @@
                         {
                             if (!DisableLogging)
                             {
-                                Logger.Info($"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                                Logger.Warn($"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
                             }
 
                             Thread.Sleep(1);
@@ -150,7 +174,7 @@
                             {
                                 if (!DisableLogging)
                                 {
-                                    Logger.Info($"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                    Logger.Warn($"Waiting for frame end timestamp of {name} in frame {currentFrame}");
                                 }
 
                                 Thread.Sleep(1);
@@ -179,12 +203,12 @@
 
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
-            if (!queries[i].ContainsKey(name))
+            if (!queries[i].TryGetValue(name, out QueryData? value))
             {
-                return;
+                value = CreateBlock(name);
             }
 
-            var queryData = queries[i][name];
+            var queryData = value;
             ctx.Begin(queryData.DisjointQuery);
             ctx.End(queryData.TimestampQueryStart);
             queryData.BeginCalled = true;
@@ -194,12 +218,12 @@
         {
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
-            if (!queries[i].ContainsKey(name))
+            if (!queries[i].TryGetValue(name, out QueryData? value))
             {
                 return;
             }
 
-            var queryData = queries[i][name];
+            var queryData = value;
             if (!queryData.BeginCalled)
             {
                 return;
@@ -207,6 +231,132 @@
 
             ctx.End(queryData.TimestampQueryEnd);
             ctx.End(queryData.DisjointQuery);
+            queryData.EndCalled = true;
+        }
+
+        public unsafe void EndFrame()
+        {
+            if (!enabled)
+            {
+                return;
+            }
+
+            if (currentFrame < FrameCount - 1)
+            {
+                ++currentFrame;
+                return;
+            }
+
+            int index = currentFrame % FrameCount;
+            int oldIndex = (currentFrame - FrameCount + 1) % FrameCount;
+            var currentQueries = queries[index];
+            var oldQueries = queries[oldIndex];
+
+            QueryDataTimestampDisjoint disjoint = default;
+            lock (blockNames)
+            {
+                // auto-cleanup stages.
+                for (int i = blockNames.Count - 1; i >= 0; i--)
+                {
+                    var name = blockNames[i];
+                    var query = currentQueries[name];
+                    if (!query.BeginCalled || !query.EndCalled)
+                    {
+                        DestroyBlock(name);
+                    }
+                }
+
+                for (int i = 0; i < blockNames.Count; i++)
+                {
+                    var name = blockNames[i];
+                    var query = oldQueries[name];
+
+                    if (query.BeginCalled && query.EndCalled)
+                    {
+                        while (deviceContext.GetData(query.DisjointQuery, null, 0, 0) == 1)
+                        {
+                            if (!DisableLogging)
+                            {
+                                Logger.Warn($"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                            }
+
+                            Thread.Sleep(1);
+                        }
+
+                        deviceContext.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
+                        if (disjoint.Disjoint)
+                        {
+                            if (!DisableLogging)
+                            {
+                                Logger.Warn($"Disjoint Timestamp Flag in {name}");
+                            }
+                        }
+                        else
+                        {
+                            ulong begin = 0;
+                            ulong end = 0;
+
+                            deviceContext.GetData(query.TimestampQueryStart, &begin, sizeof(ulong), 0);
+
+                            while (deviceContext.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
+                            {
+                                if (!DisableLogging)
+                                {
+                                    Logger.Warn($"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                }
+
+                                Thread.Sleep(1);
+                            }
+                            deviceContext.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
+
+                            double delta = (double)(end - begin) / disjoint.Frequency;
+
+                            results[name] = delta;
+                        }
+                    }
+
+                    query.BeginCalled = false;
+                    query.EndCalled = false;
+                }
+            }
+            ++currentFrame;
+        }
+
+        public void Begin(string name)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+
+            int i = currentFrame % FrameCount;
+            if (!queries[i].TryGetValue(name, out QueryData? value))
+            {
+                value = CreateBlock(name);
+            }
+
+            var queryData = value;
+            deviceContext.Begin(queryData.DisjointQuery);
+            deviceContext.End(queryData.TimestampQueryStart);
+            queryData.BeginCalled = true;
+        }
+
+        public void End(string name)
+        {
+            int i = currentFrame % FrameCount;
+            if (!queries[i].TryGetValue(name, out QueryData? value))
+            {
+                return;
+            }
+
+            var queryData = value;
+            if (!queryData.BeginCalled)
+            {
+                return;
+            }
+
+            deviceContext.End(queryData.TimestampQueryEnd);
+            deviceContext.End(queryData.DisjointQuery);
             queryData.EndCalled = true;
         }
 

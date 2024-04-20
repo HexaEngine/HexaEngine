@@ -253,7 +253,7 @@
             if (settings.ImportTextures)
             {
                 progressContext.BeginSubStep(texturePaths.Count);
-                if (!LoadTextures(targetPlatform, settings, sourceDir, scene, context, progressContext, texturePaths, texturePathToGuid))
+                if (!LoadTextures(targetPlatform, settings, sourceDir, importDir, scene, context, progressContext, texturePaths, texturePathToGuid))
                 {
                     return false;
                 }
@@ -263,7 +263,7 @@
             return true;
         }
 
-        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
             var device = Application.GraphicsDevice;
             var loader = device.TextureLoader;
@@ -308,10 +308,9 @@
                             continue;
                     }
 
-                    Application.MainWindow.Dispatcher.InvokeBlocking(() =>
-                    {
-                        TextureImporter.ExportImage(device, targetPlatform, context, guid, fileName, new(), image);
-                    });
+                    string targetPath = Path.Combine(outDir, fileName);
+                    context.ImportChild(targetPath, guid, out string path);
+                    image.SaveToFile(path, TexFileFormat.Auto, 0);
                     progressContext.AddProgress();
                 }
                 else
@@ -326,7 +325,9 @@
 
                     DictionaryGuidProvider provider = new(context.AssetMetadata.Guid, texturePathToGuid, GuidNotFoundBehavior.Throw);
 
-                    context.ImportChild(filePath, provider);
+                    string targetPath = Path.Combine(outDir, texturePath);
+                    context.ImportChild(targetPath, provider, out var path);
+                    System.IO.File.Copy(filePath, path, true);
                     progressContext.AddProgress();
                 }
             }
@@ -660,10 +661,9 @@
                     {
                         var guid = materialIds[i] = Guid.NewGuid();
 
-                        string path = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
-                        context.BeginImportChild(path);
+                        string targetPath = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
+                        context.ImportChild(targetPath, guid, out var path);
                         material.Save(path, Encoding.UTF8);
-                        context.ImportChild(path, guid);
                         progressContext.AddProgress();
                     }
                     //catch (Exception ex)
@@ -761,10 +761,9 @@
                     {
                         var guid = animationsIds[i] = Guid.NewGuid();
 
-                        string path = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
-                        context.BeginImportChild(path);
+                        string targetPath = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
+                        context.ImportChild(targetPath, guid, out var path);
                         animation.Save(path, Encoding.UTF8);
-                        context.ImportChild(path, guid);
                         progressContext.AddProgress();
                     }
                     catch (Exception ex)

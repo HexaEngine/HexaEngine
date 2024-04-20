@@ -78,6 +78,11 @@
         public static readonly DepthStencilDescription None = new(false, DepthWriteMask.Zero);
 
         /// <summary>
+        /// A built-in description with default settings for using a depth stencil buffer. ComparisonFunction.Always
+        /// </summary>
+        public static readonly DepthStencilDescription Always = new(true, DepthWriteMask.All, ComparisonFunction.Always);
+
+        /// <summary>
         /// A built-in description with default settings for using a depth stencil buffer.
         /// </summary>
         public static readonly DepthStencilDescription Default = new(true, DepthWriteMask.All);

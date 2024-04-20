@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Attributes;
     using Microsoft.Diagnostics.Symbols;
     using Microsoft.Diagnostics.Tracing;
     using Microsoft.Diagnostics.Tracing.Etlx;
@@ -17,7 +18,6 @@
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public static class ProfilingPermission
     {
@@ -222,6 +222,7 @@
         }
     }
 
+    [EditorWindowCategory("Experimental")]
     public class Profiler2Window : EditorWindow
     {
         private TraceEventSession? _session;
@@ -240,11 +241,11 @@
 #endif
         }
 
-        protected override string Name { get; } = "Profiler2";
+        protected override string Name { get; } = $"{UwU.ChartPie} Deep Profiler";
 
         public bool StartProfiling()
         {
-            ProfilingPermission.EnableProfilerUser("juna");
+            // ProfilingPermission.EnableProfilerUser("juna");
 
             string sessionName = "Cpu_Profiling_Session+" + Guid.NewGuid().ToString();
             _session = new TraceEventSession(sessionName, TraceEventSessionOptions.Create);
@@ -263,14 +264,29 @@
             {
                 using TraceLogEventSource source = TraceLog.CreateFromTraceEventSession(_session);
 
-                source.Clr.All += Clr_All;
-                source.Kernel.PerfInfoSample += Kernel_PerfInfoSample;
+                //source.Clr.All += Clr_All;
+                source.Dynamic.All += Dynamic_All;
+                //source.Kernel.PerfInfoSample += Kernel_PerfInfoSample;
                 source.Process();
-
-                source.Clr.All -= Clr_All;
+                source.Dynamic.All -= Dynamic_All;
+                // source.Clr.All -= Clr_All;
             });
 
             return true;
+        }
+
+        private void Dynamic_All(TraceEvent data)
+        {
+            if (data.ProcessID != Pid || data.EventName == null)
+            {
+                return;
+            }
+
+            if (data is not ClrStackWalkTraceData walkTraceData || walkTraceData.Source is not TraceLog traceLog)
+            {
+                ImGuiConsole.WriteLine($"TID: {data.ThreadID}, {data.EventName}");
+                return;
+            }
         }
 
         private Guid perfInfoTaskGuid = new(0xce1dbfb4, 0x137e, 0x4da6, 0x87, 0xb0, 0x3f, 0x59, 0xaa, 0x10, 0x2c, 0xbc);
@@ -363,7 +379,7 @@
         ClrTraceEventParser.Keywords.Jit |                      // Turning on JIT events is necessary to resolve JIT compiled code
         ClrTraceEventParser.Keywords.JittedMethodILToNativeMap |// This is needed if you want line number information in the stacks
         ClrTraceEventParser.Keywords.Loader |                   // You must include loader events as well to resolve JIT compiled code.
-        ClrTraceEventParser.Keywords.Stack
+        ClrTraceEventParser.Keywords.Default | ClrTraceEventParser.Keywords.Debugger | ClrTraceEventParser.Keywords.PerfTrack
 
                      )
                  );
@@ -376,8 +392,8 @@
                 ClrTraceEventParser.Keywords.Jit |              // We need JIT events to be rundown to resolve method names
                 ClrTraceEventParser.Keywords.JittedMethodILToNativeMap | // This is needed if you want line number information in the stacks
                 ClrTraceEventParser.Keywords.Loader |           // As well as the module load events.
-                ClrTraceEventParser.Keywords.StartEnumeration   // This indicates to do the rundown now (at enable time)
-                | ClrTraceEventParser.Keywords.Default | ClrTraceEventParser.Keywords.PerfTrack
+                ClrTraceEventParser.Keywords.StartEnumeration |   // This indicates to do the rundown now (at enable time)
+                ClrTraceEventParser.Keywords.PerfTrack | ClrTraceEventParser.Keywords.Debugger | ClrTraceEventParser.Keywords.Default
                 ));
 
             return true;

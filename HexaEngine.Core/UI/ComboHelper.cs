@@ -2,7 +2,9 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Utilities;
     using System;
+    using System.Reflection;
 
     /// <summary>
     /// A helper class for working with ImGui combo boxes to select enum values of a specified enum type.
@@ -11,7 +13,28 @@
     public static class ComboEnumHelper<T> where T : struct, Enum
     {
         private static readonly T[] values = Enum.GetValues<T>();
-        private static readonly string[] names = Enum.GetNames<T>();
+
+        private static readonly string[] names;
+
+        static ComboEnumHelper()
+        {
+            Type enumType = typeof(T);
+            names = new string[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+                var name = value.ToString();
+                var field = enumType.GetField(name);
+                var attribute = field?.GetCustomAttribute<EnumNameAttribute>();
+
+                if (attribute != null)
+                {
+                    name = attribute.Name;
+                }
+
+                names[i] = name;
+            }
+        }
 
         /// <summary>
         /// Displays a combo box to select an enum value.
