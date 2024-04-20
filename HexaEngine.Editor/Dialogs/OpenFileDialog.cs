@@ -12,6 +12,7 @@
         private readonly List<Item> dirs = [];
         public string RootFolder;
         private string currentFolder;
+        private string currentFolderBar;
         private string selectedFile = string.Empty;
         public List<string> AllowedExtensions = [];
         public bool OnlyAllowFolders;
@@ -75,7 +76,7 @@
             get => Path.Combine(currentFolder, selectedFile);
             set
             {
-                currentFolder = Path.GetDirectoryName(value) ?? string.Empty;
+                currentFolderBar = currentFolder = Path.GetDirectoryName(value) ?? string.Empty;
                 selectedFile = Path.GetFileName(value);
             }
         }
@@ -87,7 +88,7 @@
             get => currentFolder;
             set
             {
-                currentFolder = value;
+                currentFolderBar = currentFolder = value;
                 Refresh();
             }
         }
@@ -112,27 +113,37 @@
             if (ImGui.Begin("File picker", ref shown, ImGuiWindowFlags.NoDocking))
             {
                 ImGui.SetWindowFocus();
-                if (ImGui.Button("\xe80f"))
+                if (ImGui.Button($"{UwU.House}"))
                 {
                     CurrentFolder = RootFolder;
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("\xe72b"))
+                if (ImGui.Button($"{UwU.Backward}"))
                 {
                     TryGoBack();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("\xe72a"))
+                if (ImGui.Button($"{UwU.Forward}"))
                 {
                     TryGoForward();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("\xe72c"))
+                if (ImGui.Button($"{UwU.ArrowsRotate}"))
                 {
                     Refresh();
                 }
                 ImGui.SameLine();
-                ImGui.InputText("Path", ref currentFolder, 1024);
+                if (ImGui.InputText("Path", ref currentFolderBar, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
+                {
+                    if (Directory.Exists(currentFolderBar))
+                    {
+                        SetFolder(currentFolderBar);
+                    }
+                    else
+                    {
+                        currentFolderBar = currentFolder;
+                    }
+                }
 
                 float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
@@ -276,7 +287,6 @@
             backHistory.Push(CurrentFolder);
             CurrentFolder = path;
             forwardHistory.Clear();
-            Refresh();
         }
 
         public void GoHome()
@@ -345,7 +355,7 @@
 
                 if (Directory.Exists(fse))
                 {
-                    dirs.Add(new("\xe8b7" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
+                    dirs.Add(new($"{UwU.Folder} {Path.GetFileName(fse)}", Path.GetFileName(fse), fse));
                 }
                 else if (!OnlyAllowFolders)
                 {
@@ -354,12 +364,12 @@
                         var ext = Path.GetExtension(fse);
                         if (AllowedExtensions.Contains(ext))
                         {
-                            files.Add(new("\xe8a5" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
+                            files.Add(new($"{UwU.File} {Path.GetFileName(fse)}", Path.GetFileName(fse), fse));
                         }
                     }
                     else
                     {
-                        files.Add(new("\xe8a5" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
+                        files.Add(new($"{UwU.File} {Path.GetFileName(fse)}", Path.GetFileName(fse), fse));
                     }
                 }
             }

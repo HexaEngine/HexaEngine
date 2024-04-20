@@ -354,6 +354,7 @@
         /// <returns>The boolean value of the material property.</returns>
         public readonly bool AsBool()
         {
+            if (Data == null) return false;
             return Data[0] == 1;
         }
 

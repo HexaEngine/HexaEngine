@@ -569,7 +569,7 @@
                 if (metadata != null)
                 {
                     material.Save(metadata.GetFullPath(), Encoding.UTF8);
-                    metadata.Update();
+
                     if (nameChanged)
                     {
                         metadata.Rename(material.Name);
