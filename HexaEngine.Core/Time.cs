@@ -62,7 +62,7 @@
         /// <summary>
         /// Occurs when a fixed update is triggered.
         /// </summary>
-        public static event EventHandler? FixedUpdate;
+        public static event Action? FixedUpdate;
 
         /// <summary>
         /// Resets the time system.
@@ -140,7 +140,7 @@
 
             while (fixedTime >= FixedDelta)
             {
-                FixedUpdate?.Invoke(null, EventArgs.Empty);
+                FixedUpdate?.Invoke();
                 fixedTime -= FixedDelta;
             }
         }

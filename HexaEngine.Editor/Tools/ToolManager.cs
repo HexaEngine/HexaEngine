@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Tools
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.IO;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.TextEditor;

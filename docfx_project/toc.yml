@@ -2,6 +2,8 @@
   items:
     - name: Installation
       href: install.md
+    - name: Architecture of the Engine
+      href: install.md
 - name: Articles
   href: articles/
 - name: Examples

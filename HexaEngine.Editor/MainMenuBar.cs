@@ -164,7 +164,7 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("Open Visual Studio"))
+                    if (ImGui.MenuItem("Open Text Editor"))
                     {
                         ProjectManager.OpenVisualStudio();
                     }
@@ -330,22 +330,22 @@
 
                 if (ImGui.BeginMenu("Help"))
                 {
-                    if (ImGui.MenuItem("\xE734 HexaEngine on GitHub"))
+                    if (ImGui.MenuItem($"{UwU.Github} HexaEngine on GitHub"))
                     {
                         Designer.OpenLink("https://github.com/HexaEngine/HexaEngine");
                     }
 
-                    if (ImGui.MenuItem("\xE82D HexaEngine Documentation"))
+                    if (ImGui.MenuItem($"{UwU.Book} HexaEngine Documentation"))
                     {
                         Designer.OpenLink("https://hexaengine.github.io/HexaEngine/");
                     }
 
-                    if (ImGui.MenuItem("\xEBE8 Report a bug"))
+                    if (ImGui.MenuItem($"{UwU.Bug} Report a bug"))
                     {
                         Designer.OpenLink("https://github.com/HexaEngine/HexaEngine/issues");
                     }
 
-                    if (ImGui.MenuItem("\xE939 Join our Discord"))
+                    if (ImGui.MenuItem($"{UwU.Discord} Join our Discord"))
                     {
                         Designer.OpenLink("https://discord.gg/VawN5d8HMh");
                     }

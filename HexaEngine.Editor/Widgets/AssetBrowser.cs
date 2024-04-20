@@ -10,17 +10,11 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
-    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Scenes.Serialization;
-    using HexaEngine.Windows;
-    using Silk.NET.Direct3D11;
-    using Silk.NET.SDL;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.IO;
     using System.Numerics;
-    using static Octokit.Caching.CachedResponse;
 
     public enum PasteMode
     {
@@ -255,7 +249,7 @@
         {
             IsShown = true;
             Application.MainWindow.DropFile += DropFile;
-            FileSystem.Changed += FileSystemChanged;
+            SourceAssetsDatabase.Changed += FileSystemChanged;
             Refresh(true);
             currentDir = null;
             parentDir = currentDir?.Parent;
@@ -268,11 +262,11 @@
         protected override void DisposeCore()
         {
             Application.MainWindow.DropFile -= DropFile;
-            FileSystem.Changed -= FileSystemChanged;
+            SourceAssetsDatabase.Changed -= FileSystemChanged;
             ProjectManager.ProjectLoaded -= ProjectLoaded;
         }
 
-        private void FileSystemChanged(Core.IO.FileSystemEventArgs obj)
+        private void FileSystemChanged(System.IO.FileSystemEventArgs obj)
         {
             Refresh(!File.Exists(obj.FullPath));
         }
@@ -283,7 +277,7 @@
             SetFolder(ProjectManager.CurrentProjectAssetsFolder);
         }
 
-        protected override string Name => "\xECAA Asset Browser";
+        protected override string Name => $"{UwU.LinesLeaning} Asset Browser";
 
         public AssetExplorerIconSize IconSize
         {
@@ -597,31 +591,31 @@
             ImGui.PushID(dir.Path);
             if (ImGui.BeginPopupContextItem(dir.Path))
             {
-                if (ImGui.MenuItem("\xE845 Open"))
+                if (ImGui.MenuItem($"{UwU.OpenFile} Open"))
                 {
                     SetFolder(dir.Path);
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C6 Cut"))
+                if (ImGui.MenuItem($"{UwU.Cut} Cut"))
                 {
                     pasteMode = PasteMode.Cut;
                     pasteTarget = dir.Path;
                 }
 
-                if (ImGui.MenuItem("\xE8C8 Copy"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy"))
                 {
                     pasteMode = PasteMode.Copy;
                     pasteTarget = dir.Path;
                 }
 
-                if (ImGui.MenuItem("\xE77F Paste"))
+                if (ImGui.MenuItem($"{UwU.Paste} Paste"))
                 {
                     Paste(dir.Path);
                 }
 
-                if (ImGui.MenuItem("\xE74D Delete"))
+                if (ImGui.MenuItem($"{UwU.Trash} Delete"))
                 {
                     MessageBox.Show("Delete directory", $"Are you sure you want to delete the directory and all containing files?\n{dir.Path}", dir.Path, (x, c) =>
                     {
@@ -635,7 +629,7 @@
                     }, MessageBoxType.YesCancel);
                 }
 
-                if (ImGui.MenuItem("\xE8AC Rename"))
+                if (ImGui.MenuItem($"{UwU.Rename} Rename"))
                 {
                     renameDirectoryDialog.Directory = dir.Path;
                     renameDirectoryDialog.Show();
@@ -643,12 +637,12 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C8 Copy Full Path"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
                     Clipboard.SetClipboardText(dir.Path);
                 }
 
-                if (ImGui.MenuItem("\xE845 Open Folder in Explorer"))
+                if (ImGui.MenuItem($"{UwU.FolderOpen} Open Folder in Explorer"))
                 {
                     Designer.OpenDirectory(dir.Path);
                 }
@@ -819,7 +813,7 @@
         {
             if (ImGui.BeginPopupContextItem(file.Path, ImGuiPopupFlags.MouseButtonMask))
             {
-                if (ImGui.MenuItem("\xE845 Open"))
+                if (ImGui.MenuItem($"{UwU.OpenFile} Open"))
                 {
                     Designer.OpenFile(file.Path);
                 }
@@ -831,19 +825,19 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C6 Cut"))
+                if (ImGui.MenuItem($"{UwU.Cut} Cut"))
                 {
                     pasteMode = PasteMode.Cut;
                     pasteTarget = file.Path;
                 }
 
-                if (ImGui.MenuItem("\xE8C8 Copy"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy"))
                 {
                     pasteMode = PasteMode.Copy;
                     pasteTarget = file.Path;
                 }
 
-                if (ImGui.MenuItem("\xE74D Delete"))
+                if (ImGui.MenuItem($"{UwU.Trash} Delete"))
                 {
                     MessageBox.Show("Delete file", $"Are you sure you want to delete the file(s)?", this, (x, c) =>
                     {
@@ -865,7 +859,7 @@
                     }, MessageBoxType.YesCancel);
                 }
 
-                if (ImGui.MenuItem("\xE8AC Rename"))
+                if (ImGui.MenuItem($"{UwU.Rename} Rename"))
                 {
                     renameFileDialog.File = file.Path;
                     renameFileDialog.Show();
@@ -873,12 +867,12 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C8 Copy Full Path"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
                     Clipboard.SetClipboardText(file.Path);
                 }
 
-                if (ImGui.MenuItem("\xE845 Open Containing Folder"))
+                if (ImGui.MenuItem($"{UwU.FolderOpen} Open Containing Folder"))
                 {
                     Designer.OpenDirectory(currentDir?.FullName);
                 }
@@ -896,13 +890,13 @@
 
             if (ImGui.BeginPopupContextWindow("AssetExplorerContextMenu"))
             {
-                if (ImGui.BeginMenu("\xE948 Add"))
+                if (ImGui.BeginMenu($"{UwU.SquarePlus} Add"))
                 {
-                    if (ImGui.MenuItem("\xE948 New Item..."))
+                    if (ImGui.MenuItem($"{UwU.SquarePlus} New Item..."))
                     {
                     }
 
-                    if (ImGui.MenuItem("\xE948 New Folder"))
+                    if (ImGui.MenuItem($"{UwU.SquarePlus} New Folder"))
                     {
                         System.IO.Directory.CreateDirectory(GetNewFolderName(Path.Combine(currentDir.FullName, "New Folder")));
                         Refresh(true);
@@ -910,11 +904,11 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("\xEDAD Import Item..."))
+                    if (ImGui.MenuItem($"{UwU.FileImport} Import Item..."))
                     {
                     }
 
-                    if (ImGui.MenuItem("\xEDAD Import Folder..."))
+                    if (ImGui.MenuItem($"{UwU.FileImport} Import Folder..."))
                     {
                     }
 
@@ -932,19 +926,19 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE80F Home"))
+                if (ImGui.MenuItem($"{UwU.House} Home"))
                 {
                     GoHome();
                 }
 
-                if (ImGui.MenuItem("\xE72C Refresh"))
+                if (ImGui.MenuItem($"{UwU.ArrowsRotate} Refresh"))
                 {
                     Refresh(true);
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.BeginMenu("\xE713 Settings"))
+                if (ImGui.BeginMenu($"{UwU.Gear} Settings"))
                 {
                     DrawSettings();
 
@@ -953,19 +947,19 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE77F Paste"))
+                if (ImGui.MenuItem($"{UwU.Paste} Paste"))
                 {
                     Paste(currentDir.FullName);
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C8 Copy Full Path"))
+                if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
                     Clipboard.SetClipboardText(currentDir.FullName);
                 }
 
-                if (ImGui.MenuItem("\xE845 Open Folder in Explorer"))
+                if (ImGui.MenuItem($"{UwU.FolderOpen} Open Folder in Explorer"))
                 {
                     Designer.OpenDirectory(currentDir.FullName);
                 }
@@ -1282,13 +1276,13 @@
         {
             if (ImGui.BeginMenuBar())
             {
-                if (ImGui.BeginMenu("\xE713"))
+                if (ImGui.BeginMenu($"{UwU.Gear}"))
                 {
                     DrawSettings();
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.Button("\xE8B5 Import"))
+                if (ImGui.Button($"{UwU.FileImport} Import"))
                 {
                     importFileDialog.Show();
                 }

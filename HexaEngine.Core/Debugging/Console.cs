@@ -34,7 +34,7 @@
         private static bool resetModal;
         private static float windowAlpha = 1;
         private static readonly ConsoleColorPalette consoleColorPalette = new();
-        private static readonly string consoleName = "Console";
+        private static readonly string consoleName = $"\xf120 Console";
         private static bool consoleOpen;
         private static ConsoleColor foregroundColor = ConsoleColor.White;
         private static ConsoleColor backgroundColor = ConsoleColor.Black;

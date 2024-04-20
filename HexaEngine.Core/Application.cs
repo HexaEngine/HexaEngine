@@ -59,6 +59,7 @@
         private static ICoreWindow mainWindow;
         private static IGraphicsDevice graphicsDevice;
         private static IGraphicsContext graphicsContext;
+        private static IGPUProfiler gpuProfiler;
         private static IAudioDevice audioDevice;
 
 #nullable restore
@@ -77,6 +78,11 @@
         /// Gets the graphics context used by the application.
         /// </summary>
         public static IGraphicsContext GraphicsContext => graphicsContext;
+
+        /// <summary>
+        /// Gets the graphics context used by the application.
+        /// </summary>
+        public static IGPUProfiler GPUProfiler => gpuProfiler;
 
         /// <summary>
         /// Gets or sets the graphics backend used by the application.
@@ -345,6 +351,7 @@
         {
             graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
+            gpuProfiler = graphicsDevice.Profiler;
             audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
 
             for (int i = 0; i < windows.Count; i++)

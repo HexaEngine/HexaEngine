@@ -12,6 +12,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
+    using System;
     using System.Numerics;
 
     public static class SceneWindow
@@ -217,7 +218,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button("\xE768")) // Play "\xE768"
+                        if (ImGui.Button($"{UwU.Play}")) // Play "\xE768"
                         {
                             Play(scene);
                             modeSwitched = true;
@@ -236,7 +237,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button("\xE769")) // Pause "\xE769"
+                        if (ImGui.Button($"{UwU.Pause}")) // Pause "\xE769"
                         {
                             Pause(scene);
                             modeSwitched = true;
@@ -255,7 +256,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button("\xE71A")) // Stop "xE71A"
+                        if (ImGui.Button($"{UwU.Stop}")) // Stop "xE71A"
                         {
                             Stop(scene);
                             modeSwitched = true;
@@ -275,7 +276,7 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.BeginMenu("\xE713"))
+                    if (ImGui.BeginMenu($"{UwU.Gear}"))
                     {
                         ImGui.Checkbox("Fullscreen", ref Fullframe);
 
@@ -374,25 +375,25 @@
 
             ImGui.PopItemWidth();
 
-            if (ImGui.Button("\xECE9", new(32, 32)))
+            if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
             {
                 Inspector.Operation = ImGuizmoOperation.Translate;
             }
             TooltipHelper.Tooltip("Translate");
 
-            if (ImGui.Button("\xE7AD", new(32, 32)))
+            if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
             {
                 Inspector.Operation = ImGuizmoOperation.Rotate;
             }
             TooltipHelper.Tooltip("Rotate");
 
-            if (ImGui.Button("\xE740", new(32, 32)))
+            if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
             {
                 Inspector.Operation = ImGuizmoOperation.Scale;
             }
             TooltipHelper.Tooltip("Scale");
 
-            if (ImGui.Button("\xE759", new(32, 32)))
+            if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
             {
                 Inspector.Operation = ImGuizmoOperation.Universal;
             }
@@ -416,6 +417,10 @@
             if (ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
             {
                 TransitionToState(EditorPlayState.Edit);
+            }
+            if (ImGui.IsKeyDown(ImGuiKey.F5) && Application.InEditMode)
+            {
+                TransitionToState(EditorPlayState.Play);
             }
         }
 

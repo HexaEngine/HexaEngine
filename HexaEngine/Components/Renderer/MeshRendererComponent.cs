@@ -281,6 +281,11 @@
                         component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
                     }
 
+                    if (flags.HasFlag(ModelMaterialShaderFlags.DepthAlways))
+                    {
+                        component.QueueIndex = (uint)RenderQueueIndex.GeometryLast;
+                    }
+
                     if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))
                     {
                         component.QueueIndex = (uint)RenderQueueIndex.Transparency;
@@ -325,6 +330,11 @@
                     component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
                 }
 
+                if (flags.HasFlag(ModelMaterialShaderFlags.DepthAlways))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.GeometryLast;
+                }
+
                 if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))
                 {
                     component.QueueIndex = (uint)RenderQueueIndex.Transparency;
@@ -360,6 +370,11 @@
                 if (flags.HasFlag(ModelMaterialShaderFlags.AlphaTest))
                 {
                     component.QueueIndex = (uint)RenderQueueIndex.AlphaTest;
+                }
+
+                if (flags.HasFlag(ModelMaterialShaderFlags.DepthAlways))
+                {
+                    component.QueueIndex = (uint)RenderQueueIndex.GeometryLast;
                 }
 
                 if (flags.HasFlag(ModelMaterialShaderFlags.Transparent))

@@ -49,9 +49,10 @@
 
             ModelFile model;
 
+            using Stream stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             try
             {
-                model = GameObject.GetScene().ModelManager.Load(path);
+                model = ModelFile.Load(stream, MeshLoadMode.Streaming);
             }
             catch (Exception ex)
             {
@@ -69,7 +70,8 @@
             {
                 var mesh = model.Meshes[(int)i];
                 var key = $"{path}+{mesh.Name}+TriCook";
-                CookMesh(physics, key, mesh.LODs[0], bypassCache);
+                var lod = mesh.LoadLODData(0, stream);
+                CookMesh(physics, key, lod, bypassCache);
             }
         }
 

@@ -57,7 +57,7 @@
         /// <summary>
         /// Gets or sets the flags associated with the material.
         /// </summary>
-        public MaterialFlags Flags = MaterialFlags.Depth;
+        public MaterialFlags Flags = MaterialFlags.DepthTest;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaterialData"/> class.

@@ -1,57 +1,10 @@
 using System.Text;
 
-namespace HexaEngine.Editor.External
+namespace HexaEngine.Editor.Tools
 {
-    public class AppLauncher
-    {
-
-    }
-
-
-    public interface IArgument
-    {
-        public string Value { get; set; }
-
-        public void Sanitze()
-        {
-            Value = new string(Value.Trim().Where(x => char.IsLetterOrDigit(x) || char.IsWhiteSpace(x)).ToArray());
-        }
-
-        public void Append(List<string> arguments);
-    }
-
-    public struct OptionArgument : IArgument
-    {
-        public string Value { get; set; }
-
-        public string OptionMark { get; set; }
-
-        public void Sanitze()
-        {
-            Value = new string(Value.Trim().Where(x => char.IsLetterOrDigit(x) || char.IsWhiteSpace(x)).ToArray());
-            switch (OptionMark)
-            {
-                case "-":
-                case "/":
-                case "--":
-                case "+":
-                    break;
-                default:
-                    OptionMark = "";
-                    break;
-            }
-        }
-
-        public readonly void Append(List<string> arguments)
-        {
-            arguments.Add($"{OptionMark}{Value}");
-        }
-    }
-
     public class ArgumentsParser
     {
-
-        public string Parse(string args, Dictionary<string, string> placeholders)
+        public static string Parse(string args, Dictionary<string, string> placeholders)
         {
             StringBuilder sb = new();
             ReadOnlySpan<char> argsSpan = args.AsSpan().Trim();

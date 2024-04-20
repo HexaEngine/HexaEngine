@@ -24,7 +24,6 @@
         private bool limitFPS;
         private int targetFPS = 120;
         private bool active;
-        private void* waitObject;
 
         internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain2> swapChain, SwapChainFlag flags)
         {
@@ -44,7 +43,6 @@
             Width = description.Width;
             Height = description.Height;
             Viewport = new(0, 0, Width, Height);
-            waitObject = (flags & SwapChainFlag.FrameLatencyWaitableObject) != 0 ? swapChain.GetFrameLatencyWaitableObject() : null;
         }
 
         public ITexture2D Backbuffer { get; private set; }
@@ -115,15 +113,8 @@
             }
         }
 
-        [LibraryImport("kernel32.dll")]
-        private static partial int WaitForSingleObjectEx(void* handle, ulong dwMilliseconds, [MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)] bool bAlertable);
-
         public void WaitForPresent()
         {
-            if (waitObject != null)
-            {
-                WaitForSingleObjectEx(waitObject, 1000, true);
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -160,7 +151,7 @@
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
 
-            ResultCode code = (ResultCode)swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatUnknown, (uint)flags);
+            ResultCode code = (ResultCode)swapChain.ResizeBuffers(0, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatUnknown, (uint)flags);
 
             if (CheckError(code))
             {

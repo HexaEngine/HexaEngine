@@ -24,7 +24,6 @@ namespace HexaEngine.Graphics.Renderers
         private ICoreWindow window;
 
         private readonly RendererSettings settings = new();
-        private readonly CPUFlameProfiler profiler = new();
         private readonly HDRPipeline renderGraph;
         private RenderGraphExecuter graphExecuter;
 
@@ -37,9 +36,7 @@ namespace HexaEngine.Graphics.Renderers
         private float RenderResolution;
         private int width;
         private int height;
-        private bool enableProfiling;
-
-        public ICPUFlameProfiler Profiler => profiler;
+        private bool enableProfiling = true;
 
         public ViewportShading Shading { get; set; }
 
@@ -115,7 +112,7 @@ namespace HexaEngine.Graphics.Renderers
             resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, ResourceCreationFlags.None);
             resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
-            graphExecuter.Init(profiler);
+            graphExecuter.Init(CPUProfiler2.Global);
 
             initialized = true;
             Current = this;
@@ -200,7 +197,7 @@ namespace HexaEngine.Graphics.Renderers
             resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
 
-            graphExecuter.ResizeEnd(profiler);
+            graphExecuter.ResizeEnd(CPUProfiler2.Global);
 
             var scene = SceneManager.Current;
             if (scene == null)
@@ -231,7 +228,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, enableProfiling ? profiler : null);
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
         }
 
         public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, IScene scene, Camera camera)
@@ -256,7 +253,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = target;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, enableProfiling ? profiler : null);
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
         }
 
         public void TakeScreenshot(IGraphicsContext context, string path)
@@ -270,7 +267,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
             graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;
-            graphExecuter.Execute(context, enableProfiling ? profiler : null);
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
 
             tempTexture.Dispose();
 

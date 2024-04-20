@@ -211,8 +211,8 @@ namespace HexaEngine.Windows
             // Begin profiling frame and total time if profiling is enabled.
             graphicsDevice.Profiler.BeginFrame();
             graphicsDevice.Profiler.Begin(context, "Total");
-            sceneRenderer.Profiler.BeginFrame();
-            sceneRenderer.Profiler.Begin("Total");
+            CPUProfiler2.Global.BeginFrame();
+            CPUProfiler2.Global.Begin("Total");
 #endif
 
             // Resize the swap chain if necessary.
@@ -243,7 +243,7 @@ namespace HexaEngine.Windows
             var drawing = rendererInitialized;
 
             // Wait for swap chain presentation.
-            swapChain.WaitForPresent();
+            //swapChain.WaitForPresent();
 
             IScene? scene = SceneManager.Current;
 
@@ -271,7 +271,7 @@ namespace HexaEngine.Windows
 
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.
-            sceneRenderer.Profiler.End("Total");
+            CPUProfiler2.Global.End("Total");
             graphicsDevice.Profiler.End(context, "Total");
             graphicsDevice.Profiler.EndFrame(context);
 #endif

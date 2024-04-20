@@ -1,7 +1,43 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core.Utilities;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Editor.Attributes;
     using Newtonsoft.Json;
+
+    public enum ExternalTextEditorType
+    {
+        [EnumName("Visual Studio")]
+        VisualStudio,
+
+        [EnumName("VS Code")]
+        VSCode,
+
+        Custom,
+    }
+
+    public class ExternalTextEditor
+    {
+        public ExternalTextEditor(string name, string program, string commandLine)
+        {
+            Name = name;
+            ProgramPath = program;
+            CommandLine = commandLine;
+        }
+
+        public ExternalTextEditor()
+        {
+            Name = string.Empty;
+            ProgramPath = string.Empty;
+            CommandLine = string.Empty;
+        }
+
+        public string Name { get; set; }
+
+        public string ProgramPath { get; set; }
+
+        public string CommandLine { get; set; }
+    }
 
     public class EditorConfig
     {
@@ -25,6 +61,12 @@
         public float MouseSensitivity { get; set; } = 1;
 
         public WindowState State { get; set; } = WindowState.Normal;
+
+        public ExternalTextEditorType ExternalTextEditorType { get; set; }
+
+        public int SelectedExternalTextEditor { get; set; }
+
+        public List<ExternalTextEditor> ExternalTextEditors { get; set; } = [];
 
         public static EditorConfig Default { get; } = Load();
 

@@ -9,6 +9,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.Tools;
     using HexaEngine.Scripts;
     using System;
     using System.Collections.Generic;
@@ -17,8 +18,6 @@
     using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
-
-
 
     public static class ProjectManager
     {
@@ -288,12 +287,65 @@
 
             string? solutionName = Path.GetFileName(CurrentProjectFolder);
             string solutionPath = Path.Combine(CurrentProjectFolder, solutionName + ".sln");
+
             ProcessStartInfo psi = new();
-            psi.FileName = "cmd";
-            psi.Arguments = $"/c start devenv \"{solutionPath}\"";
-            psi.CreateNoWindow = true;
-            psi.UseShellExecute = false;
-            Process.Start(psi);
+            switch (EditorConfig.Default.ExternalTextEditorType)
+            {
+                case ExternalTextEditorType.VisualStudio:
+                    {
+                        psi.FileName = "cmd";
+                        psi.Arguments = $"/c start /B devenv \"{solutionPath}\"";
+                        psi.CreateNoWindow = true;
+                        psi.UseShellExecute = false;
+                    }
+                    break;
+
+                case ExternalTextEditorType.VSCode:
+                    {
+                        psi.FileName = "cmd";
+                        psi.Arguments = $"/c start /B code \"{CurrentProjectFolder}\"";
+                        psi.CreateNoWindow = true;
+                        psi.UseShellExecute = false;
+                    }
+                    break;
+
+                case ExternalTextEditorType.Custom:
+                    {
+                        var editorIndex = EditorConfig.Default.SelectedExternalTextEditor;
+                        var editors = EditorConfig.Default.ExternalTextEditors;
+                        var editor = editorIndex >= 0 && editorIndex < editors.Count ? editors[editorIndex] : null;
+                        if (editor == null)
+                        {
+                            semaphore.Release();
+                            return;
+                        }
+                        psi.FileName = editor.ProgramPath;
+                        psi.Arguments = ArgumentsParser.Parse(editor.CommandLine, new Dictionary<string, string>()
+                        {
+                            { "solutionPath", $"\"{solutionPath}\"" },
+                            { "solutionName", $"\"{solutionName}\"" },
+                            { "projectFolder", $"\"{CurrentProjectFolder}\"" }
+                        });
+                        psi.CreateNoWindow = true;
+                        psi.UseShellExecute = false;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open external text editor", ex.Message);
+                Logger.Error("Failed to open external text editor");
+                Logger.Log(ex);
+            }
+
             semaphore.Release();
         }
 

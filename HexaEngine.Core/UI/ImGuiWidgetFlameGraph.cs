@@ -24,6 +24,7 @@
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Debugging;
     using System.Numerics;
 
     /// <summary>
@@ -94,6 +95,8 @@ namespace HexaEngine.Core.UI
                 graphSize.Y = labelSize.Y + style.FramePadding.Y * 3 + blockHeight * (maxDepth + 1);
             }
 
+            Vector2 cursor = ImGui.GetCursorPos();
+
             ImRect frameBB = new() { Min = window->DC.CursorPos, Max = window->DC.CursorPos + graphSize };
             ImRect innerBB = new() { Min = frameBB.Min + style.FramePadding, Max = frameBB.Max - style.FramePadding };
             ImRect totalBB = new() { Min = frameBB.Min, Max = frameBB.Max + new Vector2(labelSize.X > 0.0f ? style.ItemInnerSpacing.X + labelSize.X : 0.0f, 0) };
@@ -135,6 +138,12 @@ namespace HexaEngine.Core.UI
 
             ImGui.RenderFrame(frameBB.Min, frameBB.Max, ImGui.GetColorU32(ImGuiCol.FrameBg), true, style.FrameRounding);
 
+            var duration = scaleMax - scaleMin;
+            if (duration == 0)
+            {
+                return;
+            }
+
             bool any_hovered = false;
             if (valuesCount - valuesOffset >= 1)
             {
@@ -152,12 +161,6 @@ namespace HexaEngine.Core.UI
 
                     valuesGetter(&stageStart, &stageEnd, &depth, &caption, data, i);
 
-                    var duration = scaleMax - scaleMin;
-                    if (duration == 0)
-                    {
-                        return;
-                    }
-
                     var start = stageStart - scaleMin;
                     var end = stageEnd - scaleMin;
 
@@ -166,8 +169,8 @@ namespace HexaEngine.Core.UI
                         continue;
                     }
 
-                    var startX = (float)(start / (double)duration);
-                    var endX = (float)(end / (double)duration);
+                    var startX = (start / duration);
+                    var endX = (end / duration);
 
                     float width = innerBB.Max.X - innerBB.Min.X;
                     float height;

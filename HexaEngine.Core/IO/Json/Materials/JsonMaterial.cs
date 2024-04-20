@@ -9,6 +9,6 @@
         public List<MaterialProperty> Properties = [];
         public List<MaterialTexture> Textures = [];
         public List<MaterialShader> Shaders = [];
-        public MaterialFlags Flags = MaterialFlags.Depth;
+        public MaterialFlags Flags = MaterialFlags.DepthTest;
     }
 }

@@ -2,8 +2,10 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
+    [EditorWindowCategory("Old")]
     public class SceneVariablesWindow : EditorWindow
     {
         private string _newKeyName = string.Empty;

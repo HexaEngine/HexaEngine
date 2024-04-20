@@ -7,7 +7,7 @@
 
     public class MixerWidget : EditorWindow
     {
-        protected override string Name => "Mixer";
+        protected override string Name => $"{UwU.Music} Mixer";
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {

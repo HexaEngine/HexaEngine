@@ -185,5 +185,30 @@
             };
             return materialData;
         }
+
+        public void SetPropertyBool(MaterialPropertyType type, bool value)
+        {
+            int index = GetPropertyIndex(type);
+            if (index == -1)
+            {
+                MaterialProperty property = new(type.ToString(), type, MaterialValueType.Bool, Endianness.LittleEndian);
+                property.SetBool(value);
+                Properties.Add(property);
+                return;
+            }
+            Properties[index].SetBool(value);
+        }
+
+        public void SetPropertyFloat(MaterialPropertyType type, float value)
+        {
+            int index = GetPropertyIndex(type);
+            if (index == -1)
+            {
+                MaterialProperty property = new(type.ToString(), type, MaterialValueType.Float, Endianness.LittleEndian);
+                Properties.Add(property);
+                return;
+            }
+            Properties[index].SetFloat(value);
+        }
     }
 }

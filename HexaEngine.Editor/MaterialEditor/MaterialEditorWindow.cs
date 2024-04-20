@@ -713,6 +713,26 @@
                     unsavedData = true;
                     UpdateMaterial();
                 }
+                if (ImGui.CheckboxFlags("Depth Test", ref flags, (int)MaterialFlags.DepthTest))
+                {
+                    material.Flags = (MaterialFlags)flags;
+                    unsavedData = true;
+                    UpdateMaterial();
+                }
+                if (ImGui.CheckboxFlags("Depth Always", ref flags, (int)MaterialFlags.DepthAlways))
+                {
+                    material.Flags = (MaterialFlags)flags;
+                    unsavedData = true;
+                    UpdateMaterial();
+                }
+                var value = material.GetProperty(MaterialPropertyType.TwoSided).AsBool();
+                if (ImGui.Checkbox("Two Sided", ref value))
+                {
+                    material.SetPropertyBool(MaterialPropertyType.TwoSided, value);
+                    material.Flags = (MaterialFlags)flags;
+                    unsavedData = true;
+                    UpdateMaterial();
+                }
             }
 
             ImGui.EndTable();

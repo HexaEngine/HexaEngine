@@ -15,6 +15,8 @@
         /// </summary>
         bool DisableLogging { get; set; }
 
+        IReadOnlyList<string> BlockNames { get; }
+
         /// <summary>
         /// Gets the GPU profiling data for a specific block by name.
         /// </summary>
@@ -58,5 +60,22 @@
         /// <param name="context">The graphics context associated with the profiling.</param>
         /// <param name="name">The name of the block to end profiling.</param>
         void End(IGraphicsContext context, string name);
+
+        /// <summary>
+        /// Ends the current frame for GPU profiling and provides the associated graphics context.
+        /// </summary>
+        void EndFrame();
+
+        /// <summary>
+        /// Begins GPU profiling for a specified block with the given name and associated graphics context.
+        /// </summary>
+        /// <param name="name">The name of the block to begin profiling.</param>
+        void Begin(string name);
+
+        /// <summary>
+        /// Ends GPU profiling for a specified block with the given name and associated graphics context.
+        /// </summary>
+        /// <param name="name">The name of the block to end profiling.</param>
+        void End(string name);
     }
 }

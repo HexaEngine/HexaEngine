@@ -13,7 +13,7 @@
         /// <summary>
         /// Current version of the material file format.
         /// </summary>
-        public static readonly Version Version = 1;
+        public static readonly Version Version = 2;
 
         /// <summary>
         /// Minimum supported version of the material file format.

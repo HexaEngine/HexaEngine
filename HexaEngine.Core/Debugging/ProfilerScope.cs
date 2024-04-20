@@ -44,15 +44,8 @@
         /// </summary>
         public StdString Name;
 
-        /// <summary>
-        /// Gets or sets the ring buffer for start samples.
-        /// </summary>
-        public UnsafeRingBuffer<float> StartSamples;
-
-        /// <summary>
-        /// Gets or sets the ring buffer for end samples.
-        /// </summary>
-        public UnsafeRingBuffer<float> EndSamples;
+        public float LastStartSample;
+        public float LastEndSample;
 
         /// <summary>
         /// Gets or sets the duration of the scope.
@@ -69,8 +62,6 @@
         {
             Id = id;
             Name = name;
-            StartSamples = new(sampleCount);
-            EndSamples = new(sampleCount);
         }
 
         public override readonly bool Equals(object? obj)
@@ -87,8 +78,6 @@
                    Finalized == other.Finalized &&
                    Used == other.Used &&
                    EqualityComparer<StdString>.Default.Equals(Name, other.Name) &&
-                   StartSamples.Equals(other.StartSamples) &&
-                   EndSamples.Equals(other.EndSamples) &&
                    Duration == other.Duration;
         }
 
@@ -102,8 +91,6 @@
             hash.Add(Finalized);
             hash.Add(Used);
             hash.Add(Name);
-            hash.Add(StartSamples);
-            hash.Add(EndSamples);
             hash.Add(Duration);
             return hash.ToHashCode();
         }

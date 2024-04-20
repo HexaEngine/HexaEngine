@@ -64,7 +64,7 @@
 #endif
         }
 
-        protected override string Name { get; } = "Input Manager";
+        protected override string Name { get; } = $"{UwU.Keyboard} Input Manager";
 
         protected override void OnShown()
         {

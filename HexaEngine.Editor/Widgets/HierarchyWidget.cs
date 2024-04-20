@@ -7,6 +7,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
     using HexaEngine.Volumes;
@@ -85,7 +86,7 @@
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        protected override string Name => "\xE71D Hierarchy";
+        protected override string Name => $"{UwU.Sitemap} Hierarchy";
 
         public override void DrawContent(IGraphicsContext context)
         {
@@ -97,7 +98,7 @@
                 return;
             }
 
-            ImGui.InputTextWithHint("##SearchBar", "\xE721 Search...", ref searchString, 1024);
+            ImGui.InputTextWithHint("##SearchBar", $"{UwU.MagnifyingGlass} Search...", ref searchString, 1024);
 
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff1c1c1c);
 
@@ -160,7 +161,7 @@
 
         private void DrawSettingsMenu()
         {
-            if (ImGui.BeginMenu("\xE713 Settings"))
+            if (ImGui.BeginMenu($"{UwU.Gear} Settings"))
             {
                 ImGui.Checkbox("Show Hidden", ref showHidden);
 
@@ -200,7 +201,7 @@
             var scene = SceneManager.Current;
             if (ImGui.BeginPopupContextWindow(ImGuiPopupFlags.NoOpenOverItems | ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverExistingPopup))
             {
-                if (ImGui.BeginMenu("\xE710 Add"))
+                if (ImGui.BeginMenu($"{UwU.SquarePlus} Add"))
                 {
                     foreach (var item in cache)
                     {
@@ -227,25 +228,25 @@
         {
             if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonMask))
             {
-                if (ImGui.MenuItem("\xE71E Focus"))
+                if (ImGui.MenuItem($"{UwU.MagnifyingGlassPlus} Focus"))
                 {
                     EditorCameraController.Center = element.Transform.GlobalPosition;
                 }
-                if (ImGui.MenuItem("\xE71F Defocus"))
+                if (ImGui.MenuItem($"{UwU.MagnifyingGlassMinus} Defocus"))
                 {
                     EditorCameraController.Center = Vector3.Zero;
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8E6 Unselect"))
+                if (ImGui.MenuItem($"{UwU.Minus} Unselect"))
                 {
                     SelectionCollection.Global.ClearSelection();
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C8 Clone"))
+                if (ImGui.MenuItem($"{UwU.Clone} Clone"))
                 {
                     for (int i = 0; i < SelectionCollection.Global.Count; i++)
                     {
@@ -259,7 +260,7 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE738 Delete"))
+                if (ImGui.MenuItem($"{UwU.Trash} Delete"))
                 {
                     SelectionCollection.Global.PurgeSelection();
                 }
@@ -508,20 +509,20 @@
 
         private static char GetIcon(GameObject element)
         {
-            char icon = '\xebd2';
+            char icon = UwU.Cube;
             if (element is Light)
             {
-                icon = '\xf08c';
+                icon = UwU.Lightbulb;
             }
 
             if (element is Camera)
             {
-                icon = '\xe722';
+                icon = UwU.Camera;
             }
 
             if (element is Volume)
             {
-                icon = '\xf133';
+                icon = UwU.WandMagicSparkles;
             }
 
             return icon;
@@ -543,17 +544,32 @@
 
             if (element.HasComponent<ScriptComponent>())
             {
-                labelBuffer.PushBack('\xf000');
+                labelBuffer.PushBack(UwU.Scroll);
             }
 
             if (element.HasComponent<IRendererComponent>())
             {
-                labelBuffer.PushBack('\xf158');
+                labelBuffer.PushBack(UwU.DrawPolygon);
+            }
+
+            if (element.HasComponent<IActorComponent>())
+            {
+                labelBuffer.PushBack(UwU.CircleDot);
+            }
+
+            if (element.HasComponent<IColliderComponent>())
+            {
+                labelBuffer.PushBack(UwU.Shapes);
+            }
+
+            if (element.HasComponent<IJointComponent>())
+            {
+                labelBuffer.PushBack(UwU.Link);
             }
 
             ToUTF8(ref labelBuffer, ref labelOutBuffer);
 
-            float padding = ImGui.CalcTextSize("\xe7b3").X + 7;
+            float padding = ImGui.CalcTextSize($"{UwU.Eye}").X + 7;
 
             float width = ImGui.CalcTextSize(labelOutBuffer.Data).X + padding;
             ImGui.SameLine();
@@ -562,11 +578,11 @@
 
             ImGui.SameLine();
             bool visible = element.IsEditorVisible;
-            if (visible && ImGui.MenuItem("\xe7b3"))
+            if (visible && ImGui.MenuItem($"{UwU.Eye}"))
             {
                 element.IsEditorVisible = false;
             }
-            if (!visible && ImGui.MenuItem("\xed1a"))
+            if (!visible && ImGui.MenuItem($"{UwU.EyeSlash}"))
             {
                 element.IsEditorVisible = true;
             }

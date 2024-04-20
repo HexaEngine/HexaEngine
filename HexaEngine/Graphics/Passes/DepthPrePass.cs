@@ -53,7 +53,9 @@
             RenderManager.ExecuteGroupVisibilityTest(renderers.AlphaTestQueue, CullingManager.Current.Context, profiler, "AlphaTest");
             profiler?.End("VisibilityTest.AlphaTest");
 
+            profiler?.Begin("VisibilityTest.Update");
             culling.Context.Flush(context);
+            profiler?.End("VisibilityTest.Update");
 
             var depthStencilBuffer = depthStencil.Value;
             context.ClearDepthStencilView(depthStencilBuffer.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
