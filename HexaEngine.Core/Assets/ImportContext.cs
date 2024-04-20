@@ -2,6 +2,8 @@
 
 namespace HexaEngine.Core.Assets
 {
+    using HexaEngine.Core.Debugging;
+
     public class ImportContext
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ImportContext));
