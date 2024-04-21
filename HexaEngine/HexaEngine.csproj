@@ -47,6 +47,15 @@
 		<None Update="assets\shared\fonts\ARIALBD.TTF">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\fonts\fa-brands-400.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\fa-regular-400.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\fa-solid-900.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\fonts\Font Awesome 6 Brands-Regular-400.otf">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -90,6 +99,9 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\model.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\prefab.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\scene.png">

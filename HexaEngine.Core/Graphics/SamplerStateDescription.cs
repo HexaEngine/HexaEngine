@@ -90,6 +90,11 @@
         public static readonly SamplerStateDescription PointClamp = new(Filter.MinMagMipPoint, TextureAddressMode.Clamp);
 
         /// <summary>
+        /// Predefined instance for linear sampling with mirror.
+        /// </summary>
+        public static readonly SamplerStateDescription LinearMirror = new(Filter.MinMagMipLinear, TextureAddressMode.Mirror);
+
+        /// <summary>
         /// Predefined instance for linear sampling with wrapping.
         /// </summary>
         public static readonly SamplerStateDescription LinearWrap = new(Filter.MinMagMipLinear, TextureAddressMode.Wrap);

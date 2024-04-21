@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
+    using HexaEngine.Graphics.Renderers;
     using Octokit;
     using System;
     using System.Numerics;
@@ -367,7 +368,11 @@
 
             ImGui.SetCursorPos(new(entrySize.X, pos.Y + padding.Y));
 
-            if (ImGui.SmallButton(entry.Pinned ? $"\xE77A##{entry.Path}" : $"\xE718##{entry.Path}"))
+            if (!entry.Pinned)
+            {
+                ImGuiManager.PushFont("Icons-Regular");
+            }
+            if (ImGui.SmallButton($"{UwU.Bookmark}##{entry.Path}"))
             {
                 if (entry.Pinned)
                 {
@@ -378,6 +383,8 @@
                     ProjectHistory.Pin(entry.Path);
                 }
             }
+
+            ImGuiManager.PopFont();
 
             ImGui.SetCursorPos(pos);
 
@@ -432,14 +439,19 @@
                 {
                     ProjectHistory.RemoveEntryByPath(entry.Path);
                 }
-                if (!entry.Pinned && ImGui.MenuItem($"\xE718 Pin"))
+                if (!entry.Pinned)
+                {
+                    ImGuiManager.PushFont("Icons-Regular");
+                }
+                if (!entry.Pinned && ImGui.MenuItem($"{UwU.Bookmark} Pin"))
                 {
                     ProjectHistory.Pin(entry.Path);
                 }
-                if (entry.Pinned && ImGui.MenuItem($"\xE77A Unpin"))
+                if (entry.Pinned && ImGui.MenuItem($"{UwU.Bookmark} Unpin"))
                 {
                     ProjectHistory.Unpin(entry.Path);
                 }
+                ImGuiManager.PopFont();
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Path"))
                 {
                     Clipboard.SetClipboardText(entry.Path);

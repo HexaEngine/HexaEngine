@@ -1,6 +1,7 @@
 ﻿namespace TestApp
 {
     using HexaEngine.Mathematics;
+    using System;
     using System.Numerics;
 
     public static unsafe class StringExtensions
@@ -26,18 +27,23 @@
     {
         public static void Main()
         {
-            Vector4D left = new(1, 2, 3, 4);
-            Vector4D right = new(5, 6, 7, 8);
+            Quaternion quaternion = new(-0.022436896f, 0.7067439f, -0.7067629f, -0.022269966f);
 
-            double dot = Vector4D.Dot(left, right);
+            {
+                var x = Vector3.Transform(Vector3.UnitX, quaternion);
+                var y = Vector3.Transform(Vector3.UnitY, quaternion);
+                var z = Vector3.Cross(x, y);
+                var xx = Math.Acos(Vector3.Dot(x, Vector3.UnitX));
+                var yy = Math.Acos(Vector3.Dot(y, Vector3.UnitY));
+                var zz = Math.Acos(Vector3.Dot(z, Vector3.UnitZ));
+            }
 
-            double doot = MathUtil.Dot(left, right);
+            Quaternion r = Quaternion.Normalize(quaternion);
 
-            var normalizedD = Vector4D.Normalize(left);
-            var normalizedD0 = MathUtil.Normalize(left);
-
-            var normalized = MathUtil.Normalize(new Vector3(1, 0, 0));
-            var normalized0 = MathUtil.Normalize(new Vector3(0, 0, 0));
+            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
+            float pitch = MathF.Asin((float)Math.Clamp(2.0f * (r.X * r.W - r.Y * r.Z), -1, 1));
+            float roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
+            Vector3 euler = new Vector3(yaw, pitch, roll);
         }
     }
 

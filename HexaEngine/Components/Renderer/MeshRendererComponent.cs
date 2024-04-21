@@ -63,7 +63,7 @@
 
         [EditorCategory("Materials")]
         [EditorProperty("")]
-        public MaterialAssetMappingCollection Materials { get; } = new();
+        public MaterialAssetMapper Materials { get; } = new();
 
         [JsonIgnore]
         public int LODLevel => currentLODLevel;

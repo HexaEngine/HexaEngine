@@ -30,6 +30,7 @@
                 ".model" => true,
                 ".matlib" => true,
                 ".hexlvl" => true,
+                ".prefab" => true,
                 _ => false,
             };
         }
@@ -46,6 +47,7 @@
                 ".model" => AssetType.Model,
                 ".matlib" => AssetType.MaterialLibrary,
                 ".hexlvl" => AssetType.Scene,
+                ".prefab" => AssetType.Prefab,
                 _ => AssetType.Unknown,
             };
 

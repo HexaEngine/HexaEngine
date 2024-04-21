@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Components.Physics
 {
+    using Hexa.NET.ImGui;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
@@ -147,14 +149,14 @@
         {
             if (type != ActorType.Static && GameObject != null)
             {
-                PxTransform transform = Helper.Convert(GameObject.Transform.PositionRotation);
-                actor->SetGlobalPoseMut(&transform, true);
+                //PxTransform transform = Helper.Convert(GameObject.Transform.PositionRotation);
+                //actor->SetGlobalPoseMut(&transform, true);
             }
         }
 
         protected override void EndUpdate()
         {
-            if (type != ActorType.Static && GameObject != null && !IsSleeping)
+            if (type != ActorType.Static && GameObject != null)
             {
                 var pose = actor->GetGlobalPose();
                 GameObject.Transform.PositionRotation = Helper.Convert(pose);

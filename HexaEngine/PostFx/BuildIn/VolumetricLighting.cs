@@ -110,12 +110,14 @@
         /// <inheritdoc/>
         public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.HDR;
 
+        [EditorProperty<VolumetricLightingQualityPreset>("Quality Preset")]
         public VolumetricLightingQualityPreset QualityPreset
         {
             get => qualityPreset;
             set => NotifyPropertyChangedAndSetAndReload(ref qualityPreset, value);
         }
 
+        [EditorProperty("Sample Count")]
         public int SampleCount
         {
             get => sampleCount;
@@ -129,24 +131,14 @@
             }
         }
 
+        [EditorProperty("Density")]
         public float Density
         {
             get => density;
             set => NotifyPropertyChangedAndSet(ref density, value);
         }
 
-        public float RayleighCoefficient
-        {
-            get => rayleighCoefficient;
-            set => NotifyPropertyChangedAndSet(ref rayleighCoefficient, value);
-        }
-
-        public float MieCoefficient
-        {
-            get => mieCoefficient;
-            set => NotifyPropertyChangedAndSet(ref mieCoefficient, value);
-        }
-
+        [EditorProperty("MieG")]
         public float MieG
         {
             get => mieG;
@@ -160,7 +152,7 @@
                 .RunBefore<ColorGrading>()
                 .RunAfter<HBAO>()
                 .RunAfter<SSGI>()
-                .RunAfter<SSR>()
+                .RunBefore<SSR>()
                 .RunBefore<MotionBlur>()
                 .RunBefore<AutoExposure>()
                 .RunBefore<TAA>()

@@ -3,22 +3,22 @@
     using HexaEngine.Mathematics;
     using System.Numerics;
 
-    public struct MeshDrawInstance
+    public class DrawInstance
     {
         public int NodeId;
         public Matrix4x4 Transform;
-        public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
 
-        public MeshDrawInstance(int nodeId)
+        public DrawInstance(int nodeId)
         {
             NodeId = nodeId;
         }
 
-        public MeshDrawInstance(int nodeId, Matrix4x4 transform, BoundingBox boundingBox)
+        public DrawInstance(int nodeId, Matrix4x4 transform, BoundingSphere boundingSphere)
         {
             NodeId = nodeId;
             Transform = transform;
-            BoundingBox = boundingBox;
+            BoundingSphere = boundingSphere;
         }
     }
 }

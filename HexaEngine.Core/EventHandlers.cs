@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Windows.Events;
     using System;
     using System.Collections.Generic;
 
@@ -29,6 +30,18 @@
             for (int i = 0; i < handlers.Count; i++)
             {
                 handlers[i](sender, args);
+            }
+        }
+
+        public void InvokeRouted<TRoutedEventArgs>(object? sender, TRoutedEventArgs args) where TRoutedEventArgs : RoutedEventArgs, TEventArgs
+        {
+            for (int i = 0; i < handlers.Count; i++)
+            {
+                handlers[i](sender, args);
+                if (args.Handled)
+                {
+                    return;
+                }
             }
         }
     }

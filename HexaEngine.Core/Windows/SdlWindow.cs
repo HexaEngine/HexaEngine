@@ -11,6 +11,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using System;
+    using System.ComponentModel;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -576,145 +577,286 @@
 
         #region Events
 
+        private readonly EventHandlers<ShownEventArgs> ShownHandlers = new();
+        private readonly EventHandlers<HiddenEventArgs> HiddenHandlers = new();
+        private readonly EventHandlers<ExposedEventArgs> ExposedHandlers = new();
+        private readonly EventHandlers<MovedEventArgs> MovedHandlers = new();
+        private readonly EventHandlers<ResizedEventArgs> ResizedHandlers = new();
+        private readonly EventHandlers<SizeChangedEventArgs> SizeChangedHandlers = new();
+        private readonly EventHandlers<MinimizedEventArgs> MinimizedHandlers = new();
+        private readonly EventHandlers<MaximizedEventArgs> MaximizedHandlers = new();
+        private readonly EventHandlers<RestoredEventArgs> RestoredHandlers = new();
+        private readonly EventHandlers<EnterEventArgs> EnterHandlers = new();
+        private readonly EventHandlers<LeaveEventArgs> LeaveHandlers = new();
+        private readonly EventHandlers<FocusGainedEventArgs> FocusGainedHandlers = new();
+        private readonly EventHandlers<FocusLostEventArgs> FocusLostHandlers = new();
+        private readonly EventHandlers<CloseEventArgs> ClosingHandlers = new();
+        private readonly EventHandlers<CloseEventArgs> ClosedHandlers = new();
+        private readonly EventHandlers<TakeFocusEventArgs> TakeFocusHandlers = new();
+        private readonly EventHandlers<HitTestEventArgs> HitTestHandlers = new();
+        private readonly EventHandlers<KeyboardEventArgs> KeyboardInputHandlers = new();
+        private readonly EventHandlers<TextInputEventArgs> KeyboardCharInputHandlers = new();
+        private readonly EventHandlers<MouseButtonEventArgs> MouseButtonInputHandlers = new();
+        private readonly EventHandlers<MouseMoveEventArgs> MouseMotionInputHandlers = new();
+        private readonly EventHandlers<MouseWheelEventArgs> MouseWheelInputHandlers = new();
+        private readonly EventHandlers<TouchEventArgs> TouchInputHandlers = new();
+        private readonly EventHandlers<TouchMoveEventArgs> TouchMotionInputHandlers = new();
+        private readonly EventHandlers<DropEventArgs> DropBeginHandlers = new();
+        private readonly EventHandlers<DropFileEventArgs> DropFileHandlers = new();
+        private readonly EventHandlers<DropTextEventArgs> DropTextHandlers = new();
+        private readonly EventHandlers<DropEventArgs> DropCompleteHandlers = new();
+
         /// <summary>
         /// Event triggered when the window is shown.
         /// </summary>
-        public event EventHandler<ShownEventArgs>? Shown;
+        public event EventHandler<ShownEventArgs> Shown
+        {
+            add => ShownHandlers.AddHandler(value);
+            remove => ShownHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is hidden.
         /// </summary>
-        public event EventHandler<HiddenEventArgs>? Hidden;
+        public event EventHandler<HiddenEventArgs> Hidden
+        {
+            add => HiddenHandlers.AddHandler(value);
+            remove => HiddenHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is exposed.
         /// </summary>
-        public event EventHandler<ExposedEventArgs>? Exposed;
+        public event EventHandler<ExposedEventArgs> Exposed
+        {
+            add => ExposedHandlers.AddHandler(value);
+            remove => ExposedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is moved.
         /// </summary>
-        public event EventHandler<MovedEventArgs>? Moved;
+        public event EventHandler<MovedEventArgs> Moved
+        {
+            add => MovedHandlers.AddHandler(value);
+            remove => MovedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is resized.
         /// </summary>
-        public event EventHandler<ResizedEventArgs>? Resized;
+        public event EventHandler<ResizedEventArgs> Resized
+        {
+            add => ResizedHandlers.AddHandler(value);
+            remove => ResizedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window size is changed.
         /// </summary>
-        public event EventHandler<SizeChangedEventArgs>? SizeChanged;
+        public event EventHandler<SizeChangedEventArgs> SizeChanged
+        {
+            add => SizeChangedHandlers.AddHandler(value);
+            remove => SizeChangedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is minimized.
         /// </summary>
-        public event EventHandler<MinimizedEventArgs>? Minimized;
+        public event EventHandler<MinimizedEventArgs> Minimized
+        {
+            add => MinimizedHandlers.AddHandler(value);
+            remove => MinimizedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is maximized.
         /// </summary>
-        public event EventHandler<MaximizedEventArgs>? Maximized;
+        public event EventHandler<MaximizedEventArgs> Maximized
+        {
+            add => MaximizedHandlers.AddHandler(value);
+            remove => MaximizedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is restored.
         /// </summary>
-        public event EventHandler<RestoredEventArgs>? Restored;
+        public event EventHandler<RestoredEventArgs> Restored
+        {
+            add => RestoredHandlers.AddHandler(value);
+            remove => RestoredHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the mouse enters the window.
         /// </summary>
-        public event EventHandler<EnterEventArgs>? Enter;
+        public event EventHandler<EnterEventArgs> Enter
+        {
+            add => EnterHandlers.AddHandler(value);
+            remove => EnterHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the mouse leaves the window.
         /// </summary>
-        public event EventHandler<LeaveEventArgs>? Leave;
+        public event EventHandler<LeaveEventArgs> Leave
+        {
+            add => LeaveHandlers.AddHandler(value);
+            remove => LeaveHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window gains focus.
         /// </summary>
-        public event EventHandler<FocusGainedEventArgs>? FocusGained;
+        public event EventHandler<FocusGainedEventArgs> FocusGained
+        {
+            add => FocusGainedHandlers.AddHandler(value);
+            remove => FocusGainedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window loses focus.
         /// </summary>
-        public event EventHandler<FocusLostEventArgs>? FocusLost;
+        public event EventHandler<FocusLostEventArgs> FocusLost
+        {
+            add => FocusLostHandlers.AddHandler(value);
+            remove => FocusLostHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is closing.
         /// </summary>
-        public event EventHandler<CloseEventArgs>? Closing;
+        public event EventHandler<CloseEventArgs> Closing
+        {
+            add => ClosingHandlers.AddHandler(value);
+            remove => ClosingHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window is closed.
         /// </summary>
-        public event EventHandler<CloseEventArgs>? Closed;
+        public event EventHandler<CloseEventArgs> Closed
+        {
+            add => ClosedHandlers.AddHandler(value);
+            remove => ClosedHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the window requests to take focus.
         /// </summary>
-        public event EventHandler<TakeFocusEventArgs>? TakeFocus;
+        public event EventHandler<TakeFocusEventArgs> TakeFocus
+        {
+            add => TakeFocusHandlers.AddHandler(value);
+            remove => TakeFocusHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a hit test is performed on the window.
         /// </summary>
-        public event EventHandler<HitTestEventArgs>? HitTest;
+        public event EventHandler<HitTestEventArgs> HitTest
+        {
+            add => HitTestHandlers.AddHandler(value);
+            remove => HitTestHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a keyboard input is received.
         /// </summary>
-        public event EventHandler<KeyboardEventArgs>? KeyboardInput;
+        public event EventHandler<KeyboardEventArgs> KeyboardInput
+        {
+            add => KeyboardInputHandlers.AddHandler(value);
+            remove => KeyboardInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a character input is received from the keyboard.
         /// </summary>
-        public event EventHandler<TextInputEventArgs>? KeyboardCharInput;
+        public event EventHandler<TextInputEventArgs> KeyboardCharInput
+        {
+            add => KeyboardCharInputHandlers.AddHandler(value);
+            remove => KeyboardCharInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a mouse button input is received.
         /// </summary>
-        public event EventHandler<MouseButtonEventArgs>? MouseButtonInput;
+        public event EventHandler<MouseButtonEventArgs> MouseButtonInput
+        {
+            add => MouseButtonInputHandlers.AddHandler(value);
+            remove => MouseButtonInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a mouse motion input is received.
         /// </summary>
-        public event EventHandler<MouseMoveEventArgs>? MouseMotionInput;
+        public event EventHandler<MouseMoveEventArgs> MouseMotionInput
+        {
+            add => MouseMotionInputHandlers.AddHandler(value);
+            remove => MouseMotionInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a mouse wheel input is received.
         /// </summary>
-        public event EventHandler<MouseWheelEventArgs>? MouseWheelInput;
+        public event EventHandler<MouseWheelEventArgs> MouseWheelInput
+        {
+            add => MouseWheelInputHandlers.AddHandler(value);
+            remove => MouseWheelInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a touch input is received.
         /// </summary>
-        public event EventHandler<TouchEventArgs>? TouchInput;
+        public event EventHandler<TouchEventArgs> TouchInput
+        {
+            add => TouchInputHandlers.AddHandler(value);
+            remove => TouchInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when a touch motion input is received.
         /// </summary>
-        public event EventHandler<TouchMoveEventArgs>? TouchMotionInput;
+        public event EventHandler<TouchMoveEventArgs> TouchMotionInput
+        {
+            add => TouchMotionInputHandlers.AddHandler(value);
+            remove => TouchMotionInputHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the user drops a file/text onto the window.
         /// </summary>
-        public event EventHandler<DropEventArgs>? DropBegin;
+        public event EventHandler<DropEventArgs> DropBegin
+        {
+            add => DropBeginHandlers.AddHandler(value);
+            remove => DropBeginHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the user drops a file onto the window.
         /// </summary>
-        public event EventHandler<DropFileEventArgs>? DropFile;
+        public event EventHandler<DropFileEventArgs> DropFile
+        {
+            add => DropFileHandlers.AddHandler(value);
+            remove => DropFileHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the user drops a text onto the window.
         /// </summary>
-        public event EventHandler<DropTextEventArgs>? DropText;
+        public event EventHandler<DropTextEventArgs> DropText
+        {
+            add => DropTextHandlers.AddHandler(value);
+            remove => DropTextHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Event triggered when the user drops a file/text onto the window and it's completed.
         /// </summary>
-        public event EventHandler<DropEventArgs>? DropComplete;
+        public event EventHandler<DropEventArgs> DropComplete
+        {
+            add => DropCompleteHandlers.AddHandler(value);
+            remove => DropCompleteHandlers.RemoveHandler(value);
+        }
 
         /// <summary>
         /// Raises the <see cref="Shown"/> event.
@@ -722,7 +864,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnShown(ShownEventArgs args)
         {
-            Shown?.Invoke(this, args);
+            ShownHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -731,7 +873,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnHidden(HiddenEventArgs args)
         {
-            Hidden?.Invoke(this, args);
+            HiddenHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -740,7 +882,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnExposed(ExposedEventArgs args)
         {
-            Exposed?.Invoke(this, args);
+            ExposedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -749,7 +891,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMoved(MovedEventArgs args)
         {
-            Moved?.Invoke(this, args);
+            MovedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -758,7 +900,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnResized(ResizedEventArgs args)
         {
-            Resized?.Invoke(this, args);
+            ResizedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -767,7 +909,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnSizeChanged(SizeChangedEventArgs args)
         {
-            SizeChanged?.Invoke(this, args);
+            SizeChangedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -776,7 +918,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMinimized(MinimizedEventArgs args)
         {
-            Minimized?.Invoke(this, args);
+            MinimizedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -785,7 +927,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMaximized(MaximizedEventArgs args)
         {
-            Maximized?.Invoke(this, args);
+            MaximizedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -794,7 +936,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnRestored(RestoredEventArgs args)
         {
-            Restored?.Invoke(this, args);
+            RestoredHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -803,7 +945,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnEnter(EnterEventArgs args)
         {
-            Enter?.Invoke(this, args);
+            EnterHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -812,7 +954,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnLeave(LeaveEventArgs args)
         {
-            Leave?.Invoke(this, args);
+            LeaveHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -821,7 +963,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnFocusGained(FocusGainedEventArgs args)
         {
-            FocusGained?.Invoke(this, args);
+            FocusGainedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -830,7 +972,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnFocusLost(FocusLostEventArgs args)
         {
-            FocusLost?.Invoke(this, args);
+            FocusLostHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -839,7 +981,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnClosing(CloseEventArgs args)
         {
-            Closing?.Invoke(this, args);
+            ClosingHandlers.InvokeRouted(this, args);
             if (!args.Handled)
             {
                 OnClosed(args);
@@ -858,7 +1000,7 @@
         {
             DestroyWindow();
 
-            Closed?.Invoke(this, args);
+            ClosedHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -867,7 +1009,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnTakeFocus(TakeFocusEventArgs args)
         {
-            TakeFocus?.Invoke(this, args);
+            TakeFocusHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -876,7 +1018,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnHitTest(HitTestEventArgs args)
         {
-            HitTest?.Invoke(this, args);
+            HitTestHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -885,7 +1027,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnKeyboardInput(KeyboardEventArgs args)
         {
-            KeyboardInput?.Invoke(this, args);
+            KeyboardInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -894,7 +1036,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnKeyboardCharInput(TextInputEventArgs args)
         {
-            KeyboardCharInput?.Invoke(this, args);
+            KeyboardCharInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -903,7 +1045,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMouseButtonInput(MouseButtonEventArgs args)
         {
-            MouseButtonInput?.Invoke(this, args);
+            MouseButtonInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -912,7 +1054,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMouseMotionInput(MouseMoveEventArgs args)
         {
-            MouseMotionInput?.Invoke(this, args);
+            MouseMotionInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -921,7 +1063,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnMouseWheelInput(MouseWheelEventArgs args)
         {
-            MouseWheelInput?.Invoke(this, args);
+            MouseWheelInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -930,7 +1072,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnTouchInput(TouchEventArgs args)
         {
-            TouchInput?.Invoke(this, args);
+            TouchInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -939,7 +1081,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnTouchMotionInput(TouchMoveEventArgs args)
         {
-            TouchMotionInput?.Invoke(this, args);
+            TouchMotionInputHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -948,7 +1090,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnDropBegin(DropEventArgs args)
         {
-            DropBegin?.Invoke(this, args);
+            DropBeginHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -957,7 +1099,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnDropFile(DropFileEventArgs args)
         {
-            DropFile?.Invoke(this, args);
+            DropFileHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -966,7 +1108,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnDropText(DropTextEventArgs args)
         {
-            DropText?.Invoke(this, args);
+            DropTextHandlers.InvokeRouted(this, args);
         }
 
         /// <summary>
@@ -975,7 +1117,7 @@
         /// <param name="args">The event arguments.</param>
         protected virtual void OnDropComplete(DropEventArgs args)
         {
-            DropComplete?.Invoke(this, args);
+            DropCompleteHandlers.InvokeRouted(this, args);
         }
 
         #endregion Events
@@ -1361,6 +1503,35 @@
         {
             if (!destroyed && Application.MainWindow != this)
             {
+                ShownHandlers.Clear();
+                HiddenHandlers.Clear();
+                ExposedHandlers.Clear();
+                MovedHandlers.Clear();
+                ResizedHandlers.Clear();
+                SizeChangedHandlers.Clear();
+                MinimizedHandlers.Clear();
+                MaximizedHandlers.Clear();
+                RestoredHandlers.Clear();
+                EnterHandlers.Clear();
+                LeaveHandlers.Clear();
+                FocusGainedHandlers.Clear();
+                FocusLostHandlers.Clear();
+                ClosingHandlers.Clear();
+                ClosedHandlers.Clear();
+                TakeFocusHandlers.Clear();
+                HitTestHandlers.Clear();
+                KeyboardInputHandlers.Clear();
+                KeyboardCharInputHandlers.Clear();
+                MouseButtonInputHandlers.Clear();
+                MouseMotionInputHandlers.Clear();
+                MouseWheelInputHandlers.Clear();
+                TouchInputHandlers.Clear();
+                TouchMotionInputHandlers.Clear();
+                DropBeginHandlers.Clear();
+                DropFileHandlers.Clear();
+                DropTextHandlers.Clear();
+                DropCompleteHandlers.Clear();
+
                 for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
                 {
                     sdl.FreeCursor(cursors[(int)i]);

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
@@ -9,6 +10,7 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
+    using System.IO;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -50,20 +52,52 @@
 
             lock (_lock)
             {
-                if (SceneSerializer.TrySerialize(Current, Current.Path, out var ex))
+                if (Current.IsPrefabScene)
                 {
-                    Current.UnsavedChanged = false;
-                    return;
-                }
-                else if (Application.InEditorMode)
-                {
-                    MessageBox.Show("Failed to save scene", ex.Message);
-                    Logger.Log(ex);
+                    SavePrefab(Current, new(Current), Current.Path);
                 }
                 else
                 {
-                    Logger.Throw(ex);
+                    SaveScene(Current, Current.Path);
                 }
+            }
+        }
+
+        private static void SavePrefab(Scene scene, Prefab prefab, string path)
+        {
+            if (PrefabSerializer.TrySerialize(prefab, path, out var ex))
+            {
+                scene.UnsavedChanged = false;
+                SourceAssetsDatabase.Update(path, false);
+                return;
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to save prefab", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
+            }
+        }
+
+        private static void SaveScene(Scene scene, string path)
+        {
+            if (SceneSerializer.TrySerialize(scene, path, out var ex))
+            {
+                scene.UnsavedChanged = false;
+                SourceAssetsDatabase.Update(path, false);
+                return;
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to save scene", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
             }
         }
 
@@ -192,9 +226,26 @@
             {
                 lock (_lock)
                 {
-                    if (Current == null)
+                    if (Current == null || Current.Path == null)
                     {
                         return;
+                    }
+
+                    if (!SceneSerializer.TryDeserialize(Current.Path, out var scene, out var ex))
+                    {
+                        if (Application.InEditorMode)
+                        {
+                            MessageBox.Show("Failed to load scene", ex.Message);
+                            Logger.Log(ex);
+                        }
+                        else
+                        {
+                            Logger.Throw(ex);
+                        }
+                    }
+                    else
+                    {
+                        Current = scene;
                     }
                 }
 
@@ -203,13 +254,13 @@
                 (ICoreWindow window, SceneInitFlags initFlags) = state;
                 ResourceManager.Shared.BeginNoGCRegion();
 
-                IScene scene = Current;
+                IScene iScene = Current;
 
-                scene.Unload();
-                scene.Uninitialize();
+                iScene.Unload();
+                iScene.Uninitialize();
 
-                scene.Initialize(initFlags);
-                scene.Load(window.GraphicsDevice);
+                iScene.Initialize(initFlags);
+                iScene.Load(window.GraphicsDevice);
 
                 OnSceneChanged(SceneChangeType.Reload, Current, Current);
 
@@ -271,9 +322,26 @@
             {
                 lock (_lock)
                 {
-                    if (Current == null)
+                    if (Current == null || Current.Path == null)
                     {
                         return;
+                    }
+
+                    if (!SceneSerializer.TryDeserialize(Current.Path, out var scene, out var ex))
+                    {
+                        if (Application.InEditorMode)
+                        {
+                            MessageBox.Show("Failed to load scene", ex.Message);
+                            Logger.Log(ex);
+                        }
+                        else
+                        {
+                            Logger.Throw(ex);
+                        }
+                    }
+                    else
+                    {
+                        Current = scene;
                     }
                 }
 
@@ -281,10 +349,10 @@
 
                 semaphore.Wait();
 
-                IScene scene = Current;
+                IScene iScene = Current;
 
-                scene.Initialize(flags);
-                scene.Load(window.GraphicsDevice);
+                iScene.Initialize(flags);
+                iScene.Load(window.GraphicsDevice);
 
                 ResourceManager.Shared.EndNoGCRegion();
                 OnSceneChanged(SceneChangeType.Reload, Current, Current);
@@ -293,6 +361,25 @@
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
                 semaphore.Release();
             }, (window, initFlags));
+        }
+
+        public static Task AsyncLoadPrefab(string path, SceneInitFlags initFlags)
+        {
+            if (PrefabSerializer.TryDeserialize(path, out var prefab, out var ex))
+            {
+                return AsyncLoad(prefab.ToScene(), initFlags);
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to load scene", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
+            }
+
+            return Task.CompletedTask;
         }
 
         public static Task AsyncLoad(string path, SceneInitFlags initFlags)

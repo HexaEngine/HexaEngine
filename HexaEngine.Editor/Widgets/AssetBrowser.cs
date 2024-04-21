@@ -921,6 +921,13 @@
                         Refresh(false);
                     }
 
+                    if (ImGui.MenuItem("Prefab"))
+                    {
+                        var path = GetNewFileName(Path.Combine(currentDir.FullName, "New Prefab.prefab"));
+                        PrefabSerializer.Serialize(new(), path);
+                        Refresh(false);
+                    }
+
                     ImGui.EndMenu();
                 }
 

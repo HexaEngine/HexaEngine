@@ -21,6 +21,30 @@ namespace HexaEngine.Scenes
     using System.Runtime.InteropServices;
     using System.Text;
 
+    public class SceneRootNode : GameObject
+    {
+        private Scene parent;
+
+        public SceneRootNode(Scene parent)
+        {
+            this.parent = parent;
+            Name = "Root";
+        }
+
+        [JsonIgnore]
+        public Scene Scene { get => parent; internal protected set => parent = value; }
+
+        public override Scene GetScene()
+        {
+            return parent;
+        }
+
+        public override void GetDepth(ref int depth)
+        {
+            return;
+        }
+    }
+
     [Guid("B7283349-D1C6-437D-99D2-A050E2DA61A6")]
     public class Scene : IScene
     {
@@ -48,6 +72,16 @@ namespace HexaEngine.Scenes
         {
             Name = "Scene";
             root = new SceneRootNode(this);
+
+            services = SceneSystemRegistry.GetServices(this);
+            serviceProvider = services.BuildServiceProvider();
+        }
+
+        public Scene(SceneRootNode root)
+        {
+            Name = "Scene";
+            this.root = root;
+            root.Scene = this;
 
             services = SceneSystemRegistry.GetServices(this);
             serviceProvider = services.BuildServiceProvider();
@@ -125,6 +159,22 @@ namespace HexaEngine.Scenes
                 else
                 {
                     flags &= ~SceneFlags.UnsavedChanges;
+                }
+            }
+        }
+
+        public bool IsPrefabScene
+        {
+            get => (flags & SceneFlags.PrefabScene) != 0;
+            set
+            {
+                if (value)
+                {
+                    flags |= SceneFlags.PrefabScene;
+                }
+                else
+                {
+                    flags &= ~SceneFlags.PrefabScene;
                 }
             }
         }
@@ -360,9 +410,10 @@ namespace HexaEngine.Scenes
         void IScene.Update()
         {
             Profiler.Clear();
-            semaphore.Wait();
 
             Dispatcher.ExecuteInvokes();
+
+            semaphore.Wait();
 
             var early = systems[SystemFlags.Update];
 
@@ -646,26 +697,6 @@ namespace HexaEngine.Scenes
             OnGameObjectRemoved?.Invoke(node);
         }
 
-        private class SceneRootNode : GameObject
-        {
-            private readonly Scene parent;
-
-            public SceneRootNode(Scene parent)
-            {
-                this.parent = parent;
-            }
-
-            public override Scene GetScene()
-            {
-                return parent;
-            }
-
-            public override void GetDepth(ref int depth)
-            {
-                return;
-            }
-        }
-
         public void AddChild(GameObject node)
         {
             if (semaphore.CurrentCount == 0)
@@ -673,6 +704,13 @@ namespace HexaEngine.Scenes
                 Dispatcher.Invoke(node, root.AddChild);
                 return;
             }
+            semaphore.Wait();
+            root.AddChild(node);
+            semaphore.Release();
+        }
+
+        public void AddChildUnsafe(GameObject node)
+        {
             semaphore.Wait();
             root.AddChild(node);
             semaphore.Release();

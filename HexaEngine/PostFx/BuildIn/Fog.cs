@@ -36,7 +36,7 @@
         private float fogDensity;
         private Vector3 fogColor;
         private float fogHeightEnd;
-        private float noiseScale;
+        private float noiseScale = 0.003f;
 
         private struct VolumeParams(Matrix4x4 transform, Vector3 dimensions, float minValue, float maxValue, int animate, float animationStrength, float noiseScale)
         {
@@ -167,7 +167,7 @@
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearWrapSampler = device.CreateSamplerState(new(Filter.Anisotropic, TextureAddressMode.Mirror));
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearMirror);
         }
 
         public override void Update(IGraphicsContext context)
@@ -182,7 +182,7 @@
 
             Matrix4x4 transform = Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
 
-            VolumeParams volumeParams = new(Matrix4x4.Transpose(Matrix4x4.Identity), new(densityTex.Width, densityTex.Height, densityTex.Depth), minValue, maxValue, animate ? 1 : 0, animationStrength, noiseScale);
+            VolumeParams volumeParams = new(Matrix4x4.Transpose(transform), new(densityTex.Width, densityTex.Height, densityTex.Depth), minValue, maxValue, animate ? 1 : 0, animationStrength, noiseScale);
             volumeParamsBuffer.Update(context, volumeParams);
 
             if (dirty)

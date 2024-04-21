@@ -580,7 +580,6 @@
             Transform.Changed += OnTransformChanged;
             Transform.Parent = parent?.Transform;
             scene = GetScene();
-            scene.RegisterChild(this);
 
             Initialized = true;
             for (int i = 0; i < components.Count; i++)
@@ -593,6 +592,8 @@
             {
                 children[i].Initialize();
             }
+
+            scene.RegisterChild(this);
         }
 
         public virtual void Uninitialize()

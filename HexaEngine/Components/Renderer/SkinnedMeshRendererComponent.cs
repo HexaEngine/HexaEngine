@@ -27,7 +27,7 @@
         private MaterialManager materialManager;
         private SkinnedMeshRenderer renderer;
         private SkinnedModel? model;
-        private readonly MaterialAssetMappingCollection materials = new();
+        private readonly MaterialAssetMapper materials = new();
 
         static SkinnedMeshRendererComponent()
         {
@@ -46,7 +46,7 @@
 
         [EditorCategory("Materials")]
         [EditorProperty("")]
-        public MaterialAssetMappingCollection Materials => materials;
+        public MaterialAssetMapper Materials => materials;
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(SkinnedMeshRenderer);

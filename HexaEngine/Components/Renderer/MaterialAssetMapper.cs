@@ -6,7 +6,7 @@
     using HexaEngine.Core.IO.Binary.Meshes;
     using System.Collections;
 
-    public class MaterialAssetMappingCollection : ICollection<MaterialAssetMapping>
+    public class MaterialAssetMapper : ICollection<MaterialAssetMapping>
     {
         private readonly List<MaterialAssetMapping> mappings = [];
 

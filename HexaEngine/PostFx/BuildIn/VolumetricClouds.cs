@@ -46,7 +46,7 @@
             builder
                  .RunBefore<ColorGrading>()
                  .RunBefore<Vignette>()
-                 .RunAfter<SSR>()
+                 .RunBefore<SSR>()
                  .RunBefore<TAA>();
         }
 

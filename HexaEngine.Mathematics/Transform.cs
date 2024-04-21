@@ -328,6 +328,7 @@
                 (position, orientation) = (MaskPosition(value.Item1), MaskRotation(value.Item2, out var euler));
                 velocity = position - oldpos;
                 rotation = euler.ToDeg().NormalizeEulerAngleDegrees();
+
                 OnChanged();
             }
         }

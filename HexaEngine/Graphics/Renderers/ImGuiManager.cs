@@ -4,10 +4,97 @@
     using Hexa.NET.ImGuizmo;
     using Hexa.NET.ImNodes;
     using Hexa.NET.ImPlot;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
+
+    public unsafe struct ImGuiFontBuilder
+    {
+        private ImFontAtlasPtr fontAtlas;
+        private ImFontConfigPtr config;
+        private ImFontPtr font;
+
+        public ImGuiFontBuilder(ImFontAtlasPtr fontAtlasPtr)
+        {
+            config = ImGui.ImFontConfig();
+            config.FontDataOwnedByAtlas = false;
+            fontAtlas = fontAtlasPtr;
+        }
+
+        public readonly ImFontConfigPtr Config => config;
+
+        public readonly ImFontPtr Font => font;
+
+        public readonly ImGuiFontBuilder SetOption(Action<ImFontConfigPtr> action)
+        {
+            action(config);
+            return this;
+        }
+
+        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, ReadOnlySpan<char> glyphRanges)
+        {
+            fixed (char* pGlyphRanges = glyphRanges)
+                return AddFontFromFileTTF(path, size, pGlyphRanges);
+        }
+
+        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, char* glyphRanges)
+        {
+            font = fontAtlas.AddFontFromFileTTF(path, size, config, glyphRanges);
+            config.MergeMode = true;
+            return this;
+        }
+
+        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size)
+        {
+            font = fontAtlas.AddFontFromFileTTF(path, size, config);
+            config.MergeMode = true;
+            return this;
+        }
+
+        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size)
+        {
+            // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
+            // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
+            font = fontAtlas.AddFontFromMemoryTTF(fontData, fontDataSize, size, config);
+
+            return this;
+        }
+
+        public ImGuiFontBuilder AddFontFromMemoryTTF(ReadOnlySpan<byte> fontData, float size, ReadOnlySpan<char> glyphRanges)
+        {
+            fixed (byte* pFontData = fontData)
+            {
+                fixed (char* pGlyphRanges = glyphRanges)
+                {
+                    return AddFontFromMemoryTTF(pFontData, fontData.Length, size, pGlyphRanges);
+                }
+            }
+        }
+
+        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, ReadOnlySpan<char> glyphRanges)
+        {
+            fixed (char* pGlyphRanges = glyphRanges)
+                return AddFontFromMemoryTTF(fontData, fontDataSize, size, pGlyphRanges);
+        }
+
+        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, char* pGlyphRanges)
+        {
+            // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
+            // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
+            font = fontAtlas.AddFontFromMemoryTTF(fontData, fontDataSize, size, config, pGlyphRanges);
+
+            return this;
+        }
+
+        public void Destroy()
+        {
+            config.Destroy();
+            config = default;
+            fontAtlas = default;
+        }
+    }
 
     public class ImGuiManager
     {
@@ -640,26 +727,32 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             io.ConfigViewportsNoTaskBarIcon = false;
             io.ConfigDragClickToInputText = true;
 
-            var config = ImGui.ImFontConfig();
             var fonts = io.Fonts;
+            fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
+            fonts.TexDesiredWidth = 2048;
 
-            fonts.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15, config);
-
-            config.MergeMode = true;
-            config.GlyphMinAdvanceX = 18;
-            config.GlyphOffset = new(0, 0);
-            var glyphRanges = new char[]
-            {
+            char* glyphRanges = stackalloc char[]
+  {
                 (char)0xe005, (char)0xe684,
                 (char)0xF000, (char)0xF8FF,
                 (char)0 // null terminator
             };
 
-            fixed (char* pGlyphRanges = glyphRanges)
-            {
-                ImportFont(ref config, ref fonts, pGlyphRanges, "assets/shared/fonts/Font Awesome 6 Free-Solid-900.otf");
-                ImportFont(ref config, ref fonts, pGlyphRanges, "assets/shared/fonts/Font Awesome 6 Brands-Regular-400.otf");
-            }
+            ImGuiFontBuilder defaultBuilder = new(fonts);
+            defaultBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15)
+                          .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                          .AddFontFromFileTTF("assets/shared/fonts/fa-solid-900.ttf", 14, glyphRanges)
+                          .AddFontFromFileTTF("assets/shared/fonts/fa-brands-400.ttf", 14, glyphRanges);
+            defaultBuilder.Destroy();
+
+            ImGuiFontBuilder iconsRegularBuilder = new(fonts);
+            iconsRegularBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15)
+                               .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                               .AddFontFromFileTTF("assets/shared/fonts/fa-regular-400.ttf", 14, glyphRanges);
+            aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
+            iconsRegularBuilder.Destroy();
+
+            fonts.Build();
 
             var style = ImGui.GetStyle();
             var colors = style.Colors;
@@ -753,19 +846,6 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             ImGuiRenderer.Init(device, context);
         }
 
-        private static unsafe void ImportFont(ref ImFontConfigPtr config, ref ImFontAtlasPtr fonts, char* pGlyphRanges, string path)
-        {
-            {
-                byte[] fontBytes = File.ReadAllBytes(path);
-                byte* pFontBytes = (byte*)Marshal.AllocHGlobal((nint)fontBytes.Length);
-                Marshal.Copy(fontBytes, 0, (nint)pFontBytes, fontBytes.Length);
-
-                // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
-                // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
-                fonts.AddFontFromMemoryTTF(pFontBytes, fontBytes.Length, 14, config, pGlyphRanges);
-            }
-        }
-
         public unsafe void NewFrame()
         {
             ImGui.SetCurrentContext(guiContext);
@@ -805,6 +885,29 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
         {
             ImGuiRenderer.Shutdown();
             ImGuiSDL2Platform.Shutdown();
+        }
+
+        private static readonly Dictionary<string, ImFontPtr> aliasToFont = new();
+        private static int fontPushes = 0;
+
+        public static void PushFont(string name)
+        {
+            if (aliasToFont.TryGetValue(name, out ImFontPtr fontPtr))
+            {
+                ImGui.PushFont(fontPtr);
+                fontPushes++;
+            }
+        }
+
+        public static void PopFont()
+        {
+            if (fontPushes == 0)
+            {
+                return;
+            }
+
+            ImGui.PopFont();
+            fontPushes--;
         }
     }
 }

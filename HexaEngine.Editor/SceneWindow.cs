@@ -12,7 +12,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System;
     using System.Numerics;
 
     public static class SceneWindow

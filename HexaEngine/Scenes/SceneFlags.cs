@@ -8,5 +8,6 @@
         Loaded = 4,
         Simulating = 8,
         UnsavedChanges = 16,
+        PrefabScene = 32,
     }
 }

@@ -14,6 +14,7 @@
         static ToolManager()
         {
             AddTool(new AsyncTool("Scene Editor", ".hexlvl", path => SceneManager.AsyncLoad(path, SceneInitFlags.SkipOnLoadWait)));
+            AddTool(new AsyncTool("Scene Editor", ".prefab", path => SceneManager.AsyncLoadPrefab(path, SceneInitFlags.SkipOnLoadWait)));
             AddTool(new Tool("Image Painter", ".dds|.png|.jpg|.ico|.bmp|.tga|.hdr", path =>
             {
                 if (WindowManager.TryGetWindow<ImagePainterWindow>(out var imagePainterWindow))

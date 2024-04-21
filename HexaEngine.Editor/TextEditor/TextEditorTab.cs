@@ -85,6 +85,8 @@
                 bool changed = ImGui.InputTextMultiline("##TextEdit", text->Data, (nuint)text->Capacity + 1, new Vector2(-1), ImGuiInputTextFlags.AllowTabInput | ImGuiInputTextFlags.CallbackResize | ImGuiInputTextFlags.CallbackHistory, callback, text);
                 var inw = ImGui.GetScrollY();
 
+                ImGui.Text($"{inw}");
+
                 var state = ImGui.GetCurrentWindow();
 
                 if (changed)

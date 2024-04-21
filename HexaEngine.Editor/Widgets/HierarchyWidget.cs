@@ -49,7 +49,9 @@
         }
 
         private HierarchyLevelColoring coloring = HierarchyLevelColoring.Color;
-        private uint levelColor = 0xffcf7334; // red
+        private uint levelColor = 0xffcf7334;
+        private uint prefabLevelColor = 0x8526D65F;
+        private uint sceneLevelColor = 0xffcf7334;
         private byte levelAlpha = 0xFF;
         private byte monochromeBrightness = 0xac;
         private bool reverseColoring = false;
@@ -111,8 +113,19 @@
             Vector2 avail = ImGui.GetContentRegionAvail();
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
+            if (scene.IsPrefabScene)
+            {
+                ImGui.PushStyleColor(ImGuiCol.TableHeaderBg, 0x8526D65F); // RGBA ABGR
+                levelColor = prefabLevelColor;
+            }
+            else
+            {
+                levelColor = sceneLevelColor;
+            }
+
             ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths);
             ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+
             ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
             ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
 
@@ -139,17 +152,28 @@
                 }
                 ImGui.EndDragDropTarget();
             }
-
-            for (int i = 0; i < scene.Root.Children.Count; i++)
+            if (scene.IsPrefabScene)
             {
-                var element = scene.Root.Children[i];
-                bool isLast = i == scene.Root.Children.Count - 1;
-                DisplayNode(element, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                DisplayNode(scene.Root, true, false, drawList, table, avail, 0, true);
+            }
+            else
+            {
+                for (int i = 0; i < scene.Root.Children.Count; i++)
+                {
+                    var element = scene.Root.Children[i];
+                    bool isLast = i == scene.Root.Children.Count - 1;
+                    DisplayNode(element, false, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                }
             }
 
             ImGui.PopStyleColor();
             ImGui.PopStyleColor();
             ImGui.EndTable();
+
+            if (scene.IsPrefabScene)
+            {
+                ImGui.PopStyleColor();
+            }
 
             var space = ImGui.GetContentRegionAvail();
             ImGui.Dummy(space);
@@ -306,7 +330,7 @@
             return levelColorPalette[levelNormalized];
         }
 
-        private void DisplayNode(GameObject element, bool searchHidden, ImDrawListPtr drawList, ImGuiTablePtr table, Vector2 avail, int level, bool isLast)
+        private void DisplayNode(GameObject element, bool isRoot, bool searchHidden, ImDrawListPtr drawList, ImGuiTablePtr table, Vector2 avail, int level, bool isLast)
         {
             SetLevel(level, isLast);
 
@@ -341,6 +365,11 @@
             if (element.Children.Count == 0)
             {
                 flags |= ImGuiTreeNodeFlags.Leaf;
+            }
+
+            if (isRoot)
+            {
+                flags = ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen;
             }
 
             if (level > 0)
@@ -408,7 +437,7 @@
                 {
                     var child = element.Children[i];
                     bool isLastElement = i == element.Children.Count - 1;
-                    DisplayNode(child, !child.Name.Contains(searchString), drawList, table, avail, level + 1, isLastElement);
+                    DisplayNode(child, false, !child.Name.Contains(searchString), drawList, table, avail, level + 1, isLastElement);
                 }
                 ImGui.TreePop();
             }

@@ -27,12 +27,12 @@
             descriptors.AddSingleton<AnimationManager>();
 
             Register<QuerySystem>();
+            Register<TransformSystem>();
             Register<AudioSystem>();
             Register<AnimationSystem>();
             Register<ScriptManager>();
             Register<LightManager>();
             Register<PhysicsSystem>();
-            Register<TransformSystem>();
             Register<RenderManager>();
             Register<WeatherSystem>();
             Register<ObjectPickerManager>();

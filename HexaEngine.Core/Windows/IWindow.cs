@@ -86,142 +86,142 @@
         /// <summary>
         /// Event triggered when the window is closed.
         /// </summary>
-        event EventHandler<CloseEventArgs>? Closed;
+        event EventHandler<CloseEventArgs> Closed;
 
         /// <summary>
         /// Event triggered when the window is closing.
         /// </summary>
-        event EventHandler<CloseEventArgs>? Closing;
+        event EventHandler<CloseEventArgs> Closing;
 
         /// <summary>
         /// Event triggered when the mouse enters the window.
         /// </summary>
-        event EventHandler<EnterEventArgs>? Enter;
+        event EventHandler<EnterEventArgs> Enter;
 
         /// <summary>
         /// Event triggered when the window is exposed.
         /// </summary>
-        event EventHandler<ExposedEventArgs>? Exposed;
+        event EventHandler<ExposedEventArgs> Exposed;
 
         /// <summary>
         /// Event triggered when the window gains focus.
         /// </summary>
-        event EventHandler<FocusGainedEventArgs>? FocusGained;
+        event EventHandler<FocusGainedEventArgs> FocusGained;
 
         /// <summary>
         /// Event triggered when the window loses focus.
         /// </summary>
-        event EventHandler<FocusLostEventArgs>? FocusLost;
+        event EventHandler<FocusLostEventArgs> FocusLost;
 
         /// <summary>
         /// Event triggered when the window is hidden.
         /// </summary>
-        event EventHandler<HiddenEventArgs>? Hidden;
+        event EventHandler<HiddenEventArgs> Hidden;
 
         /// <summary>
         /// Event triggered when a hit test is performed on the window.
         /// </summary>
-        event EventHandler<HitTestEventArgs>? HitTest;
+        event EventHandler<HitTestEventArgs> HitTest;
 
         /// <summary>
         /// Event triggered when a character input is received from the keyboard.
         /// </summary>
-        event EventHandler<TextInputEventArgs>? KeyboardCharInput;
+        event EventHandler<TextInputEventArgs> KeyboardCharInput;
 
         /// <summary>
         /// Event triggered when a keyboard input is received.
         /// </summary>
-        event EventHandler<KeyboardEventArgs>? KeyboardInput;
+        event EventHandler<KeyboardEventArgs> KeyboardInput;
 
         /// <summary>
         /// Event triggered when the mouse leaves the window.
         /// </summary>
-        event EventHandler<LeaveEventArgs>? Leave;
+        event EventHandler<LeaveEventArgs> Leave;
 
         /// <summary>
         /// Event triggered when the window is maximized.
         /// </summary>
-        event EventHandler<MaximizedEventArgs>? Maximized;
+        event EventHandler<MaximizedEventArgs> Maximized;
 
         /// <summary>
         /// Event triggered when the window is minimized.
         /// </summary>
-        event EventHandler<MinimizedEventArgs>? Minimized;
+        event EventHandler<MinimizedEventArgs> Minimized;
 
         /// <summary>
         /// Event triggered when a mouse button input is received.
         /// </summary>
-        event EventHandler<MouseButtonEventArgs>? MouseButtonInput;
+        event EventHandler<MouseButtonEventArgs> MouseButtonInput;
 
         /// <summary>
         /// Event triggered when a mouse motion input is received.
         /// </summary>
-        event EventHandler<MouseMoveEventArgs>? MouseMotionInput;
+        event EventHandler<MouseMoveEventArgs> MouseMotionInput;
 
         /// <summary>
         /// Event triggered when a mouse wheel input is received.
         /// </summary>
-        event EventHandler<MouseWheelEventArgs>? MouseWheelInput;
+        event EventHandler<MouseWheelEventArgs> MouseWheelInput;
 
         /// <summary>
         /// Event triggered when a touch input is received.
         /// </summary>
-        event EventHandler<TouchEventArgs>? TouchInput;
+        event EventHandler<TouchEventArgs> TouchInput;
 
         /// <summary>
         /// Event triggered when a touch motion input is received.
         /// </summary>
-        event EventHandler<TouchMoveEventArgs>? TouchMotionInput;
+        event EventHandler<TouchMoveEventArgs> TouchMotionInput;
 
         /// <summary>
         /// Event triggered when the window is moved.
         /// </summary>
-        event EventHandler<MovedEventArgs>? Moved;
+        event EventHandler<MovedEventArgs> Moved;
 
         /// <summary>
         /// Event triggered when the window is resized.
         /// </summary>
-        event EventHandler<ResizedEventArgs>? Resized;
+        event EventHandler<ResizedEventArgs> Resized;
 
         /// <summary>
         /// Event triggered when the window is restored.
         /// </summary>
-        event EventHandler<RestoredEventArgs>? Restored;
+        event EventHandler<RestoredEventArgs> Restored;
 
         /// <summary>
         /// Event triggered when the window is shown.
         /// </summary>
-        event EventHandler<ShownEventArgs>? Shown;
+        event EventHandler<ShownEventArgs> Shown;
 
         /// <summary>
         /// Event triggered when the size of the window is changed.
         /// </summary>
-        event EventHandler<SizeChangedEventArgs>? SizeChanged;
+        event EventHandler<SizeChangedEventArgs> SizeChanged;
 
         /// <summary>
         /// Event triggered when the window requests to take focus.
         /// </summary>
-        event EventHandler<TakeFocusEventArgs>? TakeFocus;
+        event EventHandler<TakeFocusEventArgs> TakeFocus;
 
         /// <summary>
         /// Event triggered when the user drops a file/text onto the window.
         /// </summary>
-        event EventHandler<DropEventArgs>? DropBegin;
+        event EventHandler<DropEventArgs> DropBegin;
 
         /// <summary>
         /// Event triggered when the user drops a file onto the window.
         /// </summary>
-        event EventHandler<DropFileEventArgs>? DropFile;
+        event EventHandler<DropFileEventArgs> DropFile;
 
         /// <summary>
         /// Event triggered when the user drops a text onto the window.
         /// </summary>
-        event EventHandler<DropTextEventArgs>? DropText;
+        event EventHandler<DropTextEventArgs> DropText;
 
         /// <summary>
         /// Event triggered when the user drops a file/text onto the window and it's completed.
         /// </summary>
-        event EventHandler<DropEventArgs>? DropComplete;
+        event EventHandler<DropEventArgs> DropComplete;
 
         /// <summary>
         /// Shows the window.

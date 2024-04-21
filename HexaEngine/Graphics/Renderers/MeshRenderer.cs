@@ -52,7 +52,7 @@
             {
                 DrawType drawType = drawTypes[i];
                 BoundingSphere sphere = meshes[drawType.MeshId]?.BoundingSphere ?? default;
-                for (int j = 0; j < drawType.Instances.Length; j++)
+                for (int j = 0; j < drawType.Instances.Count; j++)
                 {
                     DrawInstance instance = drawType.Instances[j];
                     Matrix4x4 global = globals[instance.NodeId];
@@ -80,7 +80,7 @@
                 context.AppendType(mesh.IndexCount);
                 drawTypes[i].TypeId = context.CurrentType;
                 drawTypes[i].DrawIndirectOffset = context.GetDrawArgsOffset();
-                for (int j = 0; j < drawType.Instances.Length; j++)
+                for (int j = 0; j < drawType.Instances.Count; j++)
                 {
                     DrawInstance instance = drawType.Instances[j];
                     context.AppendInstance(instance.Transform, instance.BoundingSphere);
@@ -183,7 +183,7 @@
                 }
 
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Length);
+                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Count);
                 mesh.EndDraw(context);
             }
 
@@ -216,7 +216,7 @@
                 }
 
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Length);
+                material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Count);
                 mesh.EndDraw(context);
             }
 
@@ -254,7 +254,7 @@
                 }
 
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, name, mesh.IndexCount, (uint)drawType.Instances.Length);
+                material.DrawIndexedInstanced(context, name, mesh.IndexCount, (uint)drawType.Instances.Count);
                 mesh.EndDraw(context);
             }
 

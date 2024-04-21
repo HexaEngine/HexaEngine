@@ -92,6 +92,8 @@
                     {
                         postContext.Swap();
                     }
+
+                    postContext.Signal();
                 }
             }
         }

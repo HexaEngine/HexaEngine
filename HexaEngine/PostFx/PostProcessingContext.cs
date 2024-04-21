@@ -18,6 +18,7 @@
         private bool disposedValue;
         private Texture2D input;
         private IRenderTargetView output;
+        private bool isfirst;
 
         public PostProcessingContext(IGraphicsDevice device, Format format, int width, int height, int bufferCount)
         {
@@ -61,7 +62,7 @@
 
         public bool CanDraw => input != null && output != null;
 
-        public bool IsFirst => previous == input;
+        public bool IsFirst => isfirst;
 
         public void Swap()
         {
@@ -73,8 +74,14 @@
             }
         }
 
+        public void Signal()
+        {
+            isfirst = false;
+        }
+
         public void Reset()
         {
+            isfirst = true;
             bufferIndex = 0;
             previous = input;
         }

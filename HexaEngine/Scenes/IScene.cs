@@ -34,6 +34,8 @@
 
         bool IsSimulating { get; set; }
 
+        bool IsPrefabScene { get; set; }
+
         LightManager LightManager { get; }
 
         bool Loaded { get; }

@@ -51,7 +51,7 @@
 
         public override string Name => title;
 
-        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove;
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoInputs;
 
         public override void Reset()
         {
@@ -62,6 +62,11 @@
         {
             if (!shown || signalClose)
             {
+                if ((progressFlags & ProgressFlags.NoModal) != 0)
+                {
+                    shown = false;
+                    return;
+                }
                 base.Draw();
                 return;
             }
@@ -165,18 +170,6 @@
         public void Dispose()
         {
             Close();
-        }
-
-        public override void Close()
-        {
-            if ((progressFlags & ProgressFlags.NoModal) != 0)
-            {
-                Shown = false;
-            }
-            else
-            {
-                base.Close();
-            }
         }
 
         public void Report(float value)

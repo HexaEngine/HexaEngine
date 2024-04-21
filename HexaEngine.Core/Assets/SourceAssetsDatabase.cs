@@ -286,31 +286,43 @@
         private static void UpdateFile(string file, SourceAssetMetadata asset, bool force)
         {
             asset.Lock();
-            var crc = FileSystem.GetCrc32HashExtern(file);
-            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
+            try
             {
-                var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
-                ImportInternal(null, file, asset, artifacts, null, null);
-            }
+                var crc = FileSystem.GetCrc32HashExtern(file);
+                if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
+                {
+                    var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
+                    ImportInternal(null, file, asset, artifacts, null, null);
+                }
 
-            asset.CRC32 = crc;
-            asset.Save();
-            asset.ReleaseLock();
+                asset.CRC32 = crc;
+                asset.Save();
+            }
+            finally
+            {
+                asset.ReleaseLock();
+            }
         }
 
         private static async Task UpdateFileAsync(string file, SourceAssetMetadata asset, bool force)
         {
             asset.Lock();
-            var crc = FileSystem.GetCrc32HashExtern(file);
-            if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
+            try
             {
-                var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
-                await ImportInternalAsync(null, file, asset, artifacts, null, null);
-            }
+                var crc = FileSystem.GetCrc32HashExtern(file);
+                if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
+                {
+                    var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
+                    await ImportInternalAsync(null, file, asset, artifacts, null, null);
+                }
 
-            asset.CRC32 = crc;
-            asset.Save();
-            asset.ReleaseLock();
+                asset.CRC32 = crc;
+                asset.Save();
+            }
+            finally
+            {
+                asset.ReleaseLock();
+            }
         }
 
         private static bool IgnoreFile(ReadOnlySpan<char> span)

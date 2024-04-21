@@ -1,163 +1,50 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Mathematics;
-    using Newtonsoft.Json.Bson;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-
-    public class Prefab : EntityNotifyBase, IReadOnlyPrefab
+    public enum PrefabFlags
     {
-        private readonly Guid guid = Guid.NewGuid();
-        private string name = string.Empty;
-        private readonly Transform transform = new();
-        private readonly List<IComponent> components = [];
-        private readonly List<GameObject> children = [];
+        None,
+        // for later use.
+    }
 
-        private string? fullName;
-
-        [JsonConstructor]
-        public Prefab(Guid guid, string name, Transform transform, List<IComponent> components, List<GameObject> children)
-        {
-            this.guid = guid;
-            this.name = name;
-            this.transform = transform;
-            this.components = components;
-            this.children = children;
-        }
+    public class Prefab
+    {
+        private readonly SceneRootNode root;
+        private string? path;
+        private PrefabFlags flags;
 
         public Prefab()
         {
+            root = new(null);
         }
 
-        /// <summary>
-        /// Gets or sets the unique identifier.
-        /// </summary>
-        /// <value>
-        /// The unique identifier.
-        /// </value>
-        public Guid Guid
+        public Prefab(SceneRootNode root)
         {
-            get => guid;
+            this.root = root;
         }
 
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        public string Name
+        public Prefab(Scene scene) : this((SceneRootNode)scene.Root)
         {
-            get => name;
-            set
-            {
-                name = value;
-                fullName = null;
-            }
         }
 
-        /// <summary>
-        /// Gets the full name of the Prefab, which is a unique combination of its name and Guid.
-        /// The full name is lazily generated when accessed for the first time and will be
-        /// reinitialized if either the name or Guid property is modified.
-        /// </summary>
-        /// <value>
-        /// The full name of the Prefab.
-        /// </value>
+        public SceneRootNode Root => root;
+
+        public PrefabFlags Flags { get => flags; set => flags = value; }
+
         [JsonIgnore]
-        public string FullName
+        public string? Path { get => path; internal set => path = value; }
+
+        public void BuildReferences()
         {
-            get
-            {
-                return fullName ??= $"{name}##{Guid}";
-            }
+            root.BuildReferences();
         }
 
-        public Transform Transform => transform;
-
-        public virtual List<IComponent> Components => components;
-
-        public virtual List<GameObject> Children => children;
-
-        IReadOnlyList<IComponent> IReadOnlyPrefab.Components => components;
-
-        IReadOnlyList<GameObject> IReadOnlyPrefab.Children => children;
-
-        IReadOnlyTransform IReadOnlyPrefab.Transform => transform;
-
-        private static readonly JsonSerializerSettings settings = new()
+        public Scene ToScene()
         {
-            ConstructorHandling = ConstructorHandling.Default,
-            DefaultValueHandling = DefaultValueHandling.Include,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.All,
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Include,
-            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
-        };
+            Scene scene = new(root);
+            scene.IsPrefabScene = true;
+            scene.Path = path;
 
-        private static readonly JsonSerializer serializer = JsonSerializer.Create(settings);
-
-        public static void Serialize(Prefab prefab, string path)
-        {
-            BsonDataWriter writer = new(File.Create(path));
-            try
-            {
-                serializer.Serialize(writer, prefab);
-            }
-            finally
-            {
-                writer.Close();
-            }
-        }
-
-        public static bool TrySerialize(Prefab prefab, string path, [NotNullWhen(false)] out Exception? exception)
-        {
-            try
-            {
-                Serialize(prefab, path);
-                exception = null;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-                return false;
-            }
-        }
-
-        public static Prefab? Deserialize(string path)
-        {
-            BsonDataReader reader = new(File.OpenRead(path));
-
-            Prefab? prefab;
-            try
-            {
-                prefab = (Prefab?)serializer.Deserialize(reader, typeof(Prefab)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
-            }
-            finally
-            {
-                reader.Close();
-            }
-
-            return prefab;
-        }
-
-        public static bool TryDeserialize(string path, [NotNullWhen(true)] out Prefab? prefab, [NotNullWhen(false)] out Exception? exception)
-        {
-            try
-            {
-                prefab = Deserialize(path) ?? throw new InvalidDataException("Prefab was null, failed to deserialize");
-                exception = null;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                prefab = null;
-                exception = ex;
-                return false;
-            }
+            return scene;
         }
     }
 }

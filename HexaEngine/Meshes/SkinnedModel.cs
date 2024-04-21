@@ -15,7 +15,7 @@
     {
         private readonly Stream stream;
         private readonly ModelFile modelFile;
-        private readonly MaterialAssetMappingCollection materialAssets;
+        private readonly MaterialAssetMapper materialAssets;
         private readonly ILogger logger;
 
         private Node[] nodes;
@@ -36,7 +36,7 @@
         private bool loaded;
         private bool disposedValue;
 
-        public SkinnedModel(Stream stream, MaterialAssetMappingCollection materialAssets, ILogger logger)
+        public SkinnedModel(Stream stream, MaterialAssetMapper materialAssets, ILogger logger)
         {
             this.stream = stream;
             this.materialAssets = materialAssets;

@@ -26,7 +26,7 @@
 
         public unsafe bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            if (value is not MaterialAssetMappingCollection mappings)
+            if (value is not MaterialAssetMapper mappings)
             {
                 return false;
             }

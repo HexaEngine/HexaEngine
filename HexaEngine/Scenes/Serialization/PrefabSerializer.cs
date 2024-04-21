@@ -5,7 +5,7 @@
     using Newtonsoft.Json.Bson;
     using System.Diagnostics.CodeAnalysis;
 
-    public unsafe class SceneSerializer
+    public unsafe class PrefabSerializer
     {
         private static readonly JsonSerializerSettings settings = new()
         {
@@ -23,13 +23,13 @@
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(settings);
 
-        public static byte[] Serialize(Scene scene)
+        public static byte[] Serialize(Prefab prefab)
         {
             MemoryStream ms = new();
 
             BsonDataWriter writer = new(ms);
 
-            serializer.Serialize(writer, scene);
+            serializer.Serialize(writer, prefab);
 
             var bytes = ms.ToArray();
 
@@ -39,12 +39,12 @@
             return bytes;
         }
 
-        public static void Serialize(Scene scene, string path)
+        public static void Serialize(Prefab prefab, string path)
         {
             BsonDataWriter writer = new(File.Create(path));
             try
             {
-                serializer.Serialize(writer, scene);
+                serializer.Serialize(writer, prefab);
             }
             finally
             {
@@ -52,11 +52,11 @@
             }
         }
 
-        public static bool TrySerialize(Scene scene, string path, [NotNullWhen(false)] out Exception? exception)
+        public static bool TrySerialize(Prefab prefab, string path, [NotNullWhen(false)] out Exception? exception)
         {
             try
             {
-                Serialize(scene, path);
+                Serialize(prefab, path);
                 exception = null;
                 return true;
             }
@@ -67,39 +67,37 @@
             }
         }
 
-        public static Scene? Deserialize(string path)
+        public static Prefab? Deserialize(string path)
         {
             BsonDataReader reader = new(File.OpenRead(path));
 
-            Scene? scene;
+            Prefab? prefab;
             try
             {
-                scene = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+                prefab = (Prefab?)serializer.Deserialize(reader, typeof(Prefab)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
             }
             finally
             {
                 reader.Close();
             }
 
-            IScene scene1 = scene;
+            prefab.Path = path;
+            prefab.BuildReferences();
 
-            scene.Path = path;
-            scene1.BuildReferences();
-
-            return scene;
+            return prefab;
         }
 
-        public static bool TryDeserialize(string path, [NotNullWhen(true)] out Scene? scene, [NotNullWhen(false)] out Exception? exception)
+        public static bool TryDeserialize(string path, [NotNullWhen(true)] out Prefab? prefab, [NotNullWhen(false)] out Exception? exception)
         {
             try
             {
-                scene = Deserialize(path) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+                prefab = Deserialize(path) ?? throw new InvalidDataException("scene was null, failed to deserialize");
                 exception = null;
                 return true;
             }
             catch (Exception ex)
             {
-                scene = null;
+                prefab = null;
                 exception = ex;
                 return false;
             }
