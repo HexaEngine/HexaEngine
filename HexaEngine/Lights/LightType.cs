@@ -6,5 +6,6 @@
         Point = 0,
         Spot = 1,
         Directional = 2,
+        IBL = 3,
     }
 }

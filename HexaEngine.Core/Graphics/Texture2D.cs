@@ -399,6 +399,17 @@
         }
 
         /// <summary>
+        /// Loads a <see cref="Texture2D"/> from assets and returns it.
+        /// </summary>
+        /// <param name="assetRef">The path to the texture asset.</param>
+        /// <param name="forceDim"></param>
+        /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
+        public static Texture2D LoadFromAssets(AssetRef assetRef, TextureDimension forceDim)
+        {
+            return new(new TextureFileDescription(assetRef.GetPath(), forceDim));
+        }
+
+        /// <summary>
         /// Asynchronously creates a new instance of the <see cref="Texture2D"/> class using the provided <see cref="TextureFileDescription"/>.
         /// </summary>
         /// <param name="description">The <see cref="TextureFileDescription"/> used to create the texture.</param>

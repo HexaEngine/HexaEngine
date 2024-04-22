@@ -130,22 +130,22 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("\xE710 New"))
+                    if (ImGui.MenuItem(UwU.Star + " New"))
                     {
                         modals.GetOrCreate<CreateNewDialog>(() => new(this, device)).Show();
                     }
-                    if (ImGui.MenuItem("\xE845 Open"))
+                    if (ImGui.MenuItem(UwU.OpenFile + " Open"))
                     {
                         openDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("\xE74E Save"))
+                    if (ImGui.MenuItem(UwU.FloppyDisk + " Save"))
                     {
                         Save();
                     }
-                    if (ImGui.MenuItem("\xEDE1 Export"))
+                    if (ImGui.MenuItem(UwU.FileExport + " Export"))
                     {
                         if (source != null)
                         {
@@ -156,7 +156,7 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("\xE8BB Close"))
+                    if (ImGui.MenuItem(UwU.RectangleXmark + " Close"))
                     {
                         UnloadImage();
                     }
@@ -165,11 +165,11 @@
                 }
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("\xE7A7 Undo"))
+                    if (ImGui.MenuItem(UwU.ArrowLeft + " Undo"))
                     {
                         history?.Undo(device.Context);
                     }
-                    if (ImGui.MenuItem("\xE7A6 Redo"))
+                    if (ImGui.MenuItem(UwU.ArrowRight + " Redo"))
                     {
                         history?.Redo(device.Context);
                     }

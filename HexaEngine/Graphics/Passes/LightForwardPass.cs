@@ -124,6 +124,19 @@
                 }
             }
 
+            forwardSRVs[9] = null; // IBL global diffuse
+            forwardSRVs[10] = null; // IBL global specular
+            for (int i = 0; i < lights.ActiveCount; i++)
+            {
+                var light = lights.Active[i];
+                if (light is IBLLight iBLLight)
+                {
+                    forwardSRVs[9] = (void*)(iBLLight.DiffuseMap?.SRV.NativePointer ?? 0); // IBL global diffuse
+                    forwardSRVs[10] = (void*)(iBLLight.SpecularMap?.SRV.NativePointer ?? 0); // IBL global specular
+                    break;
+                }
+            }
+
             forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];

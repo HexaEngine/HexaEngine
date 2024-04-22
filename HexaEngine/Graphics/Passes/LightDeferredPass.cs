@@ -130,6 +130,17 @@ namespace HexaEngine.Graphics.Passes
 
             deferredSrvs[9] = null; // IBL global diffuse
             deferredSrvs[10] = null; // IBL global specular
+            for (int i = 0; i < lights.ActiveCount; i++)
+            {
+                var light = lights.Active[i];
+                if (light is IBLLight iBLLight)
+                {
+                    deferredSrvs[9] = (void*)(iBLLight.DiffuseMap?.SRV.NativePointer ?? 0); // IBL global diffuse
+                    deferredSrvs[10] = (void*)(iBLLight.SpecularMap?.SRV.NativePointer ?? 0); // IBL global specular
+                    break;
+                }
+            }
+
             const int deferredBaseIndex = 11;
             GBuffer gbuffer = this.gbuffer.Value;
             for (int i = 0; i < 4; i++)

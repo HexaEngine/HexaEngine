@@ -10,7 +10,7 @@
         private Vector2 brushSize = Vector2.One;
         private IGraphicsPipelineState brushPipeline;
 
-        public override string Icon => "\xEC87##PencilTool";
+        public override string Icon => UwU.Pen + "##PencilTool";
 
         public override string Name => "Pencil";
 

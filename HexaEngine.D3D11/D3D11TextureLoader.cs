@@ -35,7 +35,7 @@
         public IScratchImage CaptureTexture(IGraphicsContext context, IResource resource)
         {
             ScratchImage image = DirectXTex.CreateScratchImage();
-            DirectXTex.CaptureTexture((ID3D11Device*)device.NativePointer, (ID3D11DeviceContext*)context.NativePointer, (ID3D11Resource*)resource.NativePointer, image);
+            DirectXTex.CaptureTexture((ID3D11Device*)device.NativePointer, (ID3D11DeviceContext*)context.NativePointer, (ID3D11Resource*)resource.NativePointer, image).ThrowHResult();
 
             return new D3DScratchImage(image);
         }

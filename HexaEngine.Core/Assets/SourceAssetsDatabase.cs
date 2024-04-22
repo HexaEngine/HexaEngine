@@ -285,6 +285,11 @@
 
         private static void UpdateFile(string file, SourceAssetMetadata asset, bool force)
         {
+            if (asset.IsLocked) // no need for updating. If it's locked it means there is a import/update operation already going on.
+            {
+                return;
+            }
+
             asset.Lock();
             try
             {
@@ -306,6 +311,11 @@
 
         private static async Task UpdateFileAsync(string file, SourceAssetMetadata asset, bool force)
         {
+            if (asset.IsLocked) // no need for updating. If it's locked it means there is a import/update operation already going on.
+            {
+                return;
+            }
+
             asset.Lock();
             try
             {
@@ -420,6 +430,7 @@
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
             SourceAssetMetadata sourceAsset = SourceAssetMetadata.Create(Path.GetRelativePath(rootFolder, path), provider?.ParentGuid ?? default, lastModified, crc32, metadataFile);
+            sourceAsset.Lock();
 
             lock (_lock)
             {
@@ -427,6 +438,8 @@
             }
 
             ImportInternal(sourcePath, path, sourceAsset, provider, progress);
+
+            sourceAsset.ReleaseLock();
             return sourceAsset;
         }
 
@@ -435,6 +448,7 @@
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
             SourceAssetMetadata sourceAsset = SourceAssetMetadata.Create(Path.GetRelativePath(rootFolder, path), provider?.ParentGuid ?? default, lastModified, crc32, metadataFile);
+            sourceAsset.Lock();
 
             lock (_lock)
             {
@@ -443,6 +457,7 @@
 
             await ImportInternalAsync(sourcePath, path, sourceAsset, provider, progress);
 
+            sourceAsset.ReleaseLock();
             return sourceAsset;
         }
 

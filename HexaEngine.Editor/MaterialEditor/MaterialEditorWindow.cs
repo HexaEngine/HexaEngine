@@ -568,7 +568,10 @@
                 var metadata = assetRef.GetSourceMetadata();
                 if (metadata != null)
                 {
+                    metadata.Lock();
                     material.Save(metadata.GetFullPath(), Encoding.UTF8);
+                    metadata.ReleaseLock();
+                    SourceAssetsDatabase.Update(metadata, false);
 
                     if (nameChanged)
                     {

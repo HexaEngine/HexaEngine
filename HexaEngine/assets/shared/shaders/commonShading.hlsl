@@ -145,9 +145,38 @@ float3 BRDF_IBL(SamplerState samplerState, TextureCube irradianceTex, TextureCub
 	return kD * diffuse + specular;
 }
 
-float3 BRDF_IBL(PixelParams surface)
+float3 BRDF_IBL(PixelParams surface, float ao)
 {
-	return 0;
+	
+	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
+	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;
+	float3 diffuse = surface.DiffuseColor * irradiance * (1.0 - E) * ao;
+
+	float3 R = reflect(-surface.V, surface.N);
+	const float MAX_REFLECTION_LOD = 8.0;
+
+	float3 prefilteredColor = globalSpecular.SampleLevel(linearClampSampler, R, surface.Roughness * MAX_REFLECTION_LOD).rgb;
+	float3 specular = prefilteredColor * E;
+	specular *= ao * surface.EnergyCompensation;
+
+	return diffuse + specular;
+	
+	/*
+	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
+	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;
+	float3 kS = FresnelSchlickRoughness(surface.F0, surface.NdotV, surface.Roughness);
+	float3 kD = 1.0 - kS;
+	float3 diffuse = irradiance * surface.DiffuseColor;
+
+	float3 R = reflect(-surface.V, surface.N);
+	const float MAX_REFLECTION_LOD = 8.0;
+
+	float3 prefilteredColor = globalSpecular.SampleLevel(linearClampSampler, R, surface.Roughness * MAX_REFLECTION_LOD).rgb;
+	float2 brdf = surface.DFG.xy;
+	float3 specular = prefilteredColor * (kS * brdf.x + brdf.y) * surface.EnergyCompensation;
+
+	return kD * diffuse + specular;
+	*/
 }
 
 float3 DirectionalLightBRDF(Light light, PixelParams pixel)
@@ -304,7 +333,7 @@ float3 ComputeIndirectLightning(
 
 	ao *= ssao.Sample(linearClampSampler, screenUV);
 
-	ambient = (ambient + BRDF_IBL(pixel)) * ao;
+	ambient = (ambient * ao + BRDF_IBL(pixel, ao));
 	ambient += emissive;
 
 	return ambient;

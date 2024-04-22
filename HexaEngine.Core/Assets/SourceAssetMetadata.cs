@@ -47,6 +47,8 @@
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented });
 
+        public bool IsLocked => _semaphore.CurrentCount == 0;
+
         public void Lock()
         {
             _semaphore.Wait();

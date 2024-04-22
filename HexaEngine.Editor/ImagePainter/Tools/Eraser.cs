@@ -13,7 +13,7 @@
         private IGraphicsPipelineState brushPipeline;
         private ConstantBuffer<Vector4> opacityBuffer;
 
-        public override string Icon => "\xE75C##EraserTool";
+        public override string Icon => UwU.Eraser + "##EraserTool";
 
         public override string Name => "Eraser";
 

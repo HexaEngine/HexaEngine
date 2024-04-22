@@ -11,7 +11,7 @@
         private ConstantBuffer<Vector4> mousePosBuffer;
         private StructuredUavBuffer<Vector4> resultBuffer;
 
-        public override string Icon => "\xEF3C##ColorGrabber";
+        public override string Icon => UwU.EyeDropper + "##ColorGrabber";
 
         public override string Name => "ColorGrabber";
 

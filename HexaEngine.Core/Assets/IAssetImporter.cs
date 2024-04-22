@@ -14,7 +14,8 @@
 
         Task ImportAsync(TargetPlatform targetPlatform, ImportContext context)
         {
-            return Task.Run(() => Import(targetPlatform, context));
+            Import(targetPlatform, context);
+            return Task.CompletedTask;
         }
 
         public void GenerateThumbnail(ThumbnailCache cache, ImportContext context)

@@ -18,6 +18,7 @@
     public unsafe class D3D11GraphicsContextBase
     {
         internal ComPtr<ID3D11DeviceContext3> DeviceContext;
+        private readonly nint nativePointer;
         private bool disposedValue;
 
         public string? DebugName { get; set; } = string.Empty;
@@ -26,7 +27,7 @@
 
         public bool IsDisposed => disposedValue;
 
-        public IntPtr NativePointer { get; }
+        public nint NativePointer => nativePointer;
 
         public event EventHandler? OnDisposed;
 
@@ -34,12 +35,14 @@
         {
             Device = device;
             DeviceContext.Handle = (ID3D11DeviceContext3*)context.Handle;
+            nativePointer = (nint)context.Handle;
         }
 
         protected D3D11GraphicsContextBase(IGraphicsDevice device, ComPtr<ID3D11DeviceContext3> context)
         {
             Device = device;
             DeviceContext = context;
+            nativePointer = (nint)context.Handle;
         }
 
         #region IGraphicsContext
