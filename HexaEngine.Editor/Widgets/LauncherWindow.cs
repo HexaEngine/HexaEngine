@@ -6,7 +6,6 @@
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
-    using Octokit;
     using System;
     using System.Numerics;
 

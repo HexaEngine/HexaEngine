@@ -29,12 +29,12 @@
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Silk.NET.GLFW" Version="2.20.0" />
-		<PackageReference Include="Silk.NET.SDL" Version="2.20.0" />
-		<PackageReference Include="Silk.NET.Assimp" Version="2.20.0" />
+		<PackageReference Include="Silk.NET.GLFW" Version="2.21.0" />
+		<PackageReference Include="Silk.NET.SDL" Version="2.21.0" />
+		<PackageReference Include="Silk.NET.Assimp" Version="2.21.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.6" />
-		<PackageReference Include="Silk.NET.SPIRV.Reflect" Version="2.20.0" />
+		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.8" />
+		<PackageReference Include="Silk.NET.SPIRV.Reflect" Version="2.21.0" />
 		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
 		<PackageReference Include="YamlDotNet" Version="15.1.2" />
 	</ItemGroup>
