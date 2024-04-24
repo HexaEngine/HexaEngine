@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Components.Physics;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;

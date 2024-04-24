@@ -36,6 +36,9 @@
         public GameObject GameObject { get; set; }
 
         [JsonIgnore]
+        public bool IsSerializable { get; } = true;
+
+        [JsonIgnore]
         public AnimatorStateMachine StateMachine => stateMachine;
 
         public event Action<Animation>? Playing;

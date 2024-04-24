@@ -231,9 +231,7 @@
                     continue;
                 }
 
-                var lightData = lights.LightBuffer[i];
-
-                volumetricLightBuffer.Add(new(lightData, light.VolumetricsMultiplier));
+                volumetricLightBuffer.Add(new(new(light), light.VolumetricsMultiplier));
 
                 if (light is DirectionalLight dir)
                 {

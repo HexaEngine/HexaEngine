@@ -53,6 +53,10 @@
             RenderManager.ExecuteGroupVisibilityTest(renderers.AlphaTestQueue, CullingManager.Current.Context, profiler, "AlphaTest");
             profiler?.End("VisibilityTest.AlphaTest");
 
+            profiler?.Begin("VisibilityTest.Transparency");
+            RenderManager.ExecuteGroupVisibilityTest(renderers.TransparencyQueue, CullingManager.Current.Context, profiler, "Transparency");
+            profiler?.End("VisibilityTest.Transparency");
+
             profiler?.Begin("VisibilityTest.Update");
             culling.Context.Flush(context);
             profiler?.End("VisibilityTest.Update");

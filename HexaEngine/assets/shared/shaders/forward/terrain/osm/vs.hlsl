@@ -1,9 +1,12 @@
 #include "defs.hlsl"
 
-cbuffer WorldBuffer
+cbuffer cb
 {
-    float4x4 world;
-};
+    uint offset;
+}
+
+StructuredBuffer<float4x4> worldMatrices;
+StructuredBuffer<uint> worldMatrixOffsets;
 
 cbuffer LightView : register(b1)
 {
@@ -18,7 +21,9 @@ inline PixelInput TransformToDPSMSpace(uint instanceId, float3 position)
 {
     PixelInput output;
 
-    output.position = mul(float4(position, 1), world).xyzw;
+    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+
+    output.position = mul(float4(position, 1), mat).xyzw;
 
     // transform vertex to DP-space
     output.position = mul(output.position, view);

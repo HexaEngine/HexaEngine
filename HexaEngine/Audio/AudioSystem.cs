@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes.Systems
+﻿namespace HexaEngine.Audio
 {
     using HexaEngine.Core;
     using HexaEngine.Queries.Generic;

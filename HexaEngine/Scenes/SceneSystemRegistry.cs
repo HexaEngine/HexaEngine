@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using HexaEngine.Audio;
     using HexaEngine.Core;
     using HexaEngine.Coroutines;
     using HexaEngine.Graphics;

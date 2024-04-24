@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
-    using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
@@ -8,9 +7,11 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.TerrainCollider")]
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<TerrainCollider>("Terrain Collider", false, true)]
     public unsafe class TerrainCollider : ColliderShape

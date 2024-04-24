@@ -38,8 +38,6 @@
                     return;
                 }
 
-                ImGui.BeginDisabled(!Application.InEditMode);
-
                 if (SelectionCollection.Global.SelectedMultiple && editor.CanEditMultiple)
                 {
                     editor.EditMultiple(context, SelectionCollection.Global);
@@ -48,8 +46,6 @@
                 {
                     editor.Edit(context, SelectionCollection.Global[0]);
                 }
-
-                ImGui.EndDisabled();
             }
         }
     }

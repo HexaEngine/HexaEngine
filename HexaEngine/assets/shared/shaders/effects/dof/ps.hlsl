@@ -26,8 +26,8 @@ struct VertexOut
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-	float4 color = sceneTexture.Sample(linearWrapSampler, pin.Tex);
-	float3 colorBlurred = blurredTexture.Sample(linearWrapSampler, pin.Tex).xyz;
+	float4 color = sceneTexture.SampleLevel(linearWrapSampler, pin.Tex, 0);
+	float3 colorBlurred = blurredTexture.SampleLevel(linearWrapSampler, pin.Tex, 0).xyz;
 	color = float4(DistanceDOF(color.xyz, colorBlurred, pin.Tex), 1.0);
 
 	return color;

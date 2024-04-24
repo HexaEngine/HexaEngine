@@ -7,6 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Numerics;
     using System.Reflection;
 
     /// <summary>
@@ -253,7 +254,7 @@
 
             if (!NoTable)
             {
-                ImGui.BeginTable(guiName.RawId, 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.PreciseWidths);
+                ImGui.BeginTable(guiName.RawId, 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.NoSavedSettings);
                 ImGui.TableSetupColumn("", 0.0f);
                 ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             }

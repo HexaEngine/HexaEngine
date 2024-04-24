@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
@@ -25,6 +24,7 @@
         private int currentLODLevel = 0;
 
         public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
         public Point2 ID;
         public Vector3 Offset;
         public Matrix4x4 Transform;
@@ -36,6 +36,8 @@
         public TerrainCell? Bottom;
 
         private bool disposedValue;
+        public uint TypeId;
+        public uint DrawIndirectOffset;
 
         public unsafe TerrainCell(TerrainFile terrain, TerrainCellData cellData, ReusableFileStream stream, bool isDynamic)
         {
@@ -57,6 +59,7 @@
             }
 
             BoundingBox = mesh.BoundingBox;
+            BoundingSphere = mesh.BoundingSphere;
         }
 
         public IReadOnlyList<TerrainDrawLayer> DrawLayers => drawLayers;

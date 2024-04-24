@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Components.Physics;
     using System.Numerics;
 
     public struct RaycastHit(uint faceIndex, HitFlags flags, Vector3 position, Vector3 normal, float distance, float u, float v, RigidBody? actor, IColliderComponent? shape)

@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.BoxCollider")]
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<BoxCollider>("Box Collider")]
     public unsafe class BoxCollider : ColliderShape

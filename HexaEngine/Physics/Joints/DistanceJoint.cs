@@ -1,10 +1,13 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics.Joints
 {
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.DistanceJoint")]
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<DistanceJoint>("Distance Joint")]
     public sealed unsafe class DistanceJoint : Joint

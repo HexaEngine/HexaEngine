@@ -14,15 +14,18 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
+    using System.Numerics;
     using System.Text;
 
     [EditorCategory("Renderer")]
     [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
     public class TerrainRendererComponent : BaseRendererComponent, ISelectableRayTest
     {
-        private TerrainRenderer renderer;
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;
+
+        private static TerrainRenderer1 renderer1;
+        private static int instances;
 
         public TerrainRendererComponent()
         {
@@ -44,7 +47,7 @@
         public override string DebugName { get; protected set; } = nameof(TerrainRenderer);
 
         [JsonIgnore]
-        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
+        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
 
         [JsonIgnore]
         public override BoundingBox BoundingBox { get => BoundingBox.Transform(terrain?.BoundingBox ?? BoundingBox.Empty, GameObject.Transform); }
@@ -75,56 +78,95 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            renderer = new(device);
+            if (Interlocked.Increment(ref instances) == 1)
+            {
+                renderer1 = new();
+                ((IRenderer1)renderer1).Initialize(device, CullingManager.Current.Context);
+            }
+
             UpdateTerrain();
         }
 
         protected override void UnloadCore()
         {
+            if (Interlocked.Decrement(ref instances) == 0)
+            {
+                renderer1.Dispose();
+            }
+
             terrain?.Dispose();
-            renderer.Dispose();
         }
 
         public override void Update(IGraphicsContext context)
         {
-            renderer.Update(GameObject.Transform.Global);
+            if (terrain == null)
+            {
+                return;
+            }
+
+            renderer1.Update(context, GameObject.Transform.Global, terrain);
         }
 
         public override void DrawDepth(IGraphicsContext context)
         {
-            renderer.DrawDepth(context);
+            if (terrain == null)
+            {
+                return;
+            }
+
+            renderer1.DrawDepth(context, terrain);
         }
 
         public override void Draw(IGraphicsContext context, RenderPath path)
         {
+            if (terrain == null)
+            {
+                return;
+            }
+
             if (path == RenderPath.Deferred)
             {
-                renderer.DrawDeferred(context);
+                renderer1.DrawDeferred(context, terrain);
             }
             else
             {
-                renderer.DrawForward(context);
+                renderer1.DrawForward(context, terrain);
             }
-        }
-
-        public override void Bake(IGraphicsContext context)
-        {
-            throw new NotImplementedException();
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            renderer.DrawShadowMap(context, light, type);
+            if (terrain == null)
+            {
+                return;
+            }
+
+            renderer1.DrawShadowMap(context, terrain, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
         {
+            if (terrain == null)
+            {
+                return;
+            }
+
+            renderer1.VisibilityTest(context, terrain);
+        }
+
+        public override void Bake(IGraphicsContext context)
+        {
+            if (terrain == null)
+            {
+                return;
+            }
+
+            renderer1.Bake(context, terrain);
         }
 
         private Job UpdateTerrain()
         {
             Loaded = false;
-            renderer?.Uninitialize();
             var tmpTerrain = terrain;
             terrain = null;
             tmpTerrain?.Dispose();
@@ -151,7 +193,6 @@
                 {
                     component.terrain = new(stream, true);
 
-                    component.renderer.Initialize(component.terrain);
                     component.Loaded = true;
                     component.GameObject.SendUpdateTransformed();
                 }

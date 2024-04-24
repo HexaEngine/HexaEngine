@@ -50,9 +50,9 @@
             return resourceBuilder.AddResource(name);
         }
 
-        public ResourceRef<Texture2D> CreateBuffer(string name, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
+        public ResourceRef<Texture2D> CreateBuffer(string name, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceMiscFlag = ResourceMiscFlag.None, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
         {
-            var texRef = CreateTexture2D(name, new(Format, Width, Height, arraySize, mipLevels, gpuAccessFlags), creationFlags);
+            var texRef = CreateTexture2D(name, new(Format, Width, Height, arraySize, mipLevels, gpuAccessFlags, cpuAccessFlags, 1, 0, resourceMiscFlag), creationFlags);
             return texRef;
         }
 
@@ -62,9 +62,21 @@
             return texRef;
         }
 
+        public ResourceRef<Texture2D> CreateBufferQuarterRes(string name, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
+        {
+            var texRef = CreateTexture2D(name, new(Format, Width / 4, Height / 4, arraySize, mipLevels, GpuAccessFlags.RW), creationFlags);
+            return texRef;
+        }
+
         public ResourceRef<Texture2D> CreateBuffer(string name, Format format, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
         {
             var texRef = CreateTexture2D(name, new(format, Width, Height, arraySize, mipLevels, gpuAccessFlags), creationFlags);
+            return texRef;
+        }
+
+        public ResourceRef<Texture2D> CreateBuffer(string name, Format format, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceMiscFlag = ResourceMiscFlag.None, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)
+        {
+            var texRef = CreateTexture2D(name, new(format, Width, Height, arraySize, mipLevels, gpuAccessFlags, cpuAccessFlags, 1, 0, resourceMiscFlag), creationFlags);
             return texRef;
         }
 

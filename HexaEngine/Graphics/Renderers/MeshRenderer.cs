@@ -58,7 +58,6 @@
                     Matrix4x4 global = globals[instance.NodeId];
                     instance.BoundingSphere = sphere;
                     instance.Transform = Matrix4x4.Transpose(global);
-                    drawType.Instances[j] = instance;
                 }
             }
         }
@@ -78,8 +77,8 @@
                 }
 
                 context.AppendType(mesh.IndexCount);
-                drawTypes[i].TypeId = context.CurrentType;
-                drawTypes[i].DrawIndirectOffset = context.GetDrawArgsOffset();
+                drawType.TypeId = context.CurrentType;
+                drawType.DrawIndirectOffset = context.GetDrawArgsOffset();
                 for (int j = 0; j < drawType.Instances.Count; j++)
                 {
                     DrawInstance instance = drawType.Instances[j];

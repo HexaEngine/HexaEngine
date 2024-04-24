@@ -1,12 +1,14 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics.Joints
 {
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.HingeJoint")]
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<HingeJoint>("Hinge Joint")]
     public sealed unsafe class HingeJoint : Joint

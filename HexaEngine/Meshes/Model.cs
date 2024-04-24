@@ -392,7 +392,7 @@
             DepthStencilDescription depthStencilDepthOnlyDesc = DepthStencilDescription.None;
             if ((flags & ModelMaterialShaderFlags.DepthTest) != 0)
             {
-                depthStencilDesc = DepthStencilDescription.Default;
+                depthStencilDepthOnlyDesc = depthStencilDesc = DepthStencilDescription.Default;
             }
             if ((flags & ModelMaterialShaderFlags.DepthAlways) != 0)
             {

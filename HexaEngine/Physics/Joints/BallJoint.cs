@@ -1,26 +1,28 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics.Joints
 {
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.BallJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<SliderJoint>("Slider Joint")]
-    public sealed unsafe class SliderJoint : Joint
+    [EditorComponent<BallJoint>("Ball Joint")]
+    public sealed unsafe class BallJoint : Joint
     {
-        private PxPrismaticJoint* joint;
-
+        private PxSphericalJoint* joint;
         private bool autoCalculate;
         private Vector3 anchor;
         private Vector3 connectedAnchor;
         private bool enableLimit;
-        private float limitMin;
-        private float limitMax;
-        private float limitRestitution;
-        private float limitBounceThreshold;
         private float springStiffness;
         private float springDamping;
+        private float limitRestitution;
+        private float limitBounceThreshold;
+        private float limitYAngle = MathUtil.PIDIV2;
+        private float limitZAngle = MathUtil.PIDIV2;
 
         [EditorProperty("Auto Calculate")]
         public bool AutoCalculate
@@ -52,34 +54,6 @@
             }
         }
 
-        [JsonIgnore]
-        public float Position
-        {
-            get
-            {
-                if (joint == null || updating)
-                {
-                    return 0.0f;
-                }
-
-                return joint->GetPosition();
-            }
-        }
-
-        [JsonIgnore]
-        public float Velocity
-        {
-            get
-            {
-                if (joint == null || updating)
-                {
-                    return 0.0f;
-                }
-
-                return joint->GetVelocity();
-            }
-        }
-
         [EditorCategory("Spring")]
         [EditorProperty("Stiffness")]
         public float SpringStiffness
@@ -105,7 +79,7 @@
         }
 
         [EditorCategory("Limits")]
-        [EditorProperty("Enable Limits")]
+        [EditorProperty("Enable Limit")]
         public bool EnableLimit
         {
             get => enableLimit;
@@ -115,34 +89,8 @@
 
                 if (joint != null && !updating)
                 {
-                    joint->SetPrismaticJointFlagMut(PxPrismaticJointFlag.LimitEnabled, value);
+                    joint->SetSphericalJointFlagMut(PxSphericalJointFlag.LimitEnabled, value);
                 }
-            }
-        }
-
-        [EditorCategory("Limits")]
-        [EditorProperty("Max")]
-        public float LimitMax
-        {
-            get => limitMax;
-            set
-            {
-                limitMax = value;
-
-                UpdateLimits();
-            }
-        }
-
-        [EditorCategory("Limits")]
-        [EditorProperty("Min")]
-        public float LimitMin
-        {
-            get => limitMin;
-            set
-            {
-                limitMin = value;
-
-                UpdateLimits();
             }
         }
 
@@ -154,6 +102,32 @@
             set
             {
                 limitRestitution = value;
+
+                UpdateLimits();
+            }
+        }
+
+        [EditorCategory("Limits")]
+        [EditorProperty("Y Angle", 0, MathUtil.PI, EditorPropertyMode.SliderAngle)]
+        public float LimitYAngle
+        {
+            get => limitYAngle;
+            set
+            {
+                limitYAngle = value;
+
+                UpdateLimits();
+            }
+        }
+
+        [EditorCategory("Limits")]
+        [EditorProperty("Z Angle", 0, MathUtil.PI, EditorPropertyMode.SliderAngle)]
+        public float LimitZAngle
+        {
+            get => limitZAngle;
+            set
+            {
+                limitZAngle = value;
 
                 UpdateLimits();
             }
@@ -172,6 +146,34 @@
             }
         }
 
+        [JsonIgnore]
+        public float SwingAngleY
+        {
+            get
+            {
+                if (joint == null || updating)
+                {
+                    return 0;
+                }
+
+                return joint->GetSwingYAngle();
+            }
+        }
+
+        [JsonIgnore]
+        public float SwingAngleZ
+        {
+            get
+            {
+                if (joint == null || updating)
+                {
+                    return 0;
+                }
+
+                return joint->GetSwingZAngle();
+            }
+        }
+
         protected override unsafe PxJoint* CreateJoint(PxPhysics* physics, PxScene* scene, RigidBody rigidBody0, RigidBody rigidBody1, Transform transform0, Transform transform1)
         {
             Vector3 connectedAnchor = AutoCalculate ? transform0.GlobalPosition + Anchor - transform1.GlobalPosition : ConnectedAnchor;
@@ -180,8 +182,8 @@
             PxTransform local0 = new() { p = anchor, q = Quaternion.Identity };
             PxTransform local1 = new() { p = connectedAnchor, q = Quaternion.Identity };
 
-            joint = physics->PhysPxPrismaticJointCreate(rigidBody0.Actor, &local0, rigidBody1.Actor, &local1);
-            joint->SetPrismaticJointFlagMut(PxPrismaticJointFlag.LimitEnabled, enableLimit);
+            joint = physics->PhysPxSphericalJointCreate(rigidBody0.Actor, &local0, rigidBody1.Actor, &local1);
+            joint->SetSphericalJointFlagMut(PxSphericalJointFlag.LimitEnabled, enableLimit);
 
             UpdateLimits();
 
@@ -195,15 +197,16 @@
                 return;
             }
 
-            PxJointLinearLimitPair limit;
-            limit.lower = limitMin;
-            limit.upper = limitMax;
+            PxJointLimitCone limit;
+
+            limit.yAngle = limitYAngle;
+            limit.zAngle = limitZAngle;
             limit.restitution = limitRestitution;
             limit.bounceThreshold = limitBounceThreshold;
             limit.stiffness = springStiffness;
             limit.damping = springDamping;
 
-            joint->SetLimitMut(&limit);
+            joint->SetLimitConeMut(&limit);
         }
     }
 }

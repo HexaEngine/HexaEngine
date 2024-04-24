@@ -5,9 +5,11 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.ColliderShape")]
     public abstract unsafe class ColliderShape : IColliderComponent
     {
         protected PxMaterial* material;
@@ -25,6 +27,9 @@
         /// </summary>
         /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
         public Guid Guid { get; set; } = Guid.NewGuid();
+
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
         internal static readonly ConcurrentNativeToManagedMapper mapper = new();

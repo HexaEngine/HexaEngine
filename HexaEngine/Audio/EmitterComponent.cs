@@ -1,12 +1,13 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Components.Audio
+namespace HexaEngine.Audio
 {
-    using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core.Audio;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Audio.EmitterComponent")]
     [EditorCategory("Audio")]
     [EditorComponent<EmitterComponent>("Emitter")]
     public class EmitterComponent : IAudioComponent
@@ -18,6 +19,9 @@ namespace HexaEngine.Components.Audio
         /// </summary>
         /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
         public Guid Guid { get; set; } = Guid.NewGuid();
+
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
         public GameObject GameObject { get; set; }

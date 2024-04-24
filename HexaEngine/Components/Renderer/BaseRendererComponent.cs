@@ -20,6 +20,9 @@
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
+        public bool IsSerializable { get; } = true;
+
+        [JsonIgnore]
         public uint QueueIndex
         {
             get => queueIndex;

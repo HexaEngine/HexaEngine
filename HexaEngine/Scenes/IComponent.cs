@@ -14,6 +14,8 @@
         [JsonIgnore]
         GameObject GameObject { get; set; }
 
+        bool IsSerializable { get; }
+
         void Awake();
 
         void Destroy();

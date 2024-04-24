@@ -19,6 +19,7 @@
             MissingMemberHandling = MissingMemberHandling.Ignore,
             SerializationBinder = new CustomSerializationBinder(),
             ContractResolver = new CustomContractResolver(),
+            Converters = [new PropertyListConverter()]
         };
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(settings);

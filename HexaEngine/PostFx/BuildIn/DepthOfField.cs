@@ -29,13 +29,14 @@ namespace HexaEngine.PostFx.BuildIn
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private IComputePipeline bokehGenerate;
-        private GaussianBlur gaussianBlur;
+        private BoxBlur gaussianBlur;
         private IGraphicsPipelineState coc;
         private IGraphicsPipelineState dof;
         private IGraphicsPipelineState bokehDraw;
 
         private ResourceRef<Texture2D> cocBuffer;
         private ResourceRef<Texture2D> buffer;
+        private ResourceRef<Texture2D> buffer1;
         private StructuredUavBuffer<Bokeh> bokehBuffer;
         private DrawIndirectArgsBuffer<DrawInstancedIndirectArgs> bokehIndirectBuffer;
 
@@ -246,7 +247,7 @@ namespace HexaEngine.PostFx.BuildIn
                 Macros = macros,
             });
 
-            gaussianBlur = new(creator, "DOF", GaussianRadius.Radius5x5);
+            gaussianBlur = new(creator, "DOF") { Size = 3 };
             DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
 
             dof = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -270,7 +271,8 @@ namespace HexaEngine.PostFx.BuildIn
 
             bokehBuffer = new((uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
 
-            buffer = creator.CreateBuffer("DOF_BUFFER");
+            buffer = creator.CreateBufferQuarterRes("DOF_BUFFER");
+            buffer1 = creator.CreateBuffer("DOF_BUFFER_1");
             cocBuffer = creator.CreateBufferHalfRes("DOF_COC_BUFFER", Format.R16UNorm);
 
             bokehIndirectBuffer = new(new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
@@ -351,12 +353,13 @@ namespace HexaEngine.PostFx.BuildIn
                 context.SetComputePipeline(null);
             }
 
-            gaussianBlur.Blur(context, Input, buffer.Value, width, height);
+            gaussianBlur.Blur(context, Input, buffer.Value, width, height, width / 4, height / 4);
+            gaussianBlur.Blur(context, buffer.Value, buffer1.Value, width / 4, height / 4, width, height);
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetSampler(0, linearWrapSampler);
-            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, buffer.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
+            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, buffer1.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
             context.SetPipelineState(dof);
             context.DrawInstanced(4, 1, 0, 0);

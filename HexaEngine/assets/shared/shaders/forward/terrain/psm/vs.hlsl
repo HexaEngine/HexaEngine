@@ -1,9 +1,12 @@
 #include "defs.hlsl"
 
-cbuffer WorldBuffer
+cbuffer cb
 {
-	float4x4 world;
-};
+    uint offset;
+}
+
+StructuredBuffer<float4x4> worldMatrices;
+StructuredBuffer<uint> worldMatrixOffsets;
 
 cbuffer LightBuffer : register(b1)
 {
@@ -17,7 +20,10 @@ cbuffer LightBuffer : register(b1)
 PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
 	PixelInput output;
-	output.position = mul(float4(input.pos, 1), world);
+
+	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+
+	output.position = mul(float4(input.pos, 1), mat);
 	output.pos = mul(output.position, lightView);
 	output.position = mul(output.position, lightViewProj);
 	return output;

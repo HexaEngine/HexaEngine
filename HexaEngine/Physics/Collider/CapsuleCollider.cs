@@ -2,9 +2,11 @@
 {
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.CapsuleCollider")]
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
     public unsafe class CapsuleCollider : ColliderShape

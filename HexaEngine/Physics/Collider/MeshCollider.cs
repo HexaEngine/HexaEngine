@@ -8,11 +8,13 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System;
     using System.Collections.Generic;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.MeshCollider")]
     [EditorCategory("Collider", "Physics")]
     [EditorComponent<MeshCollider>("Mesh Collider")]
     public unsafe class MeshCollider : ColliderShape

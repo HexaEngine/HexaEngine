@@ -6,6 +6,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System;
@@ -111,6 +112,8 @@
             bool changed = false;
             if (ImGui.BeginPopupContextWindow())
             {
+                ImGui.BeginDisabled(element is PrefabObject);
+
                 if (typeFilterComponentCache.TryGetValue(type, out EditorComponentCacheEntry? cacheEntry))
                 {
                     changed |= cacheEntry.Draw(element);
@@ -120,6 +123,8 @@
                 {
                     PopulateTypeCache(type);
                 }
+
+                ImGui.EndDisabled();
 
                 DrawSettingsMenu();
 
@@ -132,6 +137,8 @@
         {
             if (ImGui.BeginPopupContextItem(name))
             {
+                ImGui.BeginDisabled(element is PrefabObject);
+
                 if (ImGui.MenuItem("\xE738 Delete"))
                 {
                     History.Default.Do("Remove Component", (scene, element, component), DoRemoveComponent, DoAddComponent);
@@ -143,6 +150,8 @@
                 {
                     History.Default.Do("Clone Component", (scene, element, Instantiator.Instantiate(component)), DoAddComponent, DoRemoveComponent);
                 }
+
+                ImGui.EndDisabled();
 
                 ImGui.Separator();
 
@@ -192,6 +201,8 @@
             ImGui.PushID(id);
             ImGui.BeginGroup();
 
+            ImGui.BeginDisabled(gameObject is PrefabObject);
+
             changed |= DrawComponents(context, gameObject, scene);
 
             Vector2 avail = ImGui.GetContentRegionAvail();
@@ -216,6 +227,8 @@
 
                 ImGui.EndPopup();
             }
+
+            ImGui.EndDisabled();
 
             // fill up space so that the context menu is completely filling the empty space.
             var space = ImGui.GetContentRegionAvail();

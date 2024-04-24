@@ -1,17 +1,16 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Physics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System;
-    using System.Runtime.InteropServices;
 
     // TODO: Constraints.
     // TODO: Dominance Group Editor.
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Actor")]
     public abstract unsafe class Actor : IActorComponent
     {
         protected PxScene* scene;
@@ -34,6 +33,9 @@
 
         [JsonIgnore]
         public GameObject GameObject { get; set; }
+
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
 
         [EditorProperty<ActorType>("Type")]
         public ActorType Type

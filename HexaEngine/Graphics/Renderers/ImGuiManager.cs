@@ -899,6 +899,15 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             }
         }
 
+        public static void PushFont(string name, bool condition)
+        {
+            if (condition && aliasToFont.TryGetValue(name, out ImFontPtr fontPtr))
+            {
+                ImGui.PushFont(fontPtr);
+                fontPushes++;
+            }
+        }
+
         public static void PopFont()
         {
             if (fontPushes == 0)

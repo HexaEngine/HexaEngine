@@ -15,7 +15,7 @@
     {
 #nullable disable
         private readonly IGraphicsDevice device;
-        private CullingFlags cullingFlags = CullingFlags.All;
+        private CullingFlags cullingFlags = CullingFlags.All | CullingFlags.Debug;
 
         private IComputePipeline occlusion;
 

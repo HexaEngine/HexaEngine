@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGuizmo;
-    using HexaEngine.Components.Physics;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
@@ -9,6 +8,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
+    using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
@@ -229,11 +229,11 @@
                         {
                             switch (controller.Shape)
                             {
-                                case Physics.CharacterControllerShape.Capsule:
+                                case CharacterControllerShape.Capsule:
                                     DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, controller.CapsuleRadius, controller.CapsuleHeight * 2, Vector4.One);
                                     break;
 
-                                case Physics.CharacterControllerShape.Box:
+                                case CharacterControllerShape.Box:
                                     DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, controller.BoxWidth, controller.BoxHeight, controller.BoxDepth, Vector4.One);
                                     break;
                             }

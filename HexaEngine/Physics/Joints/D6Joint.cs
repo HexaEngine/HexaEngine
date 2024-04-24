@@ -1,13 +1,15 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics.Joints
 {
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.D6Joint")]
     [EditorCategory("Joints", "Physics")]
     [EditorComponent<D6Joint>("D6 Joint")]
     public sealed unsafe class D6Joint : Joint

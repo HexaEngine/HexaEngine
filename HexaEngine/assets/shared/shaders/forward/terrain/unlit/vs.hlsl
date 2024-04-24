@@ -4,16 +4,21 @@
 #define TILESIZE float2(32, 32)
 #endif
 
-cbuffer WorldBuffer
+cbuffer cb
 {
-    float4x4 world;
-};
+    uint offset;
+}
 
-PixelInput main(VertexInput input)
+StructuredBuffer<float4x4> worldMatrices;
+StructuredBuffer<uint> worldMatrixOffsets;
+
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
     PixelInput output;
 
-    output.position = mul(float4(input.position, 1), world);
+    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+
+    output.position = mul(float4(input.position, 1), mat);
     output.ctex = input.position.xz / TILESIZE;
     output.position = mul(output.position, viewProj);
 

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Serialization
 {
     using Newtonsoft.Json.Serialization;
+    using System;
     using System.Reflection;
 
     public class CustomContractResolver : DefaultContractResolver
@@ -22,6 +23,13 @@
             }
 
             return property;
+        }
+
+        protected override JsonObjectContract CreateObjectContract(Type objectType)
+        {
+            JsonObjectContract contract = base.CreateObjectContract(objectType);
+
+            return contract;
         }
     }
 }

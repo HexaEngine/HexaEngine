@@ -13,6 +13,10 @@
         /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
         public Guid Guid { get; set; } = Guid.NewGuid();
 
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
+
+        [JsonIgnore]
         public GameObject GameObject { get; set; }
 
         public void Awake()

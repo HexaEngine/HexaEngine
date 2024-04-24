@@ -4,15 +4,21 @@
 #define TILESIZE float2(32, 32)
 #endif
 
-cbuffer WorldBuffer
+cbuffer cb
 {
-    float4x4 world;
-};
+    uint offset;
+}
+
+StructuredBuffer<float4x4> worldMatrices;
+StructuredBuffer<uint> worldMatrixOffsets;
+
 #if TESSELLATION
 
-HullInput main(VertexInput input)
+HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
     HullInput output;
+
+    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
     output.position = mul(float4(input.pos, 1), world).xyz;
     output.tex = input.tex;
@@ -21,11 +27,13 @@ HullInput main(VertexInput input)
     return output;
 }
 #else
-PixelInput main(VertexInput input)
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
     PixelInput output;
 
-    output.position = mul(float4(input.pos, 1), world);
+    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+
+    output.position = mul(float4(input.pos, 1), mat);
     output.position = mul(output.position, viewProj);
     output.ctex = input.pos.xz / TILESIZE;
 

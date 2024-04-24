@@ -6,6 +6,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
     using System;
     using System.Reflection;
     using System.Runtime.InteropServices;
@@ -18,6 +19,7 @@
 
     public delegate void DestroyDelegate();
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.ScriptBehaviour")]
     [Guid("340856B8-4341-4615-B109-26DB6D6536DE")]
     [EditorComponent<ScriptComponent>("Script Behaviour")]
     public class ScriptComponent : IScriptComponent
@@ -47,6 +49,9 @@
             get => guid;
             set => guid = value;
         }
+
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
 
         [EditorProperty("Script", AssetType.Script)]
         public AssetRef ScriptRef

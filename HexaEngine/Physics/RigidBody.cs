@@ -1,16 +1,13 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics
 {
-    using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Physics;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.RigidBody")]
     [EditorCategory("Physics")]
     [EditorComponent<RigidBody>("Rigid Body")]
     public unsafe class RigidBody : Actor, IRigidBodyComponent

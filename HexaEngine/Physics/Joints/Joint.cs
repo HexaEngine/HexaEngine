@@ -1,14 +1,15 @@
-﻿namespace HexaEngine.Components.Physics
+﻿namespace HexaEngine.Physics.Joints
 {
-    using HexaEngine.Components.Audio;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System;
     using System.Numerics;
 
+    [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Joint")]
     public abstract unsafe class Joint : IJointComponent
     {
         private PxJoint* joint;
@@ -23,6 +24,9 @@
         /// </summary>
         /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
         public Guid Guid { get; set; } = Guid.NewGuid();
+
+        [JsonIgnore]
+        public bool IsSerializable { get; } = true;
 
         public GameObject GameObject { get; set; }
 

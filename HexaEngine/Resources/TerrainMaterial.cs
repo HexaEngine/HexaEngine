@@ -141,7 +141,7 @@
             }
 
             textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 4;
+            textureListPS.StartSamplerSlot = 3;
             textureListPS.Update();
             textureListDS.StartTextureSlot = 1;
             textureListDS.StartSamplerSlot = 1;
@@ -367,6 +367,16 @@
                 return;
             }
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
+            EndDraw(context);
+        }
+
+        public void DrawIndexedInstancedIndirect(IGraphicsContext context, string pass, IBuffer drawArgs, uint offset)
+        {
+            if (!BeginDraw(context, pass))
+            {
+                return;
+            }
+            context.DrawIndexedInstancedIndirect(drawArgs, offset);
             EndDraw(context);
         }
 
