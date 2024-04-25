@@ -57,6 +57,10 @@
             RenderManager.ExecuteGroupVisibilityTest(renderers.TransparencyQueue, CullingManager.Current.Context, profiler, "Transparency");
             profiler?.End("VisibilityTest.Transparency");
 
+            profiler?.Begin("VisibilityTest.GeometryLast");
+            RenderManager.ExecuteGroupVisibilityTest(renderers.GeometryLastQueue, CullingManager.Current.Context, profiler, "GeometryLast");
+            profiler?.End("VisibilityTest.GeometryLast");
+
             profiler?.Begin("VisibilityTest.Update");
             culling.Context.Flush(context);
             profiler?.End("VisibilityTest.Update");
@@ -78,6 +82,10 @@
             profiler?.Begin("PrePass.AlphaTest");
             RenderManager.ExecuteGroupDepth(renderers.AlphaTestQueue, context, profiler, "AlphaTest");
             profiler?.End("PrePass.AlphaTest");
+
+            profiler?.Begin("PrePass.GeometryLast");
+            RenderManager.ExecuteGroupDepth(renderers.GeometryLastQueue, context, profiler, "GeometryLast");
+            profiler?.End("PrePass.GeometryLast");
 
             context.ClearState();
         }

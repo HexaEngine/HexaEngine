@@ -1,6 +1,8 @@
 ﻿namespace TestApp
 {
-    using HexaEngine.Mathematics;
+    using HexaEngine.Core.Graphics.Shaders;
+    using HexaEngine.Core.Graphics.Shaders.Reflection;
+    using HexaEngine.Core.IO;
     using System;
     using System.Numerics;
 
@@ -27,23 +29,50 @@
     {
         public static void Main()
         {
-            Quaternion quaternion = new(-0.022436896f, 0.7067439f, -0.7067629f, -0.022269966f);
+            FileSystem.Initialize();
+            string path = "C:\\Users\\juna\\source\\repos\\JunaMeinhold\\HexaEngine\\TestApp\\assets\\shared\\shaders\\compute\\occlusion\\occlusion.hlsl";
+            string code = File.ReadAllText(path);
+            bool result = CrossCompiler.CompileSPIRVFromSource(code, path, "main", [], ShaderKind.ComputeShader, SourceLanguage.HLSL, out var shader, out var error);
 
+            if (result)
             {
-                var x = Vector3.Transform(Vector3.UnitX, quaternion);
-                var y = Vector3.Transform(Vector3.UnitY, quaternion);
-                var z = Vector3.Cross(x, y);
-                var xx = Math.Acos(Vector3.Dot(x, Vector3.UnitX));
-                var yy = Math.Acos(Vector3.Dot(y, Vector3.UnitY));
-                var zz = Math.Acos(Vector3.Dot(z, Vector3.UnitZ));
+                if (!ShaderReflector.ReflectShader(shader, out ShaderReflection? reflection))
+                {
+                    return;
+                }
+
+                foreach (var cb in reflection.ConstantBuffers)
+                {
+                    Console.WriteLine($"CB: {cb.Name}, Size {cb.Size}, Padded Size {cb.PaddedSize}, Slot {cb.Slot}");
+                    foreach (var member in cb.Members)
+                    {
+                        var type = *member.Type;
+                        var isVector = (type.TypeFlags & TypeFlags.Vector) != 0;
+                        var isMatrix = (type.TypeFlags & TypeFlags.Matrix) != 0;
+                        var scalarTraits = type.Traits.Numeric.Scalar;
+                        var vectorTraits = type.Traits.Numeric.Vector;
+                        var matrixTraits = type.Traits.Numeric.Matrix;
+
+                        if ((type.TypeFlags & TypeFlags.Int) != 0)
+                        {
+                            string typeName = scalarTraits.Signed ? "int" : "uint";
+                            string fullTypeName = isMatrix ? $"{typeName}{matrixTraits.ColumnCount}x{matrixTraits.RowCount}" : isVector ? $"{typeName}{vectorTraits.ComponentCount}" : typeName;
+                            Console.WriteLine($"Member: {member.Name}, Offset: {member.Offset}, Absolute Offset: {member.AbsoluteOffset}, Size: {member.Size}, Padded Size: {member.PaddedSize}, Type: {fullTypeName}");
+                        }
+                        else if ((type.TypeFlags & TypeFlags.Float) != 0)
+                        {
+                            string typeName = isMatrix ? $"float{matrixTraits.ColumnCount}x{matrixTraits.RowCount}" : isVector ? $"float{vectorTraits.ComponentCount}" : "float";
+                            Console.WriteLine($"Member: {member.Name}, Offset: {member.Offset}, Absolute Offset: {member.AbsoluteOffset}, Size: {member.Size}, Padded Size: {member.PaddedSize}, Type: {typeName}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Member: {member.Name}, Offset: {member.Offset}, Absolute Offset: {member.AbsoluteOffset}, Size: {member.Size}, Padded Size: {member.PaddedSize}, Type: {member.Type->TypeName}");
+                        }
+                    }
+                }
+
+                reflection.Dispose();
             }
-
-            Quaternion r = Quaternion.Normalize(quaternion);
-
-            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
-            float pitch = MathF.Asin((float)Math.Clamp(2.0f * (r.X * r.W - r.Y * r.Z), -1, 1));
-            float roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
-            Vector3 euler = new Vector3(yaw, pitch, roll);
         }
     }
 

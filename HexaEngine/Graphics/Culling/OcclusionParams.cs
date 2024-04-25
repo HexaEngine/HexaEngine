@@ -13,7 +13,7 @@
         public uint MaxMipLevel;
         public float P00;
         public float P11;
-        public float Padding;
+        public float DepthBias;
 
         public Vector4 Frustum;
     }

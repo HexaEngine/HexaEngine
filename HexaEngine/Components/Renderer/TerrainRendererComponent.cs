@@ -29,7 +29,7 @@
 
         public TerrainRendererComponent()
         {
-            QueueIndex = (uint)RenderQueueIndex.Transparency;
+            QueueIndex = (uint)RenderQueueIndex.GeometryLast;
         }
 
         [EditorProperty("Terrain File", AssetType.Terrain)]
@@ -47,7 +47,7 @@
         public override string DebugName { get; protected set; } = nameof(TerrainRenderer);
 
         [JsonIgnore]
-        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
+        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Forward;
 
         [JsonIgnore]
         public override BoundingBox BoundingBox { get => BoundingBox.Transform(terrain?.BoundingBox ?? BoundingBox.Empty, GameObject.Transform); }

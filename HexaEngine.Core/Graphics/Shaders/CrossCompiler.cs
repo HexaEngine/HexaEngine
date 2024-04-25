@@ -141,6 +141,7 @@
 
             ShadercCompileOptions options = Shaderc.ShadercCompileOptionsInitialize();
             Shaderc.ShadercCompileOptionsSetOptimizationLevel(options, ShadercOptimizationLevel.Performance);
+            options.SetGenerateDebugInfo();
             Shaderc.ShadercCompileOptionsSetSourceLanguage(options, sourceLanguage);
 
             for (int i = 0; i < macros.Length; i++)

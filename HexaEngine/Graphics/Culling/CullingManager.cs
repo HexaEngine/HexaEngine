@@ -16,6 +16,7 @@
 #nullable disable
         private readonly IGraphicsDevice device;
         private CullingFlags cullingFlags = CullingFlags.All | CullingFlags.Debug;
+        private float depthBias = 0.00001f;
 
         private IComputePipeline occlusion;
 
@@ -57,7 +58,7 @@
             instanceDataBuffer = new(CpuAccessFlags.Write);
             swapBuffer = new(CpuAccessFlags.RW);
             drawIndirectArgs = new(CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp));
+            sampler = device.CreateSamplerState(new(Filter.MaximumMinMagLinearMipPoint, TextureAddressMode.Clamp));
             occlusionCbs = AllocArray(2);
             occlusionCbs[0] = (void*)occlusionParamBuffer.Buffer.NativePointer;
             occlusionCbs[1] = (void*)occlusionCameraBuffer.Buffer.NativePointer;
@@ -75,6 +76,8 @@
         public CullingContext Context => context;
 
         public CullingFlags CullingFlags { get => cullingFlags; set => cullingFlags = value; }
+
+        public float DepthBias { get => depthBias; set => depthBias = value; }
 
         public StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
 
@@ -138,6 +141,7 @@
                 Frustum = new(frustumX.X, frustumX.Z, frustumY.Y, frustumY.Z),
                 P00 = projectionT.M11,
                 P11 = projectionT.M22,
+                DepthBias = depthBias
             };
             occlusionParamBuffer.Update(context);
 
@@ -162,11 +166,14 @@
             {
                 return;
             }
+
             swapBuffer.Read(context);
 
             uint drawCalls = 0;
             uint drawInstanceCount = 0;
             uint vertexCount = 0;
+
+            ImGui.InputFloat("Depth Bias", ref depthBias);
 
             ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
 

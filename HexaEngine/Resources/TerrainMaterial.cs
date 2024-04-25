@@ -256,7 +256,7 @@
 
             passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward));
             passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred));
-            passes.Add(new("DepthOnly", pipelineDescDeferred, pipelineStateDescDepth));
+            passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth));
 
             GraphicsPipelineDesc pipelineDescUnlit = new()
             {

@@ -150,10 +150,11 @@
         /// </summary>
         public int MipLevels => mipLevels;
 
+        public string DebugName => dbgName;
+
         /// <summary>
         /// Resizes the depth mip chain to the specified width and height.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="width">The new width for the depth mip chain.</param>
         /// <param name="height">The new height for the depth mip chain.</param>
         public void Resize(int width, int height)

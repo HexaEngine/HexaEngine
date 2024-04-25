@@ -73,7 +73,7 @@ cbuffer CullingParams : register(b0)
 	uint MaxMipLevel;
 	float P00;
 	float P11;
-	float padding;
+	float depthBias;
 	float4 frustum;
 };
 
@@ -110,6 +110,8 @@ void main(uint3 threadID : SV_DispatchThreadID)
 
 	visible = visible || FrustumCulling == 0;
 
+	const float2 texel = 1 / screenDim;
+
 	if (visible && OcclusionCulling)
 	{
 		float4 aabb;
@@ -122,12 +124,21 @@ void main(uint3 threadID : SV_DispatchThreadID)
 			float level = floor(log2(max(width, height)));
 
 			// sample the depth pyramid at that specific level
-			float depth = inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level).x;
+
+			float4 depths =
+			{
+				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(0, 0)).x,
+				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(1, 0)).x,
+				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(0, 1)).x,
+				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(1, 1)).x,
+			};
+
+			float depth = max(max(depths.x, depths.y), max(depths.z, depths.w));
 
 			float depthSphere = 1 - camNear / (center.z - radius);
 
 			//if the depth of the sphere is in front of the depth pyramid value, then the object is visible
-			visible = visible && depthSphere <= depth;
+			visible = visible && depthSphere <= depth + depthBias;
 		}
 	}
 

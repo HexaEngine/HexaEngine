@@ -222,6 +222,19 @@
         }
 
         /// <summary>
+        /// Appends a byte to the end of the current <see cref="StdString"/>.
+        /// </summary>
+        /// <param name="c">The byte to append.</param>
+        public void Append(byte* c)
+        {
+            while (*c != (byte)'\0')
+            {
+                Append(*c);
+                c++;
+            }
+        }
+
+        /// <summary>
         /// Appends the contents of another <see cref="StdString"/> to the end of the current <see cref="StdString"/>.
         /// </summary>
         /// <param name="c">The <see cref="StdString"/> to append.</param>

@@ -10,8 +10,10 @@ namespace HexaEngine.Graphics.Renderers
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Graphics.Filters;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System;
@@ -283,8 +285,35 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            var tex = graphExecuter.ResourceBuilder.Textures;
+            var depth = graphExecuter.ResourceBuilder.DepthStencilBuffers;
+            for (int i = 0; i < depth.Count; i++)
+            {
+                var size = ImGui.GetWindowContentRegionMax();
 
+                var texture = depth[i];
+
+                if (texture.SRV != null || !texture.SRV.IsDisposed)
+                {
+                    Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
+                }
+            }
+
+            var depthChain = graphExecuter.ResourceBuilder.DepthMipChains;
+            for (int i = 0; i < depthChain.Count; i++)
+            {
+                var size = ImGui.GetWindowContentRegionMax();
+
+                var chain = depthChain[i];
+
+                for (int j = 0; j < chain.MipLevels; j++)
+                {
+                    var vp = chain.Viewports[j];
+                    var srv = chain.SRVs[j];
+                    Image(size, vp, $"{chain.DebugName}, Level: {j}", srv.NativePointer);
+                }
+            }
+
+            var tex = graphExecuter.ResourceBuilder.Textures;
             for (int i = 0; i < tex.Count; i++)
             {
                 var size = ImGui.GetWindowContentRegionMax();
@@ -293,19 +322,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 if (texture.SRV != null || !texture.SRV.IsDisposed)
                 {
-                    float aspect = texture.Viewport.Height / texture.Viewport.Width;
-                    size.X = MathF.Min(texture.Viewport.Width, size.X);
-                    size.Y = texture.Viewport.Height;
-                    var dx = texture.Viewport.Width - size.X;
-                    if (dx > 0)
-                    {
-                        size.Y = size.X * aspect;
-                    }
-
-                    if (ImGui.CollapsingHeader(texture.DebugName ?? $"<unknown>##{i}"))
-                    {
-                        ImGui.Image(texture.SRV.NativePointer, size);
-                    }
+                    Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
                 }
             }
 
@@ -318,19 +335,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 if (atlas.SRV != null)
                 {
-                    float aspect = atlas.Viewport.Height / atlas.Viewport.Width;
-                    size.X = MathF.Min(atlas.Viewport.Width, size.X);
-                    size.Y = atlas.Viewport.Height;
-                    var dx = atlas.Viewport.Width - size.X;
-                    if (dx > 0)
-                    {
-                        size.Y = size.X * aspect;
-                    }
-
-                    if (ImGui.CollapsingHeader(atlas.DebugName))
-                    {
-                        ImGui.Image(atlas.SRV.NativePointer, size);
-                    }
+                    Image(size, atlas.Viewport, atlas.DebugName, atlas.SRV.NativePointer);
                 }
             }
 
@@ -343,20 +348,42 @@ namespace HexaEngine.Graphics.Renderers
 
                 for (int j = 0; j < gBuffer.Count; j++)
                 {
-                    float aspect = gBuffer.Viewport.Height / gBuffer.Viewport.Width;
-                    size.X = MathF.Min(gBuffer.Viewport.Width, size.X);
-                    size.Y = gBuffer.Viewport.Height;
-                    var dx = gBuffer.Viewport.Width - size.X;
-                    if (dx > 0)
-                    {
-                        size.Y = size.X * aspect;
-                    }
-
-                    if (ImGui.CollapsingHeader($"{gBuffer.DebugName}.{j}"))
-                    {
-                        ImGui.Image(gBuffer.SRVs[j].NativePointer, size);
-                    }
+                    Image(size, gBuffer.Viewport, $"{gBuffer.DebugName}.{j}", gBuffer.SRVs[j].NativePointer);
                 }
+            }
+        }
+
+        private static void Image(Vector2 size, Viewport viewport, string debugName, nint srv)
+        {
+            float aspect = viewport.Height / viewport.Width;
+            size.X = MathF.Min(viewport.Width, size.X);
+            size.Y = viewport.Height;
+            var dx = viewport.Width - size.X;
+            if (dx > 0)
+            {
+                size.Y = size.X * aspect;
+            }
+
+            if (ImGui.CollapsingHeader(debugName))
+            {
+                ImGui.Image(srv, size);
+            }
+        }
+
+        private static void Image(Vector2 size, Viewport viewport, string debugName, nint srv, Vector4 tint)
+        {
+            float aspect = viewport.Height / viewport.Width;
+            size.X = MathF.Min(viewport.Width, size.X);
+            size.Y = viewport.Height;
+            var dx = viewport.Width - size.X;
+            if (dx > 0)
+            {
+                size.Y = size.X * aspect;
+            }
+
+            if (ImGui.CollapsingHeader(debugName))
+            {
+                ImGui.Image(srv, size, tint);
             }
         }
 

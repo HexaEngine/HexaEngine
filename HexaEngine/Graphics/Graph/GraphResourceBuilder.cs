@@ -78,6 +78,10 @@
 
         public IReadOnlyList<Texture2D> Textures => textures2d;
 
+        public IReadOnlyList<DepthStencil> DepthStencilBuffers => depthStencilBuffers;
+
+        public IReadOnlyList<DepthMipChain> DepthMipChains => depthMipChains;
+
         public IReadOnlyList<ShadowAtlas> ShadowAtlas => shadowAtlas;
 
         public IReadOnlyList<GBuffer> GBuffers => gBuffers;
