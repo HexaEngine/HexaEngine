@@ -304,15 +304,6 @@
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="UavBuffer"/> class.
-        /// </summary>
-        ~UavBuffer()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Releases the resources held by the buffer.
         /// </summary>
         public void Dispose()
@@ -924,15 +915,6 @@
                 capacity = 0;
                 disposedValue = true;
             }
-        }
-
-        /// <summary>
-        /// Releases the resources used by the <see cref="UavBuffer{T}"/>.
-        /// </summary>
-        ~UavBuffer()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
         }
 
         /// <summary>

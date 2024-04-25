@@ -103,11 +103,5 @@
                 disposedValue = true;
             }
         }
-
-        ~D3D11On12GraphicsDevice()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
     }
 }

@@ -276,12 +276,6 @@ namespace HexaEngine.Core.Debugging
             }
         }
 
-        ~DebugDrawCommandList()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

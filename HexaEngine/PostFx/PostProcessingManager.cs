@@ -218,11 +218,6 @@
                 this.instance = instance;
             }
 
-            ~SuppressHandle()
-            {
-                DisposeInternal();
-            }
-
             private void DisposeInternal()
             {
                 instance.ResumeReload();
@@ -696,12 +691,6 @@
                 deferredContext.Dispose();
                 disposedValue = true;
             }
-        }
-
-        ~PostProcessingManager()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
         }
 
         public void Dispose()

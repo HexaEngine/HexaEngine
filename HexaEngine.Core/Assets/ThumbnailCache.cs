@@ -923,12 +923,6 @@
             }
         }
 
-        ~ThumbnailCache()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
         /// <summary>
         /// Disposes of the resources used by the <see cref="ThumbnailCache"/>.
         /// </summary>

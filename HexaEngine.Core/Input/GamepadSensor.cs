@@ -109,15 +109,6 @@
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="GamepadSensor"/> class.
-        /// </summary>
-        ~GamepadSensor()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Releases the resources used by the <see cref="GamepadSensor"/>.
         /// </summary>
         public void Dispose()

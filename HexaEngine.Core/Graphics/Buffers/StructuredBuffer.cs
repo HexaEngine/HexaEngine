@@ -380,15 +380,6 @@
         }
 
         /// <summary>
-        /// Finalizes the structured buffer instance by releasing resources.
-        /// </summary>
-        ~StructuredBuffer()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Releases the resources held by the structured buffer.
         /// </summary>
         public void Dispose()

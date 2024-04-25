@@ -139,11 +139,6 @@
             }
         }
 
-        ~TerrainTool()
-        {
-            DisposeInternal();
-        }
-
         public void Dispose()
         {
             DisposeInternal();

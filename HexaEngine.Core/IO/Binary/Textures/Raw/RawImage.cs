@@ -296,15 +296,6 @@
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="RawImage"/> class.
-        /// </summary>
-        ~RawImage()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Releases the resources used by the <see cref="RawImage"/> instance.
         /// </summary>
         public void Dispose()

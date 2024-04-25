@@ -125,15 +125,6 @@
             }
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Primitive{Tvertex, Tindex}"/> class.
-        /// </summary>
-        ~Primitive()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
         /// <inheritdoc/>
         public void Dispose()
         {

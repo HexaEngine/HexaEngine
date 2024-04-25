@@ -362,15 +362,6 @@
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="ThreadDispatcher"/> class.
-        /// </summary>
-        ~ThreadDispatcher()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Disposes of the resources used by the <see cref="ThreadDispatcher"/> instance.
         /// </summary>
         public void Dispose()

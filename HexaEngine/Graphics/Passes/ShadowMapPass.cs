@@ -20,9 +20,9 @@
     {
         private ResourceRef<ShadowAtlas> shadowAtlas;
 
-        private ResourceRefNotNull<ConstantBuffer<PSMShadowParams>> psmBuffer;
-        private ResourceRefNotNull<ConstantBuffer<CSMShadowParams>> csmBuffer;
-        private ResourceRefNotNull<ConstantBuffer<DPSMShadowParams>> osmBuffer;
+        private ResourceRef<ConstantBuffer<PSMShadowParams>> psmBuffer;
+        private ResourceRef<ConstantBuffer<CSMShadowParams>> csmBuffer;
+        private ResourceRef<ConstantBuffer<DPSMShadowParams>> osmBuffer;
 
         private GaussianBlur blurFilter;
         private CopyEffect copyEffect;
@@ -35,9 +35,9 @@
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(GraphicsSettings.ShadowMapFormat, GraphicsSettings.ShadowAtlasSize, 8, 1));
-            psmBuffer = new(creator.CreateConstantBuffer<PSMShadowParams>("ShadowAtlas.CB.PSM", CpuAccessFlags.Write));
-            csmBuffer = new(creator.CreateConstantBuffer<CSMShadowParams>("ShadowAtlas.CB.CSM", CpuAccessFlags.Write));
-            osmBuffer = new(creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write));
+            psmBuffer = creator.CreateConstantBuffer<PSMShadowParams>("ShadowAtlas.CB.PSM", CpuAccessFlags.Write);
+            csmBuffer = creator.CreateConstantBuffer<CSMShadowParams>("ShadowAtlas.CB.CSM", CpuAccessFlags.Write);
+            osmBuffer = creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write);
             blurFilter = new(creator, "GaussianBlur", Format.R32G32Float, 1, 1);
             copyEffect = new(creator, "CopyPass", CopyFilter.None);
         }

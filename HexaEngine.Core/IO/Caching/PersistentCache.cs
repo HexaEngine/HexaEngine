@@ -669,12 +669,6 @@
             }
         }
 
-        ~PersistentCache()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
         /// <summary>
         /// Disposes of the resources used by the <see cref="PersistentCache"/>.
         /// </summary>
@@ -1369,12 +1363,6 @@
 
                 disposedValue = true;
             }
-        }
-
-        ~PersistentCache()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
         }
 
         /// <summary>

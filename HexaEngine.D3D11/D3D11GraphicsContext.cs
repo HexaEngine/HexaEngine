@@ -26,11 +26,5 @@
         {
             DeviceContext4.Wait(((D3D11Fence)fence).fence, value);
         }
-
-        ~D3D11GraphicsContext()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
     }
 }

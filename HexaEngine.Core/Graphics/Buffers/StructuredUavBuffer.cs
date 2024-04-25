@@ -567,15 +567,6 @@
         }
 
         /// <summary>
-        /// Finalizes the object and releases resources if not already disposed.
-        /// </summary>
-        ~StructuredUavBuffer()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Disposes of the buffer and associated resources, suppressing finalization.
         /// </summary>
         public void Dispose()

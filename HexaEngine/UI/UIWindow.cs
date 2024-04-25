@@ -186,11 +186,6 @@
             OnInvalidateVisual?.Invoke(this, EventArgs.Empty);
         }
 
-        ~UIWindow()
-        {
-            Dispose(disposing: false);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

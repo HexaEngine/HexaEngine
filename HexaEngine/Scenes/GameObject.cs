@@ -91,20 +91,6 @@
             Displayed = 1 << 2,
         }
 
-        [JsonIgnore]
-        public readonly nint Pointer;
-
-        public GameObject()
-        {
-            gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
-            Pointer = GCHandle.ToIntPtr(gcHandle);
-        }
-
-        ~GameObject()
-        {
-            gcHandle.Free();
-        }
-
         /// <summary>
         /// Gets or sets the unique identifier.
         /// </summary>

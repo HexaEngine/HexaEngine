@@ -79,12 +79,6 @@
             waitDelegate = WaitCondition;
         }
 
-        ~ResourceInstance()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
         public nint Pointer => (value as IDeviceChild)?.NativePointer ?? 0;
 
         public T? Value => value;

@@ -252,7 +252,7 @@
         /// <summary>
         /// Releases the resources used by the <see cref="Asset"/> instance and removes references.
         /// </summary>
-        /// <param name="disposing">A flag indicating whether the method is being called from the explicit method.</param>  
+        /// <param name="disposing">A flag indicating whether the method is being called from the explicit method.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -280,14 +280,6 @@
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Asset"/> class.
-        /// </summary>
-        ~Asset()
-        {
-            Dispose(false);
         }
     }
 }

@@ -285,11 +285,6 @@
             }
         }
 
-        ~MaterialTextureList()
-        {
-            Dispose(disposing: false);
-        }
-
         public void Dispose()
         {
             Dispose(disposing: true);

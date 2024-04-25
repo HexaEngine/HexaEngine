@@ -121,15 +121,6 @@
         }
 
         /// <summary>
-        /// Finalizes this instance of <see cref="RenderTargetViewArray"/>.
-        /// </summary>
-        ~RenderTargetViewArray()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        /// <summary>
         /// Releases the resources used by the <see cref="RenderTargetViewArray"/>.
         /// </summary>
         public void Dispose()
@@ -209,15 +200,6 @@
 
                 disposedValue = true;
             }
-        }
-
-        /// <summary>
-        /// Finalizes this instance of <see cref="ShaderResourceViewArray"/>.
-        /// </summary>
-        ~ShaderResourceViewArray()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
         }
 
         /// <summary>

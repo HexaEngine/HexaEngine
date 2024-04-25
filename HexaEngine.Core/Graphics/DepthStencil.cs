@@ -674,15 +674,6 @@
             }
         }
 
-        /// <summary>
-        /// Finalizes this instance of <see cref="DepthStencil"/>.
-        /// </summary>
-        /// <returns></returns>
-        ~DepthStencil()
-        {
-            Dispose(disposing: false);
-        }
-
         /// <inheritdoc/>
         public void Dispose()
         {

@@ -134,11 +134,6 @@
             }
         }
 
-        ~TextFactory()
-        {
-            Dispose(false);
-        }
-
         public void Dispose()
         {
             Dispose(true);
