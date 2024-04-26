@@ -533,7 +533,7 @@
             }
             else
             {
-                GL.Enable(EnableCap.SampleAlphaToCoverage);
+                GL.Disable(EnableCap.SampleAlphaToCoverage);
             }
 
             for (uint i = 0; i < blend.RenderTarget.Length; i++)

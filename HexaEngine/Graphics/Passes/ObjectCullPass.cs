@@ -35,7 +35,7 @@
             var cull = manager.Context;
 
             manager.UpdateCamera(context, camera, creator.Viewport);
-            manager.ExecuteCulling(context, camera, cull.Count, cull.TypeCount, chain.Value);
+            manager.ExecuteCulling(context, camera, cull.Count, cull.TypeCount, chain.Value, profiler);
         }
     }
 }

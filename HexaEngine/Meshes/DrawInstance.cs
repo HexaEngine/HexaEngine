@@ -5,6 +5,7 @@
 
     public class DrawInstance
     {
+        public uint InstanceId;
         public int NodeId;
         public Matrix4x4 Transform;
         public BoundingSphere BoundingSphere;

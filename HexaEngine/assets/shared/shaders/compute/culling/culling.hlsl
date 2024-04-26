@@ -82,6 +82,7 @@ StructuredBuffer<InstanceData> instanceDataIn : register(t1);
 RWStructuredBuffer<float4x4> instanceDataOut : register(u0);
 RWStructuredBuffer<uint> instanceOffsets : register(u1);
 RWStructuredBuffer<DrawIndexedInstancedIndirectArgs> drawArgs : register(u2);
+RWStructuredBuffer<uint> visibleListOut : register(u3);
 SamplerState samplerPoint : register(s0);
 
 groupshared uint temp[1024];
@@ -151,6 +152,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	}
 
 	temp[di] = visible;
+	visibleListOut[di] = visible;
 
 	GroupMemoryBarrier();
 
