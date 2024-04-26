@@ -165,13 +165,13 @@
             context.ClearState();
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
-            visibleListBuffer.Read(context);
-            swapBuffer.Read(context);
 
             if ((cullingFlags & CullingFlags.Debug) == 0)
             {
                 return;
             }
+
+            swapBuffer.Read(context);
 
             uint drawCalls = 0;
             uint drawInstanceCount = 0;
