@@ -1,292 +1,342 @@
 ﻿namespace HexaEngine.Input
 {
     using HexaEngine.Input.Events;
+    using System.ComponentModel;
+    using System.Xml;
+    using System.Xml.Schema;
+    using System.Xml.Serialization;
 
-    public struct VirtualAxis : IEquatable<VirtualAxis>
+    public class VirtualAxis : IXmlSerializable
     {
-        /// <summary>
-        /// The axis name.
-        /// </summary>
-        public string Name;
+        private VirtualAxisBindingState[] bindingStates = [];
 
-        /// <summary>
-        /// Negative button, can be a keyboard key, mouse button, joystick button or gamepad button.
-        /// </summary>
-        public int NegativeButton;
+        [XmlAttribute]
+        public string Name { get; set; }
 
-        /// <summary>
-        /// Positive button, can be a keyboard key, mouse button, joystick button or gamepad button.
-        /// </summary>
-        public int PositiveButton;
-
-        /// <summary>
-        /// Alternative Negative button, can be a keyboard key, mouse button, joystick button or gamepad button.
-        /// </summary>
-        public int AltNegativeButton;
-
-        /// <summary>
-        /// Alternative Positive button, can be a keyboard key, mouse button, joystick button or gamepad button.
-        /// </summary>
-        public int AltPositiveButton;
+        [XmlArrayItem(ElementName = "Binding")]
+        public List<VirtualAxisBinding> Bindings { get; }
 
         /// <summary>
         /// Speed in units per second that the axis falls toward neutral when no input is present.
         /// </summary>
+        [XmlAttribute]
+        [DefaultValue(0.0f)]
         public float Gravity;
 
-        /// <summary>
-        /// How far the user needs to move an analog stick before your application registers the movement.
-        /// </summary>
-        public int Deadzone;
+        [XmlIgnore]
+        public VirtualAxisState State;
 
-        /// <summary>
-        /// Speed in units per second that the axis will move toward the target value. This is for digital devices only.
-        /// </summary>
-        public float Sensitivity;
-
-        /// <summary>
-        /// If enabled, the axis value will reset to zero when pressing a button that corresponds to the opposite direction.
-        /// </summary>
-        public bool Snap;
-
-        /// <summary>
-        /// The type of input that controls the axis
-        /// </summary>
-        public AxisType Type;
-
-        /// <summary>
-        /// The axis of a connected device that controls this axis.
-        /// </summary>
-        public int Axis;
-
-        /// <summary>
-        /// The device that controls this axis, set to -1 to query input from all devices.
-        /// </summary>
-        public int DeviceId;
-
-        public override bool Equals(object? obj)
+        public VirtualAxis()
         {
-            return obj is VirtualAxis axis && Equals(axis);
+            Bindings = [];
         }
 
-        public bool Equals(VirtualAxis other)
+        public VirtualAxis(string name)
         {
-            return Name == other.Name;
+            Name = name;
+            Bindings = new();
         }
 
-        public override int GetHashCode()
+        public VirtualAxis(string name, IEnumerable<VirtualAxisBinding> bindings) : this(name)
         {
-            return HashCode.Combine(Name);
+            Bindings = new(bindings);
         }
 
-        public bool TryProcessEvent(InputEvent e, out float direction)
+        public void Init()
         {
-            direction = 0;
+            bindingStates = new VirtualAxisBindingState[Bindings.Count];
+        }
 
-            if (DeviceId != -1 && e.DeviceId != DeviceId)
+        public void Clear()
+        {
+            Array.Clear(bindingStates);
+            State = default;
+        }
+
+        public void Flush()
+        {
+            float axisValue = 0;
+            for (var i = 0; i < bindingStates.Length; i++)
             {
+                var bindingState = bindingStates[i];
+                if ((bindingState.Flags & VirtualAxisBindingStateFlags.Hold) == 0)
+                {
+                    var oldValue = bindingState.Value;
+                    float newValue;
+                    if (Gravity > 0)
+                    {
+                        if (oldValue == 0)
+                        {
+                            continue;
+                        }
+
+                        newValue = MathF.CopySign(Math.Max(Math.Abs(oldValue) - Gravity * Time.Delta, 0), oldValue);
+                    }
+                    else
+                    {
+                        newValue = 0;
+                    }
+                    bindingState.Value = newValue;
+                    bindingStates[i] = bindingState;
+                }
+
+                axisValue += bindingState.Value;
+            }
+
+            State.Flags &= ~VirtualAxisStateFlags.Pressed;
+            State.Flags &= ~VirtualAxisStateFlags.Released;
+            State.Value = axisValue;
+        }
+
+        public bool TryProcessEvent(InputEvent e, float oldAxisValue, out float newAxisValue)
+        {
+            newAxisValue = oldAxisValue;
+
+            var axis = Helper.ConvertToAxisBindingType(e.Type);
+
+            bool result = false;
+
+            for (int i = 0; i < Bindings.Count; i++)
+            {
+                float newState = 0;
+                if (ProcessBinding(e, ref newState, axis, Bindings[i], out var flags))
+                {
+                    var stateBefore = bindingStates[i];
+                    bindingStates[i] = new(newState, flags);
+                    newAxisValue -= stateBefore.Value;
+                    newAxisValue += newState;
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        private static bool ProcessBinding(InputEvent e, ref float direction, VirtualAxisBindingType axis, VirtualAxisBinding binding, out VirtualAxisBindingStateFlags flags)
+        {
+            if (binding.DeviceId != -1 && e.DeviceId != binding.DeviceId)
+            {
+                flags = VirtualAxisBindingStateFlags.None;
                 return false;
             }
 
-            var axis = Helper.ConvertToAxisType(e.Type);
-
-            if (axis != Type)
+            if (axis != binding.Type)
             {
+                flags = VirtualAxisBindingStateFlags.None;
                 return false;
+            }
+
+            float factor = 1;
+            if (binding.Invert)
+            {
+                factor = -1;
             }
 
             switch (axis)
             {
-                case AxisType.KeyboardKey:
-                    var key = (int)e.KeyboardEvent.Key;
-                    if (key == PositiveButton || key == AltPositiveButton)
+                case VirtualAxisBindingType.KeyboardKey:
+                    var key = e.KeyboardEvent.Key;
+                    if (key == binding.KeyboardKeyBinding.Key)
                     {
-                        direction = e.KeyboardEvent.State == Core.Input.KeyState.Down ? 1 : 0;
-                        return true;
-                    }
-                    if (key == NegativeButton || key == AltNegativeButton)
-                    {
-                        direction = e.KeyboardEvent.State == Core.Input.KeyState.Down ? -1 : 0;
+                        direction = e.KeyboardEvent.State == Core.Input.KeyState.Down ? factor : 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
                     break;
 
-                case AxisType.MouseButton:
-                    var mouseButton = (int)e.MouseEvent.Button;
-                    if (mouseButton == PositiveButton || mouseButton == AltPositiveButton)
+                case VirtualAxisBindingType.MouseButton:
+                    var mouseButton = e.MouseEvent.Button;
+                    if (mouseButton == binding.MouseButtonBinding.Button)
                     {
-                        direction = e.MouseEvent.State == Core.Input.MouseButtonState.Down ? 1 : 0;
-                        return true;
-                    }
-                    if (mouseButton == NegativeButton || mouseButton == AltNegativeButton)
-                    {
-                        direction = e.MouseEvent.State == Core.Input.MouseButtonState.Down ? -1 : 0;
+                        direction = e.MouseEvent.State == Core.Input.MouseButtonState.Down ? factor : 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
                     break;
 
-                case AxisType.JoystickButton:
+                case VirtualAxisBindingType.JoystickButton:
                     var joystickButton = e.JoystickButtonEvent.Button;
-                    if (joystickButton == PositiveButton || joystickButton == AltPositiveButton)
+                    if (joystickButton == binding.JoystickButtonBinding.Button)
                     {
-                        direction = e.JoystickButtonEvent.State == Core.Input.JoystickButtonState.Down ? 1 : 0;
-                        return true;
-                    }
-                    if (joystickButton == NegativeButton || joystickButton == AltNegativeButton)
-                    {
-                        direction = e.JoystickButtonEvent.State == Core.Input.JoystickButtonState.Down ? -1 : 0;
+                        direction = e.JoystickButtonEvent.State == Core.Input.JoystickButtonState.Down ? factor : 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
                     break;
 
-                case AxisType.GamepadButton:
-                    var gamepadButton = (int)e.GamepadButtonEvent.Button;
-                    if (gamepadButton == PositiveButton || gamepadButton == AltPositiveButton)
+                case VirtualAxisBindingType.GamepadButton:
+                    var gamepadButton = e.GamepadButtonEvent.Button;
+                    if (gamepadButton == binding.GamepadButtonBinding.Button)
                     {
-                        direction = e.GamepadButtonEvent.State == Core.Input.GamepadButtonState.Down ? 1 : 0;
-                        return true;
-                    }
-                    if (gamepadButton == NegativeButton || gamepadButton == AltNegativeButton)
-                    {
-                        direction = e.GamepadButtonEvent.State == Core.Input.GamepadButtonState.Down ? -1 : 0;
+                        direction = e.GamepadButtonEvent.State == Core.Input.GamepadButtonState.Down ? factor : 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
                     break;
 
-                case AxisType.GamepadTouch:
+                case VirtualAxisBindingType.GamepadTouch:
                     var gamepadTouchpad = e.GamepadTouchPadEvent.Touchpad;
-                    if (gamepadTouchpad == Axis)
+                    if (gamepadTouchpad == binding.GamepadTouchBinding.TouchpadId)
                     {
-                        direction = e.GamepadTouchPadEvent.State == Core.Input.FingerState.Down ? 1 : 0;
+                        direction = e.GamepadTouchPadEvent.State == Core.Input.FingerState.Down ? factor : 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
                     break;
 
-                case AxisType.GamepadTouchPressure:
+                case VirtualAxisBindingType.GamepadTouchPressure:
                     var gamepadTouchpad1 = e.GamepadTouchPadEvent.Touchpad;
-                    if (gamepadTouchpad1 == Axis)
+                    if (gamepadTouchpad1 == binding.GamepadTouchPressureBinding.TouchpadId)
                     {
-                        direction = e.GamepadTouchPadEvent.Pressure;
+                        direction = e.GamepadTouchPadEvent.Pressure * factor;
+                        flags = VirtualAxisBindingStateFlags.None;
                         return true;
                     }
                     break;
 
-                case AxisType.Touch:
-                    direction = e.TouchDeviceTouchEvent.State == Core.Input.FingerState.Down ? 1 : 0;
+                case VirtualAxisBindingType.Touch:
+                    direction = e.TouchDeviceTouchEvent.State == Core.Input.FingerState.Down ? factor : 0;
+                    flags = VirtualAxisBindingStateFlags.Hold;
                     return true;
 
-                case AxisType.TouchPressure:
-                    direction = e.TouchDeviceTouchEvent.Pressure;
+                case VirtualAxisBindingType.TouchPressure:
+                    direction = e.TouchDeviceTouchEvent.Pressure * factor;
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
 
-                case AxisType.MouseWheel:
-                    direction = e.MouseWheelEvent.GetAxis(Axis);
+                case VirtualAxisBindingType.MouseWheel:
+                    direction = e.MouseWheelEvent.GetAxis(binding.MouseWheelBinding.Wheel);
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
 
-                case AxisType.MouseMovement:
-                    direction = e.MouseMovedEvent.GetAxis(Axis) * Sensitivity;
+                case VirtualAxisBindingType.MouseMovement:
+                    direction = e.MouseMovedEvent.GetAxis(binding.MouseMovementBinding.Axis) * binding.MouseMovementBinding.Sensitivity * factor;
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
 
-                case AxisType.JoystickBall:
-                    direction = e.JoystickBallMotionEvent.GetAxis(Axis);
+                case VirtualAxisBindingType.JoystickBall:
+                    direction = e.JoystickBallMotionEvent.GetAxis(binding.JoystickBallBinding.Axis);
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
 
-                case AxisType.JoystickAxis:
-                    if (e.JoystickAxisMotionEvent.Axis != Axis || Math.Abs(e.JoystickAxisMotionEvent.Value) < Deadzone)
+                case VirtualAxisBindingType.JoystickAxis:
+                    if (e.JoystickAxisMotionEvent.Axis == binding.JoystickAxisBinding.Axis && Math.Abs(e.JoystickAxisMotionEvent.Value) >= binding.JoystickAxisBinding.Deadzone)
                     {
-                        return false;
-                    }
-                    direction = (e.JoystickAxisMotionEvent.Value + 32767) / (float)65534 - 0.5f;
-                    return true;
-
-                case AxisType.JoystickHat:
-                    if (e.JoystickHatMotionEvent.Hat != Axis)
-                    {
-                        return false;
-                    }
-                    var hat = (int)e.JoystickHatMotionEvent.State;
-                    if (hat == 0)
-                    {
-                        direction = 0;
+                        direction = (e.JoystickAxisMotionEvent.Value + 32767) / (float)65534 - 0.5f;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
-                    if (hat == PositiveButton || hat == AltPositiveButton)
+                    break;
+
+                case VirtualAxisBindingType.JoystickHat:
+                    if (e.JoystickHatMotionEvent.Hat != binding.JoystickHatBinding.Hat)
+                    {
+                        flags = VirtualAxisBindingStateFlags.Hold;
+                        return false;
+                    }
+                    var hat = e.JoystickHatMotionEvent.State;
+
+                    if (hat == binding.JoystickHatBinding.State)
                     {
                         direction = 1;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
-                    if (hat == NegativeButton || hat == AltNegativeButton)
+                    else
                     {
-                        direction = -1;
+                        direction = 0;
+                        flags = VirtualAxisBindingStateFlags.Hold;
                         return true;
                     }
-                    return true;
 
-                case AxisType.GamepadAxis:
-                    if ((int)e.GamepadAxisMotionEvent.Axis != Axis || Math.Abs(e.GamepadAxisMotionEvent.Value) < Deadzone)
+                case VirtualAxisBindingType.GamepadAxis:
+                    if (e.GamepadAxisMotionEvent.Axis == binding.GamepadAxisBinding.Axis && Math.Abs((int)e.GamepadAxisMotionEvent.Value) >= binding.GamepadAxisBinding.Deadzone)
                     {
-                        return false;
+                        direction = ((e.GamepadAxisMotionEvent.Value + 32767) / (float)65534 - 0.5f) * binding.GamepadAxisBinding.Sensitivity * factor;
+                        flags = VirtualAxisBindingStateFlags.Hold;
+                        return true;
                     }
-                    direction = (e.GamepadAxisMotionEvent.Value + 32767) / (float)65534 - 0.5f;
+                    break;
+
+                case VirtualAxisBindingType.GamepadTouchMovement:
+                    direction = e.GamepadTouchPadMotionEvent.GetAxis(binding.GamepadTouchMovementBinding.Axis);
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
 
-                case AxisType.GamepadTouchMovement:
-                    direction = e.GamepadTouchPadMotionEvent.GetAxis(Axis);
-                    return true;
+                case VirtualAxisBindingType.GamepadSensor:
+                    if (e.GamepadSensorUpdateEvent.Type == binding.GamepadSensorBinding.Type)
+                    {
+                        direction = e.GamepadSensorUpdateEvent.GetAxis(binding.GamepadSensorBinding.Axis);
+                        flags = VirtualAxisBindingStateFlags.None;
+                        return true;
+                    }
+                    break;
 
-                case AxisType.GamepadSensor:
-                    direction = e.GamepadSensorUpdateEvent.GetAxis(Axis);
-                    return true;
-
-                case AxisType.TouchMovement:
-                    direction = e.TouchDeviceTouchMotionEvent.GetAxis(Axis);
+                case VirtualAxisBindingType.TouchMovement:
+                    direction = e.TouchDeviceTouchMotionEvent.GetAxis(binding.TouchMovementBinding.Axis);
+                    flags = VirtualAxisBindingStateFlags.None;
                     return true;
             }
 
+            flags = VirtualAxisBindingStateFlags.None;
             return false;
         }
 
-        public static bool operator ==(VirtualAxis left, VirtualAxis right)
+        public XmlSchema? GetSchema()
         {
-            return left.Equals(right);
+            return null;
         }
 
-        public static bool operator !=(VirtualAxis left, VirtualAxis right)
+        public void ReadXml(XmlReader reader)
         {
-            return !(left == right);
-        }
-    }
+            reader.MoveToContent();
 
-    public static class Helper
-    {
-        public static AxisType ConvertToAxisType(InputEventType type)
-        {
-            return type switch
+            Name = reader.GetAttribute("Name");
+            string? gravityAttr = reader.GetAttribute("Gravity");
+            if (gravityAttr != null)
             {
-                InputEventType.None => throw new NotSupportedException(),
-                InputEventType.MouseMoved => AxisType.MouseMovement,
-                InputEventType.MouseUp => AxisType.MouseButton,
-                InputEventType.MouseDown => AxisType.MouseButton,
-                InputEventType.MouseWheel => AxisType.MouseWheel,
-                InputEventType.KeyboardKeyDown => AxisType.KeyboardKey,
-                InputEventType.KeyboardKeyUp => AxisType.KeyboardKey,
-                InputEventType.JoystickAxisMotion => AxisType.JoystickAxis,
-                InputEventType.JoystickBallMotion => AxisType.JoystickBall,
-                InputEventType.JoystickButtonDown => AxisType.JoystickButton,
-                InputEventType.JoystickButtonUp => AxisType.JoystickButton,
-                InputEventType.JoystickHatMotion => AxisType.JoystickHat,
-                InputEventType.GamepadAxisMotion => AxisType.GamepadAxis,
-                InputEventType.GamepadButtonDown => AxisType.GamepadButton,
-                InputEventType.GamepadButtonUp => AxisType.GamepadButton,
-                InputEventType.GamepadSensorUpdate => AxisType.GamepadSensor,
-                InputEventType.GamepadTouchPadDown => AxisType.GamepadTouch,
-                InputEventType.GamepadTouchPadUp => AxisType.GamepadTouch,
-                InputEventType.GamepadTouchPadMotion => AxisType.GamepadTouchMovement,
-                InputEventType.TouchDeviceTouchDown => AxisType.Touch,
-                InputEventType.TouchDeviceTouchUp => AxisType.Touch,
-                InputEventType.TouchDeviceTouchMotion => AxisType.TouchMovement,
-                _ => throw new NotSupportedException(),
-            };
+                Gravity = float.Parse(gravityAttr);
+            }
+
+            reader.ReadStartElement();
+
+            if (reader.IsEmptyElement)
+            {
+                reader.ReadEndElement();
+                return;
+            }
+
+            reader.ReadStartElement("Bindings");
+
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "Bindings")
+                    break;
+
+                VirtualAxisBinding binding = new();
+                binding.ReadXml(reader);
+                Bindings.Add(binding);
+            }
+
+            reader.ReadEndElement(); // End of VirtualAxis element
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("Name", Name);
+            if (Gravity != 0)
+            {
+                writer.WriteAttributeString("Gravity", Gravity.ToString());
+            }
+
+            writer.WriteStartElement("Bindings");
+            foreach (var binding in Bindings)
+            {
+                writer.WriteStartElement("Binding");
+                binding.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
         }
     }
 }

@@ -24,8 +24,11 @@
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;
 
-        private static TerrainRenderer1 renderer1;
+        private static TerrainRenderer renderer1;
         private static int instances;
+        private int currentLODLevel;
+        private int maxLODLevel;
+        private int minLODLevel;
 
         public TerrainRendererComponent()
         {
@@ -69,6 +72,41 @@
             var artifact = ArtifactDatabase.GetArtifact(meta.Guid);
             terrainAsset = artifact?.Guid ?? Guid.Empty;
             UpdateTerrain();
+        }
+
+        [JsonIgnore]
+        public int LODLevel => currentLODLevel;
+
+        [EditorCategory("LOD")]
+        [EditorProperty("Max Level")]
+        public int MaxLODLevel
+        {
+            get => maxLODLevel;
+            set
+            {
+                if (terrain != null)
+                {
+                    value = MathUtil.Clamp(value, 0, 4);
+                }
+
+                maxLODLevel = value;
+            }
+        }
+
+        [EditorCategory("LOD")]
+        [EditorProperty("Min Level")]
+        public int MinLODLevel
+        {
+            get => minLODLevel;
+            set
+            {
+                if (terrain != null)
+                {
+                    value = MathUtil.Clamp(value, 0, 4);
+                }
+
+                minLODLevel = value;
+            }
         }
 
         private static bool AssetExists(TerrainRendererComponent terrain)

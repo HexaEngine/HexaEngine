@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Coroutines;
     using HexaEngine.Graphics;
+    using HexaEngine.Input;
     using HexaEngine.Lights;
     using HexaEngine.Physics;
     using HexaEngine.Queries;
@@ -29,6 +30,7 @@
 
             Register<QuerySystem>();
             Register<TransformSystem>();
+            Register<InputSystem>();
             Register<AudioSystem>();
             Register<AnimationSystem>();
             Register<ScriptManager>();

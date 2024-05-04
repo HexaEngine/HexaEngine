@@ -14,6 +14,7 @@
         NoDepthTest = 128,
         Clustered = 256,
         Bake = 512,
+        Dynamic = 1024,
         All = Update | Depth | Draw | Culling | CastShadows,
     }
 }

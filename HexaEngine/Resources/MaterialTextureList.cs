@@ -307,6 +307,17 @@
             Update();
         }
 
+        public void DisposeResources()
+        {
+            ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
+            for (int i = 0; i < textures.Count; i++)
+            {
+                textures[i]?.Dispose();
+            }
+            Clear();
+        }
+
         public void Clear()
         {
             count = 0;

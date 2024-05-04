@@ -479,6 +479,9 @@
 		<None Update="spirv-cross-c-shared.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Terrain.terrain">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />

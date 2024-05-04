@@ -199,6 +199,11 @@
         {
             for (int i = 0; i < cells.Count; i++)
             {
+                cells[i].FixHeightMap();
+            }
+
+            for (int i = 0; i < cells.Count; i++)
+            {
                 cells[i].GenerateIndicesAndUVs();
             }
 
@@ -209,7 +214,7 @@
 
             for (int i = 0; i < cells.Count; i++)
             {
-                cells[i].AverageEdges();
+                cells[i].FixNormals();
                 cells[i].UpdateVertexBuffer(context);
             }
 

@@ -1,61 +1,24 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Input;
-
-    public class InputMap
-    {
-        public InputMap(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; set; }
-
-        public List<VirtualAxis1> VirtualAxes { get; } = new();
-
-        public void Save(string path)
-        {
-            var serializer = JsonSerializer.Create();
-
-            TextWriter writer = new StreamWriter(path);
-            serializer.Serialize(writer, this);
-            writer.Close();
-        }
-
-        public void LoadFrom(string path)
-        {
-            var serializer = JsonSerializer.Create();
-
-            TextReader reader = new StreamReader(path);
-            serializer.Populate(reader, this);
-            reader.Close();
-        }
-
-        public static InputMap Read(string path)
-        {
-            var serializer = JsonSerializer.Create();
-
-            TextReader reader = new StreamReader(path);
-            JsonTextReader jsonTextReader = new(reader);
-            var inputMap = serializer.Deserialize<InputMap>(jsonTextReader) ?? new("NULL");
-            reader.Close();
-            return inputMap;
-        }
-    }
+    using System;
 
     public class InputManagerWindow : EditorWindow
     {
-        private readonly List<VirtualAxis1> virtualAxes = new();
+        private InputMap inputMap;
 
-        private VirtualAxis1? currentAxis = null;
+        private VirtualAxis? currentAxis = null;
         private int currentBinding = -1;
 
         private bool recordKey;
         private bool recordMouseButton;
+
+        private bool unsavedChanges = false;
 
         public InputManagerWindow()
         {
@@ -68,13 +31,20 @@
 
         protected override void OnShown()
         {
+            Load();
             Keyboard.KeyDown += OnKeyDown;
             Mouse.ButtonDown += OnButtonDown;
+            Application.MainWindow.Closing += MainWindowClosing;
             base.OnShown();
+        }
+
+        private void MainWindowClosing(object? sender, Core.Windows.Events.CloseEventArgs e)
+        {
         }
 
         protected override void OnClosed()
         {
+            Application.MainWindow.Closing -= MainWindowClosing;
             Mouse.ButtonDown -= OnButtonDown;
             Keyboard.KeyDown -= OnKeyDown;
             base.OnClosed();
@@ -126,8 +96,34 @@
             currentAxis.Bindings[currentBinding] = binding;
         }
 
+        private void Load()
+        {
+            if (Platform.AppConfig == null || !Platform.AppConfig.Variables.TryGetValue("InputMap", out var xml))
+            {
+                return;
+            }
+
+            inputMap = InputMap.LoadFromText(xml);
+        }
+
+        private void Save()
+        {
+            if (Platform.AppConfig == null)
+            {
+                return;
+            }
+
+            Platform.AppConfig.Variables["InputMap"] = inputMap.SaveAsText();
+            Platform.AppConfig.Save();
+        }
+
         public override unsafe void DrawContent(IGraphicsContext context)
         {
+            if (Platform.AppConfig != null && ImGui.Button("Save"))
+            {
+                Save();
+            }
+
             bool comboOpen;
             if (currentAxis != null)
             {
@@ -140,9 +136,18 @@
 
             if (comboOpen)
             {
-                for (int i = 0; i < virtualAxes.Count; i++)
+                if (currentAxis != null)
                 {
-                    var axis = virtualAxes[i];
+                    var axisName = currentAxis.Name;
+                    if (ImGui.InputText("##Name", ref axisName, 1024))
+                    {
+                        currentAxis.Name = axisName;
+                    }
+                }
+
+                for (int i = 0; i < inputMap.VirtualAxes.Count; i++)
+                {
+                    var axis = inputMap.VirtualAxes[i];
                     bool isSelected = currentAxis == axis;
                     if (ImGui.Selectable(axis.Name, isSelected))
                     {
@@ -160,7 +165,7 @@
 
             ImGui.SameLine();
 
-            if (ImGui.Button("\xE710##Axis")) // Add
+            if (ImGui.Button($"{UwU.SquarePlus}##Axis")) // Add
             {
                 AddNew();
             }
@@ -170,25 +175,47 @@
                 return;
             }
 
-            ImGui.InputText("Name", ref currentAxis.Name, 1028);
+            ImGui.SameLine();
+
+            if (ImGui.Button($"{UwU.TrashCan}##Axis")) // Add
+            {
+                inputMap.VirtualAxes.Remove(currentAxis);
+                unsavedChanges = true;
+                currentAxis = null;
+                return;
+            }
+
+            {
+                //  AxisContextMenu(axisName, currentAxis);
+            }
 
             ImGui.SeparatorText("Bindings");
 
-            ImGui.SameLine();
+            ImGui.BeginTable("##Table", 2, ImGuiTableFlags.SizingFixedFit);
+            ImGui.TableSetupColumn("", 200f);
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
 
-            if (ImGui.Button("\xE710##Binding"))
+            ImGui.TableNextRow();
+
+            ImGui.TableSetColumnIndex(0);
+
+            if (ImGui.Button($"{UwU.SquarePlus}##Binding"))
             {
                 AddNewBinding();
             }
 
-            ImGui.BeginTable("##Table", 2, ImGuiTableFlags.SizingFixedFit);
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+            if (currentBinding != -1)
+            {
+                ImGui.SameLine();
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
+                if (ImGui.Button($"{UwU.TrashCan}##Binding"))
+                {
+                    currentAxis.Bindings.RemoveAt(currentBinding);
+                    currentBinding = -1;
+                }
+            }
 
-            if (ImGui.BeginListBox("##List"))
+            if (ImGui.BeginListBox("##List", new(200, 0)))
             {
                 for (int i = 0; i < currentAxis.Bindings.Count; i++)
                 {
@@ -207,7 +234,7 @@
                         VirtualAxisBindingType.MouseMovement => $"Mouse Move: {binding.MouseMovementBinding.Axis}##{i}",
                         VirtualAxisBindingType.JoystickBall => $"Joystick Ball: {binding.JoystickBallBinding.Ball}, {binding.JoystickBallBinding.Axis}##{i}",
                         VirtualAxisBindingType.JoystickAxis => $"Joystick Axis: {binding.JoystickAxisBinding.Axis}##{i}",
-                        VirtualAxisBindingType.JoystickHat => $"Joystick Hat: {binding.JoystickHatBinding.Hat}##{i}",
+                        VirtualAxisBindingType.JoystickHat => $"Joystick Hat: {binding.JoystickHatBinding.State}##{i}",
                         VirtualAxisBindingType.GamepadAxis => $"Gamepad Axis: {binding.GamepadAxisBinding.Axis}##{i}",
                         VirtualAxisBindingType.GamepadTouchMovement => $"Gamepad Touch Move: {binding.GamepadTouchMovementBinding.Axis}##{i}",
                         VirtualAxisBindingType.GamepadSensor => $"Gamepad Sensor: {binding.MouseMovementBinding.Axis}##{i}",
@@ -238,7 +265,7 @@
 
                 ImGui.Separator();
 
-                changed |= ImGui.InputInt("DeviceId", ref binding.DeviceId);
+                changed |= ImGui.InputInt("Device Id", ref binding.DeviceId);
                 TooltipHelper.Tooltip("Set to -1 for all devices");
 
                 changed |= ImGui.Checkbox("Invert", ref binding.Invert);
@@ -252,7 +279,7 @@
                         ImGui.SetNextItemWidth(100);
                         changed |= ComboEnumHelper<Key>.Combo("Key", ref binding.KeyboardKeyBinding.Key);
                         ImGui.SameLine();
-                        if (ImGui.Button("\xE7C8"))
+                        if (ImGui.Button($"{UwU.CircleDot}"))
                         {
                             recordKey = true;
                         }
@@ -262,7 +289,7 @@
                         ImGui.SetNextItemWidth(100);
                         changed |= ComboEnumHelper<MouseButton>.Combo("Button", ref binding.MouseButtonBinding.Button);
                         ImGui.SameLine();
-                        if (ImGui.Button("\xE7C8"))
+                        if (ImGui.Button($"{UwU.CircleDot}"))
                         {
                             recordMouseButton = true;
                         }
@@ -298,6 +325,7 @@
                     case VirtualAxisBindingType.MouseMovement:
                         ImGui.SetNextItemWidth(100);
                         changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.MouseMovementBinding.Axis);
+                        changed |= ImGui.InputFloat("Sensitivity", ref binding.MouseMovementBinding.Sensitivity);
                         break;
 
                     case VirtualAxisBindingType.JoystickBall:
@@ -310,16 +338,20 @@
                     case VirtualAxisBindingType.JoystickAxis:
                         ImGui.SetNextItemWidth(100);
                         changed |= ImGui.InputInt("Axis", ref binding.JoystickAxisBinding.Axis);
+                        changed |= ImGui.InputInt("Deadzone", ref binding.JoystickAxisBinding.Deadzone);
+                        changed |= ImGui.InputFloat("Sensitivity", ref binding.JoystickAxisBinding.Sensitivity);
                         break;
 
                     case VirtualAxisBindingType.JoystickHat:
                         ImGui.SetNextItemWidth(100);
-                        changed |= ComboEnumHelper<JoystickHatState>.Combo("Hat", ref binding.JoystickHatBinding.Hat);
+                        changed |= ComboEnumHelper<JoystickHatState>.Combo("Hat", ref binding.JoystickHatBinding.State);
                         break;
 
                     case VirtualAxisBindingType.GamepadAxis:
                         ImGui.SetNextItemWidth(100);
                         changed |= ComboEnumHelper<GamepadAxis>.Combo("Axis", ref binding.GamepadAxisBinding.Axis);
+                        changed |= ImGui.InputInt("Deadzone", ref binding.GamepadAxisBinding.Deadzone);
+                        changed |= ImGui.InputFloat("Sensitivity", ref binding.GamepadAxisBinding.Sensitivity);
                         break;
 
                     case VirtualAxisBindingType.GamepadTouchMovement:
@@ -329,7 +361,7 @@
 
                     case VirtualAxisBindingType.GamepadSensor:
                         ImGui.SetNextItemWidth(100);
-                        changed |= ComboEnumHelper<Axis>.Combo("Axis", ref binding.GamepadSensorBinding.Axis);
+                        changed |= ComboEnumHelper<SensorAxis>.Combo("Axis", ref binding.GamepadSensorBinding.Axis);
                         break;
 
                     case VirtualAxisBindingType.TouchMovement:
@@ -340,6 +372,7 @@
 
                 if (changed)
                 {
+                    unsavedChanges = true;
                     currentAxis.Bindings[currentBinding] = binding;
                 }
             }
@@ -349,18 +382,38 @@
             ImGui.EndTable();
         }
 
-        private void BindingContextMenu(string name, VirtualAxis1 axis, VirtualAxisBinding binding, ref int index)
+        private void AxisContextMenu(string name, VirtualAxis axis)
         {
             if (ImGui.BeginPopupContextItem(name))
             {
-                if (ImGui.MenuItem("\xE74D Delete"))
+                if (ImGui.MenuItem($"{UwU.TrashCan} Delete"))
+                {
+                    if (currentAxis == axis)
+                    {
+                        currentAxis = null;
+                    }
+
+                    inputMap.VirtualAxes.Remove(axis);
+                    unsavedChanges = true;
+                }
+                ImGui.EndPopup();
+            }
+        }
+
+        private void BindingContextMenu(string name, VirtualAxis axis, VirtualAxisBinding binding, ref int index)
+        {
+            if (ImGui.BeginPopupContextItem(name))
+            {
+                if (ImGui.MenuItem($"{UwU.TrashCan} Delete"))
                 {
                     if (currentBinding == index)
                     {
                         currentBinding = -1;
                     }
+
                     axis.Bindings.RemoveAt(index);
                     index--;
+                    unsavedChanges = true;
                 }
                 ImGui.EndPopup();
             }
@@ -369,19 +422,21 @@
         private void AddNewBinding()
         {
             currentAxis?.Bindings.Add(new() { DeviceId = -1 });
+            unsavedChanges = true;
         }
 
         private void AddNew()
         {
-            VirtualAxis1 virtualAxis = new(GetNewUniqueName("New Axis"));
-            virtualAxes.Add(virtualAxis);
+            VirtualAxis virtualAxis = new(GetNewUniqueName("New Axis"));
+            inputMap.VirtualAxes.Add(virtualAxis);
+            unsavedChanges = true;
         }
 
         private bool Exists(string name)
         {
-            for (var i = 0; i < virtualAxes.Count; i++)
+            for (var i = 0; i < inputMap.VirtualAxes.Count; i++)
             {
-                var v = virtualAxes[i];
+                var v = inputMap.VirtualAxes[i];
                 if (v.Name == name)
                 {
                     return true;

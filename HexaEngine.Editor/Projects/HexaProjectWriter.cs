@@ -25,15 +25,59 @@
             return new();
         }
 
-        public static HexaProject CreateNew()
+        public static HexaProject CreateNew(string folder)
         {
             HexaProject project = new();
-            PropertyGroup propertyGroup = [new("TargetVersion", "HexaEngine1.0")];
+            PropertyGroup propertyGroup = [new("TargetVersion", "HexaEngine1.0"), new("AppConfig", Path.Combine(folder, "app.config"))];
             project.Items.Add(propertyGroup);
             return project;
         }
 
         public List<HexaProjectItem> Items { get; } = [];
+
+        public PropertyGroupItem? GetPropertyGroupItem(string name)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                var item = Items[i];
+                if (item is PropertyGroup group)
+                {
+                    if (group.TryGetPropertyItem(name, out var groupItem))
+                    {
+                        return groupItem;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public PropertyGroupItem GetOrCreatePropertyGroupItem(string name, string defaultValue)
+        {
+            PropertyGroup? firstGroup = null;
+            for (int i = 0; i < Items.Count; i++)
+            {
+                var item = Items[i];
+                if (item is PropertyGroup group)
+                {
+                    firstGroup ??= group;
+                    if (group.TryGetPropertyItem(name, out var groupItem))
+                    {
+                        return groupItem;
+                    }
+                }
+            }
+
+            if (firstGroup == null)
+            {
+                Items.Add(firstGroup = []);
+            }
+
+            PropertyGroupItem newGroupItem = new(name, defaultValue);
+            firstGroup.Add(newGroupItem);
+
+            return newGroupItem;
+        }
     }
 
     public class HexaProjectReader

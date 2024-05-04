@@ -179,8 +179,8 @@
             motionEventArgs.Timestamp = mouseMotionEvent.Timestamp;
             motionEventArgs.Handled = false;
             motionEventArgs.MouseId = mouseMotionEvent.Which;
-            motionEventArgs.RelX = delta.X;
-            motionEventArgs.RelY = delta.Y;
+            motionEventArgs.RelX = mouseMotionEvent.Xrel;
+            motionEventArgs.RelY = mouseMotionEvent.Yrel;
             motionEventArgs.X = pos.X;
             motionEventArgs.Y = pos.Y;
             Moved?.Invoke(null, motionEventArgs);

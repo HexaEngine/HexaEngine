@@ -28,13 +28,13 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<ISamplerState> linearClampSampler;
         private ResourceRef<ISamplerState> linearWrapSampler;
         private ResourceRef<ISamplerState> pointClampSampler;
-
+        private ResourceRef<ISamplerState> anisotropicClampSampler;
         private unsafe void** cbs;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private const uint nConstantBuffers = 3;
         private unsafe void** smps;
-        private const uint nSamplers = 3;
+        private const uint nSamplers = 4;
 
         private ResourceRef<IGraphicsPipelineState> deferred;
         private unsafe void** deferredSrvs;
@@ -71,9 +71,10 @@ namespace HexaEngine.Graphics.Passes
             lightParamsBuffer = creator.CreateConstantBuffer<DeferredLightParams>("DeferredLightParams", CpuAccessFlags.Write);
 
             smps = AllocArrayAndZero(nSamplers);
-            linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
+            linearClampSampler = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
+            anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
 
             cbs = AllocArrayAndZero(nConstantBuffers);
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -158,6 +159,7 @@ namespace HexaEngine.Graphics.Passes
             smps[0] = (void*)linearClampSampler.Value.NativePointer;
             smps[1] = (void*)linearWrapSampler.Value.NativePointer;
             smps[2] = (void*)pointClampSampler.Value.NativePointer;
+            smps[3] = (void*)anisotropicClampSampler.Value.NativePointer;
 
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);

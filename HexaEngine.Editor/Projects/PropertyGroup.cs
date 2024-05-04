@@ -72,7 +72,7 @@
             return nameToItem[name];
         }
 
-        public bool TryGetPropertyItem(string name, [MaybeNullWhen(false)] out PropertyGroupItem? value)
+        public bool TryGetPropertyItem(string name, [NotNullWhen(true)] out PropertyGroupItem? value)
         {
             return nameToItem.TryGetValue(name, out value);
         }
@@ -82,7 +82,7 @@
             return nameToItem[name].Value;
         }
 
-        public bool TryGetProperty(string name, [MaybeNullWhen(false)] out string? value)
+        public bool TryGetProperty(string name, [NotNullWhen(true)] out string? value)
         {
             if (nameToItem.TryGetValue(name, out var item))
             {

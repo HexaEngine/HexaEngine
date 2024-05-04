@@ -34,6 +34,7 @@
         public void Draw(IGraphicsContext context, RenderPath path);
 
         public void Bake(IGraphicsContext context);
+        void Draw(IGraphicsContext deferred, string pass);
 
         public string DebugName { get; }
     }

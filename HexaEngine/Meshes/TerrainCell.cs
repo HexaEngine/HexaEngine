@@ -300,7 +300,7 @@
             });
         }
 
-        public void AverageEdges()
+        public void FixNormals()
         {
             Parallel.For(0, 4, i =>
             {
@@ -309,6 +309,14 @@
                 Right?.cellData.AverageEdgeLevel(i, Edge.XNeg, cellData);
                 Left?.cellData.AverageEdgeLevel(i, Edge.XPos, cellData);
             });
+        }
+
+        public void FixHeightMap()
+        {
+            Top?.cellData.FuseHeightMap(Edge.ZNeg, cellData);
+            Bottom?.cellData.FuseHeightMap(Edge.ZPos, cellData);
+            Right?.cellData.FuseHeightMap(Edge.XNeg, cellData);
+            Left?.cellData.FuseHeightMap(Edge.XPos, cellData);
         }
 
         public void Generate()

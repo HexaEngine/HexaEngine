@@ -457,6 +457,7 @@
                 {
                     return;
                 }
+                ImGuiManager.DisableNav(false);
                 scene.IsSimulating = false;
                 SceneManager.BeginReload();
                 scene.RestoreState();
@@ -474,6 +475,7 @@
                 {
                     return;
                 }
+                ImGuiManager.DisableNav(false);
                 scene.IsSimulating = false;
                 Application.EditorPlayState = EditorPlayState.Pause;
             }
@@ -497,6 +499,7 @@
                     MessageBox.Show("Script Project Build Failed", "The script project build failed. Please fix any compilation errors before playing the scene.");
                     return;
                 }
+                ImGuiManager.DisableNav(true);
                 SceneManager.Save();
                 scene.IsSimulating = false;
                 SceneManager.BeginReload();
@@ -512,6 +515,7 @@
                 {
                     return;
                 }
+                ImGuiManager.DisableNav(true);
                 scene.IsSimulating = true;
                 Application.EditorPlayState = EditorPlayState.Play;
             }

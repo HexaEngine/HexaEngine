@@ -29,13 +29,13 @@
             if (compression == Compression.Deflate)
             {
                 isCompressed = true;
-                return new DeflateStream(stream, CompressionLevel.SmallestSize, true);
+                return new DeflateStream(stream, CompressionLevel.Optimal, true);
             }
 
             if (compression == Compression.LZ4)
             {
                 isCompressed = true;
-                return LZ4Stream.Encode(stream, LZ4Level.L10_OPT, 0, true);
+                return LZ4Stream.Encode(stream, LZ4Level.L00_FAST, 0, true);
             }
 
             isCompressed = false;

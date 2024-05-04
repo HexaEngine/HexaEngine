@@ -23,7 +23,7 @@
         /// <summary>
         /// The mask associated with the layer group.
         /// </summary>
-        public LayerMask Mask = new();
+        public LayerBlendMask Mask = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerrainLayerGroup"/> class.
@@ -38,7 +38,7 @@
         /// <param name="layers">The array of terrain layers in the group.</param>
         /// <param name="layerCount">The number of layers in the group.</param>
         /// <param name="mask">The mask associated with the layer group.</param>
-        public TerrainLayerGroup(TerrainLayer[] layers, int layerCount, LayerMask mask)
+        public TerrainLayerGroup(TerrainLayer[] layers, int layerCount, LayerBlendMask mask)
         {
             this.layers = layers;
             count = layerCount;
@@ -170,7 +170,7 @@
                 }
                 layersInGroup[i] = layers[idx];
             }
-            LayerMask layerMask = LayerMask.ReadFrom(stream, endianness, compression, mode);
+            LayerBlendMask layerMask = LayerBlendMask.ReadFrom(stream, endianness, compression, mode);
             return new TerrainLayerGroup(layersInGroup, layerCount, layerMask);
         }
     }

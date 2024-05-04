@@ -41,15 +41,15 @@ namespace HexaEngine.Lights.Types
 
         private void UpdateTextures()
         {
-            diffuseMap?.Dispose();
-            specularMap?.Dispose();
-            diffuseMap = null;
-            specularMap = null;
+            UpdateDiffuseMap();
+            UpdateSpecularMap();
+        }
 
-            if (diffuseMapAsset == Guid.Empty)
-            {
-                return;
-            }
+        private void UpdateSpecularMap()
+        {
+            var tmp = specularMap;
+            specularMap = null;
+            tmp?.Dispose();
 
             if (specularMapAsset == Guid.Empty)
             {
@@ -58,8 +58,29 @@ namespace HexaEngine.Lights.Types
 
             try
             {
-                diffuseMap = Texture2D.LoadFromAssets(diffuseMapAsset, TextureDimension.TextureCube);
                 specularMap = Texture2D.LoadFromAssets(specularMapAsset, TextureDimension.TextureCube);
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.General.Error("Failed to load");
+                LoggerFactory.General.Log(ex);
+            }
+        }
+
+        private void UpdateDiffuseMap()
+        {
+            var tmp = diffuseMap;
+            diffuseMap = null;
+            tmp?.Dispose();
+
+            if (diffuseMapAsset == Guid.Empty)
+            {
+                return;
+            }
+
+            try
+            {
+                diffuseMap = Texture2D.LoadFromAssets(diffuseMapAsset, TextureDimension.TextureCube);
             }
             catch (Exception ex)
             {

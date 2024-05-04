@@ -2,101 +2,53 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Utilities;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using System.Numerics;
 
-    public class TerrainRenderer : IDisposable
+    public class TerrainRenderer : BaseRenderer<TerrainGrid>
     {
+        private ISamplerState linearClampSampler;
         private ConstantBuffer<UPoint4> offsetBuffer;
+        private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
         private StructuredBuffer<Matrix4x4> transformNoBuffer;
         private StructuredBuffer<uint> transformNoOffsetBuffer;
         private StructuredUavBuffer<Matrix4x4> transformBuffer;
         private StructuredUavBuffer<uint> transformOffsetBuffer;
-        private readonly ISamplerState linearClampSampler;
 
-        private TerrainGrid? grid;
-
-        private bool initialized;
-        private bool disposedValue;
-
-        public TerrainRenderer(IGraphicsDevice device)
+        protected override void Initialize(IGraphicsDevice device, CullingContext cullingContext)
         {
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
             offsetBuffer = new(CpuAccessFlags.Write);
-            transformNoBuffer = new(CpuAccessFlags.Write);
-            transformNoOffsetBuffer = new(CpuAccessFlags.Write);
-            transformBuffer = new(CpuAccessFlags.Write);
-            transformOffsetBuffer = new(CpuAccessFlags.Write);
+            drawIndirectArgs = cullingContext.DrawIndirectArgs;
+            transformNoBuffer = cullingContext.InstanceDataNoCull;
+            transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;
+            transformBuffer = cullingContext.InstanceDataOutBuffer;
+            transformOffsetBuffer = cullingContext.InstanceOffsets;
         }
 
-        public void Initialize(TerrainGrid grid)
+        public override void Update(IGraphicsContext context, Matrix4x4 transform, TerrainGrid instance)
         {
-            this.grid = grid;
-
-            initialized = true;
-        }
-
-        public void Uninitialize()
-        {
-            initialized = false;
-
-            grid = null;
-        }
-
-        public unsafe void Update(IGraphicsContext context, Matrix4x4 transform)
-        {
-            if (!initialized)
+            for (int i = 0; i < instance.Count; i++)
             {
-                return;
-            }
-
-            transformBuffer.ResetCounter();
-            transformOffsetBuffer.ResetCounter();
-
-            transformNoBuffer.ResetCounter();
-            transformNoOffsetBuffer.ResetCounter();
-
-            for (int i = 0; i < grid.Count; i++)
-            {
-                TerrainCell cell = grid[i];
+                TerrainCell cell = instance[i];
                 Matrix4x4 global = transform * Matrix4x4.CreateTranslation(cell.Offset);
-                Matrix4x4.Invert(global, out var globalInverse);
+                Matrix4x4.Invert(global, out cell.TransformInv);
                 cell.Transform = global;
-                cell.TransformInv = globalInverse;
-                Matrix4x4 globalTransposed = Matrix4x4.Transpose(global);
-
-                transformOffsetBuffer.Add((uint)i);
-                transformNoOffsetBuffer.Add((uint)i);
-                transformBuffer.Add(globalTransposed);
-                transformNoBuffer.Add(globalTransposed);
+                cell.BoundingSphere = cell.Mesh.BoundingSphere;
             }
-
-            transformBuffer.Update(context);
-            transformOffsetBuffer.Update(context);
-
-            transformNoBuffer.Update(context);
-            transformNoOffsetBuffer.Update(context);
         }
 
-        public void DrawForward(IGraphicsContext context)
+        public override void VisibilityTest(CullingContext context, TerrainGrid instance)
         {
-            if (!initialized)
+            for (int i = 0; i < instance.Count; i++)
             {
-                return;
-            }
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-
-            for (int i = 0; i < grid.Count; i++)
-            {
-                var cell = grid[i];
+                TerrainCell cell = instance[i];
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
@@ -104,96 +56,29 @@
                     continue;
                 }
 
-                unsafe
-                {
-                    offsetBuffer.Update(context, new((uint)i));
-                }
+                Mesh mesh = cell.Mesh;
 
-                cell.Bind(context);
-                for (int j = 0; j < cell.DrawLayers.Count; j++)
-                {
-                    TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterial material = layer.Material;
-
-                    context.PSSetShaderResource(11, layer.Mask.SRV);
-                    context.DSSetSampler(0, linearClampSampler);
-                    context.DSSetShaderResource(0, layer.Mask.SRV);
-                    material.DrawIndexedInstanced(context, "Forward", cell.IndexCount, 1, 0, 0, 0);
-                }
-                cell.Unbind(context);
+                context.AppendType(mesh.IndexCount);
+                cell.TypeId = context.CurrentType;
+                cell.DrawIndirectOffset = context.GetDrawArgsOffset();
+                context.AppendInstance(Matrix4x4.Transpose(cell.Transform), cell.BoundingSphere);
             }
-            context.PSSetShaderResource(11, null);
-            context.DSSetShaderResource(0, null);
-            context.DSSetSampler(0, null);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
-        public void DrawDeferred(IGraphicsContext context)
+        public override void Bake(IGraphicsContext context, TerrainGrid instance)
         {
-            if (!initialized)
-            {
-                return;
-            }
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-
-            for (int i = 0; i < grid.Count; i++)
-            {
-                var cell = grid[i];
-
-                // Skip draw when no layers are present
-                if (cell.DrawLayers.Count == 0)
-                {
-                    continue;
-                }
-
-                unsafe
-                {
-                    offsetBuffer.Update(context, new((uint)i));
-                }
-
-                cell.Bind(context);
-                for (int j = 0; j < cell.DrawLayers.Count; j++)
-                {
-                    TerrainDrawLayer layer = cell.DrawLayers[j];
-                    TerrainMaterial material = layer.Material;
-
-                    context.PSSetShaderResource(11, layer.Mask.SRV);
-                    context.DSSetSampler(0, linearClampSampler);
-                    context.DSSetShaderResource(0, layer.Mask.SRV);
-                    material.DrawIndexedInstanced(context, "Deferred", cell.IndexCount, 1, 0, 0, 0);
-                }
-                cell.Unbind(context);
-            }
-
-            context.PSSetShaderResource(11, null);
-            context.DSSetShaderResource(0, null);
-            context.DSSetSampler(0, null);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
+            throw new NotSupportedException();
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public override void DrawDepth(IGraphicsContext context, TerrainGrid instance)
         {
-            if (!initialized)
-            {
-                return;
-            }
-
             context.VSSetConstantBuffer(0, offsetBuffer);
             context.VSSetShaderResource(0, transformNoBuffer.SRV);
             context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
 
-            for (int i = 0; i < grid.Count; i++)
+            for (int i = 0; i < instance.Count; i++)
             {
-                var cell = grid[i];
+                var cell = instance[i];
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
@@ -203,7 +88,7 @@
 
                 unsafe
                 {
-                    offsetBuffer.Update(context, new((uint)i));
+                    offsetBuffer.Update(context, new(cell.TypeId));
                 }
 
                 cell.Bind(context);
@@ -230,25 +115,15 @@
             context.VSSetShaderResource(1, null);
         }
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public override void DrawForward(IGraphicsContext context, TerrainGrid instance)
         {
-            if (!initialized)
-            {
-                return;
-            }
-
             context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
 
-            var name = EnumHelper<ShadowType>.GetName(type);
-
-            context.VSSetConstantBuffer(1, light);
-            context.GSSetConstantBuffer(0, light);
-            context.PSSetConstantBuffer(0, light);
-            for (int i = 0; i < grid.Count; i++)
+            for (int i = 0; i < instance.Count; i++)
             {
-                var cell = grid[i];
+                var cell = instance[i];
 
                 // Skip draw when no layers are present
                 if (cell.DrawLayers.Count == 0)
@@ -258,7 +133,144 @@
 
                 unsafe
                 {
-                    offsetBuffer.Update(context, new((uint)i));
+                    offsetBuffer.Update(context, new(cell.TypeId));
+                }
+
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterial material = layer.Material;
+
+                    context.PSSetShaderResource(11, layer.Mask.SRV);
+                    context.DSSetSampler(0, linearClampSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
+                    material.DrawIndexedInstancedIndirect(context, "Forward", drawIndirectArgs, cell.DrawIndirectOffset);
+                }
+                cell.Unbind(context);
+            }
+            context.PSSetShaderResource(11, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public override void DrawDeferred(IGraphicsContext context, TerrainGrid instance)
+        {
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+
+            for (int i = 0; i < instance.Count; i++)
+            {
+                var cell = instance[i];
+
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                {
+                    continue;
+                }
+
+                unsafe
+                {
+                    offsetBuffer.Update(context, new(cell.TypeId));
+                }
+
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterial material = layer.Material;
+
+                    context.PSSetShaderResource(11, layer.Mask.SRV);
+                    context.DSSetSampler(0, linearClampSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
+                    material.DrawIndexedInstancedIndirect(context, "Deferred", drawIndirectArgs, cell.DrawIndirectOffset);
+                }
+                cell.Unbind(context);
+            }
+
+            context.PSSetShaderResource(11, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public override void DrawDepth(IGraphicsContext context, TerrainGrid instance, IBuffer camera)
+        {
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformNoBuffer.SRV);
+            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
+
+            for (int i = 0; i < instance.Count; i++)
+            {
+                var cell = instance[i];
+
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                {
+                    continue;
+                }
+
+                unsafe
+                {
+                    offsetBuffer.Update(context, new(cell.TypeId));
+                }
+
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    TerrainDrawLayer layer = cell.DrawLayers[j];
+                    TerrainMaterial material = layer.Material;
+
+                    context.PSSetSampler(0, linearClampSampler);
+                    context.PSSetShaderResource(0, layer.Mask.SRV);
+                    context.DSSetSampler(0, linearClampSampler);
+                    context.DSSetShaderResource(0, layer.Mask.SRV);
+                    material.DrawIndexedInstanced(context, "DepthOnly", cell.IndexCount, 1, 0, 0, 0);
+                }
+                cell.Unbind(context);
+            }
+            context.PSSetShaderResource(0, null);
+            context.PSSetSampler(0, null);
+            context.DSSetShaderResource(0, null);
+            context.DSSetSampler(0, null);
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public override void DrawShadowMap(IGraphicsContext context, TerrainGrid instance, IBuffer light, ShadowType type)
+        {
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformNoBuffer.SRV);
+            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
+
+            var name = EnumHelper<ShadowType>.GetName(type);
+
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(0, light);
+            context.PSSetConstantBuffer(0, light);
+            for (int i = 0; i < instance.Count; i++)
+            {
+                var cell = instance[i];
+
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                {
+                    continue;
+                }
+
+                unsafe
+                {
+                    offsetBuffer.Update(context, new(cell.TypeId));
                 }
 
                 cell.Bind(context);
@@ -281,26 +293,10 @@
             context.VSSetShaderResource(1, null);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                linearClampSampler?.Dispose();
-                offsetBuffer?.Dispose();
-                transformBuffer?.Dispose();
-                transformOffsetBuffer?.Dispose();
-                transformNoBuffer?.Dispose();
-                transformNoOffsetBuffer?.Dispose();
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            linearClampSampler?.Dispose();
+            offsetBuffer?.Dispose();
         }
     }
 }

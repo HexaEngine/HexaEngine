@@ -17,6 +17,7 @@
 SamplerState linearClampSampler : register(s0);
 SamplerState linearWrapSampler : register(s1);
 SamplerState pointClampSampler : register(s2);
+SamplerState ansiotropicClampSampler : register(s3);
 
 Texture2D<float> ssao : register(t0);
 Texture2D iblDFG : register(t1);
@@ -147,20 +148,19 @@ float3 BRDF_IBL(SamplerState samplerState, TextureCube irradianceTex, TextureCub
 
 float3 BRDF_IBL(PixelParams surface, float ao)
 {
-	
 	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
-	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;
+	float3 irradiance = globalDiffuse.Sample(ansiotropicClampSampler, surface.N).rgb;
 	float3 diffuse = surface.DiffuseColor * irradiance * (1.0 - E) * ao;
 
 	float3 R = reflect(-surface.V, surface.N);
-	const float MAX_REFLECTION_LOD = 8.0;
+	const float MAX_REFLECTION_LOD = 9.0;
 
-	float3 prefilteredColor = globalSpecular.SampleLevel(linearClampSampler, R, surface.Roughness * MAX_REFLECTION_LOD).rgb;
+	float3 prefilteredColor = globalSpecular.SampleLevel(ansiotropicClampSampler, R, surface.Roughness * MAX_REFLECTION_LOD).rgb;
 	float3 specular = prefilteredColor * E;
 	specular *= ao * surface.EnergyCompensation;
 
 	return diffuse + specular;
-	
+
 	/*
 	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
 	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;

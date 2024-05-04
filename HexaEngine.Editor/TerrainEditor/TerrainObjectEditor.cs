@@ -60,6 +60,7 @@ namespace HexaEngine.Editor.TerrainEditor
             tools.Add(new FlattenTool());
             tools.Add(new LayerPaintTool());
             tools.Add(new NoiseTool());
+
             toolContext.Shape = new CircleToolShape();
         }
 
@@ -477,6 +478,7 @@ namespace HexaEngine.Editor.TerrainEditor
                 return;
             }
 
+            metadata.Lock();
             var path = metadata.GetFullPath();
             Stream? stream = null;
 
@@ -496,6 +498,7 @@ namespace HexaEngine.Editor.TerrainEditor
             }
             finally
             {
+                metadata.ReleaseLock();
                 stream?.Dispose();
             }
         }
@@ -576,9 +579,22 @@ namespace HexaEngine.Editor.TerrainEditor
                                 heightMap[index] = MathUtil.Lerp(min, max, (perlinNoise.OctaveNoise((x + offset.X) * scale.X, (y + offset.Y) * scale.Y, octaves, persistence, amplitude) + 1) / 2);
                             }
                         }
+                    }
 
-                        cell.Generate();
-                        updateQueue.Enqueue(cell);
+                    for (int i = 0; i < terrain.Count; i++)
+                    {
+                        terrain[i].FixHeightMap();
+                    }
+
+                    for (int i = 0; i < terrain.Count; i++)
+                    {
+                        terrain[i].GenerateLOD();
+                    }
+
+                    for (int i = 0; i < terrain.Count; i++)
+                    {
+                        terrain[i].FixNormals();
+                        updateQueue.Enqueue(terrain[i]);
                     }
                 }
             }

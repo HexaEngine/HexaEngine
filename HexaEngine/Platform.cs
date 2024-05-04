@@ -66,7 +66,7 @@
             }
             else if (window is Window window1)
             {
-                AppConfig = AppConfig.Load();
+                AppConfig = AppConfig.Load("app.config");
                 ScriptAssemblyManager.Load(AppConfig.ScriptAssembly);
                 window1.StartupScene = StartupScene;
             }
@@ -75,7 +75,7 @@
         /// <summary>
         /// Gets the application configuration settings.
         /// </summary>
-        public static AppConfig? AppConfig { get; private set; }
+        public static AppConfig? AppConfig { get; set; }
 
         /// <summary>
         /// Gets the startup scene specified in the application configuration.

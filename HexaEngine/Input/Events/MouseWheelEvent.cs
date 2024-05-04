@@ -3,25 +3,37 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
 
-    public struct MouseWheelEvent(MouseWheelEventArgs eventArgs)
+    public struct MouseWheelEvent
     {
-        public float X = eventArgs.Wheel.X;
-        public float Y = eventArgs.Wheel.Y;
-        public MouseWheelDirection Direction = eventArgs.Direction;
+        public float X;
+        public float Y;
+        public MouseWheelDirection Direction;
 
-        public float GetAxis(int index)
+        public MouseWheelEvent(MouseWheelEventArgs eventArgs)
         {
-            if (index == 0)
-            {
-                return X;
-            }
+            X = eventArgs.Wheel.X;
+            Y = eventArgs.Wheel.Y;
+            Direction = eventArgs.Direction;
+        }
 
-            if (index == 1)
+        public readonly float GetAxis(int index)
+        {
+            return index switch
             {
-                return Y;
-            }
+                0 => X,
+                1 => Y,
+                _ => 0,
+            };
+        }
 
-            return 0;
+        public readonly float GetAxis(Axis axis)
+        {
+            return axis switch
+            {
+                Axis.X => X,
+                Axis.Y => Y,
+                _ => 0,
+            };
         }
     }
 }

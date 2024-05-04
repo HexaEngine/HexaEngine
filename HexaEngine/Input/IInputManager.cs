@@ -28,6 +28,8 @@
 
         bool GetMouseButtonUp(MouseButton button);
 
-        public void Update();
+        void ImportFrom(InputMap inputMap, bool clear);
+
+        internal void Update();
     }
 }

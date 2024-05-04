@@ -10,21 +10,25 @@
         public float Y = eventArgs.Y;
         public float Pressure = eventArgs.Pressure;
 
-        public float GetAxis(int index)
+        public readonly float GetAxis(int index)
         {
-            if (index == 0)
+            return index switch
             {
-                return X;
-            }
-            else if (index == 1)
+                0 => X,
+                1 => Y,
+                2 => Pressure,
+                _ => 0,
+            };
+        }
+
+        public readonly float GetAxis(Axis index)
+        {
+            return index switch
             {
-                return Y;
-            }
-            else if (index == 2)
-            {
-                return Pressure;
-            }
-            return 0;
+                Axis.X => X,
+                Axis.Y => Y,
+                _ => Pressure,
+            };
         }
     }
 }

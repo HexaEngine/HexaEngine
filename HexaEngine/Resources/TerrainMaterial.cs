@@ -77,29 +77,20 @@
             Id = guid;
 
             textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 3;
+            textureListPS.StartSamplerSlot = 4;
             textureListPS.Update();
             textureListDS.StartTextureSlot = 1;
             textureListDS.StartSamplerSlot = 1;
             textureListDS.Update();
 
-            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], false, hasDisplacement);
+            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], true, hasDisplacement);
             shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc);
         }
 
         public void Update()
         {
-            for (int i = 0; i < textureListPS.Count; i++)
-            {
-                textureListPS[i]?.Dispose();
-            }
-            textureListPS.Clear();
-
-            for (int i = 0; i < textureListDS.Count; i++)
-            {
-                textureListDS[i]?.Dispose();
-            }
-            textureListDS.Clear();
+            textureListPS.DisposeResources();
+            textureListDS.DisposeResources();
 
             Guid guid = Guid.Empty;
             bool hasDisplacement = false;
@@ -141,13 +132,13 @@
             }
 
             textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 3;
+            textureListPS.StartSamplerSlot = 4;
             textureListPS.Update();
             textureListDS.StartTextureSlot = 1;
             textureListDS.StartSamplerSlot = 1;
             textureListDS.Update();
 
-            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(guid, [.. layerMacros], false, hasDisplacement);
+            MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(guid, [.. layerMacros], true, hasDisplacement);
 
             if (Id != guid)
             {

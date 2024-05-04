@@ -7,6 +7,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using Silk.NET.SDL;
     using System.IO;
     using System.Numerics;
 
@@ -917,6 +918,21 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
 
             ImGui.PopFont();
             fontPushes--;
+        }
+
+        public static void DisableNav(bool v)
+        {
+            var io = ImGui.GetIO();
+            if (v)
+            {
+                io.ConfigFlags &= ~ImGuiConfigFlags.NavEnableKeyboard;
+                io.ConfigFlags &= ~ImGuiConfigFlags.NavEnableGamepad;
+            }
+            else
+            {
+                io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
+                io.ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;
+            }
         }
     }
 }

@@ -107,6 +107,10 @@
 
                     CurrentProject = reader.Read() ?? throw new FileNotFoundException($"Couldn't find project file '{path}'");
 
+                    var item = CurrentProject.GetOrCreatePropertyGroupItem("AppConfig", Path.Combine(CurrentProjectFolder, "app.config"));
+
+                    Platform.AppConfig = AppConfig.Load(item.Value);
+
                     ProjectVersionControl.TryInit();
 
                     CurrentProjectAssetsFolder = Path.Combine(CurrentProjectFolder, "assets");
@@ -118,8 +122,10 @@
 
                     SourceAssetsDatabase.Init(CurrentProjectFolder, popup);
 
-                    watcher = new(Path.Combine(CurrentProjectFolder, solutionName));
-                    watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
+                    watcher = new(Path.Combine(CurrentProjectFolder, solutionName))
+                    {
+                        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security
+                    };
                     watcher.Changed += WatcherChanged;
                     watcher.Created += WatcherChanged;
                     watcher.Deleted += WatcherChanged;
@@ -239,7 +245,7 @@
 
             string projectName = Path.GetFileName(path);
             string projectFilePath = Path.Combine(path, $"{projectName}.hexproj");
-            HexaProject project = HexaProject.CreateNew();
+            HexaProject project = HexaProject.CreateNew(path);
 
             HexaProjectWriter writer = new(projectFilePath);
             writer.Write(project);
@@ -569,12 +575,13 @@
 
             // app config
             string configBuildPath = Path.Combine(buildPath, "app.config");
-            AppConfig config = new()
-            {
-                StartupScene = Path.Combine("assets", settings.StartupScene),
-                ScriptAssembly = assemblyPathRelative,
-            };
-            config.Save(configBuildPath);
+
+            AppConfig config = Platform.AppConfig?.Clone(configBuildPath) ?? new(configBuildPath);
+
+            config.StartupScene = Path.Combine("assets", settings.StartupScene);
+            config.ScriptAssembly = assemblyPathRelative;
+
+            config.SaveTo(configBuildPath);
 
             // build app
             string appTempPath = Path.Combine(CurrentProjectFolder, ".build");

@@ -26,6 +26,7 @@
         private ResourceRef<ISamplerState> linearClampSampler;
         private ResourceRef<ISamplerState> linearWrapSampler;
         private ResourceRef<ISamplerState> pointClampSampler;
+        private ResourceRef<ISamplerState> anisotropicClampSampler;
 
         private ResourceRef<ConstantBuffer<ForwardLightParams>> lightParamsBuffer;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
@@ -35,7 +36,7 @@
 
         private const uint nConstantBuffers = 3;
         private unsafe void** smps;
-        private const uint nSamplers = 3;
+        private const uint nSamplers = 4;
 
         private unsafe void** forwardRTVs;
         private const uint nForwardRTVs = 3;
@@ -74,6 +75,7 @@
             linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
+            anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
 
             cbs = AllocArrayAndZero(nConstantBuffers);
             lightParamsBuffer = creator.CreateConstantBuffer<ForwardLightParams>("ForwardLightParams", CpuAccessFlags.Write);
@@ -104,6 +106,7 @@
             smps[0] = (void*)linearClampSampler.Value.NativePointer;
             smps[1] = (void*)linearWrapSampler.Value.NativePointer;
             smps[2] = (void*)pointClampSampler.Value.NativePointer;
+            smps[3] = (void*)anisotropicClampSampler.Value.NativePointer;
 
             forwardSRVs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
             forwardSRVs[1] = (void*)brdfLUT.Value.SRV.NativePointer;

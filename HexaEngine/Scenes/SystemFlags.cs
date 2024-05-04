@@ -26,38 +26,43 @@
         Destroy = 1 << 2,
 
         /// <summary>
+        /// System will be called every frame before the actual update.
+        /// </summary>
+        EarlyUpdate = 1 << 3,
+
+        /// <summary>
         /// System will be called every frame.
         /// </summary>
-        Update = 1 << 3,
+        Update = 1 << 4,
+
+        /// <summary>
+        /// System will be called after update.
+        /// </summary>
+        LateUpdate = 1 << 5,
 
         /// <summary>
         /// System will be called every fixed update.
         /// </summary>
-        FixedUpdate = 1 << 4,
+        FixedUpdate = 1 << 6,
 
         /// <summary>
         /// System will be called every physics update.
         /// </summary>
-        PhysicsUpdate = 1 << 5,
-
-        /// <summary>
-        /// System will be called after physics update.
-        /// </summary>
-        LateUpdate = 1 << 6,
+        PhysicsUpdate = 1 << 7,
 
         /// <summary>
         /// System will be called by the render thread.
         /// </summary>
-        GraphicsUpdate = 1 << 7,
+        GraphicsUpdate = 1 << 8,
 
         /// <summary>
         /// System will be called on load.
         /// </summary>
-        Load = 1 << 8,
+        Load = 1 << 9,
 
         /// <summary>
         /// System will be called on unload.
         /// </summary>
-        Unload = 1 << 9,
+        Unload = 1 << 10,
     }
 }

@@ -152,5 +152,10 @@
                 Bake(context);
             }
         }
+
+        public void Draw(IGraphicsContext deferred, string pass)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

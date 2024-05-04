@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Editor.TerrainEditor;
@@ -50,9 +49,9 @@
                     cell.Left.CellData.HeightMap[heightMap.Width - 1, point.Y] = newHeight;
                 }
 
-                if (point.Y == 0 && cell.Bottom != null)
+                if (point.Y == 0 && cell.Top != null)
                 {
-                    cell.Bottom.CellData.HeightMap[point.X, heightMap.Height - 1] = newHeight;
+                    cell.Top.CellData.HeightMap[point.X, heightMap.Height - 1] = newHeight;
                 }
 
                 if (point.X == heightMap.Width - 1 && cell.Right != null)
@@ -60,9 +59,9 @@
                     cell.Right.CellData.HeightMap[0, point.Y] = newHeight;
                 }
 
-                if (point.Y == heightMap.Height - 1 && cell.Top != null)
+                if (point.Y == heightMap.Height - 1 && cell.Bottom != null)
                 {
-                    cell.Top.CellData.HeightMap[point.X, 0] = newHeight;
+                    cell.Bottom.CellData.HeightMap[point.X, 0] = newHeight;
                 }
 
                 heightMap[index] = newHeight;

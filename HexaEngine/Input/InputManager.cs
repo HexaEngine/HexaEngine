@@ -1,18 +1,16 @@
 ﻿namespace HexaEngine.Input
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Input.Events;
+    using System.Linq;
 
     public class InputManager : IInputManager
     {
         private readonly List<VirtualAxis> virtualAxes = new();
-        private readonly Dictionary<string, float> virtualAxisStates = new();
+        private readonly Dictionary<string, VirtualAxis> nameToAxis = new();
         private readonly Dictionary<string, float> virtualAxisStatesRaw = new();
         private readonly Dictionary<Key, KeyState> keyStates = new();
         private readonly Dictionary<MouseButton, MouseButtonState> mouseButtonStates = new();
-        private readonly HashSet<string> frameUpAxis = new();
-        private readonly HashSet<string> frameDownAxis = new();
         private readonly HashSet<Key> frameUpKeys = new();
         private readonly HashSet<Key> frameDownKeys = new();
         private readonly HashSet<MouseButton> frameUpMouseButtons = new();
@@ -57,17 +55,33 @@
 
         public IReadOnlyList<VirtualAxis> VirtualAxes => virtualAxes;
 
+        public void ImportFrom(InputMap inputMap, bool clear)
+        {
+            if (clear)
+            {
+                virtualAxes.Clear();
+                nameToAxis.Clear();
+                virtualAxisStatesRaw.Clear();
+            }
+
+            for (int i = 0; i < inputMap.VirtualAxes.Count; i++)
+            {
+                AddAxis(inputMap.VirtualAxes[i]);
+            }
+        }
+
         public void AddAxis(VirtualAxis axis)
         {
+            axis.Init();
             virtualAxes.Add(axis);
-            virtualAxisStates.Add(axis.Name, 0);
+            nameToAxis.Add(axis.Name, axis);
             virtualAxisStatesRaw.Add(axis.Name, 0);
         }
 
         public void RemoveAxis(VirtualAxis axis)
         {
             virtualAxes.Remove(axis);
-            virtualAxisStates.Remove(axis.Name);
+            nameToAxis.Remove(axis.Name);
             virtualAxisStatesRaw.Remove(axis.Name);
         }
 
@@ -79,7 +93,7 @@
 
         public float GetAxis(string name)
         {
-            return virtualAxisStates[name];
+            return nameToAxis[name].State.Value;
         }
 
         public float GetAxisRaw(string name)
@@ -89,17 +103,17 @@
 
         public bool GetButton(string name)
         {
-            return virtualAxisStates[name] != 0;
+            return nameToAxis[name].State.Value != 0;
         }
 
         public bool GetButtonDown(string name)
         {
-            return frameDownAxis.Contains(name);
+            return (nameToAxis[name].State.Flags & VirtualAxisStateFlags.Pressed) != 0;
         }
 
         public bool GetButtonUp(string name)
         {
-            return frameUpAxis.Contains(name);
+            return (nameToAxis[name].State.Flags & VirtualAxisStateFlags.Released) == 0;
         }
 
         public bool GetMouseButton(MouseButton button)
@@ -141,44 +155,36 @@
 
         void IInputManager.Update()
         {
-            frameDownAxis.Clear();
-            frameUpAxis.Clear();
             frameDownKeys.Clear();
             frameUpKeys.Clear();
             frameDownMouseButtons.Clear();
             frameUpMouseButtons.Clear();
             InputEvent inputEvent = default;
 
+            for (int i = 0; i < virtualAxes.Count; i++)
+            {
+                virtualAxes[i].Flush();
+            }
+
             while (inputBuffer.PollEvent(ref inputEvent))
             {
                 for (int i = 0; i < virtualAxes.Count; i++)
                 {
                     var virtualAxis = virtualAxes[i];
-                    if (virtualAxis.TryProcessEvent(inputEvent, out float direction))
+                    var oldValue = virtualAxis.State.Value;
+                    if (virtualAxis.TryProcessEvent(inputEvent, oldValue, out float newValue))
                     {
-                        var oldValue = virtualAxisStates[virtualAxis.Name];
-                        float newValue = direction;
-                        if (direction == 0 && virtualAxis.Gravity > 0)
-                        {
-                            if (oldValue == 0)
-                            {
-                                continue;
-                            }
-
-                            newValue = MathF.CopySign(Math.Max(Math.Abs(oldValue) - virtualAxis.Gravity * Time.Delta, 0), oldValue);
-                        }
-
+                        VirtualAxisStateFlags flags = 0;
                         if (oldValue == 0 && newValue != 0)
                         {
-                            frameDownAxis.Add(virtualAxis.Name);
+                            flags |= VirtualAxisStateFlags.Pressed;
                         }
 
                         if (oldValue != 0 && newValue == 0)
                         {
-                            frameUpAxis.Add(virtualAxis.Name);
+                            flags |= VirtualAxisStateFlags.Released;
                         }
-
-                        virtualAxisStates[virtualAxis.Name] = newValue;
+                        virtualAxis.State = new VirtualAxisState(newValue, flags);
                     }
                 }
 

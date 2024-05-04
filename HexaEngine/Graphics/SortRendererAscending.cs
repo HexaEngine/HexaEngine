@@ -3,8 +3,10 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public struct SortRendererAscending : IComparer<IRendererComponent>
+    public readonly struct SortRendererAscending : IComparer<IRendererComponent>
     {
+        public static readonly SortRendererAscending Instance;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly int IComparer<IRendererComponent>.Compare(IRendererComponent? a, IRendererComponent? b)
         {

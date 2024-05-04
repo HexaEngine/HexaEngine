@@ -8,20 +8,24 @@
         public int RelX = eventArgs.RelX;
         public int RelY = eventArgs.RelY;
 
-        public float GetAxis(int axis)
+        public readonly float GetAxis(int axis)
         {
-            if (axis == 0)
+            return axis switch
             {
-                return RelX;
-            }
-            else if (axis == 1)
+                0 => RelX,
+                1 => RelY,
+                _ => 0
+            };
+        }
+
+        public readonly float GetAxis(Axis axis)
+        {
+            return axis switch
             {
-                return RelY;
-            }
-            else
-            {
-                return 0;
-            }
+                Axis.X => RelX,
+                Axis.Y => RelY,
+                _ => 0
+            };
         }
     }
 }

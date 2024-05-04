@@ -391,16 +391,30 @@ namespace HexaEngine.Scenes
 
             semaphore.Wait();
 
-            var early = systems[SystemFlags.Update];
+            var early = systems[SystemFlags.EarlyUpdate];
+            float delta = Time.Delta;
 
             for (int i = 0; i < early.Count; i++)
             {
 #if PROFILE
                 Profiler.Start(early[i]);
 #endif
-                early[i].Update(Time.Delta);
+                early[i].Update(delta);
 #if PROFILE
                 Profiler.End(early[i]);
+#endif
+            }
+
+            var update = systems[SystemFlags.Update];
+
+            for (int i = 0; i < update.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(update[i]);
+#endif
+                update[i].Update(delta);
+#if PROFILE
+                Profiler.End(update[i]);
 #endif
             }
 
@@ -411,7 +425,7 @@ namespace HexaEngine.Scenes
 #if PROFILE
                 Profiler.Start(late[i]);
 #endif
-                late[i].Update(Time.Delta);
+                late[i].Update(delta);
 #if PROFILE
                 Profiler.End(late[i]);
 #endif

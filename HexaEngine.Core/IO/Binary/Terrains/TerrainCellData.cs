@@ -4,7 +4,9 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Mathematics;
+    using K4os.Compression.LZ4;
     using System.IO;
+    using System.Numerics;
 
     /// <summary>
     /// Represents a terrain mesh generated from a height map.
@@ -292,6 +294,57 @@
             var lodOther = other.lods[level];
             var lodSelf = lods[level];
             lodSelf.AverageEdge(xPos, lodOther);
+        }
+
+        public void FuseHeightMap(Edge edge, TerrainCellData other)
+        {
+            uint rows = heightMap.Width;
+            uint columns = heightMap.Height;
+            if (heightMap.Width != other.heightMap.Width || heightMap.Height != other.heightMap.Height)
+            {
+                throw new InvalidOperationException($"Terrain cell height map dimensions must be the same. (Width: {rows}, Height: {columns}), but other was (Width: {other.heightMap.Width}, Height: {other.heightMap.Height})");
+            }
+
+            if (edge == Edge.ZPos)
+            {
+                for (uint i = 0; i < rows; i++)
+                {
+                    var indexA = heightMap.GetIndexFor(i, columns - 1);
+                    var indexB = heightMap.GetIndexFor(i, 0);
+
+                    heightMap[indexA] = other.heightMap[indexB] = (heightMap[indexA] + other.heightMap[indexB]) / 2;
+                }
+            }
+            if (edge == Edge.ZNeg)
+            {
+                for (uint i = 0; i < rows; i++)
+                {
+                    var indexA = heightMap.GetIndexFor(i, 0);
+                    var indexB = heightMap.GetIndexFor(i, columns - 1);
+
+                    heightMap[indexA] = other.heightMap[indexB] = (heightMap[indexA] + other.heightMap[indexB]) / 2;
+                }
+            }
+            if (edge == Edge.XPos)
+            {
+                for (uint i = 0; i < columns; i++)
+                {
+                    var indexA = heightMap.GetIndexFor(rows - 1, i);
+                    var indexB = heightMap.GetIndexFor(0, i);
+
+                    heightMap[indexA] = other.heightMap[indexB] = (heightMap[indexA] + other.heightMap[indexB]) / 2;
+                }
+            }
+            if (edge == Edge.XNeg)
+            {
+                for (uint i = 0; i < columns; i++)
+                {
+                    var indexA = heightMap.GetIndexFor(0, i);
+                    var indexB = heightMap.GetIndexFor(rows - 1, i);
+
+                    heightMap[indexA] = other.heightMap[indexB] = (heightMap[indexA] + other.heightMap[indexB]) / 2;
+                }
+            }
         }
     }
 }
