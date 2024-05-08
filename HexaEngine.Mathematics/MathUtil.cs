@@ -1242,6 +1242,19 @@
         }
 
         /// <summary>
+        /// Performs linear interpolation between two values.
+        /// </summary>
+        /// <param name="x">The first value.</param>
+        /// <param name="y">The second value.</param>
+        /// <param name="s">The interpolation factor (0 to 1).</param>
+        /// <returns>The interpolated value.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Lerp(double x, double y, double s)
+        {
+            return x * (1 - s) + y * s;
+        }
+
+        /// <summary>
         /// Linearly interpolates between two 2D vectors.
         /// </summary>
         /// <param name="x">The starting vector.</param>
@@ -1860,6 +1873,26 @@
         }
 
         /// <summary>
+        /// Clamps a value to the range [0, 1].
+        /// </summary>
+        /// <param name="value">The input value to be clamped.</param>
+        /// <returns>The clamped value within the range [0, 1].</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Clamp01(double value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        /// <summary>
         /// Clamps each component of a <see cref="Vector2"/> to a specified range.
         /// </summary>
         /// <param name="v">The input <see cref="Vector2"/> to be clamped.</param>
@@ -1869,6 +1902,18 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Clamp(Vector2 v, Vector2 min, Vector2 max)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+                Vector128<float> vecMin = min.AsVector128();
+                Vector128<float> vecMax = max.AsVector128();
+
+                vec = Sse.Max(vec, vecMin);
+                vec = Sse.Min(vec, vecMax);
+
+                return vec.AsVector2();
+            }
+
             return Vector2.Clamp(v, min, max);
         }
 
@@ -1882,6 +1927,18 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Clamp(Vector3 v, Vector3 min, Vector3 max)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+                Vector128<float> vecMin = min.AsVector128();
+                Vector128<float> vecMax = max.AsVector128();
+
+                vec = Sse.Max(vec, vecMin);
+                vec = Sse.Min(vec, vecMax);
+
+                return vec.AsVector3();
+            }
+
             return Vector3.Clamp(v, min, max);
         }
 
@@ -1895,6 +1952,18 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Clamp(Vector4 v, Vector4 min, Vector4 max)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+                Vector128<float> vecMin = min.AsVector128();
+                Vector128<float> vecMax = max.AsVector128();
+
+                vec = Sse.Max(vec, vecMin);
+                vec = Sse.Min(vec, vecMax);
+
+                return vec.AsVector4();
+            }
+
             return Vector4.Clamp(v, min, max);
         }
 
@@ -1906,6 +1975,16 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Clamp01(Vector2 v)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+
+                vec = Sse.MaxScalar(vec, Vector128<float>.Zero);
+                vec = Sse.MinScalar(vec, Vector128<float>.One);
+
+                return vec.AsVector2();
+            }
+
             return Vector2.Clamp(v, Vector2.Zero, Vector2.One);
         }
 
@@ -1917,6 +1996,16 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Clamp01(Vector3 v)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+
+                vec = Sse.MaxScalar(vec, Vector128<float>.Zero);
+                vec = Sse.MinScalar(vec, Vector128<float>.One);
+
+                return vec.AsVector3();
+            }
+
             return Vector3.Clamp(v, Vector3.Zero, Vector3.One);
         }
 
@@ -1928,6 +2017,16 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Clamp01(Vector4 v)
         {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vec = v.AsVector128();
+
+                vec = Sse.MaxScalar(vec, Vector128<float>.Zero);
+                vec = Sse.MinScalar(vec, Vector128<float>.One);
+
+                return vec.AsVector4();
+            }
+
             return Vector4.Clamp(v, Vector4.Zero, Vector4.One);
         }
 
@@ -2963,6 +3062,140 @@
             }
 
             return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
+        /// <summary>
+        /// Performs smooth Hermite interpolation between two values.
+        /// </summary>
+        /// <remarks>
+        /// This method interpolates smoothly between edge0 and edge1, based on the input parameter s.
+        /// The return value is clamped between 0 and 1. Edge0 and edge1 values are expected to be between 0 and 1.
+        /// </remarks>
+        /// <param name="edge0">The lower edge.</param>
+        /// <param name="edge1">The upper edge.</param>
+        /// <param name="s">The interpolation value.</param>
+        /// <returns>A smooth Hermite interpolation between edge0 and edge1.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SmoothStep(float edge0, float edge1, float s)
+        {
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        /// <summary>
+        /// Performs smooth Hermite interpolation between two values.
+        /// </summary>
+        /// <remarks>
+        /// This method interpolates smoothly between edge0 and edge1, based on the input parameter s.
+        /// The return value is clamped between 0 and 1. Edge0 and edge1 values are expected to be between 0 and 1.
+        /// </remarks>
+        /// <param name="edge0">The lower edge.</param>
+        /// <param name="edge1">The upper edge.</param>
+        /// <param name="s">The interpolation value.</param>
+        /// <returns>A smooth Hermite interpolation between edge0 and edge1.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SmoothStep(double edge0, double edge1, double s)
+        {
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        /// <summary>
+        /// Performs smooth Hermite interpolation between two values.
+        /// </summary>
+        /// <remarks>
+        /// This method interpolates smoothly between edge0 and edge1, based on the input parameter s.
+        /// The return value is clamped between 0 and 1. Edge0 and edge1 values are expected to be between 0 and 1.
+        /// </remarks>
+        /// <param name="edge0">The lower edge.</param>
+        /// <param name="edge1">The upper edge.</param>
+        /// <param name="s">The interpolation value.</param>
+        /// <returns>A smooth Hermite interpolation between edge0 and edge1.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 SmoothStep(Vector2 edge0, Vector2 edge1, float s)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecEdge0 = edge0.AsVector128();
+                Vector128<float> vecEdge1 = edge1.AsVector128();
+
+                s = Clamp01(s);
+                s = s * s * (3f - 2f * s);
+
+                Vector128<float> vecResult = Sse.Add(vecEdge0, Sse.Multiply(Sse.Subtract(vecEdge1, vecEdge0), Vector128.Create(s)));
+
+                return vecResult.AsVector2();
+            }
+
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        /// <summary>
+        /// Performs smooth Hermite interpolation between two values.
+        /// </summary>
+        /// <remarks>
+        /// This method interpolates smoothly between edge0 and edge1, based on the input parameter s.
+        /// The return value is clamped between 0 and 1. Edge0 and edge1 values are expected to be between 0 and 1.
+        /// </remarks>
+        /// <param name="edge0">The lower edge.</param>
+        /// <param name="edge1">The upper edge.</param>
+        /// <param name="s">The interpolation value.</param>
+        /// <returns>A smooth Hermite interpolation between edge0 and edge1.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 SmoothStep(Vector3 edge0, Vector3 edge1, float s)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecEdge0 = edge0.AsVector128();
+                Vector128<float> vecEdge1 = edge1.AsVector128();
+
+                s = Clamp01(s);
+                s = s * s * (3f - 2f * s);
+
+                Vector128<float> vecResult = Sse.Add(vecEdge0, Sse.Multiply(Sse.Subtract(vecEdge1, vecEdge0), Vector128.Create(s)));
+
+                return vecResult.AsVector3();
+            }
+
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        /// <summary>
+        /// Performs smooth Hermite interpolation between two values.
+        /// </summary>
+        /// <remarks>
+        /// This method interpolates smoothly between edge0 and edge1, based on the input parameter s.
+        /// The return value is clamped between 0 and 1. Edge0 and edge1 values are expected to be between 0 and 1.
+        /// </remarks>
+        /// <param name="edge0">The lower edge.</param>
+        /// <param name="edge1">The upper edge.</param>
+        /// <param name="s">The interpolation value.</param>
+        /// <returns>A smooth Hermite interpolation between edge0 and edge1.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 SmoothStep(Vector4 edge0, Vector4 edge1, float s)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vecEdge0 = edge0.AsVector128();
+                Vector128<float> vecEdge1 = edge1.AsVector128();
+
+                s = Clamp01(s);
+                s = s * s * (3f - 2f * s);
+
+                Vector128<float> vecResult = Sse.Add(vecEdge0, Sse.Multiply(Sse.Subtract(vecEdge1, vecEdge0), Vector128.Create(s)));
+
+                return vecResult.AsVector4();
+            }
+
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
         }
     }
 }

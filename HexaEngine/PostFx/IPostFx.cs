@@ -117,5 +117,7 @@
         /// </summary>
         /// <param name="context">The graphics context.</param>
         public void Update(IGraphicsContext context);
+
+        public void ResetSettings();
     }
 }

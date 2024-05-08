@@ -184,7 +184,7 @@
             BlendDescription blend = BlendDescription.Opaque;
             if (blendFunc)
             {
-                blend = BlendDescription.AlphaBlend;
+                blend = BlendDescription.Additive;
             }
 
             GraphicsPipelineDesc pipelineDescForward = new()

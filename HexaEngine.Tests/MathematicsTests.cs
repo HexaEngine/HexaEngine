@@ -251,5 +251,102 @@
 
             Assert.That(dot0, Is.EqualTo(dot1));
         }
+
+        [TestCase(0, ExpectedResult = 0f)]
+        [TestCase(0.5f, ExpectedResult = 0.5f)]
+        [TestCase(1, ExpectedResult = 1f)]
+        [Test]
+        public float Smoothstep(float s)
+        {
+            float edge0 = 0;
+            float edge1 = 1;
+
+            float result = MathUtil.SmoothStep(edge0, edge1, s);
+
+            return result;
+        }
+
+        [TestCase(0, ExpectedResult = -2f)]
+        [TestCase(0.5f, ExpectedResult = 0f)]
+        [TestCase(1, ExpectedResult = 2f)]
+        [Test]
+        public float Smoothstep2(float s)
+        {
+            float edge0 = -2;
+            float edge1 = 2;
+
+            float result = MathUtil.SmoothStep(edge0, edge1, s);
+
+            return result;
+        }
+
+        [Test]
+        public void SmoothstepVec2()
+        {
+            Vector2 edge0 = new(0);
+            Vector2 edge1 = new(1);
+            float s = 0.5f;
+
+            Vector2 resultSSE = MathUtil.SmoothStep(edge0, edge1, s);
+            Vector2 resultNonSSE = SmoothStepNonSSE(edge0, edge1, s);
+
+            Assert.That(resultSSE, Is.EqualTo(resultNonSSE));
+        }
+
+        [Test]
+        public void SmoothstepVec3()
+        {
+            Vector3 edge0 = new(0);
+            Vector3 edge1 = new(1);
+            float s = 0.5f;
+
+            Vector3 resultSSE = MathUtil.SmoothStep(edge0, edge1, s);
+            Vector3 resultNonSSE = SmoothStepNonSSE(edge0, edge1, s);
+
+            Assert.That(resultSSE, Is.EqualTo(resultNonSSE));
+        }
+
+        [Test]
+        public void SmoothstepVec4()
+        {
+            Vector4 edge0 = new(0);
+            Vector4 edge1 = new(1);
+            float s = 0.5f;
+
+            Vector4 resultSSE = MathUtil.SmoothStep(edge0, edge1, s);
+            Vector4 resultNonSSE = SmoothStepNonSSE(edge0, edge1, s);
+
+            Assert.That(resultSSE, Is.EqualTo(resultNonSSE));
+        }
+
+        private static float Clamp01(float s)
+        {
+            if (s < 0.0f)
+                return 0.0f;
+            if (s > 1.0f)
+                return 1.0f;
+            return s;
+        }
+
+        private static Vector2 SmoothStepNonSSE(Vector2 edge0, Vector2 edge1, float s)
+        {
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        private static Vector3 SmoothStepNonSSE(Vector3 edge0, Vector3 edge1, float s)
+        {
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
+
+        private static Vector4 SmoothStepNonSSE(Vector4 edge0, Vector4 edge1, float s)
+        {
+            s = Clamp01(s);
+            s = s * s * (3f - 2f * s);
+            return edge0 + (edge1 - edge0) * s;
+        }
     }
 }

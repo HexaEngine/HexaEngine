@@ -45,6 +45,11 @@
 
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "VirtualAxes")
                 {
+                    if (reader.IsEmptyElement)
+                    {
+                        continue;
+                    }
+
                     reader.ReadStartElement("VirtualAxes");
 
                     while (reader.Read())

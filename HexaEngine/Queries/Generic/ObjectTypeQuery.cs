@@ -8,7 +8,7 @@
         private readonly List<T> cache = new();
         private bool disposedValue;
 
-        public ObjectTypeQuery(QueryFlags flags = QueryFlags.Default)
+        public ObjectTypeQuery(QueryFlags flags = QueryFlags.ObjectAdded | QueryFlags.ObjectRemoved)
         {
             Flags = flags;
         }

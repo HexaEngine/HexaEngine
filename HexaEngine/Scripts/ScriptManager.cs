@@ -1,96 +1,134 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
-    using System.Reflection;
-
-    public class GlobalScriptManager
-    {
-        private List<GlobalScript> scripts = new();
-
-        static GlobalScriptManager()
-        {
-            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
-            ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
-            Application.OnEditorPlayStateTransition += EditorPlayStateTransition;
-            Application.OnEditorPlayStateChanged += EditorPlayStateChanged;
-            SceneManager.SceneChanged += SceneChanged;
-        }
-
-        private static void SceneChanged(object? sender, SceneChangedEventArgs e)
-        {
-        }
-
-        private static void EditorPlayStateTransition(EditorPlayStateTransitionEventArgs args)
-        {
-        }
-
-        private static void EditorPlayStateChanged(EditorPlayState newState)
-        {
-        }
-
-        private static void AssemblyLoaded(object? sender, Assembly e)
-        {
-        }
-
-        private static void AssembliesUnloaded(object? sender, EventArgs? e)
-        {
-        }
-
-        public void Load()
-        {
-        }
-    }
 
     public class ScriptManager : ISceneSystem
     {
         private readonly ComponentTypeQuery<IScriptComponent> components = new();
-        private readonly FlaggedList<ScriptFlags, IScriptComponent> scripts = new();
+        private readonly ScriptGraph graph = new();
+        private readonly List<ScriptGroup> groups = [];
+        private readonly object _lock = new();
         private bool awaked;
 
         public string Name => "Scripts";
 
         public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Update | SystemFlags.FixedUpdate | SystemFlags.Destroy;
 
-        public IReadOnlyList<IScriptComponent> Scripts => (IReadOnlyList<IScriptComponent>)scripts;
+        public ScriptGraph Graph => graph;
+
+        public IReadOnlyList<ScriptGroup> Groups => groups;
+
+        private void AssemblyLoaded(object? sender, System.Reflection.Assembly e)
+        {
+            lock (_lock)
+            {
+                UpdateGraphInternal();
+            }
+        }
+
+        private void AssembliesUnloaded(object? sender, EventArgs? e)
+        {
+            lock (_lock)
+            {
+                ClearGroups();
+                graph.Clear();
+            }
+        }
 
         public void Awake(Scene scene)
         {
-            scene.QueryManager.AddQuery(components);
-
-            components.OnAdded += OnAdded;
-            components.OnRemoved -= OnRemoved;
-
-            for (int i = 0; i < components.Count; i++)
+            lock (_lock)
             {
-                scripts.Add(components[i]);
-                components[i].ScriptCreate();
+                ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
+                ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
+
+                scene.QueryManager.AddQuery(components);
+
+                for (int i = 0; i < components.Count; i++)
+                {
+                    components[i].ScriptCreate();
+                }
+
+                for (int i = 0; i < components.Count; i++)
+                {
+                    components[i].ScriptLoad();
+                }
+
+                UpdateGraphInternal();
+
+                components.OnAdded += OnAdded;
+                components.OnRemoved += OnRemoved;
+
+                if (Application.InEditMode)
+                {
+                    return;
+                }
+
+                awaked = true;
+
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    groups[i].ExecuteAwake();
+                }
+            }
+        }
+
+        public void UpdateGraph()
+        {
+            lock (_lock)
+            {
+                UpdateGraphInternal();
+            }
+        }
+
+        private void UpdateGraphInternal()
+        {
+            ClearGroups();
+
+            graph.Clear();
+
+            IList<Type> types = ScriptAssemblyManager.GetAssignableTypes<ScriptBehaviour>();
+            foreach (var item in types)
+            {
+                graph.AddNode(item);
+            }
+
+            graph.Build();
+
+            var nodeGroups = graph.GroupNodesForParallelExecution();
+
+            for (int i = 0; i < nodeGroups.Count; i++)
+            {
+                var nodeGroup = nodeGroups[i];
+                bool runInParallel = nodeGroup[0].RunInParallel;
+                ScriptGroup group = new(nodeGroup, runInParallel);
+                groups.Add(group);
             }
 
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].ScriptLoad();
+                AddToGroup(components[i]);
             }
+        }
 
-            if (Application.InEditMode)
+        private void ClearGroups()
+        {
+            for (int i = 0; i < groups.Count; i++)
             {
-                return;
+                groups[i].Clear();
             }
 
-            awaked = true;
-
-            var scriptList = scripts[ScriptFlags.Awake];
-            for (int i = 0; i < scriptList.Count; i++)
-            {
-                scriptList[i].ScriptAwake();
-            }
+            groups.Clear();
         }
 
         private void OnRemoved(GameObject gameObject, IScriptComponent component)
         {
-            scripts.Remove(component);
+            lock (_lock)
+            {
+                RemoveFromGroup(component);
+            }
 
             if (Application.InEditMode || !awaked)
             {
@@ -102,7 +140,10 @@
 
         private void OnAdded(GameObject gameObject, IScriptComponent component)
         {
-            scripts.Add(component);
+            lock (_lock)
+            {
+                AddToGroup(component);
+            }
 
             if (Application.InEditMode || !awaked)
             {
@@ -118,24 +159,56 @@
             }
         }
 
+        private void AddToGroup(IScriptComponent component)
+        {
+            for (int i = 0; i < groups.Count; i++)
+            {
+                if (groups[i].AddInstance(component))
+                {
+                    break;
+                }
+            }
+        }
+
+        private void RemoveFromGroup(IScriptComponent component)
+        {
+            for (int i = 0; i < groups.Count; i++)
+            {
+                if (groups[i].RemoveInstance(component))
+                {
+                    break;
+                }
+            }
+        }
+
         public void Destroy()
         {
-            components.OnAdded -= OnAdded;
-            components.OnRemoved -= OnRemoved;
-
-            components.Dispose();
-
-            if (Application.InEditMode)
+            lock (_lock)
             {
-                return;
-            }
+                ScriptAssemblyManager.AssemblyLoaded -= AssemblyLoaded;
+                ScriptAssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
 
-            awaked = false;
+                graph.Clear();
 
-            var scriptList = scripts[ScriptFlags.Destroy];
-            for (int i = 0; i < scriptList.Count; i++)
-            {
-                scriptList[i].Destroy();
+                components.OnAdded -= OnAdded;
+                components.OnRemoved -= OnRemoved;
+
+                components.Dispose();
+
+                if (Application.InEditMode)
+                {
+                    ClearGroups();
+                    return;
+                }
+
+                awaked = false;
+
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    groups[i].ExecuteDestroy();
+                }
+
+                ClearGroups();
             }
         }
 
@@ -146,10 +219,12 @@
                 return;
             }
 
-            var scriptList = scripts[ScriptFlags.Update];
-            for (int i = 0; i < scriptList.Count; i++)
+            lock (_lock)
             {
-                scriptList[i].Update();
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    groups[i].ExecuteUpdate();
+                }
             }
         }
 
@@ -160,10 +235,12 @@
                 return;
             }
 
-            var scriptList = scripts[ScriptFlags.FixedUpdate];
-            for (int i = 0; i < scriptList.Count; i++)
+            lock (_lock)
             {
-                scriptList[i].FixedUpdate();
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    groups[i].ExecuteFixedUpdate();
+                }
             }
         }
     }

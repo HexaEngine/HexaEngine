@@ -3,42 +3,33 @@
     using HexaEngine.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     public class ScriptNode : INode
     {
         private readonly List<ScriptNode> dependencies = [];
         private readonly List<ScriptNode> dependants = [];
         private readonly ScriptDependencyBuilder builder;
-        private readonly ScriptComponent? script;
-        private readonly ScriptFlags flags;
         private readonly Type scriptType;
 
-        public ScriptNode(ScriptComponent script, ScriptTypeRegistry registry)
-        {
-            this.script = script;
-            flags = script.Flags;
-
-            builder = new(this, registry);
-        }
-
-        public ScriptNode(Type scriptType, ScriptFlags flags, ScriptTypeRegistry registry)
+        public ScriptNode(Type scriptType, ScriptTypeRegistry registry)
         {
             builder = new(this, registry);
             this.scriptType = scriptType;
-            this.flags = flags;
+            RunInParallel = scriptType.GetCustomAttribute<ScriptRunInParallelAttribute>() != null;
         }
 
-        public ScriptComponent? Script => script;
-
-        public Type ScriptType => script?.ScriptType ?? scriptType;
-
-        public ScriptFlags Flags => flags;
+        public Type ScriptType => scriptType;
 
         List<INode> INode.Dependencies => dependencies.Cast<INode>().ToList();
 
         public List<ScriptNode> Dependencies => dependencies;
 
         public List<ScriptNode> Dependants => dependants;
+
+        public int Depth { get; internal set; }
+
+        public bool RunInParallel { get; }
 
         public ScriptDependencyBuilder Builder => builder;
 

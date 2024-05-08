@@ -30,7 +30,6 @@
         private string name = string.Empty;
         private string? fullName;
 
-        private GCHandle gcHandle;
         private object? tag;
 
         private readonly EventHandlers<GameObject, bool> enabledChangedList = new();

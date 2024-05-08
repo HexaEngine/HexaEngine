@@ -9,7 +9,7 @@
     /// Represents a Volume in 3D space and controls post-processing and weather effects.
     /// </summary>
     [EditorGameObject<Volume>("Volume")]
-    public class Volume : GameObject
+    public class Volume : GameObject, IVolume
     {
         /// <summary>
         /// Gets or sets the Volume mode.
@@ -20,6 +20,16 @@
         /// Gets or sets the Volume shape.
         /// </summary>
         public VolumeShape Shape { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Volume transition mode.
+        /// </summary>
+        public VolumeTransitionMode TransitionMode { get; set; }
+
+        /// <summary>
+        /// The volume transition duration in milliseconds.
+        /// </summary>
+        public int TransitionDuration { get; set; } = 1000;
 
         /// <summary>
         /// Gets or sets the bounding box of the Volume.
@@ -33,17 +43,24 @@
 
         public PostFxSettingsContainer Container { get; } = new();
 
-        public override void Initialize()
+        void IVolume.Init(PostProcessingManager manager)
         {
-            base.Initialize();
-            PostProcessingManager postManager = PostProcessingManager.Current ?? throw new();
-            Container.Build(postManager.Effects);
-            if (Mode == VolumeMode.Global)
+            Container.Build(manager.Effects);
+        }
+
+        void IVolume.Apply(PostProcessingManager manager)
+        {
+            using (manager.SupressReload())
             {
-                using (postManager.SupressReload())
-                {
-                    Container.Apply(postManager.Effects);
-                }
+                Container.Apply(manager.Effects);
+            }
+        }
+
+        void IVolume.Apply(PostProcessingManager manager, IVolume baseVolume, float blend, VolumeTransitionMode mode)
+        {
+            using (manager.SupressReload())
+            {
+                Container.Apply(manager.Effects, baseVolume.Container, blend, mode);
             }
         }
     }

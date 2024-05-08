@@ -5,11 +5,11 @@
 
     public class ProxyBase : IProxy
     {
-        private readonly List<PropertyInfo> properties = [];
-        private readonly Dictionary<string, object?> propertyData = [];
+        protected readonly List<PropertyInfo> properties = [];
+        protected readonly Dictionary<string, object?> propertyData = [];
 
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-        private Type? targetType;
+        protected Type? targetType;
 
         public ProxyBase(object target)
         {

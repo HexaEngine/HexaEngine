@@ -79,5 +79,5 @@ float4 main(VertexOut pin) : SV_TARGET
 	float3 L0 = sunColor * brightness * sunIntensity;
 	float3 finalColor = skyLuminance + L0;
 
-	return float4(finalColor, 1.0);
+	return float4(finalColor, 0.0);
 }

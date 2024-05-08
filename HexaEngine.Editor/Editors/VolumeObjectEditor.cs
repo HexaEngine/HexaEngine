@@ -7,6 +7,7 @@
     using HexaEngine.PostFx;
     using HexaEngine.Volumes;
     using System;
+    using System.Numerics;
     using System.Reflection;
 
     public class VolumeObjectEditor : IObjectEditor
@@ -70,11 +71,42 @@
             switch (shape)
             {
                 case VolumeShape.Box:
-
+                    Vector3 min = volume.BoundingBox.Min;
+                    Vector3 max = volume.BoundingBox.Max;
+                    if (ImGui.InputFloat3("Min", ref min))
+                    {
+                        volume.BoundingBox = new(min, max);
+                    }
+                    if (ImGui.InputFloat3("Max", ref max))
+                    {
+                        volume.BoundingBox = new(min, max);
+                    }
                     break;
 
                 case VolumeShape.Sphere:
+                    Vector3 center = volume.BoundingSphere.Center;
+                    float radius = volume.BoundingSphere.Radius;
+                    if (ImGui.InputFloat3("Center", ref center))
+                    {
+                        volume.BoundingSphere = new(center, radius);
+                    }
+                    if (ImGui.InputFloat("Radius", ref radius))
+                    {
+                        volume.BoundingSphere = new(center, radius);
+                    }
                     break;
+            }
+
+            VolumeTransitionMode transitionMode = volume.TransitionMode;
+            if (ComboEnumHelper<VolumeTransitionMode>.Combo("Transition Mode", ref transitionMode))
+            {
+                volume.TransitionMode = transitionMode;
+            }
+
+            int transitionDuration = volume.TransitionDuration;
+            if (ImGui.InputInt("Transition Duration", ref transitionDuration))
+            {
+                volume.TransitionDuration = transitionDuration;
             }
 
             ImGui.TableNextRow();
@@ -179,7 +211,7 @@
 
             if ((effect.Flags & (PostFxFlags.AlwaysEnabled | PostFxFlags.Optional)) == 0)
             {
-                bool enabled = effect.Enabled;
+                bool enabled = proxy.Enabled;
                 if (ImGui.Checkbox($"{effect.DisplayName.Id}Enable", ref enabled))
                 {
                     effect.Enabled = enabled;

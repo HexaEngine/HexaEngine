@@ -2,10 +2,13 @@
 {
     using HexaEngine.Core.Extensions;
     using HexaEngine.Scenes;
+    using Silk.NET.Vulkan;
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
 
     public interface IHasFlags<T> where T : Enum
     {
@@ -17,7 +20,7 @@
         public event Action<IHasFlags<T>, T>? FlagsChanged;
     }
 
-    public class FlaggedList<TFlags, TItem> : IList<TItem>, IDictionary<TFlags, IList<TItem>> where TFlags : unmanaged, Enum where TItem : IHasFlags<TFlags>
+    public class FlaggedList<TFlags, TItem> : IList<TItem>, IDictionary<TFlags, IList<TItem>>, IReadOnlyDictionary<TFlags, IList<TItem>> where TFlags : unmanaged, Enum where TItem : IHasFlags<TFlags>
     {
         private readonly Dictionary<TFlags, IList<TItem>> lists = new();
         private readonly List<TItem> values = new();
@@ -42,6 +45,10 @@
         public ICollection<TFlags> Keys => lists.Keys;
 
         public ICollection<IList<TItem>> Values => lists.Values;
+
+        IEnumerable<TFlags> IReadOnlyDictionary<TFlags, IList<TItem>>.Keys => lists.Keys;
+
+        IEnumerable<IList<TItem>> IReadOnlyDictionary<TFlags, IList<TItem>>.Values => lists.Values;
 
         public IList<TItem> this[TFlags index]
         {
@@ -259,6 +266,38 @@
         IEnumerator<KeyValuePair<TFlags, IList<TItem>>> IEnumerable<KeyValuePair<TFlags, IList<TItem>>>.GetEnumerator()
         {
             return ((IDictionary<TFlags, IList<TItem>>)lists).GetEnumerator();
+        }
+
+        public void Sort(IComparer<TItem>? comparer)
+        {
+            for (int i = 0; i < flags.Length; i++)
+            {
+                ((List<TItem>)lists[flags[i]]).Sort(comparer);
+            }
+        }
+
+        public void Sort(Comparison<TItem> comparison)
+        {
+            for (int i = 0; i < flags.Length; i++)
+            {
+                ((List<TItem>)lists[flags[i]]).Sort(comparison);
+            }
+        }
+
+        public void Sort(int index, int count, IComparer<TItem>? comparer)
+        {
+            for (int i = 0; i < flags.Length; i++)
+            {
+                ((List<TItem>)lists[flags[i]]).Sort(index, count, comparer);
+            }
+        }
+
+        public void Sort()
+        {
+            for (int i = 0; i < flags.Length; i++)
+            {
+                ((List<TItem>)lists[flags[i]]).Sort();
+            }
         }
     }
 }

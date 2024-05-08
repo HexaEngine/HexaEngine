@@ -63,6 +63,14 @@
             }
         }
 
+        public void Apply(IReadOnlyList<IPostFx> effects, PostFxSettingsContainer baseContainer, float blend, VolumeTransitionMode mode)
+        {
+            foreach (var effect in effects)
+            {
+                proxiesDictionary[effect].Apply(effect, baseContainer.proxiesDictionary[effect], blend, mode);
+            }
+        }
+
         public void Clear()
         {
             proxies.Clear();

@@ -125,7 +125,7 @@
                 return;
             }
 
-            Array.Copy(layers, index + 1, layers, index, count - index);
+            Array.Copy(layers, index + 1, layers, index, count - index - 1);
             count--;
             return;
         }

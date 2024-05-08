@@ -414,7 +414,7 @@
         /// </summary>
         /// <param name="description">The <see cref="TextureFileDescription"/> used to create the texture.</param>
         /// <returns>A task that represents the asynchronous operation and contains the created <see cref="Texture2D"/>.</returns>
-        [Obsolete("")]
+        [Obsolete("For legacy code, don't use.")]
         public static Task<Texture2D> CreateTextureAsync(TextureFileDescription description)
         {
             return Task.Factory.StartNew((object state) =>

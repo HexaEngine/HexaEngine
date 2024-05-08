@@ -75,5 +75,10 @@
         {
             // nothing to dispose.
         }
+
+        public void ResetSettings()
+        {
+            // nothing to do.
+        }
     }
 }

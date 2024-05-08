@@ -28,6 +28,9 @@
 
     public interface IScriptComponent : IComponent, INotifyFlagsChanged<ScriptFlags>
     {
+        int ExecutionOrderIndex { get; set; }
+        Type? ScriptType { get; }
+
         void ScriptCreate();
 
         void ScriptLoad();

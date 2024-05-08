@@ -98,12 +98,12 @@
 
         private void Load()
         {
-            if (Platform.AppConfig == null || !Platform.AppConfig.Variables.TryGetValue("InputMap", out var xml))
+            if (Platform.AppConfig == null)
             {
                 return;
             }
 
-            inputMap = InputMap.LoadFromText(xml);
+            inputMap = Platform.AppConfig.InputMap;
         }
 
         private void Save()
@@ -113,7 +113,6 @@
                 return;
             }
 
-            Platform.AppConfig.Variables["InputMap"] = inputMap.SaveAsText();
             Platform.AppConfig.Save();
         }
 
@@ -183,10 +182,6 @@
                 unsavedChanges = true;
                 currentAxis = null;
                 return;
-            }
-
-            {
-                //  AxisContextMenu(axisName, currentAxis);
             }
 
             ImGui.SeparatorText("Bindings");

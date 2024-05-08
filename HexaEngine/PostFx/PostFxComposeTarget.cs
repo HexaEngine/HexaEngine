@@ -85,5 +85,10 @@
         public void Dispose()
         {
         }
+
+        public void ResetSettings()
+        {
+            // nothing to do.
+        }
     }
 }

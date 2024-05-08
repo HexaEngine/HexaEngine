@@ -50,6 +50,8 @@
             set => guid = value;
         }
 
+        public bool Enabled { get; set; }
+
         [JsonIgnore]
         public bool IsSerializable { get; } = true;
 
@@ -160,6 +162,9 @@
 
         [JsonIgnore]
         public Type? ScriptType => scriptType;
+
+        [JsonIgnore]
+        public int ExecutionOrderIndex { get; set; }
 
         public event Action<IHasFlags<ScriptFlags>, ScriptFlags>? FlagsChanged;
 

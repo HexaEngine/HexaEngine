@@ -321,6 +321,17 @@
             }
         }
 
+        public void ResetSettings()
+        {
+            using (SupressReload())
+            {
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    effects[i].ResetSettings();
+                }
+            }
+        }
+
         public void Invalidate()
         {
             for (int i = 0; i < groups.Count; i++)
@@ -568,36 +579,33 @@
                 return;
             }
 
-            lock (_lock)
+            postContext.Clear(context);
+
+            if (isDirty)
             {
-                postContext.Clear(context);
-
-                if (isDirty)
-                {
-                    postContext.Reset();
-                    for (int i = 0; i < groups.Count; i++)
-                    {
-                        groups[i].SetupInputOutputs(postContext);
-                    }
-                    isDirty = false;
-                }
-
-                for (int i = 0; i < activeEffects.Count; i++)
-                {
-                    var effect = activeEffects[i];
-                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
-                    {
-                        continue;
-                    }
-                    profiler?.Begin(effect.Name);
-                    effect.Update(context);
-                    profiler?.End(effect.Name);
-                }
-
+                postContext.Reset();
                 for (int i = 0; i < groups.Count; i++)
                 {
-                    groups[i].Execute(context, deferredContext, creator);
+                    groups[i].SetupInputOutputs(postContext);
                 }
+                isDirty = false;
+            }
+
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                var effect = activeEffects[i];
+                if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0 || (effect.Flags & PostFxFlags.ComposeTarget) != 0)
+                {
+                    continue;
+                }
+                profiler?.Begin(effect.Name);
+                effect.Update(context);
+                profiler?.End(effect.Name);
+            }
+
+            for (int i = 0; i < groups.Count; i++)
+            {
+                groups[i].Execute(context, deferredContext, creator);
             }
         }
 

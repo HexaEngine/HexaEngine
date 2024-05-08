@@ -2,22 +2,22 @@
 {
     using HexaEngine.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
 
     public class ScriptGraph
     {
-        private readonly List<ScriptNode> nodes = new();
-        private readonly Dictionary<ScriptComponent, ScriptNode> scriptToNode = new();
-        private readonly ScriptNode root;
+        private readonly List<ScriptNode> nodes = [];
+        private readonly List<ScriptNode> sorted = [];
+        private readonly Dictionary<Type, ScriptNode> scriptToNode = [];
         private readonly ScriptTypeRegistry scriptTypeRegistry = new();
         private readonly TopologicalSorter<ScriptNode> sorter = new();
 
         public ScriptGraph()
         {
-            root = new ScriptNode(typeof(ScriptRoot), ScriptFlags.Awake | ScriptFlags.Destroy | ScriptFlags.Update | ScriptFlags.FixedUpdate, scriptTypeRegistry);
-            nodes.Add(root);
         }
 
-        public void AddNode(ScriptComponent script)
+        public void AddNode(Type script)
         {
             ScriptNode node = new(script, scriptTypeRegistry);
             nodes.Add(node);
@@ -25,7 +25,7 @@
             scriptTypeRegistry.Add(script, node);
         }
 
-        public bool RemoveNode(ScriptComponent script)
+        public bool RemoveNode(Type script)
         {
             if (!scriptToNode.TryGetValue(script, out var node))
             {
@@ -40,7 +40,6 @@
 
         public void Clear()
         {
-            root.Reset();
             for (int i = 0; i < nodes.Count; i++)
             {
                 nodes[i].Reset();
@@ -49,17 +48,59 @@
             scriptTypeRegistry.Clear();
             nodes.Clear();
             scriptToNode.Clear();
-            nodes.Add(root);
         }
 
-        public void Build(IList<ScriptComponent> scriptsSorted, ScriptFlags stage)
+        public List<List<ScriptNode>> GroupNodesForParallelExecution()
+        {
+            var depthGroups = nodes.GroupBy(node => (node.Depth, node.RunInParallel)).OrderBy(group => group.Key.Depth);
+            var parallelNodeLists = depthGroups.Select(group => group.ToList()).ToList();
+            return parallelNodeLists;
+        }
+
+        private void CalculateDepths()
+        {
+            var visited = new HashSet<ScriptNode>();
+            foreach (var node in nodes)
+            {
+                CalculateDepth(node, visited);
+            }
+        }
+
+        private static void CalculateDepth(ScriptNode node, HashSet<ScriptNode> visited)
+        {
+            if (visited.Contains(node))
+                return;
+
+            visited.Add(node);
+
+            if (node.Dependencies.Count == 0)
+            {
+                node.Depth = 0;
+            }
+            else
+            {
+                foreach (var dependency in node.Dependencies)
+                {
+                    CalculateDepth(dependency, visited);
+                    node.Depth = Math.Max(node.Depth, dependency.Depth + 1);
+                }
+            }
+        }
+
+        public void Build()
         {
             for (int i = 0; i < nodes.Count; i++)
             {
                 ScriptNode node = nodes[i];
-                node.Builder.Dependencies.Add(root.ScriptType); // prevent nodes from being culled away by topological sort.
-                node.Builder.Build(nodes, stage);
+
+                node.Builder.Build(nodes);
             }
+
+            sorted.Clear();
+
+            sorter.TopologicalSort(nodes, sorted);
+
+            CalculateDepths();
         }
     }
 }

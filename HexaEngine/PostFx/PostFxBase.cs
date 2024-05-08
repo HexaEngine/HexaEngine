@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Mathematics;
@@ -18,6 +19,7 @@
     {
         private bool initialized = false;
         private bool enabled = false;
+        private readonly ProxyBase proxy;
 
         /// <summary>
         /// Indicates whether the post-processing effect is dirty and needs an update.
@@ -50,6 +52,11 @@
         protected Viewport Viewport;
 
         private ImGuiName? displayName;
+
+        public PostFxBase()
+        {
+            proxy = new(this);
+        }
 
         /// <inheritdoc/>
         public abstract string Name { get; }
@@ -261,6 +268,11 @@
         private string GetDebuggerDisplay()
         {
             return $"{Name}, {(Initialized ? "I" : "")}{(Enabled ? "E" : "")}{(dirty ? "D" : "")}, {Flags}";
+        }
+
+        public virtual void ResetSettings()
+        {
+            proxy.Apply(this);
         }
     }
 }

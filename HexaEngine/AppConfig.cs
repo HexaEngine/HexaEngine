@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine
 {
+    using HexaEngine.Input;
     using System.Xml;
     using System.Xml.Schema;
     using System.Xml.Serialization;
@@ -21,6 +22,8 @@
         public string ScriptAssembly { get; set; } = "";
 
         public Dictionary<string, string> Variables { get; set; } = [];
+
+        public InputMap InputMap { get; set; } = new();
 
         public XmlSchema? GetSchema()
         {
@@ -46,6 +49,14 @@
                 if (reader.MoveToContent() == XmlNodeType.Element)
                 {
                     string key = reader.Name;
+
+                    if (key == "InputMap" && string.IsNullOrEmpty(reader.Value))
+                    {
+                        InputMap.ReadXml(reader);
+
+                        continue;
+                    }
+
                     string value = reader.ReadElementContentAsString();
                     Variables.Add(key, value);
                     reader.ReadEndElement();
@@ -70,6 +81,8 @@
             {
                 writer.WriteAttributeString("ScriptAssembly", ScriptAssembly);
             }
+
+            InputMap.WriteXml(writer);
 
             foreach (var kvp in Variables)
             {
