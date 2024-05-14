@@ -3,10 +3,101 @@
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
+    using System.Globalization;
+    using System.Xml;
+    using System.Xml.Schema;
+    using System.Xml.Serialization;
+
+    public struct LODLevel : IXmlSerializable
+    {
+        public int LODIndex;
+        public float MaxDistance;
+
+        public readonly XmlSchema? GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+            reader.ReadStartElement("LODLevel");
+
+            string? lodIndex = reader.GetAttribute("LODIndex");
+            if (lodIndex != null)
+            {
+                LODIndex = int.Parse(lodIndex);
+            }
+            string? maxDistance = reader.GetAttribute("MaxDistance");
+            if (maxDistance != null)
+            {
+                MaxDistance = float.Parse(maxDistance, NumberStyles.Any, CultureInfo.InvariantCulture);
+            }
+
+            reader.ReadEndElement();
+        }
+
+        public readonly void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("LODLevel");
+            writer.WriteAttributeString("LODIndex", LODIndex.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("MaxDistance", MaxDistance.ToString(CultureInfo.InvariantCulture));
+            writer.WriteEndAttribute();
+        }
+    }
+
+    public struct LODGroupDesc : IXmlSerializable
+    {
+        public Guid Guid { get; set; }
+
+        public string Name { get; set; }
+
+        public LODFadeMode FadeMode { get; set; }
+
+        public readonly XmlSchema? GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+            reader.ReadStartElement("LODGroup");
+            string? guid = reader.GetAttribute("Guid");
+            if (guid != null)
+            {
+                Guid = new Guid(guid);
+            }
+            string? name = reader.GetAttribute("Name");
+            if (name != null)
+            {
+                Name = name;
+            }
+            string? fadeMode = reader.GetAttribute("FadeMode");
+            if (fadeMode != null)
+            {
+                FadeMode = Enum.Parse<LODFadeMode>(fadeMode);
+            }
+            reader.ReadEndElement();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class LODConfig
+    {
+        public List<LODLevel> Levels { get; } = [];
+
+        public List<LODGroupDesc> Groups { get; } = [];
+    }
 
     public class LODSystem : ISceneSystem
     {
         private readonly ComponentTypeQuery<ILODRendererComponent> lodRenderers = new();
+        private readonly List<LODLevel> lodLevels = [];
 
         public string Name { get; } = "LOD System";
 
@@ -14,13 +105,24 @@
 
         public float LODBias { get; set; }
 
+        public int UpdatesPerSecond
+        {
+            get => updatesPerSecond;
+            set
+            {
+                updatesPerSecond = value;
+                updateDelta = 1 / value;
+            }
+        }
+
         public void Awake(Scene scene)
         {
             scene.QueryManager.AddQuery(lodRenderers);
         }
 
-        private readonly float accumulationThreshold = 1;
         private float accumulator;
+        private int updatesPerSecond = 20;
+        private float updateDelta;
 
         public void Update(float delta)
         {
@@ -33,11 +135,12 @@
 
             accumulator += delta;
 
-            if (accumulator < accumulationThreshold)
+            if (accumulator < updateDelta)
             {
                 return;
             }
-            accumulator -= accumulationThreshold;
+
+            accumulator -= updateDelta;
 
             var cameraPosition = camera.Transform.GlobalPosition;
 

@@ -117,6 +117,44 @@
             };
         }
 
+        /// <summary>
+        /// Checks the content of a file, used for updating file formats.
+        /// </summary>
+        /// <param name="artifact">The path to the asset.</param>
+        /// <returns><c>true</c> if content needs to be reimported/updated, otherwise <c>false</c>.</returns>
+        public bool RefreshContent(Artifact artifact)
+        {
+            Stream? stream = null;
+
+            if (artifact.Type != AssetType.Model)
+            {
+                return false;
+            }
+
+            try
+            {
+                stream = System.IO.File.OpenRead(artifact.Path);
+
+                ModelHeader header = default;
+                if (!header.TryRead(stream))
+                {
+                    return true; // indicates corruption needs reimport.
+                }
+
+                return header.FileVersion != ModelHeader.Version; // if the file format is not up-to-date a update is needed.
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
+            finally
+            {
+                stream?.Close();
+            }
+
+            return false;
+        }
+
         public unsafe void Import(TargetPlatform targetPlatform, ImportContext context)
         {
             ModelImporterSettings settings = context.GetOrCreateAdditionalMetadata<ModelImporterSettings>(SettingsKey);
@@ -940,7 +978,7 @@
                 {
                     try
                     {
-                        ModelFile modelFile = new(string.Empty, meshes, root);
+                        ModelFile modelFile = new(meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
                         modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
                         progressContext.AddProgress();

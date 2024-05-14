@@ -18,17 +18,22 @@
         /// <summary>
         /// Current version of the model file format.
         /// </summary>
-        public static readonly Version Version = 11;
+        public static readonly Version Version = new(11, 0, 0, 1);
 
         /// <summary>
         /// Minimum supported version of the model file format.
         /// </summary>
-        public static readonly Version MinVersion = 11;
+        public static readonly Version MinVersion = new(11, 0, 0, 0);
 
         /// <summary>
         /// Endianness of the data in the file.
         /// </summary>
         public Endianness Endianness;
+
+        /// <summary>
+        /// The file format version of the current file.
+        /// </summary>
+        public Version FileVersion;
 
         /// <summary>
         /// Text encoding used in the file.
@@ -41,8 +46,14 @@
         public Compression Compression;
 
         /// <summary>
+        /// Model file flags.
+        /// </summary>
+        public ModelFlags ModelFlags;
+
+        /// <summary>
         /// Name of the material library associated with the model.
         /// </summary>
+        [Obsolete("Not longer available after Version 11.0.0.1")]
         public string MaterialLibrary;
 
         /// <summary>
@@ -74,13 +85,65 @@
                 throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }
 
+            FileVersion = version;
+
             Encoding = Encoding.GetEncoding(stream.ReadInt32(Endianness));
             Compression = (Compression)stream.ReadInt32(Endianness);
-            MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+
+            if (version == new Version(11, 0, 0, 0))
+            {
+                MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+            }
+            else if (version == Version)
+            {
+                ModelFlags = (ModelFlags)stream.ReadInt32(Endianness);
+            }
+
             MeshCount = stream.ReadUInt64(Endianness);
 
             // Set the content start position
             ContentStart = (ulong)stream.Position;
+        }
+
+        /// <summary>
+        /// Reads the header information from a stream.
+        /// </summary>
+        /// <param name="stream">The stream containing the model file data.</param>
+        public bool TryRead(Stream stream)
+        {
+            // Check for the magic number to ensure correct file format
+            if (!stream.Compare(MagicNumber))
+            {
+                return false;
+            }
+
+            // Read various properties from the stream
+            Endianness = (Endianness)stream.ReadByte();
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
+            {
+                return false;
+            }
+
+            FileVersion = version;
+
+            Encoding = Encoding.GetEncoding(stream.ReadInt32(Endianness));
+            Compression = (Compression)stream.ReadInt32(Endianness);
+
+            if (version == new Version(11, 0, 0, 0))
+            {
+                MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+            }
+            else if (version == Version)
+            {
+                ModelFlags = (ModelFlags)stream.ReadInt32(Endianness);
+            }
+
+            MeshCount = stream.ReadUInt64(Endianness);
+
+            // Set the content start position
+            ContentStart = (ulong)stream.Position;
+
+            return true;
         }
 
         /// <summary>
@@ -95,7 +158,7 @@
             stream.WriteUInt64(Version, Endianness);
             stream.WriteInt32(Encoding.CodePage, Endianness);
             stream.WriteInt32((int)Compression, Endianness);
-            stream.WriteString(MaterialLibrary, Encoding, Endianness);
+            stream.WriteInt32((int)ModelFlags, Endianness);
             stream.WriteUInt64(MeshCount, Endianness);
         }
     }

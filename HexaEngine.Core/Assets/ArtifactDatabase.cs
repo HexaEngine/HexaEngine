@@ -88,6 +88,42 @@
             initLock.Set();
         }
 
+        public static void RefreshContent()
+        {
+            lock (_lock)
+            {
+                HashSet<Guid> refreshed = [];
+                for (int i = 0; i < artifacts.Count; i++)
+                {
+                    var artifact = artifacts[i];
+
+                    var source = artifact.GetSourceMetadata();
+
+                    if (source == null || refreshed.Contains(source.Guid))
+                    {
+                        continue;
+                    }
+
+                    refreshed.Add(source.Guid);
+
+                    try
+                    {
+                        IAssetImporter importer = AssetImporterRegistry.GetImporterForFile(Path.GetExtension(source.FilePath.AsSpan()));
+
+                        if (importer.RefreshContent(artifact))
+                        {
+                            SourceAssetsDatabase.UpdateAsync(source, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Failed to refresh content for '{artifact}'");
+                        Logger.Log(ex);
+                    }
+                }
+            }
+        }
+
         private static readonly byte[] MagicNumber = [0x54, 0x72, 0x61, 0x6E, 0x73, 0x41, 0x73, 0x73, 0x65, 0x74, 0x44, 0x42, 0x00];
         private static readonly Version Version = new(1, 0, 0, 0);
         private static readonly Version MinVersion = new(1, 0, 0, 0);

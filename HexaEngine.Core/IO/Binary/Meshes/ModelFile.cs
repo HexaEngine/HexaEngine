@@ -23,18 +23,16 @@
             header = default;
 
             root = new("ROOT", Matrix4x4.Identity, NodeFlags.None, null);
-            meshes = new();
+            meshes = [];
         }
 
         /// <summary>
         /// Constructor for creating a model file with specified material library, meshes, and root node.
         /// </summary>
-        /// <param name="materialLibrary">The name of the material library associated with the model.</param>
         /// <param name="meshes">The list of mesh data in the model.</param>
         /// <param name="root">The root node of the model's scene hierarchy.</param>
-        public ModelFile(string materialLibrary, IList<MeshData> meshes, Node root)
+        public ModelFile(IList<MeshData> meshes, Node root)
         {
-            header.MaterialLibrary = materialLibrary;
             header.MeshCount = (ulong)meshes.Count;
             this.meshes = new(meshes);
             this.root = root;
@@ -44,11 +42,6 @@
         /// Gets the header information of the model file.
         /// </summary>
         public ModelHeader Header => header;
-
-        /// <summary>
-        /// Gets or sets the material library associated with the model.
-        /// </summary>
-        public string MaterialLibrary { get => header.MaterialLibrary; set => header.MaterialLibrary = value; }
 
         /// <summary>
         /// Gets the list of mesh data in the model.
@@ -111,7 +104,6 @@
         /// </summary>
         /// <param name="fs">The stream from which the model file will be loaded.</param>
         /// <param name="loadMode"></param>
-        /// <param name="stream"></param>
         /// <returns>The loaded model file.</returns>
         public static ModelFile Load(Stream fs, MeshLoadMode loadMode)
         {

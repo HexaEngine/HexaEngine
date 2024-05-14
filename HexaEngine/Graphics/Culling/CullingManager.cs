@@ -240,6 +240,8 @@
             swapBuffer = null;
             drawIndirectArgs.Dispose();
             drawIndirectArgs = null;
+            visibleListBuffer.Dispose();
+            visibleListBuffer = null;
 
             instanceOffsetsNoCull.Dispose();
             instanceOffsetsNoCull = null;

@@ -183,6 +183,7 @@
                 logger.Info($"Initialized '{path}'");
                 initLock.Set();
                 ArtifactDatabase.Cleanup();
+                ArtifactDatabase.RefreshContent();
             });
         }
 
@@ -320,7 +321,7 @@
             try
             {
                 var crc = FileSystem.GetCrc32HashExtern(file);
-                if (!ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32 || force)
+                if (force || !ArtifactDatabase.IsImported(asset.Guid) || crc != asset.CRC32)
                 {
                     var artifacts = ArtifactDatabase.GetArtifactsForSource(asset.Guid).ToList();
                     await ImportInternalAsync(null, file, asset, artifacts, null, null);
