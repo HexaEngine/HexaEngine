@@ -20,7 +20,7 @@
         /// <summary>
         /// Gets the file log writer used for crash logging.
         /// </summary>
-        public static readonly FileLogWriter FileLogWriter = new("logs");
+        public static readonly LogFileWriter FileLogWriter = new("logs");
 
 #nullable disable
         private static HardwareInfo info;

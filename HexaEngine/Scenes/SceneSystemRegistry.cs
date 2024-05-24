@@ -6,6 +6,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Input;
     using HexaEngine.Lights;
+    using HexaEngine.Network;
     using HexaEngine.Physics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
@@ -22,7 +23,9 @@
 
         static SceneSystemRegistry()
         {
-            descriptors.AddSingleton(Application.GraphicsDevice);
+            bool graphicsDisabled = Application.GraphicsDisabled;
+            if (!graphicsDisabled)
+                descriptors.AddSingleton(Application.GraphicsDevice);
             descriptors.AddSingleton<ModelManager>();
             descriptors.AddSingleton<MaterialManager>();
             descriptors.AddSingleton<DrawLayerManager>();
@@ -31,16 +34,21 @@
             Register<QuerySystem>();
             Register<TransformSystem>();
             Register<InputSystem>();
+            Register<NetworkSystem>();
             Register<AudioSystem>();
             Register<AnimationSystem>();
             Register<ScriptManager>();
-            Register<LightManager>();
+            if (!graphicsDisabled)
+                Register<LightManager>();
             Register<PhysicsSystem>();
-            Register<RenderManager>();
+            if (!graphicsDisabled)
+                Register<RenderManager>();
             Register<WeatherSystem>();
             Register<ObjectPickerManager>();
-            Register<LODSystem>();
-            Register<VolumeSystem>();
+            if (!graphicsDisabled)
+                Register<LODSystem>();
+            if (!graphicsDisabled)
+                Register<VolumeSystem>();
             Register<CoroutineSystem>();
         }
 

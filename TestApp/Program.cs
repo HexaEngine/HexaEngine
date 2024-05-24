@@ -1,180 +1,119 @@
 ﻿namespace TestApp
 {
-    using HexaEngine.Core.Extensions;
+    using HexaEngine;
+    using HexaEngine.Core;
+    using HexaEngine.Core.Audio;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Binary.Terrains;
+    using HexaEngine.Network;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scripts;
     using System;
-    using System.Buffers.Binary;
-    using System.Diagnostics;
-    using System.Numerics;
-    using System.Runtime.InteropServices;
-
-    public static unsafe class StringExtensions
-    {
-        public static void ReverseString(this string s)
-        {
-            fixed (char* pStr = s)
-            {
-                char* pChar = pStr;
-                char* pStrEnd = pStr + s.Length - 1;
-                while (pChar < pStrEnd)
-                {
-                    (*pStrEnd, *pChar) = (*pChar, *pStrEnd);
-
-                    pChar++;
-                    pStrEnd--;
-                }
-            }
-        }
-    }
+    using System.Net;
 
     public static unsafe partial class Program
     {
+        private sealed class ConsoleLogWriter : ILogWriter
+        {
+            public void Clear()
+            {
+                Console.Clear();
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public void Flush()
+            {
+            }
+
+            public void Write(string message)
+            {
+                Console.Write(message);
+            }
+
+            public Task WriteAsync(string message)
+            {
+                Console.Write(message);
+                return Task.CompletedTask;
+            }
+        }
+
         public static void Main()
         {
-            FileStream fs = File.OpenRead("Terrain.terrain");
+            Console.WriteLine("Starting Server ...");
 
-            TerrainFile file = TerrainFile.Load(fs, TerrainLoadMode.Streaming);
-            LayerBlendMask? blendMask = null;
+            // Init in headless mode.
+            Application.Boot(GraphicsBackend.Disabled, AudioBackend.Disabled);
+            Platform.Init(false);
 
-            // extract a blend mask.
-            for (int i = 0; i < file.LayerGroups.Count; i++)
+            // dummy call.
+            ScriptAssemblyManager.SetInvalid(true);
+
+            Scene scene = new();
+            IScene scene1 = scene;
+            scene1.Initialize(SceneInitFlags.None);
+
+            using Server server = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+            server.Init();
+
+            bool running = true;
+            Console.CancelKeyPress += (sender, e) =>
             {
-                var group = file.LayerGroups[i];
-                if (group.Count == 1)
-                    continue;
-                blendMask = group.Mask;
-                blendMask.ReadMaskData(fs);
-                break;
-            }
+                e.Cancel = true;
+                running = false;
+            };
 
-            fs.Close();
+            Console.WriteLine("Started Server");
+            Console.WriteLine("Listening to 127.0.0.1:28900");
 
-            if (blendMask == null)
+            List<Client> clients = new();
+
+            LoggerFactory.AddGlobalWriter(new ConsoleLogWriter());
+
+            CrashLogger.Initialize();
+
+            for (int i = 0; i < 1; i++)
             {
-                return;
-            }
-
-            uint sizeRaw = blendMask.Width * blendMask.Height * sizeof(ulong);
-            MemoryStream stream = new();
-
-            for (int i = 0; i < 5000; i++)
-            {
-                stream.Position = 0;
-                Compress(blendMask, stream);
-            }
-
-            List<double> samples = new();
-
-            for (int i = 0; i < 5000; i++)
-            {
-                stream.Position = 0;
-                long begin = Stopwatch.GetTimestamp();
-                Compress(blendMask, stream);
-                long end = Stopwatch.GetTimestamp();
-
-                double delta = (end - begin) / (double)Stopwatch.Frequency;
-                samples.Add(delta);
-            }
-
-            var min = samples.Min();
-            var max = samples.Max();
-            var avg = samples.Average();
-            var stdDev = StandardDeviation(samples);
-
-            Console.WriteLine($"Compression Ratio: {stream.Length / (double)sizeRaw} ({sizeRaw.FormatDataSize()}) ({stream.Length.FormatDataSize()})");
-            Console.WriteLine($"Compression Time: Mean: {avg * 1000}ms, StdDev: {stdDev * 1000}ms, Min: {min * 1000}ms, Max: {max * 1000}ms");
-        }
-
-        public static double StandardDeviation(this List<double> values)
-        {
-            double avg = values.Average();
-            return Math.Sqrt(values.Average(v => Math.Pow(v - avg, 2)));
-        }
-
-        private struct Run
-        {
-            public uint Length;
-            public uint Offset;
-            public ulong Value;
-        }
-
-        private static void Compress(LayerBlendMask mask, Stream stream)
-        {
-            var data = mask.Data;
-
-            long basePosition = stream.Position;
-            stream.Position += 4;
-
-            const int RunBufferSize = 203;
-            Span<Run> buffer = stackalloc Run[RunBufferSize]; // 203 * 10B = 2030B
-            Span<byte> binBuffer = MemoryMarshal.AsBytes(buffer);
-
-            int blocksWritten = 0;
-
-            int bufferIndex = 0;
-
-            Run run = default;
-
-            bool newRun = true;
-
-            for (uint i = 0; i < data.Length; i++)
-            {
-                var value = data[i];
-
-                if (newRun && value != 0)
+                Task.Run(() =>
                 {
-                    run.Value = value;
-                    run.Offset = i;
-                    run.Length++;
-                    newRun = false;
+                    Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+                    client.Init();
+                    lock (clients)
+                    {
+                        clients.Add(client);
+                    }
+                });
+            }
+
+            while (running)
+            {
+                try
+                {
+                    server.Tick();
+                    lock (clients)
+                    {
+                        for (int i = 0; i < clients.Count; i++)
+                        {
+                            clients[i].Tick();
+                        }
+                    }
+
+                    Thread.Sleep(1); // Reduce CPU usage
                 }
-                else if (run.Value == value)
+                catch (Exception ex)
                 {
-                    run.Length++;
-                }
-                else
-                {
-                    buffer[bufferIndex++] = run;
-                    blocksWritten++;
-
-                    if (value != 0)
-                    {
-                        run.Value = value;
-                        run.Offset = i;
-                        run.Length = 1;
-                    }
-                    else
-                    {
-                        newRun = true;
-                    }
-
-                    if (bufferIndex == RunBufferSize)
-                    {
-                        stream.Write(binBuffer);
-                        bufferIndex = 0;
-                    }
+                    // Log the error for debugging purposes
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    // Optionally, you can break the loop or handle it accordingly
                 }
             }
 
-            if (!newRun)
-            {
-                buffer[bufferIndex++] = run;
-                blocksWritten++;
-            }
-
-            if (bufferIndex != 0)
-            {
-                stream.Write(binBuffer[..(bufferIndex * sizeof(Run))]);
-                bufferIndex = 0;
-            }
-
-            long endPosition = stream.Position;
-            stream.Position = basePosition;
-            stream.WriteInt32(blocksWritten, HexaEngine.Mathematics.Endianness.LittleEndian);
-            stream.Position = endPosition;
+            Console.WriteLine("Exiting...");
         }
 
         private static void NewMethod()
@@ -222,45 +161,6 @@
                 }
 
                 reflection.Dispose();
-            }
-        }
-    }
-
-    public unsafe class UniformScale
-    {
-        private Vector4[] vectors = new Vector4[WorkSize];
-
-        public const int WorkSize = 1024;
-
-        public UniformScale()
-        {
-        }
-
-        private struct Particle
-        {
-            public float X, Y, Z, W;
-        }
-
-        public void Baseline()
-        {
-            for (int i = 0; i < WorkSize; i++)
-            {
-                Particle particle = new() { X = i, Y = i, Z = i, W = i };
-                Particle* p = &particle;
-                Vector4* myVec = (Vector4*)p;
-                vectors[i] = *myVec;
-            }
-        }
-
-        public void BitwiseMask()
-        {
-            for (int i = 0; i < WorkSize; i++)
-            {
-                Particle particle = new() { X = i, Y = i, Z = i, W = i };
-                Particle* p = &particle;
-                float* f = (float*)p;
-                Vector4 myVec = new(f[0], f[1], f[2], f[3]);
-                vectors[i] = myVec;
             }
         }
     }

@@ -49,6 +49,7 @@
         private Vector3 skyColor = new(0.53f, 0.81f, 0.92f);
         private Vector3 ambientColor = new(15.0f / 255.0f, 15.0f / 255.0f, 15.0f / 255.0f);
         private Vector2 windDirection = new(10.0f, 10.0f);
+        private Vector4 sunDir;
         private float windSpeed = 15f;
         private float crispiness = 43f;
         private float curliness = 3.6f;
@@ -274,7 +275,7 @@
 
         public SkyType SkyModel { get => skyModel; set => skyModel = value; }
 
-        public Vector4 SunDir => weatherBuffer.Value[0].LightDir;
+        public Vector4 SunDir => sunDir;
 
         /// <summary>
         /// Called when the system is awakened in a scene.
@@ -282,9 +283,10 @@
         /// <param name="scene">The scene where the system is awakened.</param>
         public void Awake(Scene scene)
         {
-#nullable disable // cant be null here unless something terrible happend in the init process.
-            weatherBuffer = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBWeather>("CBWeather");
-#nullable restore
+            if (!Application.GraphicsDisabled)
+            {
+                weatherBuffer = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBWeather>("CBWeather");
+            }
         }
 
         /// <summary>
@@ -318,6 +320,8 @@
                     ambientColor = new Vector3(ambient.Color.X, ambient.Color.Y, ambient.Color.Z) * ambient.Intensity;
                 }
             }
+
+            this.sunDir = weather.LightDir;
 
             weather.SkyColor = new(skyColor, 1);
             weather.AmbientColor = new(ambientColor, 1);
@@ -363,7 +367,7 @@
                 weather.F = skyParams[(int)EnumSkyParams.F];
             }
 
-            weatherBuffer.Value?.Update(context, weather);
+            weatherBuffer?.Value?.Update(context, weather);
             isDirty = false;
         }
     }

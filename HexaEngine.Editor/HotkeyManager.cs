@@ -7,8 +7,8 @@
 
     public static class HotkeyManager
     {
-        private static readonly List<Key> keys = new();
-        private static readonly List<Hotkey> hotkeys = new();
+        private static readonly List<Key> keys = [];
+        private static readonly List<Hotkey> hotkeys = [];
         private const string Filename = "hotkeys.json";
 
         static HotkeyManager()
@@ -75,6 +75,17 @@
             return hotkey != null;
         }
 
+        private static IEnumerable<Hotkey> FindConflicts(Hotkey hotkey)
+        {
+            foreach (Hotkey other in hotkeys)
+            {
+                if (hotkey.IsConflicting(other, false))
+                {
+                    yield return other;
+                }
+            }
+        }
+
         public static Hotkey Register(string name, Action callback)
         {
             lock (hotkeys)
@@ -87,6 +98,11 @@
                 {
                     hotkey = new(name, callback);
                     hotkeys.Add(hotkey);
+
+                    foreach (var conflict in FindConflicts(hotkey))
+                    {
+                        hotkey.AddConflictingHotkey(conflict);
+                    }
                 }
 
                 Save();
@@ -107,6 +123,11 @@
                 {
                     hotkey = new(name, callback, defaults);
                     hotkeys.Add(hotkey);
+
+                    foreach (var conflict in FindConflicts(hotkey))
+                    {
+                        hotkey.AddConflictingHotkey(conflict);
+                    }
                 }
 
                 Save();
@@ -123,6 +144,13 @@
                 if (index == -1)
                 {
                     return;
+                }
+
+                var hotkey = hotkeys[index];
+
+                foreach (var conflict in hotkey.Conflicts)
+                {
+                    hotkey.RemoveConflictingHotkey(conflict);
                 }
 
                 hotkeys.RemoveAt(index);

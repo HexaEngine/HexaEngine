@@ -3,6 +3,7 @@
     using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
 
     public class Hotkey
@@ -10,6 +11,7 @@
         private string? cache;
         private readonly List<Key> keys = new();
         private readonly List<Key> defaults = new();
+        private readonly HashSet<Hotkey> conflicts = new();
         public readonly string Name;
 
         [JsonIgnore]
@@ -17,6 +19,9 @@
 
         [JsonIgnore]
         public Action Callback;
+
+        [JsonIgnore]
+        public HashSet<Hotkey> Conflicts => conflicts;
 
         public List<Key> Keys { get; private set; }
 
@@ -48,8 +53,25 @@
             Keys = new(keys);
         }
 
-        public bool IsConflicting(Hotkey other)
+        public void AddConflictingHotkey(Hotkey hotkey)
         {
+            conflicts.Add(hotkey);
+            hotkey.conflicts.Add(this);
+        }
+
+        public void RemoveConflictingHotkey(Hotkey hotkey)
+        {
+            conflicts.Remove(hotkey);
+            hotkey.conflicts.Remove(this);
+        }
+
+        public bool IsConflicting(Hotkey other, bool useHashSet = true)
+        {
+            if (useHashSet)
+            {
+                return conflicts.Contains(other);
+            }
+
             if (Keys.Count != other.Keys.Count)
             {
                 return false;

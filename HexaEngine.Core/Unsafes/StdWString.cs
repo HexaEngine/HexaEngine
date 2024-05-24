@@ -42,7 +42,7 @@
             var byteCount = Encoding.Unicode.GetByteCount(s) / sizeof(char);
             data = AllocT<char>(byteCount + 1);
             capacity = size = s.Length;
-            Encoding.Unicode.GetBytes(s, new Span<byte>(data, byteCount));
+            Encoding.Unicode.GetBytes(s, new Span<byte>(data, byteCount * sizeof(char)));
             data[size] = '\0';
         }
 
@@ -156,10 +156,6 @@
         {
             EnsureCapacity(size);
             this.size = size;
-            for (int i = size; i < capacity + 1; i++)
-            {
-                data[i] = '\0';
-            }
         }
 
         /// <summary>
@@ -781,8 +777,12 @@
         /// </summary>
         public void Release()
         {
-            Free(data);
-            data = null;
+            if (data != null)
+            {
+                Free(data);
+                data = null;
+            }
+
             capacity = 0;
             size = 0;
         }

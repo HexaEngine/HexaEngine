@@ -89,7 +89,15 @@
         /// </summary>
         public static GraphicsBackend GraphicsBackend
         {
-            get; set;
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets or sets the audio backend used by the application.
+        /// </summary>
+        public static AudioBackend AudioBackend
+        {
+            get; private set;
         }
 
         /// <summary>
@@ -189,6 +197,11 @@
         public static bool GraphicsDebugging { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether graphics is disabled.
+        /// </summary>
+        public static bool GraphicsDisabled => GraphicsBackend == GraphicsBackend.Disabled;
+
+        /// <summary>
         /// Occurs when the editor mode state of the application changes.
         /// </summary>
         public static event Action<bool>? OnEditorModeChanged;
@@ -271,9 +284,11 @@
         /// <summary>
         /// Initializes the application and necessary subsystems.
         /// </summary>
-        public static void Boot(GraphicsBackend backend, bool disableLogging = false)
+        public static void Boot(GraphicsBackend graphicsBackend, AudioBackend audioBackend, bool disableLogging = false)
         {
-            GraphicsBackend = backend;
+            GraphicsBackend = graphicsBackend;
+            AudioBackend = audioBackend;
+
 #if DEBUG
             GraphicsDebugging = true;
 #endif

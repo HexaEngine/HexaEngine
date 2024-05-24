@@ -10,7 +10,7 @@
     /// <summary>
     /// A log writer that appends log messages to a file.
     /// </summary>
-    public class FileLogWriter : ILogWriter
+    public class LogFileWriter : ILogWriter
     {
         private const int MaxLogFileCount = 5;
         private readonly BufferedStream stream;
@@ -20,10 +20,10 @@
         private bool disposedValue;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileLogWriter"/> class and creates or opens the specified log file.
+        /// Initializes a new instance of the <see cref="LogFileWriter"/> class and creates or opens the specified log file.
         /// </summary>
         /// <param name="folder">The path to the log folder.</param>
-        public FileLogWriter(string folder)
+        public LogFileWriter(string folder)
         {
             string fileName = $"app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log";
             string file = Path.Combine(folder, fileName);
@@ -127,7 +127,7 @@
         }
 
         /// <summary>
-        /// Releases the resources used by the <see cref="FileLogWriter"/> instance.
+        /// Releases the resources used by the <see cref="LogFileWriter"/> instance.
         /// </summary>
         /// <param name="disposing">True if the method is called directly, false if called by the finalizer.</param>
         protected virtual void Dispose(bool disposing)
@@ -144,7 +144,7 @@
         }
 
         /// <summary>
-        /// Releases the resources used by the <see cref="FileLogWriter"/> instance.
+        /// Releases the resources used by the <see cref="LogFileWriter"/> instance.
         /// </summary>
         public void Dispose()
         {

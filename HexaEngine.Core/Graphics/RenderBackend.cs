@@ -6,6 +6,11 @@
     public enum GraphicsBackend
     {
         /// <summary>
+        /// Disables the graphics sub system. (aka headless)
+        /// </summary>
+        Disabled = -1,
+
+        /// <summary>
         /// Automatically select the most appropriate graphics backend.
         /// </summary>
         Auto = 0,

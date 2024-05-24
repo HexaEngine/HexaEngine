@@ -73,6 +73,37 @@
         }
 
         /// <summary>
+        /// Initializes the platform-specific components in headless mode.
+        /// </summary>
+        /// <param name="editor">Optional parameter to specify whether the application is running in editor mode.</param>
+        public static void Init(bool editor = false)
+        {
+            Platform.editor = editor;
+
+            if (Application.GraphicsBackend != GraphicsBackend.Disabled)
+            {
+                throw new InvalidOperationException($"Graphics must be disabled if init in headless mode.");
+            }
+
+            if (Application.AudioBackend != Core.Audio.AudioBackend.Disabled)
+            {
+                throw new InvalidOperationException($"Audio must be disabled if init in headless mode.");
+            }
+
+            if (editor)
+            {
+                PluginManager.Load();
+                Application.EditorPlayState = EditorPlayState.Edit;
+                Application.InEditorMode = true;
+            }
+            else
+            {
+                AppConfig = AppConfig.Load("app.config");
+                ScriptAssemblyManager.Load(AppConfig.ScriptAssembly);
+            }
+        }
+
+        /// <summary>
         /// Gets the application configuration settings.
         /// </summary>
         public static AppConfig? AppConfig { get; set; }

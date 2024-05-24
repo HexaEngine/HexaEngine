@@ -29,8 +29,8 @@
         private bool showHidden;
         private bool focused;
 
-        private uint[] levelColorPalette =
-        {// 0xAABBGGRR
+        private readonly uint[] levelColorPalette =
+        [// 0xAABBGGRR
             0x8F0000FF,
             0x8F00FF00,
             0x8FFF0000,
@@ -39,7 +39,7 @@
             0x8F00FFFF,
             0x8F800080,
             0x8F008080,
-        };
+        ];
 
         private enum HierarchyLevelColoring
         {

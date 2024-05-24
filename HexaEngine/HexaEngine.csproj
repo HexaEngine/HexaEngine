@@ -975,6 +975,7 @@
 		<Folder Include="assets\shared\shaders\forward\sun\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\textured\" />
+		<Folder Include="Physics\Network\" />
 	</ItemGroup>
 
 

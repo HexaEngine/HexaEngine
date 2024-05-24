@@ -58,7 +58,7 @@
             // create pvd
             var pvd = NativeMethods.phys_PxCreatePvd(foundation);
 
-            fixed (byte* bytePointer = "127.0.0.1"u8.ToArray())
+            fixed (byte* bytePointer = "127.0.0.1"u8)
             {
                 var transport = NativeMethods.phys_PxDefaultPvdSocketTransportCreate(bytePointer, 5425, 10);
                 pvd->ConnectMut(transport, PxPvdInstrumentationFlags.All);
@@ -136,7 +136,7 @@
             return 0;
         }
 
-        public object SyncObject => _lock;
+        public static object SyncObject => _lock;
 
         public static PersistentCache CookingCache => cookingCache;
 
