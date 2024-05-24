@@ -4,8 +4,8 @@
     using HexaEngine.Input;
     using HexaEngine.Network.Events;
     using HexaEngine.Network.Protocol;
-    using System.Diagnostics;
     using System.Net;
+    using System.Net.Sockets;
 
     public class Client : INetwork
     {
@@ -14,7 +14,6 @@
         private readonly CancellationTokenSource receiveTaskCancellation = new();
         private Task? receiveTask;
         private bool running = true;
-        private bool ready = false;
 
         private readonly PayloadBuffer payloadBuffer = new();
         private readonly object _lock = new();
@@ -61,7 +60,7 @@
 
         public TimeSpan ServerLocalTimeOffset => client.ServerLocalTimeOffset;
 
-        public bool IsReady => ready;
+        public bool IsReady => client.IsReady;
 
         public async Task InitAsync()
         {
@@ -83,7 +82,7 @@
                     ConnectionError?.Invoke(client, ex, i);
                 }
 
-                Thread.Sleep(RetryDelay);
+                await Task.Delay(RetryDelay);
             }
         }
 
@@ -111,6 +110,15 @@
             }
         }
 
+        public void Disconnect()
+        {
+            receiveTaskCancellation.Cancel();
+            receiveTask?.Wait();
+            receiveTaskCancellation.TryReset();
+
+            client.Disconnect(true);
+        }
+
         private void ClientConnected(HexaProtoClient client)
         {
             receiveTask = ReceiveVoid();
@@ -119,14 +127,16 @@
         private void ClientReady(HexaProtoClient client, ServerHello serverHello)
         {
             Ready?.Invoke(client, serverHello);
-            ready = true;
         }
 
         private void ClientDisconnected(HexaProtoClient client, bool reuseSocket)
         {
-            Disconnected?.Invoke(client, reuseSocket);
+            running = false;
+
             UnsubscribeEvents(client);
-            ready = false;
+
+            Logger.Info("Disconnected");
+            Disconnected?.Invoke(client, reuseSocket);
         }
 
         private void SubscribeEvents(HexaProtoClient client)
@@ -135,8 +145,10 @@
             client.Ready += ClientReady;
             client.Received += ClientReceived;
             client.Disconnected += ClientDisconnected;
-            client.RateLimited += ClientRateLimited;
+            client.RateLimit += ClientRateLimit;
             client.Heartbeat += ClientHeartbeat;
+            client.Error += ClientError;
+            client.ProtocolError += ClientProtocolError;
         }
 
         private void UnsubscribeEvents(HexaProtoClient client)
@@ -145,8 +157,20 @@
             client.Ready -= ClientReady;
             client.Received -= ClientReceived;
             client.Disconnected -= ClientDisconnected;
-            client.RateLimited -= ClientRateLimited;
-            client.Heartbeat += ClientHeartbeat;
+            client.RateLimit -= ClientRateLimit;
+            client.Heartbeat -= ClientHeartbeat;
+            client.Error -= ClientError;
+            client.ProtocolError -= ClientProtocolError;
+        }
+
+        private void ClientProtocolError(HexaProtoClientBase sender, ProtocolErrorEventArgs error)
+        {
+            Logger.Error(error);
+        }
+
+        private void ClientError(SocketError socketError)
+        {
+            Logger.Error($"Socket error: {socketError}");
         }
 
         private void ClientHeartbeat(HexaProtoClient client, HeartbeatEventArgs args)
@@ -154,9 +178,9 @@
             Logger.Info($"Heartbeat, UTC Time-Offset: {args.TimeOffset}, RTT: {args.RoundTripTime}");
         }
 
-        private void ClientRateLimited(HexaProtoClient client, RateLimitEventArgs args)
+        private void ClientRateLimit(HexaProtoClient client, RateLimitEventArgs args)
         {
-            Logger.Warn($"RateLimit Received, Reset: {args.LocalRateLimitReset}, Warn: {args.Warning}");
+            Logger.Warn($"RateLimit, Reset: {args.LocalRateLimitReset}, Warn: {args.Warning}");
         }
 
         private void ClientReceived(HexaProtoClient client, Record record)
@@ -188,6 +212,11 @@
                     }
                     catch (Exception ex)
                     {
+                        if (ex is OperationCanceledException)
+                        {
+                            return;
+                        }
+
                         Logger.Log(ex);
                     }
                 }
@@ -257,7 +286,7 @@
                 ReturnRecord(record);
             }
 
-            if (ready && client.IsConnected)
+            if (IsReady)
             {
                 InputTick();
 
@@ -316,6 +345,7 @@
             running = false;
             receiveTaskCancellation.Cancel();
             receiveTask?.Wait();
+            payloadBuffer.Dispose();
 
             UnsubscribeEvents(client);
 

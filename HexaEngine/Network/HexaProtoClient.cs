@@ -22,6 +22,14 @@
             this.address = address;
         }
 
+        public bool IsReady => ready;
+
+        public TimeSpan RoundTripTime => roundTripTime;
+
+        public TimeSpan TimeOffset => timeOffset;
+
+        public TimeSpan ServerLocalTimeOffset => serverLocalTimeOffset;
+
         public event ClientConnectedEventHandler? Connected;
 
         public event ClientDisconnectedEventHandler? Disconnected;
@@ -30,7 +38,7 @@
 
         public event ClientReadyEventHandler? Ready;
 
-        public event ClientRateLimitEventHandler? RateLimited;
+        public event ClientRateLimitEventHandler? RateLimit;
 
         public event ClientHeartbeatEventHandler? Heartbeat;
 
@@ -46,16 +54,20 @@
 
         public delegate void ClientHeartbeatEventHandler(HexaProtoClient client, HeartbeatEventArgs args);
 
-        public TimeSpan RoundTripTime => roundTripTime;
-
-        public TimeSpan TimeOffset => timeOffset;
-
-        public TimeSpan ServerLocalTimeOffset => serverLocalTimeOffset;
-
         protected override void OnSocketError(SocketError error)
         {
-            DisconnectInternal(true, false);
+            Disconnect(true);
             base.OnSocketError(error);
+        }
+
+        protected override void OnProtocolError(ProtocolError error)
+        {
+            if (error.Severity == ErrorSeverity.Fatal)
+            {
+                Disconnect(true);
+            }
+
+            base.OnProtocolError(error);
         }
 
         protected virtual void OnDisconnected(bool reuseSocket)
@@ -65,7 +77,7 @@
 
         protected virtual void OnRateLimit(RateLimitEventArgs args)
         {
-            RateLimited?.Invoke(this, args);
+            RateLimit?.Invoke(this, args);
         }
 
         protected virtual void OnHeartbeat(HeartbeatEventArgs args)
@@ -76,24 +88,6 @@
         protected virtual void OnReady(ServerHello serverHello)
         {
             Ready?.Invoke(this, serverHello);
-        }
-
-        public async ValueTask ConnectAsync(CancellationToken cancellationToken)
-        {
-            await socket.ConnectAsync(address, cancellationToken);
-
-            CreateNetworkStream();
-
-            Connected?.Invoke(this);
-
-            ClientHello clientHello = new(1, DateTimeOffset.Now.Offset);
-            Send(clientHello);
-        }
-
-        public async ValueTask DisconnectAsync(bool reuseSocket, CancellationToken cancellationToken)
-        {
-            await socket.DisconnectAsync(reuseSocket, cancellationToken);
-            OnDisconnected(reuseSocket);
         }
 
         public void Connect()
@@ -108,20 +102,30 @@
             Send(clientHello);
         }
 
-        public void DisconnectInternal(bool reuseSocket, bool sendDisconnect)
+        public async ValueTask ConnectAsync(CancellationToken cancellationToken)
         {
-            if (sendDisconnect)
-            {
-                Send(new Disconnect());
-            }
+            await socket.ConnectAsync(address, cancellationToken);
 
-            socket.Disconnect(reuseSocket);
-            OnDisconnected(reuseSocket);
+            CreateNetworkStream();
+
+            Connected?.Invoke(this);
+
+            ClientHello clientHello = new(1, DateTimeOffset.Now.Offset);
+            Send(clientHello);
         }
 
         public void Disconnect(bool reuseSocket)
         {
-            DisconnectInternal(reuseSocket, true);
+            ready = false;
+            socket.Disconnect(reuseSocket);
+            OnDisconnected(reuseSocket);
+        }
+
+        public async ValueTask DisconnectAsync(bool reuseSocket, CancellationToken cancellationToken)
+        {
+            ready = false;
+            await socket.DisconnectAsync(reuseSocket, cancellationToken);
+            OnDisconnected(reuseSocket);
         }
 
         protected override void Dispose(bool disposing)
@@ -148,8 +152,7 @@
                     break;
 
                 case RecordType.Disconnect:
-                    socket.Disconnect(false);
-                    OnDisconnected(false);
+                    Disconnect(false);
                     break;
 
                 case RecordType.RateLimit:
@@ -240,14 +243,14 @@
         {
             if (ready)
             {
-                Send(new ProtocolError(ErrorCode.SequenceError, ErrorSeverity.Fatal));
+                SendProtocolError(ErrorCode.SequenceError, ErrorSeverity.Fatal);
             }
 
             ready = true;
 
             ServerHello serverHello = record.GetServerHello();
             serverLocalTimeOffset = serverHello.LocalTimeOffset;
-            RateLimit = serverHello.RateLimit;
+            RequestRateLimit = serverHello.RateLimit;
             PayloadLimit = serverHello.PayloadLimit;
             HeartbeatRate = serverHello.HeartbeatRate;
 
@@ -258,7 +261,7 @@
             }
             else
             {
-                Send(new ProtocolError(ErrorCode.GameVersionMismatch, ErrorSeverity.Fatal));
+                SendProtocolError(ErrorCode.GameVersionMismatch, ErrorSeverity.Fatal);
             }
         }
     }

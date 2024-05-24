@@ -12,5 +12,10 @@
             ErrorCode = error.ErrorCode;
             Severity = error.Severity;
         }
+
+        public override readonly string ToString()
+        {
+            return $"Protocol Error: {ErrorCode}, {Severity}";
+        }
     }
 }

@@ -1,13 +1,10 @@
 ﻿namespace HexaEngine.Network
 {
-    using HexaEngine.Core.Debugging;
     using System.Net;
     using System.Net.Sockets;
 
     public class BaseSocket : IDisposable
     {
-        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(BaseSocket));
-
         protected readonly Socket socket;
         private NetworkStream stream;
 
@@ -28,7 +25,7 @@
             socket.NoDelay = true;
             socket.Blocking = true;
 
-            stream = new NetworkStream(socket);
+            stream = new NetworkStream(socket, false);
         }
 
         public bool IsConnected => socket.Connected;
@@ -36,8 +33,6 @@
         public int ReceiveTimeout { get => socket.ReceiveTimeout; set => socket.ReceiveTimeout = value; }
 
         public int SendTimeout { get => socket.SendTimeout; set => socket.SendTimeout = value; }
-
-        public bool Blocking { get => socket.Blocking; set => socket.Blocking = value; }
 
         public EndPoint RemoteEndPoint => socket.RemoteEndPoint;
 
@@ -47,7 +42,7 @@
 
         protected void CreateNetworkStream()
         {
-            stream = new(socket);
+            stream = new(socket, false);
         }
 
         protected virtual void OnSocketError(SocketError error)
@@ -83,24 +78,26 @@
 
         protected bool Send(Span<byte> data)
         {
-            socket.Send(data, SocketFlags.None, out var error);
-            if (error != SocketError.Success)
+            try
             {
-                Logger.Log($"Socket send error: {error}");
-                OnSocketError(error);
+                stream.Write(data);
+            }
+            catch (Exception)
+            {
+                OnSocketError(SocketError.SocketError);
                 return false;
             }
+
             return true;
         }
 
-        protected async ValueTask<bool> SendAsync(Memory<byte> data, SocketFlags flags, CancellationToken token = default)
+        protected async ValueTask<bool> SendAsync(Memory<byte> data, CancellationToken token = default)
         {
-            var task = socket.SendAsync(data, flags, token);
+            var task = stream.WriteAsync(data, token);
             await task;
 
             if (task.IsFaulted)
             {
-                Logger.Log($"Socket async send error");
                 OnSocketError(SocketError.SocketError);
                 return false;
             }
@@ -112,6 +109,7 @@
         {
             if (!disposedValue)
             {
+                stream.Dispose();
                 socket.Dispose();
                 disposedValue = true;
             }

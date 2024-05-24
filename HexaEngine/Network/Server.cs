@@ -60,6 +60,7 @@
                     clientHandler.Disconnected += HandlerDisconnected;
                     clientHandler.Received += HandlerReceived;
                     clientHandler.Ready += HandlerReady;
+
                     handlers.Add(clientHandler);
                     Accepted?.Invoke(clientHandler);
                     clientHandler.Init();
@@ -85,7 +86,6 @@
             handler.Ready -= HandlerReady;
             handler.Disconnected -= HandlerDisconnected;
             handler.Received -= HandlerReceived;
-            Logger.Info($"Client Disconnected {handler.RemoteEndPoint}");
         }
 
         public void Tick()

@@ -90,30 +90,78 @@
                 });
             }
 
+            var serverTask = Task.Run(() =>
+            {
+                while (running)
+                {
+                    try
+                    {
+                        server.Tick();
+                        lock (clients)
+                        {
+                            for (int i = 0; i < clients.Count; i++)
+                            {
+                                clients[i].Tick();
+                            }
+                        }
+
+                        Thread.Sleep(1); // Reduce CPU usage
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the error for debugging purposes
+                        LoggerFactory.General.Log(ex);
+                        // Optionally, you can break the loop or handle it accordingly
+                    }
+                }
+            });
+
             while (running)
             {
-                try
+                string? line = Console.ReadLine();
+                if (line == null)
+                    continue;
+                switch (line)
                 {
-                    server.Tick();
-                    lock (clients)
-                    {
-                        for (int i = 0; i < clients.Count; i++)
-                        {
-                            clients[i].Tick();
-                        }
-                    }
+                    case "exit":
+                        running = false;
+                        break;
 
-                    Thread.Sleep(1); // Reduce CPU usage
-                }
-                catch (Exception ex)
-                {
-                    // Log the error for debugging purposes
-                    Console.WriteLine($"An error occurred: {ex.Message}");
-                    // Optionally, you can break the loop or handle it accordingly
+                    case "d":
+                        lock (clients)
+                        {
+                            for (int i = 0; i < clients.Count; i++)
+                            {
+                                clients[i].Disconnect();
+                            }
+                        }
+                        break;
+
+                    case "c":
+                        lock (clients)
+                        {
+                            for (int i = 0; i < 1; i++)
+                            {
+                                Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+                                client.Init();
+                                lock (clients)
+                                {
+                                    clients[i] = client;
+                                }
+                            }
+                        }
+                        break;
+
+                    default:
+                        continue;
                 }
             }
 
+            serverTask.Wait();
+
             Console.WriteLine("Exiting...");
+
+            LoggerFactory.CloseAll();
         }
 
         private static void NewMethod()

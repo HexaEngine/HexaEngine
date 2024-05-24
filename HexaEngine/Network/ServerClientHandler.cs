@@ -1,33 +1,20 @@
 ﻿namespace HexaEngine.Network
 {
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Network.Events;
     using HexaEngine.Network.Protocol;
     using System.Diagnostics;
     using System.Net;
-
-    public unsafe struct QueueRecord
-    {
-        public RecordType Type;
-        public PayloadBufferSegment BufferSegment;
-
-        public QueueRecord(RecordType type, PayloadBufferSegment bufferSegment)
-        {
-            Type = type;
-            BufferSegment = bufferSegment;
-        }
-
-        public readonly Span<byte> AsSpan()
-        {
-            return BufferSegment.AsSpan();
-        }
-    }
+    using System.Net.Sockets;
 
     public class ServerClientHandler : IDisposable
     {
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ServerClientHandler));
+
         private readonly HexaProtoHandler handler;
         private readonly CancellationTokenSource receiveTaskCancellation = new();
         private Task? receiveTask;
         private bool running = true;
-        private bool ready = false;
 
         private readonly PayloadBuffer payloadBuffer = new();
         private readonly object _lock = new();
@@ -39,10 +26,47 @@
         public ServerClientHandler(HexaProtoHandler handler)
         {
             this.handler = handler;
-            handler.Blocking = true;
+            SubscribeEvents(handler);
+        }
+
+        private void SubscribeEvents(HexaProtoHandler handler)
+        {
             handler.Disconnected += HandlerDisconnected;
             handler.Received += HandlerReceived;
             handler.Ready += HandlerReady;
+            handler.RateLimit += HandlerRateLimit;
+            handler.Heartbeat += HandlerHeartbeat;
+            handler.Error += HandlerError;
+            handler.ProtocolError += HandlerProtocolError;
+        }
+
+        private void UnsubscribeEvents(HexaProtoHandler handler)
+        {
+            handler.Disconnected -= HandlerDisconnected;
+            handler.Received -= HandlerReceived;
+            handler.Ready -= HandlerReady;
+            handler.RateLimit -= HandlerRateLimit;
+            handler.Heartbeat -= HandlerHeartbeat;
+            handler.Error -= HandlerError;
+            handler.ProtocolError -= HandlerProtocolError;
+        }
+
+        private void HandlerHeartbeat(HexaProtoHandler handler, HeartbeatEventArgs args)
+        {
+        }
+
+        private void HandlerRateLimit(HexaProtoHandler handler, RateLimitEventArgs args)
+        {
+        }
+
+        private void HandlerProtocolError(HexaProtoClientBase sender, ProtocolErrorEventArgs error)
+        {
+            Logger.Error(error);
+        }
+
+        private void HandlerError(SocketError socketError)
+        {
+            Logger.Error($"Socket error: {socketError}");
         }
 
         public bool Connected => handler.IsConnected;
@@ -50,8 +74,6 @@
         public int ReceiveTimeout { get => handler.ReceiveTimeout; set => handler.ReceiveTimeout = value; }
 
         public int SendTimeout { get => handler.SendTimeout; set => handler.SendTimeout = value; }
-
-        public bool Blocking { get => handler.Blocking; set => handler.Blocking = value; }
 
         public EndPoint RemoteEndPoint => handler.RemoteEndPoint;
 
@@ -65,12 +87,11 @@
 
         public uint HeartbeatTimeout { get; set; } = 500;
 
-        public bool IsReady => ready;
+        public bool IsReady => handler.IsReady;
 
         private void HandlerReady(HexaProtoHandler sender, ClientReady clientHello)
         {
             Ready?.Invoke(this, clientHello);
-            ready = true;
         }
 
         private void HandlerReceived(HexaProtoHandler sender, Record record)
@@ -81,7 +102,7 @@
                 var segment = payloadBuffer.Rent((int)record.Length);
                 if (segment == PayloadBufferSegment.Invalid)
                 {
-                    Console.WriteLine("Payload Buffer Overflow, dropped record.");
+                    Logger.Warn("Payload Buffer Overflow, dropped record.");
                     return;
                 }
                 QueueRecord queueRecord = new(record.Type, segment);
@@ -90,12 +111,23 @@
             }
         }
 
-        private void HandlerDisconnected(HexaProtoHandler sender)
+        public void Disconnect()
         {
+            receiveTaskCancellation.Cancel();
+            receiveTask?.Wait();
+            receiveTaskCancellation.TryReset();
+
+            handler.Disconnect(false);
+        }
+
+        private void HandlerDisconnected(HexaProtoHandler sender, bool reuseSocket)
+        {
+            running = false;
+
+            UnsubscribeEvents(handler);
+
+            Logger.Info("Disconnected");
             Disconnected?.Invoke(this);
-            sender.Ready -= HandlerReady;
-            sender.Disconnected -= HandlerDisconnected;
-            sender.Received -= HandlerReceived;
         }
 
         public event Action<ServerClientHandler, ClientReady>? Ready;
@@ -121,7 +153,11 @@
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        if (ex is OperationCanceledException)
+                        {
+                            return;
+                        }
+                        Logger.Log(ex);
                     }
                 }
             }, TaskCreationOptions.LongRunning);
@@ -129,7 +165,7 @@
 
         public void Tick()
         {
-            if (ready)
+            if (IsReady)
             {
                 long now = Stopwatch.GetTimestamp();
                 if (now >= nextHeartbeat)
@@ -188,6 +224,8 @@
             receiveTaskCancellation.Cancel();
             receiveTask?.Wait();
             payloadBuffer.Dispose();
+
+            UnsubscribeEvents(handler);
 
             GC.SuppressFinalize(this);
         }

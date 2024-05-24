@@ -15,10 +15,24 @@
         private DateTime rateLimitResetTimestamp;
         private byte rateLimitWarning;
         private bool heartbeatSend = false;
+        private int rateLimitWarningLimit = 3;
+        private TimeSpan requestRateLimitTimeout = TimeSpan.FromSeconds(1);
 
         public HexaProtoHandler(Socket socket) : base(socket)
         {
         }
+
+        public bool IsReady => ready;
+
+        public TimeSpan RoundTripTime => roundTripTime;
+
+        public TimeSpan TimeOffset => timeOffset;
+
+        public TimeSpan ClientLocalTimeOffset => clientLocalTimeOffset;
+
+        public int RateLimitWarningLimit { get => rateLimitWarningLimit; set => rateLimitWarningLimit = value; }
+
+        public TimeSpan RequestRateLimitTimeout { get => requestRateLimitTimeout; set => requestRateLimitTimeout = value; }
 
         public event HandlerDisconnectedEventHandler? Disconnected;
 
@@ -26,11 +40,11 @@
 
         public event HandlerReadyEventHandler? Ready;
 
-        public event HandlerRateLimitEventHandler? RateLimited;
+        public event HandlerRateLimitEventHandler? RateLimit;
 
         public event HandlerHeartbeatEventHandler? Heartbeat;
 
-        public delegate void HandlerDisconnectedEventHandler(HexaProtoHandler handler);
+        public delegate void HandlerDisconnectedEventHandler(HexaProtoHandler handler, bool reuseSocket);
 
         public delegate void HandlerReceivedEventHandler(HexaProtoHandler handler, Record record);
 
@@ -40,15 +54,9 @@
 
         public delegate void HandlerHeartbeatEventHandler(HexaProtoHandler handler, HeartbeatEventArgs args);
 
-        public TimeSpan RoundTripTime => roundTripTime;
-
-        public TimeSpan TimeOffset => timeOffset;
-
-        public TimeSpan ClientLocalTimeOffset => clientLocalTimeOffset;
-
         protected override void OnSocketError(SocketError error)
         {
-            Disconnect(false);
+            Disconnect(true);
             base.OnSocketError(error);
         }
 
@@ -56,15 +64,15 @@
         {
             if (error.Severity == ErrorSeverity.Fatal)
             {
-                Disconnect(false);
+                Disconnect(true);
             }
 
             base.OnProtocolError(error);
         }
 
-        protected virtual void OnDisconnected()
+        protected virtual void OnDisconnected(bool reuseSocket)
         {
-            Disconnected?.Invoke(this);
+            Disconnected?.Invoke(this, reuseSocket);
         }
 
         protected virtual void OnHeartbeat(HeartbeatEventArgs args)
@@ -74,7 +82,7 @@
 
         protected virtual void OnRateLimit(RateLimitEventArgs args)
         {
-            RateLimited?.Invoke(this, args);
+            RateLimit?.Invoke(this, args);
         }
 
         protected virtual void OnReady(ClientReady ready)
@@ -82,17 +90,18 @@
             Ready?.Invoke(this, ready);
         }
 
-        public async ValueTask DisconnectAsync(bool reuseSocket, CancellationToken cancellationToken)
-        {
-            await socket.DisconnectAsync(reuseSocket, cancellationToken);
-            OnDisconnected();
-        }
-
         public void Disconnect(bool reuseSocket)
         {
-            Send(new Disconnect());
+            ready = false;
             socket.Disconnect(reuseSocket);
-            OnDisconnected();
+            OnDisconnected(reuseSocket);
+        }
+
+        public async ValueTask DisconnectAsync(bool reuseSocket, CancellationToken cancellationToken)
+        {
+            ready = false;
+            await socket.DisconnectAsync(reuseSocket, cancellationToken);
+            OnDisconnected(reuseSocket);
         }
 
         protected override void Dispose(bool disposing)
@@ -111,24 +120,29 @@
         {
             DateTime now = DateTime.UtcNow;
 
-            if (record.Type == RecordType.Heartbeat)
+            switch (record.Type)
             {
-                ProcessHeartbeat(record.GetHeartbeat(), now);
-                return;
+                case RecordType.Heartbeat:
+                    ProcessHeartbeat(record.GetHeartbeat(), now);
+                    return;
+
+                case RecordType.ProtocolError:
+                    OnProtocolError(record.GetProtocolError());
+                    return;
             }
 
             if (now >= rateLimitResetTimestamp)
             {
                 Interlocked.Exchange(ref requestCount, 0);
-                rateLimitResetTimestamp = now + TimeSpan.FromSeconds(1) - timeOffset;
+                rateLimitResetTimestamp = now + requestRateLimitTimeout - timeOffset;
                 rateLimitWarning = 0;
             }
 
             int requestCountNow = Interlocked.Increment(ref requestCount);
 
-            if (requestCountNow >= RateLimit)
+            if (requestCountNow >= RequestRateLimit)
             {
-                if (rateLimitWarning >= 3)
+                if (rateLimitWarning >= RateLimitWarningLimit)
                 {
                     SendProtocolError(ErrorCode.RateLimit, ErrorSeverity.Fatal);
                 }
@@ -150,10 +164,6 @@
 
             switch (record.Type)
             {
-                case RecordType.ProtocolError:
-                    OnProtocolError(record.GetProtocolError());
-                    break;
-
                 case RecordType.ClientHello:
                     HandleClientHello(record);
                     break;
@@ -163,14 +173,7 @@
                     break;
 
                 case RecordType.Disconnect:
-                    socket.Disconnect(false);
-                    OnDisconnected();
-                    break;
-
-                case RecordType.TestPayload:
-                    TestPayload payload = default;
-                    payload.Read(record.AsSpan());
-                    Send(payload);
+                    Disconnect(false);
                     break;
             }
         }
@@ -214,7 +217,7 @@
 
             if (clientHello.GameVersion == 1)
             {
-                Send(new ServerHello(1, DateTimeOffset.Now.Offset, HeartbeatRate, RateLimit, PayloadLimit));
+                Send(new ServerHello(1, DateTimeOffset.Now.Offset, HeartbeatRate, RequestRateLimit, PayloadLimit));
             }
             else
             {

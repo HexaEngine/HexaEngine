@@ -2,6 +2,7 @@
 {
     using HexaEngine.Network.Events;
     using HexaEngine.Network.Protocol;
+    using System.Buffers;
     using System.Net.Sockets;
     using System.Runtime.CompilerServices;
 
@@ -23,8 +24,6 @@
         private bool readHeader = false; // Flag to indicate if the record header has been read
         private int state;
 
-        private Memory<byte> sendBuffer = new byte[8192];
-
         private readonly List<IRecord> queue = [];
 
         protected HexaProtoClientBase(Socket socket) : base(socket)
@@ -37,11 +36,11 @@
 
         public uint PayloadLimit { get; set; } = 1024;
 
-        public uint RateLimit { get; set; } = 1000;
+        public uint RequestRateLimit { get; set; } = 1000;
 
         public uint HeartbeatRate { get; set; } = 5000;
 
-        public ProtocolErrorEventHandler? ProtocolError;
+        public event ProtocolErrorEventHandler? ProtocolError;
 
         public delegate void ProtocolErrorEventHandler(HexaProtoClientBase sender, ProtocolErrorEventArgs error);
 
@@ -288,11 +287,18 @@
 
         public virtual unsafe ValueTask<bool> SendAsync(Span<IRecord> records, CancellationToken token = default)
         {
-            Memory<byte> buffer = Serialize(records);
-            return SendAsync(buffer, SocketFlags.None, token);
+            Memory<byte> buffer = Serialize(records, out var sendBuffer);
+            return SendAsync(buffer, sendBuffer, token);
         }
 
-        private Memory<byte> Serialize(Span<IRecord> records)
+        protected async ValueTask<bool> SendAsync(Memory<byte> data, byte[] buffer, CancellationToken token = default)
+        {
+            bool result = await SendAsync(data, token);
+            ArrayPool<byte>.Shared.Return(buffer);
+            return result;
+        }
+
+        private static Memory<byte> Serialize(Span<IRecord> records, out byte[] sendBuffer)
         {
             Unsafe.SkipInit(out Container container);
             container.NumRecords = (ushort)records.Length;
@@ -305,12 +311,9 @@
                 bufferSize += (uint)records[i].SizeOf();
             }
 
-            if (bufferSize > sendBuffer.Length)
-            {
-                sendBuffer = new byte[bufferSize];
-            }
+            sendBuffer = ArrayPool<byte>.Shared.Rent((int)bufferSize);
 
-            Memory<byte> buffer = sendBuffer[..(int)bufferSize];
+            Memory<byte> buffer = sendBuffer.AsMemory()[..(int)bufferSize];
             var bufferSpan = buffer.Span;
 
             int idx = container.Write(bufferSpan);
