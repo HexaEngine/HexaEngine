@@ -282,6 +282,11 @@
         }
 
         /// <summary>
+        /// Gets the file log writer used for logging.
+        /// </summary>
+        public static LogFileWriter? LogFileWriter { get; private set; }
+
+        /// <summary>
         /// Initializes the application and necessary subsystems.
         /// </summary>
         public static void Boot(GraphicsBackend graphicsBackend, AudioBackend audioBackend, bool disableLogging = false)
@@ -292,8 +297,13 @@
 #if DEBUG
             GraphicsDebugging = true;
 #endif
-            if (disableLogging)
+            if (!disableLogging)
+            {
                 CrashLogger.Initialize();
+                LogFileWriter = new("logs");
+                LoggerFactory.AddGlobalWriter(LogFileWriter);
+            }
+
             FileSystem.Initialize();
             ImGuiConsole.Initialize();
 

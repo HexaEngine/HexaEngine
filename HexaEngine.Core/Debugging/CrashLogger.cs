@@ -17,11 +17,6 @@
     /// </summary>
     public static class CrashLogger
     {
-        /// <summary>
-        /// Gets the file log writer used for crash logging.
-        /// </summary>
-        public static readonly LogFileWriter FileLogWriter = new("logs");
-
 #nullable disable
         private static HardwareInfo info;
         private static Task task;
@@ -44,9 +39,13 @@
             {
                 logger.Log(ex);
             }
-
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            LoggerFactory.AddGlobalWriter(FileLogWriter);
+        }
+
+        private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
+        {
+            LoggerFactory.CloseAll();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
