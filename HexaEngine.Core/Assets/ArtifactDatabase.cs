@@ -19,6 +19,10 @@
 #nullable restore
         private static readonly ManualResetEventSlim initLock = new(false);
 
+        public static IReadOnlyList<Artifact> Artifacts => artifacts;
+
+        public static object SyncObject => _lock;
+
         internal static void Init(string path)
         {
             root = path;

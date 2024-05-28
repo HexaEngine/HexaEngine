@@ -2,7 +2,11 @@
   "profiles": {
     "AssetsBundler": {
       "commandName": "Project",
-      "commandLineArgs": "-m create -c 2 -l 3 -p C:\\Users\\Juna\\source\\repos\\JunaMeinhold\\HexaEngine\\Editor\\bin\\x64\\Debug\\net7.0\\assets\\"
+      "commandLineArgs": "-m gen -c 2 -l 3 -p C:\\Users\\juna\\Desktop\\Base -o C:\\Users\\juna\\Desktop\\Base"
+    },
+    "Profile 1": {
+      "commandName": "Project",
+      "commandLineArgs": "-m list -p \"C:\\Users\\juna\\Desktop\\Base\\Base.bundle\""
     }
   }
 }

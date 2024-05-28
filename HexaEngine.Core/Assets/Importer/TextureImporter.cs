@@ -39,10 +39,17 @@
 
         public void Import(TargetPlatform targetPlatform, ImportContext context)
         {
-            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+            if (Application.MainWindow != null)
+            {
+                Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+                {
+                    Import(device, targetPlatform, context);
+                });
+            }
+            else
             {
                 Import(device, targetPlatform, context);
-            });
+            }
         }
 
         public static void Import(IGraphicsDevice device, TargetPlatform targetPlatform, ImportContext context)
@@ -96,7 +103,7 @@
             bool generateMipMaps = settings.GenerateMipMaps && metadata.MipLevels == 1;
             bool changeFormat = settings.Format != Format.Unknown && settings.Format != metadata.Format;
 
-            if (generateMipMaps && changeFormat && FormatHelper.IsCompressed(metadata.Format))
+            if ((generateMipMaps || changeFormat) && FormatHelper.IsCompressed(metadata.Format))
             {
                 try
                 {
@@ -138,7 +145,7 @@
                         try
                         {
                             Logger.Info($"Compressing texture ({image.Metadata.Format}) -> ({settings.Format})");
-                            SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                            SwapImage(ref image, image.Compress(settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
                         }
                         catch (Exception ex)
                         {

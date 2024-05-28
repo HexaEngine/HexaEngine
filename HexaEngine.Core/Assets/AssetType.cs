@@ -17,5 +17,9 @@
         Prefab,
         Terrain,
         GlobalScript,
+        Shader,
+        ShaderSource,
+        ShaderBytecode,
+        Font,
     }
 }

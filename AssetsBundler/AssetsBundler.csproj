@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 
 </Project>

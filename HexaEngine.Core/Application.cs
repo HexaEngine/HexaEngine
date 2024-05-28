@@ -344,6 +344,16 @@
             exiting = true;
         }
 
+        public static void Shutdown()
+        {
+            audioDevice?.Dispose();
+            graphicsContext?.Dispose();
+            graphicsDevice?.Dispose();
+
+            SdlCheckError();
+            Sdl.Quit();
+        }
+
         /// <summary>
         /// Registers a hook function that will be invoked for each event received by the application.
         /// </summary>
@@ -362,7 +372,7 @@
             hooks.Remove(hook);
         }
 
-        private static void Init()
+        public static void Init()
         {
             graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
@@ -499,12 +509,7 @@
 
                 OnApplicationClose?.Invoke();
 
-                audioDevice.Dispose();
-                graphicsContext.Dispose();
-                graphicsDevice.Dispose();
-
-                SdlCheckError();
-                Sdl.Quit();
+                Shutdown();
             }
         }
 

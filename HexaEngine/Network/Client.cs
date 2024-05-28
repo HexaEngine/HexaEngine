@@ -278,9 +278,6 @@
 
                     case RecordType.User:
                         break;
-
-                    case RecordType.TestPayload:
-                        break;
                 }
 
                 ReturnRecord(record);

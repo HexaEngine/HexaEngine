@@ -24,6 +24,18 @@
             return result;
         }
 
+        public static string AddPackage(string name)
+        {
+            string parameter = $"add package {name}";
+            return Execute(parameter);
+        }
+
+        public static string AddPackage(string name, string version)
+        {
+            string parameter = $"add package {name} --version {version}";
+            return Execute(parameter);
+        }
+
         public static string New(DotnetTemplate template, string outputPath)
         {
             string parameter = $"new {template.ToString().ToLower()} -o \"{outputPath}\"";

@@ -83,7 +83,7 @@
         private static readonly HashSet<string> importedFiles = [];
         private static readonly ManualResetEventSlim initLock = new(false);
 
-        public static void Init(string path, IProgress<float> progress)
+        public static Task Init(string path, IProgress<float> progress)
         {
             rootFolder = path;
             rootAssetsFolder = Path.Combine(path, "assets");
@@ -178,7 +178,7 @@
                 tasks[i].Start();
             }
 
-            Task.WhenAll(tasks).ContinueWith(x =>
+            return Task.WhenAll(tasks).ContinueWith(x =>
             {
                 logger.Info($"Initialized '{path}'");
                 initLock.Set();
@@ -339,7 +339,7 @@
         private static bool IgnoreFile(ReadOnlySpan<char> span)
         {
             var extension = Path.GetExtension(span);
-            return extension == ".meta";
+            return extension.SequenceEqual(".meta") || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".bundle");
         }
 
         public static bool IsIgnored(string file)
@@ -370,7 +370,7 @@
 
             var extension = Path.GetExtension(subDirName);
 
-            if (extension.SequenceEqual(".meta", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance))
+            if (extension.SequenceEqual(".meta", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".tmp", CharComparerIgnoreCase.Instance) || extension.SequenceEqual(".bundle", CharComparerIgnoreCase.Instance))
             {
                 return true;
             }

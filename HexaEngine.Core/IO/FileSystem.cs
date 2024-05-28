@@ -18,7 +18,7 @@
     /// </summary>
     public class FileSystem
     {
-        private static readonly List<BundleAsset> bundleAssets = new();
+        private static readonly List<AssetArchive> bundles = new();
         private static readonly Dictionary<string, string> fileIndices = new();
         private static readonly HashSet<string> fileIndicesHashes = new();
         private static readonly List<string> sources = new();
@@ -88,7 +88,7 @@
             for (int i = 0; i < bundles.Length; i++)
             {
                 string file = bundles[i];
-                bundleAssets.AddRange(new AssetArchive(file).Assets);
+                FileSystem.bundles.Add(new AssetArchive(file));
             }
 
             // Create file indices for the files in the "assets" directory and its subdirectories
@@ -437,7 +437,7 @@
             else
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                return bundleAssets.Find(x => x.Path == rel) != null;
+                return GetArchiveEntry(rel) != default;
             }
         }
 
@@ -565,9 +565,9 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = bundleAssets.Find(x => x.Path == rel);
+                var asset = GetArchiveEntry(rel);
 
-                return asset == null ? throw new FileNotFoundException(realPath) : asset.GetStream();
+                return asset == default ? throw new FileNotFoundException(realPath) : asset.GetStream();
             }
 
             throw new FileNotFoundException(realPath);
@@ -600,9 +600,9 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = bundleAssets.Find(x => x.Path == rel);
+                var asset = GetArchiveEntry(rel);
 
-                if (asset == null)
+                if (asset == default)
                 {
                     stream = default;
                     return false;
@@ -659,8 +659,8 @@
             initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
-            var files = bundleAssets.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
-            return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).Union(files).ToArray();
+            //var files = bundles..Where(x => x.PathInArchive.StartsWith(realPath)).Select(x => x.PathInArchive);
+            return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).ToArray();
         }
 
         /// <summary>
@@ -675,8 +675,8 @@
             initLock.Wait();
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
-            var files = bundleAssets.Where(x => x.Path.StartsWith(realPath) && regex.IsMatch(x.Path)).Select(x => x.Path);
-            return fileIndices.Where(x => x.Key.StartsWith(realPath) && regex.IsMatch(x.Key)).Select(x => x.Key).Union(files).ToArray();
+            //var files = bundleAssets.Where(x => x.PathInArchive.StartsWith(realPath) && regex.IsMatch(x.PathInArchive)).Select(x => x.PathInArchive);
+            return fileIndices.Where(x => x.Key.StartsWith(realPath) && regex.IsMatch(x.Key)).Select(x => x.Key).ToArray();
         }
 
         /// <summary>
@@ -701,7 +701,11 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                var asset = GetArchiveEntry(rel);
+                if (asset == default)
+                {
+                    throw new FileNotFoundException(realPath);
+                }
                 throw new NotSupportedException();
             }
 
@@ -840,7 +844,11 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                var asset = GetArchiveEntry(rel);
+                if (asset == default)
+                {
+                    throw new FileNotFoundException(realPath);
+                }
                 throw new NotSupportedException();
             }
 
@@ -871,11 +879,44 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                var asset = GetArchiveEntry(rel);
+                if (asset == default)
+                {
+                    throw new FileNotFoundException(realPath);
+                }
                 throw new NotSupportedException();
             }
 
             throw new FileNotFoundException(realPath);
+        }
+
+        private static AssetArchiveEntry GetArchiveEntry(string path)
+        {
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                if (bundle.TryGetEntry(path, out var entry))
+                {
+                    return entry;
+                }
+            }
+
+            return default;
+        }
+
+        private static bool TryGetArchiveEntry(string path, out AssetArchiveEntry entry)
+        {
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                if (bundle.TryGetEntry(path, out entry))
+                {
+                    return true;
+                }
+            }
+
+            entry = default;
+            return false;
         }
     }
 }

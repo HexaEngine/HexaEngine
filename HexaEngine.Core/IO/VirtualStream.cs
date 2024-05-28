@@ -25,7 +25,7 @@
         {
             _baseStream = baseStream;
             _start = start;
-            Length = length;
+            Length = length == 0 ? baseStream.Length : length;
             _leaveOpen = leaveOpen;
         }
 
@@ -114,6 +114,7 @@
 
             if (buffer.Length - offset < count)
             {
+                semaphore.Release();
                 throw new ArgumentException(null, nameof(buffer));
             }
 
@@ -186,9 +187,9 @@
         /// <param name="bufferSize">The size of the buffer used for copying.</param>
         public override void CopyTo(Stream destination, int bufferSize)
         {
-            semaphore.Wait();
+            //semaphore.Wait();
             base.CopyTo(destination, bufferSize);
-            semaphore.Release();
+            //semaphore.Release();
         }
 
         /// <summary>

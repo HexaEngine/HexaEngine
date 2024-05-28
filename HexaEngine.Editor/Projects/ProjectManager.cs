@@ -269,6 +269,7 @@
             string projectFilePath = Path.Combine(path, solutionName, $"{solutionName}.csproj");
             Dotnet.Sln(SlnCommand.Add, solutionPath, projectPath);
             Dotnet.AddDlls(projectFilePath, ReferencedAssemblies.ConvertAll(x => x.Location));
+            Dotnet.AddPackage("HexaEngine.Analyzers");
         }
 
         public static void SaveProjectFile()
@@ -552,10 +553,11 @@
                 File.Copy(assemblyPdbPath, assemblyPdbBuildPath);
             }
 
+            // TODO: Readd asset archives.
             // app assets
-            List<AssetDesc> assets = new();
+            //List<AssetDesc> assets = new();
             string assetsPackagePath = Path.Combine(assetsBuildPath, $"{solutionName}.assets");
-            assets.AddRange(AssetDesc.CreateFromDir(CurrentProjectAssetsFolder));
+            //assets.AddRange(AssetDesc.CreateFromDir(CurrentProjectAssetsFolder));
 
             // shared assets
             string assetsPath = Paths.CurrentAssetsPath;
@@ -563,15 +565,15 @@
             string sharedAssetPackagePath = Path.Combine(assetsPath, "shared.assets");
             if (File.Exists(sharedAssetPackagePath))
             {
-                AssetArchive archive = new(sharedAssetPackagePath);
-                assets.AddRange(archive.Assets.Cast<AssetDesc>());
+                //AssetArchive archive = new(sharedAssetPackagePath);
+                //assets.AddRange(archive.Assets.Cast<AssetDesc>());
             }
             else
             {
-                assets.AddRange(AssetDesc.CreateFromDir(sharedAssetsPath));
+                //assets.AddRange(AssetDesc.CreateFromDir(sharedAssetsPath));
             }
 
-            AssetArchive.CreateFrom(assets.ToArray(), assetsPackagePath, Compression.LZ4, CompressionLevel.SmallestSize);
+            //AssetArchive.CreateFrom(assets.ToArray(), assetsPackagePath, Compression.LZ4, CompressionLevel.SmallestSize);
 
             // app config
             string configBuildPath = Path.Combine(buildPath, "app.config");

@@ -13,6 +13,5 @@
         Physics,
         ClientInput,
         User,
-        TestPayload
     }
 }

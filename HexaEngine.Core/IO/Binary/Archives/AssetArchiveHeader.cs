@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Archives
 {
+    using HexaEngine.Core.Security.Cryptography;
     using HexaEngine.Mathematics;
     using System.IO;
     using System.Text;
@@ -17,12 +18,12 @@
         /// <summary>
         /// Current version of the asset archive format.
         /// </summary>
-        public static readonly Version Version = 13;
+        public static readonly Version Version = 14;
 
         /// <summary>
         /// Minimum supported version of the asset archive format.
         /// </summary>
-        public static readonly Version MinVersion = 13;
+        public static readonly Version MinVersion = 14;
 
         /// <summary>
         /// The endianness of the asset archive.
@@ -45,14 +46,18 @@
         public string[] Parts;
 
         /// <summary>
-        /// Array of entries in the asset archive header.
+        /// Entry count of the archive.
         /// </summary>
-        public AssetArchiveHeaderEntry[] Entries;
+        public int EntryCount;
 
         /// <summary>
         /// The position in the stream where the content starts.
         /// </summary>
         public long ContentStart;
+
+        public uint CRC32;
+
+        public SHA256Signature SHA256;
 
         /// <summary>
         /// Reads the asset archive header from a stream.
@@ -84,14 +89,12 @@
                 Parts[i] = stream.ReadString(encoding, Endianness) ?? string.Empty;
             }
 
-            int entryCount = stream.ReadInt32(Endianness);
-            Entries = new AssetArchiveHeaderEntry[entryCount];
-
-            for (int i = 0; i < entryCount; i++)
-            {
-                Entries[i].Read(stream, encoding, Endianness);
-            }
-            ContentStart = stream.Position;
+            EntryCount = stream.ReadInt32(Endianness);
+            ContentStart = stream.ReadInt64(Endianness);
+            CRC32 = stream.ReadUInt32(Endianness);
+            Span<byte> buffer = stackalloc byte[32];
+            stream.Read(buffer);
+            SHA256 = new(buffer, Endianness == Endianness.BigEndian);
         }
 
         /// <summary>
@@ -113,11 +116,12 @@
                 stream.WriteString(Parts[i], encoding, Endianness);
             }
 
-            stream.WriteInt32(Entries.Length, Endianness);
-            for (int i = 0; i < Entries.Length; i++)
-            {
-                Entries[i].Write(stream, encoding, Endianness);
-            }
+            stream.WriteInt32(EntryCount, Endianness);
+            stream.WriteInt64(ContentStart, Endianness);
+            stream.WriteUInt32(CRC32, Endianness);
+            Span<byte> buffer = stackalloc byte[32];
+            SHA256.TryWriteBytes(buffer, Endianness == Endianness.BigEndian);
+            stream.Write(buffer);
         }
 
         /// <summary>
@@ -127,7 +131,7 @@
         /// <returns>The size of the header in bytes.</returns>
         public readonly int Size(Encoding encoding)
         {
-            return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + Entries.Sum(x => x.Size(encoding));
+            return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + 8 + 4;
         }
     }
 }

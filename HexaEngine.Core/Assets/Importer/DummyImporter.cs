@@ -31,6 +31,7 @@
                 ".matlib" => true,
                 ".hexlvl" => true,
                 ".prefab" => true,
+                ".hlsl" => true,
                 _ => false,
             };
         }
@@ -48,6 +49,7 @@
                 ".matlib" => AssetType.MaterialLibrary,
                 ".hexlvl" => AssetType.Scene,
                 ".prefab" => AssetType.Prefab,
+                ".hlsl" => AssetType.ShaderSource,
                 _ => AssetType.Unknown,
             };
 
