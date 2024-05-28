@@ -6,7 +6,7 @@
 
     public class NetworkSystem : ISceneSystem
     {
-        private readonly NetworkMode mode = NetworkMode.Client;
+        private readonly NetworkMode mode = NetworkMode.None;
         private INetwork? network;
 
         public string Name { get; } = "Network";
