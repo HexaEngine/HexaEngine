@@ -1,0 +1,1021 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TernarySearchTreeDictionary&lt;T&gt; </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TernarySearchTreeDictionary&lt;T&gt; ">
+      
+      <meta name="description" content="Ternary Search Tree Dictionary">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Collections_TernarySearchTreeDictionary_1.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Collections.TernarySearchTreeDictionary%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1">
+
+
+
+  <h1 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1" class="text-break">
+Class TernarySearchTreeDictionary&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Collections.html">Collections</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Ternary Search Tree Dictionary</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TernarySearchTreeDictionary&lt;T&gt; : IDictionary&lt;string, T&gt;, ICollection&lt;KeyValuePair&lt;string, T&gt;&gt;, ICollection, IReadOnlyDictionary&lt;string, T&gt;, IReadOnlyCollection&lt;KeyValuePair&lt;string, T&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt;, IEnumerable</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">TernarySearchTreeDictionary&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.icollection">ICollection</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+  <h2 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+This dictionary is an implementation of the <b>Ternary Search Tree</b>
+data structure proposed by J. L. Bentley and R. Sedgewick in their
+paper:  Fast algorithms for sorting and searching strings
+in Proceedings of the Eighth Annual ACM-SIAM Symposium on Discrete Algorithms,
+New Orleans Louisiana, January 5-7, 1997.
+</p>
+<p>
+This dictionary acts as a symbol table: the keys must be string. It
+is generally faster to find symbol than the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.hashtable">Hashtable</a> or
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.sortedlist">SortedList</a> classes.
+</p>
+<p>
+Please read the paper to get some insight on the structure used below.
+</p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor">
+  TernarySearchTreeDictionary()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TernarySearchTreeDictionary()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Construct an empty ternary search tree with an ordinal comparer</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IComparer_System_String__" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor(System.Collections.Generic.IComparer{System.String})">
+  TernarySearchTreeDictionary(IComparer&lt;string&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TernarySearchTreeDictionary(IComparer&lt;string&gt; comparer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>comparer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icomparer-1">IComparer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>Comparer used to compare keys</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IComparer_System_String___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Construct an empty ternary search tree with the specified comparer</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0___" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,`0}})">
+  TernarySearchTreeDictionary(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor that adds multiple elements into the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TernarySearchTreeDictionary(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt; values)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</dt>
+    <dd><p>The elements to add</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Construct and populate a ternary search tree.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0___System_Collections_Generic_IComparer_System_String__" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,`0}},System.Collections.Generic.IComparer{System.String})">
+  TernarySearchTreeDictionary(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt;, IComparer&lt;string&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor that adds multiple elements into the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TernarySearchTreeDictionary(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt; values, IComparer&lt;string&gt; comparer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</dt>
+    <dd><p>The elements to add</p>
+</dd>
+    <dt><code>comparer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icomparer-1">IComparer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>Comparer used to compare keys</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1__ctor_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0___System_Collections_Generic_IComparer_System_String___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Construct and populate a ternary search tree.</p>
+</div>
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Comparer_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Comparer*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Comparer" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Comparer">
+  Comparer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the comparer used to compare keys in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IComparer&lt;string&gt;? Comparer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icomparer-1">IComparer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Count_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Count*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Count" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the number of key-and-value pairs contained in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of key-and-value pairs contained in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Count_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Complexity: O(N)</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Item_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Item*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Item_System_String_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Item(System.String)">
+  this[string]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual T this[string key] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key whose value to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The value associated with the specified key.
+If the specified key is not found, attempting to get it returns a null reference
+(Nothing in Visual Basic), and attempting to set it creates a new element using the specified key.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Item_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>[C#] In C#, this property is the indexer for the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> class.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is a null reference</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The property is set and <code class="paramref">key</code> is an empty string</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Keys_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Keys*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Keys" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Keys">
+  Keys
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.icollection">ICollection</a> containing the keys in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ICollection&lt;string&gt; Keys { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.icollection">ICollection</a> containing the keys in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Values_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Values*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Values" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Values">
+  Values
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.icollection">ICollection</a> containing the values in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ICollection&lt;T&gt; Values { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;T&gt;</dt>
+    <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.icollection">ICollection</a> containing the values in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Add_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Add_System_Collections_Generic_KeyValuePair_System_String__0__" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Add(System.Collections.Generic.KeyValuePair{System.String,`0})">
+  Add(KeyValuePair&lt;string, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds an element with the specified key and value into the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(KeyValuePair&lt;string, T&gt; item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</dt>
+    <dd><p>The element to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">item</code>.<code>Key</code> is a null reference (Nothing in Visual Basic).</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p><code class="paramref">item</code>.<code>Key</code> is an empty string</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>An element with the same key already exists in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Add_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Add_System_String__0_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Add(System.String,`0)">
+  Add(string, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds an element with the specified key and value into the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Add(string key, T value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key of the element to add.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The value of the element to add. The value can be a null reference (Nothing in Visual Basic).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is a null reference (Nothing in Visual Basic).</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p><code class="paramref">key</code> is an empty string</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>An element with the same key already exists in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> is read-only.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> has a fixed size.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_AddRange_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.AddRange*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_AddRange_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0___" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.AddRange(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,`0}})">
+  AddRange(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds multiple elements into the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddRange(IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt; values)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</dt>
+    <dd><p>The elements to add</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_AddRange_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String__0____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method attempts to create a balanced tree</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Clear_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Clear" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L353"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes all elements from the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_ContainsKey_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.ContainsKey*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_ContainsKey_System_String_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.ContainsKey(System.String)">
+  ContainsKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L371"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> contains a specific key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool ContainsKey(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to locate in the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> contains an element with the specified key; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_ContainsKey_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Complexity: Uses a Ternary Search Tree (tst) to find the key.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is a null reference (Nothing in Visual Basic).</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Find_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Find_System_String_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Find(System.String)">
+  Find(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L545"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Finds the tst node matching the key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual TernarySearchTreeDictionary&lt;T&gt;.TstDictionaryEntry&lt;T&gt;? Find(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary</a>&lt;T&gt;.<a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.TstDictionaryEntry-1.html">TstDictionaryEntry</a>&lt;T&gt;</dt>
+    <dd><p>the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> matching the key, null if not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is null.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_GetEnumerator_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.GetEnumerator*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_GetEnumerator" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.GetEnumerator">
+  GetEnumerator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L381"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual IEnumerator&lt;KeyValuePair&lt;string, T&gt;&gt; GetEnumerator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</dt>
+    <dd><p>A enumerator structure for the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Remove_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Remove*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_Remove_System_String_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.Remove(System.String)">
+  Remove(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L396"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes the element with the specified key from the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Remove(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key of the element to remove.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is a null reference (Nothing in Visual Basic).</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p><code class="paramref">key</code> is an empty string</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> is read-only.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> has a fixed size.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_StartingWith_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.StartingWith*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_StartingWith_System_String_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.StartingWith(System.String)">
+  StartingWith(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L453"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves a collection of key-value pairs where the keys start with the specified prefix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;KeyValuePair&lt;string, T&gt;&gt; StartingWith(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The prefix to search for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</dt>
+    <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a> of key-value pairs whose keys start with the specified prefix.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_TryGetNode_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.TryGetNode*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_TryGetNode_System_String_System_Collections_Generic_Stack_HexaEngine_Core_Collections_TernarySearchTreeDictionary__0__TstDictionaryEntry__0___HexaEngine_Core_Collections_TernarySearchTreeDictionary__0__TstDictionaryEntry__0___" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.TryGetNode(System.String,System.Collections.Generic.Stack{HexaEngine.Core.Collections.TernarySearchTreeDictionary{`0}.TstDictionaryEntry{`0}},HexaEngine.Core.Collections.TernarySearchTreeDictionary{`0}.TstDictionaryEntry{`0}@)">
+  TryGetNode(string, Stack&lt;TstDictionaryEntry&lt;T&gt;&gt;?, out TstDictionaryEntry&lt;T&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L560"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Finds the node matching the key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual bool TryGetNode(string key, Stack&lt;TernarySearchTreeDictionary&lt;T&gt;.TstDictionaryEntry&lt;T&gt;&gt;? stack, out TernarySearchTreeDictionary&lt;T&gt;.TstDictionaryEntry&lt;T&gt;? entry)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>stack</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack</a>&lt;<a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary</a>&lt;T&gt;.<a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.TstDictionaryEntry-1.html">TstDictionaryEntry</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+    <dt><code>entry</code> <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary</a>&lt;T&gt;.<a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.TstDictionaryEntry-1.html">TstDictionaryEntry</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>the <a class="xref" href="HexaEngine.Core.Collections.TernarySearchTreeDictionary-1.html">TernarySearchTreeDictionary&lt;T&gt;</a> matching the key, null if not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is null.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_TryGetValue_" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.TryGetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Collections_TernarySearchTreeDictionary_1_TryGetValue_System_String__0__" data-uid="HexaEngine.Core.Collections.TernarySearchTreeDictionary`1.TryGetValue(System.String,`0@)">
+  TryGetValue(string, out T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L516"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetValue(string key, out T value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key of the value to get.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>When this method returns, contains the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <code class="paramref">value</code> parameter. This parameter is passed uninitialized.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary&lt;TKey, TValue&gt;</a> contains an element with the specified key; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">key</code> is null.</p>
+</dd>
+  </dl>
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Collections/TernarySearchTreeDictionary.cs/#L43" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

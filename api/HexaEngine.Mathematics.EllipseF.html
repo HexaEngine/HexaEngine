@@ -1,0 +1,1085 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct EllipseF </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct EllipseF ">
+      
+      <meta name="description" content="Represents an ellipse in floating-point coordinates.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_EllipseF.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.EllipseF%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.EllipseF">
+
+
+
+  <h1 id="HexaEngine_Mathematics_EllipseF" data-uid="HexaEngine.Mathematics.EllipseF" class="text-break">
+Struct EllipseF  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents an ellipse in floating-point coordinates.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct EllipseF : IEquatable&lt;EllipseF&gt;</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_EllipseF__ctor_" data-uid="HexaEngine.Mathematics.EllipseF.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF__ctor_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="HexaEngine.Mathematics.EllipseF.#ctor(System.Numerics.Vector2,System.Numerics.Vector2)">
+  EllipseF(Vector2, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a> struct with specified center and radius vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EllipseF(Vector2 origin, Vector2 radius)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>origin</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>radius</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF__ctor_" data-uid="HexaEngine.Mathematics.EllipseF.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF__ctor_System_Numerics_Vector2_System_Single_" data-uid="HexaEngine.Mathematics.EllipseF.#ctor(System.Numerics.Vector2,System.Single)">
+  EllipseF(Vector2, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a> struct with specified center and radius value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EllipseF(Vector2 origin, float radius)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>origin</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>radius</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Center" data-uid="HexaEngine.Mathematics.EllipseF.Center">
+  Center
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the center of the ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 Center</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Radius" data-uid="HexaEngine.Mathematics.EllipseF.Radius">
+  Radius
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the radius of the ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 Radius</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Contains_" data-uid="HexaEngine.Mathematics.EllipseF.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Contains_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.Contains(HexaEngine.Mathematics.EllipseF)">
+  Contains(EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the ellipse contains another ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Contains(EllipseF other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Contains_" data-uid="HexaEngine.Mathematics.EllipseF.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Contains_HexaEngine_Mathematics_RectangleF_" data-uid="HexaEngine.Mathematics.EllipseF.Contains(HexaEngine.Mathematics.RectangleF)">
+  Contains(RectangleF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the ellipse contains a rectangle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Contains(RectangleF rect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rect</code> <a class="xref" href="HexaEngine.Mathematics.RectangleF.html">RectangleF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Contains_" data-uid="HexaEngine.Mathematics.EllipseF.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Contains_System_Numerics_Vector2_" data-uid="HexaEngine.Mathematics.EllipseF.Contains(System.Numerics.Vector2)">
+  Contains(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the ellipse contains the specified point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Contains(Vector2 point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Equals_" data-uid="HexaEngine.Mathematics.EllipseF.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Equals_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.Equals(HexaEngine.Mathematics.EllipseF)">
+  Equals(EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Equals(EllipseF other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Equals_" data-uid="HexaEngine.Mathematics.EllipseF.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Equals_System_Object_" data-uid="HexaEngine.Mathematics.EllipseF.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_GetHashCode_" data-uid="HexaEngine.Mathematics.EllipseF.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_GetHashCode" data-uid="HexaEngine.Mathematics.EllipseF.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Intersects_" data-uid="HexaEngine.Mathematics.EllipseF.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Intersects_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.Intersects(HexaEngine.Mathematics.EllipseF)">
+  Intersects(EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the ellipse intersects with another ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Intersects(EllipseF other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Intersects_" data-uid="HexaEngine.Mathematics.EllipseF.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Intersects_HexaEngine_Mathematics_RectangleF_" data-uid="HexaEngine.Mathematics.EllipseF.Intersects(HexaEngine.Mathematics.RectangleF)">
+  Intersects(RectangleF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the ellipse intersects with a rectangle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Intersects(RectangleF rect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rect</code> <a class="xref" href="HexaEngine.Mathematics.RectangleF.html">RectangleF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_Merge_" data-uid="HexaEngine.Mathematics.EllipseF.Merge*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_Merge_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.Merge(HexaEngine.Mathematics.EllipseF)">
+  Merge(EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Merges the current ellipse with another ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly EllipseF Merge(EllipseF other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_ToString_" data-uid="HexaEngine.Mathematics.EllipseF.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_ToString" data-uid="HexaEngine.Mathematics.EllipseF.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The fully qualified type name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Addition_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Addition_HexaEngine_Mathematics_EllipseF_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition(HexaEngine.Mathematics.EllipseF,HexaEngine.Mathematics.EllipseF)">
+  operator +(EllipseF, EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two ellipses by combining their radius vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator +(EllipseF left, EllipseF right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The first ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The second ellipse.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the addition.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Addition_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Addition_HexaEngine_Mathematics_EllipseF_System_Numerics_Vector2_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition(HexaEngine.Mathematics.EllipseF,System.Numerics.Vector2)">
+  operator +(EllipseF, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Translates the ellipse by adding the specified vector to its center.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator +(EllipseF left, Vector2 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The vector to add to the ellipse's center.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the translation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Addition_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Addition_HexaEngine_Mathematics_EllipseF_System_Single_" data-uid="HexaEngine.Mathematics.EllipseF.op_Addition(HexaEngine.Mathematics.EllipseF,System.Single)">
+  operator +(EllipseF, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the ellipse by adding the specified value to its radius.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator +(EllipseF left, float right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value to add to the ellipse's radius.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the scaling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Division_" data-uid="HexaEngine.Mathematics.EllipseF.op_Division*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Division_HexaEngine_Mathematics_EllipseF_System_Single_" data-uid="HexaEngine.Mathematics.EllipseF.op_Division(HexaEngine.Mathematics.EllipseF,System.Single)">
+  operator /(EllipseF, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the ellipse by dividing its radius by the specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator /(EllipseF left, float right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value to divide the ellipse's radius by.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the scaling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Equality_" data-uid="HexaEngine.Mathematics.EllipseF.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Equality_HexaEngine_Mathematics_EllipseF_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.op_Equality(HexaEngine.Mathematics.EllipseF,HexaEngine.Mathematics.EllipseF)">
+  operator ==(EllipseF, EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Equality operator for comparing two ellipses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(EllipseF left, EllipseF right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Inequality_" data-uid="HexaEngine.Mathematics.EllipseF.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Inequality_HexaEngine_Mathematics_EllipseF_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.op_Inequality(HexaEngine.Mathematics.EllipseF,HexaEngine.Mathematics.EllipseF)">
+  operator !=(EllipseF, EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Inequality operator for comparing two ellipses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(EllipseF left, EllipseF right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Multiply_" data-uid="HexaEngine.Mathematics.EllipseF.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Multiply_HexaEngine_Mathematics_EllipseF_System_Single_" data-uid="HexaEngine.Mathematics.EllipseF.op_Multiply(HexaEngine.Mathematics.EllipseF,System.Single)">
+  operator *(EllipseF, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the ellipse by multiplying its radius by the specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator *(EllipseF left, float right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value to multiply the ellipse's radius by.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the scaling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Subtraction_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Subtraction_HexaEngine_Mathematics_EllipseF_HexaEngine_Mathematics_EllipseF_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction(HexaEngine.Mathematics.EllipseF,HexaEngine.Mathematics.EllipseF)">
+  operator -(EllipseF, EllipseF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts the radius vector of the second ellipse from the first ellipse.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator -(EllipseF left, EllipseF right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The first ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The second ellipse.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the subtraction.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Subtraction_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Subtraction_HexaEngine_Mathematics_EllipseF_System_Numerics_Vector2_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction(HexaEngine.Mathematics.EllipseF,System.Numerics.Vector2)">
+  operator -(EllipseF, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Translates the ellipse by subtracting the specified vector from its center.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator -(EllipseF left, Vector2 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The vector to subtract from the ellipse's center.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the translation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_EllipseF_op_Subtraction_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_EllipseF_op_Subtraction_HexaEngine_Mathematics_EllipseF_System_Single_" data-uid="HexaEngine.Mathematics.EllipseF.op_Subtraction(HexaEngine.Mathematics.EllipseF,System.Single)">
+  operator -(EllipseF, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the ellipse by subtracting the specified value from its radius.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EllipseF operator -(EllipseF left, float right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>The ellipse.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value to subtract from the ellipse's radius.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.EllipseF.html">EllipseF</a></dt>
+    <dd><p>A new ellipse resulting from the scaling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/EllipseF.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

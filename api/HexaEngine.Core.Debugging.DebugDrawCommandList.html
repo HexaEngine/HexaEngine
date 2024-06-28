@@ -1,0 +1,934 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DebugDrawCommandList </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DebugDrawCommandList ">
+      
+      <meta name="description" content="Represents a queue of debugging drawing commands for rendering primitives.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Debugging_DebugDrawCommandList.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Debugging.DebugDrawCommandList%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList">
+
+
+
+  <h1 id="HexaEngine_Core_Debugging_DebugDrawCommandList" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList" class="text-break">
+Class DebugDrawCommandList  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Debugging.html">Debugging</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a queue of debugging drawing commands for rendering primitives.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class DebugDrawCommandList : IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">DebugDrawCommandList</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList__ctor_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList__ctor_HexaEngine_Core_Debugging_DebugDrawCommandListType_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.#ctor(HexaEngine.Core.Debugging.DebugDrawCommandListType)">
+  DebugDrawCommandList(DebugDrawCommandListType)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Debugging.DebugDrawCommandList.html">DebugDrawCommandList</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DebugDrawCommandList(DebugDrawCommandListType type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Debugging.DebugDrawCommandListType.html">DebugDrawCommandListType</a></dt>
+    <dd><p>The type of the debug draw command list.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Commands_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Commands*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Commands" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Commands">
+  Commands
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of debug draw commands.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;DebugDrawCommand&gt; Commands { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.Debugging.DebugDrawCommand.html">DebugDrawCommand</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_IndexCount_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.IndexCount*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_IndexCount" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.IndexCount">
+  IndexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the total count of indices used in the commands in the queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint IndexCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Indices_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Indices*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Indices" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Indices">
+  Indices
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the indices of the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint* Indices { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Type_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Type*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Type" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the type of the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DebugDrawCommandListType Type { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Debugging.DebugDrawCommandListType.html">DebugDrawCommandListType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_VertexCount_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.VertexCount*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_VertexCount" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.VertexCount">
+  VertexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the total count of vertices used in the commands in the queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint VertexCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Vertices_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Vertices*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Vertices" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Vertices">
+  Vertices
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the vertices of the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DebugDrawVert* Vertices { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Debugging.DebugDrawVert.html">DebugDrawVert</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddFace_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddFace*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddFace_System_UInt32_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddFace(System.UInt32,System.UInt32,System.UInt32)">
+  AddFace(uint, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a face (triangle) defined by three indices to the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddFace(uint i0, uint i1, uint i2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The first index of the face.</p>
+</dd>
+    <dt><code>i1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The second index of the face.</p>
+</dd>
+    <dt><code>i2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The third index of the face.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddIndex_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddIndex*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddIndex_System_UInt32_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddIndex(System.UInt32)">
+  AddIndex(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds an index to the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddIndex(uint index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddIndexRange_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddIndexRange*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddIndexRange_System_UInt32___" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddIndexRange(System.UInt32[])">
+  AddIndexRange(uint[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a range of indices to the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddIndexRange(uint[] indices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</dt>
+    <dd><p>The array of indices to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddVertex_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddVertex*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddVertex_HexaEngine_Core_Debugging_DebugDrawVert_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddVertex(HexaEngine.Core.Debugging.DebugDrawVert)">
+  AddVertex(DebugDrawVert)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a vertex to the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddVertex(DebugDrawVert vertex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertex</code> <a class="xref" href="HexaEngine.Core.Debugging.DebugDrawVert.html">DebugDrawVert</a></dt>
+    <dd><p>The vertex to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddVertexRange_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddVertexRange*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_AddVertexRange_HexaEngine_Core_Debugging_DebugDrawVert___" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.AddVertexRange(HexaEngine.Core.Debugging.DebugDrawVert[])">
+  AddVertexRange(DebugDrawVert[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a range of vertices to the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddVertexRange(DebugDrawVert[] vertices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertices</code> <a class="xref" href="HexaEngine.Core.Debugging.DebugDrawVert.html">DebugDrawVert</a>[]</dt>
+    <dd><p>The array of vertices to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_BeginDraw_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.BeginDraw*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_BeginDraw" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.BeginDraw">
+  BeginDraw()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void BeginDraw()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Dispose_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Dispose" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_Dispose_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_Dispose_System_Boolean_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_EndFrame_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.EndFrame*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_EndFrame" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.EndFrame">
+  EndFrame()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compacts the debug draw command list by merging compatible commands.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EndFrame()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_NewFrame_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.NewFrame*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_NewFrame" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.NewFrame">
+  NewFrame()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void NewFrame()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_HexaEngine_Core_Graphics_PrimitiveTopology_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd(HexaEngine.Core.Graphics.PrimitiveTopology)">
+  RecordCmd(PrimitiveTopology)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Records a command in the debug draw command list with the specified primitive topology.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordCmd(PrimitiveTopology topology)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topology</code> <a class="xref" href="HexaEngine.Core.Graphics.PrimitiveTopology.html">PrimitiveTopology</a></dt>
+    <dd><p>The primitive topology of the command.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_HexaEngine_Core_Graphics_PrimitiveTopology_System_IntPtr_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd(HexaEngine.Core.Graphics.PrimitiveTopology,System.IntPtr)">
+  RecordCmd(PrimitiveTopology, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Records a command in the debug draw command list with the specified primitive topology and texture ID.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordCmd(PrimitiveTopology topology, nint texId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topology</code> <a class="xref" href="HexaEngine.Core.Graphics.PrimitiveTopology.html">PrimitiveTopology</a></dt>
+    <dd><p>The primitive topology of the command.</p>
+</dd>
+    <dt><code>texId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The texture ID of the command.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_RecordCmd_HexaEngine_Core_Graphics_PrimitiveTopology_System_IntPtr_System_Boolean_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.RecordCmd(HexaEngine.Core.Graphics.PrimitiveTopology,System.IntPtr,System.Boolean)">
+  RecordCmd(PrimitiveTopology, nint, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Records a command in the debug draw command list with the specified primitive topology, texture ID, and depth enabling.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordCmd(PrimitiveTopology topology, nint texId, bool enableDepth)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topology</code> <a class="xref" href="HexaEngine.Core.Graphics.PrimitiveTopology.html">PrimitiveTopology</a></dt>
+    <dd><p>The primitive topology of the command.</p>
+</dd>
+    <dt><code>texId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The texture ID of the command.</p>
+</dd>
+    <dt><code>enableDepth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether depth should be enabled for the command.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveGeometry_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveGeometry*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveGeometry_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveGeometry(System.UInt32,System.UInt32)">
+  ReserveGeometry(uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reserves space for geometry in the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReserveGeometry(uint nVertices, uint nIndices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nVertices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of vertices to reserve.</p>
+</dd>
+    <dt><code>nIndices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of indices to reserve.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveIndices_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveIndices*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveIndices_System_UInt32_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveIndices(System.UInt32)">
+  ReserveIndices(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reserves space for indices in the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReserveIndices(uint nIndices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nIndices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of indices to reserve.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveVerts_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveVerts*"></a>
+
+  <h3 id="HexaEngine_Core_Debugging_DebugDrawCommandList_ReserveVerts_System_UInt32_" data-uid="HexaEngine.Core.Debugging.DebugDrawCommandList.ReserveVerts(System.UInt32)">
+  ReserveVerts(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reserves space for vertices in the debug draw command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReserveVerts(uint nVertices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nVertices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of vertices to reserve.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Debugging/DebugDrawCommandList.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

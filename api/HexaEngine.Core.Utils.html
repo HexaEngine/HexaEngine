@@ -1,0 +1,3556 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Utils </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Utils ">
+      
+      <meta name="description" content="Utilities for allocation, freeing, reallocating, moving, copying native memory and conversation from managed to unmanaged.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Utils.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Utils%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Utils">
+
+
+
+  <h1 id="HexaEngine_Core_Utils" data-uid="HexaEngine.Core.Utils" class="text-break">
+Class Utils  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Utilities for allocation, freeing, reallocating, moving, copying native memory and conversation from managed to unmanaged.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class Utils</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Utils</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Utils_Allocator_" data-uid="HexaEngine.Core.Utils.Allocator*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Allocator" data-uid="HexaEngine.Core.Utils.Allocator">
+  Allocator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IAllocationCallbacks Allocator { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.IAllocationCallbacks.html">IAllocationCallbacks</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Utils_Alloc_" data-uid="HexaEngine.Core.Utils.Alloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Alloc_System_Int32_" data-uid="HexaEngine.Core.Utils.Alloc(System.Int32)">
+  Alloc(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L658"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to unmanaged memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* Alloc(int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size, in bytes, to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Alloc_" data-uid="HexaEngine.Core.Utils.Alloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Alloc_System_IntPtr_" data-uid="HexaEngine.Core.Utils.Alloc(System.IntPtr)">
+  Alloc(nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L618"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to unmanaged memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* Alloc(nint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The number of bytes to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Alloc_" data-uid="HexaEngine.Core.Utils.Alloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Alloc_System_UInt32_" data-uid="HexaEngine.Core.Utils.Alloc(System.UInt32)">
+  Alloc(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L678"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to unmanaged memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* Alloc(uint size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The size, in bytes, to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Alloc_" data-uid="HexaEngine.Core.Utils.Alloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Alloc_System_UIntPtr_" data-uid="HexaEngine.Core.Utils.Alloc(System.UIntPtr)">
+  Alloc(nuint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L638"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to unmanaged memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* Alloc(nuint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uintptr">nuint</a></dt>
+    <dd><p>The number of bytes to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocArray_" data-uid="HexaEngine.Core.Utils.AllocArray*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocArray_System_UInt32_" data-uid="HexaEngine.Core.Utils.AllocArray(System.UInt32)">
+  AllocArray(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1038"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of pointers and returns a pointer to the newly allocated memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void** AllocArray(uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of pointers to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>A pointer to the newly allocated memory for an array of pointers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocArrayAndZero_" data-uid="HexaEngine.Core.Utils.AllocArrayAndZero*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocArrayAndZero_System_UInt32_" data-uid="HexaEngine.Core.Utils.AllocArrayAndZero(System.UInt32)">
+  AllocArrayAndZero(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1058"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of pointers, sets the memory to zero, and returns a pointer to the newly allocated memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void** AllocArrayAndZero(uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of pointers to allocate and set to zero.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>A pointer to the newly allocated memory for an array of pointers with zeroed memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopy_" data-uid="HexaEngine.Core.Utils.AllocCopy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopy_System_Void__System_Int32_" data-uid="HexaEngine.Core.Utils.AllocCopy(System.Void*,System.Int32)">
+  AllocCopy(void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L955"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* AllocCopy(void* pointer, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of bytes to allocate and copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopy_" data-uid="HexaEngine.Core.Utils.AllocCopy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopy_System_Void__System_IntPtr_" data-uid="HexaEngine.Core.Utils.AllocCopy(System.Void*,System.IntPtr)">
+  AllocCopy(void*, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L995"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* AllocCopy(void* pointer, nint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The number of bytes to allocate and copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopy_" data-uid="HexaEngine.Core.Utils.AllocCopy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopy_System_Void__System_UInt32_" data-uid="HexaEngine.Core.Utils.AllocCopy(System.Void*,System.UInt32)">
+  AllocCopy(void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L977"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* AllocCopy(void* pointer, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of bytes to allocate and copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopy_" data-uid="HexaEngine.Core.Utils.AllocCopy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopy_System_Void__System_UIntPtr_" data-uid="HexaEngine.Core.Utils.AllocCopy(System.Void*,System.UIntPtr)">
+  AllocCopy(void*, nuint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1017"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* AllocCopy(void* pointer, nuint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uintptr">nuint</a></dt>
+    <dd><p>The number of bytes to allocate and copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopyT_" data-uid="HexaEngine.Core.Utils.AllocCopyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopyT__1_System_ReadOnlySpan___0__" data-uid="HexaEngine.Core.Utils.AllocCopyT``1(System.ReadOnlySpan{``0})">
+  AllocCopyT&lt;T&gt;(ReadOnlySpan&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L928"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocCopyT&lt;T&gt;(ReadOnlySpan&lt;T&gt; source) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;T&gt;</dt>
+    <dd><p>The source span to copy from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopyT_" data-uid="HexaEngine.Core.Utils.AllocCopyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopyT__1_System_Span___0__" data-uid="HexaEngine.Core.Utils.AllocCopyT``1(System.Span{``0})">
+  AllocCopyT&lt;T&gt;(Span&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L901"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocCopyT&lt;T&gt;(Span&lt;T&gt; source) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;T&gt;</dt>
+    <dd><p>The source span to copy from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopyT_" data-uid="HexaEngine.Core.Utils.AllocCopyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopyT__1___0__System_Int32_" data-uid="HexaEngine.Core.Utils.AllocCopyT``1(``0*,System.Int32)">
+  AllocCopyT&lt;T&gt;(T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L829"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of elements of type T, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocCopyT&lt;T&gt;(T* pointer, int length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of elements in the array.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopyT_" data-uid="HexaEngine.Core.Utils.AllocCopyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopyT__1___0__System_UInt32_" data-uid="HexaEngine.Core.Utils.AllocCopyT``1(``0*,System.UInt32)">
+  AllocCopyT&lt;T&gt;(T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L852"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of elements of type T, copies data from the source pointer to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocCopyT&lt;T&gt;(T* pointer, uint length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the source data to be copied.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements in the array.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocCopyT_" data-uid="HexaEngine.Core.Utils.AllocCopyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocCopyT__1___0___" data-uid="HexaEngine.Core.Utils.AllocCopyT``1(``0[])">
+  AllocCopyT&lt;T&gt;(T[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L874"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocCopyT&lt;T&gt;(T[] source) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> T[]</dt>
+    <dd><p>The source span to copy from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the newly allocated memory with the copied data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocT_" data-uid="HexaEngine.Core.Utils.AllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocT__1" data-uid="HexaEngine.Core.Utils.AllocT``1">
+  AllocT&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L534"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to memory for a single element of type T, initializing it with the default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocT&lt;T&gt;() where T : unmanaged</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the element to allocate.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocT_" data-uid="HexaEngine.Core.Utils.AllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocT__1_System_Int32_" data-uid="HexaEngine.Core.Utils.AllocT``1(System.Int32)">
+  AllocT&lt;T&gt;(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L556"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to memory for an array of elements of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocT&lt;T&gt;(int count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the allocated memory for the array.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements to allocate.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocT_" data-uid="HexaEngine.Core.Utils.AllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocT__1_System_IntPtr_" data-uid="HexaEngine.Core.Utils.AllocT``1(System.IntPtr)">
+  AllocT&lt;T&gt;(nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L598"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to memory for an array of elements of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocT&lt;T&gt;(nint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the allocated memory for the array.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements to allocate.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocT_" data-uid="HexaEngine.Core.Utils.AllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocT__1_System_UInt32_" data-uid="HexaEngine.Core.Utils.AllocT``1(System.UInt32)">
+  AllocT&lt;T&gt;(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L577"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to memory for an array of elements of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocT&lt;T&gt;(uint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the allocated memory for the array.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements to allocate.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_AllocT_" data-uid="HexaEngine.Core.Utils.AllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_AllocT__1___0_" data-uid="HexaEngine.Core.Utils.AllocT``1(``0)">
+  AllocT&lt;T&gt;(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L513"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allocates and returns a pointer to memory for a single element of type T, initializing it with the provided data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* AllocT&lt;T&gt;(T data) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> <span class="xref">T</span></dt>
+    <dd><p>The data to initialize the allocated memory with.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the allocated memory.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the element to allocate.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Bitcount_" data-uid="HexaEngine.Core.Utils.Bitcount*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Bitcount_System_UInt32_" data-uid="HexaEngine.Core.Utils.Bitcount(System.UInt32)">
+  Bitcount(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Counts the number of set bits (1s) in the binary representation of an unsigned integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Bitcount(this uint value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The unsigned integer to count bits in.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The count of set bits in the binary representation of the integer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Compare_" data-uid="HexaEngine.Core.Utils.Compare*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Compare_System_Byte__System_Byte__System_UInt32_" data-uid="HexaEngine.Core.Utils.Compare(System.Byte*,System.Byte*,System.UInt32)">
+  Compare(byte*, byte*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the data of two pointers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Compare(byte* a, byte* b, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>a.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The b.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The length.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the data matches the other, otherwise false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Compare_" data-uid="HexaEngine.Core.Utils.Compare*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Compare_System_Char__System_Char__System_UInt32_" data-uid="HexaEngine.Core.Utils.Compare(System.Char*,System.Char*,System.UInt32)">
+  Compare(char*, char*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the data of two pointers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Compare(char* a, char* b, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>a.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>The b.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The length.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the data matches the other, otherwise false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Contains_" data-uid="HexaEngine.Core.Utils.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Contains__1___0__System_Int32___0__System_Int32_" data-uid="HexaEngine.Core.Utils.Contains``1(``0*,System.Int32,``0*,System.Int32)">
+  Contains&lt;T&gt;(T*, int, T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Contains&lt;T&gt;(T* data, int size, T* str, int length) where T : unmanaged, IEquatable&lt;T&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> T*</dt>
+    <dd></dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>str</code> T*</dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Contains_" data-uid="HexaEngine.Core.Utils.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Contains__2___0__System_Int32___1__System_Int32_System_Func___1___0__" data-uid="HexaEngine.Core.Utils.Contains``2(``0*,System.Int32,``1*,System.Int32,System.Func{``1,``0})">
+  Contains&lt;TSrc, TDst&gt;(TSrc*, int, TDst*, int, Func&lt;TDst, TSrc&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1367"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Contains&lt;TSrc, TDst&gt;(TSrc* data, int size, TDst* str, int length, Func&lt;TDst, TSrc&gt; convert) where TSrc : unmanaged, IEquatable&lt;TSrc&gt; where TDst : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> TSrc*</dt>
+    <dd></dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>str</code> TDst*</dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>convert</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TDst, TSrc&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TSrc</code></dt>
+    <dd></dd>
+    <dt><code>TDst</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Find_" data-uid="HexaEngine.Core.Utils.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Find__1___0__System_Int32___0__System_Int32_System_Int32_" data-uid="HexaEngine.Core.Utils.Find``1(``0*,System.Int32,``0*,System.Int32,System.Int32)">
+  Find&lt;T&gt;(T*, int, T*, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1395"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int Find&lt;T&gt;(T* data, int size, T* str, int length, int pos) where T : unmanaged, IEquatable&lt;T&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> T*</dt>
+    <dd></dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>str</code> T*</dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Find_" data-uid="HexaEngine.Core.Utils.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Find__2___0__System_Int32___1__System_Int32_System_Int32_System_Func___1___0__" data-uid="HexaEngine.Core.Utils.Find``2(``0*,System.Int32,``1*,System.Int32,System.Int32,System.Func{``1,``0})">
+  Find&lt;TSrc, TDst&gt;(TSrc*, int, TDst*, int, int, Func&lt;TDst, TSrc&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1422"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int Find&lt;TSrc, TDst&gt;(TSrc* data, int size, TDst* str, int length, int pos, Func&lt;TDst, TSrc&gt; convert) where TSrc : unmanaged, IEquatable&lt;TSrc&gt; where TDst : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> TSrc*</dt>
+    <dd></dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>str</code> TDst*</dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>convert</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TDst, TSrc&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TSrc</code></dt>
+    <dd></dd>
+    <dt><code>TDst</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Free_" data-uid="HexaEngine.Core.Utils.Free*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Free_System_Void__" data-uid="HexaEngine.Core.Utils.Free(System.Void*)">
+  Free(void*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1090"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Frees memory allocated for an unmanaged resource associated with a pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Free(void* pointer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the unmanaged resource to be released.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Free_" data-uid="HexaEngine.Core.Utils.Free*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Free_System_Void___" data-uid="HexaEngine.Core.Utils.Free(System.Void**)">
+  Free(void**)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Frees memory allocated for an array of pointers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Free(void** pointer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>A pointer to the array of pointers to be released.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Free_" data-uid="HexaEngine.Core.Utils.Free*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Free__1___0__" data-uid="HexaEngine.Core.Utils.Free``1(``0*)">
+  Free&lt;T&gt;(T*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1079"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Frees memory allocated for an unmanaged resource associated with a pointer to a type that implements <a class="xref" href="HexaEngine.Core.Unsafes.IFreeable.html">IFreeable</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Free&lt;T&gt;(T* pointer) where T : unmanaged, IFreeable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the unmanaged resource to be released.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type that implements <a class="xref" href="HexaEngine.Core.Unsafes.IFreeable.html">IFreeable</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_Int32_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.Int32)">
+  Memcpy(void*, void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_Int32_System_Int32_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.Int32,System.Int32)">
+  Memcpy(void*, void*, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with specified lengths.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, int dstLength, int srcLength)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_Int64_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.Int64)">
+  Memcpy(void*, void*, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, long length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_Int64_System_Int64_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.Int64,System.Int64)">
+  Memcpy(void*, void*, long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with specified lengths.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, long dstLength, long srcLength)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_UInt32_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.UInt32)">
+  Memcpy(void*, void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.UInt32,System.UInt32)">
+  Memcpy(void*, void*, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with specified lengths.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, uint dstLength, uint srcLength)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_UInt64_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.UInt64)">
+  Memcpy(void*, void*, ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, ulong length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memcpy_" data-uid="HexaEngine.Core.Utils.Memcpy*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memcpy_System_Void__System_Void__System_UInt64_System_UInt64_" data-uid="HexaEngine.Core.Utils.Memcpy(System.Void*,System.Void*,System.UInt64,System.UInt64)">
+  Memcpy(void*, void*, ulong, ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with specified lengths.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memcpy(void* src, void* dst, ulong dstLength, ulong srcLength)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_MemcpyT_" data-uid="HexaEngine.Core.Utils.MemcpyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_MemcpyT__1___0____0__System_Int32_" data-uid="HexaEngine.Core.Utils.MemcpyT``1(``0*,``0*,System.Int32)">
+  MemcpyT&lt;T&gt;(T*, T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L395"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void MemcpyT&lt;T&gt;(T* src, T* dst, int length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> T*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of elements to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_MemcpyT_" data-uid="HexaEngine.Core.Utils.MemcpyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_MemcpyT__1___0____0__System_Int32_System_Int32_" data-uid="HexaEngine.Core.Utils.MemcpyT``1(``0*,``0*,System.Int32,System.Int32)">
+  MemcpyT&lt;T&gt;(T*, T*, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void MemcpyT&lt;T&gt;(T* src, T* dst, int dstLength, int srcLength) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> T*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of elements to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_MemcpyT_" data-uid="HexaEngine.Core.Utils.MemcpyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_MemcpyT__1___0____0__System_UInt32_" data-uid="HexaEngine.Core.Utils.MemcpyT``1(``0*,``0*,System.UInt32)">
+  MemcpyT&lt;T&gt;(T*, T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L382"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void MemcpyT&lt;T&gt;(T* src, T* dst, uint length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> T*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the source and destination memory to copy.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of elements to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_MemcpyT_" data-uid="HexaEngine.Core.Utils.MemcpyT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_MemcpyT__1___0____0__System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Utils.MemcpyT``1(``0*,``0*,System.UInt32,System.UInt32)">
+  MemcpyT&lt;T&gt;(T*, T*, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L357"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies memory from the source to the destination with the same length for both source and destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void MemcpyT&lt;T&gt;(T* src, T* dst, uint dstLength, uint srcLength) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>Pointer to the source memory.</p>
+</dd>
+    <dt><code>dst</code> T*</dt>
+    <dd><p>Pointer to the destination memory.</p>
+</dd>
+    <dt><code>dstLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the destination memory to copy to.</p>
+</dd>
+    <dt><code>srcLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Length of the source memory to copy from.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of elements to copy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memset_" data-uid="HexaEngine.Core.Utils.Memset*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memset_System_Void__System_Byte_System_Int32_" data-uid="HexaEngine.Core.Utils.Memset(System.Void*,System.Byte,System.Int32)">
+  Memset(void*, byte, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the memory at the specified pointer to the specified value for a given number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memset(void* ptr, byte value, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the memory to set.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte value to set the memory to.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of bytes to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memset_" data-uid="HexaEngine.Core.Utils.Memset*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memset_System_Void__System_Byte_System_UInt32_" data-uid="HexaEngine.Core.Utils.Memset(System.Void*,System.Byte,System.UInt32)">
+  Memset(void*, byte, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the memory at the specified pointer to the specified value for a given number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memset(void* ptr, byte value, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the memory to set.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte value to set the memory to.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of bytes to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memset_" data-uid="HexaEngine.Core.Utils.Memset*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memset__1___0__System_Byte_System_Int32_" data-uid="HexaEngine.Core.Utils.Memset``1(``0*,System.Byte,System.Int32)">
+  Memset&lt;T&gt;(T*, byte, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1301"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the memory at the specified pointer to the specified value for a given number of elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memset&lt;T&gt;(T* ptr, byte value, int count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> T*</dt>
+    <dd><p>A pointer to the memory to set.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte value to set the memory to.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of elements to set.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type of elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memset_" data-uid="HexaEngine.Core.Utils.Memset*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memset__1___0__System_Byte_System_UInt32_" data-uid="HexaEngine.Core.Utils.Memset``1(``0*,System.Byte,System.UInt32)">
+  Memset&lt;T&gt;(T*, byte, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the memory at the specified pointer to the specified value for a given number of elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memset&lt;T&gt;(T* ptr, byte value, uint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> T*</dt>
+    <dd><p>A pointer to the memory to set.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte value to set the memory to.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements to set.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type of elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Memset_" data-uid="HexaEngine.Core.Utils.Memset*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Memset__1___0____0_System_Int32_" data-uid="HexaEngine.Core.Utils.Memset``1(``0*,``0,System.Int32)">
+  Memset&lt;T&gt;(T*, T, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1285"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the memory at the specified pointer to the specified value for a given number of elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Memset&lt;T&gt;(T* ptr, T value, int count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> T*</dt>
+    <dd><p>A pointer to the memory to set.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The byte value to set the memory to.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of elements to set.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type of elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Partition_" data-uid="HexaEngine.Core.Utils.Partition*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Partition_System_Void__System_Int32_System_Int32_System_Func_HexaEngine_Core_Unsafes_Pointer_HexaEngine_Core_Unsafes_Pointer_System_Int32__" data-uid="HexaEngine.Core.Utils.Partition(System.Void*,System.Int32,System.Int32,System.Func{HexaEngine.Core.Unsafes.Pointer,HexaEngine.Core.Unsafes.Pointer,System.Int32})">
+  Partition(void*, int, int, Func&lt;Pointer, Pointer, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Partitions the array for quicksort.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int Partition(void* array, int elements, int size, Func&lt;Pointer, Pointer, int&gt; compare)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the array to be partitioned.</p>
+</dd>
+    <dt><code>elements</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of elements in the array.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Size of each element in bytes.</p>
+</dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Unsafes.Pointer.html">Pointer</a>, <a class="xref" href="HexaEngine.Core.Unsafes.Pointer.html">Pointer</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Comparison function for elements.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Index of the partitioning element.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Partition_" data-uid="HexaEngine.Core.Utils.Partition*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Partition__1___0__System_Int32_System_Func_HexaEngine_Core_Unsafes_Pointer___0__HexaEngine_Core_Unsafes_Pointer___0__System_Int32__" data-uid="HexaEngine.Core.Utils.Partition``1(``0*,System.Int32,System.Func{HexaEngine.Core.Unsafes.Pointer{``0},HexaEngine.Core.Unsafes.Pointer{``0},System.Int32})">
+  Partition&lt;T&gt;(T*, int, Func&lt;Pointer&lt;T&gt;, Pointer&lt;T&gt;, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Partitions the array for quicksort.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int Partition&lt;T&gt;(T* array, int elements, Func&lt;Pointer&lt;T&gt;, Pointer&lt;T&gt;, int&gt; compare) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>array</code> T*</dt>
+    <dd><p>Pointer to the array to be partitioned.</p>
+</dd>
+    <dt><code>elements</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of elements in the array.</p>
+</dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Unsafes.Pointer-1.html">Pointer</a>&lt;T&gt;, <a class="xref" href="HexaEngine.Core.Unsafes.Pointer-1.html">Pointer</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Comparison function for elements.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Index of the partitioning element.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of the elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_QSort_" data-uid="HexaEngine.Core.Utils.QSort*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_QSort_System_Void__System_Int32_System_Int32_System_Func_HexaEngine_Core_Unsafes_Pointer_HexaEngine_Core_Unsafes_Pointer_System_Int32__" data-uid="HexaEngine.Core.Utils.QSort(System.Void*,System.Int32,System.Int32,System.Func{HexaEngine.Core.Unsafes.Pointer,HexaEngine.Core.Unsafes.Pointer,System.Int32})">
+  QSort(void*, int, int, Func&lt;Pointer, Pointer, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs a quicksort on the given array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void QSort(void* array, int elements, int size, Func&lt;Pointer, Pointer, int&gt; compare)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the array to be sorted.</p>
+</dd>
+    <dt><code>elements</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of elements in the array.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Size of each element in bytes.</p>
+</dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Unsafes.Pointer.html">Pointer</a>, <a class="xref" href="HexaEngine.Core.Unsafes.Pointer.html">Pointer</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Comparison function for elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_QSort_" data-uid="HexaEngine.Core.Utils.QSort*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_QSort__1___0__System_Int32_System_Func_HexaEngine_Core_Unsafes_Pointer___0__HexaEngine_Core_Unsafes_Pointer___0__System_Int32__" data-uid="HexaEngine.Core.Utils.QSort``1(``0*,System.Int32,System.Func{HexaEngine.Core.Unsafes.Pointer{``0},HexaEngine.Core.Unsafes.Pointer{``0},System.Int32})">
+  QSort&lt;T&gt;(T*, int, Func&lt;Pointer&lt;T&gt;, Pointer&lt;T&gt;, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs a quicksort on the given array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void QSort&lt;T&gt;(T* array, int elements, Func&lt;Pointer&lt;T&gt;, Pointer&lt;T&gt;, int&gt; compare) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>array</code> T*</dt>
+    <dd><p>Pointer to the array to be sorted.</p>
+</dd>
+    <dt><code>elements</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of elements in the array.</p>
+</dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Unsafes.Pointer-1.html">Pointer</a>&lt;T&gt;, <a class="xref" href="HexaEngine.Core.Unsafes.Pointer-1.html">Pointer</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Comparison function for elements.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of the elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAlloc_" data-uid="HexaEngine.Core.Utils.ReAlloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAlloc_System_Void__System_Int32_" data-uid="HexaEngine.Core.Utils.ReAlloc(System.Void*,System.Int32)">
+  ReAlloc(void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L765"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* ReAlloc(void* pointer, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new number of bytes to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAlloc_" data-uid="HexaEngine.Core.Utils.ReAlloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAlloc_System_Void__System_IntPtr_" data-uid="HexaEngine.Core.Utils.ReAlloc(System.Void*,System.IntPtr)">
+  ReAlloc(void*, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L807"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* ReAlloc(void* pointer, nint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The new number of bytes to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAlloc_" data-uid="HexaEngine.Core.Utils.ReAlloc*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAlloc_System_Void__System_UInt32_" data-uid="HexaEngine.Core.Utils.ReAlloc(System.Void*,System.UInt32)">
+  ReAlloc(void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L786"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void* ReAlloc(void* pointer, uint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The new number of bytes to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAllocT_" data-uid="HexaEngine.Core.Utils.ReAllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAllocT__1___0__System_Int32_" data-uid="HexaEngine.Core.Utils.ReAllocT``1(``0*,System.Int32)">
+  ReAllocT&lt;T&gt;(T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L700"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* ReAllocT&lt;T&gt;(T* pointer, int count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAllocT_" data-uid="HexaEngine.Core.Utils.ReAllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAllocT__1___0__System_IntPtr_" data-uid="HexaEngine.Core.Utils.ReAllocT``1(``0*,System.IntPtr)">
+  ReAllocT&lt;T&gt;(T*, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L744"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* ReAllocT&lt;T&gt;(T* pointer, nint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The new number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ReAllocT_" data-uid="HexaEngine.Core.Utils.ReAllocT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ReAllocT__1___0__System_UInt32_" data-uid="HexaEngine.Core.Utils.ReAllocT``1(``0*,System.UInt32)">
+  ReAllocT&lt;T&gt;(T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L722"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* ReAllocT&lt;T&gt;(T* pointer, uint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>A pointer to the existing memory.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The new number of elements to allocate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd><p>A pointer to the reallocated memory.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the elements in the array.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_StringCompare_" data-uid="HexaEngine.Core.Utils.StringCompare*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_StringCompare_System_Char__System_Char__" data-uid="HexaEngine.Core.Utils.StringCompare(System.Char*,System.Char*)">
+  StringCompare(char*, char*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two strings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool StringCompare(char* a, char* b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>a.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>b.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the data matches the other, otherwise false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_StringCompare_" data-uid="HexaEngine.Core.Utils.StringCompare*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_StringCompare_System_Char__System_String_" data-uid="HexaEngine.Core.Utils.StringCompare(System.Char*,System.String)">
+  StringCompare(char*, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two strings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool StringCompare(char* a, string b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>a.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>b.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the data matches the other, otherwise false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_StringSizeNullTerminated_" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_StringSizeNullTerminated_System_Byte__" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated(System.Byte*)">
+  StringSizeNullTerminated(byte*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1220"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the size of the null terminated string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int StringSizeNullTerminated(byte* str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_StringSizeNullTerminated_" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_StringSizeNullTerminated_System_Char__" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated(System.Char*)">
+  StringSizeNullTerminated(char*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the size of the null terminated string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int StringSizeNullTerminated(char* str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>The string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_StringSizeNullTerminated_" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_StringSizeNullTerminated_System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Utils.StringSizeNullTerminated(System.ReadOnlySpan{System.Char})">
+  StringSizeNullTerminated(ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the size of the null terminated string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int StringSizeNullTerminated(ReadOnlySpan&lt;char&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Swap_" data-uid="HexaEngine.Core.Utils.Swap*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Swap_System_Void__System_Void__System_Int32_" data-uid="HexaEngine.Core.Utils.Swap(System.Void*,System.Void*,System.Int32)">
+  Swap(void*, void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Swaps the memory content between two pointers of the specified size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Swap(void* a, void* b, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the first memory location.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the second memory location.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Size of each element in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Swap_" data-uid="HexaEngine.Core.Utils.Swap*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Swap__1___0____0__" data-uid="HexaEngine.Core.Utils.Swap``1(``0*,``0*)">
+  Swap&lt;T&gt;(T*, T*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Swaps the values of two elements using pointers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Swap&lt;T&gt;(T* a, T* b) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> T*</dt>
+    <dd><p>Pointer to the first element.</p>
+</dd>
+    <dt><code>b</code> T*</dt>
+    <dd><p>Pointer to the second element.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>Type of the elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_Swap_" data-uid="HexaEngine.Core.Utils.Swap*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_Swap__1___0____0__" data-uid="HexaEngine.Core.Utils.Swap``1(``0@,``0@)">
+  Swap&lt;T&gt;(ref T, ref T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Swaps the values of two variables.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Swap&lt;T&gt;(ref T a, ref T b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <span class="xref">T</span></dt>
+    <dd><p>The first variable.</p>
+</dd>
+    <dt><code>b</code> <span class="xref">T</span></dt>
+    <dd><p>The second variable.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the variables.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToManaged_" data-uid="HexaEngine.Core.Utils.ToManaged*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToManaged__1___0__System_Int32_" data-uid="HexaEngine.Core.Utils.ToManaged``1(``0*,System.Int32)">
+  ToManaged&lt;T&gt;(T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1239"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies unmanaged memory to a new managed array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T[]? ToManaged&lt;T&gt;(T* src, int length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>A pointer to the source unmanaged memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of elements to copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T[]</dt>
+    <dd><p>A new managed array containing the copied elements or null if <code class="paramref">src</code> is null.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type of elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToManaged_" data-uid="HexaEngine.Core.Utils.ToManaged*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToManaged__1___0__System_UInt32_" data-uid="HexaEngine.Core.Utils.ToManaged``1(``0*,System.UInt32)">
+  ToManaged&lt;T&gt;(T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L1262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies unmanaged memory to a new managed array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T[]? ToManaged&lt;T&gt;(T* src, uint length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> T*</dt>
+    <dd><p>A pointer to the source unmanaged memory.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements to copy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T[]</dt>
+    <dd><p>A new managed array containing the copied elements or null if <code class="paramref">src</code> is null.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The unmanaged type of elements.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToPtr_" data-uid="HexaEngine.Core.Utils.ToPtr*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToPtr__1___0___" data-uid="HexaEngine.Core.Utils.ToPtr``1(``0[])">
+  ToPtr&lt;T&gt;(T[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L221"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts an array to an native pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T* ToPtr&lt;T&gt;(this T[] values) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> T[]</dt>
+    <dd><p>The values.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToStringFromUTF8_" data-uid="HexaEngine.Core.Utils.ToStringFromUTF8*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToStringFromUTF8_System_Byte__" data-uid="HexaEngine.Core.Utils.ToStringFromUTF8(System.Byte*)">
+  ToStringFromUTF8(byte*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts a UTF-8 encoded null-terminated byte pointer to a managed string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string? ToStringFromUTF8(byte* ptr)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ptr</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The pointer to the UTF-8 encoded string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A managed string representing the UTF-8 data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToUTF16Ptr_" data-uid="HexaEngine.Core.Utils.ToUTF16Ptr*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToUTF16Ptr_System_String_" data-uid="HexaEngine.Core.Utils.ToUTF16Ptr(System.String)">
+  ToUTF16Ptr(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts to utf16 pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static char* ToUTF16Ptr(this string str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>*</dt>
+    <dd><p>The pointer, must be freed after usage.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ToUTF8Ptr_" data-uid="HexaEngine.Core.Utils.ToUTF8Ptr*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ToUTF8Ptr_System_String_" data-uid="HexaEngine.Core.Utils.ToUTF8Ptr(System.String)">
+  ToUTF8Ptr(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L238"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts to utf8 pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte* ToUTF8Ptr(this string str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The pointer, must be freed after usage.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemory_" data-uid="HexaEngine.Core.Utils.ZeroMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemory_System_Void__System_Int32_" data-uid="HexaEngine.Core.Utils.ZeroMemory(System.Void*,System.Int32)">
+  ZeroMemory(void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L456"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a specified number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemory(void* pointer, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of bytes to clear.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemory_" data-uid="HexaEngine.Core.Utils.ZeroMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemory_System_Void__System_Int64_" data-uid="HexaEngine.Core.Utils.ZeroMemory(System.Void*,System.Int64)">
+  ZeroMemory(void*, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L482"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a specified number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemory(void* pointer, long size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>Number of bytes to clear.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemory_" data-uid="HexaEngine.Core.Utils.ZeroMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemory_System_Void__System_IntPtr_" data-uid="HexaEngine.Core.Utils.ZeroMemory(System.Void*,System.IntPtr)">
+  ZeroMemory(void*, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L497"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a specified number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemory(void* pointer, nint size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>Number of bytes to clear.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemory_" data-uid="HexaEngine.Core.Utils.ZeroMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemory_System_Void__System_UInt32_" data-uid="HexaEngine.Core.Utils.ZeroMemory(System.Void*,System.UInt32)">
+  ZeroMemory(void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L441"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a specified number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemory(void* pointer, uint size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Number of bytes to clear.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemory_" data-uid="HexaEngine.Core.Utils.ZeroMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemory_System_Void__System_UInt64_" data-uid="HexaEngine.Core.Utils.ZeroMemory(System.Void*,System.UInt64)">
+  ZeroMemory(void*, ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L467"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a specified number of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemory(void* pointer, ulong size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>Number of bytes to clear.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemoryT_" data-uid="HexaEngine.Core.Utils.ZeroMemoryT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemoryT__1___0__" data-uid="HexaEngine.Core.Utils.ZeroMemoryT``1(``0*)">
+  ZeroMemoryT&lt;T&gt;(T*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L406"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a span of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemoryT&lt;T&gt;(T* pointer) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of elements in the span.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemoryT_" data-uid="HexaEngine.Core.Utils.ZeroMemoryT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemoryT__1___0__System_Int32_" data-uid="HexaEngine.Core.Utils.ZeroMemoryT``1(``0*,System.Int32)">
+  ZeroMemoryT&lt;T&gt;(T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L418"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a span of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemoryT&lt;T&gt;(T* pointer, int length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of elements of type T to clear.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of elements in the span.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Utils_ZeroMemoryT_" data-uid="HexaEngine.Core.Utils.ZeroMemoryT*"></a>
+
+  <h3 id="HexaEngine_Core_Utils_ZeroMemoryT__1___0__System_UInt32_" data-uid="HexaEngine.Core.Utils.ZeroMemoryT``1(``0*,System.UInt32)">
+  ZeroMemoryT&lt;T&gt;(T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L430"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets all bytes in memory to zero for a span of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ZeroMemoryT&lt;T&gt;(T* pointer, uint length) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pointer</code> T*</dt>
+    <dd><p>Pointer to the memory to clear.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>Number of elements of type T to clear.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of elements in the span.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Utils.cs/#L15" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1629 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct BoundingBox </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct BoundingBox ">
+      
+      <meta name="description" content="Defines an axis-aligned box-shaped 3D volume.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_BoundingBox.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.BoundingBox%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.BoundingBox">
+
+
+
+  <h1 id="HexaEngine_Mathematics_BoundingBox" data-uid="HexaEngine.Mathematics.BoundingBox" class="text-break">
+Struct BoundingBox  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines an axis-aligned box-shaped 3D volume.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct BoundingBox : IEquatable&lt;BoundingBox&gt;, IFormattable</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformattable">IFormattable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox__ctor_" data-uid="HexaEngine.Mathematics.BoundingBox.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox__ctor_HexaEngine_Mathematics_BoundingSphere__" data-uid="HexaEngine.Mathematics.BoundingBox.#ctor(HexaEngine.Mathematics.BoundingSphere@)">
+  BoundingBox(in BoundingSphere)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> struct.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox(in BoundingSphere sphere)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sphere</code> <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a> to initialize from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox__ctor_" data-uid="HexaEngine.Mathematics.BoundingBox.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox__ctor_System_Numerics_Vector3_System_Numerics_Vector3_" data-uid="HexaEngine.Mathematics.BoundingBox.#ctor(System.Numerics.Vector3,System.Numerics.Vector3)">
+  BoundingBox(Vector3, Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> struct.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox(Vector3 min, Vector3 max)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>min</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The minimum vertex of the bounding box.</p>
+</dd>
+    <dt><code>max</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The maximum vertex of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_CornerCount" data-uid="HexaEngine.Mathematics.BoundingBox.CornerCount">
+  CornerCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the total number of corners (8) in the BoundingBox.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int CornerCount = 8</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Empty" data-uid="HexaEngine.Mathematics.BoundingBox.Empty">
+  Empty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>A <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> which represents an empty space.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BoundingBox Empty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Max" data-uid="HexaEngine.Mathematics.BoundingBox.Max">
+  Max
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The maximum point of the box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 Max</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Min" data-uid="HexaEngine.Mathematics.BoundingBox.Min">
+  Min
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The minimum point of the box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 Min</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Center_" data-uid="HexaEngine.Mathematics.BoundingBox.Center*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Center" data-uid="HexaEngine.Mathematics.BoundingBox.Center">
+  Center
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the center of this bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector3 Center { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Depth_" data-uid="HexaEngine.Mathematics.BoundingBox.Depth*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Depth" data-uid="HexaEngine.Mathematics.BoundingBox.Depth">
+  Depth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the depth of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Depth { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Extent_" data-uid="HexaEngine.Mathematics.BoundingBox.Extent*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Extent" data-uid="HexaEngine.Mathematics.BoundingBox.Extent">
+  Extent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the extent of this bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector3 Extent { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Height_" data-uid="HexaEngine.Mathematics.BoundingBox.Height*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Height" data-uid="HexaEngine.Mathematics.BoundingBox.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the height of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Height { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Size_" data-uid="HexaEngine.Mathematics.BoundingBox.Size*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Size" data-uid="HexaEngine.Mathematics.BoundingBox.Size">
+  Size
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets size of this bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector3 Size { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Width_" data-uid="HexaEngine.Mathematics.BoundingBox.Width*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Width" data-uid="HexaEngine.Mathematics.BoundingBox.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the width of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Area_" data-uid="HexaEngine.Mathematics.BoundingBox.Area*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Area" data-uid="HexaEngine.Mathematics.BoundingBox.Area">
+  Area()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates the surface area of a <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float Area()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The surface area.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Contains_" data-uid="HexaEngine.Mathematics.BoundingBox.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Contains_HexaEngine_Mathematics_BoundingBox__" data-uid="HexaEngine.Mathematics.BoundingBox.Contains(HexaEngine.Mathematics.BoundingBox@)">
+  Contains(in BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the bounding box contains the specified bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly ContainmentType Contains(in BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The bounding box to check for containment.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.ContainmentType.html">ContainmentType</a></dt>
+    <dd><p>A value indicating whether the specified bounding box is contained within, intersects, or is disjoint from this bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Contains_" data-uid="HexaEngine.Mathematics.BoundingBox.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Contains_HexaEngine_Mathematics_BoundingSphere__" data-uid="HexaEngine.Mathematics.BoundingBox.Contains(HexaEngine.Mathematics.BoundingSphere@)">
+  Contains(in BoundingSphere)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L346"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the bounding box contains the specified bounding sphere.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly ContainmentType Contains(in BoundingSphere sphere)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sphere</code> <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a></dt>
+    <dd><p>The bounding sphere to check for containment.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.ContainmentType.html">ContainmentType</a></dt>
+    <dd><p>A value indicating whether the specified bounding sphere is contained within, intersects, or is disjoint from this bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Contains_" data-uid="HexaEngine.Mathematics.BoundingBox.Contains*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Contains_System_Numerics_Vector3__" data-uid="HexaEngine.Mathematics.BoundingBox.Contains(System.Numerics.Vector3@)">
+  Contains(in Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the bounding box contains the specified point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly ContainmentType Contains(in Vector3 point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The point to check for containment.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.ContainmentType.html">ContainmentType</a></dt>
+    <dd><p>A value indicating whether the point is contained within the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_CreateFromPoints_" data-uid="HexaEngine.Mathematics.BoundingBox.CreateFromPoints*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_CreateFromPoints_System_Numerics_Vector3___" data-uid="HexaEngine.Mathematics.BoundingBox.CreateFromPoints(System.Numerics.Vector3[])">
+  CreateFromPoints(Vector3[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new bounding box from an array of points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox CreateFromPoints(Vector3[] points)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd><p>An array of Vector3 points.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>A new BoundingBox that encapsulates the provided points.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_CreateFromPoints_" data-uid="HexaEngine.Mathematics.BoundingBox.CreateFromPoints*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_CreateFromPoints_System_Span_System_Numerics_Vector3__" data-uid="HexaEngine.Mathematics.BoundingBox.CreateFromPoints(System.Span{System.Numerics.Vector3})">
+  CreateFromPoints(Span&lt;Vector3&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new bounding box from a span of points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox CreateFromPoints(Span&lt;Vector3&gt; points)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>&gt;</dt>
+    <dd><p>A span of Vector3 points.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>A new BoundingBox that encapsulates the provided points.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_CreateMerged_" data-uid="HexaEngine.Mathematics.BoundingBox.CreateMerged*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_CreateMerged_HexaEngine_Mathematics_BoundingBox__HexaEngine_Mathematics_BoundingBox__" data-uid="HexaEngine.Mathematics.BoundingBox.CreateMerged(HexaEngine.Mathematics.BoundingBox@,HexaEngine.Mathematics.BoundingBox@)">
+  CreateMerged(in BoundingBox, in BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new bounding box by merging two existing bounding boxes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox CreateMerged(in BoundingBox original, in BoundingBox additional)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>original</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The original bounding box.</p>
+</dd>
+    <dt><code>additional</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The additional bounding box to merge with the original.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>A new BoundingBox that encompasses both the original and additional bounding boxes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Equals_" data-uid="HexaEngine.Mathematics.BoundingBox.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Equals_HexaEngine_Mathematics_BoundingBox_" data-uid="HexaEngine.Mathematics.BoundingBox.Equals(HexaEngine.Mathematics.BoundingBox)">
+  Equals(BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L554"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Equals(BoundingBox other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Equals_" data-uid="HexaEngine.Mathematics.BoundingBox.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Equals_System_Object_" data-uid="HexaEngine.Mathematics.BoundingBox.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L548"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_GetCorners_" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_GetCorners" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners">
+  GetCorners()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the eight corners of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector3[] GetCorners()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd><p>An array of points representing the eight corners of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_GetCorners_" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_GetCorners_System_Numerics_Vector3__" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners(System.Numerics.Vector3*)">
+  GetCorners(Vector3*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the eight corners of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void GetCorners(Vector3* corners)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>corners</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_GetCorners_" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_GetCorners_System_Numerics_Vector3___" data-uid="HexaEngine.Mathematics.BoundingBox.GetCorners(System.Numerics.Vector3[])">
+  GetCorners(Vector3[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the eight corners of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void GetCorners(Vector3[] corners)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>corners</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_GetHashCode_" data-uid="HexaEngine.Mathematics.BoundingBox.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_GetHashCode" data-uid="HexaEngine.Mathematics.BoundingBox.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L590"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Initialize_" data-uid="HexaEngine.Mathematics.BoundingBox.Initialize*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Initialize_HexaEngine_Mathematics_BoundingBox_" data-uid="HexaEngine.Mathematics.BoundingBox.Initialize(HexaEngine.Mathematics.BoundingBox)">
+  Initialize(BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the bounding box with the same dimensions as the provided bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Initialize(BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The bounding box to copy dimensions from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Initialize_" data-uid="HexaEngine.Mathematics.BoundingBox.Initialize*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Initialize_System_Numerics_Vector3_System_Numerics_Vector3_" data-uid="HexaEngine.Mathematics.BoundingBox.Initialize(System.Numerics.Vector3,System.Numerics.Vector3)">
+  Initialize(Vector3, Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the bounding box with specified minimum and maximum points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Initialize(Vector3 min, Vector3 max)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>min</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The minimum corner of the bounding box.</p>
+</dd>
+    <dt><code>max</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The maximum corner of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Intersects_" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Intersects_HexaEngine_Mathematics_BoundingBox__" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects(HexaEngine.Mathematics.BoundingBox@)">
+  Intersects(in BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L371"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks whether the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> intersects with a specified <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Intersects(in BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The other <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> to check.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if intersects, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Intersects_" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Intersects_HexaEngine_Mathematics_BoundingFrustum__" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects(HexaEngine.Mathematics.BoundingFrustum@)">
+  Intersects(in BoundingFrustum)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L408"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks whether the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> intersects with a specified <a class="xref" href="HexaEngine.Mathematics.BoundingFrustum.html">BoundingFrustum</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Intersects(in BoundingFrustum frustum)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>frustum</code> <a class="xref" href="HexaEngine.Mathematics.BoundingFrustum.html">BoundingFrustum</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingFrustum.html">BoundingFrustum</a> to check for intersection with the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if intersects, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Intersects_" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Intersects_HexaEngine_Mathematics_BoundingSphere__" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects(HexaEngine.Mathematics.BoundingSphere@)">
+  Intersects(in BoundingSphere)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L396"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks whether the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> intersects with a specified <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Intersects(in BoundingSphere sphere)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sphere</code> <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingSphere.html">BoundingSphere</a> to check for intersection with the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if intersects, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Intersects_" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Intersects_HexaEngine_Mathematics_Ray__" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects(HexaEngine.Mathematics.Ray@)">
+  Intersects(in Ray)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L418"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks whether the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> intersects with a specified <a class="xref" href="HexaEngine.Mathematics.Ray.html">Ray</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float? Intersects(in Ray ray)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <a class="xref" href="HexaEngine.Mathematics.Ray.html">Ray</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Ray.html">Ray</a> to check for intersection with the current <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>?</dt>
+    <dd><p>Distance value if intersects, null otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Intersects_" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Intersects_System_Numerics_Plane__" data-uid="HexaEngine.Mathematics.BoundingBox.Intersects(System.Numerics.Plane@)">
+  Intersects(in Plane)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L515"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines the intersection type between the bounding box and a plane.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly PlaneIntersectionType Intersects(in Plane plane)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>plane</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.plane">Plane</a></dt>
+    <dd><p>The plane to check for intersection with the bounding box.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.PlaneIntersectionType.html">PlaneIntersectionType</a></dt>
+    <dd><p>The type of intersection between the bounding box and the plane.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Read_" data-uid="HexaEngine.Mathematics.BoundingBox.Read*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Read_System_IO_Stream_HexaEngine_Mathematics_Endianness_" data-uid="HexaEngine.Mathematics.BoundingBox.Read(System.IO.Stream,HexaEngine.Mathematics.Endianness)">
+  Read(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L613"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a BoundingBox from a stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox Read(Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read the BoundingBox from.</p>
+</dd>
+    <dt><code>endianness</code> <a class="xref" href="HexaEngine.Mathematics.Endianness.html">Endianness</a></dt>
+    <dd><p>The endianness to use for reading data from the stream.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The BoundingBox read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_ToString_" data-uid="HexaEngine.Mathematics.BoundingBox.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_ToString" data-uid="HexaEngine.Mathematics.BoundingBox.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L596"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The fully qualified type name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_ToString_" data-uid="HexaEngine.Mathematics.BoundingBox.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_ToString_System_String_System_IFormatProvider_" data-uid="HexaEngine.Mathematics.BoundingBox.ToString(System.String,System.IFormatProvider)">
+  ToString(string?, IFormatProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L602"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Formats the value of the current instance using the specified format.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string ToString(string? format, IFormatProvider? formatProvider)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The format to use.</p>
+<p>-or-</p>
+<p>A null reference (<code>Nothing</code> in Visual Basic) to use the default format defined for the type of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformattable">IFormattable</a> implementation.</p>
+</dd>
+    <dt><code>formatProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformatprovider">IFormatProvider</a></dt>
+    <dd><p>The provider to use to format the value.</p>
+<p>-or-</p>
+<p>A null reference (<code>Nothing</code> in Visual Basic) to obtain the numeric format information from the current locale setting of the operating system.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value of the current instance in the specified format.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Transform_" data-uid="HexaEngine.Mathematics.BoundingBox.Transform*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Transform_HexaEngine_Mathematics_BoundingBox__System_Numerics_Matrix4x4__" data-uid="HexaEngine.Mathematics.BoundingBox.Transform(HexaEngine.Mathematics.BoundingBox@,System.Numerics.Matrix4x4@)">
+  Transform(in BoundingBox, in Matrix4x4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transforms given <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> using a given <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox Transform(in BoundingBox box, in Matrix4x4 transform)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The source <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>A transformation matrix that might include translation, rotation, or uniform scaling.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The transformed BoundingBox.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Transform_" data-uid="HexaEngine.Mathematics.BoundingBox.Transform*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Transform_HexaEngine_Mathematics_BoundingBox__System_Numerics_Matrix4x4__HexaEngine_Mathematics_BoundingBox__" data-uid="HexaEngine.Mathematics.BoundingBox.Transform(HexaEngine.Mathematics.BoundingBox@,System.Numerics.Matrix4x4@,HexaEngine.Mathematics.BoundingBox@)">
+  Transform(in BoundingBox, in Matrix4x4, out BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transforms given <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> using a given <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Transform(in BoundingBox box, in Matrix4x4 transform, out BoundingBox result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The source <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a>.</p>
+</dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>A transformation matrix that might include translation, rotation, or uniform scaling.</p>
+</dd>
+    <dt><code>result</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The transformed BoundingBox.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_Write_" data-uid="HexaEngine.Mathematics.BoundingBox.Write*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_Write_System_IO_Stream_HexaEngine_Mathematics_Endianness_" data-uid="HexaEngine.Mathematics.BoundingBox.Write(System.IO.Stream,HexaEngine.Mathematics.Endianness)">
+  Write(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L625"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes the BoundingBox to a stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Write(Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write the BoundingBox to.</p>
+</dd>
+    <dt><code>endianness</code> <a class="xref" href="HexaEngine.Mathematics.Endianness.html">Endianness</a></dt>
+    <dd><p>The endianness to use for writing data to the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_op_Equality_" data-uid="HexaEngine.Mathematics.BoundingBox.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_op_Equality_HexaEngine_Mathematics_BoundingBox_HexaEngine_Mathematics_BoundingBox_" data-uid="HexaEngine.Mathematics.BoundingBox.op_Equality(HexaEngine.Mathematics.BoundingBox,HexaEngine.Mathematics.BoundingBox)">
+  operator ==(BoundingBox, BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L569"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> objects for equality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(BoundingBox left, BoundingBox right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> on the left hand of the operand.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> on the right hand of the operand.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the current left is equal to the <code class="paramref">right</code> parameter; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_BoundingBox_op_Inequality_" data-uid="HexaEngine.Mathematics.BoundingBox.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_BoundingBox_op_Inequality_HexaEngine_Mathematics_BoundingBox_HexaEngine_Mathematics_BoundingBox_" data-uid="HexaEngine.Mathematics.BoundingBox.op_Inequality(HexaEngine.Mathematics.BoundingBox,HexaEngine.Mathematics.BoundingBox)">
+  operator !=(BoundingBox, BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L583"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> objects for inequality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(BoundingBox left, BoundingBox right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> on the left hand of the operand.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.BoundingBox.html">BoundingBox</a> on the right hand of the operand.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the current left is unequal to the <code class="paramref">right</code> parameter; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/BoundingBox.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

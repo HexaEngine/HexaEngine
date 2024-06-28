@@ -1,0 +1,2314 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct StdString </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct StdString ">
+      
+      <meta name="description" content="Represents a C++-style std::string implemented in C#.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Unsafes_StdString.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Unsafes.StdString%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Unsafes.StdString">
+
+
+
+  <h1 id="HexaEngine_Core_Unsafes_StdString" data-uid="HexaEngine.Core.Unsafes.StdString" class="text-break">
+Struct StdString  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Unsafes.html">Unsafes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a C++-style std::string implemented in C#.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct StdString : IEnumerable&lt;byte&gt;, IEnumerable</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString__ctor_" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString__ctor" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor">
+  StdString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> struct with default capacity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StdString()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString__ctor_" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString__ctor_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor(System.Int32)">
+  StdString(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> struct with a specified capacity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StdString(int capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString__ctor_" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString__ctor_System_String_" data-uid="HexaEngine.Core.Unsafes.StdString.#ctor(System.String)">
+  StdString(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> struct from a C# string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StdString(string s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Back_" data-uid="HexaEngine.Core.Unsafes.StdString.Back*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Back" data-uid="HexaEngine.Core.Unsafes.StdString.Back">
+  Back
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a pointer to the last byte of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly byte* Back { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Capacity_" data-uid="HexaEngine.Core.Unsafes.StdString.Capacity*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Capacity" data-uid="HexaEngine.Core.Unsafes.StdString.Capacity">
+  Capacity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the capacity of the string. Adjusting the capacity can change the memory allocated for the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Capacity { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Data_" data-uid="HexaEngine.Core.Unsafes.StdString.Data*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Data" data-uid="HexaEngine.Core.Unsafes.StdString.Data">
+  Data
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a pointer to the internal data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly byte* Data { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Front_" data-uid="HexaEngine.Core.Unsafes.StdString.Front*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Front" data-uid="HexaEngine.Core.Unsafes.StdString.Front">
+  Front
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a pointer to the first byte of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly byte* Front { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Item_" data-uid="HexaEngine.Core.Unsafes.StdString.Item*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Item_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a byte at a specified index in the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the byte to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Size_" data-uid="HexaEngine.Core.Unsafes.StdString.Size*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Size" data-uid="HexaEngine.Core.Unsafes.StdString.Size">
+  Size
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the size (length) of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly int Size { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Append_" data-uid="HexaEngine.Core.Unsafes.StdString.Append*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Append_HexaEngine_Core_Unsafes_StdString_" data-uid="HexaEngine.Core.Unsafes.StdString.Append(HexaEngine.Core.Unsafes.StdString)">
+  Append(StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L241"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Appends the contents of another <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to the end of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Append(StdString c)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to append.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Append_" data-uid="HexaEngine.Core.Unsafes.StdString.Append*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Append_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.Append(System.Byte)">
+  Append(byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L217"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Appends a byte to the end of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Append(byte c)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte to append.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Append_" data-uid="HexaEngine.Core.Unsafes.StdString.Append*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Append_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.Append(System.Byte*)">
+  Append(byte*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L228"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Appends a byte to the end of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Append(byte* c)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The byte to append.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_AsReadOnlySpan_" data-uid="HexaEngine.Core.Unsafes.StdString.AsReadOnlySpan*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_AsReadOnlySpan" data-uid="HexaEngine.Core.Unsafes.StdString.AsReadOnlySpan">
+  AsReadOnlySpan()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L712"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> that represents the data in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly ReadOnlySpan&lt;byte&gt; AsReadOnlySpan()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> that represents the data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_AsSpan_" data-uid="HexaEngine.Core.Unsafes.StdString.AsSpan*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_AsSpan" data-uid="HexaEngine.Core.Unsafes.StdString.AsSpan">
+  AsSpan()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L703"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span&lt;T&gt;</a> that represents the data in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Span&lt;byte&gt; AsSpan()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span&lt;T&gt;</a> that represents the data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_At_" data-uid="HexaEngine.Core.Unsafes.StdString.At*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_At_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.At(System.Int32)">
+  At(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the byte at the specified index, throwing exceptions for invalid index values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte At(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the byte to retrieve.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Begin_" data-uid="HexaEngine.Core.Unsafes.StdString.Begin*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Begin" data-uid="HexaEngine.Core.Unsafes.StdString.Begin">
+  Begin()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L870"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the bytes of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly IEnumerator&lt;byte&gt; Begin()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>An enumerator for the bytes of the string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_CStr_" data-uid="HexaEngine.Core.Unsafes.StdString.CStr*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_CStr" data-uid="HexaEngine.Core.Unsafes.StdString.CStr">
+  CStr()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a C-style null-terminated string (char*) from the data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly byte* CStr()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>A pointer to the null-terminated string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Clear_" data-uid="HexaEngine.Core.Unsafes.StdString.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Clear" data-uid="HexaEngine.Core.Unsafes.StdString.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L251"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the contents of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Clone_" data-uid="HexaEngine.Core.Unsafes.StdString.Clone*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Clone" data-uid="HexaEngine.Core.Unsafes.StdString.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L676"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new string with the same content as the current string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly StdString Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> containing a copy of the current string's data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Compare_" data-uid="HexaEngine.Core.Unsafes.StdString.Compare*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Compare_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.Compare(System.ReadOnlySpan{System.Byte})">
+  Compare(ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> with a specified byte sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Compare(ReadOnlySpan&lt;byte&gt; other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to compare against.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the contents are equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Compare_" data-uid="HexaEngine.Core.Unsafes.StdString.Compare*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Compare_System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Unsafes.StdString.Compare(System.ReadOnlySpan{System.Char})">
+  Compare(ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L292"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> with a specified character sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Compare(ReadOnlySpan&lt;char&gt; other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to compare against.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the contents are equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Contains_" data-uid="HexaEngine.Core.Unsafes.StdString.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Contains_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.Contains(System.ReadOnlySpan{System.Byte})">
+  Contains(ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L402"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> contains a specified byte sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Contains(ReadOnlySpan&lt;byte&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to check for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string contains the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Contains_" data-uid="HexaEngine.Core.Unsafes.StdString.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Contains_System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Unsafes.StdString.Contains(System.ReadOnlySpan{System.Char})">
+  Contains(ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L415"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> contains a specified character sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Contains(ReadOnlySpan&lt;char&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to check for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string contains the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_EndsWith_" data-uid="HexaEngine.Core.Unsafes.StdString.EndsWith*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_EndsWith_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.EndsWith(System.ReadOnlySpan{System.Byte})">
+  EndsWith(ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L336"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> ends with a specified byte sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EndsWith(ReadOnlySpan&lt;byte&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to check for at the end.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string ends with the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_EndsWith_" data-uid="HexaEngine.Core.Unsafes.StdString.EndsWith*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_EndsWith_System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Unsafes.StdString.EndsWith(System.ReadOnlySpan{System.Char})">
+  EndsWith(ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> ends with a specified character sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EndsWith(ReadOnlySpan&lt;char&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to check for at the end.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string ends with the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_EnsureCapacity_" data-uid="HexaEngine.Core.Unsafes.StdString.EnsureCapacity*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_EnsureCapacity_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.EnsureCapacity(System.Int32)">
+  EnsureCapacity(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ensures that the capacity of the string is at least a specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EnsureCapacity(int capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The desired capacity.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Equals_" data-uid="HexaEngine.Core.Unsafes.StdString.Equals*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Equals_System_Object_" data-uid="HexaEngine.Core.Unsafes.StdString.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L816"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the objects are equal; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Erase_" data-uid="HexaEngine.Core.Unsafes.StdString.Erase*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Erase" data-uid="HexaEngine.Core.Unsafes.StdString.Erase">
+  Erase()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the contents of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> without changing its size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Erase()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Find_" data-uid="HexaEngine.Core.Unsafes.StdString.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Find_System_ReadOnlySpan_System_Byte__System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.Find(System.ReadOnlySpan{System.Byte},System.Int32)">
+  Find(ReadOnlySpan&lt;byte&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L620"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Searches for the first occurrence of a specified byte sequence within the current string, starting at the specified position.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly int Find(ReadOnlySpan&lt;byte&gt; str, int pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to search for.</p>
+</dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The starting position for the search.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the first occurrence of the byte sequence, or -1 if it is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Find_" data-uid="HexaEngine.Core.Unsafes.StdString.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Find_System_ReadOnlySpan_System_Char__System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.Find(System.ReadOnlySpan{System.Char},System.Int32)">
+  Find(ReadOnlySpan&lt;char&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L575"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Searches for the first occurrence of a specified character sequence within the current string, starting at the specified position.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly int Find(ReadOnlySpan&lt;char&gt; str, int pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to search for.</p>
+</dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The starting position for the search.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the first occurrence of the character sequence, or -1 if it is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_FindLast_" data-uid="HexaEngine.Core.Unsafes.StdString.FindLast*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_FindLast_System_ReadOnlySpan_System_Byte__System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.FindLast(System.ReadOnlySpan{System.Byte},System.Int32)">
+  FindLast(ReadOnlySpan&lt;byte&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L632"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Searches for the last occurrence of a specified byte sequence within the current string, starting at the specified position.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FindLast(ReadOnlySpan&lt;byte&gt; str, int pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to search for.</p>
+</dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The starting position for the search.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the last occurrence of the byte sequence, or -1 if it is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_FindLast_" data-uid="HexaEngine.Core.Unsafes.StdString.FindLast*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_FindLast_System_ReadOnlySpan_System_Char__System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.FindLast(System.ReadOnlySpan{System.Char},System.Int32)">
+  FindLast(ReadOnlySpan&lt;char&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L587"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Searches for the last occurrence of a specified character sequence within the current string, starting at the specified position.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FindLast(ReadOnlySpan&lt;char&gt; str, int pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to search for.</p>
+</dd>
+    <dt><code>pos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The starting position for the search.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the last occurrence of the character sequence, or -1 if it is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_GetEnumerator_" data-uid="HexaEngine.Core.Unsafes.StdString.GetEnumerator*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_GetEnumerator" data-uid="HexaEngine.Core.Unsafes.StdString.GetEnumerator">
+  GetEnumerator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L856"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the bytes of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly IEnumerator&lt;byte&gt; GetEnumerator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>An enumerator for the bytes of the string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_GetHashCode_" data-uid="HexaEngine.Core.Unsafes.StdString.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_GetHashCode" data-uid="HexaEngine.Core.Unsafes.StdString.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L833"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a hash code for the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The hash code for the string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Grow_" data-uid="HexaEngine.Core.Unsafes.StdString.Grow*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Grow_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.Grow(System.Int32)">
+  Grow(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Increases the capacity of the string to a specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Grow(int capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The desired capacity.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Insert_" data-uid="HexaEngine.Core.Unsafes.StdString.Insert*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Insert_System_Int32_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.Insert(System.Int32,System.Byte)">
+  Insert(int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Inserts a byte at the specified index in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Insert(int index, byte item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index where the byte is inserted.</p>
+</dd>
+    <dt><code>item</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte to insert.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_InsertRange_" data-uid="HexaEngine.Core.Unsafes.StdString.InsertRange*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_InsertRange_System_Int32_HexaEngine_Core_Unsafes_StdString_" data-uid="HexaEngine.Core.Unsafes.StdString.InsertRange(System.Int32,HexaEngine.Core.Unsafes.StdString)">
+  InsertRange(int, StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L184"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Inserts the contents of another <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> at the specified index in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InsertRange(int index, StdString item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index where the insertion starts.</p>
+</dd>
+    <dt><code>item</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to insert.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_InsertRange_" data-uid="HexaEngine.Core.Unsafes.StdString.InsertRange*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_InsertRange_System_Int32_System_String_" data-uid="HexaEngine.Core.Unsafes.StdString.InsertRange(System.Int32,System.String)">
+  InsertRange(int, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Inserts a string at the specified index in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InsertRange(int index, string item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index where the insertion starts.</p>
+</dd>
+    <dt><code>item</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to insert.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_RBegin_" data-uid="HexaEngine.Core.Unsafes.StdString.RBegin*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_RBegin" data-uid="HexaEngine.Core.Unsafes.StdString.RBegin">
+  RBegin()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L879"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a reverse enumerator that iterates through the bytes of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly IEnumerator&lt;byte&gt; RBegin()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>A reverse enumerator for the bytes of the string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Release_" data-uid="HexaEngine.Core.Unsafes.StdString.Release*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Release" data-uid="HexaEngine.Core.Unsafes.StdString.Release">
+  Release()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L803"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Releases the memory associated with the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Release()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Replace_" data-uid="HexaEngine.Core.Unsafes.StdString.Replace*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Replace_System_Byte_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.Replace(System.Byte,System.Byte)">
+  Replace(byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L428"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Replaces all occurrences of a target byte with a replacement byte in the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Replace(byte target, byte replacement)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte to find and replace.</p>
+</dd>
+    <dt><code>replacement</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte to replace the target with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Replace_" data-uid="HexaEngine.Core.Unsafes.StdString.Replace*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Replace_System_ReadOnlySpan_System_Byte__System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.Replace(System.ReadOnlySpan{System.Byte},System.ReadOnlySpan{System.Byte})">
+  Replace(ReadOnlySpan&lt;byte&gt;, ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L444"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Replaces all occurrences of a specific byte with another byte.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Replace(ReadOnlySpan&lt;byte&gt; target, ReadOnlySpan&lt;byte&gt; replacement)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte to be replaced.</p>
+</dd>
+    <dt><code>replacement</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte to replace with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Replace_" data-uid="HexaEngine.Core.Unsafes.StdString.Replace*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Replace_System_ReadOnlySpan_System_Char__System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Unsafes.StdString.Replace(System.ReadOnlySpan{System.Char},System.ReadOnlySpan{System.Char})">
+  Replace(ReadOnlySpan&lt;char&gt;, ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L495"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Replaces all occurrences of a specific sequence of bytes with another sequence of bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Replace(ReadOnlySpan&lt;char&gt; target, ReadOnlySpan&lt;char&gt; replacement)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The sequence of bytes to be replaced.</p>
+</dd>
+    <dt><code>replacement</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The sequence of bytes to replace with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Resize_" data-uid="HexaEngine.Core.Unsafes.StdString.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Resize_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.Resize(System.Int32)">
+  Resize(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the string to the specified size, padding with null bytes if necessary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new size of the string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_ShrinkToFit_" data-uid="HexaEngine.Core.Unsafes.StdString.ShrinkToFit*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_ShrinkToFit" data-uid="HexaEngine.Core.Unsafes.StdString.ShrinkToFit">
+  ShrinkToFit()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reduces the capacity of the string to match the current size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ShrinkToFit()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_StartsWith_" data-uid="HexaEngine.Core.Unsafes.StdString.StartsWith*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_StartsWith_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Unsafes.StdString.StartsWith(System.ReadOnlySpan{System.Byte})">
+  StartsWith(ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> starts with a specified byte sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartsWith(ReadOnlySpan&lt;byte&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte sequence to check for at the beginning.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string starts with the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_StartsWith_" data-uid="HexaEngine.Core.Unsafes.StdString.StartsWith*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_StartsWith_System_ReadOnlySpan_System_Char__" data-uid="HexaEngine.Core.Unsafes.StdString.StartsWith(System.ReadOnlySpan{System.Char})">
+  StartsWith(ReadOnlySpan&lt;char&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L358"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> starts with a specified character sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartsWith(ReadOnlySpan&lt;char&gt; str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
+    <dd><p>The character sequence to check for at the beginning.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the string starts with the specified sequence; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_SubString_" data-uid="HexaEngine.Core.Unsafes.StdString.SubString*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_SubString_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.SubString(System.Int32)">
+  SubString(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L560"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> that is a substring of the current string, starting at the specified index and extending to the end of the string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly StdString SubString(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index in the current string where the substring starts.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> representing the substring.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_SubString_" data-uid="HexaEngine.Core.Unsafes.StdString.SubString*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_SubString_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Unsafes.StdString.SubString(System.Int32,System.Int32)">
+  SubString(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L547"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> that is a substring of the current string, starting at the specified index and having the specified length.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly StdString SubString(int index, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index in the current string where the substring starts.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The length of the substring to create.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> representing the substring.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_Swap_" data-uid="HexaEngine.Core.Unsafes.StdString.Swap*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_Swap_HexaEngine_Core_Unsafes_StdString__" data-uid="HexaEngine.Core.Unsafes.StdString.Swap(HexaEngine.Core.Unsafes.StdString@)">
+  Swap(ref StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L663"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Swaps the contents of this string with another string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Swap(ref StdString other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The other string to swap with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_ToString_" data-uid="HexaEngine.Core.Unsafes.StdString.ToString*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_ToString" data-uid="HexaEngine.Core.Unsafes.StdString.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L847"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the string to a C# string using UTF-8 encoding.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A C# string representing the current string's data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_ToWString_" data-uid="HexaEngine.Core.Unsafes.StdString.ToWString*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_ToWString" data-uid="HexaEngine.Core.Unsafes.StdString.ToWString">
+  ToWString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L688"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the string to a wide string (StdWString) using UTF-8 encoding.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StdWString ToWString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdWString.html">StdWString</a></dt>
+    <dd><p>A wide string representation of the current string.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Addition_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Addition_HexaEngine_Core_Unsafes_StdString_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Addition(HexaEngine.Core.Unsafes.StdString,System.Byte)">
+  operator +(StdString, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L723"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Concatenates a byte to the end of the current <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static StdString operator +(StdString str, byte c)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to concatenate to.</p>
+</dd>
+    <dt><code>c</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The byte to concatenate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The concatenated <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Equality_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Equality_HexaEngine_Core_Unsafes_StdString_HexaEngine_Core_Unsafes_StdString_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Equality(HexaEngine.Core.Unsafes.StdString,HexaEngine.Core.Unsafes.StdString)">
+  operator ==(StdString, StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L735"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> objects for equality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(StdString str1, StdString str2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str1</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+    <dt><code>str2</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the two strings are equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Equality_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Equality_HexaEngine_Core_Unsafes_StdString_System_String_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Equality(HexaEngine.Core.Unsafes.StdString,System.String)">
+  operator ==(StdString, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L757"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares a <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> object with a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> for equality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(StdString str1, string str2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str1</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+    <dt><code>str2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the two strings are equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Implicit_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Implicit_HexaEngine_Core_Unsafes_StdString__System_ReadOnlySpan_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit(HexaEngine.Core.Unsafes.StdString)~System.ReadOnlySpan{System.Byte}">
+  implicit operator ReadOnlySpan&lt;byte&gt;(StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L795"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator ReadOnlySpan&lt;byte&gt;(StdString str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to convert.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Implicit_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Implicit_HexaEngine_Core_Unsafes_StdString__System_Span_System_Byte_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit(HexaEngine.Core.Unsafes.StdString)~System.Span{System.Byte}">
+  implicit operator Span&lt;byte&gt;(StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L786"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span&lt;T&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator Span&lt;byte&gt;(StdString str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to convert.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Implicit_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Implicit_System_String__HexaEngine_Core_Unsafes_StdString" data-uid="HexaEngine.Core.Unsafes.StdString.op_Implicit(System.String)~HexaEngine.Core.Unsafes.StdString">
+  implicit operator StdString(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L777"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator StdString(string str)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to convert.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Inequality_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Inequality_HexaEngine_Core_Unsafes_StdString_HexaEngine_Core_Unsafes_StdString_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Inequality(HexaEngine.Core.Unsafes.StdString,HexaEngine.Core.Unsafes.StdString)">
+  operator !=(StdString, StdString)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L746"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares two <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> objects for inequality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(StdString str1, StdString str2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str1</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+    <dt><code>str2</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the two strings are not equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Unsafes_StdString_op_Inequality_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Core_Unsafes_StdString_op_Inequality_HexaEngine_Core_Unsafes_StdString_System_String_" data-uid="HexaEngine.Core.Unsafes.StdString.op_Inequality(HexaEngine.Core.Unsafes.StdString,System.String)">
+  operator !=(StdString, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L768"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares a <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> object with a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> for inequality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(StdString str1, string str2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>str1</code> <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Unsafes.StdString.html">StdString</a> to compare.</p>
+</dd>
+    <dt><code>str2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the two strings are not equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Unsafes/StdString.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

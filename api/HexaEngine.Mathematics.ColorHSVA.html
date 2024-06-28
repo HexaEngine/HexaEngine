@@ -1,0 +1,746 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct ColorHSVA </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct ColorHSVA ">
+      
+      <meta name="description" content="Represents a color in the Hue, Saturation, Value, and Alpha color space.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_ColorHSVA.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.ColorHSVA%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.ColorHSVA">
+
+
+
+  <h1 id="HexaEngine_Mathematics_ColorHSVA" data-uid="HexaEngine.Mathematics.ColorHSVA" class="text-break">
+Struct ColorHSVA  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a color in the Hue, Saturation, Value, and Alpha color space.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct ColorHSVA : IEquatable&lt;ColorHSVA&gt;</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA__ctor_" data-uid="HexaEngine.Mathematics.ColorHSVA.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA__ctor_HexaEngine_Mathematics_Color_" data-uid="HexaEngine.Mathematics.ColorHSVA.#ctor(HexaEngine.Mathematics.Color)">
+  ColorHSVA(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> struct from an RGBA color.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ColorHSVA(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a></dt>
+    <dd><p>The RGBA color to convert to HSVA.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA__ctor_" data-uid="HexaEngine.Mathematics.ColorHSVA.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA__ctor_System_Single_System_Single_System_Single_System_Single_" data-uid="HexaEngine.Mathematics.ColorHSVA.#ctor(System.Single,System.Single,System.Single,System.Single)">
+  ColorHSVA(float, float, float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> struct.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ColorHSVA(float h, float s, float v, float a)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>h</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The hue component (angle in degrees, from 0 to 1).</p>
+</dd>
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The saturation component (normalized, from 0 to 1).</p>
+</dd>
+    <dt><code>v</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value component (normalized, from 0 to 1).</p>
+</dd>
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The alpha (transparency) component (normalized, from 0 to 1).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_A" data-uid="HexaEngine.Mathematics.ColorHSVA.A">
+  A
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the alpha component of the color (in the range [0, 1]).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float A</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_H" data-uid="HexaEngine.Mathematics.ColorHSVA.H">
+  H
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the hue component of the color (in the range [0, 1]).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float H</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_S" data-uid="HexaEngine.Mathematics.ColorHSVA.S">
+  S
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the saturation component of the color (in the range [0, 1]).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float S</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_V" data-uid="HexaEngine.Mathematics.ColorHSVA.V">
+  V
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value component of the color (in the range [0, 1]).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float V</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_Equals_" data-uid="HexaEngine.Mathematics.ColorHSVA.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_Equals_HexaEngine_Mathematics_ColorHSVA_" data-uid="HexaEngine.Mathematics.ColorHSVA.Equals(HexaEngine.Mathematics.ColorHSVA)">
+  Equals(ColorHSVA)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> is equal to the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Equals(ColorHSVA other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to compare with the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> is equal to the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_Equals_" data-uid="HexaEngine.Mathematics.ColorHSVA.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_Equals_System_Object_" data-uid="HexaEngine.Mathematics.ColorHSVA.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a> is equal to the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a> to compare with the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a> is equal to the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_GetHashCode_" data-uid="HexaEngine.Mathematics.ColorHSVA.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_GetHashCode" data-uid="HexaEngine.Mathematics.ColorHSVA.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A hash code for the current <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_ToRGBA_" data-uid="HexaEngine.Mathematics.ColorHSVA.ToRGBA*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_ToRGBA" data-uid="HexaEngine.Mathematics.ColorHSVA.ToRGBA">
+  ToRGBA()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the color to a <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a> representation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Color ToRGBA()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a></dt>
+    <dd><p>The color as a <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_ToString_" data-uid="HexaEngine.Mathematics.ColorHSVA.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_ToString" data-uid="HexaEngine.Mathematics.ColorHSVA.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string representation of the color.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string representation of the color.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_ToVector4_" data-uid="HexaEngine.Mathematics.ColorHSVA.ToVector4*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_ToVector4" data-uid="HexaEngine.Mathematics.ColorHSVA.ToVector4">
+  ToVector4()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a> in the format (H, S, V, A).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Vector4 ToVector4()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a> representing the HSVA components.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_op_Equality_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_op_Equality_HexaEngine_Mathematics_ColorHSVA_HexaEngine_Mathematics_ColorHSVA_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Equality(HexaEngine.Mathematics.ColorHSVA,HexaEngine.Mathematics.ColorHSVA)">
+  operator ==(ColorHSVA, ColorHSVA)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> objects are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(ColorHSVA left, ColorHSVA right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> objects are equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_op_Explicit_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Explicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_op_Explicit_HexaEngine_Mathematics_Color__HexaEngine_Mathematics_ColorHSVA" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Explicit(HexaEngine.Mathematics.Color)~HexaEngine.Mathematics.ColorHSVA">
+  explicit operator ColorHSVA(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Explicitly converts a <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a> to a <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static explicit operator ColorHSVA(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a> to convert.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The equivalent <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> representation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_op_Explicit_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Explicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_op_Explicit_HexaEngine_Mathematics_ColorHSVA__HexaEngine_Mathematics_Color" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Explicit(HexaEngine.Mathematics.ColorHSVA)~HexaEngine.Mathematics.Color">
+  explicit operator Color(ColorHSVA)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Explicitly converts a <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to a <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static explicit operator Color(ColorHSVA color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to convert.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a></dt>
+    <dd><p>The equivalent <a class="xref" href="HexaEngine.Mathematics.Color.html">Color</a> representation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_ColorHSVA_op_Inequality_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_ColorHSVA_op_Inequality_HexaEngine_Mathematics_ColorHSVA_HexaEngine_Mathematics_ColorHSVA_" data-uid="HexaEngine.Mathematics.ColorHSVA.op_Inequality(HexaEngine.Mathematics.ColorHSVA,HexaEngine.Mathematics.ColorHSVA)">
+  operator !=(ColorHSVA, ColorHSVA)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> objects are not equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(ColorHSVA left, ColorHSVA right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the specified <a class="xref" href="HexaEngine.Mathematics.ColorHSVA.html">ColorHSVA</a> objects are not equal; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/ColorHSVA.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

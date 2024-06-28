@@ -1,0 +1,1147 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct Polynomial </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct Polynomial ">
+      
+      <meta name="description" content="Represents a polynomial function.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_Polynomial.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.Polynomial%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.Polynomial">
+
+
+
+  <h1 id="HexaEngine_Mathematics_Polynomial" data-uid="HexaEngine.Mathematics.Polynomial" class="text-break">
+Struct Polynomial  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a polynomial function.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct Polynomial</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.equals">ValueType.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode">ValueType.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.tostring">ValueType.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Polynomial__ctor_" data-uid="HexaEngine.Mathematics.Polynomial.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial__ctor_System_Single__System_UInt32_" data-uid="HexaEngine.Mathematics.Polynomial.#ctor(System.Single*,System.UInt32)">
+  Polynomial(float*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a> struct with the specified pointer to coefficients and degree.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Polynomial(float* coefficients, uint degree)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>coefficients</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>*</dt>
+    <dd><p>The pointer to the coefficients of the polynomial.</p>
+</dd>
+    <dt><code>degree</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The degree of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial__ctor_" data-uid="HexaEngine.Mathematics.Polynomial.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial__ctor_System_Single___" data-uid="HexaEngine.Mathematics.Polynomial.#ctor(System.Single[])">
+  Polynomial(float[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a> struct with the specified coefficients.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Polynomial(float[] coefficients)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>coefficients</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>The coefficients of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial__ctor_" data-uid="HexaEngine.Mathematics.Polynomial.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial__ctor_System_UInt32_" data-uid="HexaEngine.Mathematics.Polynomial.#ctor(System.UInt32)">
+  Polynomial(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a> struct with the specified degree.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Polynomial(uint degree)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>degree</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The degree of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Coefficients_" data-uid="HexaEngine.Mathematics.Polynomial.Coefficients*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Coefficients" data-uid="HexaEngine.Mathematics.Polynomial.Coefficients">
+  Coefficients
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a pointer to the coefficients of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float* Coefficients { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Degree_" data-uid="HexaEngine.Mathematics.Polynomial.Degree*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Degree" data-uid="HexaEngine.Mathematics.Polynomial.Degree">
+  Degree
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the degree of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly uint Degree { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Item_" data-uid="HexaEngine.Mathematics.Polynomial.Item*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Item_System_Int32_" data-uid="HexaEngine.Mathematics.Polynomial.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the coefficient at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the coefficient to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The coefficient at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Item_" data-uid="HexaEngine.Mathematics.Polynomial.Item*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Item_System_UInt32_" data-uid="HexaEngine.Mathematics.Polynomial.Item(System.UInt32)">
+  this[uint]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the coefficient at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float this[uint index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the coefficient to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The coefficient at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Add_" data-uid="HexaEngine.Mathematics.Polynomial.Add*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Add_HexaEngine_Mathematics_Polynomial_HexaEngine_Mathematics_Polynomial_" data-uid="HexaEngine.Mathematics.Polynomial.Add(HexaEngine.Mathematics.Polynomial,HexaEngine.Mathematics.Polynomial)">
+  Add(Polynomial, Polynomial)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L593"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two polynomials together.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Polynomial Add(Polynomial p1, Polynomial p2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>p1</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The first polynomial.</p>
+</dd>
+    <dt><code>p2</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The second polynomial.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The sum of the two polynomials.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Compact_" data-uid="HexaEngine.Mathematics.Polynomial.Compact*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Compact" data-uid="HexaEngine.Mathematics.Polynomial.Compact">
+  Compact()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes trailing zero coefficients from the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Compact()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Compute_" data-uid="HexaEngine.Mathematics.Polynomial.Compute*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Compute_System_Single_" data-uid="HexaEngine.Mathematics.Polynomial.Compute(System.Single)">
+  Compute(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Computes the value of the polynomial at the specified value of x.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float Compute(float x)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value of x.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The value of the polynomial at the specified value of x.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Derivative_" data-uid="HexaEngine.Mathematics.Polynomial.Derivative*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Derivative" data-uid="HexaEngine.Mathematics.Polynomial.Derivative">
+  Derivative()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L545"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Computes the derivative of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Polynomial Derivative()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The derivative of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Divide_" data-uid="HexaEngine.Mathematics.Polynomial.Divide*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Divide_HexaEngine_Mathematics_Polynomial_HexaEngine_Mathematics_Polynomial_HexaEngine_Mathematics_Polynomial__" data-uid="HexaEngine.Mathematics.Polynomial.Divide(HexaEngine.Mathematics.Polynomial,HexaEngine.Mathematics.Polynomial,HexaEngine.Mathematics.Polynomial@)">
+  Divide(Polynomial, Polynomial, out Polynomial)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L658"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides one polynomial by another and returns the quotient and remainder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Polynomial Divide(Polynomial dividend, Polynomial divisor, out Polynomial remainder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dividend</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The polynomial to be divided.</p>
+</dd>
+    <dt><code>divisor</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The polynomial by which to divide.</p>
+</dd>
+    <dt><code>remainder</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The remainder after division.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The quotient of the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Evaluate_" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Evaluate_System_Single__System_UInt32_System_Single__" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate(System.Single*,System.UInt32,System.Single*)">
+  Evaluate(float*, uint, float*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Evaluates the polynomial at the specified pointer to points and count, and stores the result in the specified pointer to values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Evaluate(float* points, uint count, float* values)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>*</dt>
+    <dd><p>The pointer to the array of points at which to evaluate the polynomial.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of points to evaluate.</p>
+</dd>
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>*</dt>
+    <dd><p>The pointer to the array to store the evaluated values.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Evaluate_" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Evaluate_System_Single___" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate(System.Single[])">
+  Evaluate(float[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Evaluates the polynomial at the specified array of points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float[] Evaluate(float[] points)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>The array of points at which to evaluate the polynomial.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>An array of values representing the polynomial evaluated at the specified points.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Evaluate_" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Evaluate_System_Single___System_Single___" data-uid="HexaEngine.Mathematics.Polynomial.Evaluate(System.Single[],System.Single[])">
+  Evaluate(float[], float[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Evaluates the polynomial at the specified array of points and stores the result in the specified array of values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Evaluate(float[] points, float[] values)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>The array of points at which to evaluate the polynomial.</p>
+</dd>
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>The array to store the evaluated values.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_FindRoots_" data-uid="HexaEngine.Mathematics.Polynomial.FindRoots*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_FindRoots_System_Int32__" data-uid="HexaEngine.Mathematics.Polynomial.FindRoots(System.Int32@)">
+  FindRoots(out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Finds the roots of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly float[] FindRoots(out int foundRoots)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>foundRoots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of roots found.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd><p>An array containing the roots of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_GetSymmetry_" data-uid="HexaEngine.Mathematics.Polynomial.GetSymmetry*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_GetSymmetry" data-uid="HexaEngine.Mathematics.Polynomial.GetSymmetry">
+  GetSymmetry()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the symmetry of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly PolynomialSymmetry GetSymmetry()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.PolynomialSymmetry.html">PolynomialSymmetry</a></dt>
+    <dd><p>The symmetry of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Integrate_" data-uid="HexaEngine.Mathematics.Polynomial.Integrate*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Integrate" data-uid="HexaEngine.Mathematics.Polynomial.Integrate">
+  Integrate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L561"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Computes the indefinite integral of the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Polynomial Integrate()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The indefinite integral of the polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Multiply_" data-uid="HexaEngine.Mathematics.Polynomial.Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Multiply_HexaEngine_Mathematics_Polynomial_HexaEngine_Mathematics_Polynomial_" data-uid="HexaEngine.Mathematics.Polynomial.Multiply(HexaEngine.Mathematics.Polynomial,HexaEngine.Mathematics.Polynomial)">
+  Multiply(Polynomial, Polynomial)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L635"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies two polynomials.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Polynomial Multiply(Polynomial p1, Polynomial p2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>p1</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The first polynomial.</p>
+</dd>
+    <dt><code>p2</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The second polynomial.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The product of the two polynomials.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Release_" data-uid="HexaEngine.Mathematics.Polynomial.Release*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Release" data-uid="HexaEngine.Mathematics.Polynomial.Release">
+  Release()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L706"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Releases the memory allocated for the polynomial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Release()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Scale_" data-uid="HexaEngine.Mathematics.Polynomial.Scale*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Scale_System_Single_" data-uid="HexaEngine.Mathematics.Polynomial.Scale(System.Single)">
+  Scale(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L577"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the polynomial by the specified scalar value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Polynomial Scale(float scalar)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scalar</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The scaled polynomial.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_SignChange_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_SignChange_HexaEngine_Mathematics_Interval_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange(HexaEngine.Mathematics.Interval)">
+  SignChange(Interval)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L480"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if there is a sign change in the polynomial function within the specified interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool SignChange(Interval interval)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>interval</code> <a class="xref" href="HexaEngine.Mathematics.Interval.html">Interval</a></dt>
+    <dd><p>The interval to check for sign change.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if there is a sign change within the interval; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_SignChange_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_SignChange_HexaEngine_Mathematics_Interval_System_Single__System_Single__" data-uid="HexaEngine.Mathematics.Polynomial.SignChange(HexaEngine.Mathematics.Interval,System.Single@,System.Single@)">
+  SignChange(Interval, out float, out float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L513"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if there is a sign change in the polynomial function within the specified interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool SignChange(Interval interval, out float y0, out float y1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>interval</code> <a class="xref" href="HexaEngine.Mathematics.Interval.html">Interval</a></dt>
+    <dd><p>The interval to check for sign change.</p>
+</dd>
+    <dt><code>y0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The function value at the start of the interval.</p>
+</dd>
+    <dt><code>y1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The function value at the end of the interval.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if there is a sign change within the interval; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_SignChange_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_SignChange_System_Single_System_Single_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange(System.Single,System.Single)">
+  SignChange(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L491"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if there is a sign change in the polynomial function within the specified interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool SignChange(float start, float end)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>start</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The start of the interval.</p>
+</dd>
+    <dt><code>end</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The end of the interval.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if there is a sign change within the interval; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_SignChange_" data-uid="HexaEngine.Mathematics.Polynomial.SignChange*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_SignChange_System_Single_System_Single_System_Single__System_Single__" data-uid="HexaEngine.Mathematics.Polynomial.SignChange(System.Single,System.Single,System.Single@,System.Single@)">
+  SignChange(float, float, out float, out float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L526"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if there is a sign change in the polynomial function within the specified interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool SignChange(float start, float end, out float y0, out float y1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>start</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The start of the interval.</p>
+</dd>
+    <dt><code>end</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The end of the interval.</p>
+</dd>
+    <dt><code>y0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The function value at the start of the interval.</p>
+</dd>
+    <dt><code>y1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The function value at the end of the interval.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if there is a sign change within the interval; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Polynomial_Subtract_" data-uid="HexaEngine.Mathematics.Polynomial.Subtract*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Polynomial_Subtract_HexaEngine_Mathematics_Polynomial_HexaEngine_Mathematics_Polynomial_" data-uid="HexaEngine.Mathematics.Polynomial.Subtract(HexaEngine.Mathematics.Polynomial,HexaEngine.Mathematics.Polynomial)">
+  Subtract(Polynomial, Polynomial)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L614"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts one polynomial from another.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Polynomial Subtract(Polynomial p1, Polynomial p2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>p1</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The polynomial to subtract from.</p>
+</dd>
+    <dt><code>p2</code> <a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The polynomial to subtract.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Polynomial.html">Polynomial</a></dt>
+    <dd><p>The result of subtracting the second polynomial from the first.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Polynomial.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

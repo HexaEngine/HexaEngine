@@ -1,0 +1,1577 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct Point4 </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct Point4 ">
+      
+      <meta name="description" content="Represents a 4D signed integer point in space.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_Point4.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.Point4%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.Point4">
+
+
+
+  <h1 id="HexaEngine_Mathematics_Point4" data-uid="HexaEngine.Mathematics.Point4" class="text-break">
+Struct Point4  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a 4D signed integer point in space.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct Point4 : IEquatable&lt;Point4&gt;</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Point4__ctor_" data-uid="HexaEngine.Mathematics.Point4.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4__ctor_HexaEngine_Mathematics_Point2_System_Int32_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.#ctor(HexaEngine.Mathematics.Point2,System.Int32,System.Int32)">
+  Point4(Point2, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> struct with specified X, Y, Z, and W components.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Point4(Point2 point, int z, int w)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="HexaEngine.Mathematics.Point2.html">Point2</a></dt>
+    <dd><p>The value for the (X, Y) component</p>
+</dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the Z component.</p>
+</dd>
+    <dt><code>w</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the W component.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4__ctor_" data-uid="HexaEngine.Mathematics.Point4.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4__ctor_HexaEngine_Mathematics_Point3_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.#ctor(HexaEngine.Mathematics.Point3,System.Int32)">
+  Point4(Point3, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> struct with specified X, Y, Z, and W components.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Point4(Point3 point, int w)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="HexaEngine.Mathematics.Point3.html">Point3</a></dt>
+    <dd><p>The value for the (X, Y, Z) component</p>
+</dd>
+    <dt><code>w</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the W component.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4__ctor_" data-uid="HexaEngine.Mathematics.Point4.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4__ctor_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.#ctor(System.Int32)">
+  Point4(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> struct with all components set to the specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Point4(int value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value to set for all components (X, Y, Z, and W).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4__ctor_" data-uid="HexaEngine.Mathematics.Point4.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4__ctor_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+  Point4(int, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> struct with specified X, Y, Z, and W components.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Point4(int x, int y, int z, int w)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the X component.</p>
+</dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the Y component.</p>
+</dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the Z component.</p>
+</dd>
+    <dt><code>w</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value for the W component.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Mathematics_Point4_W" data-uid="HexaEngine.Mathematics.Point4.W">
+  W
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The W component of the point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int W</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Point4_X" data-uid="HexaEngine.Mathematics.Point4.X">
+  X
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The X component of the point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int X</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Point4_Y" data-uid="HexaEngine.Mathematics.Point4.Y">
+  Y
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Y component of the point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Y</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Point4_Z" data-uid="HexaEngine.Mathematics.Point4.Z">
+  Z
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Z component of the point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Z</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Point4_Item_" data-uid="HexaEngine.Mathematics.Point4.Item*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Item_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the element at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the element to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.indexoutofrangeexception">IndexOutOfRangeException</a></dt>
+    <dd><p>Thrown when the index is out of the valid range.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_One_" data-uid="HexaEngine.Mathematics.Point4.One*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_One" data-uid="HexaEngine.Mathematics.Point4.One">
+  One
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with all elements set to one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 One { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_UnitW_" data-uid="HexaEngine.Mathematics.Point4.UnitW*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_UnitW" data-uid="HexaEngine.Mathematics.Point4.UnitW">
+  UnitW
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance representing the W-axis unit vector (0, 0, 0, 1).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 UnitW { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_UnitX_" data-uid="HexaEngine.Mathematics.Point4.UnitX*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_UnitX" data-uid="HexaEngine.Mathematics.Point4.UnitX">
+  UnitX
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance representing the X-axis unit vector (1, 0, 0, 0).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 UnitX { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_UnitY_" data-uid="HexaEngine.Mathematics.Point4.UnitY*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_UnitY" data-uid="HexaEngine.Mathematics.Point4.UnitY">
+  UnitY
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance representing the Y-axis unit vector (0, 1, 0, 0).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 UnitY { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_UnitZ_" data-uid="HexaEngine.Mathematics.Point4.UnitZ*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_UnitZ" data-uid="HexaEngine.Mathematics.Point4.UnitZ">
+  UnitZ
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance representing the Z-axis unit vector (0, 0, 1, 0).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 UnitZ { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_Zero_" data-uid="HexaEngine.Mathematics.Point4.Zero*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Zero" data-uid="HexaEngine.Mathematics.Point4.Zero">
+  Zero
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with all elements set to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 Zero { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Point4_Equals_" data-uid="HexaEngine.Mathematics.Point4.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Equals_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.Equals(HexaEngine.Mathematics.Point4)">
+  Equals(Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L167"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> is equal to this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Equals(Point4 other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to compare with this instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the specified <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> is equal to this instance; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_Equals_" data-uid="HexaEngine.Mathematics.Point4.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Equals_System_Object_" data-uid="HexaEngine.Mathematics.Point4.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the current <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance is equal to another <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances are equal element-wise; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_GetHashCode_" data-uid="HexaEngine.Mathematics.Point4.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_GetHashCode" data-uid="HexaEngine.Mathematics.Point4.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a hash code for the current <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer hash code.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_Read_" data-uid="HexaEngine.Mathematics.Point4.Read*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Read_System_IO_Stream_HexaEngine_Mathematics_Endianness_" data-uid="HexaEngine.Mathematics.Point4.Read(System.IO.Stream,HexaEngine.Mathematics.Endianness)">
+  Read(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L367"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> from a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 Read(Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The source <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</dd>
+    <dt><code>endianness</code> <a class="xref" href="HexaEngine.Mathematics.Endianness.html">Endianness</a></dt>
+    <dd><p>The endianness.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The read <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_ToString_" data-uid="HexaEngine.Mathematics.Point4.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_ToString" data-uid="HexaEngine.Mathematics.Point4.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using default formatting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Point4_ToString_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using the &quot;G&quot; (general) format string and the formatting conventions of the current thread culture. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the current culture's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_ToString_" data-uid="HexaEngine.Mathematics.Point4.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_ToString_System_String_" data-uid="HexaEngine.Mathematics.Point4.ToString(System.String)">
+  ToString(string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L342"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using the specified format string to format individual elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string ToString(string? format)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A standard or custom numeric format string that defines the format of individual elements.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Point4_ToString_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using <code class="paramref">format</code> and the current culture's formatting conventions. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the current culture's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_ToString_" data-uid="HexaEngine.Mathematics.Point4.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_ToString_System_String_System_IFormatProvider_" data-uid="HexaEngine.Mathematics.Point4.ToString(System.String,System.IFormatProvider)">
+  ToString(string?, IFormatProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using the specified format string to format individual elements and the specified format provider to define culture-specific formatting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string ToString(string? format, IFormatProvider? formatProvider)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A standard or custom numeric format string that defines the format of individual elements.</p>
+</dd>
+    <dt><code>formatProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformatprovider">IFormatProvider</a></dt>
+    <dd><p>A format provider that supplies culture-specific formatting information.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Point4_ToString_System_String_System_IFormatProvider__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using <code class="paramref">format</code> and <code class="paramref">formatProvider</code>. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the format provider's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_Write_" data-uid="HexaEngine.Mathematics.Point4.Write*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_Write_System_IO_Stream_HexaEngine_Mathematics_Endianness_" data-uid="HexaEngine.Mathematics.Point4.Write(System.IO.Stream,HexaEngine.Mathematics.Endianness)">
+  Write(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L394"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly void Write(Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The destination <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</dd>
+    <dt><code>endianness</code> <a class="xref" href="HexaEngine.Mathematics.Endianness.html">Endianness</a></dt>
+    <dd><p>The endianness.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Addition_" data-uid="HexaEngine.Mathematics.Point4.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Addition_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Addition(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator +(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator +(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to add.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to add.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The element-wise sum of the two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Addition_" data-uid="HexaEngine.Mathematics.Point4.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Addition_HexaEngine_Mathematics_Point4_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.op_Addition(HexaEngine.Mathematics.Point4,System.Int32)">
+  operator +(Point4, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a constant value to each element of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator +(Point4 left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to add to.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The constant value to add to each element.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with each element increased by the constant value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Decrement_" data-uid="HexaEngine.Mathematics.Point4.op_Decrement*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Decrement_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Decrement(HexaEngine.Mathematics.Point4)">
+  operator --(Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Decrements all elements of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance by 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator --(Point4 point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to decrement.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with all elements decremented by 1.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Division_" data-uid="HexaEngine.Mathematics.Point4.op_Division*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Division_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Division(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator /(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the left <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> by the right <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator /(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to divide (dividend).</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to divide by (divisor).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The element-wise division of the left <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> by the right <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Division_" data-uid="HexaEngine.Mathematics.Point4.op_Division*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Division_HexaEngine_Mathematics_Point4_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.op_Division(HexaEngine.Mathematics.Point4,System.Int32)">
+  operator /(Point4, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides each element of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance by a constant value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator /(Point4 left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to divide.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The constant value to divide each element by.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with each element divided by the constant value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Equality_" data-uid="HexaEngine.Mathematics.Point4.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Equality_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Equality(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator ==(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L190"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances are equal element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances are equal element-wise; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Implicit_" data-uid="HexaEngine.Mathematics.Point4.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Implicit_HexaEngine_Mathematics_Point4__System_Numerics_Vector4" data-uid="HexaEngine.Mathematics.Point4.op_Implicit(HexaEngine.Mathematics.Point4)~System.Numerics.Vector4">
+  implicit operator Vector4(Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator Vector4(Point4 point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to convert to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a> with each component equal to the respective <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> component as a float value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Implicit_" data-uid="HexaEngine.Mathematics.Point4.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Implicit_System_Numerics_Vector4__HexaEngine_Mathematics_Point4" data-uid="HexaEngine.Mathematics.Point4.op_Implicit(System.Numerics.Vector4)~HexaEngine.Mathematics.Point4">
+  implicit operator Point4(Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a> to a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator Point4(Vector4 vector)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The Vector4 to convert to a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>A <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> with each component rounded to the nearest unsigned integer value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Increment_" data-uid="HexaEngine.Mathematics.Point4.op_Increment*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Increment_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Increment(HexaEngine.Mathematics.Point4)">
+  operator ++(Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L299"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Increments all elements of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance by 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator ++(Point4 point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to increment.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with all elements incremented by 1.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Inequality_" data-uid="HexaEngine.Mathematics.Point4.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Inequality_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Inequality(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator !=(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances are not equal element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances are not equal element-wise; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Multiply_" data-uid="HexaEngine.Mathematics.Point4.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Multiply_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Multiply(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator *(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator *(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to multiply.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to multiply.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The element-wise product of the two <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Multiply_" data-uid="HexaEngine.Mathematics.Point4.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Multiply_HexaEngine_Mathematics_Point4_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.op_Multiply(HexaEngine.Mathematics.Point4,System.Int32)">
+  operator *(Point4, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies each element of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance by a constant value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator *(Point4 left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to multiply.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The constant value to multiply each element by.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with each element multiplied by the constant value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Subtraction_" data-uid="HexaEngine.Mathematics.Point4.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Subtraction_HexaEngine_Mathematics_Point4_HexaEngine_Mathematics_Point4_" data-uid="HexaEngine.Mathematics.Point4.op_Subtraction(HexaEngine.Mathematics.Point4,HexaEngine.Mathematics.Point4)">
+  operator -(Point4, Point4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts the right <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> from the left <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> element-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator -(Point4 left, Point4 right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to subtract from (minuend).</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> to subtract (subtrahend).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The element-wise difference between the left and right <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instances.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Point4_op_Subtraction_" data-uid="HexaEngine.Mathematics.Point4.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Point4_op_Subtraction_HexaEngine_Mathematics_Point4_System_Int32_" data-uid="HexaEngine.Mathematics.Point4.op_Subtraction(HexaEngine.Mathematics.Point4,System.Int32)">
+  operator -(Point4, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts a constant value from each element of a <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Point4 operator -(Point4 left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance to subtract from.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The constant value to subtract from each element.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Point4.html">Point4</a> instance with each element decreased by the constant value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Point4.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

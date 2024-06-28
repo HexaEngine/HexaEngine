@@ -1,0 +1,2076 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct Vector2D </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct Vector2D ">
+      
+      <meta name="description" content="Represents a 2-dimensional double-precision vector.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Mathematics_Vector2D.md&amp;value=---%0Auid%3A%20HexaEngine.Mathematics.Vector2D%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Mathematics.Vector2D">
+
+
+
+  <h1 id="HexaEngine_Mathematics_Vector2D" data-uid="HexaEngine.Mathematics.Vector2D" class="text-break">
+Struct Vector2D  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Mathematics.html">Mathematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Mathematics.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a 2-dimensional double-precision vector.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct Vector2D : IEquatable&lt;Vector2D&gt;</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Mathematics.VectorExtensions.html#HexaEngine_Mathematics_VectorExtensions_AsVector256_HexaEngine_Mathematics_Vector2D_">VectorExtensions.AsVector256(Vector2D)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Mathematics.VectorExtensions.html#HexaEngine_Mathematics_VectorExtensions_Normalize_HexaEngine_Mathematics_Vector2D_">VectorExtensions.Normalize(Vector2D)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Vector2D__ctor_" data-uid="HexaEngine.Mathematics.Vector2D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D__ctor_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.#ctor(System.Double)">
+  Vector2D(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> struct with both components set to the same value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2D(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value to set both components of the vector to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D__ctor_" data-uid="HexaEngine.Mathematics.Vector2D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D__ctor_System_Double_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.#ctor(System.Double,System.Double)">
+  Vector2D(double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> struct with the specified X and Y components.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2D(double x, double y)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The X-component of the vector.</p>
+</dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The Y-component of the vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_One" data-uid="HexaEngine.Mathematics.Vector2D.One">
+  One
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Represents a vector with both components set to one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Vector2D One</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_UnitX" data-uid="HexaEngine.Mathematics.Vector2D.UnitX">
+  UnitX
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Represents a vector with the X component set to one and the Y component set to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Vector2D UnitX</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_UnitY" data-uid="HexaEngine.Mathematics.Vector2D.UnitY">
+  UnitY
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Represents a vector with the Y component set to one and the X component set to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Vector2D UnitY</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_X" data-uid="HexaEngine.Mathematics.Vector2D.X">
+  X
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The X-component of the vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double X</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Y" data-uid="HexaEngine.Mathematics.Vector2D.Y">
+  Y
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Y-component of the vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Y</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Zero" data-uid="HexaEngine.Mathematics.Vector2D.Zero">
+  Zero
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Represents a vector with both components set to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Vector2D Zero</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Item_" data-uid="HexaEngine.Mathematics.Vector2D.Item*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Item_System_Int32_" data-uid="HexaEngine.Mathematics.Vector2D.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the element at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the element to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.indexoutofrangeexception">IndexOutOfRangeException</a></dt>
+    <dd><p>Thrown when the index is out of the valid range.</p>
+</dd>
+  </dl>
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Abs_" data-uid="HexaEngine.Mathematics.Vector2D.Abs*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Abs_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Abs(HexaEngine.Mathematics.Vector2D)">
+  Abs(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector whose elements are the absolute values of each of the specified vector's elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Abs(Vector2D value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>A vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The absolute value vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Add_" data-uid="HexaEngine.Mathematics.Vector2D.Add*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Add_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Add(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Add(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two vectors together.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Add(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector to add.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector to add.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The summed vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Clamp_" data-uid="HexaEngine.Mathematics.Vector2D.Clamp*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Clamp_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Clamp(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Clamp(Vector2D, Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Restricts a vector between a minimum and a maximum value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Clamp(Vector2D value1, Vector2D min, Vector2D max)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector to restrict.</p>
+</dd>
+    <dt><code>min</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The minimum value.</p>
+</dd>
+    <dt><code>max</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The maximum value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The restricted vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Distance_" data-uid="HexaEngine.Mathematics.Vector2D.Distance*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Distance_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Distance(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Distance(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Computes the Euclidean distance between the two given points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double Distance(Vector2D value1, Vector2D value2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first point.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second point.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The distance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_DistanceSquared_" data-uid="HexaEngine.Mathematics.Vector2D.DistanceSquared*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_DistanceSquared_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.DistanceSquared(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  DistanceSquared(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the Euclidean distance squared between two specified points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double DistanceSquared(Vector2D value1, Vector2D value2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first point.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second point.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The distance squared.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Divide_" data-uid="HexaEngine.Mathematics.Vector2D.Divide*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Divide_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Divide(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Divide(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the first vector by the second.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Divide(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector resulting from the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Divide_" data-uid="HexaEngine.Mathematics.Vector2D.Divide*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Divide_HexaEngine_Mathematics_Vector2D_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.Divide(HexaEngine.Mathematics.Vector2D,System.Double)">
+  Divide(Vector2D, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L167"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the specified vector by a specified scalar value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Divide(Vector2D left, double divisor)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+    <dt><code>divisor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector that results from the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Dot_" data-uid="HexaEngine.Mathematics.Vector2D.Dot*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Dot_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Dot(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Dot(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the dot product of two vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double Dot(Vector2D value1, Vector2D value2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The dot product.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Equals_" data-uid="HexaEngine.Mathematics.Vector2D.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Equals_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Equals(HexaEngine.Mathematics.Vector2D)">
+  Equals(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L447"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool Equals(Vector2D other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Equals_" data-uid="HexaEngine.Mathematics.Vector2D.Equals*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Equals_System_Object_" data-uid="HexaEngine.Mathematics.Vector2D.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L441"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_GetHashCode_" data-uid="HexaEngine.Mathematics.Vector2D.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_GetHashCode" data-uid="HexaEngine.Mathematics.Vector2D.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L454"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Length_" data-uid="HexaEngine.Mathematics.Vector2D.Length*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Length" data-uid="HexaEngine.Mathematics.Vector2D.Length">
+  Length()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L463"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the length of this vector object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly double Length()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The vector's length.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_LengthSquared_" data-uid="HexaEngine.Mathematics.Vector2D.LengthSquared*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_LengthSquared" data-uid="HexaEngine.Mathematics.Vector2D.LengthSquared">
+  LengthSquared()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L473"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the length of the vector squared.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly double LengthSquared()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The vector's length squared.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Vector2D_LengthSquared_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This operation offers better performance than a call to the <a class="xref" href="HexaEngine.Mathematics.Vector2D.html#HexaEngine_Mathematics_Vector2D_Length">Length()</a> method.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Lerp_" data-uid="HexaEngine.Mathematics.Vector2D.Lerp*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Lerp_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.Lerp(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D,System.Double)">
+  Lerp(Vector2D, Vector2D, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs a linear interpolation between two vectors based on the given weighting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Lerp(Vector2D value1, Vector2D value2, double amount)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+    <dt><code>amount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>A value between 0 and 1 that indicates the weight of <code class="paramref">value2</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The interpolated vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Max_" data-uid="HexaEngine.Mathematics.Vector2D.Max*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Max_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Max(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Max(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector whose elements are the maximum of each of the pairs of elements in two specified vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Max(Vector2D value1, Vector2D value2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The maximized vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Min_" data-uid="HexaEngine.Mathematics.Vector2D.Min*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Min_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Min(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Min(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector whose elements are the minimum of each of the pairs of elements in two specified vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Min(Vector2D value1, Vector2D value2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value1</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>value2</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The minimized vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Multiply_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Multiply(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a new vector whose values are the product of each pair of elements in two specified vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Multiply(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The element-wise product vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Multiply_HexaEngine_Mathematics_Vector2D_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply(HexaEngine.Mathematics.Vector2D,System.Double)">
+  Multiply(Vector2D, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a vector by a specified scalar.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Multiply(Vector2D left, double right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector to multiply.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The scaled vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Multiply_System_Double_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Multiply(System.Double,HexaEngine.Mathematics.Vector2D)">
+  Multiply(double, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a scalar value by a specified vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Multiply(double left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scaled value.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The scaled vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Negate_" data-uid="HexaEngine.Mathematics.Vector2D.Negate*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Negate_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Negate(HexaEngine.Mathematics.Vector2D)">
+  Negate(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Negates a specified vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Negate(Vector2D value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector to negate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The negated vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Normalize_" data-uid="HexaEngine.Mathematics.Vector2D.Normalize*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Normalize_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Normalize(HexaEngine.Mathematics.Vector2D)">
+  Normalize(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector with the same direction as the specified vector, but with a length of one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Normalize(Vector2D value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector to normalize.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The normalized vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Reflect_" data-uid="HexaEngine.Mathematics.Vector2D.Reflect*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Reflect_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Reflect(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Reflect(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the reflection of a vector off a surface that has the specified normal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Reflect(Vector2D vector, Vector2D normal)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+    <dt><code>normal</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The normal of the surface being reflected off.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The reflected vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_SquareRoot_" data-uid="HexaEngine.Mathematics.Vector2D.SquareRoot*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_SquareRoot_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.SquareRoot(HexaEngine.Mathematics.Vector2D)">
+  SquareRoot(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector whose elements are the square root of each of a specified vector's elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D SquareRoot(Vector2D value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>A vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The square root vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_Subtract_" data-uid="HexaEngine.Mathematics.Vector2D.Subtract*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_Subtract_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.Subtract(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  Subtract(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts the second vector from the first.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D Subtract(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The difference vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_ToString_" data-uid="HexaEngine.Mathematics.Vector2D.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_ToString" data-uid="HexaEngine.Mathematics.Vector2D.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L482"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using default formatting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override readonly string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Vector2D_ToString_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using the &quot;G&quot; (general) format string and the formatting conventions of the current thread culture. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the current culture's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_ToString_" data-uid="HexaEngine.Mathematics.Vector2D.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_ToString_System_String_" data-uid="HexaEngine.Mathematics.Vector2D.ToString(System.String)">
+  ToString(string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L493"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using the specified format string to format individual elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string ToString(string? format)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A standard or custom numeric format string that defines the format of individual elements.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Vector2D_ToString_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using <code class="paramref">format</code> and the current culture's formatting conventions. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the current culture's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_ToString_" data-uid="HexaEngine.Mathematics.Vector2D.ToString*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_ToString_System_String_System_IFormatProvider_" data-uid="HexaEngine.Mathematics.Vector2D.ToString(System.String,System.IFormatProvider)">
+  ToString(string?, IFormatProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L505"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the string representation of the current instance using the specified format string to format individual elements and the specified format provider to define culture-specific formatting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string ToString(string? format, IFormatProvider? formatProvider)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A standard or custom numeric format string that defines the format of individual elements.</p>
+</dd>
+    <dt><code>formatProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformatprovider">IFormatProvider</a></dt>
+    <dd><p>A format provider that supplies culture-specific formatting information.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Mathematics_Vector2D_ToString_System_String_System_IFormatProvider__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method returns a string in which each element of the vector is formatted using <code class="paramref">format</code> and <code class="paramref">formatProvider</code>. The &quot;&lt;&quot; and &quot;&gt;&quot; characters are used to begin and end the string, and the format provider's <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.globalization.numberformatinfo.numbergroupseparator">NumberGroupSeparator</a> property followed by a space is used to separate each element.</p>
+</div>
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Addition_" data-uid="HexaEngine.Mathematics.Vector2D.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Addition_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Addition(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator +(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator +(Vector2D a, Vector2D b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Division_" data-uid="HexaEngine.Mathematics.Vector2D.op_Division*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Division_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Division(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator /(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides two vectors component-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator /(Vector2D a, Vector2D b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The numerator vector.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The denominator vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> containing the component-wise division of the numerator vector by the denominator vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Division_" data-uid="HexaEngine.Mathematics.Vector2D.op_Division*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Division_HexaEngine_Mathematics_Vector2D_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.op_Division(HexaEngine.Mathematics.Vector2D,System.Double)">
+  operator /(Vector2D, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L379"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the vector with a float.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator /(Vector2D a, double d)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+    <dt><code>d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The dividing float value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Equality_" data-uid="HexaEngine.Mathematics.Vector2D.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Equality_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Equality(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator ==(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L422"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> instances are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> instances are equal; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Implicit_" data-uid="HexaEngine.Mathematics.Vector2D.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Implicit_HexaEngine_Mathematics_Point2__HexaEngine_Mathematics_Vector2D" data-uid="HexaEngine.Mathematics.Vector2D.op_Implicit(HexaEngine.Mathematics.Point2)~HexaEngine.Mathematics.Vector2D">
+  implicit operator Vector2D(Point2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L410"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts from an integer vector into a double-precision vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator Vector2D(Point2 v)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>v</code> <a class="xref" href="HexaEngine.Mathematics.Point2.html">Point2</a></dt>
+    <dd><p>The integer vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Implicit_" data-uid="HexaEngine.Mathematics.Vector2D.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Implicit_System_Numerics_Vector2__HexaEngine_Mathematics_Vector2D" data-uid="HexaEngine.Mathematics.Vector2D.op_Implicit(System.Numerics.Vector2)~HexaEngine.Mathematics.Vector2D">
+  implicit operator Vector2D(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L400"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts from a single-precision vector into a double-precision vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator Vector2D(Vector2 v)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>v</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The single-precision vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Inequality_" data-uid="HexaEngine.Mathematics.Vector2D.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Inequality_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Inequality(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator !=(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L434"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether two <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> instances are not equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(Vector2D left, Vector2D right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> instances are not equal; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Multiply_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator *(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies two vectors component-wise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator *(Vector2D a, Vector2D b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>A new <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a> containing the component-wise multiplication of the input vectors.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Multiply_HexaEngine_Mathematics_Vector2D_System_Double_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply(HexaEngine.Mathematics.Vector2D,System.Double)">
+  operator *(Vector2D, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the vector uniformly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator *(Vector2D a, double d)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+    <dt><code>d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scaling value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Multiply_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Multiply_System_Double_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Multiply(System.Double,HexaEngine.Mathematics.Vector2D)">
+  operator *(double, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L368"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scales the vector uniformly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator *(double d, Vector2D a)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scaling value.</p>
+</dd>
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_Subtraction_" data-uid="HexaEngine.Mathematics.Vector2D.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_Subtraction_HexaEngine_Mathematics_Vector2D_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_Subtraction(HexaEngine.Mathematics.Vector2D,HexaEngine.Mathematics.Vector2D)">
+  operator -(Vector2D, Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts two vectors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator -(Vector2D a, Vector2D b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The first vector.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The second vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Mathematics_Vector2D_op_UnaryNegation_" data-uid="HexaEngine.Mathematics.Vector2D.op_UnaryNegation*"></a>
+
+  <h3 id="HexaEngine_Mathematics_Vector2D_op_UnaryNegation_HexaEngine_Mathematics_Vector2D_" data-uid="HexaEngine.Mathematics.Vector2D.op_UnaryNegation(HexaEngine.Mathematics.Vector2D)">
+  operator -(Vector2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L390"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts the vector from a zero vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2D operator -(Vector2D a)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Mathematics.Vector2D.html">Vector2D</a></dt>
+    <dd><p>The resulting vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Mathematics/Vector2D.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
