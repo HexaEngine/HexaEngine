@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.DirectXTex;
+    using Hexa.NET.DirectXTex;
     using Silk.NET.Direct3D11;
     using System.Diagnostics;
     using System.IO;

@@ -12,270 +12,270 @@
     public static unsafe class Helper
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.CPFlags Convert(CPFlags flags)
+        public static Hexa.NET.DirectXTex.CPFlags Convert(CPFlags flags)
         {
-            DirectXTex.CPFlags result = 0;
+            Hexa.NET.DirectXTex.CPFlags result = 0;
             if ((flags & CPFlags.None) != 0)
             {
-                result |= DirectXTex.CPFlags.None;
+                result |= Hexa.NET.DirectXTex.CPFlags.None;
             }
 
             if ((flags & CPFlags.LegacyDWORD) != 0)
             {
-                result |= DirectXTex.CPFlags.LegacyDword;
+                result |= Hexa.NET.DirectXTex.CPFlags.LegacyDword;
             }
 
             if ((flags & CPFlags.Paragraph) != 0)
             {
-                result |= DirectXTex.CPFlags.Paragraph;
+                result |= Hexa.NET.DirectXTex.CPFlags.Paragraph;
             }
 
             if ((flags & CPFlags.YMM) != 0)
             {
-                result |= DirectXTex.CPFlags.Ymm;
+                result |= Hexa.NET.DirectXTex.CPFlags.Ymm;
             }
 
             if ((flags & CPFlags.ZMM) != 0)
             {
-                result |= DirectXTex.CPFlags.Zmm;
+                result |= Hexa.NET.DirectXTex.CPFlags.Zmm;
             }
 
             if ((flags & CPFlags.Page4K) != 0)
             {
-                result |= DirectXTex.CPFlags.Page4K;
+                result |= Hexa.NET.DirectXTex.CPFlags.Page4K;
             }
 
             if ((flags & CPFlags.BadDXTNTails) != 0)
             {
-                result |= DirectXTex.CPFlags.BadDxtnTails;
+                result |= Hexa.NET.DirectXTex.CPFlags.BadDxtnTails;
             }
 
             if ((flags & CPFlags.BPP24) != 0)
             {
-                result |= DirectXTex.CPFlags.Flags24Bpp;
+                result |= Hexa.NET.DirectXTex.CPFlags.Flags24Bpp;
             }
 
             if ((flags & CPFlags.BPP16) != 0)
             {
-                result |= DirectXTex.CPFlags.Flags16Bpp;
+                result |= Hexa.NET.DirectXTex.CPFlags.Flags16Bpp;
             }
 
             if ((flags & CPFlags.BPP8) != 0)
             {
-                result |= DirectXTex.CPFlags.Flags8Bpp;
+                result |= Hexa.NET.DirectXTex.CPFlags.Flags8Bpp;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.WICCodecs Convert(TexFileFormat format)
+        public static Hexa.NET.DirectXTex.WICCodecs Convert(TexFileFormat format)
         {
             return format switch
             {
                 TexFileFormat.DDS => throw new NotSupportedException(),
                 TexFileFormat.TGA => throw new NotSupportedException(),
                 TexFileFormat.HDR => throw new NotSupportedException(),
-                TexFileFormat.BMP => DirectXTex.WICCodecs.WicCodecBmp,
-                TexFileFormat.JPEG => DirectXTex.WICCodecs.WicCodecJpeg,
-                TexFileFormat.PNG => DirectXTex.WICCodecs.WicCodecPng,
-                TexFileFormat.TIFF => DirectXTex.WICCodecs.WicCodecTiff,
-                TexFileFormat.GIF => DirectXTex.WICCodecs.WicCodecGif,
-                TexFileFormat.WMP => DirectXTex.WICCodecs.WicCodecWmp,
-                TexFileFormat.ICO => DirectXTex.WICCodecs.WicCodecIco,
+                TexFileFormat.BMP => Hexa.NET.DirectXTex.WICCodecs.CodecBmp,
+                TexFileFormat.JPEG => Hexa.NET.DirectXTex.WICCodecs.CodecJpeg,
+                TexFileFormat.PNG => Hexa.NET.DirectXTex.WICCodecs.CodecPng,
+                TexFileFormat.TIFF => Hexa.NET.DirectXTex.WICCodecs.CodecTiff,
+                TexFileFormat.GIF => Hexa.NET.DirectXTex.WICCodecs.CodecGif,
+                TexFileFormat.WMP => Hexa.NET.DirectXTex.WICCodecs.CodecWmp,
+                TexFileFormat.ICO => Hexa.NET.DirectXTex.WICCodecs.CodecIco,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexFilterFlags Convert(TexFilterFlags flags)
+        public static Hexa.NET.DirectXTex.TexFilterFlags Convert(TexFilterFlags flags)
         {
-            DirectXTex.TexFilterFlags result = 0;
+            Hexa.NET.DirectXTex.TexFilterFlags result = 0;
             if ((flags & TexFilterFlags.Default) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Default;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Default;
             }
 
             if ((flags & TexFilterFlags.WrapU) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.WrapU;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapu;
             }
 
             if ((flags & TexFilterFlags.WrapV) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.WrapV;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapv;
             }
 
             if ((flags & TexFilterFlags.WrapW) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.WrapW;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapw;
             }
 
             if ((flags & TexFilterFlags.Wrap) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Wrap;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrap;
             }
 
             if ((flags & TexFilterFlags.MirrorU) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.MirrorU;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirroru;
             }
 
             if ((flags & TexFilterFlags.MirrorV) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.MirrorV;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirrorv;
             }
 
             if ((flags & TexFilterFlags.MirrorW) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.MirrorW;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirrorw;
             }
 
             if ((flags & TexFilterFlags.Mirror) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Mirror;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirror;
             }
 
             if ((flags & TexFilterFlags.SeparateAlpha) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SeparateAlpha;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.SeparateAlpha;
             }
 
             if ((flags & TexFilterFlags.FloatX2Bias) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.FloatX2Bias;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Floatx2Bias;
             }
 
             if ((flags & TexFilterFlags.RGBCopyRed) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RgbCopyRed;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.RgbCopyRed;
             }
 
             if ((flags & TexFilterFlags.RGBCopyGreen) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RgbCopyGreen;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.RgbCopyGreen;
             }
 
             if ((flags & TexFilterFlags.RGBCopyBlue) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RgbCopyBlue;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.RgbCopyBlue;
             }
 
             if ((flags & TexFilterFlags.Dither) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Dither;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Dither;
             }
 
             if ((flags & TexFilterFlags.DitherDiffusion) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.DitherDiffusion;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.DitherDiffusion;
             }
 
             if ((flags & TexFilterFlags.Point) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Point;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Point;
             }
 
             if ((flags & TexFilterFlags.Linear) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Linear;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Linear;
             }
 
             if ((flags & TexFilterFlags.Cubic) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Cubic;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Cubic;
             }
 
             if ((flags & TexFilterFlags.Box) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Box;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Box;
             }
 
             if ((flags & TexFilterFlags.Triangle) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Triangle;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Triangle;
             }
 
             if ((flags & TexFilterFlags.SRGBIn) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SrgbIn;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.SrgbIn;
             }
 
             if ((flags & TexFilterFlags.SRGBOut) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SrgbOut;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.SrgbOut;
             }
 
             if ((flags & TexFilterFlags.SRGB) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.Srgb;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.Srgb;
             }
 
             if ((flags & TexFilterFlags.ForceNonWIC) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.ForceNonWic;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.ForceNonWic;
             }
 
             if ((flags & TexFilterFlags.ForceWIC) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.ForceWic;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.ForceWic;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexCompressFlags Convert(TexCompressFlags flags)
+        public static Hexa.NET.DirectXTex.TexCompressFlags Convert(TexCompressFlags flags)
         {
-            DirectXTex.TexCompressFlags result = 0;
+            Hexa.NET.DirectXTex.TexCompressFlags result = 0;
             if ((flags & TexCompressFlags.Default) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Default;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Default;
             }
 
             if ((flags & TexCompressFlags.DitherRGB) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.RgbDither;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.RgbDither;
             }
 
             if ((flags & TexCompressFlags.DitherA) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.ADither;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.CompressaDither;
             }
 
             if ((flags & TexCompressFlags.Dither) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Dither;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Dither;
             }
 
             if ((flags & TexCompressFlags.Uniform) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Uniform;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Uniform;
             }
 
             if ((flags & TexCompressFlags.BC7Use3Sunsets) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Bc7Use3Subsets;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Bc7Use3Subsets;
             }
 
             if ((flags & TexCompressFlags.BC7Quick) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Bc7Quick;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Bc7Quick;
             }
 
             if ((flags & TexCompressFlags.SRGBIn) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.SrgbIn;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.SrgbIn;
             }
 
             if ((flags & TexCompressFlags.SRGBOut) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.SrgbOut;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.SrgbOut;
             }
 
             if ((flags & TexCompressFlags.Parallel) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.Parallel;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.Parallel;
             }
 
             return result;
@@ -2321,9 +2321,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexMetadata Convert(TexMetadata metadata)
+        public static Hexa.NET.DirectXTex.TexMetadata Convert(TexMetadata metadata)
         {
-            DirectXTex.TexMetadata texMetadata;
+            Hexa.NET.DirectXTex.TexMetadata texMetadata;
             texMetadata.Format = (int)Convert(metadata.Format);
             texMetadata.ArraySize = (nuint)metadata.ArraySize;
             texMetadata.Width = (nuint)metadata.Width;
@@ -2338,46 +2338,46 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexAlphaMode Convert(TexAlphaMode mode)
+        public static Hexa.NET.DirectXTex.TexAlphaMode Convert(TexAlphaMode mode)
         {
             return mode switch
             {
-                TexAlphaMode.Unknown => DirectXTex.TexAlphaMode.Unknown,
-                TexAlphaMode.Straight => DirectXTex.TexAlphaMode.Straight,
-                TexAlphaMode.Premultiplied => DirectXTex.TexAlphaMode.Premultiplied,
-                TexAlphaMode.Opaque => DirectXTex.TexAlphaMode.Opaque,
-                TexAlphaMode.Custom => DirectXTex.TexAlphaMode.Custom,
+                TexAlphaMode.Unknown => Hexa.NET.DirectXTex.TexAlphaMode.Unknown,
+                TexAlphaMode.Straight => Hexa.NET.DirectXTex.TexAlphaMode.Straight,
+                TexAlphaMode.Premultiplied => Hexa.NET.DirectXTex.TexAlphaMode.Premultiplied,
+                TexAlphaMode.Opaque => Hexa.NET.DirectXTex.TexAlphaMode.Opaque,
+                TexAlphaMode.Custom => Hexa.NET.DirectXTex.TexAlphaMode.Custom,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexMiscFlag Convert(TexMiscFlags flags)
+        public static Hexa.NET.DirectXTex.TexMiscFlag Convert(TexMiscFlags flags)
         {
-            DirectXTex.TexMiscFlag result = 0;
+            Hexa.NET.DirectXTex.TexMiscFlag result = 0;
 
             if ((flags & TexMiscFlags.TextureCube) != 0)
             {
-                result |= DirectXTex.TexMiscFlag.Texturecube;
+                result |= Hexa.NET.DirectXTex.TexMiscFlag.Texturecube;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectXTex.TexDimension Convert(TexDimension dimension)
+        public static Hexa.NET.DirectXTex.TexDimension Convert(TexDimension dimension)
         {
             return dimension switch
             {
-                TexDimension.Texture1D => DirectXTex.TexDimension.Texture1D,
-                TexDimension.Texture2D => DirectXTex.TexDimension.Texture2D,
-                TexDimension.Texture3D => DirectXTex.TexDimension.Texture3D,
+                TexDimension.Texture1D => Hexa.NET.DirectXTex.TexDimension.Texture1D,
+                TexDimension.Texture2D => Hexa.NET.DirectXTex.TexDimension.Texture2D,
+                TexDimension.Texture3D => Hexa.NET.DirectXTex.TexDimension.Texture3D,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TexMetadata ConvertBack(DirectXTex.TexMetadata metadata)
+        public static TexMetadata ConvertBack(Hexa.NET.DirectXTex.TexMetadata metadata)
         {
             TexMetadata texMetadata;
             texMetadata.Format = ConvertBack((Silk.NET.DXGI.Format)metadata.Format);
@@ -2387,29 +2387,29 @@
             texMetadata.Depth = (int)metadata.Depth;
             texMetadata.MipLevels = (int)metadata.MipLevels;
             texMetadata.Dimension = ConvertBack(metadata.Dimension);
-            texMetadata.MiscFlags = ConvertBack((DirectXTex.TexMiscFlag)metadata.MiscFlags);
+            texMetadata.MiscFlags = ConvertBack((Hexa.NET.DirectXTex.TexMiscFlag)metadata.MiscFlags);
             texMetadata.AlphaMode = ConvertBack(metadata.GetAlphaMode());
             return texMetadata;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TexDimension ConvertBack(DirectXTex.TexDimension dimension)
+        private static TexDimension ConvertBack(Hexa.NET.DirectXTex.TexDimension dimension)
         {
             return dimension switch
             {
-                DirectXTex.TexDimension.Texture1D => TexDimension.Texture1D,
-                DirectXTex.TexDimension.Texture2D => TexDimension.Texture2D,
-                DirectXTex.TexDimension.Texture3D => TexDimension.Texture3D,
+                Hexa.NET.DirectXTex.TexDimension.Texture1D => TexDimension.Texture1D,
+                Hexa.NET.DirectXTex.TexDimension.Texture2D => TexDimension.Texture2D,
+                Hexa.NET.DirectXTex.TexDimension.Texture3D => TexDimension.Texture3D,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TexMiscFlags ConvertBack(DirectXTex.TexMiscFlag flags)
+        private static TexMiscFlags ConvertBack(Hexa.NET.DirectXTex.TexMiscFlag flags)
         {
             TexMiscFlags result = 0;
 
-            if ((flags & DirectXTex.TexMiscFlag.Texturecube) != 0)
+            if ((flags & Hexa.NET.DirectXTex.TexMiscFlag.Texturecube) != 0)
             {
                 result |= TexMiscFlags.TextureCube;
             }
@@ -2418,15 +2418,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TexAlphaMode ConvertBack(DirectXTex.TexAlphaMode alphaMode)
+        private static TexAlphaMode ConvertBack(Hexa.NET.DirectXTex.TexAlphaMode alphaMode)
         {
             return alphaMode switch
             {
-                DirectXTex.TexAlphaMode.Unknown => TexAlphaMode.Unknown,
-                DirectXTex.TexAlphaMode.Straight => TexAlphaMode.Straight,
-                DirectXTex.TexAlphaMode.Premultiplied => TexAlphaMode.Premultiplied,
-                DirectXTex.TexAlphaMode.Opaque => TexAlphaMode.Opaque,
-                DirectXTex.TexAlphaMode.Custom => TexAlphaMode.Custom,
+                Hexa.NET.DirectXTex.TexAlphaMode.Unknown => TexAlphaMode.Unknown,
+                Hexa.NET.DirectXTex.TexAlphaMode.Straight => TexAlphaMode.Straight,
+                Hexa.NET.DirectXTex.TexAlphaMode.Premultiplied => TexAlphaMode.Premultiplied,
+                Hexa.NET.DirectXTex.TexAlphaMode.Opaque => TexAlphaMode.Opaque,
+                Hexa.NET.DirectXTex.TexAlphaMode.Custom => TexAlphaMode.Custom,
                 _ => throw new NotSupportedException(),
             };
         }

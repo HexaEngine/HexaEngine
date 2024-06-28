@@ -4,7 +4,7 @@ namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.DirectXTex;
+    using Hexa.NET.DirectXTex;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System.IO;
@@ -250,7 +250,7 @@ namespace HexaEngine.D3D11
         public void SaveToMemory(Stream stream, TexFileFormat format, int flags)
         {
             ScratchImage image = scImage;
-            HexaEngine.DirectXTex.Blob blob = DirectXTex.CreateBlob();
+            Hexa.NET.DirectXTex.Blob blob = DirectXTex.CreateBlob();
 
             var meta = image.GetMetadata();
             switch (format)
@@ -280,7 +280,7 @@ namespace HexaEngine.D3D11
         public void SaveToMemory(byte** ppData, nuint* pSize, TexFileFormat format, int flags)
         {
             ScratchImage image = scImage;
-            HexaEngine.DirectXTex.Blob blobInternal = DirectXTex.CreateBlob();
+            Hexa.NET.DirectXTex.Blob blobInternal = DirectXTex.CreateBlob();
 
             var meta = image.GetMetadata();
             switch (format)
@@ -302,12 +302,12 @@ namespace HexaEngine.D3D11
                     break;
             }
 
-            nuint size = blobInternal.GetBufferSize();
-            byte* pData = (byte*)Alloc(size);
+            ulong size = blobInternal.GetBufferSize();
+            byte* pData = (byte*)Alloc((nint)size);
             Buffer.MemoryCopy(blobInternal.GetBufferPointer(), pData, size, size);
             blobInternal.Release();
             *ppData = pData;
-            *pSize = size;
+            *pSize = (nuint)size;
         }
 
         public IImage[] GetImages()
