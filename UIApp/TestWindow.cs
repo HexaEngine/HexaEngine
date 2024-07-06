@@ -13,22 +13,20 @@
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;
     using System.Numerics;
-    using YamlDotNet.Core;
 
     public sealed class TestWindow : CoreWindow
     {
         private ThreadDispatcher renderDispatcher;
         private UIRenderer uirenderer;
         private UICommandList commandList;
+        private Texture2D compositionTexture;
 
+        private UIWindow window;
         private IGraphicsDevice graphicsDevice;
         private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
         private bool resetTime;
         private bool resize;
-
-        private ParticleSystem particleSystem = new();
-        private Emitter emitter = new();
 
         public override Viewport RenderViewport { get; }
 
@@ -51,10 +49,22 @@
             uirenderer = new(graphicsDevice);
             commandList = new();
 
+            compositionTexture = new(swapChain.Backbuffer.Description.Format, Width, Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+
+            MakeUI();
+
             Show();
         }
 
-        private SolidColorBrush brush = new(Colors.AliceBlue);
+        private void MakeUI()
+        {
+            XamlReader reader = new();
+            window = (UIWindow)reader.Parse("Test.xaml");
+
+            Width = (int)window.Width;
+            Height = (int)window.Height;
+            window.Show();
+        }
 
         /// <summary>
         /// Renders the content of the window using the specified graphics context.
@@ -78,24 +88,23 @@
 
             commandList.BeginDraw();
 
-            particleSystem.Update(emitter);
+            window.Render(commandList);
 
-            emitter.Position = new Vector2(Width / 2, Height / 2);
-            emitter.Boundaries = new(0, 0, Width, Height);
-            particleSystem.Emit(emitter);
-            particleSystem.Simulate(emitter, Time.Delta);
-            commandList.PushClipRect(new(0, 0, Width, Height));
-            particleSystem.Draw(commandList, brush);
-            commandList.PopClipRect();
             commandList.Transform = Matrix3x2.Identity;
 
             commandList.EndDraw();
+
+            // Clear render target view.
+            context.ClearRenderTargetView(compositionTexture.RTV, default);
 
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
+
+            // Set the render target to swap chain backbuffer.
+            context.SetRenderTarget(compositionTexture.RTV, null);
 
             float L = 0;
             float R = Width;
@@ -109,11 +118,10 @@
                  (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
                  );
 
-            context.ClearRenderTargetView(swapChain.BackbufferRTV, default);
-            context.SetRenderTarget(swapChain.BackbufferRTV, null);
-
             // End the ImGui frame rendering.
             uirenderer?.RenderDrawData(context, swapChain.Viewport, mvp, commandList);
+
+            context.CopyResource(swapChain.Backbuffer, compositionTexture);
 
             // Present and swap buffers.
             swapChain.Present();
@@ -128,6 +136,13 @@
         /// <param name="args">The event arguments.</param>
         protected override void OnResized(ResizedEventArgs args)
         {
+            if (window != null)
+            {
+                window.Width = args.NewWidth;
+                window.Height = args.NewHeight;
+                compositionTexture.Resize(swapChain.Backbuffer.Description.Format, args.NewWidth, args.NewHeight, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            }
+
             resize = true;
             base.OnResized(args);
         }

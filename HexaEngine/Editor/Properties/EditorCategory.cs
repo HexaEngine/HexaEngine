@@ -153,6 +153,56 @@
         /// <param name="context">The graphics context used for drawing.</param>
         /// <param name="instance">The instance of the object containing the category.</param>
         /// <param name="value">The current value of the category (not applicable for categories).</param>
+        /// <param name="proxy"></param>
+        /// <param name="setOnInstance"></param>
+        /// <returns><c>true</c> if the category was modified; otherwise, <c>false</c>.</returns>
+        public bool Draw(IGraphicsContext context, object instance, ref object? value, ProxyBase proxy, bool setOnInstance)
+        {
+            if (!IsVisible(instance))
+            {
+                return false;
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+
+            if (ImGui.TreeNodeEx(guiName.UniqueName))
+            {
+                Color();
+                ImGui.TableSetColumnIndex(0);
+                var result = Draw(context, instance, proxy, setOnInstance);
+                ImGui.TreePop();
+                return result;
+            }
+            Color();
+
+            return false;
+        }
+
+        private bool Draw(IGraphicsContext context, object instance, ProxyBase proxy, bool setOnInstance)
+        {
+            bool changed = false;
+            for (int i = 0; i < elements.Count; i++)
+            {
+                changed |= elements[i].Draw(context, instance, proxy, setOnInstance);
+            }
+
+            for (int i = 0; i < childCategories.Count; i++)
+            {
+                var category = childCategories[i];
+#nullable disable
+                changed |= category.Draw(context, instance, ref instance, proxy, setOnInstance);
+#nullable restore
+            }
+            return changed;
+        }
+
+        /// <summary>
+        /// Draws the category within the specified graphics context.
+        /// </summary>
+        /// <param name="context">The graphics context used for drawing.</param>
+        /// <param name="instance">The instance of the object containing the category.</param>
+        /// <param name="value">The current value of the category (not applicable for categories).</param>
         /// <returns><c>true</c> if the category was modified; otherwise, <c>false</c>.</returns>
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {

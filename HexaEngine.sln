@@ -64,7 +64,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers", "Hex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers.Tests", "HexaEngine.Analyzers.Tests\HexaEngine.Analyzers.Tests.csproj", "{35199F47-1B9E-4A75-B60C-7C42129E2777}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Analyzers.Annotations", "HexaEngine.Analyzers.Annotations\HexaEngine.Analyzers.Annotations.csproj", "{1EEAFB17-B07D-4211-BD3D-3E72339557C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers.Annotations", "HexaEngine.Analyzers.Annotations\HexaEngine.Analyzers.Annotations.csproj", "{1EEAFB17-B07D-4211-BD3D-3E72339557C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Unsafes", "HexaEngine.Unsafes\HexaEngine.Unsafes.csproj", "{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -805,6 +807,36 @@ Global
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|x64.Build.0 = Debug|Any CPU
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|x86.ActiveCfg = Debug|Any CPU
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|x86.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|x64.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|Any CPU.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|Any CPU.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|x64.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|x64.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|x86.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.MinSizeRel|x86.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|x64.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|x64.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.Release|x86.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|Any CPU.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|x64.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|x64.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|x86.ActiveCfg = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.RelWithDebInfo|x86.Build.0 = Release|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|Any CPU.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|Any CPU.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|x64.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|x64.Build.0 = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|x86.ActiveCfg = Debug|Any CPU
+		{7354F243-1DC6-4DB8-AE19-75CB2AF75FE9}.TraceLeak|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

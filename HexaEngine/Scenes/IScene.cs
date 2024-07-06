@@ -28,7 +28,7 @@
 
         SceneFlags Flags { get; }
 
-        List<GameObject> GameObjects { get; }
+        IReadOnlyList<GameObject> GameObjects { get; }
 
         bool Initialized { get; }
 

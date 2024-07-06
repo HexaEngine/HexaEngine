@@ -5,6 +5,7 @@ namespace HexaEngine.Core.UI
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public static unsafe class ImGuiCurveEditor
     {
@@ -15,9 +16,10 @@ namespace HexaEngine.Core.UI
 
         public enum CurveEditorFlags
         {
-            NO_TANGENTS = 1 << 0,
-            SHOW_GRID = 1 << 1,
-            RESET = 1 << 2
+            None = 0,
+            NoTangents = 1 << 0,
+            ShowGrid = 1 << 1,
+            Reset = 1 << 2
         };
 
         public enum StorageValues : int
@@ -33,16 +35,21 @@ namespace HexaEngine.Core.UI
 
         private static Vector2 start_pan;
 
-        private static float SIZE = 3;
+        private static float SIZE = 4;
 
-        private static float SIZE_handleTangent = 2;
+        private static float SIZE_handleTangent = 4;
         private static float LENGTH = 18;
 
-        public static int CurveEditor(string label, Vector2* values, int points_count, Vector2 editor_size, CurveEditorFlags flags, int* new_count)
+        public static int CurveEditor(string label, Vector2[] values, int pointsCount, Vector2 editorSize, CurveEditorFlags flags, ref int newCount)
+        {
+            return CurveEditor(label, (Vector2*)Unsafe.AsPointer(ref values[0]), pointsCount, editorSize, flags, (int*)Unsafe.AsPointer(ref newCount));
+        }
+
+        public static int CurveEditor(string label, Vector2* values, int pointsCount, Vector2 editorSize, CurveEditorFlags flags, int* newCount)
         {
             float HEIGHT = 100;
             ImGuiStylePtr style = ImGui.GetStyle();
-            Vector2 size = editor_size;
+            Vector2 size = editorSize;
             size.X = size.X < 0 ? ImGui.CalcItemWidth() + (style.FramePadding.X * 2) : size.X;
             size.Y = size.Y < 0 ? HEIGHT : size.Y;
 
@@ -57,9 +64,9 @@ namespace HexaEngine.Core.UI
             }
 
             int hovered_idx = -1;
-            if (new_count != null)
+            if (newCount != null)
             {
-                *new_count = points_count;
+                *newCount = pointsCount;
             }
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
@@ -71,16 +78,16 @@ namespace HexaEngine.Core.UI
 
             Vector2 points_min = new(float.MaxValue, float.MaxValue);
             Vector2 points_max = new(-float.MaxValue, -float.MaxValue);
-            for (int point_idx = 0; point_idx < points_count; ++point_idx)
+            for (int point_idx = 0; point_idx < pointsCount; ++point_idx)
             {
                 Vector2 point;
-                if ((flags & CurveEditorFlags.NO_TANGENTS) != 0)
+                if ((flags & CurveEditorFlags.NoTangents) != 0)
                 {
-                    point = ((Vector2*)values)[point_idx];
+                    point = values[point_idx];
                 }
                 else
                 {
-                    point = ((Vector2*)values)[1 + point_idx * 3];
+                    point = values[1 + point_idx * 3];
                 }
                 points_max = Vector2.Max(points_max, point);
                 points_min = Vector2.Min(points_min, point);
@@ -117,7 +124,7 @@ namespace HexaEngine.Core.UI
                 return new Vector2(from_x + width * x, from_y + height * y);
             }
 
-            if ((flags & CurveEditorFlags.SHOW_GRID) != 0)
+            if ((flags & CurveEditorFlags.ShowGrid) != 0)
             {
                 int exp = 0;
                 MathUtil.Frexp(width / 5, ref exp);
@@ -140,6 +147,7 @@ namespace HexaEngine.Core.UI
                     else
                     {
                         float param = x + i * step_x;
+
                         ImGui.ImFormatStringV(buf, 64, " %f", (nuint)(&param));
                     }
                     DrawList->AddText(b, 0x55000000, buf);
@@ -201,10 +209,10 @@ namespace HexaEngine.Core.UI
             }
 
             int changed_idx = -1;
-            for (int point_idx = points_count - 2; point_idx >= 0; --point_idx)
+            for (int point_idx = pointsCount - 2; point_idx >= 0; --point_idx)
             {
                 Vector2* points;
-                if ((flags & CurveEditorFlags.NO_TANGENTS) != 0)
+                if ((flags & CurveEditorFlags.NoTangents) != 0)
                 {
                     points = ((Vector2*)values) + point_idx;
                 }
@@ -217,7 +225,7 @@ namespace HexaEngine.Core.UI
                 Vector2 tangent_last = default;
                 Vector2 tangent = default;
                 Vector2 p;
-                if ((flags & CurveEditorFlags.NO_TANGENTS) != 0)
+                if ((flags & CurveEditorFlags.NoTangents) != 0)
                 {
                     p = points[1];
                 }
@@ -322,7 +330,7 @@ namespace HexaEngine.Core.UI
                 };
 
                 ImGui.PushID(point_idx);
-                if ((flags & CurveEditorFlags.NO_TANGENTS) == 0)
+                if ((flags & CurveEditorFlags.NoTangents) == 0)
                 {
                     DrawList->AddBezierCubic(transform(p_prev), transform(p_prev + tangent_last),
                                                      transform(p + tangent), transform(p), ImGui.GetColorU32(ImGuiCol.PlotLines),
@@ -344,7 +352,7 @@ namespace HexaEngine.Core.UI
                             p.X = p_prev.X + 0.001f;
                         }
 
-                        if (point_idx < points_count - 2 && p.X >= points[6].X)
+                        if (point_idx < pointsCount - 2 && p.X >= points[6].X)
                         {
                             p.X = points[6].X - 0.001f;
                         }
@@ -362,7 +370,7 @@ namespace HexaEngine.Core.UI
                             p.X = p_prev.X + 0.001f;
                         }
 
-                        if (point_idx < points_count - 2 && p.X >= points[2].X)
+                        if (point_idx < pointsCount - 2 && p.X >= points[2].X)
                         {
                             p.X = points[2].X - 0.001f;
                         }
@@ -390,21 +398,21 @@ namespace HexaEngine.Core.UI
 
             ImGui.InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
-            if (ImGui.IsItemActive() && ImGui.IsMouseDoubleClicked(0) && new_count != null)
+            if (ImGui.IsItemActive() && ImGui.IsMouseDoubleClicked(0) && newCount != null)
             {
                 Vector2 mp = ImGui.GetMousePos();
                 Vector2 new_p = invTransform(mp);
                 Vector2* points = (Vector2*)values;
 
-                if ((flags & CurveEditorFlags.NO_TANGENTS) == 0)
+                if ((flags & CurveEditorFlags.NoTangents) == 0)
                 {
-                    points[points_count * 3 + 0] = new Vector2(-0.2f, 0);
-                    points[points_count * 3 + 1] = new_p;
-                    points[points_count * 3 + 2] = new Vector2(0.2f, 0);
+                    points[pointsCount * 3 + 0] = new Vector2(-0.2f, 0);
+                    points[pointsCount * 3 + 1] = new_p;
+                    points[pointsCount * 3 + 2] = new Vector2(0.2f, 0);
                     ;
-                    ++*new_count;
+                    ++*newCount;
 
-                    QSort(values, points_count + 1, sizeof(Vector2) * 3, (Pointer a, Pointer b) =>
+                    QSort(values, pointsCount + 1, sizeof(Vector2) * 3, (Pointer a, Pointer b) =>
                     {
                         float fa = (((Vector2*)a) + 1)->X;
                         float fb = (((Vector2*)b) + 1)->X;
@@ -413,10 +421,10 @@ namespace HexaEngine.Core.UI
                 }
                 else
                 {
-                    points[points_count] = new_p;
-                    ++*new_count;
+                    points[pointsCount] = new_p;
+                    ++*newCount;
 
-                    QSort(values, points_count + 1, sizeof(Vector2), (Pointer a, Pointer b) =>
+                    QSort(values, pointsCount + 1, sizeof(Vector2), (Pointer a, Pointer b) =>
                     {
                         float fa = ((Vector2*)a)->X;
                         float fb = ((Vector2*)b)->X;
@@ -425,13 +433,13 @@ namespace HexaEngine.Core.UI
                 }
             }
 
-            if (hovered_idx >= 0 && ImGui.IsMouseDoubleClicked(0) && (new_count != null) && points_count > 2)
+            if (hovered_idx >= 0 && ImGui.IsMouseDoubleClicked(0) && (newCount != null) && pointsCount > 2)
             {
                 Vector2* points = (Vector2*)values;
-                --*new_count;
-                if ((flags & CurveEditorFlags.NO_TANGENTS) == 0)
+                --*newCount;
+                if ((flags & CurveEditorFlags.NoTangents) == 0)
                 {
-                    for (int j = hovered_idx * 3; j < points_count * 3 - 3; j += 3)
+                    for (int j = hovered_idx * 3; j < pointsCount * 3 - 3; j += 3)
                     {
                         points[j + 0] = points[j + 3];
                         points[j + 1] = points[j + 4];
@@ -440,7 +448,7 @@ namespace HexaEngine.Core.UI
                 }
                 else
                 {
-                    for (int j = hovered_idx; j < points_count - 1; ++j)
+                    for (int j = hovered_idx; j < pointsCount - 1; ++j)
                     {
                         points[j] = points[j + 1];
                     }

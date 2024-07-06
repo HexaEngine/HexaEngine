@@ -121,7 +121,7 @@
 
         public void Focus()
         {
-            var window = ImGui.FindWindowByName(Name);
+            ImGuiWindowPtr window = ImGui.FindWindowByName(Name);
             ImGui.FocusWindow(window, ImGuiFocusRequestFlags.UnlessBelowModal);
         }
     }

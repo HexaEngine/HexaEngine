@@ -292,7 +292,7 @@
             {
                 return;
             }
-            Grow(newSize);
+            Reserve(newSize);
             size = newSize;
         }
 

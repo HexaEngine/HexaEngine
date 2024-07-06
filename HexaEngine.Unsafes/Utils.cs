@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Core
 {
-    using Hardware.Info;
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Collections.Concurrent;
-    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -33,6 +31,16 @@
             {
                 (byteB[i], byteA[i]) = (byteA[i], byteB[i]);
             }
+        }
+
+        /// <summary>
+        /// Swaps the memory content between two pointers of the specified size.
+        /// </summary>
+        /// <param name="a">Pointer to the first memory location.</param>
+        /// <param name="b">Pointer to the second memory location.</param>
+        public static unsafe void SwapT<T>(T* a, T* b) where T : unmanaged
+        {
+            (*b, *a) = (*a, *b);
         }
 
         /// <summary>

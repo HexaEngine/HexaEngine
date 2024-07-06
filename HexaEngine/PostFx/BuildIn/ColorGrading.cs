@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public enum Tonemapper
@@ -10,6 +11,188 @@
         ACESFilm,
         Neutral,
         Custom,
+    }
+
+    public unsafe struct ColorGradingCurves
+    {
+        public Curve RedCurve;
+        public Curve GreenCurve;
+        public Curve BlueCurve;
+        public Curve ValueCurve;
+
+        public Curve HueCurve;
+        public Curve HueSatCurve;
+        public Curve SatCurve;
+        public Curve LumaSatCurve;
+
+        public ColorGradingCurves()
+        {
+            RedCurve = new([new(0, 0, 0), new(1, 1, 0)]);
+            GreenCurve = new([new(0, 0, 0), new(1, 1, 0)]);
+            BlueCurve = new([new(0, 0, 0), new(1, 1, 0)]);
+            ValueCurve = new([new(0, 0, 0), new(1, 1, 0)]);
+            HueCurve = new([new(0, 0.5f, 0), new(1, 0.5f, 0)]);
+            HueSatCurve = new([new(0, 0.5f, 0), new(1, 0.5f, 0)]);
+            SatCurve = new([new(0, 0.5f, 0), new(1, 0.5f, 0)]);
+            LumaSatCurve = new([new(0, 0.5f, 0), new(1, 0.5f, 0)]);
+        }
+
+        public readonly Curve this[int index]
+        {
+            get
+            {
+                return index switch
+                {
+                    0 => RedCurve,
+                    1 => GreenCurve,
+                    2 => BlueCurve,
+                    3 => ValueCurve,
+                    4 => HueCurve,
+                    5 => HueSatCurve,
+                    6 => SatCurve,
+                    7 => LumaSatCurve,
+                    _ => throw new IndexOutOfRangeException()
+                };
+            }
+        }
+
+        public Texture1D GetTexture(CpuAccessFlags cpuAccessFlags)
+        {
+            RedCurve.Compute();
+            GreenCurve.Compute();
+            BlueCurve.Compute();
+            ValueCurve.Compute();
+            HueCurve.Compute();
+            HueSatCurve.Compute();
+            SatCurve.Compute();
+            LumaSatCurve.Compute();
+
+            const int numCurves = 8;
+            var samplesCount = RedCurve.Samples.Length;
+
+            SubresourceData[] initialData = new SubresourceData[numCurves];
+
+            for (int i = 0; i < numCurves; i++)
+            {
+                float* pixels = AllocT<float>(samplesCount);
+                Curve curve = this[i];
+                for (int j = 0; j < samplesCount; j++)
+                {
+                    pixels[j] = curve.Samples[j];
+                }
+                initialData[i] = new(pixels, samplesCount * sizeof(float));
+            }
+
+            Texture1D texture = new(new Texture1DDescription(Format.R32Float, samplesCount, numCurves, 1, GpuAccessFlags.Read, cpuAccessFlags), initialData);
+
+            for (int i = 0; i < initialData.Length; i++)
+            {
+                Free((void*)initialData[i].DataPointer);
+            }
+
+            return texture;
+        }
+
+        public static Texture2D BakeCurvesTo3DLUT2DTex(ColorGradingCurves curves)
+        {
+            curves.RedCurve.Compute();
+            curves.GreenCurve.Compute();
+            curves.BlueCurve.Compute();
+            curves.ValueCurve.Compute();
+            curves.HueCurve.Compute();
+            curves.HueSatCurve.Compute();
+            curves.SatCurve.Compute();
+            curves.LumaSatCurve.Compute();
+
+            int lutSize = 32;
+            int tileSize = lutSize;
+            int tileAmount = lutSize;
+            int lut2DSize = tileSize * tileAmount;
+
+            Vector3* lut = AllocT<Vector3>(lut2DSize * lut2DSize);
+            int width = lutSize * tileAmount;
+            int height = lutSize;
+            int rowPitch = width * 3 * sizeof(float);
+
+            for (int b = 0; b < lutSize; b++)
+            {
+                float fb = (float)b / (lutSize - 1);
+                float newB = InterpolateCurve(curves.BlueCurve.Samples, curves.BlueCurve.Samples.Length, fb);
+
+                for (int g = 0; g < lutSize; g++)
+                {
+                    float fg = (float)g / (lutSize - 1);
+                    float newG = InterpolateCurve(curves.GreenCurve.Samples, curves.GreenCurve.Samples.Length, fg);
+
+                    for (int r = 0; r < lutSize; r++)
+                    {
+                        float fr = (float)r / (lutSize - 1);
+                        float newR = InterpolateCurve(curves.RedCurve.Samples, curves.RedCurve.Samples.Length, fr);
+
+                        Color color = new(newR, newG, newB, 1);
+                        ColorHSVA hsv = color.ToHSVA();
+
+                        hsv.V += InterpolateCurve(curves.ValueCurve.Samples, curves.ValueCurve.Samples.Length, hsv.V);
+                        hsv.H *= InterpolateCurve(curves.HueCurve.Samples, curves.HueCurve.Samples.Length, hsv.H) * 2;
+                        hsv.S *= InterpolateCurve(curves.HueSatCurve.Samples, curves.HueSatCurve.Samples.Length, hsv.H) * 2;
+                        hsv.S *= InterpolateCurve(curves.SatCurve.Samples, curves.SatCurve.Samples.Length, hsv.S) * 2;
+
+                        color = hsv.ToRGBA();
+                        float luma = 0.299f * color.R + 0.587f * color.G + 0.114f * color.B;
+
+                        hsv.S *= InterpolateCurve(curves.LumaSatCurve.Samples, curves.LumaSatCurve.Samples.Length, luma) * 2;
+
+                        int tileIndex = b;
+                        int x = r + tileIndex * lutSize;
+                        int y = g;
+
+                        int index = y * width + x;
+
+                        color = hsv.ToRGBA();
+
+                        lut[index] = new Vector3(MathUtil.Clamp01(color.R), MathUtil.Clamp01(color.G), MathUtil.Clamp01(color.B));
+                    }
+                }
+            }
+
+            Texture2DDescription desc = new(Format.R32G32B32Float, width, height, 1, 1, GpuAccessFlags.Read);
+
+            int slicePitch = 0;
+            FormatHelper.ComputePitch(Format.R32G32B32Float, width, height, ref rowPitch, ref slicePitch, 0);
+
+            SubresourceData subresourceData = new(lut, rowPitch);
+
+            Texture2D texture = new(desc, subresourceData);
+
+            Free(lut);
+
+            return texture;
+        }
+
+        private static float InterpolateCurve(float[] samples, int sampleCount, float value)
+        {
+            while (value > 1)
+            {
+                value--;
+            }
+
+            while (value < 0)
+            {
+                value++;
+            }
+
+            float position = value * (sampleCount - 1);
+            int index = (int)Math.Floor(position);
+            float fraction = position - index;
+
+            if (index >= sampleCount - 1)
+            {
+                return samples[sampleCount - 1];
+            }
+
+            // we have to clamp again after interpolation.
+            return MathUtil.Clamp01(samples[index] * (1 - fraction) + samples[index + 1] * fraction);
+        }
     }
 
     /// <summary>
@@ -22,6 +205,7 @@
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
         private ISamplerState samplerState;
+        private Texture1D curvesTex;
 #nullable restore
         private float shoulderStrength = 0.2f;
         private float linearStrength = 0.29f;
@@ -35,14 +219,18 @@
         private float hueShift = 0;
         private float saturation = 1;
         private float contrast = 1;
-        private float contrastMidpoint = 0.5f;
-        private float lift = 0;
-        private float gamma = 2.2f;
-        private float gain = 1;
+        private Vector3 offset = new(0f);
+        private Vector3 power = new(1f);
+        private Vector3 slope = new(1f);
+        private Vector3 lift = new(0);
+        private Vector3 gamma = new(1f);
+        private Vector3 gain = new(1);
         private Vector3 channelMaskRed = new(1, 0, 0);
         private Vector3 channelMaskGreen = new(0, 1, 0);
         private Vector3 channelMaskBlue = new(0, 0, 1);
         private Tonemapper tonemapper;
+        private ColorGradingCurves curves = new();
+        private bool curvesDirty;
 
         public struct ColorGradingParams
         {
@@ -58,23 +246,32 @@
 
             public float Saturation;    // Adjusts saturation (color intensity).
             public float Contrast;      // Adjusts the contrast.
-            public float ContrastMidpoint;
             public float _padd0;
-
-            public Vector3 WhiteBalance;
             public float _padd1;
 
-            public Vector3 ChannelMaskRed;
+            public Vector3 WhiteBalance;
             public float _padd2;
-            public Vector3 ChannelMaskGreen;
-            public float _padd3;
-            public Vector3 ChannelMaskBlue;
-            public float _padd4;
 
-            public float Lift;
-            public float GammaInv;
-            public float Gain;
+            public Vector3 ChannelMaskRed;
+            public float _padd3;
+            public Vector3 ChannelMaskGreen;
+            public float _padd4;
+            public Vector3 ChannelMaskBlue;
             public float _padd5;
+
+            public Vector3 Lift;
+            public float _padd6;
+            public Vector3 GammaInv;
+            public float _padd7;
+            public Vector3 Gain;
+            public float _padd8;
+
+            public Vector3 Offset;
+            public float _padd9;
+            public Vector3 Power;
+            public float _padd10;
+            public Vector3 Slope;
+            public float _padd11;
 
             public ColorGradingParams()
             {
@@ -240,18 +437,6 @@
             set => NotifyPropertyChangedAndSet(ref contrast, value);
         }
 
-        /// <summary>
-        /// Adjusts the contrast mid-point.
-        /// </summary>
-        [EditorCategory("Basic")]
-        [EditorProperty("Contrast Midpoint")]
-        [Tooltip("Adjusts the contrast mid-point.")]
-        public float ContrastMidpoint
-        {
-            get => contrastMidpoint;
-            set => NotifyPropertyChangedAndSet(ref contrastMidpoint, value);
-        }
-
         [EditorCategory("Channel Mixer")]
         [EditorProperty("Red")]
         [Tooltip("Specifies the channel mask for the red channel.")]
@@ -285,7 +470,7 @@
         [EditorCategory("Color Grading")]
         [EditorProperty("Lift")]
         [Tooltip("Adjusts the lift of the color grading.")]
-        public float Lift
+        public Vector3 Lift
         {
             get => lift;
             set => NotifyPropertyChangedAndSet(ref lift, value);
@@ -297,7 +482,7 @@
         [EditorCategory("Color Grading")]
         [EditorProperty("Gamma")]
         [Tooltip("Adjusts the gamma of the color grading.")]
-        public float Gamma
+        public Vector3 Gamma
         {
             get => gamma;
             set => NotifyPropertyChangedAndSet(ref gamma, value);
@@ -309,10 +494,59 @@
         [EditorCategory("Color Grading")]
         [EditorProperty("Gain")]
         [Tooltip("Adjusts the gain of the color grading.")]
-        public float Gain
+        public Vector3 Gain
         {
             get => gain;
             set => NotifyPropertyChangedAndSet(ref gain, value);
+        }
+
+        /// <summary>
+        /// Adjusts the offset of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Offset")]
+        [Tooltip("Adjusts the offset of the color grading.")]
+        public Vector3 Offset
+        {
+            get => offset;
+            set => NotifyPropertyChangedAndSet(ref offset, value);
+        }
+
+        /// <summary>
+        /// Adjusts the power of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Power")]
+        [Tooltip("Adjusts the power of the color grading.")]
+        public Vector3 Power
+        {
+            get => power;
+            set => NotifyPropertyChangedAndSet(ref power, value);
+        }
+
+        /// <summary>
+        /// Adjusts the slope of the color grading.
+        /// </summary>
+        [EditorCategory("Color Grading")]
+        [EditorProperty("Slope")]
+        [Tooltip("Adjusts the slope of the color grading.")]
+        public Vector3 Slope
+        {
+            get => slope;
+            set => NotifyPropertyChangedAndSet(ref slope, value);
+        }
+
+        [EditorCategory("Curves")]
+        [EditorProperty("")]
+        [Tooltip("")]
+        public ColorGradingCurves Curves
+        {
+            get => curves;
+            set
+            {
+                curvesDirty = true;
+                NotifyPropertyChangedAndSet(ref curves, value);
+            }
         }
 
         /// <inheritdoc/>
@@ -339,6 +573,7 @@
            );
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            curvesTex = curves.GetTexture(CpuAccessFlags.None);
         }
 
         /// <inheritdoc/>
@@ -382,15 +617,25 @@
                 colorGradingParams.HueShift = hueShift;
                 colorGradingParams.Saturation = saturation;
                 colorGradingParams.Contrast = contrast;
-                colorGradingParams.ContrastMidpoint = contrastMidpoint;
                 colorGradingParams.ChannelMaskRed = channelMaskRed;
                 colorGradingParams.ChannelMaskGreen = channelMaskGreen;
                 colorGradingParams.ChannelMaskBlue = channelMaskBlue;
                 colorGradingParams.Lift = lift;
-                colorGradingParams.GammaInv = 1 / gamma;
+                colorGradingParams.GammaInv = new Vector3(1f) / gamma;
                 colorGradingParams.Gain = gain;
+                colorGradingParams.Offset = offset;
+                colorGradingParams.Power = new Vector3(1f) / power;
+                colorGradingParams.Slope = slope;
                 paramsBuffer.Update(context, colorGradingParams);
                 dirty = false;
+            }
+
+            if (curvesDirty)
+            {
+                var staging = curves.GetTexture(CpuAccessFlags.RW);
+                context.CopyResource(curvesTex, staging);
+                staging.Dispose();
+                curvesDirty = false;
             }
         }
 
@@ -400,6 +645,7 @@
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetShaderResource(0, Input);
+            context.PSSetShaderResource(1, curvesTex.SRV);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, samplerState);
             context.SetPipelineState(pipeline);
@@ -408,6 +654,7 @@
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);
+            context.PSSetShaderResource(1, null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
@@ -418,6 +665,7 @@
             pipeline.Dispose();
             paramsBuffer.Dispose();
             samplerState.Dispose();
+            curvesTex.Dispose();
         }
     }
 }

@@ -25,6 +25,6 @@
 
         void OnGameObjectNameChanged(GameObject gameObject, string name);
 
-        void FlushQuery(IList<GameObject> objects);
+        void FlushQuery(IReadOnlyList<GameObject> objects);
     }
 }

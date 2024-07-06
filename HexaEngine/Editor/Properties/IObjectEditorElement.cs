@@ -30,5 +30,7 @@
         public bool UpdateVisibility(object instance);
 
         public bool Draw(IGraphicsContext context, object instance);
+
+        public bool Draw(IGraphicsContext context, object instance, ProxyBase proxy, bool setOnInstance);
     }
 }

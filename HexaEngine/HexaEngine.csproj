@@ -115,6 +115,9 @@
 		<None Update="assets\shared\icons\terrain.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\aces.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\brdf.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

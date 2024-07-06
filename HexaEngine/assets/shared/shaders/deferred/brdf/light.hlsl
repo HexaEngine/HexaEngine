@@ -30,5 +30,5 @@ float4 main(VSOut pin) : SV_TARGET
 	float3 direct = ComputeDirectLightning(depth, pixel);
 	float3 ambient = ComputeIndirectLightning(pin.Tex, pixel, attrs.ao, attrs.emission);
 
-	return float4(ambient + direct, 1);
+	return max(float4(ambient + direct, 1), 0);
 }

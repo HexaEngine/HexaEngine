@@ -167,7 +167,7 @@ namespace HexaEngine.Scenes
         public LightManager LightManager => GetRequiredService<LightManager>();
 
         [JsonIgnore]
-        public List<GameObject> GameObjects => nodes;
+        public IReadOnlyList<GameObject> GameObjects => nodes;
 
         [JsonIgnore]
         public Camera? CurrentCamera => cameraContainer.ActiveCamera;

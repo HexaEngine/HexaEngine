@@ -262,13 +262,15 @@
         {
             Result result;
 
+            byte* pEngineName = "HexaEngine".ToUTF8Ptr();
+
             ApplicationInfo info = new()
             {
                 SType = StructureType.ApplicationInfo,
                 ApiVersion = Vk.Version10,
                 ApplicationVersion = 0,
-                EngineVersion = 0,
-                PEngineName = null,
+                EngineVersion = 1,
+                PEngineName = pEngineName,
                 PApplicationName = null,
                 PNext = null
             };
@@ -304,6 +306,8 @@
             {
                 throw new VulkanException(result);
             }
+
+            Free(pEngineName);
 
             this.Instance = instance;
 

@@ -863,6 +863,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
 
             ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
             DockSpaceId = ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode, null);
+
             ImGui.PopStyleColor(1);
         }
 

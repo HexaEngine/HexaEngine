@@ -464,8 +464,8 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
                     if (!payload.IsNull)
                     {
-                        Guid id = *(Guid*)payload.Data;
-                        var gameObject = SceneManager.Current.FindByGuid(id);
+                        //Guid id = *(Guid*)payload.Data;
+                        //var gameObject = SceneManager.Current.FindByGuid(id);
                         SelectionCollection.Global.MoveSelection(element);
                         SceneManager.Current.UnsavedChanged = true;
                     }

@@ -4,10 +4,20 @@
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D12;
+    using Silk.NET.DXGI;
     using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
+    using Format = Core.Graphics.Format;
     using SubresourceData = Core.Graphics.SubresourceData;
+
+    public static class Helper
+    {
+        internal static ResourceFlags Convert(ResourceMiscFlag miscFlags)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public unsafe class D3D12GraphicsDevice : IGraphicsDevice
     {
@@ -62,7 +72,61 @@
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
-            throw new NotImplementedException();
+            var resourceDesc = new ResourceDesc
+            {
+                Dimension = Silk.NET.Direct3D12.ResourceDimension.Buffer,
+                Alignment = 0,
+                Width = (ulong)description.ByteWidth,
+                Height = 1,
+                DepthOrArraySize = 1,
+                MipLevels = 1,
+                Format = Silk.NET.DXGI.Format.FormatUnknown,
+                SampleDesc = new SampleDesc(1, 0),
+                Layout = TextureLayout.LayoutRowMajor,
+                Flags = Helper.Convert(description.MiscFlags)
+            };
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                resourceDesc.Flags |= ResourceFlags.AllowUnorderedAccess;
+            }
+
+            var heapProperties = description.Usage switch
+            {
+                Usage.Dynamic => new HeapProperties(HeapType.Upload),
+                Usage.Staging => new HeapProperties(HeapType.Readback),
+                _ => new HeapProperties(HeapType.Default)
+            };
+
+            ResourceStates resourceStates = ResourceStates.Common;
+            if ((description.BindFlags & BindFlags.VertexBuffer) != 0)
+            {
+                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+            }
+
+            if ((description.BindFlags & BindFlags.IndexBuffer) != 0)
+            {
+                resourceStates |= ResourceStates.IndexBuffer;
+            }
+
+            if ((description.BindFlags & BindFlags.ConstantBuffer) != 0)
+            {
+                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+            }
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                resourceStates |= ResourceStates.PixelShaderResource | ResourceStates.NonPixelShaderResource;
+            }
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                resourceStates |= ResourceStates.UnorderedAccess;
+            }
+
+            Device.CreateCommittedResource(&heapProperties, HeapFlags.None, &resourceDesc, resourceStates, null, out ComPtr<ID3D12Resource2> buffer).ThrowHResult();
+
+            return new D3D12Buffer(buffer, Device);
         }
 
         public IBuffer CreateBuffer(void* src, uint length, BufferDescription description)

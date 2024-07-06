@@ -46,6 +46,19 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Color"/> struct with specified channel values.
         /// </summary>
+        /// <param name="color">The rgb channel value.</param>
+        /// <param name="a">The alpha channel value.</param>
+        public Color(Vector3 color, float a)
+        {
+            R = color.X;
+            G = color.Y;
+            B = color.Z;
+            A = a;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Color"/> struct with specified channel values.
+        /// </summary>
         /// <param name="r">The red channel value.</param>
         /// <param name="g">The green channel value.</param>
         /// <param name="b">The blue channel value.</param>

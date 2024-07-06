@@ -73,24 +73,67 @@
             return false;
         }
 
-        /// <summary>
-        /// Action to perform when applying changes during a history action.
-        /// </summary>
-        /// <param name="context">The context containing information about the history action.</param>
-        private static void DoAction(object context)
+        public bool Draw(IGraphicsContext context, object instance, ProxyBase proxy, bool setOnInstance)
         {
-            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
-            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.NewValue);
+            if (!isVisible)
+            {
+                return false;
+            }
+
+            var value = propertyEditor.Property.GetValue(instance);
+            var oldValue = value;
+
+            if (ConditionMode == EditorPropertyConditionMode.None || ConditionMode == EditorPropertyConditionMode.Visible)
+            {
+                return DrawEditor(context, instance, value, oldValue, proxy, setOnInstance);
+            }
+
+            ImGui.BeginDisabled(!conditionState);
+            var result = DrawEditor(context, instance, value, oldValue, proxy, setOnInstance);
+            ImGui.EndDisabled();
+            return result;
         }
 
-        /// <summary>
-        /// Action to perform when undoing changes during a history action.
-        /// </summary>
-        /// <param name="context">The context containing information about the history action.</param>
+        private bool DrawEditor(IGraphicsContext context, object instance, object? value, object? oldValue, ProxyBase proxy, bool setOnInstance)
+        {
+            if (propertyEditor.Draw(context, instance, ref value))
+            {
+                History.Default.Do($"Set Value ({propertyEditor.Name})", (instance, propertyEditor.Property, proxy, setOnInstance), oldValue, value, DoActionProxy, UndoActionProxy);
+                return true;
+            }
+            return false;
+        }
+
+        private static void DoAction(object context)
+        {
+            var ctx = (HistoryContext<(object Instance, PropertyInfo Property), object>)context;
+            ctx.Target.Property.SetValue(ctx.Target.Instance, ctx.NewValue);
+        }
+
         private static void UndoAction(object context)
         {
-            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
-            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
+            var ctx = (HistoryContext<(object Instance, PropertyInfo Property), object>)context;
+            ctx.Target.Property.SetValue(ctx.Target.Instance, ctx.OldValue);
+        }
+
+        private static void DoActionProxy(object context)
+        {
+            var ctx = (HistoryContext<(object Instance, PropertyInfo Property, ProxyBase Proxy, bool SetOnInstance), object>)context;
+            ctx.Target.Proxy.Data[ctx.Target.Property.Name] = ctx.NewValue;
+            if (ctx.Target.SetOnInstance)
+            {
+                ctx.Target.Property.SetValue(ctx.Target.Instance, ctx.NewValue);
+            }
+        }
+
+        private static void UndoActionProxy(object context)
+        {
+            var ctx = (HistoryContext<(object Instance, PropertyInfo Property, ProxyBase Proxy, bool SetOnInstance), object>)context;
+            ctx.Target.Proxy.Data[ctx.Target.Property.Name] = ctx.OldValue;
+            if (ctx.Target.SetOnInstance)
+            {
+                ctx.Target.Property.SetValue(ctx.Target.Instance, ctx.OldValue);
+            }
         }
     }
 }

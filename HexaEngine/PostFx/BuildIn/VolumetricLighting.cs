@@ -311,7 +311,6 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            creator.DisposeResource("VOLUMETRIC_LIGHTNING_BUFFER");
             pipeline.Dispose();
             blurPipeline.Dispose();
             blurParams.Dispose();

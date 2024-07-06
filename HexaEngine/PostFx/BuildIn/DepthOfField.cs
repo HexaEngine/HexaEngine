@@ -29,7 +29,7 @@ namespace HexaEngine.PostFx.BuildIn
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private IComputePipeline bokehGenerate;
-        private BoxBlur gaussianBlur;
+        private GaussianBlur gaussianBlur;
         private IGraphicsPipelineState coc;
         private IGraphicsPipelineState dof;
         private IGraphicsPipelineState bokehDraw;
@@ -71,15 +71,17 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the focus range for the depth of field effect.
         /// </summary>
+        [EditorProperty("Focus Range")]
         public float FocusRange
         {
             get => focusRange;
-            set => NotifyPropertyChangedAndSet(ref focusRange, value);
+            set => NotifyPropertyChangedAndSet(ref focusRange, Math.Max(value, 0));
         }
 
         /// <summary>
         /// Gets or sets the focus point for the depth of field effect.
         /// </summary>
+        [EditorProperty("Focus Point")]
         public Vector2 FocusPoint
         {
             get => focusPoint;
@@ -89,6 +91,7 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets a value indicating whether auto-focus is enabled.
         /// </summary>
+        [EditorProperty("Auto Focus Enabled")]
         public bool AutoFocusEnabled
         {
             get => autoFocusEnabled;
@@ -98,24 +101,27 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the auto-focus radius.
         /// </summary>
+        [EditorProperty("Auto Focus Radius")]
         public float AutoFocusRadius
         {
             get => autoFocusRadius;
-            set => NotifyPropertyChangedAndSet(ref autoFocusRadius, value);
+            set => NotifyPropertyChangedAndSet(ref autoFocusRadius, Math.Max(value, 0));
         }
 
         /// <summary>
         /// Gets or sets the number of auto-focus samples.
         /// </summary>
+        [EditorProperty("Auto Focus Samples")]
         public int AutoFocusSamples
         {
             get => autoFocusSamples;
-            set => NotifyPropertyChangedAndSet(ref autoFocusSamples, value);
+            set => NotifyPropertyChangedAndSet(ref autoFocusSamples, Math.Max(value, 1));
         }
 
         /// <summary>
         /// Gets or sets a value indicating whether the bokeh effect is enabled.
         /// </summary>
+        [EditorProperty("Bokeh")]
         public bool BokehEnabled
         {
             get => bokehEnabled;
@@ -125,46 +131,51 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the threshold for bokeh blur.
         /// </summary>
+        [EditorProperty("Bokeh Blur Threshold", EditorPropertyMode.Slider, 0.01f, 1f)]
         public float BokehBlurThreshold
         {
             get => bokehBlurThreshold;
-            set => NotifyPropertyChangedAndSet(ref bokehBlurThreshold, value);
+            set => NotifyPropertyChangedAndSet(ref bokehBlurThreshold, Math.Clamp(value, 0.01f, 1f));
         }
 
         /// <summary>
         /// Gets or sets the luminance threshold for bokeh.
         /// </summary>
+        [EditorProperty("Bokeh Lum Threshold", EditorPropertyMode.Slider, 0.01f, 1f)]
         public float BokehLumThreshold
         {
             get => bokehLumThreshold;
-            set => NotifyPropertyChangedAndSet(ref bokehLumThreshold, value);
+            set => NotifyPropertyChangedAndSet(ref bokehLumThreshold, Math.Clamp(value, 0.01f, 1));
         }
 
         /// <summary>
         /// Gets or sets the scale factor for bokeh radius.
         /// </summary>
+        [EditorProperty("Bokeh Radius Scale")]
         public float BokehRadiusScale
         {
             get => bokehRadiusScale;
-            set => NotifyPropertyChangedAndSet(ref bokehRadiusScale, value);
+            set => NotifyPropertyChangedAndSet(ref bokehRadiusScale, Math.Max(value, 0));
         }
 
         /// <summary>
         /// Gets or sets the scale factor for bokeh color.
         /// </summary>
+        [EditorProperty("Bokeh Color Scale", EditorPropertyMode.Default, 0f, float.MaxValue)]
         public float BokehColorScale
         {
             get => bokehColorScale;
-            set => NotifyPropertyChangedAndSet(ref bokehColorScale, value);
+            set => NotifyPropertyChangedAndSet(ref bokehColorScale, Math.Max(value, 0));
         }
 
         /// <summary>
         /// Gets or sets the falloff factor for bokeh.
         /// </summary>
+        [EditorProperty("Bokeh Fallout", EditorPropertyMode.Slider, 0f, 1f)]
         public float BokehFallout
         {
             get => bokehFallout;
-            set => NotifyPropertyChangedAndSet(ref bokehFallout, value);
+            set => NotifyPropertyChangedAndSet(ref bokehFallout, Math.Clamp(value, 0, 1));
         }
 
         #region Structs
@@ -247,7 +258,7 @@ namespace HexaEngine.PostFx.BuildIn
                 Macros = macros,
             });
 
-            gaussianBlur = new(creator, "DOF") { Size = 3 };
+            gaussianBlur = new(creator, "DOF", Format.R16G16B16A16Float, width, height, GaussianRadius.Radius5x5);
             DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
 
             dof = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -271,7 +282,7 @@ namespace HexaEngine.PostFx.BuildIn
 
             bokehBuffer = new((uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
 
-            buffer = creator.CreateBufferQuarterRes("DOF_BUFFER");
+            buffer = creator.CreateBuffer("DOF_BUFFER");
             buffer1 = creator.CreateBuffer("DOF_BUFFER_1");
             cocBuffer = creator.CreateBufferHalfRes("DOF_COC_BUFFER", Format.R16UNorm);
 
@@ -343,9 +354,11 @@ namespace HexaEngine.PostFx.BuildIn
                 context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
                 context.CSSetUnorderedAccessView(0, (void*)bokehBuffer.UAV.NativePointer, 0);
                 context.CSSetConstantBuffer(0, cbBokeh);
+                context.CSSetConstantBuffer(1, camera.Value);
                 context.CSSetSampler(0, linearWrapSampler);
                 context.Dispatch(DispatchArgs.X, DispatchArgs.Y, DispatchArgs.Z);
                 context.CSSetConstantBuffer(0, null);
+                context.CSSetConstantBuffer(1, null);
                 context.CSSetSampler(0, null);
                 context.CSSetUnorderedAccessView(0, null);
                 Memset(srvs_bokeh, 0, 3);
@@ -353,8 +366,8 @@ namespace HexaEngine.PostFx.BuildIn
                 context.SetComputePipeline(null);
             }
 
-            gaussianBlur.Blur(context, Input, buffer.Value, width, height, width / 4, height / 4);
-            gaussianBlur.Blur(context, buffer.Value, buffer1.Value, width / 4, height / 4, width, height);
+            gaussianBlur.Blur(context, Input, buffer.Value, width, height, width, height);
+            gaussianBlur.Blur(context, buffer.Value, buffer1.Value, width, height, width, height);
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);

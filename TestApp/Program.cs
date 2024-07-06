@@ -13,6 +13,8 @@
     using HexaEngine.Scripts;
     using System;
     using System.Net;
+    using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public static unsafe partial class Program
     {
@@ -43,126 +45,183 @@
             }
         }
 
-        public static void Main()
+        /// <summary>
+        /// The factor to convert degrees to radians.
+        /// </summary>
+        public const double DegToRadFactor = float.Pi / 180;
+
+        /// <summary>
+        /// The factor to convert radians to degrees.
+        /// </summary>
+        public const double RadToDefFactor = 180 / float.Pi;
+
+        /// <summary>
+        /// Converts a <see cref="Vector3"/> from radians to degrees.
+        /// </summary>
+        /// <param name="v">The input vector in radians.</param>
+        /// <returns>A <see cref="Vector3"/> with values converted to degrees.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ToDeg(this Vector3 v)
         {
-            Console.WriteLine("Starting Server ...");
-
-            // Init in headless mode.
-            Application.Boot(GraphicsBackend.Disabled, AudioBackend.Disabled);
-            Platform.Init(false);
-
-            // dummy call.
-            ScriptAssemblyManager.SetInvalid(true);
-
-            Scene scene = new();
-            IScene scene1 = scene;
-            scene1.Initialize(SceneInitFlags.None);
-
-            using Server server = new(new(IPAddress.Parse("127.0.0.1"), 28900));
-            server.Init();
-
-            bool running = true;
-            Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = true;
-                running = false;
-            };
-
-            Console.WriteLine("Started Server");
-            Console.WriteLine("Listening to 127.0.0.1:28900");
-
-            List<Client> clients = new();
-
-            LoggerFactory.AddGlobalWriter(new ConsoleLogWriter());
-
-            CrashLogger.Initialize();
-
-            for (int i = 0; i < 1; i++)
-            {
-                Task.Run(() =>
-                {
-                    Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
-                    client.Init();
-                    lock (clients)
-                    {
-                        clients.Add(client);
-                    }
-                });
-            }
-
-            var serverTask = Task.Run(() =>
-            {
-                while (running)
-                {
-                    try
-                    {
-                        server.Tick();
-                        lock (clients)
-                        {
-                            for (int i = 0; i < clients.Count; i++)
-                            {
-                                clients[i].Tick();
-                            }
-                        }
-
-                        Thread.Sleep(1); // Reduce CPU usage
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log the error for debugging purposes
-                        LoggerFactory.General.Log(ex);
-                        // Optionally, you can break the loop or handle it accordingly
-                    }
-                }
-            });
-
-            while (running)
-            {
-                string? line = Console.ReadLine();
-                if (line == null)
-                    continue;
-                switch (line)
-                {
-                    case "exit":
-                        running = false;
-                        break;
-
-                    case "d":
-                        lock (clients)
-                        {
-                            for (int i = 0; i < clients.Count; i++)
-                            {
-                                clients[i].Disconnect();
-                            }
-                        }
-                        break;
-
-                    case "c":
-                        lock (clients)
-                        {
-                            for (int i = 0; i < 1; i++)
-                            {
-                                Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
-                                client.Init();
-                                lock (clients)
-                                {
-                                    clients[i] = client;
-                                }
-                            }
-                        }
-                        break;
-
-                    default:
-                        continue;
-                }
-            }
-
-            serverTask.Wait();
-
-            Console.WriteLine("Exiting...");
-
-            LoggerFactory.CloseAll();
+            return new Vector3((float)(v.X * RadToDefFactor), (float)(v.Y * RadToDefFactor), (float)(v.Z * RadToDefFactor));
         }
+
+        /// <summary>
+        /// Converts a <see cref="Vector3"/> from degrees to radians.
+        /// </summary>
+        /// <param name="v">The input vector in degrees.</param>
+        /// <returns>A <see cref="Vector3"/> with values converted to radians.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ToRad(this Vector3 v)
+        {
+            // Using doubles reduces floating-point error.
+            return new Vector3((float)(v.X * DegToRadFactor), (float)(v.Y * DegToRadFactor), (float)(v.Z * DegToRadFactor));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ToYawPitchRoll(this Quaternion r)
+        {
+            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
+            float pitch = MathF.Asin((float)Math.Clamp(2.0f * (r.X * r.W - r.Y * r.Z), -1, 1));
+            float roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
+            return new Vector3(yaw, pitch, roll);
+        }
+
+        public static void Main(string[] args)
+        {
+            Vector3 rotationEulerDeg = new(480, 45, 20);
+            Vector3 rotationEulerRad = rotationEulerDeg.ToRad();
+            Quaternion quat = Quaternion.CreateFromYawPitchRoll(rotationEulerRad.X, rotationEulerRad.Y, rotationEulerRad.Z);
+            Vector3 rotationEulerRad2 = quat.ToYawPitchRoll();
+            Vector3 rotationEulerDeg2 = rotationEulerRad2.ToDeg();
+
+            Console.WriteLine("Original Degrees \t\t\t\t" + rotationEulerDeg);
+            Console.WriteLine("Original Radiants \t\t\t\t" + rotationEulerRad);
+            Console.WriteLine("(Euler to qaut to euler) Converted Radiants \t" + rotationEulerRad2);
+            Console.WriteLine("Converted Degrees \t\t\t\t" + rotationEulerDeg2);
+        }
+
+        /* public static void Main()
+         {
+             Console.WriteLine("Starting Server ...");
+
+             // Init in headless mode.
+             Application.Boot(GraphicsBackend.Disabled, AudioBackend.Disabled);
+             Platform.Init(false);
+
+             // dummy call.
+             ScriptAssemblyManager.SetInvalid(true);
+
+             Scene scene = new();
+             IScene scene1 = scene;
+             scene1.Initialize(SceneInitFlags.None);
+
+             using Server server = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+             server.Init();
+
+             bool running = true;
+             Console.CancelKeyPress += (sender, e) =>
+             {
+                 e.Cancel = true;
+                 running = false;
+             };
+
+             Console.WriteLine("Started Server");
+             Console.WriteLine("Listening to 127.0.0.1:28900");
+
+             List<Client> clients = new();
+
+             LoggerFactory.AddGlobalWriter(new ConsoleLogWriter());
+
+             CrashLogger.Initialize();
+
+             for (int i = 0; i < 1; i++)
+             {
+                 Task.Run(() =>
+                 {
+                     Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+                     client.Init();
+                     lock (clients)
+                     {
+                         clients.Add(client);
+                     }
+                 });
+             }
+
+             var serverTask = Task.Run(() =>
+             {
+                 while (running)
+                 {
+                     try
+                     {
+                         server.Tick();
+                         lock (clients)
+                         {
+                             for (int i = 0; i < clients.Count; i++)
+                             {
+                                 clients[i].Tick();
+                             }
+                         }
+
+                         Thread.Sleep(1); // Reduce CPU usage
+                     }
+                     catch (Exception ex)
+                     {
+                         // Log the error for debugging purposes
+                         LoggerFactory.General.Log(ex);
+                         // Optionally, you can break the loop or handle it accordingly
+                     }
+                 }
+             });
+
+             while (running)
+             {
+                 string? line = Console.ReadLine();
+                 if (line == null)
+                     continue;
+                 switch (line)
+                 {
+                     case "exit":
+                         running = false;
+                         break;
+
+                     case "d":
+                         lock (clients)
+                         {
+                             for (int i = 0; i < clients.Count; i++)
+                             {
+                                 clients[i].Disconnect();
+                             }
+                         }
+                         break;
+
+                     case "c":
+                         lock (clients)
+                         {
+                             for (int i = 0; i < 1; i++)
+                             {
+                                 Client client = new(new(IPAddress.Parse("127.0.0.1"), 28900));
+                                 client.Init();
+                                 lock (clients)
+                                 {
+                                     clients[i] = client;
+                                 }
+                             }
+                         }
+                         break;
+
+                     default:
+                         continue;
+                 }
+             }
+
+             serverTask.Wait();
+
+             Console.WriteLine("Exiting...");
+
+             LoggerFactory.CloseAll();
+         }
+        */
 
         private static void NewMethod()
         {

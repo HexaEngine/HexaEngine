@@ -58,5 +58,10 @@
             ImGui.EndDisabled();
             return result;
         }
+
+        public bool Draw(IGraphicsContext context, object instance, ProxyBase proxy, bool setOnInstance)
+        {
+            return Draw(context, instance);
+        }
     }
 }

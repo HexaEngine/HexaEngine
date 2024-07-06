@@ -4,6 +4,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.ColorGradingEditor;
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.Factories;
     using HexaEngine.Editor.Icons;
@@ -12,6 +13,7 @@
     using HexaEngine.Editor.TerrainEditor;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using System.Diagnostics;
@@ -56,6 +58,7 @@
             ObjectEditorFactory.RegisterEditor(typeof(ScriptComponent), new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
             ObjectEditorFactory.RegisterEditor(typeof(Volume), new VolumeObjectEditor());
+            PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
         }
 
         public static void Dispose()

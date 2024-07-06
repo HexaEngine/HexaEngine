@@ -225,7 +225,7 @@
             paramsBuffer.Update(context, gaussianBlurParams);
 
             context.SetRenderTarget(intermediateTex.Value.RTV, null);
-            context.SetViewport(new(dstWidth, dstHeight));
+            context.SetViewport(new(intermediateTex.Value.Width, intermediateTex.Value.Height));
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
@@ -235,6 +235,7 @@
             context.SetRenderTarget(null, null);
             context.PSSetShaderResource(0, null);
 
+            context.SetViewport(new(dstWidth, dstHeight));
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
             context.SetPipelineState(vertical);

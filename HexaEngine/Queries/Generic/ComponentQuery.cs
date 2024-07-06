@@ -152,7 +152,7 @@
             }
         }
 
-        public virtual void FlushQuery(IList<GameObject> objects)
+        public virtual void FlushQuery(IReadOnlyList<GameObject> objects)
         {
             cache.Clear();
 

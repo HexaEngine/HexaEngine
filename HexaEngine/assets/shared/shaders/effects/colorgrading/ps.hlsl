@@ -1,6 +1,6 @@
 #include "../../colorUtils.hlsl"
 Texture2D InputTex : register(t0);
-Texture2D lutTexture : register(t1);
+Texture1DArray CurvesTex : register(t1);
 SamplerState LinearClampSampler : register(s0);
 
 #ifndef TONEMAP
@@ -13,6 +13,10 @@ SamplerState LinearClampSampler : register(s0);
  * fallback: None
 */
 #define TONEMAP 2
+#endif
+
+#if TONEMAP == 0
+#define UseACES 1
 #endif
 
 #ifndef GAMMA
@@ -52,9 +56,19 @@ cbuffer TonemapParams
 	float3 ChannelMaskBlue;
 	float _padd4;
 
-	float Lift;
-	float GammaInv;
-	float Gain;
+	float3 Lift;
+	float _padd5;
+	float3 GammaInv;
+	float _padd6;
+	float3 Gain;
+	float _padd7;
+
+	float3 Offset;
+	float _padd8;
+    float3 Power;
+	float _padd9;
+    float3 Slope;
+	float _padd10;
 };
 
 float3 NeutralCurve(float3 x)
@@ -105,20 +119,100 @@ float3 ACESFilmRec2020(float3 x)
 	return (x * (a * x + b)) / (x * (c * x + d) + e);
 }
 
+//
+// Filmic tonemapping (ACES fitting, unless TONEMAPPING_USE_FULL_ACES is set to 1)
+// Input is ACES2065-1 (AP0 w/ linear encoding)
+//
+half3 FilmicTonemap(half3 aces)
+{
+#if TONEMAPPING_USE_FULL_ACES
+
+    half3 oces = RRT(aces);
+    half3 odt = ODT_RGBmonitor_100nits_dim(oces);
+    return odt;
+
+#else
+
+    // --- Glow module --- //
+    half saturation = rgb_2_saturation(aces);
+    half ycIn = rgb_2_yc(aces);
+    half s = sigmoid_shaper((saturation - 0.4) / 0.2);
+    half addedGlow = 1.0 + glow_fwd(ycIn, RRT_GLOW_GAIN * s, RRT_GLOW_MID);
+    aces *= addedGlow;
+
+    // --- Red modifier --- //
+    half hue = rgb_2_hue(aces);
+    half centeredHue = center_hue(hue, RRT_RED_HUE);
+    half hueWeight;
+    {
+        //hueWeight = cubic_basis_shaper(centeredHue, RRT_RED_WIDTH);
+        hueWeight = pow2(smoothstep(0.0, 1.0, 1.0 - abs(2.0 * centeredHue / RRT_RED_WIDTH)));
+    }
+
+    aces.r += hueWeight * saturation * (RRT_RED_PIVOT - aces.r) * (1.0 - RRT_RED_SCALE);
+
+    // --- ACES to RGB rendering space --- //
+    half3 acescg = max(0.0, ACES_to_ACEScg(aces));
+
+    // --- Global desaturation --- //
+    //acescg = mul(RRT_SAT_MAT, acescg);
+    acescg = lerp(dot(acescg, AP1_RGB2Y).xxx, acescg, RRT_SAT_FACTOR.xxx);
+
+    // Luminance fitting of *RRT.a1.0.3 + ODT.Academy.RGBmonitor_100nits_dim.a1.0.3*.
+    // https://github.com/colour-science/colour-unity/blob/master/Assets/Colour/Notebooks/CIECAM02_Unity.ipynb
+    // RMSE: 0.0012846272106
+    const half a = 278.5085;
+    const half b = 10.7772;
+    const half c = 293.6045;
+    const half d = 88.7122;
+    const half e = 80.6889;
+    half3 x = acescg;
+    half3 rgbPost = (x * (a * x + b)) / (x * (c * x + d) + e);
+
+    // Scale luminance to linear code value
+    // half3 linearCV = Y_2_linCV(rgbPost, CINEMA_WHITE, CINEMA_BLACK);
+
+    // Apply gamma adjustment to compensate for dim surround
+    half3 linearCV = darkSurround_to_dimSurround(rgbPost);
+
+    // Apply desaturation to compensate for luminance difference
+    //linearCV = mul(ODT_SAT_MAT, color);
+    linearCV = lerp(dot(linearCV, AP1_RGB2Y).xxx, linearCV, ODT_SAT_FACTOR.xxx);
+
+    // Convert to display primary encoding
+    // Rendering space RGB to XYZ
+    half3 XYZ = mul(AP1_2_XYZ_MAT, linearCV);
+
+    // Apply CAT from ACES white point to assumed observer adapted white point
+    XYZ = mul(D60_2_D65_CAT, XYZ);
+
+    // CIE XYZ to display primaries
+    linearCV = mul(XYZ_2_REC709_MAT, XYZ);
+
+    return linearCV;
+
+#endif
+}
+
 float3 Tonemap(float3 x)
 {
+#if UseACES
+	x = ACEScg_to_ACES(x);
+#endif
+
 #if TONEMAP == 0
 #if HDR
-	return ACESFilmRec2020(x);
+	return FilmicTonemap(x);
 #else
 	return ACESFilmTonemap(x);
 #endif
 #elif TONEMAP == 1
+	x = ACEScg_to_sRGB(x);
 	return NeutralTonemap(x);
 #elif TONEMAP == 2
-	return x;
+	return ACEScg_to_sRGB(x);
 #else
-	return x;
+	return ACEScg_to_sRGB(x);
 #endif
 }
 
@@ -138,28 +232,39 @@ float3 AdjustHue(float3 color, float hueShift)
 
 float3 AdjustSaturation(float3 c, float sat)
 {
+#if UseACES
+	float luma = AcesLuminance(c);
+#else
 	float luma = Luminance(c);
+#endif
 	return luma.xxx + sat.xxx * (c - luma.xxx);
 }
 
-float3 AdjustContrast(float3 c, float midpoint, float contrast)
+float3 AdjustContrast(float3 c, float contrast)
 {
-	return (c - midpoint) * contrast + midpoint;
+	return (c - ACEScc_MIDGRAY) * contrast + ACEScc_MIDGRAY;
 }
 
-float3 LiftGammaGainHDR(float3 c, float3 lift, float3 invgamma, float3 gain)
+//
+// Offset, Power, Slope (ASC-CDL)
+// Works in Log & Linear. Results will be different but still correct.
+//
+half3 OffsetPowerSlope(half3 c, half3 offset, half3 power, half3 slope)
 {
-	c = c * gain + lift;
-
-	// ACEScg will output negative values, as clamping to 0 will lose precious information we'll
-	// mirror the gamma function instead
-	return sign(c) * pow(abs(c), invgamma);
+    half3 so = c * slope + offset;
+    so = so > (0.0).xxx ? pow(so, power) : so;
+    return so;
 }
 
-float3 LiftGammaGainLDR(float3 c, float3 lift, float3 invgamma, float3 gain)
+float3 LiftGammaGain(float3 c, float3 lift, float3 invgamma, float3 gain)
 {
-	c = saturate(pow(saturate(c), invgamma));
-	return gain * c + lift * (1.0 - c);
+    //return gain * (lift * (1.0 - c) + pow(max(c, kEpsilon), invgamma));
+    //return pow(gain * (c + lift * (1.0 - c)), invgamma);
+
+    half3 power = invgamma;
+    half3 offset = lift * gain;
+    half3 slope = ((1.0).xxx - lift) * gain;
+    return OffsetPowerSlope(c, offset, power, slope);
 }
 
 float3 ChannelMix(float3 color)
@@ -171,26 +276,86 @@ float3 ChannelMix(float3 color)
 	);
 }
 
+float3 ApplyYrgbCurve(float3 c)
+{
+	const float kHalfPixel = (1.0 / 128.0) / 2.0;
+	c += kHalfPixel.xxx;
+
+	float mr = CurvesTex.SampleLevel(LinearClampSampler, float2(c.r, 3), 0);
+	float mg = CurvesTex.SampleLevel(LinearClampSampler, float2(c.g, 3), 0);
+	float mb = CurvesTex.SampleLevel(LinearClampSampler, float2(c.b, 3), 0);
+	c = saturate(float3(mr, mg, mb));
+
+	float r = CurvesTex.SampleLevel(LinearClampSampler, float2(c.r, 0), 0);
+	float g = CurvesTex.SampleLevel(LinearClampSampler, float2(c.g, 1), 0);
+	float b = CurvesTex.SampleLevel(LinearClampSampler, float2(c.b, 2), 0);
+
+	return saturate(float3(r, g, b));
+}
+
+float CurveHueHue(float hue)
+{
+    float offset = saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(hue, 4), 0)) - 0.5;
+    hue += offset;
+    hue = RotateHue(hue, 0.0, 1.0);
+    return hue;
+}
+
+float CurveHueSat(float hue)
+{
+    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(hue, 5), 0)) * 2.0;
+}
+
+float CurveSatSat(float sat)
+{
+    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(sat, 6), 0)) * 2.0;
+}
+
+float CurveLumSat(float lum)
+{
+    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(lum, 7), 0)) * 2.0;
+}
+
 float4 main(VSOut vs) : SV_Target
 {
-	float4 color = InputTex.Sample(LinearClampSampler, vs.Tex);
+	float4 color = InputTex.Sample(LinearClampSampler, vs.Tex); // linear space.
 
 	if (color.a == 0)
 		discard;
 
-	color.rgb = color.rgb * PostExposure;
-	color.rgb = AdjustWhiteBalance(color.rgb);
-	color.rgb = AdjustHue(color.rgb, HueShift);
-	color.rgb = AdjustSaturation(color.rgb, Saturation);
-	color.rgb = AdjustContrast(color.rgb, ContrastMidpoint, Contrast);
-	color.rgb = ChannelMix(color.rgb);
-	color.rgb = Tonemap(color.rgb);
+	color = LinearToSRGB(color);
 
-#if HDR
-	color.rgb = LiftGammaGainHDR(color.rgb, Lift, GammaInv, Gain);
-#else
-	color.rgb = LiftGammaGainLDR(color.rgb, Lift, GammaInv, Gain);
-#endif
+	float3 aces = sRGB_to_ACES(color.rgb);
+
+	float3 acescc = ACES_to_ACEScc(aces);
+
+	acescc = OffsetPowerSlope(acescc, Offset, Power, Slope);
+
+	float2 hs = RgbToHsv(acescc).xy;
+	float satMultiplier = CurveHueSat(hs.x);
+	satMultiplier *= CurveSatSat(hs.y);
+    satMultiplier *= CurveLumSat(AcesLuminance(acescc));
+
+	acescc = AdjustSaturation(acescc, Saturation * satMultiplier);
+	acescc = AdjustContrast(acescc, Contrast);
+
+	aces = ACEScc_to_ACES(acescc);
+
+	float3 acescg = ACES_to_ACEScg(aces);
+
+	acescg = AdjustWhiteBalance(acescg);
+	acescg = LiftGammaGain(acescg, Lift, GammaInv, Gain);
+
+	float3 hsv = RgbToHsv(max(acescg, 0.0));
+	hsv.x = CurveHueHue(hsv.x + HueShift);
+    acescg = HsvToRgb(hsv);
+
+	acescg = ChannelMix(acescg);
+	
+	color.rgb = Tonemap(acescg.rgb);
+
+	color.rgb = ApplyYrgbCurve(color.rgb);
+
 	color.a = 1;
 
 	return color;
