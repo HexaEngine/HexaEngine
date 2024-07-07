@@ -1,10 +1,13 @@
 ﻿namespace HexaEngine.Vulkan
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Shaderc;
+    using HexaEngine.SPIRVCross;
     using Silk.NET.Core.Native;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
@@ -14,7 +17,14 @@
         {
             ShadercCompiler compiler = Shaderc.ShadercCompilerInitialize();
 
-            ShadercSourceLanguage sourceLanguage = ShadercSourceLanguage.Hlsl;
+            ReadOnlySpan<char> extension = Path.GetExtension(sourceName.AsSpan());
+
+            ShadercSourceLanguage sourceLanguage = extension switch
+            {
+                ".hlsl" => ShadercSourceLanguage.Hlsl,
+                ".glsl" => ShadercSourceLanguage.Glsl,
+                _ => throw new NotSupportedException($"File '{extension}' extension not recognised, use .hlsl for HLSL shaders and .glsl for GLSL shaders."),
+            };
 
             var sourceSize = (nuint)source.Length;
             byte* pEntrypoint = (byte*)Marshal.StringToCoTaskMemUTF8(entryPoint);

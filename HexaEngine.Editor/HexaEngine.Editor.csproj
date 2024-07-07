@@ -7,6 +7,18 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+		<DefineConstants>WINDOWS</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+		<DefineConstants>LINUX</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+		<DefineConstants>OSX</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="LibGit2Sharp" Version="0.30.0" />
 		<PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.9" />

@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Silk.NET.Vulkan;
+    using Hexa.NET.Vulkan;
     using System;
 
     public class VulkanException : Exception
     {
-        public VulkanException(Result result) : base(result.ToString())
+        public VulkanException(VkResult result) : base(result.ToString())
         {
         }
     }
