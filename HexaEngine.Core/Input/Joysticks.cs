@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -65,7 +65,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AddJoystick(JoyDeviceEvent even)
+        internal static void AddJoystick(SDLJoyDeviceEvent even)
         {
             Joystick joystick = new(even.Which);
             joysticks.Add(joystick);
@@ -76,7 +76,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void RemoveJoystick(JoyDeviceEvent even)
+        internal static void RemoveJoystick(SDLJoyDeviceEvent even)
         {
             Joystick joystick = idToJoystick[even.Which];
             joystickEventArgs.Timestamp = even.Timestamp;
@@ -88,7 +88,7 @@
             joystick.Dispose();
         }
 
-        internal static void OnAxisMotion(JoyAxisEvent even)
+        internal static void OnAxisMotion(SDLJoyAxisEvent even)
         {
             var result = idToJoystick[even.Which].OnAxisMotion(even);
             if (result == null)
@@ -100,25 +100,25 @@
             AxisMotion?.Invoke(value.Joystick, value.AxisMotionEventArgs);
         }
 
-        internal static void OnBallMotion(JoyBallEvent even)
+        internal static void OnBallMotion(SDLJoyBallEvent even)
         {
             var result = idToJoystick[even.Which].OnBallMotion(even);
             BallMotion?.Invoke(result.Joystick, result.BallMotionEventArgs);
         }
 
-        internal static void OnButtonDown(JoyButtonEvent even)
+        internal static void OnButtonDown(SDLJoyButtonEvent even)
         {
             var result = idToJoystick[even.Which].OnButtonDown(even);
             ButtonDown?.Invoke(result.Joystick, result.ButtonEventArgs);
         }
 
-        internal static void OnButtonUp(JoyButtonEvent even)
+        internal static void OnButtonUp(SDLJoyButtonEvent even)
         {
             var result = idToJoystick[even.Which].OnButtonUp(even);
             ButtonUp?.Invoke(result.Joystick, result.ButtonEventArgs);
         }
 
-        internal static void OnHatMotion(JoyHatEvent even)
+        internal static void OnHatMotion(SDLJoyHatEvent even)
         {
             var result = idToJoystick[even.Which].OnHatMotion(even);
             HatMotion?.Invoke(result.Joystick, result.HatMotionEventArgs);

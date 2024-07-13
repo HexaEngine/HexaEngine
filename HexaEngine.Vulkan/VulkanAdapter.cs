@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
-    using Silk.NET.SDL;
     using Silk.NET.Vulkan;
     using Silk.NET.Vulkan.Extensions.KHR;
     using System;
@@ -18,7 +18,6 @@
     public unsafe class VulkanAdapter : IGraphicsAdapter, IDisposable
     {
         public static readonly Vk Vk = Vk.GetApi();
-        public static readonly Sdl Sdl = Application.Sdl;
         public static readonly KhrSwapchain KhrSwapchain = new(Vk.Context);
         public static readonly KhrSurface KhrSurface = new(Vk.Context);
         public Instance Instance;
@@ -78,10 +77,10 @@
         private byte** GetRequiredInstanceExtensions(out uint count)
         {
             uint rcount = 0;
-            Sdl.VulkanGetInstanceExtensions(null, &rcount, (byte**)null);
+            SDL.SDLVulkanGetInstanceExtensions(null, &rcount, (byte**)null);
 
             byte** extensions = (byte**)AllocArray(rcount);
-            Sdl.VulkanGetInstanceExtensions(null, &rcount, extensions);
+            SDL.SDLVulkanGetInstanceExtensions(null, &rcount, extensions);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -481,15 +480,15 @@
             throw new NotImplementedException();
         }
 
-        private SurfaceKHR CreateSurface(Window* window)
+        private SurfaceKHR CreateSurface(SDLWindow* window)
         {
             SurfaceKHR surface;
             VkHandle handle = new(Instance.Handle);
-            Sdl.VulkanCreateSurface(window, handle, (VkNonDispatchableHandle*)&surface);
+            SDL.SDLVulkanCreateSurface(window, Instance.Handle, (Hexa.NET.SDL2.VkSurfaceKHR*)&surface);
             return surface;
         }
 
-        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, Window* window)
+        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, SDLWindow* window)
         {
             return new VulkanSwapChain(device, window, CreateSurface(window));
         }

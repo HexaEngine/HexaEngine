@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Threading;
     using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System;
 
     public abstract class CoreWindow : SdlWindow, ICoreWindow
@@ -14,14 +14,14 @@
         /// <summary>
         /// Creates a new instance of the <see cref="CoreWindow"/> class.
         /// </summary>
-        public CoreWindow(WindowFlags flags = WindowFlags.Resizable) : base(flags)
+        public CoreWindow(SDLWindowFlags flags = SDLWindowFlags.Resizable) : base(flags)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the <see cref="CoreWindow"/> class.
         /// </summary>
-        public CoreWindow(int x, int y, int width, int height, WindowFlags flags = WindowFlags.Resizable) : base(x, y, width, height, flags)
+        public CoreWindow(int x, int y, int width, int height, SDLWindowFlags flags = SDLWindowFlags.Resizable) : base(x, y, width, height, flags)
         {
         }
 

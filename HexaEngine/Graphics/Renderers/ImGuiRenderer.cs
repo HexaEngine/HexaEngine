@@ -4,6 +4,7 @@
 namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
@@ -426,7 +427,6 @@ namespace HexaEngine.Graphics.Renderers
         }
 
         private static readonly Dictionary<Pointer<ViewportDataHandle>, ViewportData> viewportData = new();
-        private static readonly Silk.NET.SDL.Sdl sdl = Silk.NET.SDL.Sdl.GetApi();
 
         private static unsafe void CreateWindow(ImGuiViewport* viewport)
         {
@@ -437,9 +437,9 @@ namespace HexaEngine.Graphics.Renderers
 
             // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
-            Silk.NET.SDL.Window* window = (Silk.NET.SDL.Window*)viewport->PlatformHandle;
+            SDLWindow* window = (SDLWindow*)viewport->PlatformHandle;
             int w, h;
-            sdl.GetWindowSize(window, &w, &h);
+            SDL.SDLGetWindowSize(window, &w, &h);
 
             SwapChainDescription description = new()
             {

@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.OpenGL
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Contexts;
     using Silk.NET.OpenGL;
-    using Silk.NET.SDL;
     using System;
     using System.Diagnostics;
     using System.Globalization;
@@ -331,7 +331,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             throw new NotImplementedException();
         }
@@ -341,7 +341,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

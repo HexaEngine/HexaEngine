@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     public interface IGraphicsDevice1 : IGraphicsDevice
@@ -48,7 +48,7 @@
         /// </summary>
         /// <param name="window">The SDL window to associate the swap chain with.</param>
         /// <returns>The created swap chain.</returns>
-        unsafe ISwapChain CreateSwapChain(Window* window);
+        unsafe ISwapChain CreateSwapChain(SDLWindow* window);
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.
@@ -66,7 +66,7 @@
         /// <param name="swapChainDescription">The description of the swap chain.</param>
         /// <param name="fullscreenDescription">The description of the fullscreen mode.</param>
         /// <returns>The created swap chain.</returns>
-        unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
+        unsafe ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
 
         /// <summary>
         /// Creates a buffer with the given description.

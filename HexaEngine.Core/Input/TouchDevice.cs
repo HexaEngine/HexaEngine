@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
-    using Silk.NET.SDL;
 
     /// <summary>
     /// Represents a generic delegate for handling events in the TouchDevice class.
@@ -16,7 +16,6 @@
     /// </summary>
     public unsafe class TouchDevice
     {
-        private static readonly Sdl sdl = Application.Sdl;
         private readonly long id;
         private readonly string name;
         private readonly TouchDeviceType type;
@@ -32,15 +31,15 @@
         /// <param name="index">The index of the touch device.</param>
         public TouchDevice(int index)
         {
-            id = sdl.GetTouchDevice(index);
-            name = sdl.GetTouchNameS(index);
-            type = (TouchDeviceType)sdl.GetTouchDeviceType(id);
+            id = SDL.SDLGetTouchDevice(index);
+            name = SDL.SDLGetTouchNameS(index);
+            type = (TouchDeviceType)SDL.SDLGetTouchDeviceType(id);
 
-            var fingerCount = sdl.GetNumTouchFingers(id);
+            var fingerCount = SDL.SDLGetNumTouchFingers(id);
             fingers = new Finger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
-                var finger = sdl.GetTouchFinger(id, i);
+                var finger = SDL.SDLGetTouchFinger(id, i);
                 fingers[i] = new(finger);
                 fingerIdToIndex.Add(finger->Id, i);
             }
@@ -54,13 +53,13 @@
         {
             this.id = id;
             name = "Unknown";
-            type = (TouchDeviceType)sdl.GetTouchDeviceType(id);
+            type = (TouchDeviceType)SDL.SDLGetTouchDeviceType(id);
 
-            var fingerCount = sdl.GetNumTouchFingers(id);
+            var fingerCount = SDL.SDLGetNumTouchFingers(id);
             fingers = new Finger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
-                var finger = sdl.GetTouchFinger(id, i);
+                var finger = SDL.SDLGetTouchFinger(id, i);
                 fingers[i] = new(finger);
                 fingerIdToIndex.Add(finger->Id, i);
             }
@@ -101,7 +100,7 @@
         /// </summary>
         public event TouchDeviceEventHandler<TouchMoveEventArgs>? TouchMotion;
 
-        internal (TouchDevice, TouchEventArgs) OnFingerUp(TouchFingerEvent evnt)
+        internal (TouchDevice, TouchEventArgs) OnFingerUp(SDLTouchFingerEvent evnt)
         {
             touchEventArgs.Timestamp = evnt.Timestamp;
             touchEventArgs.TouchDeviceId = id;
@@ -119,7 +118,7 @@
             return (this, touchEventArgs);
         }
 
-        internal (TouchDevice, TouchEventArgs) OnFingerDown(TouchFingerEvent evnt)
+        internal (TouchDevice, TouchEventArgs) OnFingerDown(SDLTouchFingerEvent evnt)
         {
             touchEventArgs.Timestamp = evnt.Timestamp;
             touchEventArgs.TouchDeviceId = id;
@@ -137,7 +136,7 @@
             return (this, touchEventArgs);
         }
 
-        internal (TouchDevice, TouchMoveEventArgs) OnFingerMotion(TouchFingerEvent evnt)
+        internal (TouchDevice, TouchMoveEventArgs) OnFingerMotion(SDLTouchFingerEvent evnt)
         {
             touchMotionEventArgs.Timestamp = evnt.Timestamp;
             touchMotionEventArgs.TouchDeviceId = id;

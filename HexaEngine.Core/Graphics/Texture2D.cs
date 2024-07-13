@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Assets;
     using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     public sealed unsafe class Texture2D : Texture<ITexture2D, Texture2DDescription>, ITexture2D, IShaderResourceView, IRenderTargetView, IUnorderedAccessView

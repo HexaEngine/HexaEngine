@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
@@ -9,7 +10,6 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using Silk.NET.Maths;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -251,19 +251,18 @@
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
-        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, Window* window)
+        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window)
         {
-            Sdl sdl = Sdl.GetApi();
-            SysWMInfo info;
-            sdl.GetVersion(&info.Version);
-            sdl.GetWindowWMInfo(window, &info);
+            SDLSysWMInfo info;
+            SDL.SDLGetVersion(&info.Version);
+            SDL.SDLGetWindowWMInfo(window, &info);
 
             int width = 0;
             int height = 0;
 
-            sdl.GetWindowSize(window, &width, &height);
+            SDL.SDLGetWindowSize(window, &width, &height);
 
-            var Hwnd = info.Info.Win.Hwnd;
+            var Hwnd = info.Info.Win.Window;
 
             SwapChainDesc1 desc = new()
             {
@@ -292,13 +291,12 @@
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
-        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            Sdl sdl = Sdl.GetApi();
-            SysWMInfo info;
-            sdl.GetVersion(&info.Version);
-            sdl.GetWindowWMInfo(window, &info);
-            var Hwnd = info.Info.Win.Hwnd;
+            SDLSysWMInfo info;
+            SDL.SDLGetVersion(&info.Version);
+            SDL.SDLGetWindowWMInfo(window, &info);
+            var Hwnd = info.Info.Win.Window;
 
             SwapChainDesc1 desc = Helper.Convert(swapChainDescription);
             desc.Format = ChooseSwapChainFormat(device.Device, desc.Format);

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
     using Silk.NET.Vulkan;
     using System;
     using System.Runtime.CompilerServices;
@@ -37,7 +37,7 @@
             return CreateSwapChain(window.GetWindow());
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             return vulkanAdapter.CreateSwapChain(this, window);
         }
@@ -47,7 +47,7 @@
             return CreateSwapChain(window.GetWindow(), swapChainDescription, fullscreenDescription);
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

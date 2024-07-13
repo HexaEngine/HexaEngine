@@ -2,9 +2,6 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
-    using Microsoft.VisualBasic;
-    using Silk.NET.SDL;
-    using System;
     using System.Collections.Generic;
     using System.Text;
 

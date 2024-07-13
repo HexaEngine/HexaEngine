@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
 
     /// <summary>
@@ -7,7 +8,7 @@
     /// </summary>
     public unsafe class Finger
     {
-        private readonly Silk.NET.SDL.Finger* finger;
+        private readonly SDLFinger* finger;
         private readonly long id;
         private FingerState state;
 
@@ -15,7 +16,7 @@
         /// Initializes a new instance of the <see cref="Finger"/> class.
         /// </summary>
         /// <param name="finger">A pointer to the native SDL finger.</param>
-        public Finger(Silk.NET.SDL.Finger* finger)
+        public Finger(SDLFinger* finger)
         {
             this.finger = finger;
             id = finger->Id;

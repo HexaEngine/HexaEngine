@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Windows
 {
-    using HexaEngine.Core.Assets.Importer;
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -9,9 +9,7 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
-    using Silk.NET.SDL;
     using System;
-    using System.ComponentModel;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -25,11 +23,6 @@
     public unsafe class SdlWindow : IWindow, INativeWindow
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Sdl));
-
-        /// <summary>
-        /// The SDL instance
-        /// </summary>
-        protected static readonly Sdl sdl = Application.Sdl;
 
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();
@@ -58,7 +51,7 @@
         private readonly DropFileEventArgs dropFileEventArgs = new();
         private readonly DropTextEventArgs dropTextEventArgs = new();
 
-        private Window* window;
+        private SDLWindow* window;
         private bool created;
         private int width = 1280;
         private int height = 720;
@@ -73,17 +66,17 @@
         private bool bordered = true;
         private bool destroyed = false;
 
-        private Cursor** cursors;
+        private SDLCursor** cursors;
 
         /// <summary>
         /// The position of the window centered on the screen.
         /// </summary>
-        public const int WindowPosCentered = Silk.NET.SDL.Sdl.WindowposCentered;
+        public const uint WindowPosCentered = SDL.SDL_WINDOWPOS_CENTERED_MASK;
 
         /// <summary>
         /// Creates a new instance of the <see cref="SdlWindow"/> class.
         /// </summary>
-        public SdlWindow(WindowFlags flags = WindowFlags.Resizable)
+        public SdlWindow(SDLWindowFlags flags = SDLWindowFlags.Resizable)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -100,7 +93,7 @@
         /// <summary>
         /// Creates a new instance of the <see cref="SdlWindow"/> class.
         /// </summary>
-        public SdlWindow(int x, int y, int width, int height, WindowFlags flags = WindowFlags.Resizable)
+        public SdlWindow(int x, int y, int width, int height, SDLWindowFlags flags = SDLWindowFlags.Resizable)
         {
             this.x = x;
             this.y = y;
@@ -121,7 +114,7 @@
         /// <summary>
         /// Method called to construct the platform-specific window.
         /// </summary>
-        internal void PlatformConstruct(WindowFlags flags)
+        internal void PlatformConstruct(SDLWindowFlags flags)
         {
             if (created)
             {
@@ -131,44 +124,44 @@
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            flags |= WindowFlags.Hidden;
+            flags |= SDLWindowFlags.Hidden;
 
             switch (Application.GraphicsBackend)
             {
                 case GraphicsBackend.Vulkan:
-                    flags |= WindowFlags.Vulkan;
+                    flags |= SDLWindowFlags.Vulkan;
                     break;
 
                 case GraphicsBackend.OpenGL:
-                    flags |= WindowFlags.Opengl;
+                    flags |= SDLWindowFlags.Opengl;
                     break;
 
                 case GraphicsBackend.Metal:
-                    flags |= WindowFlags.Metal;
+                    flags |= SDLWindowFlags.Metal;
                     break;
             }
 
-            window = SdlCheckError(sdl.CreateWindow(ptr, x, y, width, height, (uint)flags));
+            window = SdlCheckError(SDL.SDLCreateWindow(ptr, x, y, width, height, (uint)flags));
 
-            WindowID = sdl.GetWindowID(window).SdlThrowIf();
+            WindowID = SDL.SDLGetWindowID(window).SdlThrowIf();
 
             int w;
             int h;
-            sdl.GetWindowSize(window, &w, &h);
+            SDL.SDLGetWindowSize(window, &w, &h);
 
-            cursors = (Cursor**)AllocArray((uint)SystemCursor.NumSystemCursors);
-            cursors[(int)CursorType.Arrow] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorArrow));
-            cursors[(int)CursorType.IBeam] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorIbeam));
-            cursors[(int)CursorType.Wait] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorWait));
-            cursors[(int)CursorType.Crosshair] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorCrosshair));
-            cursors[(int)CursorType.WaitArrow] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorWaitarrow));
-            cursors[(int)CursorType.SizeNWSE] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizens));
-            cursors[(int)CursorType.SizeNESW] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizewe));
-            cursors[(int)CursorType.SizeWE] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizenesw));
-            cursors[(int)CursorType.SizeNS] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizenwse));
-            cursors[(int)CursorType.SizeAll] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizeall));
-            cursors[(int)CursorType.No] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorNo));
-            cursors[(int)CursorType.Hand] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorHand));
+            cursors = (SDLCursor**)AllocArray((uint)SDLSystemCursor.NumSystemCursors);
+            cursors[(int)CursorType.Arrow] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Arrow));
+            cursors[(int)CursorType.IBeam] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Ibeam));
+            cursors[(int)CursorType.Wait] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Wait));
+            cursors[(int)CursorType.Crosshair] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Crosshair));
+            cursors[(int)CursorType.WaitArrow] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Waitarrow));
+            cursors[(int)CursorType.SizeNWSE] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizens));
+            cursors[(int)CursorType.SizeNESW] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizewe));
+            cursors[(int)CursorType.SizeWE] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizenesw));
+            cursors[(int)CursorType.SizeNS] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizenwse));
+            cursors[(int)CursorType.SizeAll] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizeall));
+            cursors[(int)CursorType.No] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.No));
+            cursors[(int)CursorType.Hand] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Hand));
 
             Width = w;
             Height = h;
@@ -185,7 +178,7 @@
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             Application.RegisterWindow((ICoreWindow)this);
-            sdl.ShowWindow(window);
+            SDL.SDLShowWindow(window);
         }
 
         ///<summary>
@@ -195,7 +188,7 @@
         public void Hide()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            sdl.HideWindow(window);
+            SDL.SDLHideWindow(window);
             OnHidden(hiddenEventArgs);
         }
 
@@ -217,7 +210,7 @@
         public void ReleaseCapture()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            sdl.CaptureMouse(SdlBool.False);
+            SDL.SDLCaptureMouse(SDLBool.False);
         }
 
         ///<summary>
@@ -227,7 +220,7 @@
         public void Capture()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            sdl.CaptureMouse(SdlBool.True);
+            SDL.SDLCaptureMouse(SDLBool.True);
         }
 
         ///<summary>
@@ -238,7 +231,7 @@
         public void Fullscreen(FullscreenMode mode)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            sdl.SetWindowFullscreen(window, (uint)mode);
+            SDL.SDLSetWindowFullscreen(window, (uint)mode);
         }
 
         ///<summary>
@@ -251,7 +244,7 @@
         public bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            return sdl.VulkanCreateSurface(window, vkHandle, vkNonDispatchableHandle) == SdlBool.True;
+            return SDL.SDLVulkanCreateSurface(window, new VkInstance(vkHandle.Handle), (VkSurfaceKHR*)vkNonDispatchableHandle) == SDLBool.True;
         }
 
         ///<summary>
@@ -262,14 +255,70 @@
         public IGLContext OpenGLCreateContext()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            return new SdlContext(sdl, window, null, (GLattr.ContextMajorVersion, 4), (GLattr.ContextMinorVersion, 5));
+            var context = SDL.SDLGLCreateContext(window);
+
+            return new WrapperContext(window, context);
+        }
+
+        private struct WrapperContext : IGLContext
+        {
+            private SDLWindow* window;
+            private SDLGLContext context;
+
+            public WrapperContext(SDLWindow* window, SDLGLContext context)
+            {
+                this.window = window;
+                this.context = context;
+            }
+
+            public readonly nint Handle => context.Handle;
+
+            public IGLContextSource? Source { get; }
+
+            public readonly bool IsCurrent => SDL.SDLGLGetCurrentContext().Handle == context.Handle;
+
+            public readonly void Clear()
+            {
+            }
+
+            public void Dispose()
+            {
+                context.SdlglDeleteContext();
+                this = default;
+            }
+
+            public readonly nint GetProcAddress(string proc, int? slot = null)
+            {
+                return (nint)SDL.SDLGLGetProcAddress(proc);
+            }
+
+            public readonly void MakeCurrent()
+            {
+                SDL.SDLGLMakeCurrent(window, context);
+            }
+
+            public readonly void SwapBuffers()
+            {
+                SDL.SDLGLSwapWindow(window);
+            }
+
+            public readonly void SwapInterval(int interval)
+            {
+                SDL.SDLGLSetSwapInterval(interval);
+            }
+
+            public readonly bool TryGetProcAddress(string proc, out nint addr, int? slot = null)
+            {
+                addr = (nint)SDL.SDLGLGetProcAddress(proc);
+                return addr != 0;
+            }
         }
 
         /// <summary>
         /// Gets a pointer to the window.
         /// </summary>
         /// <returns>A pointer to the window.</returns>
-        public Window* GetWindow() => window;
+        public SDLWindow* GetWindow() => window;
 
         /// <summary>
         /// Gets the window ID.
@@ -287,7 +336,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 title = value;
-                sdl.SetWindowTitle(window, value);
+                SDL.SDLSetWindowTitle(window, value);
             }
         }
 
@@ -302,7 +351,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 x = value;
-                sdl.SetWindowPosition(window, value, y);
+                SDL.SDLSetWindowPosition(window, value, y);
             }
         }
 
@@ -317,7 +366,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 y = value;
-                sdl.SetWindowPosition(window, x, value);
+                SDL.SDLSetWindowPosition(window, x, value);
             }
         }
 
@@ -334,7 +383,7 @@
                 resizedEventArgs.OldWidth = width;
                 resizedEventArgs.NewWidth = value;
                 width = value;
-                sdl.SetWindowSize(window, value, height);
+                SDL.SDLSetWindowSize(window, value, height);
                 Viewport = new(width, height);
                 OnResized(resizedEventArgs);
             }
@@ -353,7 +402,7 @@
                 resizedEventArgs.OldHeight = height;
                 resizedEventArgs.NewHeight = value;
                 height = value;
-                sdl.SetWindowSize(window, width, value);
+                SDL.SDLSetWindowSize(window, width, value);
                 Viewport = new(width, height);
                 OnResized(resizedEventArgs);
             }
@@ -367,7 +416,7 @@
             get
             {
                 Rectangle result;
-                sdl.GetWindowBordersSize(window, &result.Top, &result.Left, &result.Bottom, &result.Right);
+                SDL.SDLGetWindowBordersSize(window, &result.Top, &result.Left, &result.Bottom, &result.Right);
                 return result;
             }
         }
@@ -386,7 +435,7 @@
                 }
 
                 int x, y;
-                sdl.GetMouseState(&x, &y);
+                SDL.SDLGetMouseState(&x, &y);
                 return new Vector2(x, y);
             }
         }
@@ -415,19 +464,19 @@
                 switch (value)
                 {
                     case WindowState.Hidden:
-                        sdl.HideWindow(window);
+                        SDL.SDLHideWindow(window);
                         break;
 
                     case WindowState.Normal:
-                        sdl.ShowWindow(window);
+                        SDL.SDLShowWindow(window);
                         break;
 
                     case WindowState.Minimized:
-                        sdl.MinimizeWindow(window);
+                        SDL.SDLMinimizeWindow(window);
                         break;
 
                     case WindowState.Maximized:
-                        sdl.MaximizeWindow(window);
+                        SDL.SDLMaximizeWindow(window);
                         break;
                 }
             }
@@ -444,7 +493,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 lockCursor = value;
-                sdl.SetRelativeMouseMode(value ? SdlBool.True : SdlBool.False);
+                SDL.SDLSetRelativeMouseMode(value ? SDLBool.True : SDLBool.False);
             }
         }
 
@@ -459,7 +508,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 resizable = value;
-                sdl.SetWindowResizable(window, value ? SdlBool.True : SdlBool.False);
+                SDL.SDLSetWindowResizable(window, value ? SDLBool.True : SDLBool.False);
             }
         }
 
@@ -474,7 +523,7 @@
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 bordered = value;
-                sdl.SetWindowBordered(window, value ? SdlBool.True : SdlBool.False);
+                SDL.SDLSetWindowBordered(window, value ? SDLBool.True : SDLBool.False);
             }
         }
 
@@ -527,11 +576,11 @@
             get
             {
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
-                SysWMInfo wmInfo;
-                sdl.GetVersion(&wmInfo.Version);
-                sdl.GetWindowWMInfo(window, &wmInfo);
+                SDLSysWMInfo wmInfo;
+                SDL.SDLGetVersion(&wmInfo.Version);
+                SDL.SDLGetWindowWMInfo(window, &wmInfo);
 
-                return (wmInfo.Info.Win.Hwnd, wmInfo.Info.Win.HDC, wmInfo.Info.Win.HInstance);
+                return (wmInfo.Info.Win.Window, wmInfo.Info.Win.Hdc, wmInfo.Info.Win.HInstance);
             }
         }
 
@@ -1126,27 +1175,27 @@
         /// Processes a window event received from the message loop.
         /// </summary>
         /// <param name="evnt">The window event to process.</param>
-        internal void ProcessEvent(WindowEvent evnt)
+        internal void ProcessEvent(SDLWindowEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            WindowEventID type = (WindowEventID)evnt.Event;
+            SDLWindowEventID type = (SDLWindowEventID)evnt.Event;
             switch (type)
             {
-                case WindowEventID.None:
+                case SDLWindowEventID.None:
                     return;
 
-                case WindowEventID.Shown:
+                case SDLWindowEventID.Shown:
                     {
                         shownEventArgs.Handled = false;
                         OnShown(shownEventArgs);
                         if (shownEventArgs.Handled)
                         {
-                            sdl.HideWindow(window);
+                            SDL.SDLHideWindow(window);
                         }
                     }
                     break;
 
-                case WindowEventID.Hidden:
+                case SDLWindowEventID.Hidden:
                     {
                         WindowState oldState = state;
                         state = WindowState.Hidden;
@@ -1156,19 +1205,19 @@
                         OnHidden(hiddenEventArgs);
                         if (hiddenEventArgs.Handled)
                         {
-                            sdl.ShowWindow(window);
+                            SDL.SDLShowWindow(window);
                         }
                     }
                     break;
 
-                case WindowEventID.Exposed:
+                case SDLWindowEventID.Exposed:
                     {
                         exposedEventArgs.Handled = false;
                         OnExposed(exposedEventArgs);
                     }
                     break;
 
-                case WindowEventID.Moved:
+                case SDLWindowEventID.Moved:
                     {
                         int xold = x;
                         int yold = y;
@@ -1182,12 +1231,12 @@
                         OnMoved(movedEventArgs);
                         if (movedEventArgs.Handled)
                         {
-                            sdl.SetWindowPosition(window, xold, yold);
+                            SDL.SDLSetWindowPosition(window, xold, yold);
                         }
                     }
                     break;
 
-                case WindowEventID.Resized:
+                case SDLWindowEventID.Resized:
                     {
                         int widthOld = width;
                         int heightOld = height;
@@ -1202,12 +1251,12 @@
                         OnResized(resizedEventArgs);
                         if (resizedEventArgs.Handled)
                         {
-                            sdl.SetWindowSize(window, widthOld, heightOld);
+                            SDL.SDLSetWindowSize(window, widthOld, heightOld);
                         }
                     }
                     break;
 
-                case WindowEventID.SizeChanged:
+                case SDLWindowEventID.SizeChanged:
                     {
                         int widthOld = width;
                         int heightOld = height;
@@ -1223,7 +1272,7 @@
                     }
                     break;
 
-                case WindowEventID.Minimized:
+                case SDLWindowEventID.Minimized:
                     {
                         WindowState oldState = state;
                         state = WindowState.Minimized;
@@ -1238,7 +1287,7 @@
                     }
                     break;
 
-                case WindowEventID.Maximized:
+                case SDLWindowEventID.Maximized:
                     {
                         WindowState oldState = state;
                         state = WindowState.Maximized;
@@ -1253,7 +1302,7 @@
                     }
                     break;
 
-                case WindowEventID.Restored:
+                case SDLWindowEventID.Restored:
                     {
                         WindowState oldState = state;
                         state = WindowState.Normal;
@@ -1268,7 +1317,7 @@
                     }
                     break;
 
-                case WindowEventID.Enter:
+                case SDLWindowEventID.Enter:
                     {
                         hovering = true;
                         enterEventArgs.Handled = false;
@@ -1276,7 +1325,7 @@
                     }
                     break;
 
-                case WindowEventID.Leave:
+                case SDLWindowEventID.Leave:
                     {
                         hovering = false;
                         leaveEventArgs.Handled = false;
@@ -1284,7 +1333,7 @@
                     }
                     break;
 
-                case WindowEventID.FocusGained:
+                case SDLWindowEventID.FocusGained:
                     {
                         focused = true;
                         focusGainedEventArgs.Handled = false;
@@ -1292,7 +1341,7 @@
                     }
                     break;
 
-                case WindowEventID.FocusLost:
+                case SDLWindowEventID.FocusLost:
                     {
                         focused = false;
                         focusLostEventArgs.Handled = false;
@@ -1300,29 +1349,29 @@
                     }
                     break;
 
-                case WindowEventID.Close:
+                case SDLWindowEventID.Close:
                     {
                         closeEventArgs.Handled = false;
                         OnClosing(closeEventArgs);
                         if (closeEventArgs.Handled)
                         {
-                            sdl.ShowWindow(window);
+                            SDL.SDLShowWindow(window);
                         }
                     }
                     break;
 
-                case WindowEventID.TakeFocus:
+                case SDLWindowEventID.TakeFocus:
                     {
                         takeFocusEventArgs.Handled = false;
                         OnTakeFocus(takeFocusEventArgs);
                         if (!takeFocusEventArgs.Handled)
                         {
-                            sdl.SetWindowInputFocus(window).SdlThrowIf();
+                            SDL.SDLSetWindowInputFocus(window).SdlThrowIf();
                         }
                     }
                     break;
 
-                case WindowEventID.HitTest:
+                case SDLWindowEventID.HitTest:
                     {
                         hitTestEventArgs.Timestamp = evnt.Timestamp;
                         hitTestEventArgs.Handled = false;
@@ -1336,11 +1385,11 @@
         /// Processes a keyboard input event received from the message loop.
         /// </summary>
         /// <param name="evnt">The keyboard event to process.</param>
-        internal void ProcessInputKeyboard(KeyboardEvent evnt)
+        internal void ProcessInputKeyboard(SDLKeyboardEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             KeyState state = (KeyState)evnt.State;
-            Key keyCode = (Key)sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
+            Key keyCode = (Key)SDL.SDLGetKeyFromScancode(evnt.Keysym.Scancode);
             keyboardEventArgs.Timestamp = evnt.Timestamp;
             keyboardEventArgs.Handled = false;
             keyboardEventArgs.State = state;
@@ -1353,12 +1402,12 @@
         /// Processes a text input event received from the message loop.
         /// </summary>
         /// <param name="evnt">The text input event to process.</param>
-        internal void ProcessInputText(TextInputEvent evnt)
+        internal void ProcessInputText(SDLTextInputEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             keyboardCharEventArgs.Timestamp = evnt.Timestamp;
             keyboardCharEventArgs.Handled = false;
-            keyboardCharEventArgs.Text = evnt.Text;
+            keyboardCharEventArgs.Text = &evnt.Text_0;
             OnKeyboardCharInput(keyboardCharEventArgs);
         }
 
@@ -1366,7 +1415,7 @@
         /// Processes a mouse button event received from the message loop.
         /// </summary>
         /// <param name="evnt">The mouse button event to process.</param>
-        internal void ProcessInputMouse(MouseButtonEvent evnt)
+        internal void ProcessInputMouse(SDLMouseButtonEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             MouseButtonState state = (MouseButtonState)evnt.State;
@@ -1385,12 +1434,12 @@
         /// Processes a mouse motion event received from the message loop.
         /// </summary>
         /// <param name="evnt">The mouse motion event to process.</param>
-        internal void ProcessInputMouse(MouseMotionEvent evnt)
+        internal void ProcessInputMouse(SDLMouseMotionEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             if (lockCursor)
             {
-                sdl.WarpMouseInWindow(window, 0, 0);
+                SDL.SDLWarpMouseInWindow(window, 0, 0);
             }
 
             mouseMotionEventArgs.Timestamp = evnt.Timestamp;
@@ -1407,7 +1456,7 @@
         /// Processes a mouse wheel event received from the message loop.
         /// </summary>
         /// <param name="evnt">The mouse wheel event to process.</param>
-        internal void ProcessInputMouse(MouseWheelEvent evnt)
+        internal void ProcessInputMouse(SDLMouseWheelEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             mouseWheelEventArgs.Timestamp = evnt.Timestamp;
@@ -1418,7 +1467,7 @@
             OnMouseWheelInput(mouseWheelEventArgs);
         }
 
-        internal void ProcessInputTouchMotion(TouchFingerEvent evnt)
+        internal void ProcessInputTouchMotion(SDLTouchFingerEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             touchMotionEventArgs.Timestamp = evnt.Timestamp;
@@ -1432,7 +1481,7 @@
             OnTouchMotionInput(touchMotionEventArgs);
         }
 
-        internal void ProcessInputTouchUp(TouchFingerEvent evnt)
+        internal void ProcessInputTouchUp(SDLTouchFingerEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             touchEventArgs.Timestamp = evnt.Timestamp;
@@ -1445,7 +1494,7 @@
             OnTouchInput(touchEventArgs);
         }
 
-        internal void ProcessInputTouchDown(TouchFingerEvent evnt)
+        internal void ProcessInputTouchDown(SDLTouchFingerEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             touchEventArgs.Timestamp = evnt.Timestamp;
@@ -1458,17 +1507,17 @@
             OnTouchInput(touchEventArgs);
         }
 
-        internal void ProcessDropBegin(DropEvent evnt)
+        internal void ProcessDropBegin(SDLDropEvent evnt)
         {
             dropEventArgs.Timestamp = evnt.Timestamp;
             dropEventArgs.Handled = false;
             OnDropBegin(dropEventArgs);
         }
 
-        internal void ProcessDropFile(DropEvent evnt)
+        internal void ProcessDropFile(SDLDropEvent evnt)
         {
             int x, y;
-            sdl.GetMouseState(&x, &y);
+            SDL.SDLGetMouseState(&x, &y);
             dropFileEventArgs.Timestamp = evnt.Timestamp;
             dropFileEventArgs.File = evnt.File;
             dropFileEventArgs.X = x;
@@ -1477,10 +1526,10 @@
             OnDropFile(dropFileEventArgs);
         }
 
-        internal void ProcessDropText(DropEvent evnt)
+        internal void ProcessDropText(SDLDropEvent evnt)
         {
             int x, y;
-            sdl.GetMouseState(&x, &y);
+            SDL.SDLGetMouseState(&x, &y);
             dropTextEventArgs.Timestamp = evnt.Timestamp;
             dropTextEventArgs.Text = evnt.File;
             dropTextEventArgs.X = x;
@@ -1489,7 +1538,7 @@
             OnDropText(dropTextEventArgs);
         }
 
-        internal void ProcessDropComplete(DropEvent evnt)
+        internal void ProcessDropComplete(SDLDropEvent evnt)
         {
             dropEventArgs.Timestamp = evnt.Timestamp;
             dropEventArgs.Handled = false;
@@ -1532,14 +1581,14 @@
                 DropTextHandlers.Clear();
                 DropCompleteHandlers.Clear();
 
-                for (SystemCursor i = 0; i < SystemCursor.NumSystemCursors; i++)
+                for (SDLSystemCursor i = 0; i < SDLSystemCursor.NumSystemCursors; i++)
                 {
-                    sdl.FreeCursor(cursors[(int)i]);
+                    SDL.SDLFreeCursor(cursors[(int)i]);
                 }
                 Free(cursors);
                 cursors = null;
 
-                sdl.DestroyWindow(window);
+                SDL.SDLDestroyWindow(window);
                 SdlCheckError();
                 window = null;
 

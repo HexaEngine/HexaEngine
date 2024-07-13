@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D12;
     using Silk.NET.DXGI;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;
@@ -451,7 +451,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             throw new NotImplementedException();
         }
@@ -461,7 +461,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

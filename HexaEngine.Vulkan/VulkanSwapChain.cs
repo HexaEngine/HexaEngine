@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using Silk.NET.SDL;
     using Silk.NET.Vulkan;
     using System;
     using Semaphore = Silk.NET.Vulkan.Semaphore;
@@ -12,7 +11,7 @@
     public unsafe class VulkanSwapChain : ISwapChain
     {
         public VulkanGraphicsDevice device;
-        private Window* window;
+        private SDLWindow* window;
         private readonly SurfaceKHR surface;
         public SwapchainKHR SwapChain;
         public UnsafeList<Image> SwapChainImages = new();
@@ -31,7 +30,7 @@
         private bool disposedValue;
         private const uint MAX_FRAMES_IN_FLIGHT = 2;
 
-        public VulkanSwapChain(VulkanGraphicsDevice device, Window* window, SurfaceKHR surface)
+        public VulkanSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SurfaceKHR surface)
         {
             this.device = device;
             this.window = window;

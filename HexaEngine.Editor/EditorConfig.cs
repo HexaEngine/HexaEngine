@@ -54,9 +54,9 @@
 
         public int Height { get; set; } = 720;
 
-        public int X { get; set; } = SdlWindow.WindowPosCentered;
+        public int X { get; set; } = (int)SdlWindow.WindowPosCentered;
 
-        public int Y { get; set; } = SdlWindow.WindowPosCentered;
+        public int Y { get; set; } = (int)SdlWindow.WindowPosCentered;
 
         public float MouseSensitivity { get; set; } = 1;
 

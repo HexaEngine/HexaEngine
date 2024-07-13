@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.SDL2;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Unsafes;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Maths;
-    using Silk.NET.SDL;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -15,8 +13,6 @@
 
     public static class ImGuiSDL2Platform
     {
-        private static readonly Sdl sdl = Sdl.GetApi();
-
         public enum GamepadMode
         {
             AutoFirst,
@@ -29,8 +25,8 @@
         /// </summary>
         private unsafe struct BackendData
         {
-            public Window* Window;
-            public Renderer* Renderer;
+            public SDLWindow* Window;
+            public SDLRenderer* Renderer;
             public ulong Time;
             public byte* ClipboardTextData;
             public bool UseVulkan;
@@ -38,13 +34,13 @@
 
             public uint MouseWindowID;
             public int MouseButtonsDown;
-            public Cursor** MouseCursors;
-            public Cursor* LastMouseCursor;
+            public SDLCursor** MouseCursors;
+            public SDLCursor* LastMouseCursor;
             public int MouseLastLeaveFrame;
             public bool MouseCanUseGlobalState;
             public bool MouseCanReportHoveredViewport;  // This is hard to use/unreliable on SDL so we'll set ImGuiBackendFlags_HasMouseHoveredViewport dynamically based on state.
 
-            public UnsafeList<Pointer<GameController>> Gamepads;
+            public UnsafeList<Pointer<SDLGameController>> Gamepads;
             public GamepadMode GamepadMode;
             public bool WantUpdateGamepadsList;
         }
@@ -66,16 +62,16 @@
             BackendData* bd = GetBackendData();
             if (bd->ClipboardTextData != null)
             {
-                sdl.Free(bd->ClipboardTextData);
+                SDL.SDLFree(bd->ClipboardTextData);
             }
 
-            bd->ClipboardTextData = sdl.GetClipboardText();
+            bd->ClipboardTextData = SDL.SDLGetClipboardText();
             return bd->ClipboardTextData;
         }
 
         private static unsafe void SetClipboardText(void* data, byte* text)
         {
-            sdl.SetClipboardText(text);
+            SDL.SDLSetClipboardText(text);
         }
 
         /// <summary>
@@ -87,134 +83,134 @@
         {
             if (data->WantVisible == 1)
             {
-                Rectangle<int> r = new(new((int)data->InputPos.X, (int)data->InputPos.Y), new(1, (int)data->InputLineHeight));
-                sdl.SetTextInputRect(&r);
+                SDLRect r = new((int)data->InputPos.X, (int)data->InputPos.Y, 1, (int)data->InputLineHeight);
+                SDL.SDLSetTextInputRect(&r);
             }
         }
 
         private static ImGuiKey KeycodeToImGuiKey(int keycode)
         {
-            return (KeyCode)keycode switch
+            return (SDLKeyCode)keycode switch
             {
-                KeyCode.KTab => ImGuiKey.Tab,
-                KeyCode.KLeft => ImGuiKey.LeftArrow,
-                KeyCode.KRight => ImGuiKey.RightArrow,
-                KeyCode.KUp => ImGuiKey.UpArrow,
-                KeyCode.KDown => ImGuiKey.DownArrow,
-                KeyCode.KPageup => ImGuiKey.PageUp,
-                KeyCode.KPagedown => ImGuiKey.PageDown,
-                KeyCode.KHome => ImGuiKey.Home,
-                KeyCode.KEnd => ImGuiKey.End,
-                KeyCode.KInsert => ImGuiKey.Insert,
-                KeyCode.KDelete => ImGuiKey.Delete,
-                KeyCode.KBackspace => ImGuiKey.Backspace,
-                KeyCode.KSpace => ImGuiKey.Space,
-                KeyCode.KReturn => ImGuiKey.Enter,
-                KeyCode.KEscape => ImGuiKey.Escape,
-                KeyCode.KQuote => ImGuiKey.Apostrophe,
-                KeyCode.KComma => ImGuiKey.Comma,
-                KeyCode.KMinus => ImGuiKey.Minus,
-                KeyCode.KPeriod => ImGuiKey.Period,
-                KeyCode.KSlash => ImGuiKey.Slash,
-                KeyCode.KSemicolon => ImGuiKey.Semicolon,
-                KeyCode.KEquals => ImGuiKey.Equal,
-                KeyCode.KLeftbracket => ImGuiKey.LeftBracket,
-                KeyCode.KBackslash => ImGuiKey.Backslash,
-                KeyCode.KRightbracket => ImGuiKey.RightBracket,
-                KeyCode.KBackquote => ImGuiKey.GraveAccent,
-                KeyCode.KCapslock => ImGuiKey.CapsLock,
-                KeyCode.KScrolllock => ImGuiKey.ScrollLock,
-                KeyCode.KNumlockclear => ImGuiKey.NumLock,
-                KeyCode.KPrintscreen => ImGuiKey.PrintScreen,
-                KeyCode.KPause => ImGuiKey.Pause,
-                KeyCode.KKP0 => ImGuiKey.Keypad0,
-                KeyCode.KKP1 => ImGuiKey.Keypad1,
-                KeyCode.KKP2 => ImGuiKey.Keypad2,
-                KeyCode.KKP3 => ImGuiKey.Keypad3,
-                KeyCode.KKP4 => ImGuiKey.Keypad4,
-                KeyCode.KKP5 => ImGuiKey.Keypad5,
-                KeyCode.KKP6 => ImGuiKey.Keypad6,
-                KeyCode.KKP7 => ImGuiKey.Keypad7,
-                KeyCode.KKP8 => ImGuiKey.Keypad8,
-                KeyCode.KKP9 => ImGuiKey.Keypad9,
-                KeyCode.KKPPeriod => ImGuiKey.KeypadDecimal,
-                KeyCode.KKPDivide => ImGuiKey.KeypadDivide,
-                KeyCode.KKPMultiply => ImGuiKey.KeypadMultiply,
-                KeyCode.KKPMinus => ImGuiKey.KeypadSubtract,
-                KeyCode.KKPPlus => ImGuiKey.KeypadAdd,
-                KeyCode.KKPEnter => ImGuiKey.KeypadEnter,
-                KeyCode.KKPEquals => ImGuiKey.KeypadEqual,
-                KeyCode.KLctrl => ImGuiKey.LeftCtrl,
-                KeyCode.KLshift => ImGuiKey.LeftShift,
-                KeyCode.KLalt => ImGuiKey.LeftAlt,
-                KeyCode.KLgui => ImGuiKey.LeftSuper,
-                KeyCode.KRctrl => ImGuiKey.RightCtrl,
-                KeyCode.KRshift => ImGuiKey.RightShift,
-                KeyCode.KRalt => ImGuiKey.RightAlt,
-                KeyCode.KRgui => ImGuiKey.RightSuper,
-                KeyCode.KApplication => ImGuiKey.Menu,
-                KeyCode.K0 => ImGuiKey.Key0,
-                KeyCode.K1 => ImGuiKey.Key1,
-                KeyCode.K2 => ImGuiKey.Key2,
-                KeyCode.K3 => ImGuiKey.Key3,
-                KeyCode.K4 => ImGuiKey.Key4,
-                KeyCode.K5 => ImGuiKey.Key5,
-                KeyCode.K6 => ImGuiKey.Key6,
-                KeyCode.K7 => ImGuiKey.Key7,
-                KeyCode.K8 => ImGuiKey.Key8,
-                KeyCode.K9 => ImGuiKey.Key9,
-                KeyCode.KA => ImGuiKey.A,
-                KeyCode.KB => ImGuiKey.B,
-                KeyCode.KC => ImGuiKey.C,
-                KeyCode.KD => ImGuiKey.D,
-                KeyCode.KE => ImGuiKey.E,
-                KeyCode.KF => ImGuiKey.F,
-                KeyCode.KG => ImGuiKey.G,
-                KeyCode.KH => ImGuiKey.H,
-                KeyCode.KI => ImGuiKey.I,
-                KeyCode.KJ => ImGuiKey.J,
-                KeyCode.KK => ImGuiKey.K,
-                KeyCode.KL => ImGuiKey.L,
-                KeyCode.KM => ImGuiKey.M,
-                KeyCode.KN => ImGuiKey.N,
-                KeyCode.KO => ImGuiKey.O,
-                KeyCode.KP => ImGuiKey.P,
-                KeyCode.KQ => ImGuiKey.Q,
-                KeyCode.KR => ImGuiKey.R,
-                KeyCode.KS => ImGuiKey.S,
-                KeyCode.KT => ImGuiKey.T,
-                KeyCode.KU => ImGuiKey.U,
-                KeyCode.KV => ImGuiKey.V,
-                KeyCode.KW => ImGuiKey.W,
-                KeyCode.KX => ImGuiKey.X,
-                KeyCode.KY => ImGuiKey.Y,
-                KeyCode.KZ => ImGuiKey.Z,
-                KeyCode.KF1 => ImGuiKey.F1,
-                KeyCode.KF2 => ImGuiKey.F2,
-                KeyCode.KF3 => ImGuiKey.F3,
-                KeyCode.KF4 => ImGuiKey.F4,
-                KeyCode.KF5 => ImGuiKey.F5,
-                KeyCode.KF6 => ImGuiKey.F6,
-                KeyCode.KF7 => ImGuiKey.F7,
-                KeyCode.KF8 => ImGuiKey.F8,
-                KeyCode.KF9 => ImGuiKey.F9,
-                KeyCode.KF10 => ImGuiKey.F10,
-                KeyCode.KF11 => ImGuiKey.F11,
-                KeyCode.KF12 => ImGuiKey.F12,
-                KeyCode.KACBack => ImGuiKey.AppBack,
-                KeyCode.KACForward => ImGuiKey.AppForward,
+                SDLKeyCode.Tab => ImGuiKey.Tab,
+                SDLKeyCode.Left => ImGuiKey.LeftArrow,
+                SDLKeyCode.Right => ImGuiKey.RightArrow,
+                SDLKeyCode.Up => ImGuiKey.UpArrow,
+                SDLKeyCode.Down => ImGuiKey.DownArrow,
+                SDLKeyCode.Pageup => ImGuiKey.PageUp,
+                SDLKeyCode.Pagedown => ImGuiKey.PageDown,
+                SDLKeyCode.Home => ImGuiKey.Home,
+                SDLKeyCode.End => ImGuiKey.End,
+                SDLKeyCode.Insert => ImGuiKey.Insert,
+                SDLKeyCode.Delete => ImGuiKey.Delete,
+                SDLKeyCode.Backspace => ImGuiKey.Backspace,
+                SDLKeyCode.Space => ImGuiKey.Space,
+                SDLKeyCode.Return => ImGuiKey.Enter,
+                SDLKeyCode.Escape => ImGuiKey.Escape,
+                SDLKeyCode.Quote => ImGuiKey.Apostrophe,
+                SDLKeyCode.Comma => ImGuiKey.Comma,
+                SDLKeyCode.Minus => ImGuiKey.Minus,
+                SDLKeyCode.Period => ImGuiKey.Period,
+                SDLKeyCode.Slash => ImGuiKey.Slash,
+                SDLKeyCode.Semicolon => ImGuiKey.Semicolon,
+                SDLKeyCode.Equals => ImGuiKey.Equal,
+                SDLKeyCode.Leftbracket => ImGuiKey.LeftBracket,
+                SDLKeyCode.Backslash => ImGuiKey.Backslash,
+                SDLKeyCode.Rightbracket => ImGuiKey.RightBracket,
+                SDLKeyCode.Backquote => ImGuiKey.GraveAccent,
+                SDLKeyCode.Capslock => ImGuiKey.CapsLock,
+                SDLKeyCode.Scrolllock => ImGuiKey.ScrollLock,
+                SDLKeyCode.Numlockclear => ImGuiKey.NumLock,
+                SDLKeyCode.Printscreen => ImGuiKey.PrintScreen,
+                SDLKeyCode.Pause => ImGuiKey.Pause,
+                SDLKeyCode.Kp0 => ImGuiKey.Keypad0,
+                SDLKeyCode.Kp1 => ImGuiKey.Keypad1,
+                SDLKeyCode.Kp2 => ImGuiKey.Keypad2,
+                SDLKeyCode.Kp3 => ImGuiKey.Keypad3,
+                SDLKeyCode.Kp4 => ImGuiKey.Keypad4,
+                SDLKeyCode.Kp5 => ImGuiKey.Keypad5,
+                SDLKeyCode.Kp6 => ImGuiKey.Keypad6,
+                SDLKeyCode.Kp7 => ImGuiKey.Keypad7,
+                SDLKeyCode.Kp8 => ImGuiKey.Keypad8,
+                SDLKeyCode.Kp9 => ImGuiKey.Keypad9,
+                SDLKeyCode.KpPeriod => ImGuiKey.KeypadDecimal,
+                SDLKeyCode.KpDivide => ImGuiKey.KeypadDivide,
+                SDLKeyCode.KpMultiply => ImGuiKey.KeypadMultiply,
+                SDLKeyCode.KpMinus => ImGuiKey.KeypadSubtract,
+                SDLKeyCode.KpPlus => ImGuiKey.KeypadAdd,
+                SDLKeyCode.KpEnter => ImGuiKey.KeypadEnter,
+                SDLKeyCode.KpEquals => ImGuiKey.KeypadEqual,
+                SDLKeyCode.Lctrl => ImGuiKey.LeftCtrl,
+                SDLKeyCode.Lshift => ImGuiKey.LeftShift,
+                SDLKeyCode.Lalt => ImGuiKey.LeftAlt,
+                SDLKeyCode.Lgui => ImGuiKey.LeftSuper,
+                SDLKeyCode.Rctrl => ImGuiKey.RightCtrl,
+                SDLKeyCode.Rshift => ImGuiKey.RightShift,
+                SDLKeyCode.Ralt => ImGuiKey.RightAlt,
+                SDLKeyCode.Rgui => ImGuiKey.RightSuper,
+                SDLKeyCode.Application => ImGuiKey.Menu,
+                SDLKeyCode.Sdlk0 => ImGuiKey.Key0,
+                SDLKeyCode.Sdlk1 => ImGuiKey.Key1,
+                SDLKeyCode.Sdlk2 => ImGuiKey.Key2,
+                SDLKeyCode.Sdlk3 => ImGuiKey.Key3,
+                SDLKeyCode.Sdlk4 => ImGuiKey.Key4,
+                SDLKeyCode.Sdlk5 => ImGuiKey.Key5,
+                SDLKeyCode.Sdlk6 => ImGuiKey.Key6,
+                SDLKeyCode.Sdlk7 => ImGuiKey.Key7,
+                SDLKeyCode.Sdlk8 => ImGuiKey.Key8,
+                SDLKeyCode.Sdlk9 => ImGuiKey.Key9,
+                SDLKeyCode.A => ImGuiKey.A,
+                SDLKeyCode.B => ImGuiKey.B,
+                SDLKeyCode.C => ImGuiKey.C,
+                SDLKeyCode.D => ImGuiKey.D,
+                SDLKeyCode.E => ImGuiKey.E,
+                SDLKeyCode.F => ImGuiKey.F,
+                SDLKeyCode.G => ImGuiKey.G,
+                SDLKeyCode.H => ImGuiKey.H,
+                SDLKeyCode.I => ImGuiKey.I,
+                SDLKeyCode.J => ImGuiKey.J,
+                SDLKeyCode.K => ImGuiKey.K,
+                SDLKeyCode.L => ImGuiKey.L,
+                SDLKeyCode.M => ImGuiKey.M,
+                SDLKeyCode.N => ImGuiKey.N,
+                SDLKeyCode.O => ImGuiKey.O,
+                SDLKeyCode.P => ImGuiKey.P,
+                SDLKeyCode.Q => ImGuiKey.Q,
+                SDLKeyCode.R => ImGuiKey.R,
+                SDLKeyCode.S => ImGuiKey.S,
+                SDLKeyCode.T => ImGuiKey.T,
+                SDLKeyCode.U => ImGuiKey.U,
+                SDLKeyCode.V => ImGuiKey.V,
+                SDLKeyCode.W => ImGuiKey.W,
+                SDLKeyCode.X => ImGuiKey.X,
+                SDLKeyCode.Y => ImGuiKey.Y,
+                SDLKeyCode.Z => ImGuiKey.Z,
+                SDLKeyCode.F1 => ImGuiKey.F1,
+                SDLKeyCode.F2 => ImGuiKey.F2,
+                SDLKeyCode.F3 => ImGuiKey.F3,
+                SDLKeyCode.F4 => ImGuiKey.F4,
+                SDLKeyCode.F5 => ImGuiKey.F5,
+                SDLKeyCode.F6 => ImGuiKey.F6,
+                SDLKeyCode.F7 => ImGuiKey.F7,
+                SDLKeyCode.F8 => ImGuiKey.F8,
+                SDLKeyCode.F9 => ImGuiKey.F9,
+                SDLKeyCode.F10 => ImGuiKey.F10,
+                SDLKeyCode.F11 => ImGuiKey.F11,
+                SDLKeyCode.F12 => ImGuiKey.F12,
+                SDLKeyCode.AcBack => ImGuiKey.AppBack,
+                SDLKeyCode.AcForward => ImGuiKey.AppForward,
                 _ => ImGuiKey.None,
             };
         }
 
-        private static void UpdateKeyModifiers(Keymod keymods)
+        private static void UpdateKeyModifiers(SDLKeymod keymods)
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            io.AddKeyEvent(ImGuiKey.ModCtrl, (keymods & Keymod.Ctrl) != 0);
-            io.AddKeyEvent(ImGuiKey.ModShift, (keymods & Keymod.Shift) != 0);
-            io.AddKeyEvent(ImGuiKey.ModAlt, (keymods & Keymod.Alt) != 0);
-            io.AddKeyEvent(ImGuiKey.ModSuper, (keymods & Keymod.Gui) != 0);
+            io.AddKeyEvent(ImGuiKey.ModCtrl, (keymods & SDLKeymod.Ctrl) != 0);
+            io.AddKeyEvent(ImGuiKey.ModShift, (keymods & SDLKeymod.Shift) != 0);
+            io.AddKeyEvent(ImGuiKey.ModAlt, (keymods & SDLKeymod.Alt) != 0);
+            io.AddKeyEvent(ImGuiKey.ModSuper, (keymods & SDLKeymod.Gui) != 0);
         }
 
         /// <summary>
@@ -224,26 +220,26 @@
         /// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         /// If you have multiple SDL events and some of them are not meant to be used by dear imgui, you may need to filter events based on their windowID field.
         /// </summary>
-        private static unsafe bool ProcessEvent(Event env)
+        private static unsafe bool ProcessEvent(SDLEvent env)
         {
             var io = ImGui.GetIO();
             var bd = GetBackendData();
 
-            switch ((EventType)env.Type)
+            switch ((SDLEventType)env.Type)
             {
-                case EventType.Mousemotion:
+                case SDLEventType.Mousemotion:
                     {
                         Vector2 mouse_pos = new(env.Motion.X, env.Motion.Y);
                         if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0)
                         {
                             int window_x, window_y;
-                            var window = sdl.GetWindowFromID(env.Motion.WindowID);
+                            var window = SDL.SDLGetWindowFromID(env.Motion.WindowID);
                             if (window == null)
                             {
                                 SdlCheckError();
                             }
 
-                            sdl.GetWindowPosition(window, &window_x, &window_y);
+                            SDL.SDLGetWindowPosition(window, &window_x, &window_y);
                             mouse_pos.X += window_x;
                             mouse_pos.Y += window_y;
                         }
@@ -252,7 +248,7 @@
                         io.AddMousePosEvent(mouse_pos.X, mouse_pos.Y);
                         return true;
                     }
-                case EventType.Mousewheel:
+                case SDLEventType.Mousewheel:
                     {
                         //IMGUI_DEBUG_LOG("wheel %.2f %.2f, precise %.2f %.2f\n", (float)event->wheel.x, (float)event->wheel.y, event->wheel.preciseX, event->wheel.preciseY);
 
@@ -265,41 +261,41 @@
                         io.AddMouseWheelEvent(wheel_x, wheel_y);
                         return true;
                     }
-                case EventType.Mousebuttondown:
-                case EventType.Mousebuttonup:
+                case SDLEventType.Mousebuttondown:
+                case SDLEventType.Mousebuttonup:
                     {
                         int mouse_button = -1;
-                        if (env.Button.Button == Sdl.ButtonLeft) { mouse_button = 0; }
-                        if (env.Button.Button == Sdl.ButtonRight) { mouse_button = 1; }
-                        if (env.Button.Button == Sdl.ButtonMiddle) { mouse_button = 2; }
-                        if (env.Button.Button == Sdl.ButtonX1) { mouse_button = 3; }
-                        if (env.Button.Button == Sdl.ButtonX2) { mouse_button = 4; }
+                        if (env.Button.Button == SDL.SDL_BUTTON_LEFT) { mouse_button = 0; }
+                        if (env.Button.Button == SDL.SDL_BUTTON_RIGHT) { mouse_button = 1; }
+                        if (env.Button.Button == SDL.SDL_BUTTON_MIDDLE) { mouse_button = 2; }
+                        if (env.Button.Button == SDL.SDL_BUTTON_X1) { mouse_button = 3; }
+                        if (env.Button.Button == SDL.SDL_BUTTON_X2) { mouse_button = 4; }
                         if (mouse_button == -1)
                         {
                             break;
                         }
 
                         io.AddMouseSourceEvent(env.Button.Which == unchecked((uint)-1) ? ImGuiMouseSource.TouchScreen : ImGuiMouseSource.Source);
-                        io.AddMouseButtonEvent(mouse_button, env.Type == (int)EventType.Mousebuttondown);
-                        bd->MouseButtonsDown = (env.Type == (int)EventType.Mousebuttondown) ? (bd->MouseButtonsDown | (1 << mouse_button)) : (bd->MouseButtonsDown & ~(1 << mouse_button));
+                        io.AddMouseButtonEvent(mouse_button, env.Type == (int)SDLEventType.Mousebuttondown);
+                        bd->MouseButtonsDown = (env.Type == (int)SDLEventType.Mousebuttondown) ? (bd->MouseButtonsDown | (1 << mouse_button)) : (bd->MouseButtonsDown & ~(1 << mouse_button));
                         return true;
                     }
-                case EventType.Textinput:
+                case SDLEventType.Textinput:
                     {
-                        io.AddInputCharactersUTF8(env.Text.Text);
+                        io.AddInputCharactersUTF8(&env.Text.Text_0);
                         return true;
                     }
-                case EventType.Keydown:
-                case EventType.Keyup:
+                case SDLEventType.Keydown:
+                case SDLEventType.Keyup:
                     {
-                        UpdateKeyModifiers((Keymod)env.Key.Keysym.Mod);
+                        UpdateKeyModifiers((SDLKeymod)env.Key.Keysym.Mod);
                         ImGuiKey key = KeycodeToImGuiKey(env.Key.Keysym.Sym);
-                        io.AddKeyEvent(key, env.Type == (int)EventType.Keydown);
+                        io.AddKeyEvent(key, env.Type == (int)SDLEventType.Keydown);
                         io.SetKeyEventNativeData(key, env.Key.Keysym.Sym, (int)env.Key.Keysym.Scancode, (int)env.Key.Keysym.Scancode); // To support legacy indexing (<1.87 user code). Legacy backend uses SDLK_*** as indices to IsKeyXXX() functions.
                         return true;
                     }
 
-                case EventType.Displayevent:
+                case SDLEventType.Displayevent:
                     {
                         // 2.0.26 has SDL_DISPLAYEVENT_CONNECTED/SDL_DISPLAYEVENT_DISCONNECTED/SDL_DISPLAYEVENT_ORIENTATION,
                         // so change of DPI/Scaling are not reflected in this event. (SDL3 has it)
@@ -307,36 +303,36 @@
                         return true;
                     }
 
-                case EventType.Windowevent:
+                case SDLEventType.Windowevent:
                     {
                         // - When capturing mouse, SDL will send a bunch of conflicting LEAVE/ENTER event on every mouse move, but the final ENTER tends to be right.
                         // - However we won't get a correct LEAVE event for a captured window.
                         // - In some cases, when detaching a window from main viewport SDL may send SDL_WINDOWEVENT_ENTER one frame too late,
                         //   causing SDL_WINDOWEVENT_LEAVE on previous frame to interrupt drag operation by clear mouse position. This is why
                         //   we delay process the SDL_WINDOWEVENT_LEAVE events by one frame. See issue #5012 for details.
-                        WindowEventID window_event = (WindowEventID)env.Window.Type;
-                        if (window_event == WindowEventID.Enter)
+                        SDLWindowEventID window_event = (SDLWindowEventID)env.Window.Type;
+                        if (window_event == SDLWindowEventID.Enter)
                         {
                             bd->MouseWindowID = env.Window.WindowID;
                             bd->MouseLastLeaveFrame = 0;
                         }
-                        if (window_event == WindowEventID.Leave)
+                        if (window_event == SDLWindowEventID.Leave)
                         {
                             bd->MouseLastLeaveFrame = ImGui.GetFrameCount() + 1;
                         }
 
-                        if (window_event == WindowEventID.FocusGained)
+                        if (window_event == SDLWindowEventID.FocusGained)
                         {
                             io.AddFocusEvent(true);
                         }
-                        else if (window_event == WindowEventID.FocusLost)
+                        else if (window_event == SDLWindowEventID.FocusLost)
                         {
                             io.AddFocusEvent(false);
                         }
 
-                        if (window_event == WindowEventID.Close || window_event == WindowEventID.Moved || window_event == WindowEventID.Resized)
+                        if (window_event == SDLWindowEventID.Close || window_event == SDLWindowEventID.Moved || window_event == SDLWindowEventID.Resized)
                         {
-                            var window = sdl.GetWindowFromID(env.Window.WindowID);
+                            var window = SDL.SDLGetWindowFromID(env.Window.WindowID);
                             if (window == null)
                             {
                                 SdlCheckError();
@@ -346,17 +342,17 @@
 
                             if (viewport != null)
                             {
-                                if (window_event == WindowEventID.Close)
+                                if (window_event == SDLWindowEventID.Close)
                                 {
                                     viewport->PlatformRequestClose = 1;
                                 }
 
-                                if (window_event == WindowEventID.Moved)
+                                if (window_event == SDLWindowEventID.Moved)
                                 {
                                     viewport->PlatformRequestMove = 1;
                                 }
 
-                                if (window_event == WindowEventID.SizeChanged)
+                                if (window_event == SDLWindowEventID.SizeChanged)
                                 {
                                     viewport->PlatformRequestResize = 1;
                                 }
@@ -368,8 +364,8 @@
                         return true;
                     }
 
-                case EventType.Controllerdeviceadded:
-                case EventType.Controllerdeviceremoved:
+                case SDLEventType.Controllerdeviceadded:
+                case SDLEventType.Controllerdeviceremoved:
                     {
                         bd->WantUpdateGamepadsList = true;
                         return true;
@@ -379,7 +375,7 @@
             return false;
         }
 
-        public static unsafe bool Init(Window* window, Renderer* renderer, void* sdlGLContext)
+        public static unsafe bool Init(SDLWindow* window, SDLRenderer* renderer, void* sdlGLContext)
         {
             var io = ImGui.GetIO();
             Trace.Assert(io.BackendPlatformUserData == null, "Already initialized a platform backend!");
@@ -387,7 +383,7 @@
             Application.RegisterHook(ProcessEvent);
 
             bool mouse_can_use_global_state = false;
-            string sdl_backend = sdl.GetCurrentVideoDriverS();
+            string sdl_backend = SDL.SDLGetCurrentVideoDriverS();
             string[] global_mouse_whitelist = { "windows", "cocoa", "x11", "DIVE", "VMAN" };
             for (int n = 0; n < global_mouse_whitelist.Length; n++)
             {
@@ -426,33 +422,33 @@
             io.ClipboardUserData = null;
             io.SetPlatformImeDataFn = (void*)Marshal.GetFunctionPointerForDelegate<SetPlatformImeDataFn>(SetPlatformImeData);
 
-            bd->MouseCursors = (Cursor**)AllocArray((uint)ImGuiMouseCursor.Count);
-            bd->MouseCursors[(int)ImGuiMouseCursor.Arrow] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorArrow));
-            bd->MouseCursors[(int)ImGuiMouseCursor.TextInput] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorIbeam));
-            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeAll] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizeall));
-            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNs] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizens));
-            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeEw] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizewe));
-            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNesw] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizenesw));
-            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNwse] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorSizenwse));
-            bd->MouseCursors[(int)ImGuiMouseCursor.Hand] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorHand));
-            bd->MouseCursors[(int)ImGuiMouseCursor.NotAllowed] = SdlCheckError(sdl.CreateSystemCursor(SystemCursor.SystemCursorNo));
+            bd->MouseCursors = (SDLCursor**)AllocArray((uint)ImGuiMouseCursor.Count);
+            bd->MouseCursors[(int)ImGuiMouseCursor.Arrow] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Arrow));
+            bd->MouseCursors[(int)ImGuiMouseCursor.TextInput] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Ibeam));
+            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeAll] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizeall));
+            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNs] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizens));
+            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeEw] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizewe));
+            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNesw] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizenesw));
+            bd->MouseCursors[(int)ImGuiMouseCursor.ResizeNwse] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Sizenwse));
+            bd->MouseCursors[(int)ImGuiMouseCursor.Hand] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Hand));
+            bd->MouseCursors[(int)ImGuiMouseCursor.NotAllowed] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.No));
 
             // Set platform dependent data in viewport
             // Our mouse update function expect PlatformHandle to be filled for the main viewport
             ImGuiViewport* main_viewport = ImGui.GetMainViewport();
             main_viewport->PlatformHandle = window;
             main_viewport->PlatformHandleRaw = null;
-            SysWMInfo info;
-            sdl.GetVersion(&info.Version);
-            if (sdl.GetWindowWMInfo(window, &info))
+            SDLSysWMInfo info;
+            SDL.SDLGetVersion(&info.Version);
+            if (SDL.SDLGetWindowWMInfo(window, &info) == SDLBool.True)
             {
                 if (sdl_backend == "windows")
                 {
-                    main_viewport->PlatformHandleRaw = (void*)info.Info.Win.Hwnd;
+                    main_viewport->PlatformHandleRaw = (void*)info.Info.Win.Window;
                 }
                 else if (sdl_backend == "cocoa")
                 {
-                    main_viewport->PlatformHandleRaw = info.Info.Cocoa.Window;
+                    main_viewport->PlatformHandleRaw = (void*)info.Info.Cocoa.Window;
                 }
             }
             else
@@ -464,15 +460,15 @@
             // (This is unfortunately a global SDL setting, so enabling it might have a side-effect on your application.
             // It is unlikely to make a difference, but if your app absolutely needs to ignore the initial on-focus click:
             // you can ignore SDL_MOUSEBUTTONDOWN events coming right after a SDL_WINDOWEVENT_FOCUS_GAINED)
-            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            SDL.SDLSetHint(SDL.SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 
             // From 2.0.18: Enable native IME.
             // IMPORTANT: This is used at the time of SDL_CreateWindow() so this will only affects secondary windows, if any.
             // For the main window to be affected, your application needs to call this manually before calling SDL_CreateWindow().
-            sdl.SetHint(Sdl.HintImeShowUI, "1");
+            SDL.SDLSetHint(SDL.SDL_HINT_IME_SHOW_UI, "1");
 
             // From 2.0.22: Disable auto-capture, this is preventing drag and drop across multiple windows (see #5710)
-            sdl.SetHint(Sdl.HintMouseAutoCapture, "0");
+            SDL.SDLSetHint(SDL.SDL_HINT_MOUSE_AUTO_CAPTURE, "0");
 
             // We need SDL_CaptureMouse(), SDL_GetGlobalMouseState() from SDL 2.0.4+ to support multiple viewports.
             // We left the call to ImGui_ImplSDL2_InitPlatformInterface() outside of #ifdef to avoid unused-function warnings.
@@ -484,12 +480,12 @@
             return true;
         }
 
-        public static unsafe bool InitForOpenGL(Window* window, void* sdl_gl_context)
+        public static unsafe bool InitForOpenGL(SDLWindow* window, void* sdl_gl_context)
         {
             return Init(window, null, sdl_gl_context);
         }
 
-        public static unsafe bool InitForVulkan(Window* window)
+        public static unsafe bool InitForVulkan(SDLWindow* window)
         {
             if (!Init(window, null, null))
             {
@@ -501,17 +497,17 @@
             return true;
         }
 
-        public static unsafe bool InitForD3D(Window* window)
+        public static unsafe bool InitForD3D(SDLWindow* window)
         {
             return Init(window, null, null);
         }
 
-        public static unsafe bool InitForMetal(Window* window)
+        public static unsafe bool InitForMetal(SDLWindow* window)
         {
             return Init(window, null, null);
         }
 
-        public static unsafe bool InitForSDLRenderer(Window* window, Renderer* renderer)
+        public static unsafe bool InitForSDLRenderer(SDLWindow* window, SDLRenderer* renderer)
         {
             return Init(window, renderer, null);
         }
@@ -526,12 +522,12 @@
 
             if (bd->ClipboardTextData != null)
             {
-                sdl.Free(bd->ClipboardTextData);
+                SDL.SDLFree(bd->ClipboardTextData);
             }
 
             for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor.Count; cursor_n++)
             {
-                sdl.FreeCursor(bd->MouseCursors[(int)cursor_n]);
+                SDL.SDLFreeCursor(bd->MouseCursors[(int)cursor_n]);
             }
 
             Free(bd->MouseCursors);
@@ -548,8 +544,8 @@
             var bd = GetBackendData();
             var io = ImGui.GetIO();
 
-            sdl.CaptureMouse(bd->MouseButtonsDown != 0 ? SdlBool.True : SdlBool.False).SdlThrowIfNeg();
-            Window* focused_window = sdl.GetKeyboardFocus();
+            SDL.SDLCaptureMouse(bd->MouseButtonsDown != 0 ? SDLBool.True : SDLBool.False).SdlThrowIfNeg();
+            SDLWindow* focused_window = SDL.SDLGetKeyboardFocus();
             bool isAppFocused = focused_window != null && (bd->Window == focused_window || !ImGui.FindViewportByPlatformHandle(focused_window).IsNull);
 
             if (isAppFocused)
@@ -559,11 +555,11 @@
                     // (Optional) Set OS mouse position from Dear ImGui if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
                     if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0)
                     {
-                        sdl.WarpMouseGlobal((int)io.MousePos.X, (int)io.MousePos.Y).SdlThrowIfNeg();
+                        SDL.SDLWarpMouseGlobal((int)io.MousePos.X, (int)io.MousePos.Y).SdlThrowIfNeg();
                     }
                     else
                     {
-                        sdl.WarpMouseInWindow(focused_window, (int)io.MousePos.X, (int)io.MousePos.Y);
+                        SDL.SDLWarpMouseInWindow(focused_window, (int)io.MousePos.X, (int)io.MousePos.Y);
                     }
                 }
 
@@ -576,7 +572,7 @@
                     if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) == 0)
                     {
                         int x, y;
-                        sdl.GetWindowPosition(focused_window, &x, &y);
+                        SDL.SDLGetWindowPosition(focused_window, &x, &y);
                         global.X -= x;
                         global.Y -= y;
                     }
@@ -594,7 +590,7 @@
             if ((io.BackendFlags & ImGuiBackendFlags.HasMouseHoveredViewport) != 0)
             {
                 int mouse_viewport_id = 0;
-                Window* sdl_mouse_window = sdl.GetWindowFromID(bd->MouseWindowID);
+                SDLWindow* sdl_mouse_window = SDL.SDLGetWindowFromID(bd->MouseWindowID);
                 if (sdl_mouse_window != null)
                 {
                     ImGuiViewport* mouse_viewport = ImGui.FindViewportByPlatformHandle(sdl_mouse_window);
@@ -622,18 +618,18 @@
             if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor.None)
             {
                 // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-                sdl.ShowCursor((int)SdlBool.False).SdlThrowIfNeg();
+                SDL.SDLShowCursor((int)SDLBool.False).SdlThrowIfNeg();
             }
             else
             {
                 // Show OS mouse cursor
-                Cursor* expected_cursor = bd->MouseCursors[(int)imgui_cursor] != null ? bd->MouseCursors[(int)imgui_cursor] : bd->MouseCursors[(int)ImGuiMouseCursor.Arrow];
+                SDLCursor* expected_cursor = bd->MouseCursors[(int)imgui_cursor] != null ? bd->MouseCursors[(int)imgui_cursor] : bd->MouseCursors[(int)ImGuiMouseCursor.Arrow];
                 if (bd->LastMouseCursor != expected_cursor)
                 {
-                    sdl.SetCursor(expected_cursor); // SDL function doesn't have an early out (see #6113)
+                    SDL.SDLSetCursor(expected_cursor); // SDL function doesn't have an early out (see #6113)
                     bd->LastMouseCursor = expected_cursor;
                 }
-                sdl.ShowCursor((int)SdlBool.True).SdlThrowIfNeg();
+                SDL.SDLShowCursor((int)SDLBool.True).SdlThrowIfNeg();
             }
         }
 
@@ -644,15 +640,15 @@
             {
                 for (int i = 0; i < bd->Gamepads.Size; i++)
                 {
-                    GameController* gamepad = bd->Gamepads[i];
-                    sdl.GameControllerClose(gamepad);
+                    SDLGameController* gamepad = bd->Gamepads[i];
+                    SDL.SDLGameControllerClose(gamepad);
                 }
             }
 
             bd->Gamepads.Resize(0);
         }
 
-        public static unsafe void SetGamepadMode(GamepadMode mode, GameController** manual_gamepads_array, int manual_gamepads_count)
+        public static unsafe void SetGamepadMode(GamepadMode mode, SDLGameController** manual_gamepads_array, int manual_gamepads_count)
         {
             BackendData* bd = GetBackendData();
             CloseGamepads();
@@ -672,13 +668,13 @@
             bd->GamepadMode = mode;
         }
 
-        private static unsafe void UpdateGamepadButton(BackendData* bd, ImGuiIO* io, ImGuiKey key, GameControllerButton button_no)
+        private static unsafe void UpdateGamepadButton(BackendData* bd, ImGuiIO* io, ImGuiKey key, SDLGameControllerButton button_no)
         {
             bool merged_value = false;
             for (int i = 0; i < bd->Gamepads.Size; i++)
             {
-                GameController* gamepad = bd->Gamepads[i];
-                merged_value |= sdl.GameControllerGetButton(gamepad, button_no) != 0;
+                SDLGameController* gamepad = bd->Gamepads[i];
+                merged_value |= SDL.SDLGameControllerGetButton(gamepad, button_no) != 0;
             }
 
             io->AddKeyEvent(key, merged_value);
@@ -690,13 +686,13 @@
             return v < 0.0f ? 0.0f : v > 1.0f ? 1.0f : v;
         }
 
-        private static unsafe void UpdateGamepadAnalog(BackendData* bd, ImGuiIO* io, ImGuiKey key, GameControllerAxis axis_no, float v0, float v1)
+        private static unsafe void UpdateGamepadAnalog(BackendData* bd, ImGuiIO* io, ImGuiKey key, SDLGameControllerAxis axis_no, float v0, float v1)
         {
             float merged_value = 0.0f;
             for (int i = 0; i < bd->Gamepads.Size; i++)
             {
-                GameController* gamepad = bd->Gamepads[i];
-                float vn = Saturate((float)(sdl.GameControllerGetAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
+                SDLGameController* gamepad = bd->Gamepads[i];
+                float vn = Saturate((float)(SDL.SDLGameControllerGetAxis(gamepad, axis_no) - v0) / (float)(v1 - v0));
                 if (merged_value < vn)
                 {
                     merged_value = vn;
@@ -714,12 +710,12 @@
             if (bd->WantUpdateGamepadsList && bd->GamepadMode != GamepadMode.Manual)
             {
                 CloseGamepads();
-                int joystick_count = sdl.NumJoysticks();
+                int joystick_count = SDL.SDLNumJoysticks();
                 for (int n = 0; n < joystick_count; n++)
                 {
-                    if (sdl.IsGameController(n) == SdlBool.True)
+                    if (SDL.SDLIsGameController(n) == SDLBool.True)
                     {
-                        GameController* gamepad = sdl.GameControllerOpen(n);
+                        SDLGameController* gamepad = SDL.SDLGameControllerOpen(n);
                         if (gamepad != null)
                         {
                             bd->Gamepads.PushBack(gamepad);
@@ -750,30 +746,30 @@
 
             // Update gamepad inputs
             const int thumb_dead_zone = 8000; // SDL_gamecontroller.h suggests using this value.
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadStart, GameControllerButton.Start);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadBack, GameControllerButton.Back);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceLeft, GameControllerButton.X);              // Xbox X, PS Square
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceRight, GameControllerButton.B);              // Xbox B, PS Circle
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceUp, GameControllerButton.Y);              // Xbox Y, PS Triangle
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceDown, GameControllerButton.A);              // Xbox A, PS Cross
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadLeft, GameControllerButton.DpadLeft);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadRight, GameControllerButton.DpadRight);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadUp, GameControllerButton.DpadUp);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadDown, GameControllerButton.DpadDown);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadL1, GameControllerButton.Leftshoulder);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadR1, GameControllerButton.Rightshoulder);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadL2, GameControllerAxis.Triggerleft, 0.0f, 32767);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadR2, GameControllerAxis.Triggerright, 0.0f, 32767);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadL3, GameControllerButton.Leftstick);
-            UpdateGamepadButton(bd, io, ImGuiKey.GamepadR3, GameControllerButton.Rightstick);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickLeft, GameControllerAxis.Leftx, -thumb_dead_zone, -32768);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickRight, GameControllerAxis.Leftx, +thumb_dead_zone, +32767);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickUp, GameControllerAxis.Lefty, -thumb_dead_zone, -32768);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickDown, GameControllerAxis.Lefty, +thumb_dead_zone, +32767);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickLeft, GameControllerAxis.Rightx, -thumb_dead_zone, -32768);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickRight, GameControllerAxis.Rightx, +thumb_dead_zone, +32767);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickUp, GameControllerAxis.Righty, -thumb_dead_zone, -32768);
-            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickDown, GameControllerAxis.Righty, +thumb_dead_zone, +32767);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadStart, SDLGameControllerButton.Start);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadBack, SDLGameControllerButton.Back);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceLeft, SDLGameControllerButton.X);              // Xbox X, PS Square
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceRight, SDLGameControllerButton.B);              // Xbox B, PS Circle
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceUp, SDLGameControllerButton.Y);              // Xbox Y, PS Triangle
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadFaceDown, SDLGameControllerButton.A);              // Xbox A, PS Cross
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadLeft, SDLGameControllerButton.DpadLeft);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadRight, SDLGameControllerButton.DpadRight);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadUp, SDLGameControllerButton.DpadUp);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadDpadDown, SDLGameControllerButton.DpadDown);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadL1, SDLGameControllerButton.Leftshoulder);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadR1, SDLGameControllerButton.Rightshoulder);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadL2, SDLGameControllerAxis.Triggerleft, 0.0f, 32767);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadR2, SDLGameControllerAxis.Triggerright, 0.0f, 32767);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadL3, SDLGameControllerButton.Leftstick);
+            UpdateGamepadButton(bd, io, ImGuiKey.GamepadR3, SDLGameControllerButton.Rightstick);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickLeft, SDLGameControllerAxis.Leftx, -thumb_dead_zone, -32768);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickRight, SDLGameControllerAxis.Leftx, +thumb_dead_zone, +32767);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickUp, SDLGameControllerAxis.Lefty, -thumb_dead_zone, -32768);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadLStickDown, SDLGameControllerAxis.Lefty, +thumb_dead_zone, +32767);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickLeft, SDLGameControllerAxis.Rightx, -thumb_dead_zone, -32768);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickRight, SDLGameControllerAxis.Rightx, +thumb_dead_zone, +32767);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickUp, SDLGameControllerAxis.Righty, -thumb_dead_zone, -32768);
+            UpdateGamepadAnalog(bd, io, ImGuiKey.GamepadRStickDown, SDLGameControllerAxis.Righty, +thumb_dead_zone, +32767);
         }
 
         /// <summary>
@@ -786,22 +782,22 @@
             UnsafeVector<ImGuiPlatformMonitor>* monitors = (UnsafeVector<ImGuiPlatformMonitor>*)&platform_io->Monitors;
             monitors->Resize(0);
             bd->WantUpdateMonitors = false;
-            int display_count = sdl.GetNumVideoDisplays();
+            int display_count = SDL.SDLGetNumVideoDisplays();
             for (int n = 0; n < display_count; n++)
             {
                 // Warning: the validity of monitor DPI information on Windows depends on the application DPI awareness settings, which generally needs to be set in the manifest or at runtime.
                 ImGuiPlatformMonitor monitor = default;
-                Rectangle<int> r;
-                sdl.GetDisplayBounds(n, &r);
-                monitor.MainPos = monitor.WorkPos = new Vector2(r.Origin.X, r.Origin.Y);
-                monitor.MainSize = monitor.WorkSize = new Vector2(r.Size.X, r.Size.Y);
+                SDLRect r;
+                SDL.SDLGetDisplayBounds(n, &r);
+                monitor.MainPos = monitor.WorkPos = new Vector2(r.X, r.Y);
+                monitor.MainSize = monitor.WorkSize = new Vector2(r.W, r.H);
 
-                sdl.GetDisplayUsableBounds(n, &r);
-                monitor.WorkPos = new(r.Origin.X, r.Origin.Y);
-                monitor.WorkSize = new(r.Size.X, r.Size.Y);
+                SDL.SDLGetDisplayUsableBounds(n, &r);
+                monitor.WorkPos = new(r.X, r.Y);
+                monitor.WorkSize = new(r.W, r.H);
 
                 float dpi;
-                sdl.GetDisplayDPI(n, &dpi, null, null);
+                SDL.SDLGetDisplayDPI(n, &dpi, null, null);
                 monitor.DpiScale = dpi / 96.0f;
 
                 monitors->Add(monitor);
@@ -813,18 +809,18 @@
             var bd = GetBackendData();
             var io = ImGui.GetIO();
             int w, h, displayW, displayH;
-            sdl.GetWindowSize(bd->Window, &w, &h);
-            if (((WindowFlags)sdl.GetWindowFlags(bd->Window) & WindowFlags.Minimized) != 0)
+            SDL.SDLGetWindowSize(bd->Window, &w, &h);
+            if (((SDLWindowFlags)SDL.SDLGetWindowFlags(bd->Window) & SDLWindowFlags.Minimized) != 0)
             {
                 w = h = 0;
             }
             if (bd->Renderer != null)
             {
-                sdl.GetRendererOutputSize(bd->Renderer, &displayW, &displayH);
+                SDL.SDLGetRendererOutputSize(bd->Renderer, &displayW, &displayH);
             }
             else
             {
-                sdl.GLGetDrawableSize(bd->Window, &displayW, &displayH);
+                SDL.SDLGLGetDrawableSize(bd->Window, &displayW, &displayH);
             }
 
             io.DisplaySize = new(w, h);
@@ -874,7 +870,7 @@
         // Helper structure we store in the void* RendererUserData field of each ImGuiViewport to easily retrieve our backend data.
         private unsafe struct ViewportData
         {
-            public Window* Window;
+            public SDLWindow* Window;
             public uint WindowID;
             public bool WindowOwned;
             public void* GLContext;
@@ -895,46 +891,46 @@
             void* backup_context = null;
             if (use_opengl)
             {
-                backup_context = SdlCheckError(sdl.GLGetCurrentContext());
-                sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1).SdlThrowIfNeg();
-                sdl.GLMakeCurrent(main_viewport_data->Window, main_viewport_data->GLContext).SdlThrowIfNeg();
+                backup_context = SdlCheckError((void*)SDL.SDLGLGetCurrentContext().Handle);
+                SDL.SDLGLSetAttribute(SDLGLattr.GlShareWithCurrentContext, 1).SdlThrowIfNeg();
+                SDL.SDLGLMakeCurrent(main_viewport_data->Window, new((nint)main_viewport_data->GLContext)).SdlThrowIfNeg();
             }
 
-            WindowFlags sdl_flags = 0;
-            sdl_flags |= use_opengl ? WindowFlags.Opengl : bd->UseVulkan ? WindowFlags.Vulkan : 0;
-            sdl_flags |= (WindowFlags)sdl.GetWindowFlags(bd->Window) & WindowFlags.AllowHighdpi;
-            sdl_flags |= WindowFlags.Hidden;
-            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoDecoration) != 0 ? WindowFlags.Borderless : 0;
-            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoDecoration) != 0 ? 0 : WindowFlags.Resizable;
-            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoTaskBarIcon) != 0 ? WindowFlags.SkipTaskbar : 0;
-            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.TopMost) != 0 ? WindowFlags.AlwaysOnTop : 0;
+            SDLWindowFlags sdl_flags = 0;
+            sdl_flags |= use_opengl ? SDLWindowFlags.Opengl : bd->UseVulkan ? SDLWindowFlags.Vulkan : 0;
+            sdl_flags |= (SDLWindowFlags)SDL.SDLGetWindowFlags(bd->Window) & SDLWindowFlags.AllowHighdpi;
+            sdl_flags |= SDLWindowFlags.Hidden;
+            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoDecoration) != 0 ? SDLWindowFlags.Borderless : 0;
+            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoDecoration) != 0 ? 0 : SDLWindowFlags.Resizable;
+            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.NoTaskBarIcon) != 0 ? SDLWindowFlags.SkipTaskbar : 0;
+            sdl_flags |= (viewport->Flags & ImGuiViewportFlags.TopMost) != 0 ? SDLWindowFlags.AlwaysOnTop : 0;
 
-            vd->Window = SdlCheckError(sdl.CreateWindow("No Title Yet", (int)viewport->Pos.X, (int)viewport->Pos.Y, (int)viewport->Size.X, (int)viewport->Size.Y, (uint)sdl_flags));
+            vd->Window = SdlCheckError(SDL.SDLCreateWindow("No Title Yet", (int)viewport->Pos.X, (int)viewport->Pos.Y, (int)viewport->Size.X, (int)viewport->Size.Y, (uint)sdl_flags));
             vd->WindowOwned = true;
             if (use_opengl)
             {
-                vd->GLContext = SdlCheckError(sdl.GLCreateContext(vd->Window));
-                sdl.GLSetSwapInterval(0).SdlThrowIfNeg();
+                vd->GLContext = SdlCheckError((void*)SDL.SDLGLCreateContext(vd->Window).Handle);
+                SDL.SDLGLSetSwapInterval(0).SdlThrowIfNeg();
             }
             if (use_opengl && backup_context != null)
             {
-                sdl.GLMakeCurrent(vd->Window, backup_context).SdlThrowIfNeg();
+                SDL.SDLGLMakeCurrent(vd->Window, new((nint)backup_context)).SdlThrowIfNeg();
             }
 
             viewport->PlatformHandle = vd->Window;
             viewport->PlatformHandleRaw = null;
-            var sdl_backend = sdl.GetCurrentVideoDriverS();
-            SysWMInfo info;
-            sdl.GetVersion(&info.Version);
-            if (sdl.GetWindowWMInfo(vd->Window, &info))
+            var sdl_backend = SDL.SDLGetCurrentVideoDriverS();
+            SDLSysWMInfo info;
+            SDL.SDLGetVersion(&info.Version);
+            if (SDL.SDLGetWindowWMInfo(vd->Window, &info) == SDLBool.True)
             {
                 if (sdl_backend == "windows")
                 {
-                    main_viewport->PlatformHandleRaw = (void*)info.Info.Win.Hwnd;
+                    main_viewport->PlatformHandleRaw = (void*)info.Info.Win.Window;
                 }
                 else if (sdl_backend == "cocoa")
                 {
-                    main_viewport->PlatformHandleRaw = info.Info.Cocoa.Window;
+                    main_viewport->PlatformHandleRaw = (void*)info.Info.Cocoa.Window;
                 }
             }
             else
@@ -950,12 +946,12 @@
             {
                 if (vd->GLContext != null && vd->WindowOwned)
                 {
-                    sdl.GLDeleteContext(vd->GLContext);
+                    SDL.SDLGLDeleteContext(new((nint)vd->GLContext));
                 }
 
                 if (vd->Window != null && vd->WindowOwned)
                 {
-                    sdl.DestroyWindow(vd->Window);
+                    SDL.SDLDestroyWindow(vd->Window);
                 }
 
                 SdlCheckError();
@@ -969,14 +965,14 @@
         private static unsafe void ShowWindow(ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.ShowWindow(vd->Window);
+            SDL.SDLShowWindow(vd->Window);
         }
 
         private static unsafe Vector2* GetWindowPos(Vector2* size, ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
             int x = 0, y = 0;
-            sdl.GetWindowPosition(vd->Window, &x, &y);
+            SDL.SDLGetWindowPosition(vd->Window, &x, &y);
             *size = new Vector2(x, y);
             return size;
         }
@@ -984,14 +980,14 @@
         private static unsafe void SetWindowPos(ImGuiViewport* viewport, Vector2 pos)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.SetWindowPosition(vd->Window, (int)pos.X, (int)pos.Y);
+            SDL.SDLSetWindowPosition(vd->Window, (int)pos.X, (int)pos.Y);
         }
 
         private static unsafe Vector2* GetWindowSize(Vector2* size, ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
             int w = 0, h = 0;
-            sdl.GetWindowSize(vd->Window, &w, &h);
+            SDL.SDLGetWindowSize(vd->Window, &w, &h);
             *size = new Vector2(w, h);
             return size;
         }
@@ -999,38 +995,38 @@
         private static unsafe void SetWindowSize(ImGuiViewport* viewport, Vector2 size)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.SetWindowSize(vd->Window, (int)size.X, (int)size.Y);
+            SDL.SDLSetWindowSize(vd->Window, (int)size.X, (int)size.Y);
         }
 
         private static unsafe void SetWindowTitle(ImGuiViewport* viewport, byte* title)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.SetWindowTitle(vd->Window, title);
+            SDL.SDLSetWindowTitle(vd->Window, title);
         }
 
         private static unsafe void SetWindowAlpha(ImGuiViewport* viewport, float alpha)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.SetWindowOpacity(vd->Window, alpha);
+            SDL.SDLSetWindowOpacity(vd->Window, alpha);
         }
 
         private static unsafe void SetWindowFocus(ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            sdl.RaiseWindow(vd->Window);
+            SDL.SDLRaiseWindow(vd->Window);
         }
 
         private static unsafe byte GetWindowFocus(ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            var focused = ((WindowFlags)sdl.GetWindowFlags(vd->Window) & WindowFlags.InputFocus) != 0;
+            var focused = ((SDLWindowFlags)SDL.SDLGetWindowFlags(vd->Window) & SDLWindowFlags.InputFocus) != 0;
             return (byte)(focused ? 1 : 0);
         }
 
         private static unsafe byte GetWindowMinimized(ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            var minimized = ((WindowFlags)sdl.GetWindowFlags(vd->Window) & WindowFlags.Minimized) != 0;
+            var minimized = ((SDLWindowFlags)SDL.SDLGetWindowFlags(vd->Window) & SDLWindowFlags.Minimized) != 0;
             return (byte)(minimized ? 1 : 0);
         }
 
@@ -1039,7 +1035,7 @@
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
             if (vd->GLContext != null)
             {
-                sdl.GLMakeCurrent(vd->Window, vd->GLContext).SdlThrowIfNeg();
+                SDL.SDLGLMakeCurrent(vd->Window, new((nint)vd->GLContext)).SdlThrowIfNeg();
             }
         }
 
@@ -1048,19 +1044,19 @@
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
             if (vd->GLContext != null)
             {
-                sdl.GLMakeCurrent(vd->Window, vd->GLContext).SdlThrowIfNeg();
-                sdl.GLSwapWindow(vd->Window);
+                SDL.SDLGLMakeCurrent(vd->Window, new((nint)vd->GLContext)).SdlThrowIfNeg();
+                SDL.SDLGLSwapWindow(vd->Window);
             }
         }
 
         private static unsafe int CreateVkSurface(ImGuiViewport* viewport, ulong vk_instance, void* vk_allocator, ulong* out_vk_surface)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            SdlBool ret = sdl.VulkanCreateSurface(vd->Window, *(VkHandle*)&vk_instance, (VkNonDispatchableHandle*)out_vk_surface);
-            return ret == SdlBool.True ? 0 : 1; // ret ? VK_SUCCESS : VK_NOT_READY
+            SDLBool ret = SDL.SDLVulkanCreateSurface(vd->Window, *(VkInstance*)&vk_instance, (VkSurfaceKHR*)out_vk_surface);
+            return ret == SDLBool.True ? 0 : 1; // ret ? VK_SUCCESS : VK_NOT_READY
         }
 
-        private static unsafe void InitPlatformInterface(Window* window, void* sdl_gl_context)
+        private static unsafe void InitPlatformInterface(SDLWindow* window, void* sdl_gl_context)
         {
             ImGuiPlatformIO* platform_io = ImGui.GetPlatformIO();
 
@@ -1084,7 +1080,7 @@
             ViewportData* vd = AllocT<ViewportData>();
             ZeroMemoryT(vd);
             vd->Window = window;
-            vd->WindowID = sdl.GetWindowID(window).SdlThrowIf();
+            vd->WindowID = SDL.SDLGetWindowID(window).SdlThrowIf();
             vd->WindowOwned = false;
             vd->GLContext = sdl_gl_context;
             main_viewport->PlatformUserData = vd;

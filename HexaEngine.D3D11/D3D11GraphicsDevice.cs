@@ -1,17 +1,18 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
-    using Silk.NET.SDL;
     using System;
     using System.Globalization;
     using System.Runtime.CompilerServices;
     using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Format = Core.Graphics.Format;
+    using ID3D11Device = Silk.NET.Direct3D11.ID3D11Device;
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
@@ -120,7 +121,7 @@
             return adapter.CreateSwapChainForWindow(this, window);
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             return adapter.CreateSwapChainForWindow(this, window);
         }
@@ -130,7 +131,7 @@
             return adapter.CreateSwapChainForWindow(this, window, swapChainDescription, fullscreenDescription);
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             return adapter.CreateSwapChainForWindow(this, window, swapChainDescription, fullscreenDescription);
         }
