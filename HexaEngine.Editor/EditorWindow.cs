@@ -7,10 +7,10 @@
     {
         protected bool IsDocked;
         protected ImGuiWindowFlags Flags;
-        private bool windowEnded;
-        private bool wasShown;
-        private bool initialized;
-        private bool isShown;
+        protected bool windowEnded;
+        protected bool wasShown;
+        protected bool initialized;
+        protected bool isShown;
 
         protected abstract string Name { get; }
 

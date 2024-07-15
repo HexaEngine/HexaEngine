@@ -356,6 +356,86 @@
             semaphore.Release();
         }
 
+        public static void OpenFileInEditor(string filePath, int line = -1, int column = -1)
+        {
+            semaphore.Wait();
+            if (CurrentProjectFolder == null)
+            {
+                semaphore.Release();
+                return;
+            }
+
+            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            string solutionPath = Path.Combine(CurrentProjectFolder, solutionName + ".sln");
+
+            ProcessStartInfo psi = new();
+
+            switch (EditorConfig.Default.ExternalTextEditorType)
+            {
+                case ExternalTextEditorType.VisualStudio:
+                    if (filePath != null && line > 0)
+                    {
+                        // Open specific file at a specific line and column
+                        psi.FileName = "devenv";
+                        psi.Arguments = $"/edit \"{filePath}\" /command \"edit.goto {line},{column}\"";
+                    }
+                    else
+                    {
+                        // Open the solution normally
+                        psi.FileName = "cmd";
+                        psi.Arguments = $"/c start /B devenv \"{solutionPath}\"";
+                    }
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                case ExternalTextEditorType.VSCode:
+                    psi.FileName = "cmd";
+                    string codeArguments = filePath == null ? CurrentProjectFolder : $"{filePath}:{line}:{column}";
+                    psi.Arguments = $"/c start /B code --goto \"{codeArguments}\"";
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                case ExternalTextEditorType.Custom:
+                    var editorIndex = EditorConfig.Default.SelectedExternalTextEditor;
+                    var editors = EditorConfig.Default.ExternalTextEditors;
+                    var editor = editorIndex >= 0 && editorIndex < editors.Count ? editors[editorIndex] : null;
+                    if (editor == null)
+                    {
+                        semaphore.Release();
+                        return;
+                    }
+                    psi.FileName = editor.ProgramPath;
+                    psi.Arguments = ArgumentsParser.Parse(editor.CommandLine, new Dictionary<string, string>
+                    {
+                        { "solutionPath", $"\"{solutionPath}\"" },
+                        { "solutionName", $"\"{solutionName}\"" },
+                        { "projectFolder", $"\"{CurrentProjectFolder}\"" }
+                    });
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                default:
+                    semaphore.Release();
+                    return;
+            }
+
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open external text editor", ex.Message);
+                Logger.Error("Failed to open external text editor");
+                Logger.Log(ex);
+            }
+
+            semaphore.Release();
+        }
+
         public static void BuildScripts(bool force = false)
         {
             semaphore.Wait();
@@ -426,17 +506,23 @@
             semaphore.Release();
         }
 
+        public static ScriptCompilationResult? CompilationResult { get; private set; }
+
+        public static event Action<ScriptCompilationResult>? CompilationComplete;
+
         private static bool Build()
         {
             string solutionName = Path.GetFileName(CurrentProjectFolder);
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
 
             string output = Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
-            bool failed = output.Contains("FAILED");
+
+            CompilationResult = ScriptCompilationResult.FromMSBuildLog(output);
+            CompilationComplete?.Invoke(CompilationResult);
             AnalyseLog(output);
             scriptProjectChanged = false;
 
-            return !failed;
+            return !CompilationResult.Success;
         }
 
         private static void Clean()

@@ -49,6 +49,7 @@
             Register<NativeMemoryWidget>();
             Register<InputManagerWindow>();
             Register<PackageManagerWidget>();
+            Register<ErrorListWidget>();
 
             Register<BakeWindow>();
         }

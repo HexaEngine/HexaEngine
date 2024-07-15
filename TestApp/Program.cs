@@ -1,104 +1,14 @@
 ﻿namespace TestApp
 {
-    using HexaEngine;
-    using HexaEngine.Core;
-    using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
-    using HexaEngine.Network;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scripts;
     using System;
-    using System.Net;
-    using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public static unsafe partial class Program
     {
-        private sealed class ConsoleLogWriter : ILogWriter
-        {
-            public void Clear()
-            {
-                Console.Clear();
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public void Flush()
-            {
-            }
-
-            public void Write(string message)
-            {
-                Console.Write(message);
-            }
-
-            public Task WriteAsync(string message)
-            {
-                Console.Write(message);
-                return Task.CompletedTask;
-            }
-        }
-
-        /// <summary>
-        /// The factor to convert degrees to radians.
-        /// </summary>
-        public const double DegToRadFactor = float.Pi / 180;
-
-        /// <summary>
-        /// The factor to convert radians to degrees.
-        /// </summary>
-        public const double RadToDefFactor = 180 / float.Pi;
-
-        /// <summary>
-        /// Converts a <see cref="Vector3"/> from radians to degrees.
-        /// </summary>
-        /// <param name="v">The input vector in radians.</param>
-        /// <returns>A <see cref="Vector3"/> with values converted to degrees.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToDeg(this Vector3 v)
-        {
-            return new Vector3((float)(v.X * RadToDefFactor), (float)(v.Y * RadToDefFactor), (float)(v.Z * RadToDefFactor));
-        }
-
-        /// <summary>
-        /// Converts a <see cref="Vector3"/> from degrees to radians.
-        /// </summary>
-        /// <param name="v">The input vector in degrees.</param>
-        /// <returns>A <see cref="Vector3"/> with values converted to radians.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToRad(this Vector3 v)
-        {
-            // Using doubles reduces floating-point error.
-            return new Vector3((float)(v.X * DegToRadFactor), (float)(v.Y * DegToRadFactor), (float)(v.Z * DegToRadFactor));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToYawPitchRoll(this Quaternion r)
-        {
-            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
-            float pitch = MathF.Asin((float)Math.Clamp(2.0f * (r.X * r.W - r.Y * r.Z), -1, 1));
-            float roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
-            return new Vector3(yaw, pitch, roll);
-        }
-
         public static void Main(string[] args)
         {
-            Vector3 rotationEulerDeg = new(480, 45, 20);
-            Vector3 rotationEulerRad = rotationEulerDeg.ToRad();
-            Quaternion quat = Quaternion.CreateFromYawPitchRoll(rotationEulerRad.X, rotationEulerRad.Y, rotationEulerRad.Z);
-            Vector3 rotationEulerRad2 = quat.ToYawPitchRoll();
-            Vector3 rotationEulerDeg2 = rotationEulerRad2.ToDeg();
-
-            Console.WriteLine("Original Degrees \t\t\t\t" + rotationEulerDeg);
-            Console.WriteLine("Original Radiants \t\t\t\t" + rotationEulerRad);
-            Console.WriteLine("(Euler to qaut to euler) Converted Radiants \t" + rotationEulerRad2);
-            Console.WriteLine("Converted Degrees \t\t\t\t" + rotationEulerDeg2);
         }
 
         /* public static void Main()
