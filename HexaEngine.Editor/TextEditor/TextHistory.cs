@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Unsafes;
+    using Silk.NET.DirectStorage;
 
     public unsafe class TextHistory
     {
@@ -24,6 +26,10 @@
         public int UndoCount => undoHistoryCount;
 
         public int RedoCount => redoHistoryCount;
+
+        public bool CanUndo => undoHistoryCount > 0;
+
+        public bool CanRedo => redoHistoryCount > 0;
 
         public void Clear()
         {
@@ -52,52 +58,46 @@
 
         private void UndoPushInternal()
         {
-            if (source == null)
-            {
-                return;
-            }
-
             var last = undoHistory[^1];
-            for (int i = undoHistory.Length - 1; i != 0; i--)
+
+            // Release the last entry if it contains data
+            last.Release();
+
+            // Shift entries in undoHistory to the right
+            for (int i = undoHistory.Length - 1; i > 0; i--)
             {
                 undoHistory[i] = undoHistory[i - 1];
             }
 
+            // Allocate a new StdString and clone the current text
             last.Data = AllocT<StdString>();
             *last.Data = source.Text->Clone();
 
+            // Place the new entry at the beginning of undoHistory
             undoHistory[0] = last;
-            undoHistoryCount++;
-            if (undoHistoryCount > maxCount)
-            {
-                undoHistoryCount = maxCount;
-            }
+            undoHistoryCount = Math.Min(undoHistoryCount + 1, maxCount);
         }
 
         private void RedoPushInternal(TextHistoryEntry entry)
         {
-            if (source == null)
-            {
-                return;
-            }
-
             var last = redoHistory[^1];
-            for (int i = redoHistory.Length - 1; i != 0; i--)
+
+            // Release the last entry if it contains data
+            last.Release();
+
+            // Shift entries in redoHistory to the right
+            for (int i = redoHistory.Length - 1; i > 0; i--)
             {
                 redoHistory[i] = redoHistory[i - 1];
             }
 
-            last.Release();
-
+            // Allocate a new StdString and clone the entry data
             last.Data = AllocT<StdString>();
             *last.Data = entry.Data->Clone();
 
+            // Place the new entry at the beginning of redoHistory
             redoHistory[0] = last;
-            redoHistoryCount++;
-            if (redoHistoryCount > maxCount)
-            {
-                redoHistoryCount = maxCount;
-            }
+            redoHistoryCount = Math.Min(redoHistoryCount + 1, maxCount);
         }
 
         public void Undo()
@@ -107,22 +107,20 @@
                 return;
             }
 
-            if (source == null)
-            {
-                return;
-            }
-
             var first = undoHistory[0];
+
+            // Shift entries in undoHistory to the left
             for (int i = 0; i < undoHistory.Length - 1; i++)
             {
                 undoHistory[i] = undoHistory[i + 1];
             }
+
             RedoPushInternal(first);
 
-            source.Text = first.Data;
+            // Set the source text to the first entry's data
+            source.SetText(first.Data);
 
-            first.Release();
-
+            // Place the released entry at the end of undoHistory
             undoHistory[^1] = first;
             undoHistoryCount--;
         }
@@ -134,12 +132,9 @@
                 return;
             }
 
-            if (source == null)
-            {
-                return;
-            }
-
             var first = redoHistory[0];
+
+            // Shift entries in redoHistory to the left
             for (int i = 0; i < redoHistory.Length - 1; i++)
             {
                 redoHistory[i] = redoHistory[i + 1];
@@ -147,8 +142,10 @@
 
             UndoPushInternal();
 
-            source.Text = first.Data;
+            // Set the source text to the first entry's data
+            source.SetText(first.Data);
 
+            // Place the released entry at the end of redoHistory
             redoHistory[^1] = first;
             redoHistoryCount--;
         }
@@ -159,6 +156,8 @@
             {
                 return;
             }
+
+            Clear();
 
             disposedValue = true;
         }

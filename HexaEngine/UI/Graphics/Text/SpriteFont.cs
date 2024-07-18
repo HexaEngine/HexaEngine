@@ -203,6 +203,11 @@
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)
         {
+            RenderText(commandList, origin, textSpan.AsSpan(), fontSize, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> textSpan, float fontSize, Brush brush)
+        {
             int indexCount = 6 * textSpan.Length;
             int vertexCount = 4 * textSpan.Length;
 
@@ -272,6 +277,11 @@
         }
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
+        {
+            RenderText(commandList, origin, textSpan.AsSpan(), fontSize, whitespaceScale, incrementalTabStop, readingDirection, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
             int indexCount = 6 * textSpan.Length;
@@ -384,10 +394,15 @@
 
         public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop)
         {
+            return MeasureSize(text.AsSpan(), fontSize, incrementalTabStop);
+        }
+
+        public Vector2 MeasureSize(ReadOnlySpan<char> text, float fontSize, float incrementalTabStop)
+        {
             float x = 0;
             float y = 0;
             uint last = 0;
-            for (int i = text.Start; i < text.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
                 var c = text[i];
 

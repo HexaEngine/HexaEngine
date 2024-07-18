@@ -121,7 +121,7 @@
             var buffer = AllocT<byte>(33);
             SDL.SDLJoystickGetGUIDString(guid, buffer, 33);
             var size = StringSizeNullTerminated(buffer);
-            var value = Encoding.ASCII.GetString(buffer, size - 1);
+            var value = Encoding.ASCII.GetString(buffer, size);
             Free(buffer);
             this.guid = value;
         }

@@ -388,7 +388,7 @@
             int idpin1 = 0;
             int idpin2 = 0;
             bool createdFromSpan = false;
-            if (ImNodes.IsLinkCreatedIntPtr(ref idNode1, ref idpin1, ref idNode2, ref idpin2, ref createdFromSpan))
+            if (ImNodes.IsLinkCreated(ref idNode1, ref idpin1, ref idNode2, ref idpin2, ref createdFromSpan))
             {
                 var pino = GetNode(idNode1).GetOutput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);

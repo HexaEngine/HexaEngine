@@ -16,4 +16,10 @@
 		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="assets\shared\fonts\MaterialIconsRound-Regular.otf">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

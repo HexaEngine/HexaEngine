@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor
+﻿#define BypassLauncher
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
@@ -28,8 +30,9 @@
             MainMenuBar.Init(device);
             IconManager.Init(device);
             WindowManager.Init(device);
+#if !BypassLauncher
             PopupManager.Show<LauncherWindow>();
-
+#endif
             if (!EditorConfig.Default.SetupDone)
             {
                 PopupManager.Show<SetupWindow>();

@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Core.Unsafes;
     using System.Globalization;
+    using System.Numerics;
     using System.Text;
 
     public unsafe class TextSource
@@ -21,14 +23,6 @@
         public StdString* Text
         {
             get => text;
-            set
-            {
-                text->Release();
-                Free(text);
-                text = value;
-                newLineType = GetNewLineType(text);
-                LineCount = CountLines(text);
-            }
         }
 
         public Encoding Encoding { get; set; } = Encoding.UTF8;
@@ -53,6 +47,12 @@
         public bool Changed { get; set; }
 
         public int LineCount { get; set; }
+
+        public void SetText(StdString* newText)
+        {
+            text->Resize(newText->Size);
+            MemcpyT(newText->CStr(), text->CStr(), newText->Size);
+        }
 
         public static bool IsText(StdString* text)
         {
@@ -126,6 +126,52 @@
             return NewLineType.Mixed;
         }
 
+        public List<TextSpan> Lines { get; } = [];
+
+        public float MaxLineWidth { get; private set; }
+
+        public Vector2 LayoutSize { get; private set; }
+
+        public void Update(float lineHeight)
+        {
+            byte* pText = text->Data;
+            Lines.Clear();
+            int lineStart = 0;
+            float maxWidth = 0;
+
+            for (int i = 0; i < text->Size; i++)
+            {
+                byte c = pText[i];
+
+                if (c == '\n' || c == '\r')
+                {
+                    // for CRLF
+                    if (c == '\r' && i < text->Size - 1 && pText[i + 1] == '\n')
+                    {
+                        i++;
+                    }
+
+                    TextSpan span = new(text, lineStart, i - lineStart);
+                    span.Size = ImGui.CalcTextSize(pText + lineStart, pText + i).X;
+                    maxWidth = Math.Max(maxWidth, span.Size);
+                    Lines.Add(span);
+                    lineStart = i + 1;
+                }
+            }
+
+            if (lineStart <= text->Size)
+            {
+                TextSpan span = new(text, lineStart, text->Size - lineStart);
+                span.Size = ImGui.CalcTextSize(pText + lineStart, pText + text->Size).X;
+                maxWidth = Math.Max(maxWidth, span.Size);
+                Lines.Add(span);
+            }
+
+            MaxLineWidth = maxWidth;
+            LineCount = Lines.Count;
+            LayoutSize = new(maxWidth, Lines.Count * lineHeight);
+        }
+
         public static void ConvertNewLineType(StdString* text, NewLineType newLineType)
         {
             // don't care just return original, you can't convert it to mixed anyway.
@@ -164,7 +210,7 @@
 
         public static int CountLines(StdString* text)
         {
-            int lineCount = 1; // Mindestens eine Zeile ist vorhanden, da der Text Inhalt hat.
+            int lineCount = 1;
 
             foreach (byte c in *text)
             {

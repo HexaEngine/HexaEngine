@@ -68,14 +68,14 @@
             }
         }
 
-        public static Scene? Deserialize(string path)
+        public static Scene Deserialize(string path)
         {
             BsonDataReader reader = new(File.OpenRead(path));
 
-            Scene? scene;
+            Scene scene;
             try
             {
-                scene = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException("scene was null, failed to deserialize");
+                scene = serializer.Deserialize<Scene>(reader) ?? throw new InvalidDataException("scene was null, failed to deserialize");
             }
             finally
             {

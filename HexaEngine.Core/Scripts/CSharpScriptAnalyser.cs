@@ -30,7 +30,7 @@
             string code = File.ReadAllText(filePath);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            CSharpCompilation compilation = CSharpCompilation.Create("Class").AddSyntaxTrees(syntaxTree);
+
             var syntaxRoot = syntaxTree.GetRoot();
 
             var namespaceDeclaration = syntaxRoot.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();

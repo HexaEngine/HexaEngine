@@ -8,9 +8,12 @@
 
         public void Release()
         {
-            Data->Release();
-            Free(Data);
-            Data = null;
+            if (Data != null)
+            {
+                Data->Release();
+                Free(Data);
+                Data = null;
+            }
         }
     }
 }

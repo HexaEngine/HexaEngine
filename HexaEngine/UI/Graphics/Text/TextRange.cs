@@ -28,6 +28,11 @@
             return new(text, 0, text.Length);
         }
 
+        public readonly ReadOnlySpan<char> AsSpan()
+        {
+            return Text.AsSpan(Start, Length);
+        }
+
         public override readonly string ToString()
         {
             return Text.Substring(Start, Length);

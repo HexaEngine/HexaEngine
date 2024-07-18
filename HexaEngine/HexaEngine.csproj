@@ -52,6 +52,9 @@
 		<None Update="assets\shared\fonts\ARIALBD.TTF">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\fonts\CascadiaMono.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\fonts\fa-brands-400.ttf">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -68,6 +71,15 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\fonts\Font Awesome 6 Free-Solid-900.otf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialIcons-Regular.ttf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialIconsRound-Regular.otf">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialSymbolsRounded.ttf">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\animation.png">

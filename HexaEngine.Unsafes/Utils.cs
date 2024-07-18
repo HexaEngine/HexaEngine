@@ -1234,7 +1234,7 @@
                 ret++;
             }
 
-            return ret + 1;
+            return ret;
         }
 
         /// <summary>
@@ -1427,7 +1427,7 @@
             return -1;
         }
 
-        public static int Find<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, int pos, Func<TDst, TSrc> convert) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
+        public static int Find<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, int pos, IConverter<TDst, TSrc> convert) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
         {
             if (length > size - pos)
             {
@@ -1437,7 +1437,34 @@
             int cmp = 0;
             for (int i = pos; i < size; i++)
             {
-                if (data[i].Equals(convert(str[cmp])))
+                if (data[i].Equals(convert.Convert(str[cmp])))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return i - cmp + 1;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return -1;
+        }
+
+        public static int Find<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, int pos, IConverter<TDst, TSrc> convert, IEqualityComparer<TSrc> comparer) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
+        {
+            if (length > size - pos)
+            {
+                return -1;
+            }
+
+            int cmp = 0;
+            for (int i = pos; i < size; i++)
+            {
+                if (comparer.Equals(data[i], convert.Convert(str[cmp])))
                 {
                     cmp++;
                     if (cmp == length)
@@ -1576,5 +1603,15 @@
         {
             pool.Clear();
         }
+    }
+
+    public interface IConverter
+    {
+        public object? Convert(object? value);
+    }
+
+    public interface IConverter<TIn, TOut>
+    {
+        public TOut Convert(TIn value);
     }
 }

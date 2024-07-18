@@ -15,7 +15,7 @@
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
 
-            Vector2 pos = new(window->DC.CursorPos.X, window->DC.CursorPos.Y + window->DC.CurrLineTextBaseOffset);
+            Vector2 pos = ImGui.GetCursorScreenPos();
             Vector2 size = ImGui.CalcTextSize(label);
             ImRect bb = new() { Min = pos, Max = new(pos.X + size.X, pos.Y + size.Y) };
 
@@ -83,7 +83,7 @@
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
 
-            Vector2 pos = new(window->DC.CursorPos.X, window->DC.CursorPos.Y + window->DC.CurrLineTextBaseOffset);
+            Vector2 pos = ImGui.GetCursorScreenPos();
             Vector2 size = ImGui.CalcTextSize(ref label);
             ImRect bb = new() { Min = pos, Max = new(pos.X + size.X, pos.Y + size.Y) };
 

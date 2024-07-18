@@ -610,7 +610,7 @@
         public readonly int Find(ReadOnlySpan<byte> str, int pos)
         {
             fixed (byte* pStr = str)
-                return Utils.Find(data, size, pStr, str.Length, pos, x => (char)x);
+                return Utils.Find(data, size, pStr, str.Length, pos, CharToWCharConverter.Default);
         }
 
         /// <summary>

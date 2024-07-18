@@ -1,12 +1,18 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Mathematics;
+    using HexaEngine.UI.Graphics;
+    using HexaEngine.UI.Graphics.Text;
     using System.IO;
+    using System.Numerics;
 
     [EditorWindowCategory("Tools")]
     public class TextEditorWindow : EditorWindow
@@ -20,7 +26,8 @@
 
         public TextEditorWindow()
         {
-            Flags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar;
+            IsShown = true;
+            Flags = ImGuiWindowFlags.MenuBar;
         }
 
         protected override string Name => "Text Editor";
@@ -29,37 +36,37 @@
 
         public TextEditorTab? CurrentTab => currentTab;
 
-        public void DrawMenuBar()
+        private void DrawMenuBar()
         {
             if (ImGui.BeginMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("\xE710 New"))
+                    if (ImGui.MenuItem($"{UwU.CreateFile} New"))
                     {
                         New();
                     }
 
-                    if (ImGui.MenuItem("\xE845 Open"))
+                    if (ImGui.MenuItem($"{UwU.OpenFile} Open"))
                     {
                         openDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("\xE74E Save"))
+                    if (ImGui.MenuItem($"{UwU.FloppyDisk} Save", "Ctrl+S"))
                     {
                         Save();
                     }
 
-                    if (ImGui.MenuItem("\xE74E Save As"))
+                    if (ImGui.MenuItem($"{UwU.ShareFromSquare} Save As"))
                     {
                         saveDialog.Show();
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("\xE8BB Close"))
+                    if (ImGui.MenuItem($"{UwU.Xmark} Close"))
                     {
                         if (currentTab != null)
                         {
@@ -72,14 +79,14 @@
                 }
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("\xE7A7 Undo"))
+                    if (ImGui.MenuItem($"{UwU.RotateLeft} Undo", "Ctrl+Z"))
                     {
-                        currentTab?.History.Undo();
+                        currentTab?.Undo();
                     }
 
-                    if (ImGui.MenuItem("\xE7A6 Redo"))
+                    if (ImGui.MenuItem($"{UwU.RotateRight} Redo", "Ctrl+Y"))
                     {
-                        currentTab?.History.Redo();
+                        currentTab?.Redo();
                     }
 
                     ImGui.EndMenu();
@@ -161,6 +168,7 @@
         {
             DrawWindows();
             DrawMenuBar();
+            HandleShortcuts();
 
             if (ImGui.BeginTabBar("##TextEditor"))
             {
@@ -177,9 +185,40 @@
                         tabs.RemoveAt(i);
                         i--;
                     }
-                    tab.Draw();
+                    tab.Draw(context);
                 }
                 ImGui.EndTabBar();
+            }
+        }
+
+        private void HandleShortcuts()
+        {
+            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.S)))
+            {
+                Save();
+            }
+
+            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Z)))
+            {
+                CurrentTab?.Undo();
+            }
+
+            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Y)))
+            {
+                CurrentTab?.Redo();
+            }
+
+            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.F)))
+            {
+                CurrentTab?.ShowFind();
+            }
+        }
+
+        protected override void DisposeCore()
+        {
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                tabs[i].Dispose();
             }
         }
     }

@@ -6,7 +6,6 @@
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.PoseEditor;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
     using System.Diagnostics.CodeAnalysis;
@@ -22,6 +21,8 @@
         static WindowManager()
         {
             categories.Add(Default);
+
+            Register<OutputWidget>();
 
             Register<PreferencesWidget>();
             Register<PipelineWidget>();

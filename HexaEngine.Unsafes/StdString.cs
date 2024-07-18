@@ -4,6 +4,26 @@
     using System.Collections;
     using System.Text;
 
+    public readonly struct WCharToCharConverter : IConverter<char, byte>
+    {
+        public static readonly WCharToCharConverter Default = new();
+
+        public readonly byte Convert(char value)
+        {
+            return (byte)value;
+        }
+    }
+
+    public readonly struct CharToWCharConverter : IConverter<byte, char>
+    {
+        public static readonly CharToWCharConverter Default = new();
+
+        public readonly char Convert(byte value)
+        {
+            return (char)value;
+        }
+    }
+
     /// <summary>
     /// Represents a C++-style std::string implemented in C#.
     /// </summary>
@@ -41,10 +61,11 @@
         public StdString(string s)
         {
             var byteCount = Encoding.UTF8.GetByteCount(s);
+
             data = AllocT<byte>(byteCount + 1);
-            capacity = size = s.Length;
+            ZeroMemoryT(data, byteCount + 1);
+            capacity = size = byteCount;
             Encoding.UTF8.GetBytes(s, new Span<byte>(data, byteCount));
-            data[size] = (byte)'\0';
         }
 
         /// <summary>
@@ -157,10 +178,6 @@
         {
             EnsureCapacity(size);
             this.size = size;
-            for (int i = size; i < capacity + 1; i++)
-            {
-                data[i] = (byte)'\0';
-            }
         }
 
         /// <summary>
@@ -170,7 +187,7 @@
         /// <param name="item">The byte to insert.</param>
         public void Insert(int index, byte item)
         {
-            Grow(size + 1);
+            EnsureCapacity(size + 1);
             MemcpyT(&data[index], &data[index + 1], size - index);
             data[index] = item;
             size++;
@@ -183,7 +200,7 @@
         /// <param name="item">The <see cref="StdString"/> to insert.</param>
         public void InsertRange(int index, StdString item)
         {
-            Grow(size + item.size);
+            EnsureCapacity(size + item.size);
             MemcpyT(&data[index], &data[index + item.size], size - index);
             for (int i = 0; i < item.size; i++)
             {
@@ -193,6 +210,14 @@
             size += item.size;
         }
 
+        public void InsertRange(int index, byte* str, int count)
+        {
+            EnsureCapacity(size + count);
+            MemcpyT(&data[index], &data[index + count], size - index);
+            MemcpyT(str, &data[index], count);
+            size += count;
+        }
+
         /// <summary>
         /// Inserts a string at the specified index in the current <see cref="StdString"/>.
         /// </summary>
@@ -200,7 +225,7 @@
         /// <param name="item">The string to insert.</param>
         public void InsertRange(int index, string item)
         {
-            Grow(size + item.Length);
+            EnsureCapacity(size + item.Length);
             MemcpyT(&data[index], &data[index + item.Length], size - index);
             for (int i = 0; i < item.Length; i++)
             {
@@ -260,6 +285,22 @@
         public readonly void Erase()
         {
             ZeroMemoryT(data, size);
+        }
+
+        public void Erase(int start, int len)
+        {
+            if (start < 0 || start >= size || len <= 0 || start + len > size)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            int newSize = size - len;
+            if (newSize > 0)
+            {
+                MemcpyT(data + start + len, data + start, newSize - start, newSize - start);
+            }
+
+            size = newSize;
         }
 
         /// <summary>
@@ -547,7 +588,8 @@
         public readonly StdString SubString(int index, int length)
         {
             StdString @string = new(length);
-            @string.Resize(length);
+            @string.Capacity = length;
+            @string.size = length;
             MemcpyT(data + index, @string.data, length);
             return @string;
         }
@@ -561,7 +603,8 @@
         {
             var length = size - index;
             StdString @string = new(length);
-            @string.Resize(length);
+            @string.Capacity = length;
+            @string.size = length;
             MemcpyT(data + index, @string.data, length);
             return @string;
         }
@@ -575,7 +618,19 @@
         public readonly int Find(ReadOnlySpan<char> str, int pos)
         {
             fixed (char* pStr = str)
-                return Utils.Find(data, size, pStr, str.Length, pos, x => (byte)x);
+                return Utils.Find(data, size, pStr, str.Length, pos, WCharToCharConverter.Default);
+        }
+
+        /// <summary>
+        /// Searches for the first occurrence of a specified character sequence within the current string, starting at the specified position.
+        /// </summary>
+        /// <param name="str">The character sequence to search for.</param>
+        /// <param name="pos">The starting position for the search.</param>
+        /// <returns>The index of the first occurrence of the character sequence, or -1 if it is not found.</returns>
+        public readonly int Find(ReadOnlySpan<char> str, int pos, IEqualityComparer<byte> comparer)
+        {
+            fixed (char* pStr = str)
+                return Utils.Find(data, size, pStr, str.Length, pos, WCharToCharConverter.Default, comparer);
         }
 
         /// <summary>
@@ -676,7 +731,8 @@
         public readonly StdString Clone()
         {
             StdString @string = new(size);
-            @string.Resize(size);
+            @string.Capacity = size;
+            @string.size = size;
             MemcpyT(data, @string.data, size);
             return @string;
         }
@@ -687,13 +743,13 @@
         /// <returns>A wide string representation of the current string.</returns>
         public StdWString ToWString()
         {
-            StdWString str = new();
-            str.Resize(size);
+            StdWString @string = new(size);
+            @string.Resize(size);
             for (int i = 0; i < size; i++)
             {
-                str[i] = (char)this[i];
+                @string[i] = (char)this[i];
             }
-            return str;
+            return @string;
         }
 
         /// <summary>
@@ -802,8 +858,12 @@
         /// </summary>
         public void Release()
         {
-            Free(data);
-            data = null;
+            if (data != null)
+            {
+                Free(data);
+                data = null;
+            }
+
             capacity = 0;
             size = 0;
         }

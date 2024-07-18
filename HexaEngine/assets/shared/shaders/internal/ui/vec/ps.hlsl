@@ -119,7 +119,7 @@ uint bufferIndex = input.bufferIndex;
 //   0 - no anti-aliasing
 //   1 - normal anti-aliasing
 // >=2 - exaggerated effect
-	float antiAliasingWindowSize = 2.0;
+	float antiAliasingWindowSize = 1.0;
 
 	// Enable a second ray along the y-axis to achieve 2-dimensional anti-aliasing.
 	bool enableSuperSamplingAntiAliasing = true;

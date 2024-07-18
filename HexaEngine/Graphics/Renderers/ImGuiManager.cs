@@ -731,7 +731,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             fonts.TexDesiredWidth = 2048;
 
             char* glyphRanges = stackalloc char[]
-  {
+            {
                 (char)0xe005, (char)0xe684,
                 (char)0xF000, (char)0xF8FF,
                 (char)0 // null terminator
@@ -750,6 +750,20 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
                                .AddFontFromFileTTF("assets/shared/fonts/fa-regular-400.ttf", 14, glyphRanges);
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
+
+            char* glyphMaterialRanges = stackalloc char[]
+           {
+                (char)0xe003, (char)0xF8FF,
+                (char)0 // null terminator
+            };
+
+            ImGuiFontBuilder textEditorFontBuilder = new(fonts);
+            textEditorFontBuilder.AddFontFromFileTTF("assets/shared/fonts/CascadiaMono.ttf", size: 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges)
+                                 ;
+            aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
+            textEditorFontBuilder.Destroy();
 
             fonts.Build();
 
@@ -791,9 +805,9 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             colors[(int)ImGuiCol.ResizeGripActive] = new Vector4(0.40f, 0.44f, 0.47f, 1.00f);
             colors[(int)ImGuiCol.Tab] = new Vector4(0.00f, 0.00f, 0.00f, 0.52f);
             colors[(int)ImGuiCol.TabHovered] = new Vector4(0.14f, 0.14f, 0.14f, 1.00f);
-            colors[(int)ImGuiCol.TabActive] = new Vector4(0.20f, 0.20f, 0.20f, 0.36f);
-            colors[(int)ImGuiCol.TabUnfocused] = new Vector4(0.00f, 0.00f, 0.00f, 0.52f);
-            colors[(int)ImGuiCol.TabUnfocusedActive] = new Vector4(0.14f, 0.14f, 0.14f, 1.00f);
+            colors[(int)ImGuiCol.TabSelected] = new Vector4(0.20f, 0.20f, 0.20f, 0.36f);
+            colors[(int)ImGuiCol.TabDimmed] = new Vector4(0.00f, 0.00f, 0.00f, 0.52f);
+            colors[(int)ImGuiCol.TabDimmedSelected] = new Vector4(0.14f, 0.14f, 0.14f, 1.00f);
             colors[(int)ImGuiCol.DockingPreview] = new Vector4(0.33f, 0.67f, 0.86f, 1.00f);
             colors[(int)ImGuiCol.DockingEmptyBg] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);
             colors[(int)ImGuiCol.PlotLines] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);

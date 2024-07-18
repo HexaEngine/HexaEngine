@@ -533,6 +533,8 @@
             scriptProjectChanged = true;
         }
 
+        private static readonly ILogger BuildLogger = LoggerFactory.GetLogger("Build");
+
         private static void AnalyseLog(string message)
         {
             string[] lines = message.Split('\n');
@@ -540,15 +542,15 @@
             {
                 if (line.Contains("0 Warning(s)"))
                 {
-                    LoggerFactory.General.Info(line);
+                    BuildLogger.Info(line);
                 }
                 else if (line.Contains("0 Error(s)"))
                 {
-                    LoggerFactory.General.Info(line);
+                    BuildLogger.Info(line);
                 }
                 else
                 {
-                    LoggerFactory.General.Log(line);
+                    BuildLogger.Log(line);
                 }
             }
         }
