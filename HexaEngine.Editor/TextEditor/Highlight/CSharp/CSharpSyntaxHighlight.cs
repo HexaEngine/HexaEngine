@@ -18,7 +18,7 @@
 
         private static readonly CSharpParseOptions options = new(LanguageVersion.CSharp12);
 
-        protected override unsafe void FindMatches(StdString* text, Span<char> span)
+        protected override unsafe void FindMatches(StdWString* text, Span<char> span)
         {
             base.FindMatches(text, span);
 

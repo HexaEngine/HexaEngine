@@ -1,4 +1,8 @@
-﻿namespace HexaEngine.Editor.TextEditor
+﻿namespace Hexa.NET.ImGui
+{
+}
+
+namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Unsafes;
@@ -95,19 +99,17 @@
 
         private readonly List<TextHighlightSpan> matchSpans = [];
 
-        public unsafe void Analyze(StdString* text, List<TextSpan> lines, List<TextHighlightSpan> spans, float lineHeight)
+        public unsafe void Analyze(StdWString* text, List<TextSpan> lines, List<TextHighlightSpan> spans, float lineHeight)
         {
             matchSpans.Clear();
             Text = text;
-            var wText = text->ToWString();
-            var span = wText.AsSpan();
+
+            var span = text->AsSpan();
 
             FindMatches(text, span);
             RemoveOverlapping();
             FillGaps(text, spans);
             ComputeOrigin(lines, lineHeight, spans);
-
-            wText.Release();
         }
 
         private static unsafe void ComputeOrigin(List<TextSpan> lines, float lineHeight, List<TextHighlightSpan> spans)
@@ -120,7 +122,7 @@
             }
         }
 
-        private unsafe void FillGaps(StdString* text, List<TextHighlightSpan> spans)
+        private unsafe void FillGaps(StdWString* text, List<TextHighlightSpan> spans)
         {
             spans.Clear();
             int currentPos = 0;
@@ -143,9 +145,9 @@
             spans.Sort(TextHighlightSpanStartComparer.Instance);
         }
 
-        protected unsafe StdString* Text { get; private set; }
+        protected unsafe StdWString* Text { get; private set; }
 
-        protected virtual unsafe void FindMatches(StdString* text, Span<char> span)
+        protected virtual unsafe void FindMatches(StdWString* text, Span<char> span)
         {
             for (int i = 0; i < regexes.Count; i++)
             {
@@ -235,9 +237,9 @@
             }
         }
 
-        private unsafe void SplitLines(StdString* text, int currentPos, int length, List<TextHighlightSpan> outSpans)
+        private unsafe void SplitLines(StdWString* text, int currentPos, int length, List<TextHighlightSpan> outSpans)
         {
-            byte* pText = text->Data;
+            char* pText = text->Data;
             int lineStart = 0;
 
             for (int index = 0; index < length; index++)
@@ -271,7 +273,7 @@
             var lineIndex = FindLineIndexOfCharacter(lines, idx);
             var line = lines[lineIndex];
             var characterIndex = FindCharacterIndexInLine(line, idx);
-            var width = ImGui.CalcTextSize(line.Data, line.Data + characterIndex).X;
+            var width = ImGuiWChar.CalcTextSize(line.Data, line.Data + characterIndex).X;
 
             var origin = new Vector2(width, lineIndex * lineHeight);
             return origin;
@@ -340,7 +342,7 @@
 
     public unsafe struct TextHighlightSpan
     {
-        public StdString* String;
+        public StdWString* String;
         public Vector2 Origin;
         public int Start;
         public int End;
@@ -348,7 +350,7 @@
         public uint Color;
         public bool HasColor;
 
-        public TextHighlightSpan(StdString* str, Vector2 origin, ColorRGBA color, int start, int length)
+        public TextHighlightSpan(StdWString* str, Vector2 origin, ColorRGBA color, int start, int length)
         {
             String = str;
             Origin = origin;
@@ -358,7 +360,7 @@
             HasColor = true;
         }
 
-        public TextHighlightSpan(StdString* str, Vector2 origin, int start, int length)
+        public TextHighlightSpan(StdWString* str, Vector2 origin, int start, int length)
         {
             String = str;
             Origin = origin;
@@ -369,32 +371,32 @@
 
         public readonly int Length => End - Start;
 
-        public readonly byte* Data => String->Data + Start;
+        public readonly char* Data => String->Data + Start;
 
-        public readonly ReadOnlySpan<byte> AsReadOnlySpan()
+        public readonly ReadOnlySpan<char> AsReadOnlySpan()
         {
-            return new ReadOnlySpan<byte>(String->Data + Start, Length);
+            return new ReadOnlySpan<char>(String->Data + Start, Length);
         }
 
-        public readonly Span<byte> AsSpan()
+        public readonly Span<char> AsSpan()
         {
-            return new Span<byte>(String->Data + Start, Length);
+            return new Span<char>(String->Data + Start, Length);
         }
 
         public override readonly string ToString()
         {
-            return $"[{Start}-{End}] {Color:X}, {Encoding.UTF8.GetString(AsSpan())}";
+            return $"[{Start}-{End}] {Color:X}, {new string(Data)}";
         }
     }
 
     public unsafe struct TextSpan
     {
-        public StdString* String;
+        public StdWString* String;
         public int Start;
         public int End;
         public float Size;
 
-        public TextSpan(StdString* str, int start, int length)
+        public TextSpan(StdWString* str, int start, int length)
         {
             String = str;
             Start = start;
@@ -403,18 +405,18 @@
 
         public readonly int Length => End - Start;
 
-        public readonly byte* Data => String->Data + Start;
+        public readonly char* Data => String->Data + Start;
 
-        public readonly byte* DataEnd => String->Data + End;
+        public readonly char* DataEnd => String->Data + End;
 
-        public readonly ReadOnlySpan<byte> AsReadOnlySpan()
+        public readonly ReadOnlySpan<char> AsReadOnlySpan()
         {
-            return new ReadOnlySpan<byte>(String->Data + Start, Length);
+            return new ReadOnlySpan<char>(String->Data + Start, Length);
         }
 
-        public readonly Span<byte> AsSpan()
+        public readonly Span<char> AsSpan()
         {
-            return new Span<byte>(String->Data + Start, Length);
+            return new Span<char>(String->Data + Start, Length);
         }
     }
 }

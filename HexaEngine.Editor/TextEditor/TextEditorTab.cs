@@ -13,18 +13,18 @@
     using System.Runtime.InteropServices;
     using System.Text.RegularExpressions;
 
-    public readonly struct CaseInsensitiveComparer : IEqualityComparer<byte>
+    public readonly struct CaseInsensitiveComparer : IEqualityComparer<char>
     {
         public static readonly CaseInsensitiveComparer Default = new();
 
-        public readonly bool Equals(byte x, byte y)
+        public readonly bool Equals(char x, char y)
         {
-            return char.ToLowerInvariant((char)x) == char.ToLowerInvariant((char)y);
+            return char.ToLowerInvariant(x) == char.ToLowerInvariant(y);
         }
 
-        public readonly int GetHashCode(byte obj)
+        public readonly int GetHashCode(char obj)
         {
-            return char.ToLowerInvariant((char)obj).GetHashCode();
+            return char.ToLowerInvariant(obj).GetHashCode();
         }
     }
 
@@ -165,7 +165,7 @@
 
         public struct TextSelection
         {
-            public StdString* Text;
+            public StdWString* Text;
             public CursorState Start;
             public CursorState End;
 
@@ -175,7 +175,7 @@
                 End = CursorState.Invalid;
             }
 
-            public TextSelection(StdString* text, CursorState start, CursorState end)
+            public TextSelection(StdWString* text, CursorState start, CursorState end)
             {
                 Text = text;
                 Start = start;
@@ -184,7 +184,7 @@
 
             public static readonly TextSelection Invalid = new(null, CursorState.Invalid, CursorState.Invalid);
 
-            public byte* Data => Text->Data + Math.Min(Start.Index, End.Index);
+            public char* Data => Text->Data + Math.Min(Start.Index, End.Index);
 
             public readonly int Length => Math.Abs(End - Start);
 
@@ -213,7 +213,7 @@
             if (ImGui.BeginTabItem(name.UniqueName, ref open, flags))
             {
                 isFocused = true;
-                StdString* text = source.Text;
+                StdWString* text = source.Text;
                 ImGuiManager.PushFont("TextEditorFont");
 
                 ImGui.BeginChild("##TextEditorChild", new Vector2(-(sideBarWidth + sidePanelWidth), 0), ImGuiWindowFlags.HorizontalScrollbar);
@@ -350,7 +350,6 @@
                 {
                     options |= RegexOptions.ExplicitCapture;
                 }
-                StdWString wStr = source.Text->ToWString();
 
                 int startPos = 0;
                 int textLength = source.Text->Size;
@@ -360,14 +359,13 @@
                     textLength = Math.Min(textLength, selection.Length);
                 }
 
-                foreach (var match in Regex.EnumerateMatches(wStr.AsReadOnlySpan().Slice(startPos, textLength), searchText, options))
+                foreach (var match in Regex.EnumerateMatches(source.Text->AsReadOnlySpan().Slice(startPos, textLength), searchText, options))
                 {
                     var idx = match.Index;
                     var len = match.Length;
                     TextSpan span = new(source.Text, idx, len);
                     findResults.Add(span);
                 }
-                wStr.Release();
             }
             else
             {
@@ -376,7 +374,7 @@
                 bool selectionOnly = (findFlags & TextFindFlags.Selection) != 0;
 
                 int textLength = source.Text->Size;
-                byte* pText = source.Text->CStr();
+                char* pText = source.Text->CStr();
 
                 int startPos = 0;
                 if (selectionOnly)
@@ -385,12 +383,12 @@
                     textLength = Math.Min(textLength, selection.Length);
                 }
 
-                IEqualityComparer<byte> comparer = caseSensitive ? EqualityComparer<byte>.Default : CaseInsensitiveComparer.Default;
+                IEqualityComparer<char> comparer = caseSensitive ? EqualityComparer<char>.Default : CaseInsensitiveComparer.Default;
 
                 int pos = startPos;
                 fixed (char* pSearchText = searchText)
                 {
-                    while ((pos = Find(pText, textLength, pSearchText, searchText.Length, pos, WCharToCharConverter.Default, comparer)) != -1)
+                    while ((pos = Find(pText, textLength, pSearchText, searchText.Length, pos, comparer)) != -1)
                     {
                         if (wholeWord && !IsWholeWordMatch(pText, pos, searchText.Length))
                         {
@@ -407,10 +405,10 @@
             findIndex = Math.Clamp(findIndex, 0, findResults.Count - 1);
         }
 
-        private bool IsWholeWordMatch(byte* pText, int index, int length)
+        private bool IsWholeWordMatch(char* pText, int index, int length)
         {
-            bool startIsWordBoundary = index == 0 || !char.IsLetterOrDigit((char)pText[index - 1]);
-            bool endIsWordBoundary = index + length >= source.Text->Size || !char.IsLetterOrDigit((char)pText[index + length]);
+            bool startIsWordBoundary = index == 0 || !char.IsLetterOrDigit(pText[index - 1]);
+            bool endIsWordBoundary = index + length >= source.Text->Size || !char.IsLetterOrDigit(pText[index + length]);
 
             return startIsWordBoundary && endIsWordBoundary;
         }
@@ -478,7 +476,7 @@
             flags ^= flag;
         }
 
-        private void Update(float lineHeight, StdString* text)
+        private void Update(float lineHeight, StdWString* text)
         {
             ClearSelection();
             needsUpdate = false;
@@ -490,7 +488,7 @@
         private bool wasFocused = false;
         private TextSelection selection = TextSelection.Invalid;
 
-        private bool DrawEditor(string label, StdString* text, Vector2 size)
+        private bool DrawEditor(string label, StdWString* text, Vector2 size)
         {
             int id = ImGui.GetID(label);
 
@@ -521,7 +519,7 @@
 
             Vector2 mousePos = ImGui.GetMousePos();
 
-            byte* pText = text->CStr();
+            char* pText = text->CStr();
 
             {
                 const float widthBreakpointsWidth = 20;
@@ -599,7 +597,7 @@
             size.X -= width + style->FramePadding.X;
         }
 
-        private void HandleMouseInput(int id, ImGuiWindow* window, float lineHeight, StdString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, byte* pText)
+        private void HandleMouseInput(int id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
         {
             bool isMouseDown = isHovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
 
@@ -705,6 +703,7 @@
             {
                 return;
             }
+
             source.Text->Erase(selection.EffectiveStart.Index, selection.Length);
             source.Update(ImGui.GetTextLineHeight());
             SetCursor(selection.EffectiveStart.Index);
@@ -725,7 +724,7 @@
             ClearSelection();
         }
 
-        private void HandleKeyboardInput(StdString* text, ref bool changed, bool isFocused)
+        private void HandleKeyboardInput(StdWString* text, ref bool changed, bool isFocused)
         {
             ImGuiIOPtr io = ImGui.GetIO();
             if (isFocused)
@@ -738,7 +737,7 @@
                         char c = io.InputQueueCharacters.Data[i];
                         if (c >= 32) // Handle regular characters
                         {
-                            text->Insert(cursorState, (byte)c);
+                            text->Insert(cursorState, c);
                             cursorState++;
                             changed = true;
                         }
@@ -755,7 +754,7 @@
                         int index = cursorState - 1;
                         int length = 1;
 
-                        byte c = text->At(index);
+                        char c = text->At(index);
                         if (c == '\n' || c == '\r')
                         {
                             if (c == '\n' && index - 1 >= 0 && text->At(index - 1) == '\r')
@@ -786,24 +785,24 @@
                     switch (source.NewLineType)
                     {
                         case NewLineType.CRLF:
-                            text->Insert(cursorState, (byte)'\r');
-                            text->Insert(cursorState, (byte)'\n');
+                            text->Insert(cursorState, '\r');
+                            text->Insert(cursorState, '\n');
                             cursorState += CursorState.NewLineCRLF;
                             break;
 
                         case NewLineType.LF:
-                            text->Insert(cursorState, (byte)'\n');
+                            text->Insert(cursorState, '\n');
                             cursorState += CursorState.NewLineLF;
                             break;
 
                         case NewLineType.CR:
-                            text->Insert(cursorState, (byte)'\r');
+                            text->Insert(cursorState, '\r');
                             cursorState += CursorState.NewLineCR;
                             break;
 
                         case NewLineType.Mixed:
                         default:
-                            text->Insert(cursorState, (byte)'\n');
+                            text->Insert(cursorState, '\n');
                             cursorState += CursorState.NewLineLF;
                             break;
                     }
@@ -815,7 +814,7 @@
                 if (ImGui.IsKeyPressed(ImGuiKey.Tab))
                 {
                     PreEdit();
-                    text->Insert(cursorState, (byte)'\t');
+                    text->Insert(cursorState, '\t');
                     changed = true;
                     PostEdit();
                 }
@@ -884,7 +883,7 @@
         {
             var text = source.Text;
             var subString = text->SubString(selection.EffectiveStart.Index, selection.Length);
-            ImGui.SetClipboardText(subString.Data);
+            ImGui.SetClipboardText(subString.ToString());
             subString.Release();
         }
 
@@ -942,7 +941,7 @@
             PostEdit();
         }
 
-        private void DrawText(ImDrawList* drawList, Vector2 origin, byte* pText)
+        private void DrawText(ImDrawList* drawList, Vector2 origin, char* pText)
         {
             for (int i = 0; i < highlightSpans.Count; i++)
             {
@@ -950,11 +949,11 @@
 
                 if (lineSpan.HasColor)
                 {
-                    drawList->AddText(origin + lineSpan.Origin, lineSpan.Color, pText + lineSpan.Start, pText + lineSpan.End);
+                    ImGuiWChar.AddText(drawList, origin + lineSpan.Origin, lineSpan.Color, pText + lineSpan.Start, pText + lineSpan.End);
                 }
                 else
                 {
-                    drawList->AddText(origin + lineSpan.Origin, 0xffffffff, pText + lineSpan.Start, pText + lineSpan.End);
+                    ImGuiWChar.AddText(drawList, origin + lineSpan.Origin, 0xffffffff, pText + lineSpan.Start, pText + lineSpan.End);
                 }
             }
         }
@@ -988,10 +987,10 @@
                 if (lineIndex == startLine)
                 {
                     // Selection starts on this line
-                    float startX = ImGui.CalcTextSize(line.Data, line.Data + start.Column).X;
+                    float startX = ImGuiWChar.CalcTextSize(line.Data, line.Data + start.Column).X;
                     float endX = (lineIndex == endLine)
-                        ? ImGui.CalcTextSize(line.Data, line.Data + end.Column).X
-                        : ImGui.CalcTextSize(line.Data, line.DataEnd).X;
+                        ? ImGuiWChar.CalcTextSize(line.Data, line.Data + end.Column).X
+                        : ImGuiWChar.CalcTextSize(line.Data, line.DataEnd).X;
 
                     Vector2 topLeft = quadOrigin + new Vector2(startX, 0);
                     Vector2 bottomLeft = quadOrigin + new Vector2(startX, lineHeight);
@@ -1003,7 +1002,7 @@
                 else if (lineIndex == endLine)
                 {
                     // Selection ends on this line
-                    float endX = ImGui.CalcTextSize(line.Data, line.Data + end.Column).X;
+                    float endX = ImGuiWChar.CalcTextSize(line.Data, line.Data + end.Column).X;
 
                     Vector2 topLeft = quadOrigin;
                     Vector2 bottomLeft = quadOrigin + new Vector2(0, lineHeight);
@@ -1015,7 +1014,7 @@
                 else
                 {
                     // Full line selection
-                    float lineWidth = ImGui.CalcTextSize(line.Data, line.DataEnd).X;
+                    float lineWidth = ImGuiWChar.CalcTextSize(line.Data, line.DataEnd).X;
 
                     Vector2 topLeft = quadOrigin;
                     Vector2 bottomLeft = quadOrigin + new Vector2(0, lineHeight);
@@ -1043,13 +1042,13 @@
                 {
                     var lineSpan = source.Lines[cursorState.Line];
 
-                    cursorX = origin.X + ImGui.CalcTextSize(lineSpan.Data, lineSpan.Data + cursorState.Column).X;
+                    cursorX = origin.X + ImGuiWChar.CalcTextSize(lineSpan.Data, lineSpan.Data + cursorState.Column).X;
                     cursorY = origin.Y + cursorState.Line * lineHeight;
                 }
                 else if (source.Lines.Count > 0)
                 {
                     TextSpan lastLineSpan = source.Lines[^1];
-                    cursorX = origin.X + ImGui.CalcTextSize(lastLineSpan.Data, lastLineSpan.Data + lastLineSpan.Length).X;
+                    cursorX = origin.X + ImGuiWChar.CalcTextSize(lastLineSpan.Data, lastLineSpan.Data + lastLineSpan.Length).X;
                     cursorY = origin.Y + (source.LineCount - 1) * lineHeight;
                 }
 
@@ -1078,7 +1077,7 @@
 
         private static int HitTest(TextSource source, Vector2 origin, Vector2 mousePos, float lineHeight)
         {
-            byte* pText = source.Text->Data;
+            char* pText = source.Text->Data;
             Vector2 relativeMousePos = mousePos - origin;
 
             int lineIndex = (int)MathF.Floor(relativeMousePos.Y / lineHeight);
@@ -1092,8 +1091,8 @@
 
             for (int j = lineSpan.Start; j < lineSpan.End; j++)
             {
-                float last = ImGui.CalcTextSize(pText + lineSpan.Start, pText + j).X;
-                float penX = ImGui.CalcTextSize(pText + lineSpan.Start, pText + j + 1).X;
+                float last = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + j).X;
+                float penX = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + j + 1).X;
 
                 if (penX > relativeMousePos.X)
                 {

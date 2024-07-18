@@ -70,7 +70,7 @@
             }
 
             // Allocate a new StdString and clone the current text
-            last.Data = AllocT<StdString>();
+            last.Data = AllocT<StdWString>();
             *last.Data = source.Text->Clone();
 
             // Place the new entry at the beginning of undoHistory
@@ -92,7 +92,7 @@
             }
 
             // Allocate a new StdString and clone the entry data
-            last.Data = AllocT<StdString>();
+            last.Data = AllocT<StdWString>();
             *last.Data = entry.Data->Clone();
 
             // Place the new entry at the beginning of redoHistory

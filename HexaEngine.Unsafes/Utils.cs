@@ -1427,6 +1427,33 @@
             return -1;
         }
 
+        public static int Find<T>(T* data, int size, T* str, int length, int pos, IEqualityComparer<T> comparer) where T : unmanaged, IEquatable<T>
+        {
+            if (length > size - pos)
+            {
+                return -1;
+            }
+
+            int cmp = 0;
+            for (int i = pos; i < size; i++)
+            {
+                if (comparer.Equals(data[i], str[cmp]))
+                {
+                    cmp++;
+                    if (cmp == length)
+                    {
+                        return i - cmp + 1;
+                    }
+                }
+                else
+                {
+                    cmp = 0;
+                }
+            }
+
+            return -1;
+        }
+
         public static int Find<TSrc, TDst>(TSrc* data, int size, TDst* str, int length, int pos, IConverter<TDst, TSrc> convert) where TSrc : unmanaged, IEquatable<TSrc> where TDst : unmanaged
         {
             if (length > size - pos)

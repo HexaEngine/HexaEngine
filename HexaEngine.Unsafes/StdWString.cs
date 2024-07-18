@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
     using System.Collections;
+    using System.Collections.Generic;
     using System.Text;
 
     /// <summary>
@@ -165,7 +166,7 @@
         /// <param name="item">The char to insert.</param>
         public void Insert(int index, char item)
         {
-            Grow(size + 1);
+            EnsureCapacity(size + 1);
             MemcpyT(&data[index], &data[index + 1], size - index);
             data[index] = item;
             size++;
@@ -178,13 +179,35 @@
         /// <param name="item">The <see cref="StdWString"/> to insert.</param>
         public void InsertRange(int index, StdWString item)
         {
-            Grow(size + item.size);
+            EnsureCapacity(size + item.size);
             MemcpyT(&data[index], &data[index + item.size], size - index);
             for (int i = 0; i < item.size; i++)
             {
                 data[index + i] = item[i];
             }
             size += item.size;
+        }
+
+        public void InsertRange(int index, byte* str, int len)
+        {
+            EnsureCapacity(size + len);
+            MemcpyT(&data[index], &data[index + len], size - index);
+            for (int i = 0; i < len; i++)
+            {
+                data[index + i] = (char)str[i];
+            }
+            size += len;
+        }
+
+        public void InsertRange(int index, char* str, int len)
+        {
+            EnsureCapacity(size + len);
+            MemcpyT(&data[index], &data[index + len], size - index);
+            for (int i = 0; i < len; i++)
+            {
+                data[index + i] = str[i];
+            }
+            size += len;
         }
 
         /// <summary>
@@ -194,7 +217,7 @@
         /// <param name="item">The string to insert.</param>
         public void InsertRange(int index, string item)
         {
-            Grow(size + item.Length);
+            EnsureCapacity(size + item.Length);
             MemcpyT(&data[index], &data[index + item.Length], size - index);
             for (int i = 0; i < item.Length; i++)
             {
@@ -240,6 +263,22 @@
         public readonly void Erase()
         {
             ZeroMemoryT(data, size);
+        }
+
+        public void Erase(int start, int len)
+        {
+            if (start < 0 || start >= size || len <= 0 || start + len > size)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            int newSize = size - len;
+            if (newSize > 0)
+            {
+                MemcpyT(data + start + len, data + start, newSize - start, newSize - start);
+            }
+
+            size = newSize;
         }
 
         /// <summary>

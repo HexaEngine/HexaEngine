@@ -4,7 +4,7 @@
 
     public unsafe struct TextHistoryEntry
     {
-        public StdString* Data;
+        public StdWString* Data;
 
         public void Release()
         {

@@ -8,19 +8,19 @@
 
     public unsafe class TextSource
     {
-        private StdString* text;
+        private StdWString* text;
         private NewLineType newLineType;
 
         public TextSource(string text)
         {
-            this.text = AllocT<StdString>();
+            this.text = AllocT<StdWString>();
             *this.text = new(text);
             IsBinary = !IsText(this.text);
             newLineType = GetNewLineType(this.text);
             LineCount = CountLines(this.text);
         }
 
-        public StdString* Text
+        public StdWString* Text
         {
             get => text;
         }
@@ -48,17 +48,17 @@
 
         public int LineCount { get; set; }
 
-        public void SetText(StdString* newText)
+        public void SetText(StdWString* newText)
         {
             text->Resize(newText->Size);
             MemcpyT(newText->CStr(), text->CStr(), newText->Size);
         }
 
-        public static bool IsText(StdString* text)
+        public static bool IsText(StdWString* text)
         {
             for (int i = 0; i < text->Size; i++)
             {
-                byte c = (*text)[i];
+                char c = (*text)[i];
                 if (char.GetUnicodeCategory((char)c) == UnicodeCategory.Control)
                 {
                     return false;
@@ -68,7 +68,7 @@
             return true;
         }
 
-        public static NewLineType GetNewLineType(StdString* text)
+        public static NewLineType GetNewLineType(StdWString* text)
         {
             bool crlf = false;
             bool lf = false;
@@ -78,8 +78,8 @@
 
             for (int i = 0; i < text->Size; i++)
             {
-                byte c = (*text)[i];
-                byte c1 = (*text)[i + 1 == text->Size ? i : i + 1];
+                char c = (*text)[i];
+                char c1 = (*text)[i + 1 == text->Size ? i : i + 1];
 
                 if (c == '\r' && c1 == '\n')
                 {
@@ -134,14 +134,14 @@
 
         public void Update(float lineHeight)
         {
-            byte* pText = text->Data;
+            char* pText = text->Data;
             Lines.Clear();
             int lineStart = 0;
             float maxWidth = 0;
 
             for (int i = 0; i < text->Size; i++)
             {
-                byte c = pText[i];
+                char c = pText[i];
 
                 if (c == '\n' || c == '\r')
                 {
@@ -152,7 +152,7 @@
                     }
 
                     TextSpan span = new(text, lineStart, i - lineStart);
-                    span.Size = ImGui.CalcTextSize(pText + lineStart, pText + i).X;
+                    span.Size = ImGuiWChar.CalcTextSize(pText + lineStart, pText + i).X;
                     maxWidth = Math.Max(maxWidth, span.Size);
                     Lines.Add(span);
                     lineStart = i + 1;
@@ -162,7 +162,7 @@
             if (lineStart <= text->Size)
             {
                 TextSpan span = new(text, lineStart, text->Size - lineStart);
-                span.Size = ImGui.CalcTextSize(pText + lineStart, pText + text->Size).X;
+                span.Size = ImGuiWChar.CalcTextSize(pText + lineStart, pText + text->Size).X;
                 maxWidth = Math.Max(maxWidth, span.Size);
                 Lines.Add(span);
             }
@@ -172,7 +172,7 @@
             LayoutSize = new(maxWidth, Lines.Count * lineHeight);
         }
 
-        public static void ConvertNewLineType(StdString* text, NewLineType newLineType)
+        public static void ConvertNewLineType(StdWString* text, NewLineType newLineType)
         {
             // don't care just return original, you can't convert it to mixed anyway.
             if (newLineType == NewLineType.Mixed)
@@ -190,8 +190,8 @@
             StringBuilder sb = new();
             for (int i = 0; i < text->Size; i++)
             {
-                byte c = (*text)[i];
-                byte c1 = (*text)[i + 1 == text->Size ? i : i + 1];
+                char c = (*text)[i];
+                char c1 = (*text)[i + 1 == text->Size ? i : i + 1];
 
                 if (c == '\r' && c1 == '\n' || c == '\n' || c == '\r')
                 {
@@ -208,11 +208,11 @@
             return;
         }
 
-        public static int CountLines(StdString* text)
+        public static int CountLines(StdWString* text)
         {
             int lineCount = 1;
 
-            foreach (byte c in *text)
+            foreach (char c in *text)
             {
                 if (c == '\n')
                 {
