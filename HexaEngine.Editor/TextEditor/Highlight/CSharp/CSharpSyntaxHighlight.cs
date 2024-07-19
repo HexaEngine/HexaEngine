@@ -65,7 +65,13 @@
                 case MethodDeclarationSyntax methodDecl:
                     AddSpan(methodDecl.Identifier, 0xdcdcaaff); // Method color
                     HandleParameterList(methodDecl.ParameterList);
-                    HandleMethodBody(methodDecl.Body);
+                    HandleMethodBody(methodDecl.Body, true);
+                    break;
+
+                case LocalFunctionStatementSyntax localFunc:
+                    AddSpan(localFunc.Identifier, 0xdcdcaaff); // Local function color
+                    HandleParameterList(localFunc.ParameterList);
+                    HandleMethodBody(localFunc.Body, true);
                     break;
 
                 case AttributeSyntax attributeSyntax:
@@ -98,37 +104,75 @@
             }
         }
 
-        private unsafe void HandleMethodBody(BlockSyntax? body)
+        private readonly HashSet<string> localDeclarationStatementSyntaxes = new();
+
+        private unsafe void HandleMethodBody(BlockSyntax? body, bool clear)
         {
+            if (clear)
+            {
+                localDeclarationStatementSyntaxes.Clear();
+            }
+
             if (body == null)
                 return;
 
             foreach (var statement in body.Statements)
             {
-                if (statement is LocalDeclarationStatementSyntax localDecl)
-                {
+                HandleStatement(statement);
+            }
+        }
+
+        private unsafe void HandleStatement(StatementSyntax statement)
+        {
+            switch (statement)
+            {
+                case LocalDeclarationStatementSyntax localDecl:
                     foreach (var variable in localDecl.Declaration.Variables)
                     {
+                        localDeclarationStatementSyntaxes.Add(variable.Identifier.ValueText);
                         AddSpan(variable.Identifier, 0x9cdcfeff); // Local variable declaration color
                     }
-                }
-                else if (statement is ExpressionStatementSyntax expressionStatement)
-                {
-                    HandleExpression(expressionStatement.Expression);
-                }
-                else if (statement is ForStatementSyntax forStatement)
-                {
-                    foreach (var variable in forStatement.Declaration.Variables)
-                    {
-                        AddSpan(variable.Identifier, 0x9cdcfeff); // Local variable declaration in for loop color
-                    }
+                    break;
 
+                case ExpressionStatementSyntax expressionStatement:
+                    HandleExpression(expressionStatement.Expression);
+                    break;
+
+                case ForStatementSyntax forStatement:
+                    if (forStatement.Declaration != null)
+                    {
+                        foreach (var variable in forStatement.Declaration.Variables)
+                        {
+                            localDeclarationStatementSyntaxes.Add(variable.Identifier.ValueText);
+                            AddSpan(variable.Identifier, 0x9cdcfeff); // Local variable declaration in for loop color
+                        }
+                    }
                     HandleExpression(forStatement.Condition);
                     foreach (var expressionSyntax in forStatement.Incrementors)
                     {
                         HandleExpression(expressionSyntax);
                     }
-                }
+                    break;
+
+                case IfStatementSyntax ifStatement:
+                    HandleExpression(ifStatement.Condition);
+                    HandleStatement(ifStatement.Statement);
+                    if (ifStatement.Else != null)
+                    {
+                        HandleStatement(ifStatement.Else.Statement);
+                    }
+                    break;
+
+                case WhileStatementSyntax whileStatement:
+                    HandleExpression(whileStatement.Condition);
+                    HandleStatement(whileStatement.Statement);
+                    break;
+
+                case BlockSyntax block:
+                    HandleMethodBody(block, false);
+                    break;
+
+                    // Add more cases for different statement types as needed
             }
         }
 
@@ -150,19 +194,18 @@
 
             foreach (var node in expression.DescendantNodesAndSelf())
             {
+                if (node is InvocationExpressionSyntax invocationExpression)
+                {
+                    HandleExpression(invocationExpression.Expression);
+                    continue;
+                }
+
                 if (node is IdentifierNameSyntax identifierName)
                 {
-                    if (identifierName.Parent is not InvocationExpressionSyntax &&
-                        identifierName.Parent is not MemberAccessExpressionSyntax &&
-                        identifierName.Parent is not FieldDeclarationSyntax &&
-                        identifierName.Parent is not GenericNameSyntax &&
-                        identifierName.Parent is not ObjectCreationExpressionSyntax)
+                    if (localDeclarationStatementSyntaxes.Contains(identifierName.Identifier.ValueText))
                     {
                         AddSpan(identifierName.Identifier, 0x9cdcfeff); // Variable usage color
-                        continue;
                     }
-
-                    HandleNode(node);
                 }
             }
         }

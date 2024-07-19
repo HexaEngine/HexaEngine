@@ -1,12 +1,13 @@
 ﻿/*
  * Based of GIMP source code.
+ * This part is Licensed under GPL-3.0.
+ * Fair use of code, this code section is trivial to the rest.
  */
-
-using System.Security.Cryptography;
-using System.Text.Json.Serialization;
 
 namespace HexaEngine.Mathematics
 {
+    using System.Text.Json.Serialization;
+
     public unsafe struct Curve
     {
         public Curve(IEnumerable<CurvePoint> points, int initSampleCount = 256)
@@ -53,7 +54,7 @@ namespace HexaEngine.Mathematics
                             curve.Samples[i] = point.Y;
                         }
 
-                        point = curve.Points[curve.Points.Count - 1];
+                        point = curve.Points[^1];
                         boundary = (int)Math.Round(point.X * (double)(curve.Samples.Length - 1));
 
                         for (int i = boundary; i < curve.Samples.Length; i++)

@@ -1,16 +1,12 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Mathematics;
-    using HexaEngine.UI.Graphics;
-    using HexaEngine.UI.Graphics.Text;
+    using HexaEngine.Editor.TextEditor.Panels;
     using System.IO;
     using System.Numerics;
 
@@ -22,12 +18,14 @@
         private readonly SaveFileDialog saveDialog = new();
 
         private readonly List<TextEditorTab> tabs = new();
+        private readonly List<SidePanel> sidePanels = new();
         private TextEditorTab? currentTab;
 
         public TextEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
+            sidePanels.Add(new ExplorerSidePanel());
         }
 
         protected override string Name => "Text Editor";
@@ -170,8 +168,14 @@
             DrawMenuBar();
             HandleShortcuts();
 
+            Vector2 cursor = ImGui.GetCursorPos();
+            Vector2 avail = ImGui.GetContentRegionAvail();
+
+            float actualSidePanelWidth = sidePanelCollapsed ? 0 : sidePanelWidth;
+
             if (ImGui.BeginTabBar("##TextEditor"))
             {
+                Vector2 cursorTab = ImGui.GetCursorPos();
                 for (int i = 0; i < tabs.Count; i++)
                 {
                     var tab = tabs[i];
@@ -185,10 +189,84 @@
                         tabs.RemoveAt(i);
                         i--;
                     }
-                    tab.Draw(context);
+
+                    Vector2 size = new(avail.X - sideBarWidth - actualSidePanelWidth - resizeBarWidth, avail.Y - (cursorTab.Y - cursor.Y));
+                    tab.Draw(context, size);
                 }
                 ImGui.EndTabBar();
             }
+
+            ImGui.SetCursorPos(cursor + new Vector2(avail.X - sideBarWidth - actualSidePanelWidth - resizeBarWidth, 0));
+
+            ImGui.InvisibleButton("ResizeBar", new Vector2(resizeBarWidth, avail.Y));
+
+            if (ImGui.IsItemHovered())
+                ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeEw);
+
+            if (ImGui.IsItemActive() && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+            {
+                sidePanelWidth -= ImGui.GetIO().MouseDelta.X;
+                sidePanelWidth = Math.Max(sidePanelWidth, 0);
+                sidePanelCollapsed = sidePanelWidth <= 100;
+            }
+
+            ImGui.SetCursorPos(cursor + new Vector2(avail.X - sideBarWidth - actualSidePanelWidth + resizeBarWidth, 0));
+            DrawSidePanel();
+
+            ImGui.SetCursorPos(cursor + new Vector2(avail.X - sideBarWidth + resizeBarWidth, 0));
+            DrawSideBar();
+        }
+
+        private unsafe void DrawSidePanel()
+        {
+            if (sidePanelCollapsed)
+            {
+                return;
+            }
+
+            if (activeSidePanel < 0 && activeSidePanel >= sidePanels.Count)
+            {
+                return;
+            }
+
+            ImGui.BeginChild("##SidePanel", new Vector2(sidePanelWidth, 0));
+            var cursor = ImGui.GetCursorScreenPos();
+            var avail = ImGui.GetContentRegionAvail();
+            var max = cursor + new Vector2(sidePanelWidth, avail.Y);
+            ImDrawList* drawList = ImGui.GetWindowDrawList();
+            drawList->AddRectFilled(cursor, max, 0xff1c1c1c);
+
+            sidePanels[activeSidePanel].Draw();
+
+            ImGui.EndChild();
+        }
+
+        private const float resizeBarWidth = 2.0f;
+        private const float sideBarWidth = 40f;
+        private float sidePanelWidth = 200f;
+        private bool sidePanelCollapsed = false;
+        private int activeSidePanel;
+
+        private unsafe void DrawSideBar()
+        {
+            ImGui.BeginChild("##SideBar", new Vector2(sideBarWidth, 0));
+            var cursor = ImGui.GetCursorScreenPos();
+            var avail = ImGui.GetContentRegionAvail();
+            var max = cursor + new Vector2(sideBarWidth, avail.Y);
+            ImDrawList* drawList = ImGui.GetWindowDrawList();
+            drawList->AddRectFilled(cursor, max, 0xff2c2c2c);
+
+            for (int i = 0; i < sidePanels.Count; i++)
+            {
+                var sidePanel = sidePanels[i];
+                if (ImGui.Button(sidePanel.Icon))
+                {
+                    activeSidePanel = i;
+                    sidePanelWidth = sidePanelWidth <= 100 ? 200f : sidePanelWidth;
+                    sidePanelCollapsed = false;
+                }
+            }
+            ImGui.EndChild();
         }
 
         private void HandleShortcuts()

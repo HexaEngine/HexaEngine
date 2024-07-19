@@ -5,53 +5,23 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.UI.Graphics;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text.RegularExpressions;
 
-    public readonly struct CaseInsensitiveComparer : IEqualityComparer<char>
-    {
-        public static readonly CaseInsensitiveComparer Default = new();
-
-        public readonly bool Equals(char x, char y)
-        {
-            return char.ToLowerInvariant(x) == char.ToLowerInvariant(y);
-        }
-
-        public readonly int GetHashCode(char obj)
-        {
-            return char.ToLowerInvariant(obj).GetHashCode();
-        }
-    }
-
-    /*
-     * [X] Multiline + Editor with Colors.
-     * [X] Selection
-     * [X] Copy, Cut & Paste
-     * [X] Undo Redo
-     *
-     *
-     *
-     *
-     */
-
-    /// <summary>
-    ///
-    /// </summary>
     public unsafe class TextEditorTab
     {
         private readonly ImGuiName name;
-
         private bool open = true;
         private bool isFocused = false;
         private TextSource source;
         private TextHistory history;
-
         private bool needsUpdate = true;
+        private JumpTarget? jumpTo;
 
         public TextEditorTab(string tabName, TextSource source)
         {
@@ -82,131 +52,11 @@
 
         private readonly List<TextHighlightSpan> highlightSpans = [];
 
-        public struct CursorState
-        {
-            public int Index;
-            public int Line;
-            public int Column;
-
-            public CursorState(int index, int line, int column)
-            {
-                Index = index;
-                Line = line;
-                Column = column;
-            }
-
-            public static readonly CursorState NewLineLF = new(1, 1, 0);
-            public static readonly CursorState NewLineCR = new(1, 1, 0);
-            public static readonly CursorState NewLineCRLF = new(2, 1, 0);
-            public static readonly CursorState Invalid = new(-1, -1, -1);
-
-            public static CursorState FromOffset(int offset)
-            {
-                return new CursorState(offset, 0, offset);
-            }
-
-            public static CursorState FromIndex(int index, TextSource source)
-            {
-                int line = 0;
-                int column = 0;
-                for (; line < source.LineCount; line++)
-                {
-                    var lineSpan = source.Lines[line];
-                    if (lineSpan.Start <= index && lineSpan.End >= index)
-                    {
-                        column = index - lineSpan.Start;
-                        break;
-                    }
-                }
-
-                return new(index, line, column);
-            }
-
-            public static CursorState FromLineColumn(int line, int column, TextSource source)
-            {
-                var lineSpan = source.Lines[line];
-                var index = lineSpan.Start + column;
-                return new(index, line, column);
-            }
-
-            public static CursorState operator ++(CursorState state)
-            {
-                int newIndex = state.Index + 1;
-                int newColumn = state.Column + 1;
-                return new(newIndex, state.Line, newColumn);
-            }
-
-            public static CursorState operator --(CursorState state)
-            {
-                int newLine = state.Line;
-                int newColumn = state.Column - 1;
-                if (newColumn < 0)
-                {
-                    newLine--;
-                    newColumn = 0;
-                }
-                return new(state.Index - 1, newLine, newColumn);
-            }
-
-            public static CursorState operator +(CursorState a, CursorState b)
-            {
-                return new CursorState(a.Index + b.Index, a.Line + b.Line, a.Column + b.Column);
-            }
-
-            public static CursorState operator -(CursorState a, CursorState b)
-            {
-                return new CursorState(a.Index - b.Index, a.Line - b.Line, a.Column - b.Column);
-            }
-
-            public static implicit operator int(CursorState state) => state.Index;
-        }
-
         private CursorState cursorState;
-
-        public struct TextSelection
-        {
-            public StdWString* Text;
-            public CursorState Start;
-            public CursorState End;
-
-            public TextSelection()
-            {
-                Start = CursorState.Invalid;
-                End = CursorState.Invalid;
-            }
-
-            public TextSelection(StdWString* text, CursorState start, CursorState end)
-            {
-                Text = text;
-                Start = start;
-                End = end;
-            }
-
-            public static readonly TextSelection Invalid = new(null, CursorState.Invalid, CursorState.Invalid);
-
-            public char* Data => Text->Data + Math.Min(Start.Index, End.Index);
-
-            public readonly int Length => Math.Abs(End - Start);
-
-            public bool IsValid()
-            {
-                var start = Start.Index;
-                var end = End.Index;
-                if (start > end)
-                {
-                    (start, end) = (end, start);
-                }
-                return start >= 0 && Text != null && end <= Text->Size;
-            }
-
-            public readonly CursorState EffectiveStart => Start.Index <= End.Index ? Start : End;
-
-            public readonly CursorState EffectiveEnd => Start.Index <= End.Index ? End : Start;
-        }
 
         private readonly List<TextSelection> selections = [];
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, Vector2 size)
         {
             isFocused = false;
             ImGuiTabItemFlags flags = source.Changed ? ImGuiTabItemFlags.UnsavedDocument : ImGuiTabItemFlags.None;
@@ -216,37 +66,22 @@
                 StdWString* text = source.Text;
                 ImGuiManager.PushFont("TextEditorFont");
 
-                ImGui.BeginChild("##TextEditorChild", new Vector2(-(sideBarWidth + sidePanelWidth), 0), ImGuiWindowFlags.HorizontalScrollbar);
+                ImGui.BeginChild("##TextEditorChild", size, ImGuiWindowFlags.HorizontalScrollbar);
 
                 Vector2 avail = ImGui.GetContentRegionAvail();
-                bool changed = DrawEditor("##TextEditor", text, avail);
+                DrawEditor("##TextEditor", text, avail);
                 ImGui.EndChild();
 
+                ImGui.SameLine();
                 DrawFindWindow();
 
                 ImGuiManager.PopFont();
-
-                DrawSideBar();
 
                 ImGui.EndTabItem();
             }
         }
 
-        private float sideBarWidth = 40f;
-        private float sidePanelWidth = 0f;
-
-        private void DrawSideBar()
-        {
-            ImGui.BeginChild("##SideBar", new Vector2(sideBarWidth, 0));
-            var cursor = ImGui.GetCursorScreenPos();
-            var avail = ImGui.GetContentRegionAvail();
-            var max = cursor + new Vector2(sideBarWidth, avail.Y);
-            ImDrawList* drawList = ImGui.GetWindowDrawList();
-            drawList->AddRectFilled(cursor, max, 0xff2c2c2c);
-            ImGui.EndChild();
-        }
-
-        private enum TextFindFlags
+        public enum TextFindFlags
         {
             None = 0,
             CaseSensitive = 1,
@@ -255,11 +90,26 @@
             Selection = 8,
         }
 
+        public enum FindWindowFlags
+        {
+            None = 0,
+            Visible = 1,
+            ReplaceVisible = 2
+        }
+
+        private FindWindowFlags findWindowFlags;
         private string searchText = string.Empty;
+        private string replaceText = string.Empty;
+
         private TextFindFlags findFlags;
 
-        private void DrawFindWindow()
+        private bool DrawFindWindow()
         {
+            if ((findWindowFlags & FindWindowFlags.Visible) == 0)
+            {
+                return false;
+            }
+
             ImGuiStylePtr style = ImGui.GetStyle();
 
             // Get the font size
@@ -271,9 +121,15 @@
             float frameHeight = fontSize + framePadding.Y * 4.0f + itemSpacing.Y;
 
             const float padding = 40;
-            const float width = 440;
+            const float width = 500;
 
-            ImGui.SameLine();
+            bool replaceVisible = (findWindowFlags & FindWindowFlags.ReplaceVisible) != 0;
+
+            if (replaceVisible)
+            {
+                frameHeight += fontSize + framePadding.Y * 4.0f;
+            }
+
             var cursor = ImGui.GetCursorPos();
             ImGui.SetCursorPos(new(cursor.X - width - padding, cursor.Y));
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff181818);
@@ -281,42 +137,83 @@
             {
                 ImGui.PopStyleColor();
 
+                if (IconButton(replaceVisible ? $"{GUwU.ArrowDropDown}" : $"{GUwU.ArrowRight}", false))
+                {
+                    InvertFlagInt32(ref findWindowFlags, FindWindowFlags.ReplaceVisible);
+                }
+
                 ImGui.SameLine();
+
+                var baseCursor = ImGui.GetCursorPos();
 
                 bool updateSearch = ImGui.InputTextEx("##SearchText", "Find...", ref searchText, 1024, new(200, 0), 0, null, null);
-                ImGui.SameLine();
 
+                ImGui.SameLine();
                 if (IconButton($"{GUwU.MatchCase}", (findFlags & TextFindFlags.CaseSensitive) != 0))
                 {
-                    InvertFlag(ref findFlags, TextFindFlags.CaseSensitive);
+                    InvertFlagInt32(ref findFlags, TextFindFlags.CaseSensitive);
                     updateSearch = true;
                 }
                 ImGui.SameLine();
                 if (IconButton($"{GUwU.MatchWord}", (findFlags & TextFindFlags.WholeWorld) != 0))
                 {
-                    InvertFlag(ref findFlags, TextFindFlags.WholeWorld);
+                    InvertFlagInt32(ref findFlags, TextFindFlags.WholeWorld);
                     updateSearch = true;
                 }
                 ImGui.SameLine();
                 if (IconButton($"{GUwU.RegularExpression}", (findFlags & TextFindFlags.Regex) != 0))
                 {
-                    InvertFlag(ref findFlags, TextFindFlags.Regex);
+                    InvertFlagInt32(ref findFlags, TextFindFlags.Regex);
                     updateSearch = true;
                 }
 
                 ImGui.SameLine();
                 if (IconButton($"{GUwU.ArrowUpward}")) // goes upwards in the search
                 {
+                    findIndex--;
+                    if (findIndex < 0)
+                    {
+                        findIndex = findResults.Count - 1;
+                    }
+                    JumpTo(findResults[findIndex]);
                 }
                 ImGui.SameLine();
                 if (IconButton($"{GUwU.ArrowDownward}")) // goes downwards in the search
                 {
+                    findIndex++;
+                    if (findIndex >= findResults.Count)
+                    {
+                        findIndex = 0;
+                    }
+                    JumpTo(findResults[findIndex]);
                 }
                 ImGui.SameLine();
                 if (IconButton($"{GUwU.Subject}", (findFlags & TextFindFlags.Selection) != 0))
                 {
-                    InvertFlag(ref findFlags, TextFindFlags.Selection);
+                    InvertFlagInt32(ref findFlags, TextFindFlags.Selection);
                     updateSearch = true;
+                }
+                ImGui.SameLine();
+                if (IconButton($"{GUwU.Close}"))
+                {
+                    InvertFlagInt32(ref findWindowFlags, FindWindowFlags.Visible);
+                    updateSearch = true;
+                }
+
+                if (replaceVisible)
+                {
+                    ImGui.SetCursorPosX(baseCursor.X);
+                    ImGui.InputTextEx("##ReplaceText", "Replace...", ref replaceText, 1024, new(200, 0), 0, null, null);
+                    ImGui.SameLine();
+                    if (IconButton($"{GUwU.FindReplace}")) // replace first.
+                    {
+                        PerformReplace(0);
+                    }
+                    ImGui.SameLine();
+                    if (IconButton($"{GUwU.SwapHoriz}")) // replace all.
+                    {
+                        PerformReplaceAll();
+                    }
                 }
 
                 if (updateSearch)
@@ -331,14 +228,22 @@
             ImGui.EndChild();
 
             ImGui.SetCursorPos(cursor);
+
+            return true;
         }
 
-        private readonly List<TextSpan> findResults = [];
+        private readonly List<SearchResult> findResults = [];
         private int findIndex = -1;
 
         private void PerformFind()
         {
             findResults.Clear();
+            if (searchText.Length == 0)
+            {
+                findIndex = -1;
+                return;
+            }
+
             if ((findFlags & TextFindFlags.Regex) != 0)
             {
                 RegexOptions options = RegexOptions.Multiline | RegexOptions.Compiled;
@@ -363,7 +268,8 @@
                 {
                     var idx = match.Index;
                     var len = match.Length;
-                    TextSpan span = new(source.Text, idx, len);
+
+                    SearchResult span = SearchResult.FromIndex(source.Text, idx, len, source);
                     findResults.Add(span);
                 }
             }
@@ -396,13 +302,57 @@
                             continue;
                         }
 
-                        findResults.Add(new TextSpan(source.Text, pos, searchText.Length));
+                        SearchResult span = SearchResult.FromIndex(source.Text, pos, searchText.Length, source);
+                        findResults.Add(span);
                         pos += searchText.Length;
                     }
                 }
             }
 
-            findIndex = Math.Clamp(findIndex, 0, findResults.Count - 1);
+            if (findIndex != -1)
+            {
+                findIndex = Math.Clamp(findIndex, 0, findResults.Count - 1);
+            }
+        }
+
+        private void PerformReplaceAll()
+        {
+            if (findResults.Count == 0)
+                return;
+
+            PreEdit(TextEditOp.Replace);
+            // Iterate in reverse order to maintain valid indices after each replacement
+            for (int i = findResults.Count - 1; i >= 0; i--)
+            {
+                SearchResult result = findResults[i];
+
+                // Erase the found substring
+                result.String->Erase(result.Start, result.Length);
+
+                // Insert the replacement text
+                result.String->InsertRange(result.Start, replaceText);
+            }
+            PostEdit();
+            needsUpdate = true;
+        }
+
+        private void PerformReplace(int index)
+        {
+            if (findResults.Count == 0)
+                return;
+
+            PreEdit(TextEditOp.Replace);
+
+            SearchResult result = findResults[index];
+
+            // Erase the found substring
+            result.String->Erase(result.Start, result.Length);
+
+            // Insert the replacement text
+            result.String->InsertRange(result.Start, replaceText);
+
+            PostEdit();
+            needsUpdate = true;
         }
 
         private bool IsWholeWordMatch(char* pText, int index, int length)
@@ -471,9 +421,12 @@
             return isClicked;
         }
 
-        private static void InvertFlag(ref TextFindFlags flags, TextFindFlags flag)
+        private static void InvertFlagInt32<T>(ref T flags, T flag) where T : struct, Enum
         {
-            flags ^= flag;
+            int iFlags = Unsafe.BitCast<T, int>(flags);
+            int iFlag = Unsafe.BitCast<T, int>(flag);
+            iFlags ^= iFlag;
+            flags = Unsafe.BitCast<int, T>(iFlags);
         }
 
         private void Update(float lineHeight, StdWString* text)
@@ -503,16 +456,20 @@
                 Update(lineHeight, text);
             }
 
-            var fieldSize = Vector2.Max(size, source.LayoutSize + size - new Vector2(0, lineHeight));
+            (int digits, float lineNumberWidth) = ComputeLineNumbersWidth();
+
+            const float breakpointsWidth = 20;
+            var textAreaSize = Vector2.Max(size, source.LayoutSize + new Vector2(lineNumberWidth + breakpointsWidth, size.Y - lineHeight));
 
             Vector2 cursor = ImGui.GetCursorScreenPos();
-            ImRect bb = new() { Min = cursor, Max = cursor + fieldSize };
+            Vector2 localCursor = ImGui.GetCursorPos();
+            ImRect bb = new() { Min = cursor, Max = cursor + textAreaSize };
 
             ImGui.ItemSizeRect(bb, 0.0f);
             if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
-            bool isHovered = ImGui.IsItemHovered();
+            bool isHovered = ImGui.IsItemHovered(0);
             bool isFocused = ImGui.IsItemFocused();
 
             bool changed = false;
@@ -521,17 +478,36 @@
 
             char* pText = text->CStr();
 
+            if (jumpTo.HasValue)
             {
-                const float widthBreakpointsWidth = 20;
-                var max = cursor + new Vector2(widthBreakpointsWidth, fieldSize.Y);
-                draw->AddRectFilled(cursor, max, 0xff2c2c2c);
-                cursor.X += widthBreakpointsWidth + style->FramePadding.X;
-                fieldSize.X -= widthBreakpointsWidth + style->FramePadding.X;
+                var jump = jumpTo.Value;
+                var lineIdx = jump.Line;
+                var line = source.Lines[lineIdx];
+                var column = jump.Column;
+                float start = ImGuiWChar.CalcTextSize(line.Data, line.Data + column).X;
+                float xwidth = 1;
+                if (jump.Length > 0)
+                {
+                    xwidth = ImGuiWChar.CalcTextSize(line.Data + column, line.Data + column + jump.Length).X;
+                }
+
+                Vector2 min = cursor + new Vector2(start, lineIdx * lineHeight);
+                Vector2 max = min + new Vector2(xwidth, lineHeight);
+                ImGui.ScrollToRect(window, new ImRect() { Min = min, Max = max }, jump.Flags);
+                jumpTo = null;
             }
 
-            DrawLineNumbers(ref fieldSize, style, draw, ref cursor, lineHeight);
-            DrawCursorLine(draw, source, lineHeight, cursor, fieldSize, cursorState);
+            {
+                var max = cursor + new Vector2(breakpointsWidth, textAreaSize.Y);
+                draw->AddRectFilled(cursor, max, 0xff2c2c2c);
+                cursor.X += breakpointsWidth + style->FramePadding.X;
+                textAreaSize.X -= breakpointsWidth + style->FramePadding.X;
+            }
+
+            DrawLineNumbers(ref textAreaSize, style, draw, ref cursor, lineHeight, digits, lineNumberWidth);
+            DrawCursorLine(draw, source, isFocused, lineHeight, cursor, textAreaSize, cursorState);
             DrawText(draw, cursor, pText);
+            DrawFindResults(draw, cursor, source, lineHeight);
             DrawSelection(draw, cursor, source, lineHeight);
 
             HandleMouseInput(id, window, lineHeight, text, isHovered, isFocused, mousePos, cursor, pText);
@@ -544,16 +520,53 @@
 
             if (changed)
             {
-                ImGui.SetActiveID(id, window);
                 source.Changed = true;
                 Update(lineHeight, text);
             }
-            else
-            {
-                ImGui.ClearActiveID();
-            }
 
             return changed;
+        }
+
+        private (int digits, float lineNumbersWidth) ComputeLineNumbersWidth()
+        {
+            int digits = (int)Math.Log10(source.LineCount) + 1;
+            byte* buf = stackalloc byte[digits + 1]; // no need to set last byte to \0 since stacks are naturally zeroed.
+            Memset(buf, (byte)'0', digits);
+            float lineNumbersWidth = ImGui.CalcTextSize(buf).X;
+            return (digits, lineNumbersWidth);
+        }
+
+        private void DrawFindResults(ImDrawList* drawList, Vector2 cursor, TextSource source, float lineHeight)
+        {
+            const uint highlightColor = 0x993399FF; // ABGR
+            const uint highlightColorSelected = 0x9996C9FC; // ABGR
+            for (int i = 0; i < findResults.Count; i++)
+            {
+                SearchResult result = findResults[i];
+                if (i == findIndex)
+                {
+                    DrawFindResult(drawList, cursor, source, lineHeight, highlightColorSelected, result);
+                    continue;
+                }
+
+                DrawFindResult(drawList, cursor, source, lineHeight, highlightColor, result);
+            }
+        }
+
+        private static void DrawFindResult(ImDrawList* drawList, Vector2 cursor, TextSource source, float lineHeight, uint highlightColor, SearchResult result)
+        {
+            var line = source.Lines[result.Line];
+            float startX = ImGuiWChar.CalcTextSize(line.Data, result.Data).X;
+            float endX = ImGuiWChar.CalcTextSize(line.Data, result.DataEnd).X;
+
+            Vector2 quadOrigin = cursor + new Vector2(0, lineHeight * result.Line);
+
+            Vector2 topLeft = quadOrigin + new Vector2(startX, 0);
+            Vector2 bottomLeft = quadOrigin + new Vector2(startX, lineHeight);
+            Vector2 topRight = quadOrigin + new Vector2(endX, 0);
+            Vector2 bottomRight = quadOrigin + new Vector2(endX, lineHeight);
+
+            drawList->AddQuadFilled(topLeft, topRight, bottomRight, bottomLeft, highlightColor);
         }
 
         private static void FormatIntUTF8(int value, byte* buffer)
@@ -580,12 +593,9 @@
             }
         }
 
-        private void DrawLineNumbers(ref Vector2 size, ImGuiStyle* style, ImDrawList* draw, ref Vector2 cursor, float lineHeight)
+        private void DrawLineNumbers(ref Vector2 size, ImGuiStyle* style, ImDrawList* draw, ref Vector2 cursor, float lineHeight, int digits, float width)
         {
-            int nCount = (int)Math.Log10(source.LineCount) + 1;
-            byte* buf = stackalloc byte[nCount + 1]; // no need to set last byte to \0 since stacks are naturally zeroed.
-            Memset(buf, (byte)'0', nCount);
-            float width = ImGui.CalcTextSize(buf).X;
+            byte* buf = stackalloc byte[digits + 1]; // no need to set last byte to \0 since stacks are naturally zeroed.
             Vector2 current = cursor;
             for (int line = 1; line <= source.LineCount; line++)
             {
@@ -600,6 +610,9 @@
         private void HandleMouseInput(int id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
         {
             bool isMouseDown = isHovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
+
+            bool isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
+            bool isDoubleClick = ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
 
             if (isHovered)
             {
@@ -627,6 +640,11 @@
                 {
                     ImGui.ClearActiveID();
                 }
+
+                if (isClick && !isDragging && !isDoubleClick)
+                {
+                    ClearSelection();
+                }
             }
 
             if (isMouseDown && isFocused)
@@ -648,16 +666,16 @@
                     selection.End = cursorState;
                 }
 
-                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                if (isDoubleClick)
                 {
                     var index = HitTest(source, origin, mousePos, lineHeight);
                     int start = index;
-                    while (char.IsLetter((char)pText[start]) && index > 0)
+                    while (char.IsLetter(pText[start]) && index > 0)
                     {
                         start--;
                     }
                     int end = index;
-                    while (char.IsLetter((char)pText[end]) && end < text->Size)
+                    while (char.IsLetter(pText[end]) && end < text->Size)
                     {
                         end++;
                     }
@@ -666,7 +684,7 @@
                     return;
                 }
 
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                if (isClick)
                 {
                     SetCursor(HitTest(source, origin, mousePos, lineHeight));
                     ClearSelection();
@@ -709,19 +727,25 @@
             SetCursor(selection.EffectiveStart.Index);
         }
 
-        private void PreEdit()
+        private void PreEdit(TextEditOp op)
         {
             // push history.
             history.UndoPush();
 
-            // erase selection
-            EraseSelection();
+            if (op != TextEditOp.Replace)
+            {
+                // erase selection
+                EraseSelection();
+            }
         }
 
         private void PostEdit()
         {
             // clear selection
             ClearSelection();
+
+            // update finds
+            PerformFind();
         }
 
         private void HandleKeyboardInput(StdWString* text, ref bool changed, bool isFocused)
@@ -731,7 +755,7 @@
             {
                 if (io.InputQueueCharacters.Size > 0)
                 {
-                    PreEdit();
+                    PreEdit(TextEditOp.Insert);
                     for (int i = 0; i < io.InputQueueCharacters.Size; i++)
                     {
                         char c = io.InputQueueCharacters.Data[i];
@@ -748,7 +772,7 @@
 
                 if (ImGui.IsKeyPressed(ImGuiKey.Backspace) && cursorState > 0) // Handle backspace
                 {
-                    PreEdit();
+                    PreEdit(TextEditOp.Erase);
                     if (!selection.IsValid() && text->Size > 0)
                     {
                         int index = cursorState - 1;
@@ -781,7 +805,7 @@
 
                 if (ImGui.IsKeyPressed(ImGuiKey.Enter) || ImGui.IsKeyPressed(ImGuiKey.KeypadEnter)) // Handle enter
                 {
-                    PreEdit();
+                    PreEdit(TextEditOp.Insert);
                     switch (source.NewLineType)
                     {
                         case NewLineType.CRLF:
@@ -813,7 +837,7 @@
 
                 if (ImGui.IsKeyPressed(ImGuiKey.Tab))
                 {
-                    PreEdit();
+                    PreEdit(TextEditOp.Insert);
                     text->Insert(cursorState, '\t');
                     changed = true;
                     PostEdit();
@@ -872,7 +896,7 @@
                 if (io.KeyCtrl && ImGui.IsKeyDown(ImGuiKey.X) && selection.IsValid())
                 {
                     CopySelectionToClipboard();
-                    PreEdit();
+                    PreEdit(TextEditOp.Cut);
                     PostEdit();
                     changed = true;
                 }
@@ -889,7 +913,103 @@
 
         public void ShowFind()
         {
-            showFindWindow = true;
+            InvertFlagInt32(ref findWindowFlags, FindWindowFlags.Visible);
+        }
+
+        public void JumpTo(int index, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            (int line, int column) = GetLineAndColumnOfIndex(index);
+
+            if (line == -1 || column == -1)
+            {
+                return;
+            }
+
+            JumpTo(index, line, column, scrollFlags);
+        }
+
+        public void JumpTo(int line, int column, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            if (line < 0 || column < 0 || line >= source.Lines.Count)
+            {
+                return;
+            }
+
+            TextSpan lineSpan = source.Lines[line];
+            if (column >= lineSpan.Length)
+            {
+                return;
+            }
+
+            var index = lineSpan.Start + column;
+
+            JumpTo(index, line, column, scrollFlags);
+        }
+
+        public void JumpTo(int index, int line, int column, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            jumpTo = new(index, line, column, scrollFlags);
+        }
+
+        public void JumpToWithLength(int index, int length, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            (int line, int column) = GetLineAndColumnOfIndex(index);
+
+            if (line == -1 || column == -1)
+            {
+                return;
+            }
+
+            JumpToWithLength(index, length, line, column, scrollFlags);
+        }
+
+        public void JumpToWithLength(int line, int column, int length, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            if (line < 0 || column < 0 || line >= source.Lines.Count)
+            {
+                return;
+            }
+
+            TextSpan lineSpan = source.Lines[line];
+            if (column >= lineSpan.Length)
+            {
+                return;
+            }
+
+            var index = lineSpan.Start + column;
+
+            JumpToWithLength(index, length, line, column, scrollFlags);
+        }
+
+        public void JumpTo(SearchResult result, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            JumpToWithLength(result.Start, result.Length, result.Line, result.Column, scrollFlags);
+        }
+
+        public void JumpToWithLength(int index, int length, int line, int column, ImGuiScrollFlags scrollFlags = ImGuiScrollFlags.None)
+        {
+            jumpTo = new(index, length, line, column, scrollFlags);
+        }
+
+        public (int line, int column) GetLineAndColumnOfIndex(int index)
+        {
+            int line = 0;
+            int column = -1;
+            for (; line < source.LineCount; line++)
+            {
+                var lineSpan = source.Lines[line];
+                if (lineSpan.Start <= index && lineSpan.End > index)
+                {
+                    column = index - lineSpan.Start;
+                    break;
+                }
+            }
+            if (column == -1)
+            {
+                line = -1;
+            }
+
+            return (line, column);
         }
 
         public void Undo()
@@ -932,7 +1052,7 @@
         public void InsertTextFromClipboard()
         {
             var text = source.Text;
-            PreEdit();
+            PreEdit(TextEditOp.Paste);
             var clipboardText = ImGui.GetClipboardText();
             int textSize = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(clipboardText).Length;
             text->InsertRange(cursorState, clipboardText, textSize);
@@ -1029,9 +1149,8 @@
         private bool cursorVisible = true;
         private readonly float cursorBlinkInterval = 0.5f;
         private float cursorBlinkTimer = 0.0f;
-        private bool showFindWindow;
 
-        private void DrawCursorLine(ImDrawList* drawList, TextSource source, float lineHeight, Vector2 origin, Vector2 avail, CursorState cursorState)
+        private void DrawCursorLine(ImDrawList* drawList, TextSource source, bool isFocused, float lineHeight, Vector2 origin, Vector2 avail, CursorState cursorState)
         {
             if (isFocused)
             {
@@ -1078,9 +1197,9 @@
         private static int HitTest(TextSource source, Vector2 origin, Vector2 mousePos, float lineHeight)
         {
             char* pText = source.Text->Data;
-            Vector2 relativeMousePos = mousePos - origin;
+            Vector2 position = mousePos - origin;
 
-            int lineIndex = (int)MathF.Floor(relativeMousePos.Y / lineHeight);
+            int lineIndex = (int)MathF.Floor(position.Y / lineHeight);
 
             if (lineIndex < 0 || lineIndex >= source.Lines.Count)
             {
@@ -1089,23 +1208,58 @@
 
             TextSpan lineSpan = source.Lines[lineIndex];
 
-            for (int j = lineSpan.Start; j < lineSpan.End; j++)
+            int start = lineSpan.Start;
+            int end = lineSpan.End;
+
+            int mid;
+            float midWidth, nextWidth;
+            while (start < end)
             {
-                float last = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + j).X;
-                float penX = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + j + 1).X;
+                mid = (start + end) / 2;
+                midWidth = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + mid).X;
+                nextWidth = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + mid + 1).X;
 
-                if (penX > relativeMousePos.X)
+                if (midWidth <= position.X && position.X < nextWidth)
                 {
-                    if (Math.Abs(penX - relativeMousePos.X) < Math.Abs(last - relativeMousePos.X))
+                    // Decide which character is closer to the mouse position
+                    if (position.X - midWidth < nextWidth - position.X)
                     {
-                        return j + 1;
+                        return mid;
                     }
-
-                    return j;
+                    else
+                    {
+                        return mid + 1;
+                    }
+                }
+                else if (midWidth < position.X)
+                {
+                    start = mid + 1;
+                }
+                else
+                {
+                    end = mid;
                 }
             }
 
-            return lineSpan.End;
+            // If we exit the loop, it means we didn't find an exact match
+            // Return the closest character index, but ensure start doesn't go below lineSpan.Start
+            if (start > lineSpan.Start)
+            {
+                float prevWidth = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + start - 1).X;
+                if (prevWidth <= position.X)
+                {
+                    nextWidth = ImGuiWChar.CalcTextSize(pText + lineSpan.Start, pText + start).X;
+                    if (position.X - prevWidth < nextWidth - position.X)
+                    {
+                        return start - 1;
+                    }
+                    else
+                    {
+                        return start;
+                    }
+                }
+            }
+            return lineSpan.Start;
         }
 
         public void Dispose()
