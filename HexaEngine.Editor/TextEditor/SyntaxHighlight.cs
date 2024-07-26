@@ -1,73 +1,10 @@
-﻿namespace Hexa.NET.ImGui
-{
-}
-
-namespace HexaEngine.Editor.TextEditor
+﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Editor.TextEditor.Highlight.CSharp;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Themes;
     using System.Numerics;
-    using System.Text;
     using System.Text.RegularExpressions;
-
-    public class SyntaxHighlightCollection
-    {
-    }
-
-    public static class SyntaxHighlightDefaults
-    {
-        static SyntaxHighlightDefaults()
-        {
-            var syntaxHighlightCSharp = new SyntaxHighlight("C#", @".*\.cs");
-
-            // Keywords
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Keywords", @"\b(global|abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while|get|set|var)\b", new ColorRGBA(0x569cd6ff)));
-
-            // Comments
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Comments", @"//.*|/\*[\s\S]*?\*/", Colors.Green));
-
-            // Strings
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Strings", "\".*?\"", Colors.Red));
-
-            // Numbers
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Numbers", @"\b(\d+(\.\d*)?|\.\d+)\b", Colors.Purple));
-
-            // Directives (e.g., using, #if, #endif)
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Directives", @"^#[^\r\n]*", Colors.DarkGray));
-
-            // User-defined types (e.g., class names)
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("UserTypes", @"\b[A-Z][A-Za-z0-9_]*\b", new ColorRGBA(0x4ec9b0ff)));
-
-            // Preprocessor directives (e.g., #define, #if, #endif)
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Preprocessor", @"^#[A-Za-z]+\b", Colors.DarkMagenta));
-
-            // Punctuation
-            //syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Punctuation", @"[\(\)\{\}\[\];,]", Colors.Wheat));
-
-            // Operators
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Operators", @"[\+\-\*/%=&\|<>\^!~\?]", Colors.Gray));
-
-            // Attributes
-            syntaxHighlightCSharp.Definitions.Add(new SyntaxHighlightDefinition("Attributes", @"\[.*?\]", Colors.Pink));
-
-            syntaxHighlightCSharp.Initialize();
-
-            CSharp = new CSharpSyntaxHighlight();
-        }
-
-        public static SyntaxHighlight CSharp { get; }
-    }
-
-    public class SyntaxHighlightDefinition(string name, string pattern, ColorRGBA color)
-    {
-        public string Name { get; set; } = name;
-
-        public string Pattern { get; set; } = pattern;
-
-        public ColorRGBA Color { get; set; } = color;
-    }
 
     public class SyntaxHighlight
     {
@@ -98,10 +35,12 @@ namespace HexaEngine.Editor.TextEditor
         }
 
         private readonly List<TextHighlightSpan> matchSpans = [];
+        private readonly List<TextSpan> foldSpans = [];
 
         public unsafe void Analyze(StdWString* text, List<TextSpan> lines, List<TextHighlightSpan> spans, float lineHeight)
         {
             matchSpans.Clear();
+            foldSpans.Clear();
             Text = text;
 
             var span = text->AsSpan();
@@ -109,7 +48,73 @@ namespace HexaEngine.Editor.TextEditor
             FindMatches(text, span);
             RemoveOverlapping();
             FillGaps(text, spans);
+            SplitFolds(spans);
             ComputeOrigin(lines, lineHeight, spans);
+        }
+
+        private int InFolding(int idx, int len)
+        {
+            int end = idx + len;
+            for (int i = 0; i < foldSpans.Count; i++)
+            {
+                var span = foldSpans[i];
+                if (span.Start <= end && span.End >= idx)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private unsafe void SplitFolds(List<TextHighlightSpan> spans)
+        {
+            foldSpans.Sort(TextSpanStartComparer.Instance);
+
+            int lastFoldIndex = 0;
+            for (int i = spans.Count - 1; i >= 0; i--)
+            {
+                var span = spans[i];
+                bool foundOverlap = false;
+                for (int j = lastFoldIndex; j < foldSpans.Count; j++)
+                {
+                    var fold = foldSpans[j];
+                    if (span.Start < fold.End && span.End > fold.Start)
+                    {
+                        // Split the span at the overlapping points
+                        if (span.Start < fold.Start && span.End > fold.End)
+                        {
+                            // Case 3: The span starts before the fold and ends after the fold
+                            spans.Insert(i, new TextHighlightSpan(span.String, default, span.Color, span.HasColor, span.Start, fold.Start - span.Start));
+                            spans.Insert(i + 1, new TextHighlightSpan(span.String, default, span.Color, span.HasColor, fold.Start, fold.End - fold.Start));
+                            spans.Insert(i + 2, new TextHighlightSpan(span.String, default, span.Color, span.HasColor, fold.End, span.End - fold.End));
+                            spans.RemoveAt(i + 3);
+                        }
+                        else if (span.Start < fold.Start)
+                        {
+                            // Case 1: The span starts before the fold and ends within the fold
+                            spans.Insert(i, new TextHighlightSpan(span.String, default, span.Color, span.HasColor, span.Start, fold.Start - span.Start));
+                            spans.RemoveAt(i + 1);
+                        }
+                        else if (span.End > fold.End)
+                        {
+                            // Case 2: The span starts within the fold and ends after the fold
+                            spans.Insert(i, new TextHighlightSpan(span.String, default, span.Color, span.HasColor, fold.End, span.End - fold.End));
+                            spans.RemoveAt(i + 1);
+                        }
+                        else
+                        {
+                            // Case 4: The span is completely inside the fold
+                            // Do nothing
+                        }
+                        lastFoldIndex = j;
+                        foundOverlap = true;
+                    }
+                    else if (foundOverlap)
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
         private static unsafe void ComputeOrigin(List<TextSpan> lines, float lineHeight, List<TextHighlightSpan> spans)
@@ -164,10 +169,20 @@ namespace HexaEngine.Editor.TextEditor
             }
         }
 
+        protected virtual unsafe void FindFoldings(StdWString* text, Span<char> span)
+        {
+        }
+
         protected unsafe void EmitSpan(int idx, int len, ColorRGBA color)
         {
             TextHighlightSpan textSpan = new(Text, default, color, idx, len);
             matchSpans.Add(textSpan);
+        }
+
+        protected unsafe void EmitFolding(int idx, int len)
+        {
+            TextSpan textSpan = new(Text, idx, len);
+            foldSpans.Add(textSpan);
         }
 
         private unsafe void RemoveOverlapping()
@@ -295,128 +310,6 @@ namespace HexaEngine.Editor.TextEditor
         public static int FindCharacterIndexInLine(TextSpan line, int idx)
         {
             return idx - line.Start;
-        }
-    }
-
-    public class TextSpanStartComparer : IComparer<TextSpan>
-    {
-        public static readonly TextSpanStartComparer Instance = new();
-
-        public int Compare(TextSpan x, TextSpan y)
-        {
-            if (x.Start > y.Start)
-            {
-                return 1;
-            }
-            else if (x.Start < y.Start)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
-
-    public class TextHighlightSpanStartComparer : IComparer<TextHighlightSpan>
-    {
-        public static readonly TextHighlightSpanStartComparer Instance = new();
-
-        public int Compare(TextHighlightSpan x, TextHighlightSpan y)
-        {
-            if (x.Start > y.Start)
-            {
-                return 1;
-            }
-            else if (x.Start < y.Start)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
-
-    public unsafe struct TextHighlightSpan
-    {
-        public StdWString* String;
-        public Vector2 Origin;
-        public int Start;
-        public int End;
-        public float Size;
-        public uint Color;
-        public bool HasColor;
-
-        public TextHighlightSpan(StdWString* str, Vector2 origin, ColorRGBA color, int start, int length)
-        {
-            String = str;
-            Origin = origin;
-            Start = start;
-            End = start + length;
-            Color = ImGui.ColorConvertFloat4ToU32(color);
-            HasColor = true;
-        }
-
-        public TextHighlightSpan(StdWString* str, Vector2 origin, int start, int length)
-        {
-            String = str;
-            Origin = origin;
-            Start = start;
-            End = start + length;
-            HasColor = false;
-        }
-
-        public readonly int Length => End - Start;
-
-        public readonly char* Data => String->Data + Start;
-
-        public readonly ReadOnlySpan<char> AsReadOnlySpan()
-        {
-            return new ReadOnlySpan<char>(String->Data + Start, Length);
-        }
-
-        public readonly Span<char> AsSpan()
-        {
-            return new Span<char>(String->Data + Start, Length);
-        }
-
-        public override readonly string ToString()
-        {
-            return $"[{Start}-{End}] {Color:X}, {new string(Data)}";
-        }
-    }
-
-    public unsafe struct TextSpan
-    {
-        public StdWString* String;
-        public int Start;
-        public int End;
-        public float Size;
-
-        public TextSpan(StdWString* str, int start, int length)
-        {
-            String = str;
-            Start = start;
-            End = start + length;
-        }
-
-        public readonly int Length => End - Start;
-
-        public readonly char* Data => String->Data + Start;
-
-        public readonly char* DataEnd => String->Data + End;
-
-        public readonly ReadOnlySpan<char> AsReadOnlySpan()
-        {
-            return new ReadOnlySpan<char>(String->Data + Start, Length);
-        }
-
-        public readonly Span<char> AsSpan()
-        {
-            return new Span<char>(String->Data + Start, Length);
         }
     }
 }

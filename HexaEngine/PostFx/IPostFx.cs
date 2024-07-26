@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.ComponentModel;
 
     /// <summary>

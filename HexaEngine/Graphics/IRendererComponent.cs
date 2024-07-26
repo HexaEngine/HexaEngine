@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
 
     public delegate void QueueIndexChangedEventHandler(IRendererComponent sender, uint oldIndex, uint newIndex);

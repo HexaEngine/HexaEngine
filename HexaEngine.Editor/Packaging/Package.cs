@@ -3,7 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.MaterialEditor.Generator.Structs;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
     using System.IO.Compression;

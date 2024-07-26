@@ -510,7 +510,7 @@
                 fs.Close();
                 return;
             }
-            var version = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var version = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             if (version != Version)
             {
                 EndWrite();
@@ -518,9 +518,9 @@
                 return;
             }
 
-            writtenBytes = fs.ReadInt64(Mathematics.Endianness.LittleEndian);
+            writtenBytes = fs.ReadInt64(Hexa.NET.Mathematics.Endianness.LittleEndian);
 
-            var count = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var count = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             entries.EnsureCapacity(count);
 
             Span<byte> buffer = stackalloc byte[PersistentCacheEntry.EntrySize];
@@ -548,9 +548,9 @@
 
             var fs = File.Create(indexFile);
 
-            fs.WriteInt32(Version, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt64(writtenBytes, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt32(entries.Count, Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(Version, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt64(writtenBytes, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(entries.Count, Hexa.NET.Mathematics.Endianness.LittleEndian);
 
             Span<byte> buffer = stackalloc byte[PersistentCacheEntry.EntrySize];
             for (var i = 0; i < entries.Count; i++)
@@ -1205,7 +1205,7 @@
                 fs.Close();
                 return;
             }
-            var version = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var version = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             if (version != Version)
             {
                 EndWrite();
@@ -1213,9 +1213,9 @@
                 return;
             }
 
-            writtenBytes = fs.ReadInt64(Mathematics.Endianness.LittleEndian);
+            writtenBytes = fs.ReadInt64(Hexa.NET.Mathematics.Endianness.LittleEndian);
 
-            var count = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var count = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             entries.EnsureCapacity(count);
             hashTable.EnsureCapacity(count);
 
@@ -1244,9 +1244,9 @@
 
             var fs = File.Create(indexFile);
 
-            fs.WriteInt32(Version, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt64(writtenBytes, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt32(entries.Count, Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(Version, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt64(writtenBytes, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(entries.Count, Hexa.NET.Mathematics.Endianness.LittleEndian);
 
             Span<byte> buffer = stackalloc byte[PersistentCacheEntry<TKey>.EntrySize];
             for (var i = 0; i < entries.Count; i++)

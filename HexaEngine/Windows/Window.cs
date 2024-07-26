@@ -4,13 +4,14 @@ namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
+    using HexaEngine.Profiling;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
@@ -211,8 +212,8 @@ namespace HexaEngine.Windows
             // Begin profiling frame and total time if profiling is enabled.
             graphicsDevice.Profiler.BeginFrame();
             graphicsDevice.Profiler.Begin(context, "Total");
-            CPUProfiler2.Global.BeginFrame();
-            CPUProfiler2.Global.Begin("Total");
+            CPUProfiler.Global.BeginFrame();
+            CPUProfiler.Global.Begin("Total");
 #endif
 
             // Resize the swap chain if necessary.
@@ -271,7 +272,7 @@ namespace HexaEngine.Windows
 
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.
-            CPUProfiler2.Global.End("Total");
+            CPUProfiler.Global.End("Total");
             graphicsDevice.Profiler.End(context, "Total");
             graphicsDevice.Profiler.EndFrame(context);
 #endif
@@ -289,6 +290,7 @@ namespace HexaEngine.Windows
         /// Called when [render begin].
         /// </summary>
         /// <param name="context">The context.</param>
+        [Profile]
         protected virtual void OnRenderBegin(IGraphicsContext context)
         {
         }
@@ -297,6 +299,7 @@ namespace HexaEngine.Windows
         /// Called when [render].
         /// </summary>
         /// <param name="context">The context.</param>
+        [Profile]
         protected virtual void OnRender(IGraphicsContext context)
         {
         }
@@ -305,6 +308,7 @@ namespace HexaEngine.Windows
         /// Called when [render end].
         /// </summary>
         /// <param name="context">The context.</param>
+        [Profile]
         protected virtual void OnRenderEnd(IGraphicsContext context)
         {
         }

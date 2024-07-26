@@ -4,6 +4,63 @@
     using HexaEngine.Core.Windows;
     using System.Runtime.CompilerServices;
 
+    public struct GraphicsDeviceCapabilities
+    {
+        public GraphicsDeviceCapabilitiesFlags Flags;
+
+        public readonly bool SupportsCommandLists => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsCommandLists) != 0;
+
+        public readonly bool SupportsComputeShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsComputeShaders) != 0;
+
+        public readonly bool SupportsGeometryShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsGeometryShaders) != 0;
+
+        public readonly bool SupportsRayTracing => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsRayTracing) != 0;
+
+        public readonly bool SupportsTessellationShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsTessellationShaders) != 0;
+    }
+
+    public enum GraphicsDeviceCapabilitiesFlags
+    {
+        None = 0,
+
+        /// <summary>
+        /// Indicates support for query objects.
+        /// </summary>
+        SupportsQuery = 1 << 0,
+
+        /// <summary>
+        /// Indicates support for geometry shaders.
+        /// </summary>
+        SupportsGeometryShaders = 1 << 1,
+
+        /// <summary>
+        /// Indicates support for compute shaders.
+        /// </summary>
+        SupportsComputeShaders = 1 << 2,
+
+        /// <summary>
+        /// Indicates support for tessellation shaders.
+        /// </summary>
+        SupportsTessellationShaders = 1 << 3,
+
+        /// <summary>
+        /// Indicates support for command lists, enabling pre-recorded command execution.
+        /// </summary>
+        SupportsCommandLists = 1 << 4,
+
+        SupportsConservativeRasterization = 1 << 5,
+
+        SupportsIndirectDraw = 1 << 6,
+
+        /// <summary>
+        /// Indicates support for ray tracing.
+        /// </summary>
+        SupportsRayTracing = 1 << 7,
+
+        Minimal = SupportsQuery | SupportsGeometryShaders | SupportsComputeShaders | SupportsTessellationShaders,
+        Full = SupportsGeometryShaders | SupportsComputeShaders | SupportsTessellationShaders | SupportsCommandLists | SupportsRayTracing,
+    }
+
     public interface IGraphicsDevice1 : IGraphicsDevice
     {
         ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
@@ -33,6 +90,11 @@
         /// Gets the GPU profiler associated with the device.
         /// </summary>
         IGPUProfiler Profiler { get; }
+
+        /// <summary>
+        /// Gets the capabilities of the graphics device.
+        /// </summary>
+        GraphicsDeviceCapabilities Capabilities { get; }
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.

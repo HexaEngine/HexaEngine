@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Input
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Input.Events;
 
     /// <summary>

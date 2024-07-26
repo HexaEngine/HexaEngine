@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Reflection;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Collections;
     using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// Represents a group of terrain layers.

@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Core.Logging;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Text;
 

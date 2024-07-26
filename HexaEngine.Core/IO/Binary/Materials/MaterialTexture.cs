@@ -3,7 +3,7 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
     using System.Text;
 

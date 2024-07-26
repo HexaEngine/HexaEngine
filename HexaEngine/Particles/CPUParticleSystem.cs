@@ -3,8 +3,8 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
     using System.Numerics;

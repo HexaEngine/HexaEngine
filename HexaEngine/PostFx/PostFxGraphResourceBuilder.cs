@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostFxGraphResourceBuilder : IGraphResourceBuilder

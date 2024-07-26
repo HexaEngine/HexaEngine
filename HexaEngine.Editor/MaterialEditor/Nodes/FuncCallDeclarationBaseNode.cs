@@ -3,7 +3,7 @@
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
 
     public abstract class FuncCallDeclarationBaseNode : Node, IFuncCallDeclarationNode

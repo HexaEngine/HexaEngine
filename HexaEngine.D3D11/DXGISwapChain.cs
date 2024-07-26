@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
@@ -57,7 +57,7 @@
 
         public int Height { get; private set; }
 
-        public Mathematics.Viewport Viewport { get; private set; }
+        public Hexa.NET.Mathematics.Viewport Viewport { get; private set; }
 
         public event EventHandler? Resizing;
 

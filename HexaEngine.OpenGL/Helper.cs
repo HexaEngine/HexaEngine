@@ -108,7 +108,7 @@
             };
         }
 
-        public static BufferTargetARB Convert(BindFlags bindFlags, ResourceMiscFlag resourceMiscFlag)
+        public static BufferTargetARB ConvertBufferTarget(BindFlags bindFlags, ResourceMiscFlag resourceMiscFlag)
         {
             BufferTargetARB target = bindFlags switch
             {

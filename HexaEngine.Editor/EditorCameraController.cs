@@ -4,7 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Input;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;

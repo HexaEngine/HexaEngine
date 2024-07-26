@@ -5,7 +5,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
 

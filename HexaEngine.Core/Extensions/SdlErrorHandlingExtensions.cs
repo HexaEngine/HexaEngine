@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
     using Hexa.NET.SDL2;
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
     using System.Runtime.CompilerServices;
 
     /// <summary>

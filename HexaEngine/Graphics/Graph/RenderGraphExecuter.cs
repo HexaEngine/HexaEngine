@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Profiling;
 
     public class RenderGraphExecuter
     {
@@ -61,6 +61,7 @@
             }
         }
 
+        [Profiling.Profile]
         public void Execute(IGraphicsContext context, ICPUProfiler? profiler)
         {
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)

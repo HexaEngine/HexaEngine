@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
 

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Editor;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Diagnostics;

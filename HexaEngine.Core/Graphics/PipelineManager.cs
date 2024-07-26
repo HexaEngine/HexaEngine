@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
     using System.Collections.Generic;
 
     /// <summary>

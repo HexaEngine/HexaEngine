@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Archives
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using K4os.Compression.LZ4.Streams;
     using System;
     using System.IO;

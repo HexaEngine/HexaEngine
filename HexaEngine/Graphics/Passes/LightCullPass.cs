@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
 
     public class LightCullPass : ComputePass

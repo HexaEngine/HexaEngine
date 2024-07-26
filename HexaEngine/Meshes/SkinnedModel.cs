@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Meshes
 {
     using HexaEngine.Components.Renderer;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Core.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes.Managers;

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Fonts
 {
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// Represents a glyph in a font, including its identifier, position, size, offset, and advance value.

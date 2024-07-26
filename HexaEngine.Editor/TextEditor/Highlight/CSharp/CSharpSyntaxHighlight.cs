@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.TextEditor.Highlight.CSharp
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Themes;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;

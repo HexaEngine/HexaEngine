@@ -76,7 +76,7 @@
 
         public int Height { get; private set; }
 
-        public Mathematics.Viewport Viewport { get; private set; }
+        public Hexa.NET.Mathematics.Viewport Viewport { get; private set; }
 
         public event EventHandler? Resizing;
 

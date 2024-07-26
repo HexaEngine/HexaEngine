@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using Silk.NET.DirectStorage;
 
     public unsafe class TextHistory

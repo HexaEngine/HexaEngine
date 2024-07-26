@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;

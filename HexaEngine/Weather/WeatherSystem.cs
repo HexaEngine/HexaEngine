@@ -7,8 +7,8 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Sky;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Sky;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -293,6 +293,7 @@
         /// Updates the WeatherManager and contributes weather-related information to graphics rendering.
         /// </summary>
         /// <param name="context">The graphics context for rendering updates.</param>
+        [Profiling.Profile]
         public void Update(IGraphicsContext context)
         {
             var manager = LightManager.Current;
@@ -341,7 +342,7 @@
             Vector3 sunDir = Vector3.Normalize(new Vector3(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
             if (skyModel == SkyType.HosekWilkie)
             {
-                SkyParameters skyParams = Mathematics.Sky.HosekWilkie.SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir, overcast);
+                SkyParameters skyParams = Hexa.NET.Mathematics.Sky.HosekWilkie.SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir, overcast);
 
                 weather.A = skyParams[(int)EnumSkyParams.A];
                 weather.B = skyParams[(int)EnumSkyParams.B];
@@ -357,7 +358,7 @@
 
             if (skyModel == SkyType.Preetham)
             {
-                SkyParameters skyParams = Mathematics.Sky.Preetham.SkyModel.CalculateSkyParameters(turbidity, sunDir, overcast, 1);
+                SkyParameters skyParams = Hexa.NET.Mathematics.Sky.Preetham.SkyModel.CalculateSkyParameters(turbidity, sunDir, overcast, 1);
 
                 weather.A = skyParams[(int)EnumSkyParams.A];
                 weather.B = skyParams[(int)EnumSkyParams.B];

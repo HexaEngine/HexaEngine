@@ -4,7 +4,7 @@
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;

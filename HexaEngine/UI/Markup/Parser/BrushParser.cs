@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI.Markup.Parser
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Graphics;
     using System;
     using System.Globalization;

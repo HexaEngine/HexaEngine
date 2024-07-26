@@ -4,8 +4,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Weather;
     using Silk.NET.OpenAL;
     using System;

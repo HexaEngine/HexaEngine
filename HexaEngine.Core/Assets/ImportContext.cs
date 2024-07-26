@@ -1,8 +1,6 @@
-﻿using HexaEngine.Core.Debugging;
-
-namespace HexaEngine.Core.Assets
+﻿namespace HexaEngine.Core.Assets
 {
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
 
     public class ImportContext
     {

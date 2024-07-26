@@ -6,7 +6,7 @@
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using System.Numerics;

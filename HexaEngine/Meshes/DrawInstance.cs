@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public class DrawInstance

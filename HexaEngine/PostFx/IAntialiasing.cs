@@ -4,7 +4,7 @@ namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public interface IAntialiasing
     {

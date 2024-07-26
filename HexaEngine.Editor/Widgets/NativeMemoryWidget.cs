@@ -4,7 +4,7 @@ namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Attributes;
     using System.Runtime.InteropServices;
 

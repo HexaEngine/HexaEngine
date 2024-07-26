@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Queries
 {
     using HexaEngine.Collections;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
 
     public class QuerySystem : ISceneSystem, IDisposable

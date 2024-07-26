@@ -4,7 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.Vulkan;
@@ -484,13 +484,18 @@
         {
             SurfaceKHR surface;
             VkHandle handle = new(Instance.Handle);
-            SDL.SDLVulkanCreateSurface(window, Instance.Handle, (Hexa.NET.SDL2.VkSurfaceKHR*)&surface);
+            SDL.SDLVulkanCreateSurface(window, Instance.Handle, (VkSurfaceKHR*)&surface);
             return surface;
         }
 
         internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, SDLWindow* window)
         {
-            return new VulkanSwapChain(device, window, CreateSurface(window));
+            return new VulkanSwapChain(device, window, CreateSurface(window), null, null);
+        }
+
+        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            return new VulkanSwapChain(device, window, CreateSurface(window), swapChainDescription, fullscreenDescription);
         }
 
         protected virtual void Dispose(bool disposing)

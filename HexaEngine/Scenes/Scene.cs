@@ -7,7 +7,7 @@ namespace HexaEngine.Scenes
     using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scripts;

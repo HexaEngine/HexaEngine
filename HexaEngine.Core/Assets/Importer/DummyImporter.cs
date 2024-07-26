@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
 
     public enum DummyImportMethod
     {

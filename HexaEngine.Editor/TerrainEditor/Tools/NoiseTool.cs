@@ -4,8 +4,8 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Noise;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Noise;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -57,7 +57,7 @@
                 return;
             }
 
-            device.GL.UseProgram(program);
+            OpenGLGraphicsDevice.GL.UseProgram(program);
         }
 
         public void Dispatch(IGraphicsContext context, uint x, uint y, uint z)
@@ -72,9 +72,9 @@
                 return;
             }
 
-            device.GL.UseProgram(program);
-            device.GL.DispatchCompute(x, y, z);
-            device.GL.UseProgram(0);
+            OpenGLGraphicsDevice.GL.UseProgram(program);
+            OpenGLGraphicsDevice.GL.DispatchCompute(x, y, z);
+            OpenGLGraphicsDevice.GL.UseProgram(0);
         }
 
         public void EndDispatch(IGraphicsContext context)
@@ -89,7 +89,7 @@
                 return;
             }
 
-            device.GL.UseProgram(0);
+            OpenGLGraphicsDevice.GL.UseProgram(0);
         }
 
         public void Recompile()
@@ -98,7 +98,7 @@
 
             if (program != 0)
             {
-                device.GL.DeleteProgram(program);
+                OpenGLGraphicsDevice.GL.DeleteProgram(program);
             }
 
             program = 0;
@@ -136,7 +136,7 @@
                 PipelineManager.Unregister(this);
                 if (program != 0)
                 {
-                    device.GL.DeleteProgram(program);
+                    OpenGLGraphicsDevice.GL.DeleteProgram(program);
                 }
 
                 disposedValue = true;

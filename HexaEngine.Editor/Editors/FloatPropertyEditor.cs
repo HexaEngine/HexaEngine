@@ -5,7 +5,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Reflection;
 
     public class FloatPropertyEditor : IPropertyEditor

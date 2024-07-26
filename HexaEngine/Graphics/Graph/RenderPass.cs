@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Profiling;
 
     public class RenderPass
     {

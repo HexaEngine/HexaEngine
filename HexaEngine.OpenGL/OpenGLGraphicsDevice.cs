@@ -13,7 +13,7 @@
     public unsafe class OpenGLGraphicsDevice : IGraphicsDevice
     {
         private readonly IGLContext glContext;
-        public readonly GL GL;
+        public static GL GL;
 
         public OpenGLGraphicsDevice(IWindow window, bool debug)
         {
@@ -30,12 +30,76 @@
             ShaderCompiler = new(GL);
             TextureLoader = new OpenGLTextureLoader(this);
             Profiler = new OpenGLProfiler();
+
+            Capabilities = new GraphicsDeviceCapabilities
+            {
+                Flags = InitializeCapabilitiesFlags()
+            };
         }
 
         public void DebugMsg(GLEnum source, GLEnum type, int id, GLEnum severity, int length, nint message, nint userParam)
         {
             var msg = ToStringFromUTF8((byte*)message);
             Trace.WriteLine(msg);
+        }
+
+        private GraphicsDeviceCapabilitiesFlags InitializeCapabilitiesFlags()
+        {
+            GraphicsDeviceCapabilitiesFlags flags = GraphicsDeviceCapabilitiesFlags.None;
+
+            if (GL.IsExtensionPresent("GL_NV_command_list"))
+            {
+                flags |= GraphicsDeviceCapabilitiesFlags.SupportsCommandLists;
+            }
+
+            if (GL.IsExtensionPresent("GL_ARB_geometry_shader4"))
+            {
+                flags |= GraphicsDeviceCapabilitiesFlags.SupportsGeometryShaders;
+            }
+
+            if (GL.IsExtensionPresent("GL_ARB_tessellation_shader"))
+            {
+                flags |= GraphicsDeviceCapabilitiesFlags.SupportsTessellationShaders;
+            }
+
+            if (GL.IsExtensionPresent("GL_NV_conservative_raster") ||
+                GL.IsExtensionPresent("GL_INTEL_conservative_rasterization") ||
+                GL.IsExtensionPresent("GL_AMD_conservative_depth") ||
+                GL.IsExtensionPresent("GL_ARB_conservative_depth"))
+            {
+                flags |= GraphicsDeviceCapabilitiesFlags.SupportsConservativeRasterization;
+            }
+
+            if (CheckForRayTracingSupport())
+            {
+                flags |= GraphicsDeviceCapabilitiesFlags.SupportsRayTracing;
+            }
+
+            return flags;
+        }
+
+        private static bool CheckForTessellationShaderSupport()
+        {
+            // Check for the presence of the geometry shader feature
+            return GL.GetInteger(GetPName.MaxTessControlUniformBlocks) != 0;
+        }
+
+        private static bool CheckForGeometryShaderSupport()
+        {
+            // Check for the presence of the geometry shader feature
+            return GL.GetInteger(GetPName.MaxGeometryUniformComponents) != 0;
+        }
+
+        private static bool CheckForConservativeRasterizationSupport()
+        {
+            // Check for the presence of the GL_NV_conservative_raster extension
+            return GL.IsExtensionPresent("GL_NV_conservative_raster");
+        }
+
+        private static bool CheckForRayTracingSupport()
+        {
+            // Check for the presence of the ray tracing extension (e.g., GL_NV_ray_tracing)
+            return GL.IsExtensionPresent("GL_NV_ray_tracing");
         }
 
         public GraphicsBackend Backend => GraphicsBackend.OpenGL;
@@ -53,32 +117,33 @@
         public nint NativePointer { get; }
 
         public IGPUProfiler Profiler { get; }
+        public GraphicsDeviceCapabilities Capabilities { get; }
 
         public event EventHandler? OnDisposed;
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
             var buffer = GL.GenBuffer();
-            CheckError(GL);
+            CheckError();
 
-            GL.BufferData(Helper.Convert(description.BindFlags, description.MiscFlags), (nuint)description.ByteWidth, null, Helper.Convert(description.Usage));
+            GL.BufferData(Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags), (nuint)description.ByteWidth, null, Helper.Convert(description.Usage));
 
-            return new OpenGLBuffer(GL, buffer, description);
+            return new OpenGLBuffer(buffer, description);
         }
 
         public unsafe IBuffer CreateBuffer(void* src, uint length, BufferDescription description)
         {
             var buffer = GL.GenBuffer();
-            CheckError(GL);
+            CheckError();
             description.ByteWidth = (int)length;
 
-            var target = Helper.Convert(description.BindFlags, description.MiscFlags);
+            var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             GL.BindBuffer(target, buffer);
             GL.BufferData(target, length, src, Helper.Convert(description.Usage));
             GL.BindBuffer(target, 0);
-            CheckError(GL);
+            CheckError();
 
-            return new OpenGLBuffer(GL, buffer, description);
+            return new OpenGLBuffer(buffer, description);
         }
 
         public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
@@ -89,15 +154,15 @@
             }
 
             var buffer = GL.GenBuffer();
-            CheckError(GL);
+            CheckError();
 
-            var target = Helper.Convert(description.BindFlags, description.MiscFlags);
+            var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             GL.BindBuffer(target, buffer);
             GL.BufferData(target, (nuint)description.ByteWidth, &value, Helper.Convert(description.Usage));
             GL.BindBuffer(target, 0);
-            CheckError(GL);
+            CheckError();
 
-            return new OpenGLBuffer(GL, buffer, description);
+            return new OpenGLBuffer(buffer, description);
         }
 
         public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
@@ -111,16 +176,16 @@
             uint size = (uint)(sizeof(T) * count);
             description.ByteWidth = (int)size;
             var buffer = GL.GenBuffer();
-            CheckError(GL);
+            CheckError();
 
-            var target = Helper.Convert(description.BindFlags, description.MiscFlags);
+            var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             var usage = Helper.Convert(description.Usage);
             GL.BindBuffer(target, buffer);
             GL.BufferData(target, (nuint)description.ByteWidth, values, usage);
             GL.BindBuffer(target, 0);
-            CheckError(GL);
+            CheckError();
 
-            return new OpenGLBuffer(GL, buffer, description);
+            return new OpenGLBuffer(buffer, description);
         }
 
         public unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
@@ -237,23 +302,23 @@
                 description = new(texture3D);
             }
 
-            return new OpenGLShaderResourceView(GL, (uint)resource.NativePointer, description);
+            return new OpenGLShaderResourceView((uint)resource.NativePointer, description);
         }
 
         public IShaderResourceView CreateShaderResourceView(IResource resource, ShaderResourceViewDescription description)
         {
-            return new OpenGLShaderResourceView(GL, (uint)resource.NativePointer, description);
+            return new OpenGLShaderResourceView((uint)resource.NativePointer, description);
         }
 
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
         {
             ShaderResourceViewDescription description = new(ShaderResourceViewDimension.Buffer);
-            return new OpenGLShaderResourceView(GL, (uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
+            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
         }
 
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
         {
-            return new OpenGLShaderResourceView(GL, (uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
+            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
         }
 
         public ISwapChain CreateSwapChain(SdlWindow window)
@@ -323,7 +388,7 @@
 
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
         {
-            return new OpenGLUnorderedAccessView(GL, (uint)resource.NativePointer, description);
+            return new OpenGLUnorderedAccessView((uint)resource.NativePointer, description);
         }
 
         public void Dispose()

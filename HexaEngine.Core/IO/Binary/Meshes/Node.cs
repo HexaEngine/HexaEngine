@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.IO;
     using System.Numerics;

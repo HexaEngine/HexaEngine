@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -130,7 +130,7 @@
                 }
             }
 
-            Mathematics.Curve.CalculateCurve(ref curve);
+            Hexa.NET.Mathematics.Curve.CalculateCurve(ref curve);
 
             var curveColor = ImGui.GetColorU32(ImGuiCol.PlotLines);
 

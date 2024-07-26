@@ -8,7 +8,7 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System;

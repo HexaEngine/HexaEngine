@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System;
     using System.Collections.Generic;
 

@@ -2,7 +2,7 @@
 {
     using BenchmarkDotNet.Attributes;
     using BenchmarkDotNet.Running;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
 
     public class Program
     {

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using MagicPhysX;
     using System.Numerics;
 

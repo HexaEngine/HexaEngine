@@ -3,6 +3,7 @@
     using Hexa.NET.FreeType;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using System;
     using System.Resources;
 

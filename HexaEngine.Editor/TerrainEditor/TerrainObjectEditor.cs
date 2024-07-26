@@ -2,24 +2,25 @@
 
 namespace HexaEngine.Editor.TerrainEditor
 {
+    using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGui;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Noise;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Noise;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using System;

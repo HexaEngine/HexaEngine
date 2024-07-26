@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Textures;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Themes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;

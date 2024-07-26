@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using System;
-    using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.Intrinsics.X86;
 
     public class LTTBAlgorithm
     {
@@ -231,8 +229,8 @@
         {
             rawValues = AllocT<T>(length);
             avgValues = AllocT<T>(length);
-            Memset(rawValues, 0, length);
-            Memset(avgValues, 0, length);
+            MemsetT(rawValues, 0, length);
+            MemsetT(avgValues, 0, length);
             this.length = length;
         }
 

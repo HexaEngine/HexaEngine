@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
+    using Hexa.NET.DebugDraw;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
 
     public class OverlayPass : RenderPass

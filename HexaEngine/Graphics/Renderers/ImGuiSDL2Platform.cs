@@ -4,7 +4,7 @@
     using Hexa.NET.SDL2;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;

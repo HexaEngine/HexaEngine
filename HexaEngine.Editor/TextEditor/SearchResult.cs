@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System;
 
     public unsafe struct SearchResult

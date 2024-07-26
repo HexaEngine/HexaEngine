@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.OpenGL;
     using System;

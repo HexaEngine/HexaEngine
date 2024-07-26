@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Physics
 {
     using HexaEngine.Components.Physics.Collider;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using MagicPhysX;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;

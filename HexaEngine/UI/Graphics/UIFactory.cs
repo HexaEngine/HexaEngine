@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
     using HexaEngine.Core;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Collections.Generic;
 

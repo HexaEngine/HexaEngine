@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Configuration;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
@@ -11,7 +10,8 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
@@ -208,6 +208,8 @@
             }
             profiler?.End("ShadowMap.UpdatePoint");
         }
+
+        private int[] cascadeUpdateFrequency = [1, 2, 4, 8];
 
         private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
         {

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Configuration;
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using System;
     using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Lights
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public struct CBDispatchParams
     {

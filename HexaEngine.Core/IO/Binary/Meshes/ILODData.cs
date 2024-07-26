@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public interface ILODData
     {

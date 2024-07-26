@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using System.Threading.Tasks;
 
     public class MaterialTextureResourceFactory : ResourceFactory<MaterialTexture, Core.IO.Binary.Materials.MaterialTexture>

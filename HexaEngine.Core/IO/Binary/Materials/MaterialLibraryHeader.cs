@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Text;
 
     /// <summary>

@@ -292,7 +292,7 @@
         /// </summary>
         public void Clear()
         {
-            Memset(items, 0, capacity);
+            MemsetT(items, 0, capacity);
             count = 0;
         }
 

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Security;
     using HexaEngine.Security.Credentials;

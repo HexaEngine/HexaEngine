@@ -26,7 +26,7 @@ SOFTWARE.
 
 #endregion
 
-using HexaEngine.Mathematics;
+using Hexa.NET.Mathematics;
 using System.Numerics;
 
 namespace HexaEngine.Core.MeshDecimator

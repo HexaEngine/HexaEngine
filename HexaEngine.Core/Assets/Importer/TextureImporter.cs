@@ -2,9 +2,9 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.Logging;
 
     public class TextureImporter : IAssetImporter
     {

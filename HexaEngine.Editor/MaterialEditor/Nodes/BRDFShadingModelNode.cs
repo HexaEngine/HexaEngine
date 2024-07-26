@@ -3,7 +3,7 @@
     using Hexa.NET.ImNodes;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Newtonsoft.Json;
 
     public class BRDFShadingModelNode : Node, ITypedNode

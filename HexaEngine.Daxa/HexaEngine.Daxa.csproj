@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Hexa.NET.Daxa" Version="1.0.0-alpha" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+	</ItemGroup>
+
+</Project>

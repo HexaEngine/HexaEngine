@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Effects.Noise;
     using HexaEngine.Graphics.Graph;

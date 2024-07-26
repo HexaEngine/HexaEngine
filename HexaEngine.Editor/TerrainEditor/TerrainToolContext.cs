@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using System;
     using System.Numerics;

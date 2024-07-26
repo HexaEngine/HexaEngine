@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Runtime.CompilerServices;
-    using static HexaEngine.Core.Utils;
 
     /// <summary>
     /// Represents a G-Buffer used for storing intermediate rendering results.

@@ -2,7 +2,7 @@
 {
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Vulkan;
     using System;
@@ -13,6 +13,8 @@
         public VulkanGraphicsDevice device;
         private SDLWindow* window;
         private readonly SurfaceKHR surface;
+        private readonly SwapChainDescription? swapChainDescription;
+        private readonly SwapChainFullscreenDescription? fullscreenDescription;
         public SwapchainKHR SwapChain;
         public UnsafeList<Image> SwapChainImages = new();
         public Silk.NET.Vulkan.Format format;
@@ -30,11 +32,13 @@
         private bool disposedValue;
         private const uint MAX_FRAMES_IN_FLIGHT = 2;
 
-        public VulkanSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SurfaceKHR surface)
+        public VulkanSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SurfaceKHR surface, SwapChainDescription? swapChainDescription, SwapChainFullscreenDescription? fullscreenDescription)
         {
             this.device = device;
             this.window = window;
             this.surface = surface;
+            this.swapChainDescription = swapChainDescription;
+            this.fullscreenDescription = fullscreenDescription;
             CreateSwapChain();
             CreateImageViews();
             CreateSyncObjects();
@@ -186,7 +190,7 @@
 
         public int Height { get; }
 
-        public Mathematics.Viewport Viewport { get; }
+        public Hexa.NET.Mathematics.Viewport Viewport { get; }
 
         public bool VSync { get; set; }
 

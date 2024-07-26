@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
 
@@ -186,7 +186,7 @@
             var nFace = pMesh.IndexCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertTangents, 0, (int)pMesh.VertexCount);
+            MemsetT(vertTangents, 0, (int)pMesh.VertexCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -244,7 +244,7 @@
             var nFace = pMesh.IndexCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertTangents, 0, (int)pMesh.VertexCount);
+            MemsetT(vertTangents, 0, (int)pMesh.VertexCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -311,7 +311,7 @@
         public static unsafe bool ProcessMesh2Parallel(TerrainCellLODData pMesh)
         {
             Vector3* tangents = AllocT<Vector3>(pMesh.FaceCount);
-            Memset(tangents, 0, (int)pMesh.FaceCount);
+            MemsetT(tangents, 0, (int)pMesh.FaceCount);
 
             var m_terrainHeight = (int)pMesh.Rows;
             var m_terrainWidth = (int)pMesh.Columns;

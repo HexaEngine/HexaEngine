@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Animations
 {
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using K4os.Compression.LZ4;
     using K4os.Compression.LZ4.Streams;
     using System.Collections.Generic;

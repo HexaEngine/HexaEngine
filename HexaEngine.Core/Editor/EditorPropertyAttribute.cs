@@ -64,6 +64,7 @@
         /// <param name="filter">The filename filter for the file picker.</param>
         /// <param name="relativeTo">The path relative to this value.</param>
         /// <param name="mode">The editor property mode for file picker.</param>
+        [Obsolete("Use the AssetType overload instead.")]
         public EditorPropertyAttribute(string name, string? startingPath, string? filter = null, string? relativeTo = null, EditorPropertyMode mode = EditorPropertyMode.Filepicker)
         {
             Name = name;

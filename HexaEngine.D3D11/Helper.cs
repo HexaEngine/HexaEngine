@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Silk.NET.Core.Native;
     using System.Numerics;
     using System.Runtime.CompilerServices;

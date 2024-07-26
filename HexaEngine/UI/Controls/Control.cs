@@ -2,7 +2,7 @@
 {
     using HexaEngine.UI.Graphics.Text;
     using HexaEngine.UI.Graphics;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Diagnostics.CodeAnalysis;
     using System.Xml.Serialization;

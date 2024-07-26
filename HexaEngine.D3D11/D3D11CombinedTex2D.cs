@@ -11,7 +11,7 @@
         internal ComPtr<ID3D11RenderTargetView> rtv;
         internal ComPtr<ID3D11UnorderedAccessView> uav;
         internal ComPtr<ID3D11DepthStencilView> dsv;
-        private readonly Mathematics.Viewport viewport;
+        private readonly Hexa.NET.Mathematics.Viewport viewport;
 
         public D3D11CombinedTex2D(D3D11GraphicsDevice device, CombinedTex2DDesc description)
         {
@@ -55,7 +55,7 @@
 
         public bool IsDSV => dsv.Handle != null;
 
-        public Mathematics.Viewport Viewport => viewport;
+        public Hexa.NET.Mathematics.Viewport Viewport => viewport;
 
         protected override void DisposeCore()
         {

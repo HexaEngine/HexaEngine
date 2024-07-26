@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Silk.NET.Assimp;
     using System.Numerics;
 

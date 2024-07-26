@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.IO;
     using System.Numerics;
     using HexaEngine.Core.IO.Binary.Meshes;

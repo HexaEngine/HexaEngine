@@ -1,4 +1,4 @@
-﻿using HexaEngine.Mathematics;
+﻿using Hexa.NET.Mathematics;
 using HexaEngine.PostFx;
 
 namespace HexaEngine.Volumes

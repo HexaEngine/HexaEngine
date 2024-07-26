@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.MaterialEditor.Generator;
@@ -364,7 +365,7 @@
                         continue;
                     }
 
-                    property = new(type.ToString(), type, valueType, Mathematics.Endianness.LittleEndian);
+                    property = new(type.ToString(), type, valueType, Endianness.LittleEndian);
                     material.Properties.Add(property);
                 }
                 else
@@ -588,9 +589,9 @@
         {
             string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
             MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
-            material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Mathematics.Endianness.LittleEndian, 0f));
-            material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Mathematics.Endianness.LittleEndian, 0.4f));
-            material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Mathematics.Endianness.LittleEndian, 1f));
+            material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Endianness.LittleEndian, 0f));
+            material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Endianness.LittleEndian, 0.4f));
+            material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Endianness.LittleEndian, 1f));
             MaterialFile = material;
 
             path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);

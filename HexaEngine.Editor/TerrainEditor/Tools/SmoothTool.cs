@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Editor.TerrainEditor;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
 
     public class SmoothTool : TerrainTool

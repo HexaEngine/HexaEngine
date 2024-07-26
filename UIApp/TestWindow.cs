@@ -8,7 +8,7 @@
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.UI;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;

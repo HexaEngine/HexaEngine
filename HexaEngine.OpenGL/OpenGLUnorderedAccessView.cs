@@ -8,9 +8,8 @@
         private UnorderedAccessViewDescription description;
         internal uint resource;
 
-        public OpenGLUnorderedAccessView(GL gl, uint resource, UnorderedAccessViewDescription description)
+        public OpenGLUnorderedAccessView(uint resource, UnorderedAccessViewDescription description)
         {
-            this.gl = gl;
             this.resource = resource;
             this.description = description;
 

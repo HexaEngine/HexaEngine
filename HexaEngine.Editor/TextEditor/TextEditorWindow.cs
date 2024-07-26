@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
@@ -23,7 +23,6 @@
 
         public TextEditorWindow()
         {
-            IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
             sidePanels.Add(new ExplorerSidePanel());
         }
@@ -162,6 +161,7 @@
             }
         }
 
+        [Profiling.Profile]
         public override unsafe void DrawContent(IGraphicsContext context)
         {
             DrawWindows();

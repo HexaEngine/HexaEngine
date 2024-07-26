@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using Silk.NET.Core;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
@@ -13,7 +13,7 @@
     using Format = Core.Graphics.Format;
     using MapMode = Core.Graphics.MapMode;
     using MappedSubresource = Core.Graphics.MappedSubresource;
-    using Viewport = Mathematics.Viewport;
+    using Viewport = Hexa.NET.Mathematics.Viewport;
 
     public unsafe class D3D11GraphicsContextBase
     {

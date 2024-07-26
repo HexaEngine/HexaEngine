@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
     using System.Reflection;
@@ -130,7 +130,7 @@
         public static unsafe bool GenMeshVertexNormals2(MeshLODData pMesh)
         {
             Vector3* vertNormals = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertNormals, 0, (int)pMesh.VertexCount);
+            MemsetT(vertNormals, 0, (int)pMesh.VertexCount);
             uint nFaces = pMesh.IndexCount / 3;
 
             for (int face = 0; face < nFaces; ++face)
@@ -194,7 +194,7 @@
         public static unsafe bool GenMeshVertexNormals2(TerrainCellLODData pMesh)
         {
             Vector3* normals = AllocT<Vector3>(pMesh.FaceCount);
-            Memset(normals, 0, (int)pMesh.FaceCount);
+            MemsetT(normals, 0, (int)pMesh.FaceCount);
 
             var m_terrainHeight = (int)pMesh.Rows;
             var m_terrainWidth = (int)pMesh.Columns;

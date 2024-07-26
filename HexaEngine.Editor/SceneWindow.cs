@@ -1,15 +1,15 @@
 ﻿namespace HexaEngine.Editor
 {
+    using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;

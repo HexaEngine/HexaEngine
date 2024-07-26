@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Profiling;
     using System.Numerics;
 
     public class HizDepthPass : ComputePass

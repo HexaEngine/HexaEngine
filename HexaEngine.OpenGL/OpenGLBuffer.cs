@@ -8,9 +8,8 @@
         private readonly BufferDescription description;
         private uint buffer;
 
-        public OpenGLBuffer(GL gl, uint buffer, BufferDescription description)
+        public OpenGLBuffer(uint buffer, BufferDescription description)
         {
-            this.gl = gl;
             this.buffer = buffer;
             this.description = description;
             nativePointer = buffer;
@@ -26,7 +25,7 @@
 
         protected override void DisposeCore()
         {
-            gl.DeleteBuffer(buffer);
+            OpenGLGraphicsDevice.GL.DeleteBuffer(buffer);
             buffer = 0;
             nativePointer = 0;
         }

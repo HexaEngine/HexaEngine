@@ -5,7 +5,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -144,6 +144,7 @@
 
         public readonly Queue<LightSource> UpdateShadowLightQueue = new();
 
+        [Profiling.Profile]
         public unsafe void Update(IGraphicsContext context, ShadowAtlas shadowAtlas, Camera camera)
         {
             while (lightUpdateQueue.TryDequeue(out var lightSource))

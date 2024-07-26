@@ -6,8 +6,8 @@ namespace HexaEngine.Graphics.Renderers
     using Hexa.NET.ImGui;
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Numerics;

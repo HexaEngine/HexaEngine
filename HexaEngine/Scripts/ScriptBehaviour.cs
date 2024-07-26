@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;

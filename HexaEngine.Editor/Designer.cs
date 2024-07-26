@@ -1,4 +1,4 @@
-﻿#define BypassLauncher
+﻿//#define BypassLauncher
 
 namespace HexaEngine.Editor
 {
@@ -16,6 +16,7 @@ namespace HexaEngine.Editor
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.PostFx.BuildIn;
+    using HexaEngine.Profiling;
     using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using System.Diagnostics;
@@ -72,18 +73,14 @@ namespace HexaEngine.Editor
             PopupManager.Dispose();
         }
 
+        [Profile]
         public static void Draw(IGraphicsContext context)
         {
-            using (CPUProfiler2.Global.BeginBlock("MainMenuBar.Draw"))
-                MainMenuBar.Draw();
-            using (CPUProfiler2.Global.BeginBlock("WindowManager.Draw"))
-                WindowManager.Draw(context);
-            using (CPUProfiler2.Global.BeginBlock("ImGuiConsole.Draw"))
-                ImGuiConsole.Draw();
-            using (CPUProfiler2.Global.BeginBlock("MessageBoxes.Draw"))
-                MessageBoxes.Draw();
-            using (CPUProfiler2.Global.BeginBlock("PopupManager.Draw"))
-                PopupManager.Draw();
+            MainMenuBar.Draw();
+            WindowManager.Draw(context);
+            ImGuiConsole.Draw();
+            MessageBoxes.Draw();
+            PopupManager.Draw();
         }
 
         public static void OpenFile(string? path)

@@ -3,9 +3,9 @@
     using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Archives;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
@@ -37,7 +37,8 @@
         {
             ReferencedAssemblyNames.Add("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("HexaEngine.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("Hexa.NET.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("Hexa.NET.Utilities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.D3D11, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.D3D12, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Vulkan, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -687,7 +688,7 @@
             Logger.Log(Dotnet.AddDlls(appTempProjPath,
                 Path.GetFullPath("HexaEngine.dll"),
                 Path.GetFullPath("HexaEngine.Core.dll"),
-                Path.GetFullPath("HexaEngine.Mathematics.dll"),
+                Path.GetFullPath("Hexa.NET.Mathematics.dll"),
                 Path.GetFullPath("HexaEngine.D3D11.dll"),
                 Path.GetFullPath("HexaEngine.D3D12.dll"),
                 Path.GetFullPath("HexaEngine.Vulkan.dll"),

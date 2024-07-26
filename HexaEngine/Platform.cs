@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using HexaEngine.D3D11;
     using HexaEngine.D3D12;

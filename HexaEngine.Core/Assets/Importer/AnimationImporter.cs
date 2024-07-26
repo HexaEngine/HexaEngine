@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Binary.Animations;
+    using HexaEngine.Core.Logging;
     using System;
 
     public class AnimationImporter : IAssetImporter

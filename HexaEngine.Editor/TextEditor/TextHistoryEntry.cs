@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
 
     public unsafe struct TextHistoryEntry
     {

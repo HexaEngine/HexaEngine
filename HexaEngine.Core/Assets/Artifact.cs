@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets
 {
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Buffers.Binary;
     using System.Text;
 

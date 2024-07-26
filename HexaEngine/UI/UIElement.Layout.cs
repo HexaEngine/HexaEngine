@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public partial class UIElement

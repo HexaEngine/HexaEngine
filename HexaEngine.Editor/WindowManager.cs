@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.ImagePainter;
@@ -8,6 +7,7 @@
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Profiling;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
@@ -276,6 +276,7 @@
             }
         }
 
+        [Profiling.Profile]
         public static void Draw(IGraphicsContext context)
         {
             for (int i = 0; i < windows.Count; i++)
@@ -287,7 +288,7 @@
                     continue;
                 }
 
-                using (CPUProfiler2.Global.BeginBlock(window.Name))
+                using (CPUProfiler.Global.BeginBlock($"{window.Name}.DrawWindow"))
                     window.DrawWindow(context);
             }
         }

@@ -7,7 +7,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;

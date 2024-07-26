@@ -1,4 +1,4 @@
-﻿using HexaEngine.Core.Unsafes;
+﻿using Hexa.NET.Utilities;
 
 namespace HexaEngine.Core.Graphics.Shaders.Reflection
 {

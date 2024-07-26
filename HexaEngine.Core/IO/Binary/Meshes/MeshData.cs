@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using K4os.Compression.LZ4;
     using K4os.Compression.LZ4.Streams;
     using System;

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public struct OctreeObject : IEquatable<OctreeObject>
     {

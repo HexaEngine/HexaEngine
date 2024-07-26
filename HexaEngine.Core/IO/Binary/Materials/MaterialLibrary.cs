@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Core.Logging;
+    using Hexa.NET.Mathematics;
     using System.IO;
     using System.Text;
 

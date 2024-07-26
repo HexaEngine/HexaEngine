@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.PostFx;
     using HexaEngine.PostFx.BuildIn;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Numerics;
 

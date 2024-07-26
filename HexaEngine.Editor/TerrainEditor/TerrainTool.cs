@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Noise;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Noise;
     using System.Numerics;
 
     public abstract class TerrainTool : IDisposable

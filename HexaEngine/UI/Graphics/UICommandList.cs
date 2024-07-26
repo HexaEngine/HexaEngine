@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public static class SortingAlgorithms

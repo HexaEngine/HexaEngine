@@ -111,6 +111,9 @@
 
         public D3DFeatureLevel Level { get; protected set; }
 
+        // TODO: Implement this
+        public GraphicsDeviceCapabilities Capabilities { get; }
+
         public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
         {
             return new D3D11CombinedTex2D(this, desc);

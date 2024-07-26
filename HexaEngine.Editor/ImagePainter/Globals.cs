@@ -1,2 +1,3 @@
 ﻿global using Newtonsoft.Json;
-global using static HexaEngine.Core.Utils;
+global using static Hexa.NET.Utilities.Utils;
+global using Hexa.NET.Utilities;

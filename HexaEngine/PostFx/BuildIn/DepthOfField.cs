@@ -9,7 +9,7 @@ namespace HexaEngine.PostFx.BuildIn
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
@@ -361,7 +361,7 @@ namespace HexaEngine.PostFx.BuildIn
                 context.CSSetConstantBuffer(1, null);
                 context.CSSetSampler(0, null);
                 context.CSSetUnorderedAccessView(0, null);
-                Memset(srvs_bokeh, 0, 3);
+                MemsetT(srvs_bokeh, 0, 3);
                 context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
                 context.SetComputePipeline(null);
             }
@@ -379,7 +379,7 @@ namespace HexaEngine.PostFx.BuildIn
             context.SetPipelineState(null);
             context.PSSetConstantBuffer(1, null);
             context.PSSetConstantBuffer(0, null);
-            Memset(srvs_dof, 0, 3);
+            MemsetT(srvs_dof, 0, 3);
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
 
             if (bokehEnabled)

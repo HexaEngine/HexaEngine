@@ -1,16 +1,16 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;

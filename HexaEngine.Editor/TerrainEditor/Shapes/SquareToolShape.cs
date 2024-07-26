@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.TerrainEditor;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using System.Numerics;
 

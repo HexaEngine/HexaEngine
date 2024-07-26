@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

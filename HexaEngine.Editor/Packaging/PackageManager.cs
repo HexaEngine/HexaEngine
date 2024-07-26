@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Logging;
     using System.Collections.Generic;
 
     public class PackageManager

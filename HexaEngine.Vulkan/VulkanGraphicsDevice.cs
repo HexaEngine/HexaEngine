@@ -32,6 +32,8 @@
 
         public PhysicalDevice PhysicalDevice => vulkanAdapter.PhysicalDevice;
 
+        public GraphicsDeviceCapabilities Capabilities { get; }
+
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return CreateSwapChain(window.GetWindow());
@@ -49,7 +51,7 @@
 
         public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            throw new NotImplementedException();
+            return vulkanAdapter.CreateSwapChain(this, window, swapChainDescription, fullscreenDescription);
         }
 
         public IBuffer CreateBuffer(BufferDescription description)

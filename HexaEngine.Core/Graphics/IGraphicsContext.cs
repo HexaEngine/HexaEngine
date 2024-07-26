@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public interface IGraphicsContext1 : IGraphicsContext

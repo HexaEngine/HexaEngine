@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// A tooltip helper for ImGui

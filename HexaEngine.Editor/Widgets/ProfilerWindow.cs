@@ -7,6 +7,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Diagnostics;
     using System.Numerics;
@@ -84,7 +85,7 @@
                     if (ImGui.Checkbox("Profile", ref cpu))
                     {
                         full = cpu;
-                        CPUProfiler2.Global.Enabled = cpu;
+                        CPUProfiler.Global.Enabled = cpu;
                     }
 
                     if (ImGui.Checkbox("GPU Profile (heavy performance impact)", ref gpu))
@@ -115,7 +116,7 @@
             SampleInterpolated(context);
             if (flame)
             {
-                var profiler = CPUProfiler2.Global;
+                var profiler = CPUProfiler.Global;
                 ImGuiWidgetFlameGraph.PlotFlame("Flame", profiler.Getter, profiler.Current, profiler.StageCount, ref selected);
             }
             if (full)
@@ -222,7 +223,7 @@
 
                 unsafe
                 {
-                    var profiler = CPUProfiler2.Global;
+                    var profiler = CPUProfiler.Global;
                     var entry = profiler.Current;
 
                     if (entry->Stages.Count > 0)
@@ -269,6 +270,11 @@
                             {
                                 flags |= ImGuiTreeNodeFlags.DefaultOpen;
                             }
+                            if (stage.Leaf)
+                            {
+                                flags |= ImGuiTreeNodeFlags.Leaf;
+                            }
+
                             var currPos = ImGui.GetCursorPos();
                             bool open = ImGui.TreeNodeEx(stage.Name.Data, flags);
                             if (open)
@@ -441,7 +447,7 @@
 
             if (cpu)
             {
-                var profiler = CPUProfiler2.Global;
+                var profiler = CPUProfiler.Global;
                 var blockNames = profiler.BlockNames;
                 lock (blockNames)
                 {

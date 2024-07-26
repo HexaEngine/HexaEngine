@@ -5,9 +5,11 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Profiling;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
@@ -48,6 +50,7 @@
         {
         }
 
+        [Profile]
         internal static unsafe void Draw()
         {
             if (ImGui.IsAnyMouseDown())

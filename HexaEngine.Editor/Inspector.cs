@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.Editor
 {
+    using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGuizmo;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;

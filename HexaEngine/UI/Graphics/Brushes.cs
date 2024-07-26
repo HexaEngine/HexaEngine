@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// <see cref="Brushes"/> defines standard brushes using colors from the <see cref="Colors"/> class.

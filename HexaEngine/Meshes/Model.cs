@@ -2,13 +2,13 @@
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Configuration;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Jobs;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System.Numerics;

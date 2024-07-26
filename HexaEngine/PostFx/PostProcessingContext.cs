@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public class PostProcessingContext : IDisposable
     {

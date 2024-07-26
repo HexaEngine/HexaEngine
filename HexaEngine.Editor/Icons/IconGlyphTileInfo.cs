@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 

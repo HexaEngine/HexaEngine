@@ -10,7 +10,7 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Particles;
     using HexaEngine.Scenes.Managers;
     using System;

@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
@@ -11,9 +10,10 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using Silk.NET.Assimp;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

@@ -1,7 +1,7 @@
 namespace HexaEngine.Tests
 {
     using HexaEngine.Core.IO.Caching;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 

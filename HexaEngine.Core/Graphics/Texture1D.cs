@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Runtime.CompilerServices;
 
     public sealed unsafe class Texture1D : Texture<ITexture1D, Texture1DDescription>, ITexture1D, IShaderResourceView, IRenderTargetView, IUnorderedAccessView

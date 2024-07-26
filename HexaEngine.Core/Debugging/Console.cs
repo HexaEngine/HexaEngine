@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Collections;
+    using HexaEngine.Core.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -303,6 +304,7 @@
         /// <summary>
         /// Draws the ImGuiConsole window, allowing for logging, message display, and command input.
         /// </summary>
+        [Profiling.Profile]
         public static void Draw()
         {
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, windowAlpha);

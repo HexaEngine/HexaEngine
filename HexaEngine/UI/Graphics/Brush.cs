@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     public abstract class Brush : UIResource
     {

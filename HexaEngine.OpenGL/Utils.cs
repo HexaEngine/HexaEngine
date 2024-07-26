@@ -8,12 +8,12 @@
 
     public static unsafe class Utils
     {
-        public static void CheckError(GL GL)
+        public static void CheckError()
         {
-            var error = GL.GetError();
+            var error = OpenGLGraphicsDevice.GL.GetError();
             if (error != GLEnum.NoError)
             {
-                var msg = GL.GetStringS(error);
+                var msg = OpenGLGraphicsDevice.GL.GetStringS(error);
                 throw new OpenGLException((ErrorCode)error, msg);
             }
         }

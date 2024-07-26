@@ -2,8 +2,8 @@
 
 namespace HexaEngine.Core.UI
 {
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

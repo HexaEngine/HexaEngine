@@ -111,7 +111,7 @@
             var fs = File.Create(path);
             AssetArchiveHeader header = new()
             {
-                Endianness = Mathematics.Endianness.LittleEndian,
+                Endianness = Hexa.NET.Mathematics.Endianness.LittleEndian,
                 Compression = compression,
                 Flags = AssetArchiveFlags.Normal,
                 Parts = [],

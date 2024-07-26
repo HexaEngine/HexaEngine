@@ -138,7 +138,7 @@
             ctx.SetDepthStencilState(state.DepthStencil, state.StencilRef);
             ctx.SetBlendState(state.Blend, state.BlendFactor, state.SampleMask);
             ctx.SetPrimitiveTopology(state.Topology);
-            device.GL.UseProgram(program);
+            OpenGLGraphicsDevice.GL.UseProgram(program);
         }
 
         public void EndDraw(IGraphicsContext context)
@@ -154,7 +154,7 @@
             }
 
             var ctx = (OpenGLGraphicsContext)context;
-            device.GL.UseProgram(0);
+            OpenGLGraphicsDevice.GL.UseProgram(0);
 
             ctx.SetRasterizerState(default);
             ctx.SetDepthStencilState(default, default);
@@ -168,7 +168,7 @@
 
             if (program != 0)
             {
-                device.GL.DeleteProgram(program);
+                OpenGLGraphicsDevice.GL.DeleteProgram(program);
             }
 
             program = 0;
@@ -199,7 +199,7 @@
 
                 if (program != 0)
                 {
-                    device.GL.DeleteProgram(program);
+                    OpenGLGraphicsDevice.GL.DeleteProgram(program);
                 }
 
                 disposedValue = true;

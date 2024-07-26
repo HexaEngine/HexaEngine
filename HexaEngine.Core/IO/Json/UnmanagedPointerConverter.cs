@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Json
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;

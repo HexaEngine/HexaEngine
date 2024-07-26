@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;

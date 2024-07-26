@@ -3,8 +3,8 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
     using System.Threading;

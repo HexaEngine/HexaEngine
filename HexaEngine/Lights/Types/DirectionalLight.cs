@@ -6,7 +6,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -142,6 +142,59 @@
             context.SetRenderTarget(csmBuffer.RTV, csmDepthBuffer.DSV);
             context.SetViewport(csmBuffer.Viewport);
 
+#nullable enable
+        }
+
+        public unsafe void BeginUpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmConstantBuffer, Camera camera)
+        {
+            if (csmBuffer == null)
+            {
+                return;
+            }
+#nullable disable
+            var data = buffer.Local + QueueIndex;
+
+            Matrix4x4* views = ShadowData.GetViews(data);
+            float* cascades = ShadowData.GetCascades(data);
+
+            var matrices = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, shadowFrustra, ShadowMapSize, cascadeCount);
+            CSMShadowParams shadowParams = default;
+            for (uint i = 0; i < cascadeCount - 1; i++)
+            {
+                shadowParams[i] = matrices[i];
+            }
+            shadowParams.CascadeCount = (uint)(cascadeCount - 1);
+
+            context.Write(csmConstantBuffer.Buffer, shadowParams);
+
+#nullable enable
+        }
+
+        public unsafe void UpdateShadowMap(IGraphicsContext context, int cascadeIndex, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmConstantBuffer, Camera camera)
+        {
+            if (csmBuffer == null)
+            {
+                return;
+            }
+#nullable disable
+            var data = buffer.Local + QueueIndex;
+
+            Matrix4x4* views = ShadowData.GetViews(data);
+            float* cascades = ShadowData.GetCascades(data);
+
+            var matrices = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, shadowFrustra, ShadowMapSize, cascadeCount);
+            CSMShadowParams shadowParams = default;
+            for (uint i = 0; i < cascadeCount - 1; i++)
+            {
+                shadowParams[i] = matrices[i];
+            }
+            shadowParams.CascadeCount = (uint)(cascadeCount - 1);
+
+            context.Write(csmConstantBuffer.Buffer, shadowParams);
+            context.ClearRenderTargetView(csmBuffer.RTVArraySlices[cascadeIndex], Vector4.One);
+            context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
+            context.SetRenderTarget(csmBuffer.RTV, csmDepthBuffer.DSV);
+            context.SetViewport(csmBuffer.Viewport);
 #nullable enable
         }
 

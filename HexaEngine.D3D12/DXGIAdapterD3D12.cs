@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.D3D12
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;

@@ -8,18 +8,16 @@
         private ShaderResourceViewDescription description;
         internal uint resource;
 
-        public OpenGLShaderResourceView(GL gl, uint resource, ShaderResourceViewDescription description, ObjectIdentifier identifier)
+        public OpenGLShaderResourceView(uint resource, ShaderResourceViewDescription description, ObjectIdentifier identifier)
         {
-            this.gl = gl;
             this.resource = resource;
             this.description = description;
             Identifier = identifier;
             nativePointer = resource;
         }
 
-        public OpenGLShaderResourceView(GL gl, uint resource, ShaderResourceViewDescription description)
+        public OpenGLShaderResourceView(uint resource, ShaderResourceViewDescription description)
         {
-            this.gl = gl;
             this.resource = resource;
             this.description = description;
             Identifier = description.ViewDimension switch

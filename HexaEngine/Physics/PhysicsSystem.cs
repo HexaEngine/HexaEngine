@@ -2,8 +2,8 @@
 {
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;

@@ -3,8 +3,9 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Profiling;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -56,6 +57,7 @@
 
         private readonly List<TextSelection> selections = [];
 
+        [Profile]
         public void Draw(IGraphicsContext context, Vector2 size)
         {
             isFocused = false;
@@ -441,6 +443,7 @@
         private bool wasFocused = false;
         private TextSelection selection = TextSelection.Invalid;
 
+        [Profiling.Profile]
         private bool DrawEditor(string label, StdWString* text, Vector2 size)
         {
             int id = ImGui.GetID(label);
@@ -531,11 +534,12 @@
         {
             int digits = (int)Math.Log10(source.LineCount) + 1;
             byte* buf = stackalloc byte[digits + 1]; // no need to set last byte to \0 since stacks are naturally zeroed.
-            Memset(buf, (byte)'0', digits);
+            MemsetT(buf, (byte)'0', digits);
             float lineNumbersWidth = ImGui.CalcTextSize(buf).X;
             return (digits, lineNumbersWidth);
         }
 
+        [Profiling.Profile]
         private void DrawFindResults(ImDrawList* drawList, Vector2 cursor, TextSource source, float lineHeight)
         {
             const uint highlightColor = 0x993399FF; // ABGR
@@ -593,6 +597,7 @@
             }
         }
 
+        [Profiling.Profile]
         private void DrawLineNumbers(ref Vector2 size, ImGuiStyle* style, ImDrawList* draw, ref Vector2 cursor, float lineHeight, int digits, float width)
         {
             byte* buf = stackalloc byte[digits + 1]; // no need to set last byte to \0 since stacks are naturally zeroed.
@@ -607,33 +612,19 @@
             size.X -= width + style->FramePadding.X;
         }
 
+        [Profiling.Profile]
         private void HandleMouseInput(int id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
         {
             bool isMouseDown = isHovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
-
             bool isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
             bool isDoubleClick = ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
 
             if (isHovered)
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.TextInput);
-            }
-
-            if (isMouseDown)
-            {
-                ImGui.SetFocusID(id, window);
-            }
-
-            bool isDragging = ImGui.IsMouseDragging(ImGuiMouseButton.Left);
-            if (!isDragging)
-            {
-                wasDragging = false;
-            }
-
-            if (isHovered)
-            {
-                if (isDragging || isMouseDown)
+                if (isMouseDown)
                 {
+                    ImGui.SetFocusID(id, window);
                     ImGui.SetActiveID(id, window);
                 }
                 else
@@ -641,7 +632,7 @@
                     ImGui.ClearActiveID();
                 }
 
-                if (isClick && !isDragging && !isDoubleClick)
+                if (isClick && !ImGui.IsMouseDragging(ImGuiMouseButton.Left) && !isDoubleClick)
                 {
                     ClearSelection();
                 }
@@ -654,32 +645,40 @@
                     SetCursor(HitTest(source, origin, mousePos, lineHeight));
                 }
 
-                if (isDragging && !wasDragging)
+                bool isDragging = ImGui.IsMouseDragging(ImGuiMouseButton.Left);
+                if (isDragging)
                 {
-                    selection.Text = text;
-                    selection.Start = selection.End = cursorState;
-                    wasDragging = true;
+                    if (!wasDragging)
+                    {
+                        selection.Text = text;
+                        selection.Start = selection.End = cursorState;
+                        wasDragging = true;
+                    }
+                    else
+                    {
+                        SetCursor(HitTest(source, origin, mousePos, lineHeight));
+                        selection.End = cursorState;
+                    }
                 }
-                else if (isDragging && wasDragging)
+                else
                 {
-                    SetCursor(HitTest(source, origin, mousePos, lineHeight));
-                    selection.End = cursorState;
+                    wasDragging = false;
                 }
 
                 if (isDoubleClick)
                 {
-                    var index = HitTest(source, origin, mousePos, lineHeight);
+                    int index = HitTest(source, origin, mousePos, lineHeight);
                     int start = index;
-                    while (char.IsLetter(pText[start]) && index > 0)
+                    while (start > 0 && char.IsLetter(pText[start - 1]))
                     {
                         start--;
                     }
                     int end = index;
-                    while (char.IsLetter(pText[end]) && end < text->Size)
+                    while (end < text->Size && char.IsLetter(pText[end]))
                     {
                         end++;
                     }
-                    SetSelection(start + 1, end);
+                    SetSelection(start, end);
                     SetCursor(end);
                     return;
                 }
@@ -710,11 +709,17 @@
             selection.End = CursorState.FromIndex(end, source);
         }
 
+        /// <summary>
+        /// Clear the current selection.
+        /// </summary>
         public void ClearSelection()
         {
             selection.Start = selection.End = CursorState.Invalid;
         }
 
+        /// <summary>
+        /// Erase the current selection.
+        /// </summary>
         public void EraseSelection()
         {
             if (!selection.IsValid())
@@ -748,6 +753,7 @@
             PerformFind();
         }
 
+        [Profiling.Profile]
         private void HandleKeyboardInput(StdWString* text, ref bool changed, bool isFocused)
         {
             ImGuiIOPtr io = ImGui.GetIO();
@@ -1061,6 +1067,7 @@
             PostEdit();
         }
 
+        [Profiling.Profile]
         private void DrawText(ImDrawList* drawList, Vector2 origin, char* pText)
         {
             for (int i = 0; i < highlightSpans.Count; i++)
@@ -1078,6 +1085,7 @@
             }
         }
 
+        [Profiling.Profile]
         private void DrawSelection(ImDrawList* drawList, Vector2 origin, TextSource source, float lineHeight)
         {
             if (!selection.IsValid())
@@ -1150,6 +1158,7 @@
         private readonly float cursorBlinkInterval = 0.5f;
         private float cursorBlinkTimer = 0.0f;
 
+        [Profiling.Profile]
         private void DrawCursorLine(ImDrawList* drawList, TextSource source, bool isFocused, float lineHeight, Vector2 origin, Vector2 avail, CursorState cursorState)
         {
             if (isFocused)

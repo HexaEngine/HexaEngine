@@ -4,7 +4,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Controls.Primitives;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;

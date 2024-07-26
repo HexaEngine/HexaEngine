@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
+    using HexaEngine.Profiling;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -358,6 +358,7 @@
             AddToQueue(sender);
         }
 
+        [Profiling.Profile]
         public void Update(IGraphicsContext context)
         {
             for (int i = 0; i < renderers.Count; i++)

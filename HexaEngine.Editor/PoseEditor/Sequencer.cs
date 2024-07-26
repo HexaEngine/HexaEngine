@@ -3,7 +3,7 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Animations;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public class Sequencer : EditorWindow

@@ -5,7 +5,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Reflection;

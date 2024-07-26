@@ -5,7 +5,6 @@
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild
     {
-        protected GL gl;
         protected uint nativePointer;
 
         protected abstract ObjectIdentifier Identifier { get; }
@@ -15,10 +14,10 @@
             get
             {
                 uint len;
-                gl.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
+                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
                 byte* pName = (byte*)Alloc((nuint)len);
-                gl.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
-                string str = Utils.ToStr(pName, len);
+                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
+                string str = ToStr(pName, len);
                 Free(pName);
                 return str;
             }
@@ -27,11 +26,11 @@
                 if (value != null)
                 {
                     byte* pName = value.ToUTF8Ptr();
-                    gl.ObjectLabel(Identifier, nativePointer, (uint)value.Length, pName);
+                    OpenGLGraphicsDevice.GL.ObjectLabel(Identifier, nativePointer, (uint)value.Length, pName);
                 }
                 else
                 {
-                    gl.ObjectLabel(Identifier, nativePointer, 0, (byte*)null);
+                    OpenGLGraphicsDevice.GL.ObjectLabel(Identifier, nativePointer, 0, (byte*)null);
                 }
             }
         }

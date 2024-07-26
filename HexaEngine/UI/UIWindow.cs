@@ -3,7 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Controls;
     using System.Numerics;
 

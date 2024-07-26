@@ -6,9 +6,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
     using System.Diagnostics;
     using static Extensions.SdlErrorHandlingExtensions;

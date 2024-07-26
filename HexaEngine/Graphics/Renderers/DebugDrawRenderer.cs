@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.DebugDraw;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Numerics;
@@ -87,7 +87,7 @@
             int height = 256;
 
             uint* pixels = AllocT<uint>(width * height);
-            Memset(pixels, 0xffffffff, width * height);
+            MemsetT(pixels, 0xffffffff, width * height);
 
             var texDesc = new Texture2DDescription
             {
@@ -205,7 +205,7 @@
                         texId = fontTextureView.NativePointer;
                     }
                     context.PSSetShaderResources(0, 1, (void**)&texId);
-                    context.SetPrimitiveTopology(cmd.Topology);
+                    context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
                     voffset += (int)cmd.VertexCount;
                     ioffset += cmd.IndexCount;
@@ -293,7 +293,7 @@
 
                     var texId = cmd.TextureId;
                     context.PSSetShaderResources(0, 1, (void**)&texId);
-                    context.SetPrimitiveTopology(cmd.Topology);
+                    context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
                     voffset += (int)cmd.VertexCount;
                     ioffset += cmd.IndexCount;

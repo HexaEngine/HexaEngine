@@ -8,7 +8,7 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Weather;
     using System;

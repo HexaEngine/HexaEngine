@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
     using HexaEngine.Core.Input;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// Provides data for mouse button input events.

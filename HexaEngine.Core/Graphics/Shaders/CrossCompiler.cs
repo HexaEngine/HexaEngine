@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics.Shaders
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Shaderc;
     using HexaEngine.SPIRVCross;
     using Silk.NET.Core.Native;
