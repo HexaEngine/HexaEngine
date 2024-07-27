@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
-    using HexaEngine.Graphics.Filters;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Threading;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Filters;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;

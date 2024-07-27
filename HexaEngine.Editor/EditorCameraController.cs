@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Input;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;

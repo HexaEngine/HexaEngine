@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.ColorGradingEditor;
@@ -11,7 +10,6 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
-    using System.Reflection;
 
     public static class PostProcessingEditorFactory
     {

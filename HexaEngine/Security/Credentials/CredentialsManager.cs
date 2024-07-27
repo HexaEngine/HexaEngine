@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Security.Credentials
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.UI;
     using System.Security;
 

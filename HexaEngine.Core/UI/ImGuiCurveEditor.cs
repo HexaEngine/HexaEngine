@@ -2,8 +2,8 @@
 
 namespace HexaEngine.Core.UI
 {
-    using Hexa.NET.Utilities;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

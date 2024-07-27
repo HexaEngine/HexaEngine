@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Dummy
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using System;
 

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
     using Hexa.NET.ImNodes;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
-    using Hexa.NET.Mathematics;
     using Newtonsoft.Json;
 
     public class BRDFShadingModelNode : Node, ITypedNode

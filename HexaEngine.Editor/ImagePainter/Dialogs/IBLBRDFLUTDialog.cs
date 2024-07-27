@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Graphics.Filters;

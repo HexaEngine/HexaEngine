@@ -1,13 +1,11 @@
 ﻿namespace HexaEngine.Editor.TextEditor.Panels
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Graphics.Reflection;
     using Hexa.NET.Utilities;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Editor.Projects;
     using System;
     using System.Diagnostics;
-    using System.IO.Enumeration;
 
     public static class Ut
     {

@@ -1,6 +1,6 @@
-﻿using HexaEngine.Core.Assets;
+﻿using Hexa.NET.Logging;
+using HexaEngine.Core.Assets;
 using HexaEngine.Core.Graphics;
-using HexaEngine.Core.Logging;
 using HexaEngine.Editor.Attributes;
 
 namespace HexaEngine.Lights.Types

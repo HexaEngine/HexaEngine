@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.Logging;
 
     public static class MaterialShaderResourceFactoryExtensions
     {

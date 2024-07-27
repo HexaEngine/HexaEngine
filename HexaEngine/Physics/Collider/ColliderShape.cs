@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
+    using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;

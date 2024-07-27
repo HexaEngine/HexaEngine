@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
@@ -9,7 +11,6 @@
     using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
     using System.Diagnostics;
     using static Extensions.SdlErrorHandlingExtensions;

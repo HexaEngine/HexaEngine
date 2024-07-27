@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using Hexa.NET.Utilities;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using System;

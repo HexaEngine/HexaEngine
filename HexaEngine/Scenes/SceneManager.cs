@@ -1,16 +1,14 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
-    using HexaEngine.Physics;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
-    using System.IO;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 

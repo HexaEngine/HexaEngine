@@ -9,7 +9,7 @@ namespace HexaEngine.Core.Debugging
     using HexaEngine.Core.Graphics;
     using System.Collections.Concurrent;
     using System.Diagnostics;
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
 
 #endif
 

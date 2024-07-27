@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Lights.Structs
 {
-    using HexaEngine.Lights.Types;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Lights.Types;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

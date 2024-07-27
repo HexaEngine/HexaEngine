@@ -41,9 +41,9 @@ SOFTWARE.
 
 #endregion
 
-using HexaEngine.Core.Logging;
-using HexaEngine.Core.MeshDecimator.Collections;
+using Hexa.NET.Logging;
 using Hexa.NET.Mathematics;
+using HexaEngine.Core.MeshDecimator.Collections;
 using System.Numerics;
 
 namespace HexaEngine.Core.MeshDecimator.Algorithms

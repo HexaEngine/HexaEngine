@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.UI
 {
-    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public static class VisualTreeHelper

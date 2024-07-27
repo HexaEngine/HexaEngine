@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
+    using Hexa.NET.Logging;
     using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Binary.Archives;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
@@ -15,7 +14,6 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
 

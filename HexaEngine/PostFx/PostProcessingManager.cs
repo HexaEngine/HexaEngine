@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Profiling;
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;

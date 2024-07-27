@@ -1,6 +1,4 @@
-﻿using Hexa.NET.Utilities;
-
-namespace HexaEngine.Core.Graphics.Shaders.Reflection
+﻿namespace HexaEngine.Core.Graphics.Shaders.Reflection
 {
     public unsafe struct TypeInfo
     {

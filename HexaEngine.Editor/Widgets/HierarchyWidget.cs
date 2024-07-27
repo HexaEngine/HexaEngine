@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Graphics;
+    using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;

@@ -3,16 +3,16 @@
 namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Graphics.Filters;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;

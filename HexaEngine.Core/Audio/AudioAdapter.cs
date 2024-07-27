@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Audio
 {
-    using HexaEngine.Core.Graphics;
-
     /// <summary>
     /// Provides a set of audio adapters to create audio devices for various audio backends.
     /// </summary>

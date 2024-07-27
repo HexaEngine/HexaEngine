@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using Hexa.NET.Mathematics;
     using System;
     using System.ComponentModel;
 

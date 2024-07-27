@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Graphics.Filters
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public class RemapFilter : DisposableBase

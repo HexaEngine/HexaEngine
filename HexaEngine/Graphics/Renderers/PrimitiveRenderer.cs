@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Resources;
-    using HexaEngine.Scenes;
     using System.Numerics;
 
     public class PrimitiveRenderer : IRenderer, IDisposable

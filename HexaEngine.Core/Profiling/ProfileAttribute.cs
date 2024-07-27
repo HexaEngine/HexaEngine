@@ -2,9 +2,8 @@
 #nullable disable
 #if PROFILE
 
-using HexaEngine.Profiling;
-using System.Reflection;
 using MethodDecorator.Fody.Interfaces;
+using System.Reflection;
 
 #endif
 

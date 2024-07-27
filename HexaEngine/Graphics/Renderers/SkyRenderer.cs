@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
-    using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;

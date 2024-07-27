@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Profiling;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;

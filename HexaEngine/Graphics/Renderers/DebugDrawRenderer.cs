@@ -17,6 +17,8 @@
         private static ISamplerState fontSampler;
         private static IShaderResourceView fontTextureView;
 
+        private static DebugDrawContext debugDrawContext;
+
         private static int vertexBufferSize = 5000;
         private static int indexBufferSize = 10000;
         private bool disposedValue;
@@ -26,7 +28,7 @@
             DebugDrawRenderer.device = device;
 
             context = device.Context;
-
+            debugDrawContext = DebugDraw.CreateContext();
             CreateDeviceObjects();
         }
 
@@ -83,8 +85,8 @@
 
         private static unsafe void CreateFontsTexture()
         {
-            int width = 256;
-            int height = 256;
+            int width = 1;
+            int height = 1;
 
             uint* pixels = AllocT<uint>(width * height);
             MemsetT(pixels, 0xffffffff, width * height);
@@ -119,7 +121,7 @@
             };
             fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
             texture.Dispose();
-
+            debugDrawContext.FontTextureId = fontTextureView.NativePointer;
             var samplerDesc = new SamplerStateDescription
             {
                 Filter = Filter.MinMagMipLinear,
@@ -132,18 +134,19 @@
                 MaxLOD = 0f
             };
             fontSampler = device.CreateSamplerState(samplerDesc);
+            Free(pixels);
         }
 
         public void BeginDraw()
         {
+            DebugDraw.SetCurrentContext(debugDrawContext);
             DebugDraw.NewFrame();
         }
 
         public void EndDraw()
         {
             DebugDraw.Render();
-            context.SetViewport(DebugDraw.GetViewport());
-            Render(DebugDraw.GetImmediateCommandList(), DebugDraw.GetCamera());
+            Render(DebugDraw.GetDrawData());
         }
 
         private void Render(DebugDrawCommandList queue, Matrix4x4 camera)
@@ -228,7 +231,7 @@
 
         private void SetupRenderState(DebugDrawData data)
         {
-            context.SetViewport(data.Viewport);
+            context.SetViewport(new(data.Viewport.Offset, data.Viewport.Size));
             context.VSSetConstantBuffer(0, constantBuffer);
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
@@ -292,6 +295,10 @@
                     var cmd = list.Commands[j];
 
                     var texId = cmd.TextureId;
+                    if (texId == 0)
+                    {
+                        texId = fontTextureView.NativePointer;
+                    }
                     context.PSSetShaderResources(0, 1, (void**)&texId);
                     context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
@@ -318,6 +325,7 @@
         {
             if (!disposedValue)
             {
+                debugDrawContext.Dispose();
                 pso.Dispose();
                 constantBuffer.Dispose();
                 vertexBuffer.Dispose();

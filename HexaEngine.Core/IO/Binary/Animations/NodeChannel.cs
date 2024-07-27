@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Animations
 {
-    using HexaEngine.Core.IO;
     using Hexa.NET.Mathematics;
-    using System;
+    using HexaEngine.Core.IO;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
-    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
 

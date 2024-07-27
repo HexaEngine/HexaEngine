@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
@@ -9,7 +9,6 @@
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
 
     public unsafe partial class DXGISwapChain : DeviceChildBase, ISwapChain
     {

@@ -1,15 +1,14 @@
 ﻿namespace HexaEngine.Editor
 {
-    using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
@@ -124,7 +123,8 @@
         {
             ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
             ImGuizmo.SetOrthographic(EditorCameraController.Dimension == EditorCameraDimension.Dim2D);
-            DebugDraw.SetViewport(RenderViewport);
+
+            //DebugDraw.SetViewport(RenderViewport);
         }
 
         public static void Focus()

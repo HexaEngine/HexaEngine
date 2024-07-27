@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Graphics
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
 
     public delegate void QueueIndexChangedEventHandler(IRendererComponent sender, uint oldIndex, uint newIndex);

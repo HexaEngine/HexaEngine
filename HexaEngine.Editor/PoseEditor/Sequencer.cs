@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.PoseEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Animations;
-    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public class Sequencer : EditorWindow

@@ -2,9 +2,9 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.SDL2;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
-    using Hexa.NET.Utilities;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;

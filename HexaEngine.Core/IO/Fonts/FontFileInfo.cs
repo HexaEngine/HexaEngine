@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
-    using HexaEngine.Core;
     using System;
 
     public unsafe struct FontFileInfo : IEquatable<FontFileInfo>

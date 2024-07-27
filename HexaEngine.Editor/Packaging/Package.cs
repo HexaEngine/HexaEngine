@@ -1,10 +1,7 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO;
-    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
     using Hexa.NET.Mathematics;
-    using Microsoft.CodeAnalysis;
+    using HexaEngine.Core.IO;
     using System.Collections.Generic;
     using System.IO.Compression;
     using System.Text;

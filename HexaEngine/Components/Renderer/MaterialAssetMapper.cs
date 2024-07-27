@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using HexaEngine.Core.Logging;
     using System.Collections;
 
     public class MaterialAssetMapper : ICollection<MaterialAssetMapping>

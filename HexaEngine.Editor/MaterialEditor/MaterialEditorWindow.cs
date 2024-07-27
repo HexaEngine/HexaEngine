@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.MaterialEditor.Generator;

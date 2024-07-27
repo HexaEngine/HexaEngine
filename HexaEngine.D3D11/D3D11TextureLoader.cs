@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.DirectXTex;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Hexa.NET.DirectXTex;
     using Silk.NET.Direct3D11;
     using System.Diagnostics;
     using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public unsafe class D3D11TextureLoader : ITextureLoader
     {

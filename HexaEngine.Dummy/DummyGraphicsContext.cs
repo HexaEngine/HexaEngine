@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Dummy
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Graphics;
     using System;
     using System.Numerics;
 

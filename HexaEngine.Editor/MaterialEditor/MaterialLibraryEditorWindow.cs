@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Extensions;
+    using Hexa.NET.Utilities.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.UI;

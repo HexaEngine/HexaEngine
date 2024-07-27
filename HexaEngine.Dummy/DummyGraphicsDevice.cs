@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
 

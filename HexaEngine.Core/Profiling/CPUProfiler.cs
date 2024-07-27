@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Profiling
 {
-    using HexaEngine.Core.UI;
-    using Hexa.NET.Utilities;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
+    using HexaEngine.Core.UI;
     using System.Collections.Generic;
     using System.Diagnostics;
 

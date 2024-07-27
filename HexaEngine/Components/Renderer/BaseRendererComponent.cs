@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
-    using HexaEngine.Animations;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
 
     public abstract class BaseRendererComponent : IRendererComponent

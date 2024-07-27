@@ -4,11 +4,10 @@
 namespace Editor
 {
     using Hexa.NET.DebugDraw;
+    using Hexa.NET.Logging;
     using HexaEngine;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;

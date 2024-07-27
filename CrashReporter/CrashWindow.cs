@@ -1,13 +1,13 @@
 ﻿namespace CrashReporter
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;

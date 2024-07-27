@@ -1,19 +1,15 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
-    using HexaEngine.Meshes;
     using System.Numerics;
 
     public abstract class PrimitiveRenderComponent : BaseRendererComponent

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Graphics.Renderers;
-    using Hexa.NET.Mathematics;
 
     public class ImageSourceOverlay
     {

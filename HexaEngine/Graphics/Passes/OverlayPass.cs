@@ -52,8 +52,9 @@
             {
                 profiler?.Begin("DebugDraw");
                 context.SetRenderTarget(postFxBuffer.Value, depthStencil.Value);
-                DebugDraw.SetViewport(creator.Viewport);
+                DebugDraw.SetViewport(creator.Viewport.Offset, creator.Viewport.Size);
                 debugDrawRenderer?.EndDraw();
+                context.SetViewport(creator.Viewport);
                 debugDrawRenderer?.BeginDraw();
                 profiler?.End("DebugDraw");
             }

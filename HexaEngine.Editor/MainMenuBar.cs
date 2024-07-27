@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Widgets;

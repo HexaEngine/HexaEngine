@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
 

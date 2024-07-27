@@ -4,7 +4,6 @@
     using HexaEngine.UI;
     using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]

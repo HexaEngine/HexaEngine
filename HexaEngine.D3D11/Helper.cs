@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Textures;
-    using Hexa.NET.Mathematics;
     using Silk.NET.Core.Native;
     using System.Numerics;
     using System.Runtime.CompilerServices;

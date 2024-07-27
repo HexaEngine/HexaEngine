@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
     using HexaEngine.Collections;
-    using HexaEngine.UI;
 
     public class RenderGraphNode : INode
     {

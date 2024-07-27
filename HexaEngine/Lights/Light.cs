@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Lights
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Components;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;

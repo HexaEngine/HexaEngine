@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Lights;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Lights;
 
     public struct TextureAtlasHandle : IDisposable
     {

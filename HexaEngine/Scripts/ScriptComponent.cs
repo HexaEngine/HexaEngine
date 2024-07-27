@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Scripts
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;

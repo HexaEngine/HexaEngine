@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
 

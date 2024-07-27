@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Animations;
-    using HexaEngine.Core.Logging;
     using System.Collections.Generic;
 
     public class AnimationManager : IDisposable

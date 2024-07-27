@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;

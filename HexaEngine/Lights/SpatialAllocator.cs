@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core;
-
-namespace HexaEngine.Lights
+﻿namespace HexaEngine.Lights
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;

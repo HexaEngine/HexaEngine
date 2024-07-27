@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.UI;

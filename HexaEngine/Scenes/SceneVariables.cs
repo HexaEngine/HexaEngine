@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Collections;
+    using Hexa.NET.Utilities.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 

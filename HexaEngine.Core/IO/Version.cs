@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using System.Numerics;
     using System.Runtime.CompilerServices;
 
     /// <summary>

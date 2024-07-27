@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using Hexa.NET.Utilities;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using System.Runtime.CompilerServices;
 
     public unsafe struct OctreeNode

@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.Logging;
 
     public class TextureImporter : IAssetImporter
     {

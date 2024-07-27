@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using Hexa.NET.Utilities;
-    using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
     /// <summary>

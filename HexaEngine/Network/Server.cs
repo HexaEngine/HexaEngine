@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Network
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using HexaEngine.Network.Protocol;
     using System.Net;
 

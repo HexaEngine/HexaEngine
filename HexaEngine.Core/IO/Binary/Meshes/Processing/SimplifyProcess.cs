@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes.Processing
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using HexaEngine.Core.Logging;
     using MeshDecimator;
     using MeshDecimator.Algorithms;
     using System.Numerics;

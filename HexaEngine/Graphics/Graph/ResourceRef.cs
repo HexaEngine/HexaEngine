@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using Newtonsoft.Json.Linq;
     using System;
     using System.Runtime.CompilerServices;
-    using YamlDotNet.Core.Tokens;
 
     public delegate void ResourceRefChangedEventHandler<T>(ResourceRef resourceRef, T? value) where T : class, IDisposable;
 

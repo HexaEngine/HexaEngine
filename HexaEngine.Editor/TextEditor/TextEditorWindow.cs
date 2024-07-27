@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;

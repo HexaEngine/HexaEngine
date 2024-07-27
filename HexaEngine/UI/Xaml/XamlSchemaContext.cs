@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.UI.Xaml
 {
-    using System;
-    using System.Reflection;
     using HexaEngine.UI.Markup;
     using HexaEngine.UI.Xaml.Schema;
+    using System;
+    using System.Reflection;
 
     public class XamlSchemaContext
     {

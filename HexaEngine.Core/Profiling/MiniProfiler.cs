@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Profiling
 {
+    using HexaEngine.Core.Debugging;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using HexaEngine.Core.Debugging;
 
     public enum DisplayOptions
     {

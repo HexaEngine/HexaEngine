@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.UI.Controls
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.UI.Graphics;

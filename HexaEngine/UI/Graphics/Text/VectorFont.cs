@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.Utilities;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.UI.Graphics;
     using System;
     using System.Collections.Generic;

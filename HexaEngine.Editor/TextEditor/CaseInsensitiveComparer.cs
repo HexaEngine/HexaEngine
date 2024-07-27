@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public  readonly struct CaseInsensitiveComparer : IEqualityComparer<char>
+    public readonly struct CaseInsensitiveComparer : IEqualityComparer<char>
     {
         public static readonly CaseInsensitiveComparer Default = new();
 

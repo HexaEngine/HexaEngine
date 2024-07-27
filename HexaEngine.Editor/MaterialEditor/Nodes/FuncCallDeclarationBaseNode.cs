@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
 
     public abstract class FuncCallDeclarationBaseNode : Node, IFuncCallDeclarationNode

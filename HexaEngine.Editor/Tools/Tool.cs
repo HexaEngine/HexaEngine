@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Tools
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.UI;
     using System;
     using System.IO;

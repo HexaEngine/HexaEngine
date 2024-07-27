@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using Hexa.NET.Mathematics;
-    using HexaEngine.Meshes;
     using System.Numerics;
 
     [EditorDisplayName("Volumetric Lighting")]

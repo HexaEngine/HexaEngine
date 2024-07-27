@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
@@ -8,7 +9,6 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Weather;
     using System;

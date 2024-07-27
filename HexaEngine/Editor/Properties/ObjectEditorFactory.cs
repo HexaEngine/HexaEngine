@@ -5,7 +5,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using System.Xml.Linq;
 
     /// <summary>
     /// Factory class responsible for creating and managing object editors.

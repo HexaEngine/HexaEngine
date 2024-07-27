@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
 

@@ -6,7 +6,6 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Input;
-    using System;
 
     public class InputManagerWindow : EditorWindow
     {

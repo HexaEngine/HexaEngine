@@ -1,14 +1,12 @@
 ﻿namespace UIApp
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine;
-    using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using Hexa.NET.Mathematics;
     using HexaEngine.UI;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;

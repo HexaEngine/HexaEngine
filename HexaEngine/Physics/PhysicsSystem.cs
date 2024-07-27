@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Physics
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Core.IO.Caching;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using MagicPhysX;

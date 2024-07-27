@@ -1,5 +1,4 @@
-﻿using HexaEngine.Core;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 
 namespace HexaEngine.Network.Protocol
 {

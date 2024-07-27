@@ -3,7 +3,6 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using System.Diagnostics;
 
     public partial class UIElement : IInputElement
     {

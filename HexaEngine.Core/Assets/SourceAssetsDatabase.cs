@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Logging;
     using System;
     using System.IO;
 

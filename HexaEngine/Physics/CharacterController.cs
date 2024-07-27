@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Editor.Attributes;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;

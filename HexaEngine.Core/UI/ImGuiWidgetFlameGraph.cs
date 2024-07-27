@@ -24,7 +24,6 @@
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using System.Numerics;
 
     /// <summary>

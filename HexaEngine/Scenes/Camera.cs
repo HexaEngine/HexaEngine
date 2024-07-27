@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Components;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;

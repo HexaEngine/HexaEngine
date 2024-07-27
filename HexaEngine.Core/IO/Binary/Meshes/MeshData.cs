@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Hexa.NET.Mathematics;
     using K4os.Compression.LZ4;
     using K4os.Compression.LZ4.Streams;
     using System;

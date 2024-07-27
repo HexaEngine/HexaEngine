@@ -1,17 +1,11 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
     using Hexa.NET.Mathematics;
     using Hexa.NET.Mathematics.Noise;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using System.Numerics;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public enum NoiseMode
     {

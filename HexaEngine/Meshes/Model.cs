@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Jobs;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System.Numerics;

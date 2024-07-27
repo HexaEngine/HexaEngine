@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using System;
     using System.Numerics;
     using System.Threading.Tasks;

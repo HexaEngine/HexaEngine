@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Physics.Joints
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;

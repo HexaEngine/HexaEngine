@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.DirectXTex;
+    using HexaEngine.Core.Graphics;
 
     public class D3DImage : IImage
     {

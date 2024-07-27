@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Weather
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Sky;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -7,8 +9,6 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using Hexa.NET.Mathematics;
-    using Hexa.NET.Mathematics.Sky;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System.Numerics;

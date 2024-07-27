@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.TerrainEditor;
 

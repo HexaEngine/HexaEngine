@@ -3,7 +3,6 @@
     using HexaEngine.Core.IO;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
     using System.Xml;
 
     public class PackageMetadata

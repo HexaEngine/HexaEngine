@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Vulkan
 {
     using Hexa.NET.SDL2;
-    using HexaEngine.Core;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
-    using Hexa.NET.Utilities;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.Vulkan;

@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.Scripts
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using System;
-    using System.Diagnostics.CodeAnalysis;
 
     [Flags]
     public enum GlobalScriptFlags

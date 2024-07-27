@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

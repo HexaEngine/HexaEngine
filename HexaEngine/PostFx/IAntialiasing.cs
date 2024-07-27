@@ -2,9 +2,9 @@
 
 namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
 
     public interface IAntialiasing
     {

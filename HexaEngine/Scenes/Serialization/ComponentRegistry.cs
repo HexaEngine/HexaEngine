@@ -1,5 +1,4 @@
-﻿using HexaEngine.Core.Graphics.Reflection;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Serialization;
 

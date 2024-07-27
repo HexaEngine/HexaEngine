@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Textures
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Graphics;
     using System;
-    using System.Numerics;
 
     /// <summary>
     /// Represents a class for building texture atlases.

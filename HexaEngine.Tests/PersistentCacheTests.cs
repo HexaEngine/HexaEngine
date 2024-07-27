@@ -1,11 +1,10 @@
 namespace HexaEngine.Tests
 {
-    using HexaEngine.Core.IO.Caching;
     using Hexa.NET.Utilities;
+    using HexaEngine.Core.IO.Caching;
+    using NUnit.Framework;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
-
-    using NUnit.Framework;
 
 
     public unsafe class PersistentCacheTests

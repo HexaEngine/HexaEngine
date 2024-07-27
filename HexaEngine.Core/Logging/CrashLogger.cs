@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Logging
 {
     using Hardware.Info;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;

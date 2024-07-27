@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Particles
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Structs;
-    using Hexa.NET.Utilities;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
     using System.Numerics;

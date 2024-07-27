@@ -4,6 +4,9 @@ namespace HexaEngine.Editor.TerrainEditor
 {
     using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Noise;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
@@ -12,15 +15,13 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
-    using Hexa.NET.Mathematics;
-    using Hexa.NET.Mathematics.Noise;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using System;

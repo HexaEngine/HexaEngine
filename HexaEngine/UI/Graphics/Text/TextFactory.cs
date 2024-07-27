@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using System;
-    using System.Resources;
 
     public unsafe class TextFactory : IDisposable
     {

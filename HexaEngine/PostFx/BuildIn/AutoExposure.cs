@@ -2,7 +2,6 @@
 
 namespace HexaEngine.PostFx.BuildIn
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;

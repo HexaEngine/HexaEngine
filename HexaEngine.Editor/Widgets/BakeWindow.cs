@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
     using System.Threading;

@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D12 : IGraphicsAdapter

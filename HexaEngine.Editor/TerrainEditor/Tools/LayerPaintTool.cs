@@ -1,16 +1,14 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.MaterialEditor;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using System.Numerics;
 

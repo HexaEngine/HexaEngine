@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics.Buffers
 {
-    using System;
-    using System.Runtime.CompilerServices;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using System;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents a buffer for draw indirect arguments in graphics rendering.

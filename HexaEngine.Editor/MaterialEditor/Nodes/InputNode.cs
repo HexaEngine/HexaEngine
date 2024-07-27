@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
     using Hexa.NET.ImNodes;
-    using HexaEngine.Editor.NodeEditor;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Editor.NodeEditor;
     using Newtonsoft.Json;
 
     public class InputNode : Node

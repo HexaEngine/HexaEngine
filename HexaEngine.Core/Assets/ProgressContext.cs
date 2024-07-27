@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Assets
 {
     using Hexa.NET.Mathematics;
-    using System;
 
     public class ProgressContext
     {

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.UI
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
-    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Controls;
     using System.Numerics;
 

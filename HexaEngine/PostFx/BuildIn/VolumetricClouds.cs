@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Weather;

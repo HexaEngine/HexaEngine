@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.UI;
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Effects.Noise
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;

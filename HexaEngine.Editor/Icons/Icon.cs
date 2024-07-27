@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO.Textures;
-    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Text.RegularExpressions;
 

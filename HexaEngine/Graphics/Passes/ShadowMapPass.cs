@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -10,7 +11,6 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;

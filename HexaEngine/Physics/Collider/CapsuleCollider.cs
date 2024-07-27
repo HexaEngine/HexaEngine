@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
-    using HexaEngine.Editor.Attributes;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System.Numerics;

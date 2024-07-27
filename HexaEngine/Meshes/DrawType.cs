@@ -1,6 +1,4 @@
-﻿using HexaEngine.Resources;
-
-namespace HexaEngine.Meshes
+﻿namespace HexaEngine.Meshes
 {
     public class DrawType
     {

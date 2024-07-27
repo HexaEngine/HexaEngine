@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
-    using HexaEngine.Core.Debugging;
     using System.Collections.Generic;
     using System.Linq;
 

@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
     using System.Runtime.CompilerServices;

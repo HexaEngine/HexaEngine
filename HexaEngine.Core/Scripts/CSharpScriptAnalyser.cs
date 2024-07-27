@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Scripts
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Diagnostics.CodeAnalysis;

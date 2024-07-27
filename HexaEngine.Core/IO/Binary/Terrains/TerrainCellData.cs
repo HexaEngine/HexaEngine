@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using Hexa.NET.Mathematics;
-    using K4os.Compression.LZ4;
     using System.IO;
-    using System.Numerics;
 
     /// <summary>
     /// Represents a terrain mesh generated from a height map.

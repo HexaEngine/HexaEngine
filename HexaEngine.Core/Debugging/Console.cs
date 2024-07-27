@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Collections;
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Utilities.Collections;
     using System;
     using System.Collections.Generic;
     using System.Linq;

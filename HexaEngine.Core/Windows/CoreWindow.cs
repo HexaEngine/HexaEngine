@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using Hexa.NET.Mathematics;
     using Hexa.NET.SDL2;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
-    using Hexa.NET.Mathematics;
     using System;
 
     public abstract class CoreWindow : SdlWindow, ICoreWindow

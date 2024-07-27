@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.UI.Controls
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Controls.Primitives;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;

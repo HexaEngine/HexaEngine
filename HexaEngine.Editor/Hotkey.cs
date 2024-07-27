@@ -3,7 +3,6 @@
     using HexaEngine.Core.Input;
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Text;
 
     public class Hotkey

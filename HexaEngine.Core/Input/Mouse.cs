@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.Mathematics;
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
-    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;

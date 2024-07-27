@@ -2,15 +2,15 @@
 
 namespace HexaEngine.Windows
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
-    using HexaEngine.Core.Threading;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Profiling;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;

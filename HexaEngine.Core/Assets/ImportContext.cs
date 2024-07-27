@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Assets
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
 
     public class ImportContext
     {

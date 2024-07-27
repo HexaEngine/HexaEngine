@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Vulkan
 {
     using Hexa.NET.SDL2;
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.Utilities;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Vulkan;
     using System;

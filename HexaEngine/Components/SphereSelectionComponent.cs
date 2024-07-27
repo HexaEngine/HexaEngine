@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Components
 {
-    using HexaEngine.Editor.Attributes;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 

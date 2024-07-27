@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Graphics;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Graphics;
     using Silk.NET.Core;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;

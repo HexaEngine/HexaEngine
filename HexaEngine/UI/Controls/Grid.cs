@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.UI.Controls
 {
     using Hexa.NET.Mathematics;
-    using HexaEngine.UI.Graphics;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 

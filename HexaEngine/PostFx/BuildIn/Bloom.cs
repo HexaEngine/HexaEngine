@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
 

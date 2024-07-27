@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
@@ -10,7 +11,6 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Particles;
     using HexaEngine.Scenes.Managers;
     using System;

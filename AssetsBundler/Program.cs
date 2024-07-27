@@ -6,14 +6,12 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Archives;
-    using HexaEngine.Core.Windows;
     using HexaEngine.Windows;
     using System;
     using System.IO;
     using System.IO.Compression;
     using System.IO.Hashing;
     using System.Security.Cryptography;
-    using System.Security.Cryptography.X509Certificates;
     using System.Text;
 
     internal class Program

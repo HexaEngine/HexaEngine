@@ -2,11 +2,10 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.Profiling;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
     public class ObjectCullPass : ComputePass

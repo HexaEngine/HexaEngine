@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Jobs;
 
     public class CubeRendererComponent : PrimitiveRenderComponent

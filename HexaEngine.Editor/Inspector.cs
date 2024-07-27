@@ -2,12 +2,12 @@
 {
     using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGuizmo;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -114,7 +114,7 @@
                             {
                                 for (int ji = 0; ji < 8; ji++)
                                 {
-                                    DebugDraw.DrawFrustum(directional.ShadowFrustra[ji], Vector4.One);
+                                    //DebugDraw.DrawFrustum(directional.ShadowFrustra[ji], Vector4.One);
                                 }
                             }
                         }
@@ -131,7 +131,7 @@
 
                         if (drawLightBounds)
                         {
-                            DebugDraw.DrawFrustum(spotlight.ShadowFrustum, Vector4.One);
+                            //DebugDraw.DrawFrustum(spotlight.ShadowFrustum.Corners, Vector4.One);
                         }
                     }
 
@@ -142,7 +142,7 @@
 
                         if (drawLightBounds)
                         {
-                            DebugDraw.DrawBoundingBox(pointLight.ShadowBox, Vector4.One);
+                            //DebugDraw.DrawBoundingBox(pointLight.ShadowBox.Min, pointLight., Vector4.One);
                         }
                     }
                 }
@@ -164,7 +164,7 @@
                         continue;
                     }
                     DebugDraw.DrawQuadBillboard(cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), cameraUVStart, cameraUVEnd, cameraTint, cameraIconPtr);
-                    DebugDraw.DrawFrustum(cam.Transform.NormalizedFrustum, Vector4.One);
+                    //DebugDraw.DrawFrustum(cam.Transform.NormalizedFrustum, Vector4.One);
                 }
             }
 

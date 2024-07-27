@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO.Caching
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Security.Cryptography;
     using System;
     using System.Buffers.Binary;

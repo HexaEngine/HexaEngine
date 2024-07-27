@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
-    using HexaEngine.Core.IO;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.IO;
     using System.Collections.Generic;
     using System.IO;
 

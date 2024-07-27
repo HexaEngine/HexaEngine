@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
     using System;
     using System.Numerics;

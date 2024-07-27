@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using Hexa.NET.Mathematics;
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using System.Numerics;

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics.Shaders;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Security.Cryptography;
     using System;
     using System.Buffers.Binary;

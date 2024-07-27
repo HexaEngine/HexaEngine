@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.UI
 {
-    using YamlDotNet.Core.Tokens;
-
     public interface IDependencyElement
     {
         public string? Name { get; set; }

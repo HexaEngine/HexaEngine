@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.Logging;
     using System;
 
     public class MaterialImporter : IAssetImporter

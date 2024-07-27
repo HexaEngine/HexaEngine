@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Volumes
 {
-    using HexaEngine.Core.Logging;
+    using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Queries.Generic;

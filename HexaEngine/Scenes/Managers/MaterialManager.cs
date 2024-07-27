@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO.Binary.Materials;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;

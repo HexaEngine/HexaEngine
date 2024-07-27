@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Logging;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 

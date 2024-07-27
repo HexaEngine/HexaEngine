@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Meshes
+﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Core;
     using Hexa.NET.Mathematics;
+    using HexaEngine;
     using HexaEngine.Scenes;
     using System.Numerics;
 
@@ -17,7 +17,10 @@
 
         public float Far;
         public float Near;
-        public Vector2 ScreenDim;
+        public float Reserved1;
+        public float Reserved2;
+
+        public Vector4 ScreenDim;
 
         public uint Frame;
         public float CumulativeTime;
@@ -38,7 +41,7 @@
 
             Far = camera.Far;
             Near = camera.Near;
-            ScreenDim = screenDim;
+            ScreenDim = new Vector4(screenDim, 1 / screenDim.X, 1 / screenDim.Y);
 
             Frame = (uint)Time.Frame;
             CumulativeTime = Time.CumulativeFrameTime;
@@ -61,7 +64,7 @@
 
             Far = camera.Far;
             Near = camera.Near;
-            ScreenDim = screenDim;
+            ScreenDim = new Vector4(screenDim, 1 / screenDim.X, 1 / screenDim.Y);
 
             Frame = (uint)Time.Frame;
             CumulativeTime = Time.CumulativeFrameTime;
@@ -84,7 +87,7 @@
 
             Far = camera.Far;
             Near = camera.Near;
-            ScreenDim = screenDim;
+            ScreenDim = new Vector4(screenDim, 1 / screenDim.X, 1 / screenDim.Y);
 
             Frame = (uint)Time.Frame;
             CumulativeTime = Time.CumulativeFrameTime;
@@ -106,7 +109,7 @@
 
             Far = camera.Far;
             Near = camera.Near;
-            ScreenDim = screenDim;
+            ScreenDim = new Vector4(screenDim, 1 / screenDim.X, 1 / screenDim.Y);
 
             Frame = (uint)Time.Frame;
             CumulativeTime = Time.CumulativeFrameTime;

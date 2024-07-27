@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Numerics;

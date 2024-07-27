@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.IO;
     using System;
     using System.Runtime.CompilerServices;
 

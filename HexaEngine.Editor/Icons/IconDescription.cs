@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
     using System.ComponentModel;
-    using System.Numerics;
     using System.Xml.Serialization;
 
     [XmlRoot(ElementName = "Icon")]

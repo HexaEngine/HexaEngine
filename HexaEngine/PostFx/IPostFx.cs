@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Graph;
-    using Hexa.NET.Mathematics;
     using System.ComponentModel;
 
     /// <summary>

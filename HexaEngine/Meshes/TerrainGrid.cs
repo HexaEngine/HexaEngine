@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using Hexa.NET.Mathematics;
-    using Silk.NET.Assimp;
     using System.Numerics;
 
     public class TerrainGrid

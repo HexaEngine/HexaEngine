@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core;
-
-namespace HexaEngine.Meshes
+﻿namespace HexaEngine.Meshes
 {
     using HexaEngine.Core.IO.Binary.Meshes;
     using System;

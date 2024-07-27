@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Archives
 {
-    using HexaEngine.Core.Security.Cryptography;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Security.Cryptography;
     using System.IO;
     using System.Text;
 

@@ -2,12 +2,12 @@
 
 namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Logging;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D.Compilers;
     using Silk.NET.Direct3D11;

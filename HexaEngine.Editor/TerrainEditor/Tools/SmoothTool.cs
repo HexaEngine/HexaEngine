@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Editor.TerrainEditor;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
 
     public class SmoothTool : TerrainTool

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.PostFx
 {
     using HexaEngine.Collections;
-    using HexaEngine.Graphics.Graph;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes.Processing
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using Hexa.NET.Utilities;
-    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
 

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Resources
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using Hexa.NET.Mathematics;
 
     public class Mesh : ResourceInstance
     {

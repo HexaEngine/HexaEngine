@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.OpenGL
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.OpenGL;
     using System;

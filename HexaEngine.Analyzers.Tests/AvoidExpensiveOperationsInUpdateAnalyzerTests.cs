@@ -1,8 +1,5 @@
-using Microsoft;
-
 namespace HexaEngine.Analyzers.Tests
 {
-    using Microsoft;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Testing.NUnit;
     using Microsoft.CodeAnalysis.Testing;

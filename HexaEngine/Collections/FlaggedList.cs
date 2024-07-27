@@ -2,13 +2,10 @@
 {
     using HexaEngine.Core.Extensions;
     using HexaEngine.Scenes;
-    using Silk.NET.Vulkan;
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
 
     public interface IHasFlags<T> where T : Enum
     {

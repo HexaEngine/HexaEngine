@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Windows.Events;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Windows.Events;
 
     /// <summary>
     /// Represents a swap chain for presenting graphics output to a display.

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;

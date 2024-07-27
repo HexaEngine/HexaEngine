@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using Hexa.NET.Logging;
     using System;
-    using HexaEngine.Core.Logging;
 
     /// <summary>
     /// Represents a console message with formatting and timestamp information.

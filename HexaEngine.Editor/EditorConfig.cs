@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Utilities;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Editor.Attributes;
     using Newtonsoft.Json;
 
     public enum ExternalTextEditorType

@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using Hexa.NET.Mathematics;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostFxGraphResourceBuilder : IGraphResourceBuilder

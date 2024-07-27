@@ -10,7 +10,6 @@
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System.Numerics;
 
     public class LightForwardPass : RenderPass
     {

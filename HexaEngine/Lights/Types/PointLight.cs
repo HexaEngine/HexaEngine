@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;

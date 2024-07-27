@@ -3,8 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.PostFx;
-    using Silk.NET.Core.Win32Extras;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

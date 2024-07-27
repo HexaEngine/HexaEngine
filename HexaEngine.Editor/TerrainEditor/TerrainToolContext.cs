@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Meshes;
-    using System;
     using System.Numerics;
 
     public class TerrainToolContext

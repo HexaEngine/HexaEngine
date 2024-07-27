@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.UI.Controls
 {
-    using HexaEngine.UI.Graphics.Text;
-    using HexaEngine.UI.Graphics;
     using Hexa.NET.Mathematics;
-    using System.Numerics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Xml.Serialization;
-    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Core.Input.Events;
+    using HexaEngine.Core.Windows.Events;
+    using HexaEngine.UI.Graphics;
+    using HexaEngine.UI.Graphics.Text;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Numerics;
+    using System.Xml.Serialization;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Control : FrameworkElement

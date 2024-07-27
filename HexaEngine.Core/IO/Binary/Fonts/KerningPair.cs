@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Fonts
 {
-    using HexaEngine.Core.IO;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.IO;
 
     /// <summary>
     /// Represents a kerning pair, consisting of two characters and an amount.

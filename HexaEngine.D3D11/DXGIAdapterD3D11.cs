@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Logging;
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;

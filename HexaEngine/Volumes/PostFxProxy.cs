@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Volumes
 {
-    using HexaEngine.Editor;
     using Hexa.NET.Mathematics;
+    using HexaEngine.Editor;
     using HexaEngine.PostFx;
     using System.Collections.Generic;
-    using System.Management;
     using System.Numerics;
 
     /// <summary>

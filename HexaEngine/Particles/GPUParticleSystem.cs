@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Particles
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using Hexa.NET.Utilities;
-    using Hexa.NET.Mathematics;
     using HexaEngine.Weather;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
-    using YamlDotNet.Core;
 
     //based on AMD GPU Particles Sample: https://github.com/GPUOpen-LibrariesAndSDKs/GPUParticles11
 

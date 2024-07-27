@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public class ImageSource : IDisposable

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Logging;
-    using Hexa.NET.Utilities;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D.Compilers;
     using System;
