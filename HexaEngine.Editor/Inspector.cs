@@ -84,11 +84,11 @@
             {
                 if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                 {
-                    DebugDraw.DrawGrid(Matrix4x4.Identity, gridSize, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid(Matrix4x4.Identity, GridFlags.DrawAxis);
                 }
                 else if (EditorCameraController.Dimension == EditorCameraDimension.Dim2D)
                 {
-                    DebugDraw.DrawGrid(MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), gridSize, new Vector4(1, 1, 1, 0.2f));
+                    DebugDraw.DrawGrid(MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), GridFlags.DrawAxis);
                 }
             }
 

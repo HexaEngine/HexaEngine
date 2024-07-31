@@ -41,12 +41,16 @@
 
         public readonly bool IsEmpty => (Type & ItemTypeFlags.Empty) != 0;
 
-        public void Release()
+        public unsafe void Release()
         {
-            Name.Release();
-            Path.Release();
-            Extension.Release();
-            this = default;
+            if (Name.Front != null)
+            {
+                Name.Release();
+                Name.Release();
+                Path.Release();
+                Extension.Release();
+                this = default;
+            }
         }
 
         public override readonly string ToString()
@@ -68,6 +72,7 @@
         Empty = 4
     }
 
+    // TODO: Implement explorer side panel.
     public unsafe class ExplorerSidePanel : SidePanel
     {
         private readonly HashSet<string> openFolders = [];
@@ -86,7 +91,7 @@
             {
                 return;
             }
-            fileSystemState.SetFolder(folder);
+            //fileSystemState.SetFolder(folder);
         }
 
         protected override void DisposeCore()

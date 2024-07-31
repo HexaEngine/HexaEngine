@@ -174,14 +174,10 @@ namespace Editor
             // Update and draw the frame viewer.
             SceneWindow.SourceViewport = Viewport;
             SceneWindow.Update();
-            SceneWindow.Draw();
+
             drawing &= SceneWindow.IsVisible;
             windowViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
             CPUProfiler.Global.End("Editor.Update");
-
-            // Set the camera for DebugDraw based on the current camera's view projection matrix.
-
-            DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
@@ -211,7 +207,10 @@ namespace Editor
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
             if (editorInitialized)
             {
+                // Set the camera for DebugDraw based on the current camera's view projection matrix.
+                DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
                 Designer.Draw(context);
+                SceneWindow.Draw();
             }
 
             // Invoke virtual method for post-render operations.
