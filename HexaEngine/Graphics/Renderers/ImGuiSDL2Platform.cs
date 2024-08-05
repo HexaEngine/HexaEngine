@@ -79,7 +79,7 @@
         /// </summary>
         /// <param name="vp"></param>
         /// <param name="data"></param>
-        private static unsafe void SetPlatformImeData(ImGuiViewport* vp, ImGuiPlatformImeData* data)
+        private static unsafe void SetPlatformImeData(ImGuiContext* ctx, ImGuiViewport* vp, ImGuiPlatformImeData* data)
         {
             if (data->WantVisible == 1)
             {
@@ -420,7 +420,7 @@
             io.SetClipboardTextFn = (void*)Marshal.GetFunctionPointerForDelegate<SetClipboardTextFn>(SetClipboardText);
             io.GetClipboardTextFn = (void*)Marshal.GetFunctionPointerForDelegate<GetClipboardTextFn>(GetClipboardText);
             io.ClipboardUserData = null;
-            io.SetPlatformImeDataFn = (void*)Marshal.GetFunctionPointerForDelegate<SetPlatformImeDataFn>(SetPlatformImeData);
+            io.PlatformSetImeDataFn = (void*)Marshal.GetFunctionPointerForDelegate<PlatformSetImeDataFn>(SetPlatformImeData);
 
             bd->MouseCursors = (SDLCursor**)AllocArray((uint)ImGuiMouseCursor.Count);
             bd->MouseCursors[(int)ImGuiMouseCursor.Arrow] = SdlCheckError(SDL.SDLCreateSystemCursor(SDLSystemCursor.Arrow));

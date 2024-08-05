@@ -8,9 +8,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.MaterialEditor.Generator;
+    using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
     using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
@@ -934,27 +936,34 @@
             ResourceManager.Shared.EndNoGCRegion();
 
             Directory.CreateDirectory("generated/" + "shaders/");
-            /*
-            IOSignature inputSig = new("Pixel",
-                new SignatureDef("pos", new(VectorType.Float4)),
-                new SignatureDef("uv", new(VectorType.Float3)),
-                new SignatureDef("normal", new(VectorType.Float3)),
-                new SignatureDef("tangent", new(VectorType.Float3)),
-                new SignatureDef("binormal", new(VectorType.Float3)));
 
-            IOSignature outputSig = new("Material",
-                new SignatureDef("baseColor", new(VectorType.Float4)),
-                new SignatureDef("normal", new(VectorType.Float3)),
-                new SignatureDef("roughness", new(ScalarType.Float)),
-                new SignatureDef("metallic", new(ScalarType.Float)),
-                new SignatureDef("reflectance", new(ScalarType.Float)),
-                new SignatureDef("ao", new(ScalarType.Float)),
-                new SignatureDef("emissive", new(VectorType.Float4)));
+            try
+            {
+                IOSignature inputSig = new("Pixel",
+            new SignatureDef("pos", new(VectorType.Float4)),
+            new SignatureDef("uv", new(VectorType.Float3)),
+            new SignatureDef("normal", new(VectorType.Float3)),
+            new SignatureDef("tangent", new(VectorType.Float3)),
+            new SignatureDef("binormal", new(VectorType.Float3)));
 
-            string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
+                IOSignature outputSig = new("Material",
+                    new SignatureDef("baseColor", new(VectorType.Float4)),
+                    new SignatureDef("normal", new(VectorType.Float3)),
+                    new SignatureDef("roughness", new(ScalarType.Float)),
+                    new SignatureDef("metallic", new(ScalarType.Float)),
+                    new SignatureDef("reflectance", new(ScalarType.Float)),
+                    new SignatureDef("ao", new(ScalarType.Float)),
+                    new SignatureDef("emissive", new(VectorType.Float4)));
 
-            File.WriteAllText("assets/generated/shaders/generated/usercodeMaterial.hlsl", result);
-            */
+                string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
+
+                File.WriteAllText("generated/usercodeMaterial.hlsl", result);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogAndShowError("Failed to generate shader code", ex);
+            }
+
             semaphore.Release();
         }
     }

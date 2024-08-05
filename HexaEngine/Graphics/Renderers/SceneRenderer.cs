@@ -289,7 +289,7 @@ namespace HexaEngine.Graphics.Renderers
             var depth = graphExecuter.ResourceBuilder.DepthStencilBuffers;
             for (int i = 0; i < depth.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var texture = depth[i];
 
@@ -302,7 +302,7 @@ namespace HexaEngine.Graphics.Renderers
             var depthChain = graphExecuter.ResourceBuilder.DepthMipChains;
             for (int i = 0; i < depthChain.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var chain = depthChain[i];
 
@@ -317,7 +317,7 @@ namespace HexaEngine.Graphics.Renderers
             var tex = graphExecuter.ResourceBuilder.Textures;
             for (int i = 0; i < tex.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var texture = tex[i];
 
@@ -330,7 +330,7 @@ namespace HexaEngine.Graphics.Renderers
             var shadowAtlas = graphExecuter.ResourceBuilder.ShadowAtlas;
             for (int i = 0; i < shadowAtlas.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var atlas = shadowAtlas[i];
 
@@ -343,7 +343,7 @@ namespace HexaEngine.Graphics.Renderers
             var gBuffers = graphExecuter.ResourceBuilder.GBuffers;
             for (int i = 0; i < gBuffers.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var gBuffer = gBuffers[i];
 

@@ -202,7 +202,7 @@
                         if (currentDir.Parent != null)
                         {
                             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
-                            if (ImGui.Selectable("../", false, ImGuiSelectableFlags.DontClosePopups))
+                            if (ImGui.Selectable("../", false, ImGuiSelectableFlags.NoAutoClosePopups))
                             {
                                 SetFolder(currentDir.Parent.FullName);
                             }
@@ -214,7 +214,7 @@
                         {
                             var dir = dirs[i];
                             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
-                            if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
+                            if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.NoAutoClosePopups))
                             {
                                 SetFolder(dir.Path);
                             }
@@ -227,7 +227,7 @@
                             var file = files[i];
 
                             bool isSelected = selectedFile == file.Path;
-                            if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
+                            if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.NoAutoClosePopups))
                             {
                                 selectedFile = file.Filename;
                             }
