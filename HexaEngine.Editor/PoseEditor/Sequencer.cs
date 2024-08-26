@@ -135,7 +135,7 @@
                 Max = Window->DC.CursorPos + cursorPos + size
             };
 
-            int id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
+            uint id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
             bool hovered = ImGui.ItemHoverable(bb, id, ImGuiItemFlags.None);
 
             ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);

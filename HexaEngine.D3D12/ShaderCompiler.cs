@@ -74,7 +74,7 @@
             include->LpVtbl[2] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Release);
             include->LpVtbl[3] = (void*)Marshal.GetFunctionPointerForDelegate(handler.LoadSource);
 
-            compiler.Compile(&sourceBuffer, (char**)arguments.Data, arguments.Size, pInclude, out ComPtr<IDxcResult> pCompileResult).ThrowHResult();
+            compiler.Compile(&sourceBuffer, (char**)arguments.Data, (uint)arguments.Size, pInclude, out ComPtr<IDxcResult> pCompileResult).ThrowHResult();
 
             stringArgs.Release();
             arguments.Release();

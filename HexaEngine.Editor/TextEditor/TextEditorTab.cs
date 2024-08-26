@@ -384,7 +384,7 @@
             uint activeColor = ImGui.GetColorU32(ImGuiCol.ButtonActive);
             uint selectedColor = ImGui.GetColorU32(ImGuiCol.TabSelectedOverline);
             uint selectedBgColor = ImGui.GetColorU32(ImGuiCol.TabSelected);
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
@@ -446,7 +446,7 @@
         [Profiling.Profile]
         private bool DrawEditor(string label, StdWString* text, Vector2 size)
         {
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImGuiStyle* style = ImGui.GetStyle();
@@ -613,7 +613,7 @@
         }
 
         [Profiling.Profile]
-        private void HandleMouseInput(int id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
+        private void HandleMouseInput(uint id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
         {
             bool isMouseDown = isHovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
             bool isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
@@ -772,7 +772,7 @@
                             changed = true;
                         }
                     }
-                    io.InputQueueCharacters.Size = 0; // Clear
+                    io.InputQueueCharacters.Resize(0); // Clear
                     PostEdit();
                 }
 

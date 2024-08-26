@@ -39,13 +39,13 @@
         internal static unsafe void Init()
         {
             int numkeys;
-            byte* pKeys = SDL.SDLGetKeyboardState(&numkeys);
+            byte* pKeys = SDL.GetKeyboardState(&numkeys);
 
             for (int i = 0; i < keys.Length; i++)
             {
                 Key key = keys[i];
-                keyNames[i] = SDL.SDLGetKeyNameS((int)key);
-                var scancode = (Key)SDL.SDLGetScancodeFromKey((int)key);
+                keyNames[i] = SDL.GetKeyNameS((int)key);
+                var scancode = (Key)SDL.GetScancodeFromKey((int)key);
                 states.Add(key, (KeyState)pKeys[(int)scancode]);
             }
         }
@@ -53,7 +53,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void OnKeyDown(SDLKeyboardEvent keyboardEvent)
         {
-            Key keyCode = (Key)SDL.SDLGetKeyFromScancode(keyboardEvent.Keysym.Scancode);
+            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
             states[keyCode] = KeyState.Down;
             keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
             keyboardEventArgs.Handled = false;
@@ -66,7 +66,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void OnKeyUp(SDLKeyboardEvent keyboardEvent)
         {
-            Key keyCode = (Key)SDL.SDLGetKeyFromScancode(keyboardEvent.Keysym.Scancode);
+            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
             states[keyCode] = KeyState.Up;
             keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
             keyboardEventArgs.Handled = false;
@@ -160,7 +160,7 @@
         /// <returns>The current keyboard modifier state.</returns>
         public static KeyMod GetModState()
         {
-            return (KeyMod)SDL.SDLGetModState();
+            return (KeyMod)SDL.GetModState();
         }
     }
 }

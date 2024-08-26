@@ -254,13 +254,13 @@
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window)
         {
             SDLSysWMInfo info;
-            SDL.SDLGetVersion(&info.Version);
-            SDL.SDLGetWindowWMInfo(window, &info);
+            SDL.GetVersion(&info.Version);
+            SDL.GetWindowWMInfo(window, &info);
 
             int width = 0;
             int height = 0;
 
-            SDL.SDLGetWindowSize(window, &width, &height);
+            SDL.GetWindowSize(window, &width, &height);
 
             var Hwnd = info.Info.Win.Window;
 
@@ -294,8 +294,8 @@
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             SDLSysWMInfo info;
-            SDL.SDLGetVersion(&info.Version);
-            SDL.SDLGetWindowWMInfo(window, &info);
+            SDL.GetVersion(&info.Version);
+            SDL.GetWindowWMInfo(window, &info);
             var Hwnd = info.Info.Win.Window;
 
             SwapChainDesc1 desc = Helper.Convert(swapChainDescription);

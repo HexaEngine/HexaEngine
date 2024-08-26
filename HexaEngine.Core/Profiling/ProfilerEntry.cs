@@ -52,16 +52,16 @@
         /// </summary>
         /// <param name="id">The unique identifier of the stage to find.</param>
         /// <returns>The index of the stage in the list, or -1 if not found.</returns>
-        public uint IdToIndex(uint id)
+        public int IdToIndex(uint id)
         {
-            for (uint i = 0; i < Stages.Size; i++)
+            for (int i = 0; i < Stages.Size; i++)
             {
                 if (Stages[i].Id == id)
                 {
                     return i;
                 }
             }
-            return unchecked((uint)-1);
+            return -1;
         }
 
         public static bool operator ==(ProfilerEntry left, ProfilerEntry right)

@@ -48,7 +48,7 @@
         /// </summary>
         internal static void Init()
         {
-            var touchDeviceCount = SDL.SDLGetNumTouchDevices();
+            var touchDeviceCount = SDL.GetNumTouchDevices();
 
             for (int i = 0; i < touchDeviceCount; i++)
             {

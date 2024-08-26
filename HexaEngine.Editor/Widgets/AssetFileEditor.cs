@@ -19,7 +19,7 @@
             if (ImGui.CollapsingHeader("Misc", ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.CollapsingHeader))
             {
                 ImGui.BeginTable("FileMeta", 2, ImGuiTableFlags.SizingFixedSame);
-                ImGui.TableSetupColumn("", 0);
+                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.None);
                 ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
 
                 ImGui.TableNextRow();

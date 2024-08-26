@@ -1,4 +1,29 @@
 // Based on: http://wdobbie.com/post/gpu-text-rendering-with-vector-textures/
+// And https://github.com/GreenLightning/gpu-font-rendering
+
+/*
+	MIT License
+
+	Copyright(c) 2022 Green Lightning
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files(the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and /or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions :
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
 
 cbuffer CBSolidColorBrush
 {
@@ -108,6 +133,17 @@ float2 rotate(float2 v) {
 	return float2(v.y, -v.x);
 }
 
+float2 SnapToPixel(float2 position, float2 uv)
+{
+	// Use fwidth to determine the size of a pixel in UV space
+	float2 pixelSize = fwidth(uv);
+
+	// Compute the snapped position by rounding to the nearest pixel grid in UV space
+	float2 snappedUV = floor(position / pixelSize + 0.5) * pixelSize;
+
+	return snappedUV;
+}
+
 float4 main(PSIn input) : SV_TARGET
 {
 	float2 uv = input.uv;
@@ -115,11 +151,13 @@ uint bufferIndex = input.bufferIndex;
 
 	float alpha = 0;
 
+	uv = SnapToPixel(uv, uv);
+
 	// Size of the window (in pixels) used for 1-dimensional anti-aliasing along each rays.
 //   0 - no anti-aliasing
 //   1 - normal anti-aliasing
 // >=2 - exaggerated effect
-	float antiAliasingWindowSize = 1.0;
+	float antiAliasingWindowSize = 1;
 
 	// Enable a second ray along the y-axis to achieve 2-dimensional anti-aliasing.
 	bool enableSuperSamplingAntiAliasing = true;

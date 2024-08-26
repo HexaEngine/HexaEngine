@@ -154,8 +154,8 @@
                 BuildGlyph(charcode, glyphIndex);
             }
 
-            glyphBuffer = device.CreateBuffer(bufferGlyphs.Data, bufferGlyphs.Size, new BufferDescription((int)(bufferGlyphs.Size * sizeof(BufferGlyph)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferGlyph)));
-            curveBuffer = device.CreateBuffer(bufferCurves.Data, bufferCurves.Size, new BufferDescription((int)(bufferCurves.Size * sizeof(BufferCurve)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferCurve)));
+            glyphBuffer = device.CreateBuffer(bufferGlyphs.Data, (uint)bufferGlyphs.Size, new BufferDescription((int)(bufferGlyphs.Size * sizeof(BufferGlyph)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferGlyph)));
+            curveBuffer = device.CreateBuffer(bufferCurves.Data, (uint)bufferCurves.Size, new BufferDescription((int)(bufferCurves.Size * sizeof(BufferCurve)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferCurve)));
 
             glyphBufferSRV = device.CreateShaderResourceView(glyphBuffer);
             curveBufferSRV = device.CreateShaderResourceView(curveBuffer);
@@ -179,13 +179,13 @@
 
             bufferGlyph.Count = (int)(bufferCurves.Size - bufferGlyph.Index);
 
-            uint bufferIndex = bufferGlyphs.Size;
+            int bufferIndex = bufferGlyphs.Size;
             bufferGlyphs.Add(bufferGlyph);
 
             VectorFontGlyph glyph = new()
             {
                 Index = glyphIndex,
-                BufferIndex = bufferIndex,
+                BufferIndex = (uint)bufferIndex,
                 CurveCount = bufferGlyph.Count,
                 Width = face->Glyph->Metrics.Width,
                 Height = face->Glyph->Metrics.Height,

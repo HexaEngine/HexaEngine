@@ -879,7 +879,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             ImGui.PopStyleColor(1);
         }
 
-        public static int DockSpaceId { get; private set; }
+        public static uint DockSpaceId { get; private set; }
 
         public unsafe void EndFrame()
         {

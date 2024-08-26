@@ -11,7 +11,7 @@
     {
         private static Exception? GetErrorAsException()
         {
-            byte* ex = SDL.SDLGetError();
+            byte* ex = SDL.GetError();
 
             if (ex == null || ex[0] == '\0')
             {

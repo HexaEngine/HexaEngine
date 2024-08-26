@@ -22,7 +22,7 @@
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
 
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
             if (window->SkipItems != 0)
                 return false;
 
@@ -229,7 +229,7 @@
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
 
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
             if (window->SkipItems != 0)
                 return false;
 

@@ -28,7 +28,7 @@
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();
 
-            int id = ImGui.ImGuiWindowGetID(window, label, (byte*)null);
+            uint id = ImGui.ImGuiWindowGetID(window, label, (byte*)null);
             if (window->SkipItems != 0)
                 return false;
 

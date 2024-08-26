@@ -6,6 +6,7 @@
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Vulkan;
     using System;
+    using Fence = Silk.NET.Vulkan.Fence;
     using Semaphore = Silk.NET.Vulkan.Semaphore;
 
     public unsafe class VulkanSwapChain : ISwapChain
@@ -30,7 +31,7 @@
         private bool framebufferWaitResize;
         private bool framebufferCreated;
         private bool disposedValue;
-        private const uint MAX_FRAMES_IN_FLIGHT = 2;
+        private const int MAX_FRAMES_IN_FLIGHT = 2;
 
         public VulkanSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SurfaceKHR surface, SwapChainDescription? swapChainDescription, SwapChainFullscreenDescription? fullscreenDescription)
         {
@@ -106,7 +107,7 @@
 
             SwapChain = swapchainKHR;
             VulkanAdapter.KhrSwapchain.GetSwapchainImages(device.Device, swapchainKHR, &imageCount, null);
-            SwapChainImages.Resize(imageCount);
+            SwapChainImages.Resize((int)imageCount);
             VulkanAdapter.KhrSwapchain.GetSwapchainImages(device.Device, swapchainKHR, &imageCount, SwapChainImages.Data);
 
             format = surfaceFormat.Format;
@@ -225,7 +226,7 @@
 
             if (formatCount != 0)
             {
-                details.Formats.Resize(formatCount);
+                details.Formats.Resize((int)formatCount);
                 VulkanAdapter.KhrSurface.GetPhysicalDeviceSurfaceFormats(device, surface, &formatCount, details.Formats.Data);
             }
 
@@ -234,7 +235,7 @@
 
             if (presentModeCount != 0)
             {
-                details.PresentModes.Resize(presentModeCount);
+                details.PresentModes.Resize((int)presentModeCount);
                 VulkanAdapter.KhrSurface.GetPhysicalDeviceSurfacePresentModes(device, surface, &presentModeCount, details.PresentModes.Data);
             }
 

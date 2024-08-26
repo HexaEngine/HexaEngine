@@ -113,12 +113,12 @@
             }
 
             ImGui.BeginTable("ErrorTable", 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable);
-            ImGui.TableSetupColumn("", 0);
-            ImGui.TableSetupColumn("", 0);
+            ImGui.TableSetupColumn("");
+            ImGui.TableSetupColumn("");
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableSetupColumn("", 200);
-            ImGui.TableSetupColumn("", 0);
-            ImGui.TableSetupColumn("", 0);
+            ImGui.TableSetupColumn("");
+            ImGui.TableSetupColumn("");
 
             ImGui.TableNextRow(ImGuiTableRowFlags.Headers);
             ImGui.TableSetColumnIndex(0);

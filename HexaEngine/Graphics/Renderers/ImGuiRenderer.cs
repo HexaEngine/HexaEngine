@@ -115,14 +115,14 @@ namespace HexaEngine.Graphics.Renderers
             {
                 var cmdlList = data->CmdLists.Data[n];
 
-                var vertBytes = cmdlList->VtxBuffer.Size * sizeof(ImDrawVert);
-                Buffer.MemoryCopy(cmdlList->VtxBuffer.Data, vertexResourcePointer, vertBytes, vertBytes);
+                var vertBytes = cmdlList.VtxBuffer.Size * sizeof(ImDrawVert);
+                Buffer.MemoryCopy(cmdlList.VtxBuffer.Data, vertexResourcePointer, vertBytes, vertBytes);
 
-                var idxBytes = cmdlList->IdxBuffer.Size * sizeof(ImDrawIdx);
-                Buffer.MemoryCopy(cmdlList->IdxBuffer.Data, indexResourcePointer, idxBytes, idxBytes);
+                var idxBytes = cmdlList.IdxBuffer.Size * sizeof(ImDrawIdx);
+                Buffer.MemoryCopy(cmdlList.IdxBuffer.Data, indexResourcePointer, idxBytes, idxBytes);
 
-                vertexResourcePointer += cmdlList->VtxBuffer.Size;
-                indexResourcePointer += cmdlList->IdxBuffer.Size;
+                vertexResourcePointer += cmdlList.VtxBuffer.Size;
+                indexResourcePointer += cmdlList.IdxBuffer.Size;
             }
             ctx.Unmap(vertexBuffer, 0);
             ctx.Unmap(indexBuffer, 0);
@@ -160,9 +160,9 @@ namespace HexaEngine.Graphics.Renderers
             {
                 var cmdList = data->CmdLists.Data[n];
 
-                for (int i = 0; i < cmdList->CmdBuffer.Size; i++)
+                for (int i = 0; i < cmdList.CmdBuffer.Size; i++)
                 {
-                    var cmd = cmdList->CmdBuffer.Data[i];
+                    var cmd = cmdList.CmdBuffer.Data[i];
                     if (cmd.UserCallback != null)
                     {
                         // User callback, registered via ImDrawList::AddCallback()
@@ -203,8 +203,8 @@ namespace HexaEngine.Graphics.Renderers
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, (uint)(cmd.IdxOffset + global_idx_offset), (int)(cmd.VtxOffset + global_vtx_offset), 0);
                     }
                 }
-                global_idx_offset += cmdList->IdxBuffer.Size;
-                global_vtx_offset += cmdList->VtxBuffer.Size;
+                global_idx_offset += cmdList.IdxBuffer.Size;
+                global_vtx_offset += cmdList.VtxBuffer.Size;
             }
 
             ctx.SetPipelineState(null);
@@ -439,7 +439,7 @@ namespace HexaEngine.Graphics.Renderers
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
             SDLWindow* window = (SDLWindow*)viewport->PlatformHandle;
             int w, h;
-            SDL.SDLGetWindowSize(window, &w, &h);
+            SDL.GetWindowSize(window, &w, &h);
 
             SwapChainDescription description = new()
             {

@@ -5,12 +5,13 @@
 
     public static unsafe class ImGuiHyperLink
     {
+        [Obsolete("Use ImGui.TextLink() / ImGui.TextLinkOpenURL()")]
         public static bool HyperLink(byte* label, bool underlineWhenHoveredOnly = false)
         {
             uint linkColor = ImGui.ColorConvertFloat4ToU32(new(0.2f, 0.3f, 0.8f, 1));
             uint linkHoverColor = ImGui.ColorConvertFloat4ToU32(new(0.4f, 0.6f, 0.8f, 1));
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
@@ -39,12 +40,13 @@
             return isClicked;
         }
 
+        [Obsolete("Use ImGui.TextLink() / ImGui.TextLinkOpenURL()")]
         public static bool HyperLink(string label, bool underlineWhenHoveredOnly = false)
         {
             uint linkColor = ImGui.ColorConvertFloat4ToU32(new(0.2f, 0.3f, 0.8f, 1));
             uint linkHoverColor = ImGui.ColorConvertFloat4ToU32(new(0.4f, 0.6f, 0.8f, 1));
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
@@ -73,12 +75,13 @@
             return isClicked;
         }
 
+        [Obsolete("Use ImGui.TextLink() / ImGui.TextLinkOpenURL()")]
         public static bool HyperLink(ref byte label, bool underlineWhenHoveredOnly = false)
         {
             uint linkColor = ImGui.ColorConvertFloat4ToU32(new(0.2f, 0.3f, 0.8f, 1));
             uint linkHoverColor = ImGui.ColorConvertFloat4ToU32(new(0.4f, 0.6f, 0.8f, 1));
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
-            int id = ImGui.GetID(ref label);
+            uint id = ImGui.GetID(ref label);
 
             ImGuiWindow* window = ImGui.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();

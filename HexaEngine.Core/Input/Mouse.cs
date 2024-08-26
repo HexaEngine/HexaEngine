@@ -31,9 +31,9 @@
         internal static void Init()
         {
             pos = default;
-            SDL.SDLGetMouseState(ref pos.X, ref pos.Y);
+            SDL.GetMouseState(ref pos.X, ref pos.Y);
 
-            uint state = SDL.SDLGetMouseState(null, null);
+            uint state = SDL.GetMouseState(null, null);
             uint maskLeft = unchecked(1 << ((int)MouseButton.Left - 1));
             uint maskMiddle = unchecked(1 << ((int)MouseButton.Middle - 1));
             uint maskRight = unchecked(1 << ((int)MouseButton.Right - 1));
@@ -54,7 +54,7 @@
             get
             {
                 int x, y;
-                SDL.SDLGetGlobalMouseState(&x, &y);
+                SDL.GetGlobalMouseState(&x, &y);
                 return new Vector2(x, y);
             }
         }
@@ -195,17 +195,17 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Poll()
         {
-            if (SDL.SDLGetRelativeMouseMode() == SDLBool.True)
+            if (SDL.GetRelativeMouseMode() == SDLBool.True)
             {
                 Point2 relative;
-                SDL.SDLGetGlobalMouseState(ref pos.X, ref pos.Y);
-                SDL.SDLGetRelativeMouseState(&relative.X, &relative.Y);
+                SDL.GetGlobalMouseState(ref pos.X, ref pos.Y);
+                SDL.GetRelativeMouseState(&relative.X, &relative.Y);
                 delta = (Vector2)relative;
             }
             else
             {
                 var old = pos;
-                SDL.SDLGetGlobalMouseState(ref pos.X, ref pos.Y);
+                SDL.GetGlobalMouseState(ref pos.X, ref pos.Y);
                 delta = (Vector2)(pos - old);
             }
         }

@@ -56,7 +56,7 @@ namespace HexaEngine.Core.UI
             ImGuiWindow* parent_window = ImGui.GetCurrentWindow();
             ImDrawList* DrawList = ImGui.GetWindowDrawList();
 
-            int id = ImGui.ImGuiWindowGetID(parent_window, label, (byte*)null);
+            uint id = ImGui.ImGuiWindowGetID(parent_window, label, (byte*)null);
             if (!ImGui.BeginChild(id, size, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
                 ImGui.EndChild();

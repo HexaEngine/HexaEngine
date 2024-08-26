@@ -43,8 +43,8 @@ namespace HexaEngine.Core.Graphics
         public void Set(uint slot, nint resource)
         {
             var size = Math.Max(slot + 1, list.Size);
-            list.Resize(size);
-            list[slot] = resource;
+            list.Resize((int)size);
+            list[(int)slot] = resource;
             baseSlot = Math.Min(baseSlot, slot);
         }
 
@@ -62,7 +62,7 @@ namespace HexaEngine.Core.Graphics
                 return;
             }
 
-            list[slot] = 0;
+            list[(int)slot] = 0;
 
             if (baseSlot == slot)
             {
@@ -127,10 +127,9 @@ namespace HexaEngine.Core.Graphics
             }
         }
 
-
         private void BindShaderResources(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;
@@ -166,7 +165,7 @@ namespace HexaEngine.Core.Graphics
 
         private void UnbindShaderResources(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;
@@ -204,7 +203,7 @@ namespace HexaEngine.Core.Graphics
 
         private void BindConstantBuffers(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;
@@ -240,7 +239,7 @@ namespace HexaEngine.Core.Graphics
 
         private void UnbindConstantBuffers(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;
@@ -278,7 +277,7 @@ namespace HexaEngine.Core.Graphics
 
         private void BindSamplers(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;
@@ -314,7 +313,7 @@ namespace HexaEngine.Core.Graphics
 
         private void UnbindSamplers(IGraphicsContext context)
         {
-            uint size = list.Size - baseSlot;
+            uint size = (uint)(list.Size - baseSlot);
             if (size == 0 || baseSlot == uint.MaxValue)
             {
                 return;

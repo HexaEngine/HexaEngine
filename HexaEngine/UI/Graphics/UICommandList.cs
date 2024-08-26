@@ -340,7 +340,7 @@
         public UIVertex* ReserveVertices(uint count)
         {
             var s = vertices.Size;
-            vertices.Resize(vertices.Size + count);
+            vertices.Resize(vertices.Size + (int)count);
             vertexCountSinceLast += count;
             return vertices.Data + s;
         }
@@ -348,23 +348,23 @@
         public uint* ReserveIndices(uint count)
         {
             var s = indices.Size;
-            indices.Resize(indices.Size + count);
+            indices.Resize(indices.Size + (int)count);
             indexCountSinceLast += count;
             return indices.Data + s;
         }
 
         public void Reserve(uint idxCount, uint vtxCount)
         {
-            indices.Resize(indices.Size + idxCount);
+            indices.Resize(indices.Size + (int)idxCount);
             indexCountSinceLast += idxCount;
-            vertices.Resize(vertices.Size + vtxCount);
+            vertices.Resize(vertices.Size + (int)vtxCount);
             vertexCountSinceLast += vtxCount;
         }
 
         public void PrimReserve(int idxCount, int vtxCount)
         {
-            indices.Reserve(indices.Size + (uint)idxCount);
-            vertices.Reserve(vertices.Size + (uint)vtxCount);
+            indices.Reserve(indices.Size + idxCount);
+            vertices.Reserve(vertices.Size + vtxCount);
         }
 
         public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, Brush? brush = null, nint textureId0 = 0, nint textureId1 = 0)
@@ -385,8 +385,8 @@
             UIDrawCommand cmd = new(vertices.Data, indices.Data, vertexCountSinceLast, indexCountSinceLast, vertexCountOffset, indexCountOffset, zIndex: zIndex, clipRect, bounds, commandType, brush, textureId0, textureId1);
             commands.Add(cmd);
 
-            vertexCountOffset = vertices.Size;
-            indexCountOffset = indices.Size;
+            vertexCountOffset = (uint)vertices.Size;
+            indexCountOffset = (uint)indices.Size;
             vertexCountSinceLast = 0;
             indexCountSinceLast = 0;
         }
@@ -409,14 +409,14 @@
 
             if (transformGlobal != Matrix3x2.Identity)
             {
-                for (uint i = 0; i < commandList.vertices.Size; i++)
+                for (int i = 0; i < commandList.vertices.Size; i++)
                 {
-                    vertices.Data[vertexCountOffset + i].Position = Vector2.Transform(vertices[vertexCountOffset + i].Position, transformGlobal);
+                    vertices.Data[vertexCountOffset + i].Position = Vector2.Transform(vertices[(int)vertexCountOffset + i].Position, transformGlobal);
                 }
             }
 
-            vertexCountOffset = vertices.Size;
-            indexCountOffset = indices.Size;
+            vertexCountOffset = (uint)vertices.Size;
+            indexCountOffset = (uint)indices.Size;
         }
 
         public void BeginDraw()
@@ -448,9 +448,9 @@
                 {
                     if (lastCmd.VertexOffset + lastCmd.VertexCount == cmd.VertexOffset)
                     {
-                        for (uint j = 0; j < cmd.IndexCount; j++)
+                        for (int j = 0; j < cmd.IndexCount; j++)
                         {
-                            indices[j + cmd.IndexOffset] += lastCmd.VertexCount;
+                            indices[j + (int)cmd.IndexOffset] += lastCmd.VertexCount;
                         }
 
                         lastCmd.VertexCount += cmd.VertexCount;

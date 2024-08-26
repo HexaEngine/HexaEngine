@@ -32,7 +32,7 @@
         {
             this.id = id;
             this.controller = controller;
-            var fingerCount = SDL.SDLGameControllerGetNumTouchpadFingers(controller, id);
+            var fingerCount = SDL.GameControllerGetNumTouchpadFingers(controller, id);
             fingerStates = new GamepadTouchpadFinger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
@@ -40,7 +40,7 @@
                 float x;
                 float y;
                 float pressure;
-                SDL.SDLGameControllerGetTouchpadFinger(controller, id, i, &state, &x, &y, &pressure);
+                SDL.GameControllerGetTouchpadFinger(controller, id, i, &state, &x, &y, &pressure);
                 fingerStates[i] = new(state == SDL.SDL_PRESSED ? FingerState.Down : FingerState.Up, x, y, pressure);
             }
         }
@@ -175,7 +175,7 @@
                 float x;
                 float y;
                 float pressure;
-                SDL.SDLGameControllerGetTouchpadFinger(controller, id, i, &state, &x, &y, &pressure);
+                SDL.GameControllerGetTouchpadFinger(controller, id, i, &state, &x, &y, &pressure);
                 fingerStates[i] = new(state == SDL.SDL_PRESSED ? FingerState.Down : FingerState.Up, x, y, pressure);
             }
         }

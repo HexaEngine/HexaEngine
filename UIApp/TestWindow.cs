@@ -1,6 +1,7 @@
 ﻿namespace UIApp
 {
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
@@ -139,6 +140,7 @@
                 window.Width = args.NewWidth;
                 window.Height = args.NewHeight;
                 compositionTexture.Resize(swapChain.Backbuffer.Description.Format, args.NewWidth, args.NewHeight, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+                window.InvalidateArrange();
             }
 
             resize = true;

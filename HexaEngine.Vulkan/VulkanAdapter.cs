@@ -76,10 +76,10 @@
         private byte** GetRequiredInstanceExtensions(out uint count)
         {
             uint rcount = 0;
-            SDL.SDLVulkanGetInstanceExtensions(null, &rcount, (byte**)null);
+            SDL.VulkanGetInstanceExtensions(null, &rcount, (byte**)null);
 
             byte** extensions = (byte**)AllocArray(rcount);
-            SDL.SDLVulkanGetInstanceExtensions(null, &rcount, extensions);
+            SDL.VulkanGetInstanceExtensions(null, &rcount, extensions);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -153,7 +153,7 @@
             uint extensionCount;
             Vk.EnumerateDeviceExtensionProperties(device, (byte*)null, &extensionCount, null);
 
-            UnsafeList<ExtensionProperties> availableExtensions = new(extensionCount);
+            UnsafeList<ExtensionProperties> availableExtensions = new((int)extensionCount);
             Vk.EnumerateDeviceExtensionProperties(device, (byte*)null, &extensionCount, availableExtensions.Data);
 
             SortedSet<string> requiredExtensions = new(DeviceExtensions);
@@ -483,7 +483,7 @@
         {
             SurfaceKHR surface;
             VkHandle handle = new(Instance.Handle);
-            SDL.SDLVulkanCreateSurface(window, Instance.Handle, (VkSurfaceKHR*)&surface);
+            SDL.VulkanCreateSurface(window, Instance.Handle, (VkSurfaceKHR*)&surface);
             return surface;
         }
 

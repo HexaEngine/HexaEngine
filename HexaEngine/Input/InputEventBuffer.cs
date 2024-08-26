@@ -140,7 +140,7 @@
         {
             if (!disposedValue)
             {
-                inputQueue.Dispose();
+                inputQueue.Release();
                 disposedValue = true;
             }
         }

@@ -560,9 +560,9 @@
         private static unsafe void ToUTF8(ref UnsafeList<char> str, ref UnsafeList<byte> pOutStr)
         {
             int byteSize = Encoding.UTF8.GetByteCount(str.Data, (int)str.Size);
-            pOutStr.Reserve((uint)byteSize + 1);
+            pOutStr.Reserve((int)byteSize + 1);
             Encoding.UTF8.GetBytes(str.Data, (int)str.Size, pOutStr.Data, byteSize);
-            pOutStr.Resize((uint)byteSize);
+            pOutStr.Resize((int)byteSize);
             pOutStr[pOutStr.Size] = (byte)'\0';
         }
 

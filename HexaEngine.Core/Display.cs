@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets the number of video displays available.
         /// </summary>
-        public static int NumVideoDisplays => SDL.SDLGetNumVideoDisplays();
+        public static int NumVideoDisplays => SDL.GetNumVideoDisplays();
 
         /// <summary>
         /// Gets the closest display mode to the specified mode for a given display.
@@ -21,7 +21,7 @@
         public static DisplayMode GetClosestDisplayMode(int displayIndex, DisplayMode mode)
         {
             DisplayMode closest;
-            SDL.SDLGetClosestDisplayMode(displayIndex, (SDLDisplayMode*)&mode, (SDLDisplayMode*)&closest);
+            SDL.GetClosestDisplayMode(displayIndex, (SDLDisplayMode*)&mode, (SDLDisplayMode*)&closest);
             return closest;
         }
 
@@ -33,7 +33,7 @@
         public static DisplayMode GetCurrentDisplayMode(int displayIndex)
         {
             DisplayMode mode;
-            SDL.SDLGetCurrentDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
+            SDL.GetCurrentDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
             return mode;
         }
 
@@ -45,7 +45,7 @@
         public static DisplayMode GetDesktopDisplayMode(int displayIndex)
         {
             DisplayMode mode;
-            SDL.SDLGetDesktopDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
+            SDL.GetDesktopDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
             return mode;
         }
 
@@ -56,7 +56,7 @@
         /// <returns>The name of the display.</returns>
         public static string GetDisplayName(int displayIndex)
         {
-            return SDL.SDLGetDisplayNameS(displayIndex);
+            return SDL.GetDisplayNameS(displayIndex);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@
         /// <returns>The orientation of the display.</returns>
         public static DisplayOrientation GetDisplayOrientation(int displayIndex)
         {
-            return (DisplayOrientation)SDL.SDLGetDisplayOrientation(displayIndex);
+            return (DisplayOrientation)SDL.GetDisplayOrientation(displayIndex);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@
         /// <param name="vdpi">The vertical DPI.</param>
         public static void GetDisplayDPI(int displayIndex, ref float ddpi, ref float hdpi, ref float vdpi)
         {
-            SDL.SDLGetDisplayDPI(displayIndex, ref ddpi, ref hdpi, ref vdpi);
+            SDL.GetDisplayDPI(displayIndex, ref ddpi, ref hdpi, ref vdpi);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@
         public static void GetDisplayBounds(int displayIndex, ref int x, ref int y, ref int width, ref int height)
         {
             SDLRect rectangle;
-            SDL.SDLGetDisplayBounds(displayIndex, &rectangle);
+            SDL.GetDisplayBounds(displayIndex, &rectangle);
             x = rectangle.X;
             y = rectangle.Y;
             width = rectangle.W;
@@ -110,7 +110,7 @@
         public static void GetDisplayUsableBounds(int displayIndex, ref int x, ref int y, ref int width, ref int height)
         {
             SDLRect rectangle;
-            SDL.SDLGetDisplayUsableBounds(displayIndex, &rectangle);
+            SDL.GetDisplayUsableBounds(displayIndex, &rectangle);
             x = rectangle.X;
             y = rectangle.Y;
             width = rectangle.W;
@@ -126,7 +126,7 @@
         public static DisplayMode GetDisplayMode(int displayIndex, int modeIndex)
         {
             DisplayMode mode;
-            SDL.SDLGetDisplayMode(displayIndex, modeIndex, (SDLDisplayMode*)&mode);
+            SDL.GetDisplayMode(displayIndex, modeIndex, (SDLDisplayMode*)&mode);
             return mode;
         }
 
@@ -137,7 +137,7 @@
         /// <returns>The number of display modes.</returns>
         public static int GetNumDisplayModes(int displayIndex)
         {
-            return SDL.SDLGetNumDisplayModes(displayIndex);
+            return SDL.GetNumDisplayModes(displayIndex);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@
         public static int GetPointDisplayIndex(int x, int y)
         {
             var point = new SDLPoint(x, y);
-            return SDL.SDLGetPointDisplayIndex(&point);
+            return SDL.GetPointDisplayIndex(&point);
         }
 
         /// <summary>
@@ -163,7 +163,7 @@
         public static int GetRectDisplayIndex(int x, int y, int width, int height)
         {
             var rect = new SDLRect(x, y, width, height);
-            return SDL.SDLGetRectDisplayIndex(&rect);
+            return SDL.GetRectDisplayIndex(&rect);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@
         /// <returns>The index of the display containing the window.</returns>
         public static int GetWindowDisplayIndex(Windows.SdlWindow window)
         {
-            return SDL.SDLGetWindowDisplayIndex(window.GetWindow());
+            return SDL.GetWindowDisplayIndex(window.GetWindow());
         }
 
         /// <summary>
@@ -184,7 +184,7 @@
         public static DisplayMode GetWindowDisplayMode(Windows.SdlWindow window)
         {
             DisplayMode mode;
-            SDL.SDLGetWindowDisplayMode(window.GetWindow(), (SDLDisplayMode*)&mode);
+            SDL.GetWindowDisplayMode(window.GetWindow(), (SDLDisplayMode*)&mode);
             return mode;
         }
     }

@@ -31,15 +31,15 @@
         /// <param name="index">The index of the touch device.</param>
         public TouchDevice(int index)
         {
-            id = SDL.SDLGetTouchDevice(index);
-            name = SDL.SDLGetTouchNameS(index);
-            type = (TouchDeviceType)SDL.SDLGetTouchDeviceType(id);
+            id = SDL.GetTouchDevice(index);
+            name = SDL.GetTouchNameS(index);
+            type = (TouchDeviceType)SDL.GetTouchDeviceType(id);
 
-            var fingerCount = SDL.SDLGetNumTouchFingers(id);
+            var fingerCount = SDL.GetNumTouchFingers(id);
             fingers = new Finger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
-                var finger = SDL.SDLGetTouchFinger(id, i);
+                var finger = SDL.GetTouchFinger(id, i);
                 fingers[i] = new(finger);
                 fingerIdToIndex.Add(finger->Id, i);
             }
@@ -53,13 +53,13 @@
         {
             this.id = id;
             name = "Unknown";
-            type = (TouchDeviceType)SDL.SDLGetTouchDeviceType(id);
+            type = (TouchDeviceType)SDL.GetTouchDeviceType(id);
 
-            var fingerCount = SDL.SDLGetNumTouchFingers(id);
+            var fingerCount = SDL.GetNumTouchFingers(id);
             fingers = new Finger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
-                var finger = SDL.SDLGetTouchFinger(id, i);
+                var finger = SDL.GetTouchFinger(id, i);
                 fingers[i] = new(finger);
                 fingerIdToIndex.Add(finger->Id, i);
             }

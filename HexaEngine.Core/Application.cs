@@ -307,15 +307,15 @@
             FileSystem.Initialize();
             ImGuiConsole.Initialize();
 
-            SDL.SDLSetHint(SDL.SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-            SDL.SDLSetHint(SDL.SDL_HINT_AUTO_UPDATE_JOYSTICKS, "1");
-            SDL.SDLSetHint(SDL.SDL_HINT_JOYSTICK_HIDAPI_PS4, "1");//HintJoystickHidapiPS4
-            SDL.SDLSetHint(SDL.SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1"); //HintJoystickHidapiPS4Rumble
-            SDL.SDLSetHint(SDL.SDL_HINT_JOYSTICK_RAWINPUT, "0");
-            SDL.SDLSetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1"); //HintWindowsDisableThreadNaming
-            SDL.SDLSetHint(SDL.SDL_HINT_MOUSE_NORMAL_SPEED_SCALE, "1");
+            SDL.SetHint(SDL.SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+            SDL.SetHint(SDL.SDL_HINT_AUTO_UPDATE_JOYSTICKS, "1");
+            SDL.SetHint(SDL.SDL_HINT_JOYSTICK_HIDAPI_PS4, "1");//HintJoystickHidapiPS4
+            SDL.SetHint(SDL.SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1"); //HintJoystickHidapiPS4Rumble
+            SDL.SetHint(SDL.SDL_HINT_JOYSTICK_RAWINPUT, "0");
+            SDL.SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1"); //HintWindowsDisableThreadNaming
+            SDL.SetHint(SDL.SDL_HINT_MOUSE_NORMAL_SPEED_SCALE, "1");
 
-            SDL.SDLInit(SDL.SDL_INIT_EVENTS + SDL.SDL_INIT_GAMECONTROLLER + SDL.SDL_INIT_HAPTIC + SDL.SDL_INIT_JOYSTICK + SDL.SDL_INIT_SENSOR);
+            SDL.Init(SDL.SDL_INIT_EVENTS + SDL.SDL_INIT_GAMECONTROLLER + SDL.SDL_INIT_HAPTIC + SDL.SDL_INIT_JOYSTICK + SDL.SDL_INIT_SENSOR);
 
             SdlCheckError();
 
@@ -328,7 +328,7 @@
             TouchDevices.Init();
             SdlCheckError();
 
-            SDL.SDLEventState((uint)SDLEventType.Dropfile, SDL.SDL_ENABLE);
+            SDL.EventState((uint)SDLEventType.Dropfile, SDL.SDL_ENABLE);
         }
 
         /// <summary>
@@ -361,7 +361,7 @@
             graphicsDevice?.Dispose();
 
             SdlCheckError();
-            SDL.SDLQuit();
+            SDL.Quit();
         }
 
         /// <summary>
@@ -438,8 +438,8 @@
 
             while (!exiting)
             {
-                SDL.SDLPumpEvents();
-                while (SDL.SDLPollEvent(&evnt) == 1)
+                SDL.PumpEvents();
+                while (SDL.PollEvent(&evnt) == 1)
                 {
                     for (int j = 0; j < hooks.Count; j++)
                     {
@@ -474,23 +474,23 @@
             graphicsDevice.Dispose();
 
             SdlCheckError();
-            SDL.SDLQuit();
+            SDL.Quit();
         }
 
         public static void StartTextInput()
         {
-            SDL.SDLStartTextInput();
+            SDL.StartTextInput();
         }
 
         public static void StopTextInput()
         {
-            SDL.SDLStopTextInput();
+            SDL.StopTextInput();
         }
 
         public static void SetTextInputRect(Rectangle rect)
         {
             SDLRect sdlRect = new(rect.Left, rect.Top, rect.Size.X, rect.Size.Y);
-            SDL.SDLSetTextInputRect(&sdlRect);
+            SDL.SetTextInputRect(&sdlRect);
         }
 
         private static void HandleEvent(SDLEvent evnt)
@@ -807,7 +807,7 @@
                             ((SdlWindow)mainWindow).ProcessDropFile(even);
                         }
 
-                        SDL.SDLFree(evnt.Drop.File);
+                        SDL.Free(evnt.Drop.File);
                     }
                     break;
 
@@ -819,7 +819,7 @@
                             ((SdlWindow)mainWindow).ProcessDropText(even);
                         }
 
-                        SDL.SDLFree(evnt.Drop.File);
+                        SDL.Free(evnt.Drop.File);
                     }
                     break;
 

@@ -10,7 +10,7 @@
 
     public class CPUParticleSystem
     {
-        private UnsafeList<uint> deadList = new(MaxParticles);
+        private UnsafeList<int> deadList = new(MaxParticles);
         private UnsafeList<CPUParticleA> particlesA = new(MaxParticles);
         private UnsafeList<CPUParticleB> particlesB = new(MaxParticles);
         private UnsafeList<ViewSpacePositionRadius> viewSpacePositions = new(MaxParticles);
@@ -82,7 +82,7 @@
 
         private void InitializeDeadList(int index)
         {
-            deadList[index] = (uint)index;
+            deadList[index] = (int)index;
         }
 
         public void ResetParticles()
@@ -124,7 +124,7 @@
                 pb.StartSize = emitter.StartSize;
                 pb.EndSize = emitter.EndSize;
 
-                uint index;
+                int index;
                 lock (_lock)
                 {
                     index = *deadList.Back;
@@ -247,12 +247,12 @@
                     pb.Age = -1;
                     lock (_lock)
                     {
-                        deadList.PushBack((uint)id);
+                        deadList.PushBack((int)id);
                     }
                 }
                 else
                 {
-                    uint index = aliveIndexBuffer.InterlockedIncrementCounter();
+                    int index = aliveIndexBuffer.InterlockedIncrementCounter();
                     aliveIndexBuffer[index] = new(pb.DistanceToEye, id);
                     uint dstIdx = 0;
 

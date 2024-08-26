@@ -37,7 +37,7 @@
             this.controller = controller;
             this.type = sensorType;
             buffer = AllocT<float>(3);
-            SDL.SDLGameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length).SdlThrowIfNeg();
+            SDL.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length).SdlThrowIfNeg();
         }
 
         /// <summary>
@@ -45,8 +45,8 @@
         /// </summary>
         public bool Enabled
         {
-            get => SDL.SDLGameControllerIsSensorEnabled(controller, Helper.ConvertBack(type)) == SDLBool.True;
-            set => SDL.SDLGameControllerSetSensorEnabled(controller, Helper.ConvertBack(type), value ? SDLBool.True : SDLBool.False).SdlThrowIfNeg();
+            get => SDL.GameControllerIsSensorEnabled(controller, Helper.ConvertBack(type)) == SDLBool.True;
+            set => SDL.GameControllerSetSensorEnabled(controller, Helper.ConvertBack(type), value ? SDLBool.True : SDLBool.False).SdlThrowIfNeg();
         }
 
         /// <summary>
@@ -87,7 +87,7 @@
         /// </summary>
         public void Flush()
         {
-            SDL.SDLGameControllerGetSensorData(controller, Helper.ConvertBack(type), buffer, length).SdlThrowIfNeg();
+            SDL.GameControllerGetSensorData(controller, Helper.ConvertBack(type), buffer, length).SdlThrowIfNeg();
             sensorUpdateEventArgs.Data = buffer;
             sensorUpdateEventArgs.Length = length;
             sensorUpdateEventArgs.Type = type;

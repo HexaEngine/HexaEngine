@@ -17,7 +17,7 @@
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             ImGuiContextPtr g = ImGui.GetCurrentContext();
             ImGuiStylePtr style = ImGui.GetStyle();
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             var cursorPos = ImGui.GetCursorPos();
 
@@ -72,7 +72,7 @@
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             var g = ImGui.GetCurrentContext();
             var style = ImGui.GetStyle();
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             var cursorPos = ImGui.GetCursorPos();
 

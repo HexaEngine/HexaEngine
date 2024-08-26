@@ -273,7 +273,7 @@
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
 
-                int id = ImGui.GetID(effect.DisplayName.Id);
+                uint id = ImGui.GetID(effect.DisplayName.Id);
 
                 if (ImGui.TreeNodeEx(effect.DisplayName.Id))
                 {
@@ -312,7 +312,7 @@
             return changed;
         }
 
-        private static void DrawEnable(int id, IPostFx effect, PostFxProxy proxy, bool isOpen)
+        private static void DrawEnable(uint id, IPostFx effect, PostFxProxy proxy, bool isOpen)
         {
             ImGui.SameLine();
 

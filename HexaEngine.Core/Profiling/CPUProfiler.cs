@@ -150,7 +150,7 @@
                 ProfilerEntry* entry = entries.GetPointer(index);
                 ProfilerEntry* oldEntry = entries.GetPointer(oldIndex);
 
-                for (uint i = 0; i < entry->Stages.Size; i++)
+                for (int i = 0; i < entry->Stages.Size; i++)
                 {
                     ProfilerScope* oldStage = oldEntry->Stages.GetPointer(i);
                     ProfilerScope* stage = entry->Stages.GetPointer(i);
@@ -205,7 +205,7 @@
                 blockNames.Add(name);
                 nameToId.Add(name, currentId);
                 idToName.Add(currentId, name);
-                for (uint i = 0; i < FrameCount; i++)
+                for (int i = 0; i < FrameCount; i++)
                 {
                     entries.GetPointer(i)->Stages.PushBack(new(currentId, name));
                 }
@@ -224,7 +224,7 @@
             lock (blockNames)
             {
                 var id = nameToId[name];
-                for (uint i = 0; i < FrameCount; i++)
+                for (int i = 0; i < FrameCount; i++)
                 {
                     var entry = entries.GetPointer(i);
                     var index = entry->IdToIndex(id);
@@ -249,7 +249,7 @@
             lock (blockNames)
             {
                 var name = idToName[id];
-                for (uint i = 0; i < FrameCount; i++)
+                for (int i = 0; i < FrameCount; i++)
                 {
                     var entry = entries.GetPointer(i);
                     var index = entry->IdToIndex(id);

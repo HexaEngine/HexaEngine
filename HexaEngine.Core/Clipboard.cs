@@ -13,7 +13,7 @@
         /// <returns>An unsafe pointer to the clipboard text.</returns>
         public static char* GetClipboardTextUnsafe()
         {
-            return (char*)SDL.SDLGetClipboardText();
+            return (char*)SDL.GetClipboardText();
         }
 
         /// <summary>
@@ -22,7 +22,7 @@
         /// <returns>The clipboard text as a string.</returns>
         public static string GetClipboardText()
         {
-            return SDL.SDLGetClipboardTextS();
+            return SDL.GetClipboardTextS();
         }
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// <param name="text">An unsafe pointer to the text to be set in the clipboard.</param>
         public static void SetClipboardTextUnsafe(char* text)
         {
-            SDL.SDLSetClipboardText((byte*)text);
+            SDL.SetClipboardText((byte*)text);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@
         /// <param name="text">The text to be set in the clipboard.</param>
         public static void SetClipboardText(string text)
         {
-            SDL.SDLSetClipboardText(text);
+            SDL.SetClipboardText(text);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@
         /// <param name="text">An unsafe pointer to the text to be freed.</param>
         public static void Free(char* text)
         {
-            SDL.SDLFree(text);
+            SDL.Free(text);
         }
     }
 }
