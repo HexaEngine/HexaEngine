@@ -33,15 +33,15 @@
 
         private readonly IndexBuffer<uint> indexBuffer;
 
-        private readonly IComputePipeline particleInitDeadList;
-        private readonly IComputePipeline particleReset;
-        private readonly IComputePipeline particleEmit;
-        private readonly IComputePipeline particleSimulate;
+        private readonly IComputePipelineState particleInitDeadList;
+        private readonly IComputePipelineState particleReset;
+        private readonly IComputePipelineState particleEmit;
+        private readonly IComputePipelineState particleSimulate;
         private readonly IGraphicsPipelineState particles;
-        private readonly IComputePipeline particleSortInitArgs;
-        private readonly IComputePipeline particleSort512;
-        private readonly IComputePipeline particleBitonicSortStep;
-        private readonly IComputePipeline particleSortInner512;
+        private readonly IComputePipelineState particleSortInitArgs;
+        private readonly IComputePipelineState particleSort512;
+        private readonly IComputePipelineState particleBitonicSortStep;
+        private readonly IComputePipelineState particleSortInner512;
 
         private readonly ISamplerState linearClampSampler;
         private readonly ISamplerState linearWrapSampler;
@@ -185,14 +185,14 @@
 
             indexBuffer = new(indices, CpuAccessFlags.None);
 
-            particleInitDeadList = device.CreateComputePipeline(new("forward/particles/InitDeadListCS.hlsl"));
-            particleReset = device.CreateComputePipeline(new("forward/particles/ParticleResetCS.hlsl"));
-            particleEmit = device.CreateComputePipeline(new("forward/particles/ParticleEmitCS.hlsl"));
-            particleSimulate = device.CreateComputePipeline(new("forward/particles/ParticleSimulateCS.hlsl"));
-            particleSortInitArgs = device.CreateComputePipeline(new("forward/particles/InitSortDispatchArgsCS.hlsl"));
-            particleSort512 = device.CreateComputePipeline(new("forward/particles/Sort512CS.hlsl"));
-            particleBitonicSortStep = device.CreateComputePipeline(new("forward/particles/BitonicSortStepCS.hlsl"));
-            particleSortInner512 = device.CreateComputePipeline(new("forward/particles/SortInner512CS.hlsl"));
+            particleInitDeadList = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitDeadListCS.hlsl"));
+            particleReset = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleResetCS.hlsl"));
+            particleEmit = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleEmitCS.hlsl"));
+            particleSimulate = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleSimulateCS.hlsl"));
+            particleSortInitArgs = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitSortDispatchArgsCS.hlsl"));
+            particleSort512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/Sort512CS.hlsl"));
+            particleBitonicSortStep = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/BitonicSortStepCS.hlsl"));
+            particleSortInner512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/SortInner512CS.hlsl"));
 
             particles = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -215,9 +215,9 @@
             nint* dead_list_uavs = stackalloc nint[] { deadListBuffer.UAV.NativePointer };
             context.CSSetUnorderedAccessViews(0, 1, (void**)dead_list_uavs, initial_count);
 
-            context.SetComputePipeline(particleInitDeadList);
+            context.SetComputePipelineState(particleInitDeadList);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
-            context.SetComputePipeline(null);
+            context.SetComputePipelineState(null);
 
             dead_list_uavs[0] = 0;
             context.CSSetUnorderedAccessViews(0, 1, (void**)dead_list_uavs, null);
@@ -229,9 +229,9 @@
             uint* initial_counts = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1) };
             context.CSSetUnorderedAccessViews(0, 2, (void**)uavs, initial_counts);
 
-            context.SetComputePipeline(particleReset);
+            context.SetComputePipelineState(particleReset);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
-            context.SetComputePipeline(null);
+            context.SetComputePipelineState(null);
 
             uavs[0] = 0;
             uavs[1] = 0;
@@ -242,7 +242,7 @@
         {
             if (emitter.NumberToEmit > 0)
             {
-                context.SetComputePipeline(particleEmit);
+                context.SetComputePipelineState(particleEmit);
 
                 nint* uavs = stackalloc nint[] { particleBufferA.UAV.NativePointer, particleBufferB.UAV.NativePointer, deadListBuffer.UAV.NativePointer };
                 uint* initial_counts = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1) };
@@ -280,7 +280,7 @@
                 ZeroMemory(uavs, sizeof(nint) * 3);
                 context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, null);
 
-                context.SetComputePipeline(null);
+                context.SetComputePipelineState(null);
             }
         }
 
@@ -311,7 +311,7 @@
             context.CSSetConstantBuffer(4, emitterBuffer);
             context.CSSetConstantBuffer(0, simulationBuffer);
 
-            context.SetComputePipeline(particleSimulate);
+            context.SetComputePipelineState(particleSimulate);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
 
             ZeroMemory(uavs, sizeof(nint) * 6);
@@ -371,14 +371,14 @@
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
 
             nint* vs_srvs = stackalloc nint[] { particleBufferA.SRV.NativePointer, viewSpacePositionsBuffer.SRV.NativePointer, aliveIndexBuffer.SRV.NativePointer };
-            nint* ps_srvs = stackalloc nint[] { emitter.ParticleTexture.SRV.NativePointer, depthSRV.NativePointer };
+            nint* ps_srvs = stackalloc nint[] { emitter.ParticleTexture.SRV!.NativePointer, depthSRV.NativePointer };
             context.VSSetShaderResources(0, 3, (void**)vs_srvs);
             context.PSSetShaderResources(0, 2, (void**)ps_srvs);
             context.PSSetSampler(0, linearClampSampler);
 
-            context.SetPipelineState(particles);
+            context.SetGraphicsPipelineState(particles);
             context.DrawIndexedInstancedIndirect(indirectRenderArgsBuffer, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetSampler(0, null);
             ZeroMemory(vs_srvs, sizeof(nint) * 3);
@@ -395,7 +395,7 @@
             // Write the indirect args to a UAV
             nint indirect_sort_args_uav = indirectSortArgsBuffer.UAV.NativePointer;
             context.CSSetUnorderedAccessViews(0, 1, (void**)&indirect_sort_args_uav, null);
-            context.SetComputePipeline(particleSortInitArgs);
+            context.SetComputePipelineState(particleSortInitArgs);
             context.Dispatch(1, 1, 1);
 
             nint uav = aliveIndexBuffer.UAV.NativePointer;
@@ -422,7 +422,7 @@
                 done = false;
             }
 
-            context.SetComputePipeline(particleSort512);
+            context.SetComputePipelineState(particleSort512);
             context.DispatchIndirect(indirectSortArgsBuffer, 0);
             return done;
         }
@@ -430,7 +430,7 @@
         public bool SortIncremental(IGraphicsContext context, uint presorted)
         {
             bool done = true;
-            context.SetComputePipeline(particleBitonicSortStep);
+            context.SetComputePipelineState(particleBitonicSortStep);
 
             uint num_thread_groups = 0;
             if (MaxParticles > presorted)
@@ -468,7 +468,7 @@
                 sortDispatchInfoBuffer.Update(context, sort_dispatch_info);
                 context.Dispatch(num_thread_groups, 1, 1);
             }
-            context.SetComputePipeline(particleSortInner512);
+            context.SetComputePipelineState(particleSortInner512);
             context.Dispatch(num_thread_groups, 1, 1);
 
             return done;

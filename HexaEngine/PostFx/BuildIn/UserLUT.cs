@@ -85,9 +85,9 @@
             context.PSSetShaderResources(0, 2, (void**)passSRVs);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSamplers(0, 2, (void**)passSMPs);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             nint* empty = stackalloc nint[] { 0, 0 };
             context.PSSetSamplers(0, 2, (void**)empty);
             context.PSSetConstantBuffer(0, null);

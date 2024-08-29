@@ -285,7 +285,7 @@
             context.PSSetShaderResource(0, sunMask.Value);
             context.PSSetShaderResource(1, noiseTex);
             context.PSSetSampler(0, linearClampSampler);
-            context.SetPipelineState(godrays);
+            context.SetGraphicsPipelineState(godrays);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

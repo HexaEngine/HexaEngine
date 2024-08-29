@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a graphics pipeline that specifies the rendering state and shaders for graphics rendering.
     /// </summary>
-    public interface IGraphicsPipeline : IDisposable
+    public interface IGraphicsPipeline : IPipeline
     {
         /// <summary>
         /// Gets the description of the graphics pipeline, including shader information and other state settings.

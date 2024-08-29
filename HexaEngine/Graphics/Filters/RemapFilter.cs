@@ -99,7 +99,7 @@
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, int width, int height)
         {
             paramsBuffer.Update(context, new(min, max, new(width, height)));
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(width, height));
             context.PSSetShaderResource(0, source);
@@ -114,7 +114,7 @@
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, int srcWidth, int srcHeight, int dstWidth, int dstHeight)
         {
             paramsBuffer.Update(context, new(min, max, new(srcWidth, srcHeight)));
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(dstWidth, dstHeight));
             context.PSSetShaderResource(0, source);
@@ -129,7 +129,7 @@
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, Point4 scissors, int width, int height)
         {
             paramsBuffer.Update(context, new(min, max, new(width, height)));
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(width, height));
             context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);
@@ -146,7 +146,7 @@
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, Point4 scissors, int srcWidth, int srcHeight, int dstWidth, int dstHeight)
         {
             paramsBuffer.Update(context, new(min, max, new(srcWidth, srcHeight)));
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(dstWidth, dstHeight));
             context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);

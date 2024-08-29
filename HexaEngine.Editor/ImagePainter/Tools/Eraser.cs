@@ -58,9 +58,9 @@
 
             context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(1, null);
         }
 
@@ -70,9 +70,9 @@
 
             context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(1, null);
         }
 

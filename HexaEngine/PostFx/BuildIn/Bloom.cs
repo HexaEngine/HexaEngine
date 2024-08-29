@@ -346,7 +346,7 @@
         {
             context.PSSetConstantBuffer(0, downsampleCBuffer);
             context.PSSetSampler(0, linearSampler);
-            context.SetPipelineState(downsample);
+            context.SetGraphicsPipelineState(downsample);
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
                 if (i > 0)
@@ -366,7 +366,7 @@
             }
 
             context.PSSetConstantBuffer(0, upsampleCBuffer);
-            context.SetPipelineState(upsample);
+            context.SetGraphicsPipelineState(upsample);
             for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
@@ -382,14 +382,14 @@
 #nullable restore
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.SetPipelineState(compose);
+            context.SetGraphicsPipelineState(compose);
             context.PSSetConstantBuffer(0, bloomCBuffer);
             context.PSSetShaderResources(0, 3, (void**)composeSRVs);
             context.DrawInstanced(4, 1, 0, 0);
             nint* emptySRVs = stackalloc nint[] { 0, 0, 0 };
             context.PSSetShaderResources(0, 3, (void**)emptySRVs);
             context.PSSetConstantBuffer(0, null);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

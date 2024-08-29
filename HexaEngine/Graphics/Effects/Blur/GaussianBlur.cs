@@ -200,7 +200,7 @@
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
 
             context.SetRenderTarget(null, null);
@@ -208,9 +208,9 @@
 
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
@@ -229,7 +229,7 @@
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
 
             context.SetRenderTarget(null, null);
@@ -238,9 +238,9 @@
             context.SetViewport(new(dstWidth, dstHeight));
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
@@ -260,7 +260,7 @@
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
 
             context.SetRenderTarget(null, null);
@@ -268,9 +268,9 @@
 
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);

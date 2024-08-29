@@ -16,7 +16,7 @@
         private ISamplerState linearClampSampler;
         private ISamplerState linearWrapSampler;
 
-        private IComputePipeline volume;
+        private IComputePipelineState volume;
         private IGraphicsPipelineState fog;
 
         private ConstantBuffer<VolumeParams> volumeParamsBuffer;
@@ -143,7 +143,7 @@
 
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            volume = device.CreateComputePipeline(new()
+            volume = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "compute/volume/shader.hlsl"
             });
@@ -200,14 +200,14 @@
             context.CSSetConstantBuffer(1, camera.Value);
             context.CSSetConstantBuffer(2, weather.Value);
             context.CSSetUnorderedAccessView(0, (void*)densityTex.UAV.NativePointer);
-            context.SetComputePipeline(volume);
+            context.SetComputePipelineState(volume);
 
             uint threadGroupsX = (uint)Math.Ceiling(densityTex.Width / 16f);
             uint threadGroupsY = (uint)Math.Ceiling(densityTex.Height / 9f);
             uint threadGroupsZ = (uint)Math.Ceiling(densityTex.Depth / 4f);
             context.Dispatch(threadGroupsX, threadGroupsY, threadGroupsZ);
 
-            context.SetComputePipeline(null);
+            context.SetComputePipelineState(null);
 
             context.CSSetUnorderedAccessView(0, null);
             context.CSSetConstantBuffer(2, null);
@@ -222,11 +222,11 @@
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetSampler(1, linearWrapSampler);
 
-            context.SetPipelineState(fog);
+            context.SetGraphicsPipelineState(fog);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetSampler(1, null);

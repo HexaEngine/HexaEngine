@@ -265,11 +265,11 @@
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetSampler(1, shadowSampler);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetSampler(1, null);
@@ -293,11 +293,11 @@
             context.PSSetShaderResource(0, depthChain.Value.SRV);
             context.PSSetShaderResource(1, buffer.Value);
 
-            context.SetPipelineState(blurPipeline);
+            context.SetGraphicsPipelineState(blurPipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetShaderResource(0, null);
             context.PSSetShaderResource(1, null);

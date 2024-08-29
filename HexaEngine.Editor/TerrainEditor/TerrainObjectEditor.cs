@@ -284,7 +284,7 @@ namespace HexaEngine.Editor.TerrainEditor
             context.VSSetConstantBuffer(1, camera.Value);
             context.PSSetConstantBuffer(0, brushBuffer);
             context.PSSetConstantBuffer(1, camera.Value);
-            context.SetPipelineState(brushOverlay);
+            context.SetGraphicsPipelineState(brushOverlay);
 
             context.DrawIndexedInstanced(cell.Mesh.IndexCount, 1, 0, 0, 0);
 
@@ -294,7 +294,7 @@ namespace HexaEngine.Editor.TerrainEditor
             context.VSSetConstantBuffer(1, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetConstantBuffer(1, null);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         private static void GenerateInactiveLOD(TerrainCell cell, int activeLevel)

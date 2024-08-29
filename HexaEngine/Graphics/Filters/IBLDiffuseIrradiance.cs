@@ -89,7 +89,7 @@
             context.PSSetSampler(0, sampler);
             context.PSSetShaderResource(0, Source);
             context.VSSetConstantBuffer(0, viewBuffer);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
 
             for (int i = 0; i < 6; i++)
             {
@@ -98,7 +98,7 @@
                 cube.DrawAuto(context);
             }
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetShaderResource(0, null);
             context.VSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);

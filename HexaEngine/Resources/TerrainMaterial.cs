@@ -348,7 +348,7 @@
         {
             textureListPS.UnbindPS(context);
             textureListDS.UnbindDS(context);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void DrawIndexedInstanced(IGraphicsContext context, string pass, uint indexCount, uint instanceCount, uint indexOffset = 0, int vertexOffset = 0, uint instanceOffset = 0)

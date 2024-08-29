@@ -268,11 +268,11 @@
             context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, linearWrapSampler);
 
-            context.SetPipelineState(psoSSGI);
+            context.SetGraphicsPipelineState(psoSSGI);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(1, null);

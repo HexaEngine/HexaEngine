@@ -4,17 +4,19 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
+    using System.Collections.Generic;
     using System.Numerics;
 
     public class HizDepthPass : ComputePass
     {
         private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<IComputePipeline> downsample;
+        private ResourceRef<IComputePipelineState> downsample;
         private ResourceRef<ConstantBuffer<Vector4>> cbDownsample;
         private ResourceRef<IGraphicsPipelineState> copy;
         private ResourceRef<ISamplerState> samplerState;
         private ResourceRef<DepthMipChain> chain;
         private string[] names;
+        private IResourceBindingList[] lists;
 
         public HizDepthPass() : base("HiZDepth")
         {
@@ -25,7 +27,7 @@
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            downsample = creator.CreateComputePipeline(new()
+            downsample = creator.CreateComputePipelineState(new()
             {
                 Path = "compute/hiz/shader.hlsl",
             });
@@ -34,7 +36,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen));
+            }, GraphicsPipelineStateDesc.DefaultFullscreenF));
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
@@ -48,50 +50,65 @@
             }
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
+        public override void Prepare(GraphResourceBuilder creator)
         {
-            var input = depthStencil.Value.SRV;
-            var chain = this.chain.Value;
-            var viewports = chain.Viewports;
+            copy.Value!.Bindings.SetSRV("sourceTex", depthStencil.Value!.SRV!);
+
+            var chain = this.chain.Value!;
             var uavs = chain.UAVs;
             var srvs = chain.SRVs;
+
+            var bindings = downsample.Value!.Bindings;
+            bindings.SetCBV("params", cbDownsample.Value!);
+            bindings.SetSampler("samplerPoint", samplerState.Value!);
+
+            // Set these so that automatic cleanup is performed of the UAV and SRV after the loop.
+            // This is far more optimal than clearing it inside of the loop explicitly.
+            // It avoids excessive state changes in backends like D3D11.
+            bindings.SetUAV("output", uavs[1]);
+            bindings.SetSRV("input", srvs[0]);
+
+            lists = new IResourceBindingList[chain.MipLevels];
+
+            for (int i = 1; i < lists.Length; i++)
+            {
+                var list = creator.Device.CreateResourceBindingList(downsample.Value.Pipeline!);
+                list.SetUAV("output", uavs[i]);
+                list.SetSRV("input", srvs[i - 1]);
+                lists[i] = list;
+            }
+        }
+
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
+        {
+            var chain = this.chain.Value!;
+            var viewports = chain.Viewports;
 
             profiler?.Begin("HizDepthPass.CopyEffect");
 
             context.SetRenderTarget(chain.RTV, null);
-            context.PSSetShaderResource(0, input);
             context.SetViewport(viewports[0]);
-            context.SetPipelineState(copy.Value);
+            context.SetGraphicsPipelineState(copy.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
-            context.SetRenderTarget(null, null);
-            context.PSSetShaderResource(0, null);
-
-            context.SetComputePipeline(downsample.Value);
-            context.CSSetConstantBuffer(0, cbDownsample.Value);
-            context.CSSetSampler(0, samplerState.Value);
+            context.SetComputePipelineState(downsample.Value);
 
             profiler?.End("HizDepthPass.CopyEffect");
 
             for (uint i = 1; i < chain.MipLevels; i++)
             {
-                string name = names[(i - 1)];
+                string name = names[i - 1];
                 profiler?.Begin(name);
                 Vector2 texel = new(1 / viewports[i].Width, 1 / viewports[i].Height);
-                context.Write(cbDownsample.Value, new Vector4(texel, 0, 0));
-                context.CSSetUnorderedAccessView((void*)uavs[i].NativePointer);
-                context.CSSetShaderResource(0, srvs[i - 1]);
+                context.Write(cbDownsample.Value!, new Vector4(texel, 0, 0));
+                context.SetResourceBindingList(lists[i]);
                 context.Dispatch((uint)viewports[i].Width / 32 + 1, (uint)viewports[i].Height / 32 + 1, 1);
                 profiler?.End(name);
             }
 
-            context.CSSetUnorderedAccessView(null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetSampler(0, null);
-            context.CSSetConstantBuffer(0, null);
-            context.SetComputePipeline(null);
+            context.SetComputePipelineState(null);
         }
     }
 }

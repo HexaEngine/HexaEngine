@@ -73,9 +73,9 @@
             context.PSSetShaderResources(0, 2, (void**)srvs);
             context.PSSetSamplers(0, 2, (void**)sps);
 
-            context.SetPipelineState(decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline);
+            context.SetGraphicsPipelineState(decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline);
             cube.DrawAuto(context);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             ZeroMemory(srvs, sizeof(nint) * 2);
             ZeroMemory(cbs, sizeof(nint) * 2);

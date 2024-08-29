@@ -96,7 +96,7 @@
             context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, sampler);
             context.PSSetShaderResource(0, depth.Value.SRV);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

@@ -63,9 +63,9 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetShaderResource(0, src);
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetShaderResource(0, null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
@@ -85,9 +85,9 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetShaderResource(0, src);
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetShaderResource(0, null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);

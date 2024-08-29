@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Scenes.Systems
 {
     using HexaEngine.Core;
+    using HexaEngine.Queries;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
 
     public class AnimationSystem : ISceneSystem
     {
-        private readonly ComponentTypeQuery<IAnimator> animators = new();
+        private readonly ComponentTypeQuery<IAnimator> animators = new(QueryFlags.Default);
         private readonly Scene scene;
 
         public string Name => "Animations";

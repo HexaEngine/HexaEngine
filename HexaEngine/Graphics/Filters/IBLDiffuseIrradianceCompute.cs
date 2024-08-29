@@ -9,7 +9,7 @@
     /// </summary>
     public class IBLDiffuseIrradianceCompute : IDisposable
     {
-        private readonly IComputePipeline pipeline;
+        private readonly IComputePipelineState pipeline;
         private readonly ISamplerState sampler;
 
         public IShaderResourceView? Source;
@@ -21,12 +21,13 @@
 
         public IBLDiffuseIrradianceCompute(IGraphicsDevice device)
         {
-            pipeline = device.CreateComputePipeline(new()
+            pipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "filter/irradiance/cs.hlsl"
             });
 
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
+            pipeline.Bindings.SetSampler("defaultSampler", sampler);
         }
 
         public unsafe void Dispatch(IGraphicsContext context, uint width, uint height)
@@ -36,15 +37,11 @@
                 return;
             }
 
-            context.CSSetSampler(0, sampler);
-            context.CSSetShaderResource(0, Source);
-            context.CSSetUnorderedAccessView((void*)Target.NativePointer);
-            context.SetComputePipeline(pipeline);
+            pipeline.Bindings.SetSRV("inputTexture", Source!);
+            pipeline.Bindings.SetUAV("outputTexture", Target!);
+            context.SetComputePipelineState(pipeline);
             context.Dispatch(width / ThreadCount, height / ThreadCount, 6);
-            context.SetComputePipeline(null);
-            context.CSSetUnorderedAccessView(null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetSampler(0, null);
+            context.SetComputePipelineState(null);
         }
 
         protected virtual void Dispose(bool disposing)

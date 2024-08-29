@@ -354,7 +354,7 @@
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.Viewport);
                 context.PSSetShaderResource(0, source.SRV);
-                context.SetPipelineState(copyPipeline);
+                context.SetGraphicsPipelineState(copyPipeline);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
 

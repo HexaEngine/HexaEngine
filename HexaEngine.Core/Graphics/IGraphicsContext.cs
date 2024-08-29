@@ -3,73 +3,6 @@
     using Hexa.NET.Mathematics;
     using System.Numerics;
 
-    public interface IGraphicsContext1 : IGraphicsContext
-    {
-        public void VSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void VSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void VSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void HSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void HSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void HSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void DSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void DSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void DSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void GSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void GSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void GSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void PSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void PSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void PSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void CSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void CSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void CSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void SetRenderTarget(ICombinedTex2D? target, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargets(IList<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargets(Span<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargetsAndUnorderedAccessViews(ICombinedTex2D? renderTargetView, ICombinedTex2D? depthStencilView, uint uavSlot, ICombinedTex2D? unorderedAccessView, uint uavInitialCount = unchecked((uint)-1));
-
-        public unsafe void SetRenderTargetsAndUnorderedAccessViews(IList<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, IList<ICombinedTex2D?> unorderedAccessViews, IList<uint> uavInitialCounts);
-
-        public unsafe void SetRenderTargetsAndUnorderedAccessViews(Span<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, Span<ICombinedTex2D?> unorderedAccessViews, Span<uint> uavInitialCounts);
-
-        public void CSSetUnorderedAccessView(uint slot, ICombinedTex2D? tex, uint uavInitialCount = unchecked((uint)-1));
-
-        public void CSSetUnorderedAccessViews(uint slot, IList<ICombinedTex2D?> tex, IList<uint> uavInitialCounts);
-
-        public void CSSetUnorderedAccessViews(uint slot, Span<ICombinedTex2D?> tex, Span<uint> uavInitialCounts);
-
-        public void ClearDepthStencilView(ICombinedTex2D depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
-
-        public void ClearRenderTargetView(ICombinedTex2D renderTargetView, Vector4 value);
-
-        public void ClearUnorderedAccessViewFloat(ICombinedTex2D uav, float r, float g, float b, float a);
-
-        public void ClearUnorderedAccessViewUint(ICombinedTex2D uav, uint r, uint g, uint b, uint a);
-
-        public void ClearView(ICombinedTex2D tex, Vector4 color, Rect rect);
-    }
-
     /// <summary>
     /// Provides an interface for graphics context management and operations on a graphics device.
     /// </summary>
@@ -85,16 +18,16 @@
         IGraphicsDevice Device { get; }
 
         /// <summary>
+        /// Sets the active compute pipeline state for rendering.
+        /// </summary>
+        /// <param name="state">The compute pipeline state to set. Pass null to unset the active pipeline state.</param>
+        void SetComputePipelineState(IComputePipelineState? state);
+
+        /// <summary>
         /// Sets the active graphics pipeline state for rendering.
         /// </summary>
         /// <param name="state">The graphics pipeline state to set. Pass null to unset the active pipeline state.</param>
-        void SetPipelineState(IGraphicsPipelineState? state);
-
-        /// <summary>
-        /// Sets the active compute pipeline for GPU computation.
-        /// </summary>
-        /// <param name="pipeline">The compute pipeline to set. Pass null to unset the active pipeline.</param>
-        void SetComputePipeline(IComputePipeline? pipeline);
+        void SetGraphicsPipelineState(IGraphicsPipelineState? state);
 
         /// <summary>
         /// Copies data from one resource to another.
@@ -673,6 +606,7 @@
         /// </summary>
         /// <param name="commandList">The command list to execute.</param>
         /// <param name="restoreState">True to restore the rendering state after execution; otherwise, false.</param>
+        [Obsolete("Use command buffers")]
         void ExecuteCommandList(ICommandList commandList, bool restoreState);
 
         /// <summary>
@@ -680,7 +614,10 @@
         /// </summary>
         /// <param name="restoreState">True to restore the rendering state after finishing; otherwise, false.</param>
         /// <returns>A new command list that can be used for rendering commands.</returns>
+        [Obsolete("Use command buffers")]
         ICommandList FinishCommandList(bool restoreState);
+
+        void ExecuteCommandBuffer(ICommandBuffer commandBuffer);
 
         /// <summary>
         /// Updates a subresource of a resource.

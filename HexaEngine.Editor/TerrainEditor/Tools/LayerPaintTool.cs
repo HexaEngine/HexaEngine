@@ -16,8 +16,8 @@
     {
         private IGraphicsPipelineState maskEdit;
 
-        private IComputePipeline occupationCheckPipeline;
-        private IComputePipeline channelRemapPipeline;
+        private IComputePipelineState occupationCheckPipeline;
+        private IComputePipelineState channelRemapPipeline;
 
         private Texture2D maskTexBuffer;
         private ISamplerState maskSampler;
@@ -56,12 +56,12 @@
                 Topology = PrimitiveTopology.TriangleStrip,
             });
 
-            occupationCheckPipeline = device.CreateComputePipeline(new()
+            occupationCheckPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "tools/terrain/mask/occupation.hlsl",
             });
 
-            channelRemapPipeline = device.CreateComputePipeline(new()
+            channelRemapPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "tools/terrain/mask/remap.hlsl",
             });
@@ -72,6 +72,12 @@
             brushBuffer = new(CpuAccessFlags.Write);
             remapBuffer = new(CpuAccessFlags.Write);
             channelBuffer = new(1, CpuAccessFlags.Read);
+
+            occupationCheckPipeline.Bindings.SetCBV("ParamsBuffer", remapBuffer);
+            occupationCheckPipeline.Bindings.SetUAV("outputBuffer", channelBuffer.UAV);
+
+            channelRemapPipeline.Bindings.SetCBV("ParamsBuffer", remapBuffer);
+            channelRemapPipeline.Bindings.SetUAV("outputTex", maskTexBuffer.UAV!);
         }
 
         protected override void DisposeCore()
@@ -95,21 +101,14 @@
 
             channelBuffer.Clear(context);
 
-            context.CSSetConstantBuffer(0, remapBuffer);
-            context.CSSetShaderResource(0, texture.SRV);
-            context.CSSetUnorderedAccessView(0, (void*)channelBuffer.UAV.NativePointer);
-
-            context.SetComputePipeline(occupationCheckPipeline);
+            occupationCheckPipeline.Bindings.SetSRV("maskTex", texture.SRV!);
+            context.SetComputePipelineState(occupationCheckPipeline);
 
             uint numGroupsX = (uint)Math.Ceiling(size.X / 32);
             uint numGroupsY = (uint)Math.Ceiling(size.Y / 32);
             context.Dispatch(numGroupsX, numGroupsY, 1);
 
-            context.SetComputePipeline(null);
-
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetUnorderedAccessView(0, null);
+            context.SetComputePipelineState(null);
 
             channelBuffer.Read(context);
 
@@ -121,21 +120,14 @@
             Vector2 size = texture.Viewport.Size;
             remapBuffer.Update(context, new(size, source, destination, factor));
 
-            context.CSSetConstantBuffer(0, remapBuffer);
-            context.CSSetShaderResource(0, texture.SRV);
-            context.CSSetUnorderedAccessView(0, (void*)maskTexBuffer.UAV.NativePointer);
-
-            context.SetComputePipeline(channelRemapPipeline);
+            channelRemapPipeline.Bindings.SetSRV("maskTex", texture.SRV!);
+            context.SetComputePipelineState(channelRemapPipeline);
 
             uint numGroupsX = (uint)Math.Ceiling(size.X / 32);
             uint numGroupsY = (uint)Math.Ceiling(size.Y / 32);
             context.Dispatch(numGroupsX, numGroupsY, 1);
 
-            context.SetComputePipeline(null);
-
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetUnorderedAccessView(0, null);
+            context.SetComputePipelineState(null);
 
             maskTexBuffer.CopyTo(context, texture);
         }
@@ -288,9 +280,9 @@
                 context.SetRenderTarget(maskTex.RTV, null);
                 context.SetViewport(vp);
 
-                context.SetPipelineState(maskEdit);
+                context.SetGraphicsPipelineState(maskEdit);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.SetPipelineState(null);
+                context.SetGraphicsPipelineState(null);
 
                 context.SetViewport(default);
                 context.SetRenderTarget(null, null);

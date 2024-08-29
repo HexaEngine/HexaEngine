@@ -47,7 +47,7 @@ namespace HexaEngine.Graphics.Renderers
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
-            ctx.SetPipelineState(pso);
+            ctx.SetGraphicsPipelineState(pso);
             ctx.SetViewport(viewport);
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
@@ -207,7 +207,7 @@ namespace HexaEngine.Graphics.Renderers
                 global_vtx_offset += cmdList.VtxBuffer.Size;
             }
 
-            ctx.SetPipelineState(null);
+            ctx.SetGraphicsPipelineState(null);
             ctx.SetViewport(default);
             ctx.SetVertexBuffer(null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);

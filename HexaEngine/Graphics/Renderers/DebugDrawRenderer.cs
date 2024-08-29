@@ -191,7 +191,7 @@
                 context.VSSetConstantBuffer(0, constantBuffer);
                 context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-                context.SetPipelineState(pso);
+                context.SetGraphicsPipelineState(pso);
                 context.VSSetConstantBuffer(0, constantBuffer);
                 context.PSSetSampler(0, fontSampler);
 
@@ -215,7 +215,7 @@
                 }
             }
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);
@@ -235,7 +235,7 @@
             context.VSSetConstantBuffer(0, constantBuffer);
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-            context.SetPipelineState(pso);
+            context.SetGraphicsPipelineState(pso);
             context.VSSetConstantBuffer(0, constantBuffer);
             context.PSSetSampler(0, fontSampler);
         }
@@ -307,7 +307,7 @@
                 }
             }
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);

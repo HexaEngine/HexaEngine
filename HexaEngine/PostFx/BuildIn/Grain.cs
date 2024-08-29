@@ -103,9 +103,9 @@
             context.PSSetShaderResource(0, Input);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, samplerState.Value);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetShaderResource(0, null);

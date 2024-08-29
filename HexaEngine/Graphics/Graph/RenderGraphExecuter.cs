@@ -40,7 +40,15 @@
                 pass.Init(resourceCreator, profiler);
                 resourceCreator.Container = null;
             }
+
             resourceCreator.CreateResources();
+
+            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            {
+                var idx = renderGraph.SortedNodeIndices[i];
+                var pass = renderPasses[idx];
+                pass.Prepare(resourceCreator);
+            }
         }
 
         public void TriggerOneHit()

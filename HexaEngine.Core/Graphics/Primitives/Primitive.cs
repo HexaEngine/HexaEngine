@@ -40,7 +40,7 @@
         /// <inheritdoc/>
         public void DrawAuto(IGraphicsContext context, IGraphicsPipelineState pipeline)
         {
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
@@ -53,7 +53,7 @@
                 context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
             context.SetVertexBuffer(null, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         /// <inheritdoc/>

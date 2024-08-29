@@ -28,13 +28,13 @@
                 return false;
             }
 
-            context.SetPipelineState(pipelineState);
+            context.SetGraphicsPipelineState(pipelineState);
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void Dispose()

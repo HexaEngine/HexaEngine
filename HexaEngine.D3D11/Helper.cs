@@ -2838,28 +2838,6 @@
             };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Silk.NET.Direct3D11.Texture2DDesc Convert(CombinedTex2DDesc description)
-        {
-            Silk.NET.Direct3D11.Texture2DDesc desc;
-            desc.Format = Convert(description.Format);
-            desc.Width = (uint)description.Width;
-            desc.Height = (uint)description.Height;
-            desc.ArraySize = (uint)description.ArraySize;
-            desc.MipLevels = (uint)description.MipLevels;
-
-            Convert(description.CpuAccessFlags, description.GpuAccessFlags, out var usage, out var bindFlags);
-
-            desc.Usage = Convert(usage);
-            desc.BindFlags = (uint)Convert(bindFlags);
-
-            desc.CPUAccessFlags = (uint)Convert(description.CpuAccessFlags);
-            desc.MiscFlags = (uint)Convert(description.MiscFlag);
-            desc.SampleDesc = Convert(description.SampleDescription);
-
-            return desc;
-        }
-
         internal static void Convert(CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, out Usage usage, out BindFlags bindFlags)
         {
             usage = 0;

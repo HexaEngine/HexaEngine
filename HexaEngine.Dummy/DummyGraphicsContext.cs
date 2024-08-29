@@ -331,17 +331,12 @@
             throw new NotImplementedException();
         }
 
-        public void SetComputePipeline(IComputePipeline? pipeline)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public void SetPipelineState(IGraphicsPipelineState? state)
+        public void SetGraphicsPipelineState(IGraphicsPipelineState? state)
         {
             throw new NotImplementedException();
         }

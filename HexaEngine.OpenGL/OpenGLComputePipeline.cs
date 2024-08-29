@@ -14,6 +14,8 @@
         private ShaderMacro[]? macros;
         private bool disposedValue;
 
+        public event Action<IPipeline>? OnCompile;
+
         public OpenGLComputePipeline(OpenGLGraphicsDevice device, ComputePipelineDesc desc, string dbgName)
         {
             PipelineManager.Register(this);

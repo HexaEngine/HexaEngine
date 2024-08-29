@@ -285,9 +285,9 @@
             nint* smps = stackalloc nint[] { pointClampSampler.NativePointer, linearClampSampler.NativePointer, linearBorderSampler.NativePointer };
             context.PSSetSamplers(0, 3, (void**)smps);
 
-            context.SetPipelineState(pipelineSSR);
+            context.SetGraphicsPipelineState(pipelineSSR);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             nint* emptySmps = stackalloc nint[3];
             context.PSSetSamplers(0, 3, (void**)emptySmps);

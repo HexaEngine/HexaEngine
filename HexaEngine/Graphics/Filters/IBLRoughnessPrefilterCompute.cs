@@ -11,7 +11,7 @@
     /// </summary>
     public class IBLRoughnessPrefilterCompute : IDisposable
     {
-        private readonly IComputePipeline pipeline;
+        private readonly IComputePipelineState pipeline;
         private readonly ConstantBuffer<RoughnessParams> roughnessBuffer;
         private readonly ISamplerState sampler;
 
@@ -31,13 +31,15 @@
 
         public IBLRoughnessPrefilterCompute(IGraphicsDevice device)
         {
-            pipeline = device.CreateComputePipeline(new()
+            pipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "filter/prefilter/cs.hlsl",
             });
 
             roughnessBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
+            pipeline.Bindings.SetSampler("defaultSampler", sampler);
+            pipeline.Bindings.SetCBV("ParamsBuffer", roughnessBuffer);
         }
 
         public unsafe void Dispatch(IGraphicsContext context, uint width, uint height)
@@ -49,17 +51,12 @@
 
             context.Write(roughnessBuffer, new RoughnessParams() { Roughness = Roughness });
 
-            context.CSSetConstantBuffer(0, roughnessBuffer);
-            context.CSSetShaderResource(0, Source);
-            context.CSSetSampler(0, sampler);
-            context.CSSetUnorderedAccessView((void*)Target.NativePointer);
-            context.SetComputePipeline(pipeline);
+            pipeline.Bindings.SetSRV("inputTexture", Source!);
+            pipeline.Bindings.SetUAV("outputTexture", Target!);
+
+            context.SetComputePipelineState(pipeline);
             context.Dispatch(width / ThreadCount, height / ThreadCount, 6);
-            context.SetComputePipeline(null);
-            context.CSSetUnorderedAccessView(null);
-            context.CSSetSampler(0, null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetConstantBuffer(0, null);
+            context.SetComputePipelineState(null);
         }
 
         protected virtual void Dispose(bool disposing)

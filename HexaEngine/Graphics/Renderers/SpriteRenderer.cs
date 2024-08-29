@@ -45,7 +45,7 @@
 
             constantBuffer.Update(context, constants);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.VSSetShaderResource(0, batch.Buffer.SRV);
             context.VSSetConstantBuffer(0, constantBuffer);
 
@@ -61,7 +61,7 @@
             context.VSSetConstantBuffer(0, null);
             context.VSSetShaderResource(0, null);
             context.VSSetConstantBuffer(1, null);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void Dispose()

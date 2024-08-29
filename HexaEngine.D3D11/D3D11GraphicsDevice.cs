@@ -18,7 +18,7 @@
     using SubresourceData = Core.Graphics.SubresourceData;
     using Usage = Core.Graphics.Usage;
 
-    public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice, IGraphicsDevice1
+    public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
         internal readonly D3D11 D3D11;
 
@@ -114,11 +114,6 @@
         // TODO: Implement this
         public GraphicsDeviceCapabilities Capabilities { get; }
 
-        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
-        {
-            return new D3D11CombinedTex2D(this, desc);
-        }
-
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return adapter.CreateSwapChainForWindow(this, window);
@@ -142,6 +137,11 @@
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return new D3D11ComputePipelineState((D3D11ComputePipeline)pipeline, $"({nameof(D3D11ComputePipelineState)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
@@ -634,6 +634,14 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            ComPtr<ID3D11DeviceContext3> context;
+            Device.CreateDeferredContext3(0, &context.Handle);
+            return new D3D11CommandBuffer(this, context);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
         {
             ComPtr<ID3D11UnorderedAccessView> view;
@@ -643,9 +651,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
         {
             return new D3D11ResourceBindingList((D3D11GraphicsPipeline)pipeline);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
+        {
+            return new D3D11ResourceBindingList((D3D11ComputePipeline)pipeline);
         }
     }
 }

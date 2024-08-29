@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Dummy
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using System;
@@ -14,6 +15,7 @@
         public ITextureLoader TextureLoader { get; }
 
         public IGPUProfiler Profiler { get; }
+        public GraphicsDeviceCapabilities Capabilities { get; }
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
@@ -32,9 +34,19 @@
             return new DummyBuffer(description);
         }
 
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new DummyComputePipeline(desc);
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public IGraphicsContext CreateDeferredContext()
@@ -87,7 +99,12 @@
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
             throw new NotImplementedException();
         }
@@ -133,6 +150,16 @@
         }
 
         public unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe ISwapChain CreateSwapChain(SDLWindow* window)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

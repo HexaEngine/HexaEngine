@@ -4,16 +4,19 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
 
-    public unsafe class D3D11ComputePipeline : DisposableBase, IComputePipeline
+    public unsafe class D3D11ComputePipeline : DisposableBase, IComputePipeline, IPipeline
     {
-        private readonly D3D11GraphicsDevice device;
         private readonly string dbgName;
-        private bool valid;
-        private bool initialized;
-        private ComPtr<ID3D11ComputeShader> cs;
+        private readonly D3D11GraphicsDevice device;
         private ComputePipelineDesc desc;
         private ShaderMacro[]? macros;
-        private bool disposedValue;
+
+        internal ComPtr<ID3D11ComputeShader> cs;
+
+        internal Shader* computeShaderBlob;
+
+        private bool valid;
+        private volatile bool initialized;
 
         public D3D11ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc, string dbgName)
         {
@@ -116,6 +119,8 @@
             context.CSSetShader((ID3D11ComputeShader*)null, null, 0);
         }
 
+        public event Action<IPipeline>? OnCompile;
+
         public void Recompile()
         {
             initialized = false;
@@ -123,9 +128,14 @@
             if (cs.Handle != null)
             {
                 cs.Release();
+                cs = default;
             }
 
-            cs = null;
+            if (computeShaderBlob != null)
+            {
+                Free(computeShaderBlob);
+                computeShaderBlob = null;
+            }
 
             Compile(true);
 
@@ -149,16 +159,20 @@
                 device.Device.CreateComputeShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &computeShader.Handle);
                 cs = computeShader;
                 Utils.SetDebugName(cs, dbgName);
-                Free(shader);
-                valid = true;
+
+                computeShaderBlob = shader;
             }
+
+            valid = true;
+
+            OnCompile?.Invoke(this);
         }
 
         protected virtual ShaderMacro[] GetShaderMacros()
         {
             if (macros == null)
             {
-                return Array.Empty<ShaderMacro>();
+                return [];
             }
             return macros;
         }
@@ -169,6 +183,13 @@
             if (cs.Handle != null)
             {
                 cs.Release();
+                cs = default;
+            }
+
+            if (computeShaderBlob != null)
+            {
+                Free(computeShaderBlob);
+                computeShaderBlob = null;
             }
         }
     }

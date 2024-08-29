@@ -142,6 +142,8 @@
         private readonly Stack<string> forwardHistory = new();
         private string? CurrentFolder = null;
 
+        private SemaphoreSlim refreshLock = new(1);
+
         private bool showExtensions = false;
         private bool showHidden = false;
 
@@ -363,83 +365,85 @@
             {
                 RefreshDirs();
             }
-            lock (this)
+
+            refreshLock.Wait();
+            files.Clear();
+            dirs.Clear();
+            if (CurrentFolder == null)
             {
-                files.Clear();
-                dirs.Clear();
-                if (CurrentFolder == null)
-                {
-                    return;
-                }
-
-                currentDir = new(CurrentFolder);
-                parentDir = currentDir?.Parent;
-
-                foreach (var fse in System.IO.Directory.GetFileSystemEntries(CurrentFolder))
-                {
-                    bool isDir = System.IO.Directory.Exists(fse);
-                    bool isFile = File.Exists(fse);
-
-                    if (!isDir && !isFile)
-                    {
-                        continue;
-                    }
-
-                    if (SourceAssetsDatabase.IsIgnored(fse))
-                    {
-                        continue;
-                    }
-
-                    if (fse.EndsWith(".meta") && !showHidden)
-                    {
-                        continue;
-                    }
-
-                    if (System.IO.Directory.Exists(fse))
-                    {
-                        dirs.Add(new(Path.GetFileName(fse), fse, null, null));
-                    }
-                    else
-                    {
-                        var metadata = SourceAssetsDatabase.GetMetadata(fse);
-                        Ref<Texture2D>? thumbnail = null;
-                        if (metadata != null)
-                        {
-                            SourceAssetsDatabase.ThumbnailCache.TryGet(metadata.Guid, out thumbnail);
-                            if (metadata.ParentGuid != default)
-                            {
-                                groups.Add(metadata.ParentGuid);
-                            }
-                        }
-                        files.Add(new(Path.GetFileName(fse), fse, metadata, thumbnail));
-                    }
-                }
-
-                for (int i = 0; i < files.Count; i++)
-                {
-                    var file = files[i];
-                    if (file.Metadata == null || file.Metadata.ParentGuid == default)
-                    {
-                        continue;
-                    }
-
-                    Guid parentGuid = file.Metadata.ParentGuid;
-
-                    for (int j = 0; j < files.Count; j++)
-                    {
-                        var item = files[j];
-                        if (item.Metadata != null && item.Metadata.Guid == parentGuid)
-                        {
-                            item.GroupItems.Add(file);
-                            files.RemoveAt(i);
-                            i--;
-                            break;
-                        }
-                    }
-                }
-
-                files.Sort(new ItemGroupComparer(groups));
+                refreshLock.Release();
+                return;
             }
+
+            currentDir = new(CurrentFolder);
+            parentDir = currentDir?.Parent;
+
+            foreach (var fse in System.IO.Directory.GetFileSystemEntries(CurrentFolder))
+            {
+                bool isDir = System.IO.Directory.Exists(fse);
+                bool isFile = File.Exists(fse);
+
+                if (!isDir && !isFile)
+                {
+                    continue;
+                }
+
+                if (SourceAssetsDatabase.IsIgnored(fse))
+                {
+                    continue;
+                }
+
+                if (fse.EndsWith(".meta") && !showHidden)
+                {
+                    continue;
+                }
+
+                if (System.IO.Directory.Exists(fse))
+                {
+                    dirs.Add(new(Path.GetFileName(fse), fse, null, null));
+                }
+                else
+                {
+                    var metadata = SourceAssetsDatabase.GetMetadata(fse);
+                    Ref<Texture2D>? thumbnail = null;
+                    if (metadata != null)
+                    {
+                        SourceAssetsDatabase.ThumbnailCache.TryGet(metadata.Guid, out thumbnail);
+                        if (metadata.ParentGuid != default)
+                        {
+                            groups.Add(metadata.ParentGuid);
+                        }
+                    }
+                    files.Add(new(Path.GetFileName(fse), fse, metadata, thumbnail));
+                }
+            }
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                var file = files[i];
+                if (file.Metadata == null || file.Metadata.ParentGuid == default)
+                {
+                    continue;
+                }
+
+                Guid parentGuid = file.Metadata.ParentGuid;
+
+                for (int j = 0; j < files.Count; j++)
+                {
+                    var item = files[j];
+                    if (item.Metadata != null && item.Metadata.Guid == parentGuid)
+                    {
+                        item.GroupItems.Add(file);
+                        files.RemoveAt(i);
+                        i--;
+                        break;
+                    }
+                }
+            }
+
+            files.Sort(new ItemGroupComparer(groups));
+
+            refreshLock.Release();
         }
 
         public void SetFolder(string? path)
@@ -1150,7 +1154,7 @@
 
                 bool isContentHovered = false;
 
-                lock (this)
+                if (refreshLock.Wait(0))
                 {
                     for (int i = 0; i < dirs.Count; i++)
                     {
@@ -1170,6 +1174,8 @@
                     {
                         isContentHovered |= DisplayFile(size, windowSize, ref x, files[i]);
                     }
+
+                    refreshLock.Release();
                 }
 
                 if (!isContentHovered && ImGui.IsWindowHovered() && ImGui.IsMouseClicked(0))

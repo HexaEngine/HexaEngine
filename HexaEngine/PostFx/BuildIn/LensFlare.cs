@@ -143,7 +143,7 @@
         public override void Draw(IGraphicsContext context)
         {
             // downsample and threshold
-            context.SetPipelineState(downsamplePipeline);
+            context.SetGraphicsPipelineState(downsamplePipeline);
             context.SetRenderTarget(downsampleBuffer.Value.RTV, null);
             context.SetViewport(downsampleBuffer.Value.Viewport);
             context.PSSetShaderResource(0, Input);
@@ -152,7 +152,7 @@
             context.DrawInstanced(4, 1, 0, 0);
 
             // lens
-            context.SetPipelineState(lensPipeline);
+            context.SetGraphicsPipelineState(lensPipeline);
             context.SetRenderTarget(accumBuffer.Value.RTV, null);
             context.SetViewport(accumBuffer.Value.Viewport);
             context.PSSetShaderResource(0, downsampleBuffer.Value.SRV);

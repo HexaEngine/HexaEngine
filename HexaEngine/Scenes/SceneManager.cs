@@ -6,6 +6,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
+    using HexaEngine.Lights;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
@@ -531,6 +532,11 @@
         {
             SceneChangedEventArgs sceneChangedEventArgs = new(changeType, oldScene, newScene);
             SceneChanged?.Invoke(null, sceneChangedEventArgs);
+        }
+
+        internal static void Shutdown()
+        {
+            LightManager.Shutdown();
         }
     }
 }

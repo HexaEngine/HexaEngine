@@ -242,13 +242,13 @@ namespace HexaEngine.PostFx.BuildIn
             nint* composeSRVs = stackalloc nint[] { Input.NativePointer, lumaTex.Value.SRV.NativePointer };
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.SetPipelineState(compose);
+            context.SetGraphicsPipelineState(compose);
             context.PSSetShaderResources(0, 2, (void**)composeSRVs);
             context.PSSetSampler(0, linearSampler);
             context.DrawInstanced(4, 1, 0, 0);
             context.PSSetSampler(0, null);
             context.PSSetShaderResources(0, 2, (void**)emptyUAV2s);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

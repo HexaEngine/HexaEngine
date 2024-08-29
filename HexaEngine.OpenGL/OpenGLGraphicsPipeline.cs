@@ -17,6 +17,8 @@
         protected bool valid;
         protected volatile bool initialized;
 
+        public event Action<IPipeline>? OnCompile;
+
         public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, string dbgName)
         {
             this.device = device;

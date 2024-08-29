@@ -33,12 +33,8 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private const uint nConstantBuffers = 3;
-        private unsafe void** smps;
-        private const uint nSamplers = 4;
 
         private ResourceRef<IGraphicsPipelineState> deferred;
-        private unsafe void** deferredSrvs;
-        private const uint nDeferredSrvs = 16;
 
         private readonly bool forceForward = true;
 
@@ -70,7 +66,6 @@ namespace HexaEngine.Graphics.Passes
             probeParamsBuffer = creator.CreateConstantBuffer<ProbeBufferParams>("ProbeBufferParams", CpuAccessFlags.Write);
             lightParamsBuffer = creator.CreateConstantBuffer<DeferredLightParams>("DeferredLightParams", CpuAccessFlags.Write);
 
-            smps = AllocArrayAndZero(nSamplers);
             linearClampSampler = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
@@ -80,8 +75,8 @@ namespace HexaEngine.Graphics.Passes
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
-            deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
-
+            var stateDesc = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen;
+            stateDesc.Flags = GraphicsPipelineStateFlags.CreateResourceBindingList;
             deferred = creator.CreateGraphicsPipelineState(new()
             {
                 Pipeline = new()
@@ -89,8 +84,76 @@ namespace HexaEngine.Graphics.Passes
                     VertexShader = "quad.hlsl",
                     PixelShader = "deferred/brdf/light.hlsl",
                 },
-                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
+                State = stateDesc
             });
+
+            LightManager.ActiveLightsChanged += ActiveLightsChanged;
+        }
+
+        private unsafe void ActiveLightsChanged(object sender, LightManager manager)
+        {
+            var bindings = deferred.Value.Bindings;
+
+            bindings.SetSRV("globalProbes", manager.GlobalProbes.SRV);
+            bindings.SetSRV("lights", manager.LightBuffer.SRV);
+            bindings.SetSRV("shadowData", manager.ShadowDataBuffer.SRV);
+
+            IShaderResourceView csmBuffer = null;
+            for (int i = 0; i < manager.ActiveCount; i++)
+            {
+                var light = manager.Active[i];
+                if (light is DirectionalLight directional && directional.ShadowMapEnable)
+                {
+                    csmBuffer = directional.GetShadowMap();
+                    break;
+                }
+            }
+            bindings.SetSRV("depthCSM", csmBuffer);
+
+            IShaderResourceView globalDiffuseIbl = null;
+            IShaderResourceView globalSpecularIbl = null;
+            for (int i = 0; i < manager.ActiveCount; i++)
+            {
+                var light = manager.Active[i];
+                if (light is IBLLight iBLLight)
+                {
+                    globalDiffuseIbl = iBLLight.DiffuseMap?.SRV; // IBL global diffuse
+                    globalSpecularIbl = iBLLight.SpecularMap?.SRV; // IBL global specular
+                    break;
+                }
+            }
+            bindings.SetSRV("globalDiffuse", globalDiffuseIbl);
+            bindings.SetSRV("globalSpecular", globalSpecularIbl);
+        }
+
+        public override unsafe void Prepare(GraphResourceBuilder creator)
+        {
+            var bindings = deferred.Value.Bindings;
+            bindings.SetSampler("linearClampSampler", linearClampSampler.Value);
+            bindings.SetSampler("linearWrapSampler", linearWrapSampler.Value);
+            bindings.SetSampler("pointClampSampler", pointClampSampler.Value);
+            bindings.SetSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
+
+            bindings.SetCBV("CameraBuffer", camera.Value);
+            bindings.SetCBV("WeatherCBuf", weather.Value);
+
+            bindings.SetSRV("ssao", AOBuffer.Value.SRV);
+            bindings.SetSRV("iblDFG", brdfLUT.Value.SRV);
+
+            bindings.SetSRV("lightIndexList", lightIndexList.Value.SRV);
+            bindings.SetSRV("lightGrid", lightGridBuffer.Value.SRV);
+            bindings.SetSRV("depthAtlas", shadowAtlas.Value.SRV);
+
+            GBuffer gbuffer = this.gbuffer.Value;
+            bindings.SetSRV("GBufferA", gbuffer.SRVs[0]);
+            bindings.SetSRV("GBufferB", gbuffer.SRVs[1]);
+            bindings.SetSRV("GBufferC", gbuffer.SRVs[2]);
+            bindings.SetSRV("GBufferD", gbuffer.SRVs[3]);
+
+            bindings.SetSRV("Depth", depthStencil.Value.SRV);
+
+            cbs[1] = (void*)camera.Value.NativePointer;
+            cbs[2] = (void*)weather.Value.NativePointer;
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
@@ -107,59 +170,6 @@ namespace HexaEngine.Graphics.Passes
             }
 
             var renderers = current.RenderManager;
-            var lights = current.LightManager;
-            var globalProbes = lights.GlobalProbes;
-
-            deferredSrvs[0] = (void*)AOBuffer.Value.SRV.NativePointer;
-            deferredSrvs[1] = (void*)brdfLUT.Value.SRV.NativePointer;
-            deferredSrvs[2] = (void*)globalProbes.SRV.NativePointer;
-            deferredSrvs[3] = (void*)lights.LightBuffer.SRV.NativePointer;
-            deferredSrvs[4] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
-            deferredSrvs[5] = (void*)lightIndexList.Value.SRV.NativePointer;
-            deferredSrvs[6] = (void*)lightGridBuffer.Value.SRV.NativePointer;
-            deferredSrvs[7] = (void*)shadowAtlas.Value.SRV.NativePointer;
-            deferredSrvs[8] = null;
-            for (int i = 0; i < lights.ActiveCount; i++)
-            {
-                var light = lights.Active[i];
-                if (light is DirectionalLight directional && directional.ShadowMapEnable)
-                {
-                    deferredSrvs[8] = (void*)(directional.GetShadowMap()?.NativePointer ?? 0);
-                    break;
-                }
-            }
-
-            deferredSrvs[9] = null; // IBL global diffuse
-            deferredSrvs[10] = null; // IBL global specular
-            for (int i = 0; i < lights.ActiveCount; i++)
-            {
-                var light = lights.Active[i];
-                if (light is IBLLight iBLLight)
-                {
-                    deferredSrvs[9] = (void*)(iBLLight.DiffuseMap?.SRV.NativePointer ?? 0); // IBL global diffuse
-                    deferredSrvs[10] = (void*)(iBLLight.SpecularMap?.SRV.NativePointer ?? 0); // IBL global specular
-                    break;
-                }
-            }
-
-            const int deferredBaseIndex = 11;
-            GBuffer gbuffer = this.gbuffer.Value;
-            for (int i = 0; i < 4; i++)
-            {
-                if (i < gbuffer.Count)
-                {
-                    deferredSrvs[i + deferredBaseIndex] = (void*)gbuffer.SRVs[i]?.NativePointer;
-                }
-            }
-            deferredSrvs[deferredBaseIndex + 4] = (void*)depthStencil.Value.SRV.NativePointer;
-
-            cbs[1] = (void*)camera.Value.NativePointer;
-            cbs[2] = (void*)weather.Value.NativePointer;
-
-            smps[0] = (void*)linearClampSampler.Value.NativePointer;
-            smps[1] = (void*)linearWrapSampler.Value.NativePointer;
-            smps[2] = (void*)pointClampSampler.Value.NativePointer;
-            smps[3] = (void*)anisotropicClampSampler.Value.NativePointer;
 
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);
@@ -179,31 +189,14 @@ namespace HexaEngine.Graphics.Passes
             context.DSSetConstantBuffer(1, null);
             context.GSSetConstantBuffer(1, null);
             context.CSSetConstantBuffer(1, null);
+
             context.Device.Profiler.Begin(context, "Light.Deferred");
             context.SetRenderTarget(lightBuffer.Value.RTV, null);
 
-            var probeParamsBuffer = this.probeParamsBuffer.Value;
-            var probeParams = probeParamsBuffer.Local;
-            probeParams->GlobalProbes = globalProbes.Count;
-            probeParamsBuffer.Update(context);
-            cbs[0] = (void*)probeParamsBuffer.Buffer?.NativePointer;
-
-            context.PSSetSamplers(0, nSamplers, smps);
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
-
-            context.SetPipelineState(deferred.Value);
+            context.SetGraphicsPipelineState(deferred.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
-            nint* null_samplers = stackalloc nint[(int)nSamplers];
-            context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
-
-            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
-            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
-
-            nint* null_srvs = stackalloc nint[(int)nDeferredSrvs];
-            context.PSSetShaderResources(0, nDeferredSrvs, (void**)null_srvs);
             context.Device.Profiler.End(context, "Light.Deferred");
         }
     }

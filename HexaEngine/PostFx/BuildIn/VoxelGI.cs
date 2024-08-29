@@ -133,7 +133,7 @@ namespace HexaEngine.PostFx.BuildIn
         {
             context.SetRenderTargetsAndUnorderedAccessViews(null, null, 0, voxels.UAV);
             context.PSSetShaderResource(1, lights.SRV);
-            context.SetPipelineState(voxelize);
+            context.SetGraphicsPipelineState(voxelize);
             context.SetViewport(new(VoxelResolution));
         }
     }

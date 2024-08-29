@@ -53,21 +53,25 @@
                 profiler?.Begin("DebugDraw");
                 context.SetRenderTarget(postFxBuffer.Value, depthStencil.Value);
                 DebugDraw.SetViewport(creator.Viewport.Offset, creator.Viewport.Size);
+                profiler?.Begin("DebugDraw.EndDraw");
                 debugDrawRenderer?.EndDraw();
+                profiler?.End("DebugDraw.EndDraw");
                 context.SetViewport(creator.Viewport);
+                profiler?.Begin("DebugDraw.BeginDraw");
                 debugDrawRenderer?.BeginDraw();
+                profiler?.End("DebugDraw.BeginDraw");
                 profiler?.End("DebugDraw");
             }
 
             context.SetRenderTarget(creator.Output, null);
             context.SetViewport(creator.OutputViewport);
-            context.SetPipelineState(copyPipeline.Value);
+            context.SetGraphicsPipelineState(copyPipeline.Value);
             context.PSSetShaderResource(0, postFxBuffer.Value);
             context.PSSetSampler(0, samplerState.Value);
             context.DrawInstanced(4, 1, 0, 0);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

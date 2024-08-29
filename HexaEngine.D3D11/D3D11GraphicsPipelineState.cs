@@ -7,7 +7,14 @@
     using Silk.NET.Direct3D11;
     using System.Numerics;
 
-    public unsafe class D3D11GraphicsPipelineState : DisposableBase, IGraphicsPipelineState
+    public abstract class D3D11PipelineState : DisposableBase
+    {
+        internal abstract void SetState(ComPtr<ID3D11DeviceContext3> context);
+
+        internal abstract void UnsetState(ComPtr<ID3D11DeviceContext3> context);
+    }
+
+    public unsafe class D3D11GraphicsPipelineState : D3D11PipelineState, IGraphicsPipelineState
     {
         private readonly D3D11GraphicsDevice device;
         private readonly D3D11GraphicsPipeline pipeline;
@@ -43,7 +50,7 @@
                 pipeline.OnCreateLayout += CreateLayout;
                 vs = pipeline.vs;
                 hs = pipeline.hs;
-                this.ds = pipeline.ds;
+                ds = pipeline.ds;
                 gs = pipeline.gs;
                 ps = pipeline.ps;
             }
@@ -154,7 +161,7 @@
             isValid = true;
         }
 
-        private void OnPipelineCompile(IGraphicsPipeline pipe)
+        private void OnPipelineCompile(IPipeline pipe)
         {
             D3D11GraphicsPipeline pipeline = (D3D11GraphicsPipeline)pipe;
             vs = pipeline.vs;
@@ -196,7 +203,9 @@
 
         public IResourceBindingList Bindings => resourceBindingList;
 
-        internal void SetState(ComPtr<ID3D11DeviceContext3> context)
+        public string DebugName => dbgName;
+
+        internal override void SetState(ComPtr<ID3D11DeviceContext3> context)
         {
             context.VSSetShader(vs, null, 0);
             context.HSSetShader(hs, null, 0);
@@ -217,7 +226,7 @@
             resourceBindingList?.BindGraphics(context);
         }
 
-        internal static void UnsetState(ComPtr<ID3D11DeviceContext3> context)
+        internal override void UnsetState(ComPtr<ID3D11DeviceContext3> context)
         {
             context.VSSetShader((ID3D11VertexShader*)null, null, 0);
             context.HSSetShader((ID3D11HullShader*)null, null, 0);
@@ -230,6 +239,8 @@
             context.OMSetDepthStencilState((ID3D11DepthStencilState*)null, 0);
             context.IASetInputLayout((ID3D11InputLayout*)null);
             context.IASetPrimitiveTopology(0);
+
+            resourceBindingList?.UnbindGraphics(context);
         }
 
         protected override void DisposeCore()

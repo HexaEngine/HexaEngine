@@ -61,11 +61,6 @@
         Full = SupportsGeometryShaders | SupportsComputeShaders | SupportsTessellationShaders | SupportsCommandLists | SupportsRayTracing,
     }
 
-    public interface IGraphicsDevice1 : IGraphicsDevice
-    {
-        ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
-    }
-
     /// <summary>
     /// Represents a graphics device used for rendering.
     /// </summary>
@@ -103,7 +98,9 @@
         /// <returns>The created swap chain.</returns>
         ISwapChain CreateSwapChain(SdlWindow window);
 
-        IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline);
+        IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline);
+
+        IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline);
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.
@@ -336,7 +333,10 @@
         /// Creates a deferred graphics context for command recording.
         /// </summary>
         /// <returns>The created deferred graphics context.</returns>
+        [Obsolete("Use command buffers")]
         IGraphicsContext CreateDeferredContext();
+
+        ICommandBuffer CreateCommandBuffer();
 
         /// <summary>
         /// Creates an unordered access view for a resource.
@@ -391,6 +391,30 @@
         IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineStateDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return CreateGraphicsPipelineState(desc.Pipeline, desc.State, filename, line);
+        }
+
+        /// <summary>
+        /// Creates a graphics pipeline state object.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline containing shaders.</param>
+        /// <param name="filename">The file path of the caller (automatically provided).</param>
+        /// <param name="line">The line number of the caller (automatically provided).</param>
+        /// <returns>The created graphics pipeline state object.</returns>
+        IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+
+        /// <summary>
+        /// Creates a graphics pipeline state object.
+        /// </summary>
+        /// <param name="desc">The description of the compute pipeline.</param>
+        /// <param name="filename">The file path of the caller (automatically provided).</param>
+        /// <param name="line">The line number of the caller (automatically provided).</param>
+        /// <returns>The created graphics pipeline state object.</returns>
+        IComputePipelineState CreateComputePipelineState(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            var pipeline = CreateComputePipeline(desc, filename, line);
+            var pso = CreateComputePipelineState(pipeline, filename, line);
+            pipeline.Dispose();
+            return pso;
         }
 
         /// <summary>

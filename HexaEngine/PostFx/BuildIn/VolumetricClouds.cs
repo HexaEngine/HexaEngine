@@ -103,7 +103,7 @@
             nint* cbcs = stackalloc nint[] { camera.Value.NativePointer, weather.Value.NativePointer };
             context.PSSetConstantBuffers(1, 2, (void**)cbcs);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
 
             context.ClearState();

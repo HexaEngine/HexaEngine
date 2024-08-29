@@ -4,6 +4,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
     public struct ShaderParameter
     {
@@ -21,9 +22,284 @@
         Sampler,
     }
 
+    public unsafe class D3D11DescriptorRange
+    {
+        public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters, Dictionary<string, ShaderParameter> shaderParametersByName)
+        {
+            Stage = stage;
+            Type = type;
+            Parameters = parameters;
+            ShaderParametersByName = shaderParametersByName;
+            Ranges = [];
+            uint startSlot = uint.MaxValue;
+
+            uint maxSlot = 0;
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                ShaderParameter parameter = parameters[i];
+                startSlot = Math.Min(startSlot, parameter.Index);
+                maxSlot = Math.Max(maxSlot, parameter.Index);
+            }
+
+            uint count = parameters.Count == 0 ? 0 : (maxSlot + 1) - startSlot;
+
+            StartSlot = startSlot;
+            Count = count;
+
+            if (count == 0)
+            {
+                return;
+            }
+            Resources = (void**)AllocT<nint>(count);
+            ZeroMemory(Resources, Count * sizeof(nint));
+        }
+
+        public readonly ShaderStage Stage;
+        public readonly ShaderParameterType Type;
+        public readonly uint StartSlot;
+        public readonly uint Count;
+        public readonly void** Resources;
+
+        public readonly List<ShaderParameter> Parameters;
+        public readonly Dictionary<string, ShaderParameter> ShaderParametersByName;
+        public UnsafeList<ResourceRange> Ranges;
+
+        public struct ResourceRange
+        {
+            public void** Start;
+            public int Length;
+
+            public ResourceRange(void** start, int length)
+            {
+                Start = start;
+                Length = length;
+            }
+        }
+
+        public void SetByName(string name, void* resource)
+        {
+            var parameter = ShaderParametersByName[name];
+            Resources[parameter.Index - StartSlot] = resource;
+            UpdateRanges(parameter.Index - StartSlot, resource == null);
+        }
+
+        public bool TrySetByName(string name, void* resource)
+        {
+            if (ShaderParametersByName.TryGetValue(name, out var parameter))
+            {
+                Resources[parameter.Index - StartSlot] = resource;
+                UpdateRanges(parameter.Index - StartSlot, resource == null);
+                return true;
+            }
+            return false;
+        }
+
+        private void UpdateRanges(uint idx, bool clear)
+        {
+            if (clear)
+            {
+                // Resource is set to null; remove or adjust the range
+                for (int i = 0; i < Ranges.Count; i++)
+                {
+                    ResourceRange* range = Ranges.GetPointer(i);
+                    int rangeStart = (int)(range->Start - Resources);
+                    int rangeEnd = rangeStart + range->Length - 1;
+
+                    if (idx >= rangeStart && idx <= rangeEnd)
+                    {
+                        // The null resource falls within this range
+                        if (range->Length == 1)
+                        {
+                            // The range has only this single entry; remove the range
+                            Ranges.RemoveAt(i);
+                        }
+                        else if (idx == rangeStart)
+                        {
+                            // Adjust the range to start after the null entry
+                            range->Start++;
+                            range->Length--;
+                        }
+                        else if (idx == rangeEnd)
+                        {
+                            // Adjust the range to end before the null entry
+                            range->Length--;
+                        }
+                        else
+                        {
+                            // Split the range into two separate ranges
+                            var newRange = new ResourceRange
+                            {
+                                Start = range->Start + (idx - rangeStart + 1),
+                                Length = rangeEnd - (int)idx
+                            };
+
+                            range->Length = (int)(idx - rangeStart);
+                            Ranges.Insert(i + 1, newRange);
+                        }
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // Handle setting a non-null resource
+                for (int i = 0; i < Ranges.Count; i++)
+                {
+                    ResourceRange* range = Ranges.GetPointer(i);
+                    int rangeStart = (int)(range->Start - Resources);
+                    int rangeEnd = rangeStart + range->Length - 1;
+
+                    if (idx == rangeStart - 1)
+                    {
+                        // Extend the range at the beginning
+                        range->Start--;
+                        range->Length++;
+
+                        // Check if we need to merge with the previous range
+                        if (i > 0)
+                        {
+                            ResourceRange* previousRange = Ranges.GetPointer(i - 1);
+                            if (previousRange->Start + previousRange->Length == range->Start)
+                            {
+                                previousRange->Length += range->Length;
+                                Ranges.RemoveAt(i);
+                            }
+                        }
+                        return;
+                    }
+                    else if (idx == rangeEnd + 1)
+                    {
+                        // Extend the range at the end
+                        range->Length++;
+
+                        // Check if we need to merge with the next range
+                        if (i < Ranges.Count - 1)
+                        {
+                            ResourceRange* nextRange = Ranges.GetPointer(i + 1);
+                            if (range->Start + range->Length == nextRange->Start)
+                            {
+                                range->Length += nextRange->Length;
+                                Ranges.RemoveAt(i + 1);
+                            }
+                        }
+                        return;
+                    }
+                    else if (idx < rangeStart)
+                    {
+                        // Insert a new range before this one
+                        var newRange = new ResourceRange { Start = Resources + idx, Length = 1 };
+                        Ranges.Insert(i, newRange);
+
+                        // Check if we need to merge with the next range
+                        if (i < Ranges.Count - 1)
+                        {
+                            ResourceRange* nextRange = Ranges.GetPointer(i + 1);
+                            if (newRange.Start + newRange.Length == nextRange->Start)
+                            {
+                                newRange.Length += nextRange->Length;
+                                Ranges.RemoveAt(i + 1);
+                            }
+                        }
+                        return;
+                    }
+                }
+
+                // If no existing range is found, add a new one at the end
+                var endRange = new ResourceRange { Start = Resources + idx, Length = 1 };
+                Ranges.Add(endRange);
+
+                // Check if we need to merge with the previous range
+                if (Ranges.Count > 1)
+                {
+                    ResourceRange* previousRange = Ranges.GetPointer(Ranges.Count - 2);
+                    if (previousRange->Start + previousRange->Length == endRange.Start)
+                    {
+                        previousRange->Length += endRange.Length;
+                        Ranges.RemoveAt(Ranges.Count - 1);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Bind(ComPtr<ID3D11DeviceContext3> context, void* func)
+        {
+            var function = (delegate*<ID3D11DeviceContext3*, uint, uint, void**, void>)func;
+            for (int i = 0; i < Ranges.Count; i++)
+            {
+                ResourceRange range = Ranges[i];
+
+                if (range.Length > 0)
+                {
+                    void** resources = range.Start;
+                    var start = (uint)(range.Start - Resources);
+                    function(context, StartSlot + start, (uint)range.Length, resources);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void BindUAV(ComPtr<ID3D11DeviceContext3> context)
+        {
+            for (int i = 0; i < Ranges.Count; i++)
+            {
+                ResourceRange range = Ranges[i];
+
+                if (range.Length > 0)
+                {
+                    void** resources = range.Start;
+                    var start = (uint)(range.Start - Resources);
+                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, (uint*)null);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Unbind(ComPtr<ID3D11DeviceContext3> context, void* func)
+        {
+            nint* resources = stackalloc nint[256];
+            var function = (delegate*<ID3D11DeviceContext3*, uint, uint, void**, void>)func;
+            for (int i = 0; i < Ranges.Count; i++)
+            {
+                ResourceRange range = Ranges[i];
+
+                if (range.Length > 0)
+                {
+                    var start = (uint)(range.Start - Resources);
+                    function(context, StartSlot + start, (uint)range.Length, (void**)resources);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UnbindUAV(ComPtr<ID3D11DeviceContext3> context)
+        {
+            nint* resources = stackalloc nint[256];
+            for (int i = 0; i < Ranges.Count; i++)
+            {
+                ResourceRange range = Ranges[i];
+
+                if (range.Length > 0)
+                {
+                    var start = (uint)(range.Start - Resources);
+                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, (uint*)null);
+                }
+            }
+        }
+
+        public void Release()
+        {
+            if (Resources != null)
+            {
+                Free(Resources);
+            }
+            Ranges.Release();
+        }
+    }
+
     public unsafe class D3D11ResourceBindingList : DisposableBase, IResourceBindingList
     {
-        private readonly D3D11GraphicsPipeline pipeline;
+        private readonly IPipeline pipeline;
         private readonly List<ShaderParameter> shaderParameters = [];
         private readonly Dictionary<string, ShaderParameter> shaderParametersByName = [];
         private readonly List<D3D11DescriptorRange> rangesSRVs = [];
@@ -44,7 +320,16 @@
             Reflect(pipeline.pixelShaderBlob, ShaderStage.Pixel);
         }
 
-        private void OnPipelineCompile(IGraphicsPipeline pipe)
+        public D3D11ResourceBindingList(D3D11ComputePipeline pipeline)
+        {
+            pipeline.AddRef();
+            pipeline.OnCompile += OnPipelineCompile;
+            this.pipeline = pipeline;
+
+            Reflect(pipeline.computeShaderBlob, ShaderStage.Compute);
+        }
+
+        private void OnPipelineCompile(IPipeline pipe)
         {
             D3D11GraphicsPipeline pipeline = (D3D11GraphicsPipeline)pipe;
             Clear();
@@ -57,115 +342,62 @@
 
         public void SetSRV(string name, IShaderResourceView srv)
         {
+            var p = srv?.NativePointer ?? 0;
             for (int i = 0; i < rangesSRVs.Count; i++)
             {
-                rangesSRVs[i].TrySetByName(name, (void*)srv.NativePointer);
+                rangesSRVs[i].TrySetByName(name, (void*)p);
             }
         }
 
         public void SetUAV(string name, IUnorderedAccessView uav)
         {
+            var p = uav?.NativePointer ?? 0;
             for (int i = 0; i < rangesUAVs.Count; i++)
             {
-                rangesUAVs[i].TrySetByName(name, (void*)uav.NativePointer);
+                rangesUAVs[i].TrySetByName(name, (void*)p);
             }
         }
 
         public void SetCBV(string name, IBuffer cbv)
         {
+            var p = cbv?.NativePointer ?? 0;
             for (int i = 0; i < rangesCBVs.Count; i++)
             {
-                rangesCBVs[i].TrySetByName(name, (void*)cbv.NativePointer);
+                rangesCBVs[i].TrySetByName(name, (void*)p);
             }
         }
 
         public void SetSampler(string name, ISamplerState sampler)
         {
+            var p = sampler?.NativePointer ?? 0;
             for (int i = 0; i < rangesSamplers.Count; i++)
             {
-                rangesSamplers[i].TrySetByName(name, (void*)sampler.NativePointer);
+                rangesSamplers[i].TrySetByName(name, (void*)p);
             }
         }
 
         public void SetSRV(string name, ShaderStage stage, IShaderResourceView srv)
         {
-            rangesSRVs[(int)stage].TrySetByName(name, (void*)srv.NativePointer);
+            var p = srv?.NativePointer ?? 0;
+            rangesSRVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
         public void SetUAV(string name, ShaderStage stage, IUnorderedAccessView uav)
         {
-            rangesUAVs[(int)stage].TrySetByName(name, (void*)uav.NativePointer);
+            var p = uav?.NativePointer ?? 0;
+            rangesUAVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
         public void SetCBV(string name, ShaderStage stage, IBuffer cbv)
         {
-            rangesCBVs[(int)stage].TrySetByName(name, (void*)cbv.NativePointer);
+            var p = cbv?.NativePointer ?? 0;
+            rangesCBVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
         public void SetSampler(string name, ShaderStage stage, ISamplerState sampler)
         {
-            rangesSamplers[(int)stage].TrySetByName(name, (void*)sampler.NativePointer);
-        }
-
-        private class D3D11DescriptorRange
-        {
-            public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters, Dictionary<string, ShaderParameter> shaderParametersByName)
-            {
-                Stage = stage;
-                Type = type;
-                Parameters = parameters;
-                ShaderParametersByName = shaderParametersByName;
-                uint startSlot = uint.MaxValue;
-                uint count = 0;
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    ShaderParameter parameter = parameters[i];
-                    startSlot = Math.Min(startSlot, parameter.Index);
-                    count += parameter.Size;
-                }
-
-                StartSlot = startSlot;
-                Count = count;
-
-                if (count == 0)
-                {
-                    return;
-                }
-                Resources = AllocArrayAndZero(count);
-            }
-
-            public readonly ShaderStage Stage;
-            public readonly ShaderParameterType Type;
-            public readonly uint StartSlot;
-            public readonly uint Count;
-            public readonly void** Resources;
-
-            public readonly List<ShaderParameter> Parameters;
-            public readonly Dictionary<string, ShaderParameter> ShaderParametersByName;
-
-            public void SetByName(string name, void* resource)
-            {
-                var parameter = ShaderParametersByName[name];
-                Resources[parameter.Index] = resource;
-            }
-
-            public bool TrySetByName(string name, void* resource)
-            {
-                if (ShaderParametersByName.TryGetValue(name, out var parameter))
-                {
-                    Resources[parameter.Index] = resource;
-                    return true;
-                }
-                return false;
-            }
-
-            public void Release()
-            {
-                if (Resources != null)
-                {
-                    Free(Resources);
-                }
-            }
+            var p = sampler?.NativePointer ?? 0;
+            rangesSamplers[(int)stage].TrySetByName(name, (void*)p);
         }
 
         private void Reflect(Shader* shader, ShaderStage stage)
@@ -260,211 +492,80 @@
 
         public void BindGraphics(ComPtr<ID3D11DeviceContext3> context)
         {
-            var vertexStageSRVRange = rangesSRVs[(int)ShaderStage.Vertex];
-            if (vertexStageSRVRange.Count > 0)
-            {
-                context.VSSetShaderResources(vertexStageSRVRange.StartSlot, vertexStageSRVRange.Count, (ID3D11ShaderResourceView**)vertexStageSRVRange.Resources);
-            }
-
-            var hullStageSRVRange = rangesSRVs[(int)ShaderStage.Hull];
-            if (hullStageSRVRange.Count > 0)
-            {
-                context.HSSetShaderResources(hullStageSRVRange.StartSlot, hullStageSRVRange.Count, (ID3D11ShaderResourceView**)hullStageSRVRange.Resources);
-            }
-
-            var domainStageSRVRange = rangesSRVs[(int)ShaderStage.Domain];
-            if (domainStageSRVRange.Count > 0)
-            {
-                context.DSSetShaderResources(domainStageSRVRange.StartSlot, domainStageSRVRange.Count, (ID3D11ShaderResourceView**)domainStageSRVRange.Resources);
-            }
-
-            var geometryStageSRVRange = rangesSRVs[(int)ShaderStage.Geometry];
-            if (geometryStageSRVRange.Count > 0)
-            {
-                context.GSSetShaderResources(geometryStageSRVRange.StartSlot, geometryStageSRVRange.Count, (ID3D11ShaderResourceView**)geometryStageSRVRange.Resources);
-            }
-
-            var pixelStageSRVRange = rangesSRVs[(int)ShaderStage.Pixel];
-            if (pixelStageSRVRange.Count > 0)
-            {
-                context.PSSetShaderResources(pixelStageSRVRange.StartSlot, pixelStageSRVRange.Count, (ID3D11ShaderResourceView**)pixelStageSRVRange.Resources);
-            }
+            // SRV
+            rangesSRVs[(int)ShaderStage.Vertex].Bind(context, context.Handle->LpVtbl[25]); // V-Table Index 25 VSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Hull].Bind(context, context.Handle->LpVtbl[59]); // V-Table Index 59 HSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Domain].Bind(context, context.Handle->LpVtbl[63]); // V-Table Index 63 DSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Geometry].Bind(context, context.Handle->LpVtbl[31]); // V-Table Index 31 GSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Pixel].Bind(context, context.Handle->LpVtbl[8]); // V-Table Index 8 PSSetShaderResources.
 
             // CBV
-
-            var vertexStageCBVRange = rangesCBVs[(int)ShaderStage.Vertex];
-            if (vertexStageCBVRange.Count > 0)
-            {
-                context.VSSetConstantBuffers(vertexStageCBVRange.StartSlot, vertexStageCBVRange.Count, (ID3D11Buffer**)vertexStageCBVRange.Resources);
-            }
-
-            var hullStageCBVRange = rangesCBVs[(int)ShaderStage.Hull];
-            if (hullStageCBVRange.Count > 0)
-            {
-                context.HSSetConstantBuffers(hullStageCBVRange.StartSlot, hullStageCBVRange.Count, (ID3D11Buffer**)hullStageCBVRange.Resources);
-            }
-
-            var domainStageCBVRange = rangesCBVs[(int)ShaderStage.Domain];
-            if (domainStageCBVRange.Count > 0)
-            {
-                context.DSSetConstantBuffers(domainStageCBVRange.StartSlot, domainStageCBVRange.Count, (ID3D11Buffer**)domainStageCBVRange.Resources);
-            }
-
-            var geometryStageCBVRange = rangesCBVs[(int)ShaderStage.Geometry];
-            if (geometryStageCBVRange.Count > 0)
-            {
-                context.GSSetConstantBuffers(geometryStageCBVRange.StartSlot, geometryStageCBVRange.Count, (ID3D11Buffer**)geometryStageCBVRange.Resources);
-            }
-
-            var pixelStageCBVRange = rangesCBVs[(int)ShaderStage.Pixel];
-            if (pixelStageCBVRange.Count > 0)
-            {
-                context.PSSetConstantBuffers(pixelStageCBVRange.StartSlot, pixelStageCBVRange.Count, (ID3D11Buffer**)pixelStageCBVRange.Resources);
-            }
+            rangesCBVs[(int)ShaderStage.Vertex].Bind(context, context.Handle->LpVtbl[7]); // V-Table Index 7 VSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Hull].Bind(context, context.Handle->LpVtbl[62]); // V-Table Index 62 HSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Domain].Bind(context, context.Handle->LpVtbl[66]); // V-Table Index 66 DSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Geometry].Bind(context, context.Handle->LpVtbl[22]); // V-Table Index 22 GSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Pixel].Bind(context, context.Handle->LpVtbl[16]); // V-Table Index 16 PSSetConstantBuffers.
 
             // Sampler
-
-            var vertexStageSamplerRange = rangesSamplers[(int)ShaderStage.Vertex];
-            if (vertexStageSamplerRange.Count > 0)
-            {
-                context.VSSetSamplers(vertexStageSamplerRange.StartSlot, vertexStageSamplerRange.Count, (ID3D11SamplerState**)vertexStageSamplerRange.Resources);
-            }
-
-            var hullStageSamplerRange = rangesSamplers[(int)ShaderStage.Hull];
-            if (hullStageSamplerRange.Count > 0)
-            {
-                context.HSSetSamplers(hullStageSamplerRange.StartSlot, hullStageSamplerRange.Count, (ID3D11SamplerState**)hullStageSamplerRange.Resources);
-            }
-
-            var domainStageSamplerRange = rangesSamplers[(int)ShaderStage.Domain];
-            if (domainStageSamplerRange.Count > 0)
-            {
-                context.DSSetSamplers(domainStageSamplerRange.StartSlot, domainStageSamplerRange.Count, (ID3D11SamplerState**)domainStageSamplerRange.Resources);
-            }
-
-            var geometryStageSamplerRange = rangesSamplers[(int)ShaderStage.Geometry];
-            if (geometryStageSamplerRange.Count > 0)
-            {
-                context.GSSetSamplers(geometryStageSamplerRange.StartSlot, geometryStageSamplerRange.Count, (ID3D11SamplerState**)geometryStageSamplerRange.Resources);
-            }
-
-            var pixelStageSamplerRange = rangesSamplers[(int)ShaderStage.Pixel];
-            if (pixelStageSamplerRange.Count > 0)
-            {
-                context.PSSetSamplers(pixelStageSamplerRange.StartSlot, pixelStageSamplerRange.Count, (ID3D11SamplerState**)pixelStageSamplerRange.Resources);
-            }
+            rangesSamplers[(int)ShaderStage.Vertex].Bind(context, context.Handle->LpVtbl[26]); // V-Table Index 26 VSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Hull].Bind(context, context.Handle->LpVtbl[61]); // V-Table Index 61 HSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Domain].Bind(context, context.Handle->LpVtbl[65]); // V-Table Index 65 DSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Geometry].Bind(context, context.Handle->LpVtbl[32]); // V-Table Index 32 GSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Pixel].Bind(context, context.Handle->LpVtbl[10]); // V-Table Index 10 PSSetSamplers.
         }
 
         public void UnbindGraphics(ComPtr<ID3D11DeviceContext3> context)
         {
-            var vertexStageSRVRange = rangesSRVs[(int)ShaderStage.Vertex];
-            if (vertexStageSRVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)vertexStageSRVRange.Count];
-                context.VSSetShaderResources(vertexStageSRVRange.StartSlot, vertexStageSRVRange.Count, (ID3D11ShaderResourceView**)empty);
-            }
-
-            var hullStageSRVRange = rangesSRVs[(int)ShaderStage.Hull];
-            if (hullStageSRVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)hullStageSRVRange.Count];
-                context.HSSetShaderResources(hullStageSRVRange.StartSlot, hullStageSRVRange.Count, (ID3D11ShaderResourceView**)empty);
-            }
-
-            var domainStageSRVRange = rangesSRVs[(int)ShaderStage.Domain];
-            if (domainStageSRVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)domainStageSRVRange.Count];
-                context.DSSetShaderResources(domainStageSRVRange.StartSlot, domainStageSRVRange.Count, (ID3D11ShaderResourceView**)empty);
-            }
-
-            var geometryStageSRVRange = rangesSRVs[(int)ShaderStage.Geometry];
-            if (geometryStageSRVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)geometryStageSRVRange.Count];
-                context.GSSetShaderResources(geometryStageSRVRange.StartSlot, geometryStageSRVRange.Count, (ID3D11ShaderResourceView**)empty);
-            }
-
-            var pixelStageSRVRange = rangesSRVs[(int)ShaderStage.Pixel];
-            if (pixelStageSRVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)pixelStageSRVRange.Count];
-                context.PSSetShaderResources(pixelStageSRVRange.StartSlot, pixelStageSRVRange.Count, (ID3D11ShaderResourceView**)empty);
-            }
+            // SRV
+            rangesSRVs[(int)ShaderStage.Vertex].Unbind(context, context.Handle->LpVtbl[25]); // V-Table Index 25 VSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Hull].Unbind(context, context.Handle->LpVtbl[59]); // V-Table Index 59 HSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Domain].Unbind(context, context.Handle->LpVtbl[63]); // V-Table Index 63 DSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Geometry].Unbind(context, context.Handle->LpVtbl[31]); // V-Table Index 31 GSSetShaderResources.
+            rangesSRVs[(int)ShaderStage.Pixel].Unbind(context, context.Handle->LpVtbl[8]); // V-Table Index 8 PSSetShaderResources.
 
             // CBV
-
-            var vertexStageCBVRange = rangesCBVs[(int)ShaderStage.Vertex];
-            if (vertexStageCBVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)vertexStageCBVRange.Count];
-                context.VSSetConstantBuffers(vertexStageCBVRange.StartSlot, vertexStageCBVRange.Count, (ID3D11Buffer**)empty);
-            }
-
-            var hullStageCBVRange = rangesCBVs[(int)ShaderStage.Hull];
-            if (hullStageCBVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)hullStageCBVRange.Count];
-                context.HSSetConstantBuffers(hullStageCBVRange.StartSlot, hullStageCBVRange.Count, (ID3D11Buffer**)empty);
-            }
-
-            var domainStageCBVRange = rangesCBVs[(int)ShaderStage.Domain];
-            if (domainStageCBVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)domainStageCBVRange.Count];
-                context.DSSetConstantBuffers(domainStageCBVRange.StartSlot, domainStageCBVRange.Count, (ID3D11Buffer**)empty);
-            }
-
-            var geometryStageCBVRange = rangesCBVs[(int)ShaderStage.Geometry];
-            if (geometryStageCBVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)geometryStageCBVRange.Count];
-                context.GSSetConstantBuffers(geometryStageCBVRange.StartSlot, geometryStageCBVRange.Count, (ID3D11Buffer**)empty);
-            }
-
-            var pixelStageCBVRange = rangesCBVs[(int)ShaderStage.Pixel];
-            if (pixelStageCBVRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)pixelStageCBVRange.Count];
-                context.PSSetConstantBuffers(pixelStageCBVRange.StartSlot, pixelStageCBVRange.Count, (ID3D11Buffer**)empty);
-            }
+            rangesCBVs[(int)ShaderStage.Vertex].Unbind(context, context.Handle->LpVtbl[7]); // V-Table Index 7 VSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Hull].Unbind(context, context.Handle->LpVtbl[62]); // V-Table Index 62 HSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Domain].Unbind(context, context.Handle->LpVtbl[66]); // V-Table Index 66 DSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Geometry].Unbind(context, context.Handle->LpVtbl[22]); // V-Table Index 22 GSSetConstantBuffers.
+            rangesCBVs[(int)ShaderStage.Pixel].Unbind(context, context.Handle->LpVtbl[16]); // V-Table Index 16 PSSetConstantBuffers.
 
             // Sampler
+            rangesSamplers[(int)ShaderStage.Vertex].Unbind(context, context.Handle->LpVtbl[26]); // V-Table Index 26 VSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Hull].Unbind(context, context.Handle->LpVtbl[61]); // V-Table Index 61 HSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Domain].Unbind(context, context.Handle->LpVtbl[65]); // V-Table Index 65 DSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Geometry].Unbind(context, context.Handle->LpVtbl[32]); // V-Table Index 32 GSSetSamplers.
+            rangesSamplers[(int)ShaderStage.Pixel].Unbind(context, context.Handle->LpVtbl[10]); // V-Table Index 10 PSSetSamplers.
+        }
 
-            var vertexStageSamplerRange = rangesSamplers[(int)ShaderStage.Vertex];
-            if (vertexStageSamplerRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)vertexStageSamplerRange.Count];
-                context.VSSetSamplers(vertexStageSamplerRange.StartSlot, vertexStageSamplerRange.Count, (ID3D11SamplerState**)empty);
-            }
+        public void BindCompute(ComPtr<ID3D11DeviceContext3> context)
+        {
+            // UAV
+            rangesUAVs[0].BindUAV(context); // V-Table Index 68 CSSetUnorderedAccessViews.
 
-            var hullStageSamplerRange = rangesSamplers[(int)ShaderStage.Hull];
-            if (hullStageSamplerRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)hullStageSamplerRange.Count];
-                context.HSSetSamplers(hullStageSamplerRange.StartSlot, hullStageSamplerRange.Count, (ID3D11SamplerState**)empty);
-            }
+            // SRV
+            rangesSRVs[0].Bind(context, context.Handle->LpVtbl[67]); // V-Table Index 67 CSSetShaderResources.
 
-            var domainStageSamplerRange = rangesSamplers[(int)ShaderStage.Domain];
-            if (domainStageSamplerRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)domainStageSamplerRange.Count];
-                context.DSSetSamplers(domainStageSamplerRange.StartSlot, domainStageSamplerRange.Count, (ID3D11SamplerState**)empty);
-            }
+            // CBV
+            rangesCBVs[0].Bind(context, context.Handle->LpVtbl[71]); // V-Table Index 71 CSSetConstantBuffers.
 
-            var geometryStageSamplerRange = rangesSamplers[(int)ShaderStage.Geometry];
-            if (geometryStageSamplerRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)geometryStageSamplerRange.Count];
-                context.GSSetSamplers(geometryStageSamplerRange.StartSlot, geometryStageSamplerRange.Count, (ID3D11SamplerState**)empty);
-            }
+            // Sampler
+            rangesSamplers[0].Bind(context, context.Handle->LpVtbl[70]); // V-Table Index 70 CSSetSamplers.
+        }
 
-            var pixelStageSamplerRange = rangesSamplers[(int)ShaderStage.Pixel];
-            if (pixelStageSamplerRange.Count > 0)
-            {
-                nint* empty = stackalloc nint[(int)pixelStageSamplerRange.Count];
-                context.PSSetSamplers(pixelStageSamplerRange.StartSlot, pixelStageSamplerRange.Count, (ID3D11SamplerState**)empty);
-            }
+        public void UnbindCompute(ComPtr<ID3D11DeviceContext3> context)
+        {
+            // UAV
+            rangesUAVs[0].UnbindUAV(context); // V-Table Index 68 CSSetUnorderedAccessViews.
+
+            // SRV
+            rangesSRVs[0].Unbind(context, context.Handle->LpVtbl[67]); // V-Table Index 67 CSSetShaderResources.
+
+            // CBV
+            rangesCBVs[0].Unbind(context, context.Handle->LpVtbl[71]); // V-Table Index 71 CSSetConstantBuffers.
+
+            // Sampler
+            rangesSamplers[0].Unbind(context, context.Handle->LpVtbl[70]); // V-Table Index 70 CSSetSamplers.
         }
 
         protected override void DisposeCore()

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a compute pipeline used for running compute shaders on a graphics device.
     /// </summary>
-    public interface IComputePipeline : IDisposable
+    public interface IComputePipeline : IPipeline
     {
         /// <summary>
         /// Gets the debug name of the compute pipeline.

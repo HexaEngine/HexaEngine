@@ -124,7 +124,12 @@ namespace HexaEngine.Daxa
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
             throw new NotImplementedException();
         }
@@ -228,6 +233,16 @@ namespace HexaEngine.Daxa
         {
             GC.SuppressFinalize(this);
             Device.DvcDecRefcnt();
+        }
+
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
         }
     }
 }

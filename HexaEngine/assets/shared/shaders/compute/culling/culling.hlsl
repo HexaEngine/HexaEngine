@@ -156,6 +156,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 
 	GroupMemoryBarrier();
 
+	// this could be improved through a gpu based sorting system.
 	if (di == 0)
 	{
 		uint j = 0;

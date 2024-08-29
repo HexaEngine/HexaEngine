@@ -244,15 +244,15 @@
                         break;
 
                     case UICommandType.DrawPrimitive:
-                        ctx.SetPipelineState(primPso);
+                        ctx.SetGraphicsPipelineState(primPso);
                         break;
 
                     case UICommandType.DrawTexture:
-                        ctx.SetPipelineState(texPso);
+                        ctx.SetGraphicsPipelineState(texPso);
                         break;
 
                     case UICommandType.DrawTextVector:
-                        ctx.SetPipelineState(bezierPso);
+                        ctx.SetGraphicsPipelineState(bezierPso);
                         break;
                 }
 
@@ -282,7 +282,7 @@
                 global_vtx_offset += (int)cmd.VertexCount;
             }
 
-            ctx.SetPipelineState(null);
+            ctx.SetGraphicsPipelineState(null);
             ctx.SetViewport(default);
             ctx.SetVertexBuffer(0, null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);

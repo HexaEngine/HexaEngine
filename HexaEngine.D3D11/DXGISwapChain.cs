@@ -91,7 +91,7 @@
             ResultCode hr;
             if (!active)
             {
-                hr = (ResultCode)swapChain.Present(4, 0);
+                hr = (ResultCode)swapChain.Present(1, 0);
             }
             else if (vSync)
             {

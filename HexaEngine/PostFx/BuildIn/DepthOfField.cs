@@ -28,7 +28,7 @@ namespace HexaEngine.PostFx.BuildIn
         private PostFxGraphResourceBuilder creator;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private IComputePipeline bokehGenerate;
+        private IComputePipelineState bokehGenerate;
         private GaussianBlur gaussianBlur;
         private IGraphicsPipelineState coc;
         private IGraphicsPipelineState dof;
@@ -252,7 +252,7 @@ namespace HexaEngine.PostFx.BuildIn
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            bokehGenerate = device.CreateComputePipeline(new()
+            bokehGenerate = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "compute/bokeh/shader.hlsl",
                 Macros = macros,
@@ -343,13 +343,13 @@ namespace HexaEngine.PostFx.BuildIn
             context.PSSetShaderResource(0, depth.Value.SRV);
             context.PSSetConstantBuffer(0, cbDof);
             context.PSSetConstantBuffer(1, camera.Value);
-            context.SetPipelineState(coc);
+            context.SetGraphicsPipelineState(coc);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetRenderTarget(null, null);
 
             if (bokehEnabled)
             {
-                context.SetComputePipeline(bokehGenerate);
+                context.SetComputePipelineState(bokehGenerate);
                 nint* srvs_bokeh = stackalloc nint[] { Input.NativePointer, depth.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
                 context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
                 context.CSSetUnorderedAccessView(0, (void*)bokehBuffer.UAV.NativePointer, 0);
@@ -363,7 +363,7 @@ namespace HexaEngine.PostFx.BuildIn
                 context.CSSetUnorderedAccessView(0, null);
                 MemsetT(srvs_bokeh, 0, 3);
                 context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
-                context.SetComputePipeline(null);
+                context.SetComputePipelineState(null);
             }
 
             gaussianBlur.Blur(context, Input, buffer.Value, width, height, width, height);
@@ -374,9 +374,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.PSSetSampler(0, linearWrapSampler);
             nint* srvs_dof = stackalloc nint[] { Input.NativePointer, buffer1.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
-            context.SetPipelineState(dof);
+            context.SetGraphicsPipelineState(dof);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.PSSetConstantBuffer(1, null);
             context.PSSetConstantBuffer(0, null);
             MemsetT(srvs_dof, 0, 3);
@@ -387,9 +387,9 @@ namespace HexaEngine.PostFx.BuildIn
                 context.CopyStructureCount(bokehIndirectBuffer, 0, bokehBuffer.UAV);
                 context.VSSetShaderResource(0, bokehBuffer.SRV);
                 context.PSSetShaderResource(0, bokehTex);
-                context.SetPipelineState(bokehDraw);
+                context.SetGraphicsPipelineState(bokehDraw);
                 context.DrawInstancedIndirect(bokehIndirectBuffer, 0);
-                context.SetPipelineState(null);
+                context.SetGraphicsPipelineState(null);
                 context.PSSetShaderResource(0, null);
                 context.VSSetShaderResource(0, null);
             }

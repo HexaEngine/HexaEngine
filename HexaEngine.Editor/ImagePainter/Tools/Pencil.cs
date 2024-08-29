@@ -49,17 +49,17 @@
         public override void Draw(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void Dispose()

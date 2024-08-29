@@ -138,11 +138,11 @@
 
             context.PSSetConstantBuffer(0, paramsBuffer);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
             context.PSSetConstantBuffer(0, null);
 

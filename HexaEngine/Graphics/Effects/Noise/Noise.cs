@@ -80,13 +80,13 @@
         {
             context.SetRenderTarget(rtv, null);
             context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
             context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void Draw(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport)

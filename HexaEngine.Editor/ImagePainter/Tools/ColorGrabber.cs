@@ -7,7 +7,7 @@
 
     public class ColorGrabber : Tool
     {
-        private IComputePipeline computePipeline;
+        private IComputePipelineState computePipeline;
         private ConstantBuffer<Vector4> mousePosBuffer;
         private StructuredUavBuffer<Vector4> resultBuffer;
 
@@ -19,12 +19,14 @@
 
         public override void Init(IGraphicsDevice device)
         {
-            computePipeline = device.CreateComputePipeline(new()
+            computePipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "tools/image/grabber/cs.hlsl"
             });
             mousePosBuffer = new(CpuAccessFlags.Write);
             resultBuffer = new(1, CpuAccessFlags.Read);
+            computePipeline.Bindings.SetCBV("PositionBuffer", mousePosBuffer);
+            computePipeline.Bindings.SetUAV("output", resultBuffer.UAV);
         }
 
         public override void DrawSettings()
@@ -42,15 +44,10 @@
             if (ImGui.BeginTooltip())
             {
                 mousePosBuffer.Update(context, new(toolContext.Position, 0, 0));
-                context.SetComputePipeline(computePipeline);
-                context.CSSetShaderResource(0, toolContext.ImageSource.SRV);
-                context.CSSetUnorderedAccessView(0, (void*)resultBuffer.UAV.NativePointer);
-                context.CSSetConstantBuffer(0, mousePosBuffer);
+                computePipeline.Bindings.SetSRV("tex", toolContext.ImageSource.SRV);
+                context.SetComputePipelineState(computePipeline);
                 context.Dispatch(1, 1, 1);
-                context.SetComputePipeline(null);
-                context.CSSetShaderResource(0, null);
-                context.CSSetUnorderedAccessView(0, null);
-                context.CSSetConstantBuffer(0, null);
+                context.SetComputePipelineState(null);
                 resultBuffer.Read(context);
                 var pixel = *resultBuffer.Local;
 

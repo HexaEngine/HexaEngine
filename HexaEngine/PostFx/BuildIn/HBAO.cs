@@ -200,9 +200,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.PSSetConstantBuffers(0, 2, (void**)cbs);
             context.PSSetSampler(0, samplerLinear);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             ZeroMemory(srvs, sizeof(nint) * 3);
             ZeroMemory(cbs, sizeof(nint) * 2);
             context.PSSetSampler(0, null);

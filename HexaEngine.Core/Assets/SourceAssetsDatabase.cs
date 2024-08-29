@@ -2,6 +2,7 @@
 {
     using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.UI;
     using System;
     using System.IO;
 
@@ -173,6 +174,8 @@
             progressMax = progressMax - files.Length + tasks.Count;
             progress.Report(progressValue / (float)progressMax);
 
+            initLock.Set();
+
             for (int i = 0; i < tasks.Count; i++)
             {
                 tasks[i].Start();
@@ -181,7 +184,7 @@
             return Task.WhenAll(tasks).ContinueWith(x =>
             {
                 logger.Info($"Initialized '{path}'");
-                initLock.Set();
+
                 ArtifactDatabase.Cleanup();
                 ArtifactDatabase.RefreshContent();
             });
@@ -498,10 +501,12 @@
             {
                 await importer.ImportAsync(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 
@@ -527,10 +532,12 @@
             {
                 importer.Import(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 
@@ -554,10 +561,12 @@
             {
                 await importer.ImportAsync(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 

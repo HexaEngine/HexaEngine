@@ -33,11 +33,11 @@ namespace HexaEngine.Graphics.Filters
             context.SetRenderTarget(Target, null);
             context.SetViewport(new(width, height));
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
 

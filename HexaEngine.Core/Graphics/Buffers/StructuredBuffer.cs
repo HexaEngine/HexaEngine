@@ -174,6 +174,11 @@
         public bool IsDisposed => buffer.IsDisposed;
 
         /// <summary>
+        ///
+        /// </summary>
+        public T* Items => items;
+
+        /// <summary>
         /// Gets or sets the element at the specified index in the buffer.
         /// </summary>
         /// <param name="index">The zero-based index of the element to get or set.</param>

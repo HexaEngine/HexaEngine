@@ -11,6 +11,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Lights;
     using HexaEngine.Profiling;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
@@ -355,6 +356,8 @@ namespace HexaEngine.Windows
             {
                 initTask.Wait();
             }
+
+            SceneManager.Shutdown();
 
             // Dispose of the scene renderer, render dispatcher, shared resource manager, audio manager, swap chain,
             // graphics context, and graphics device.

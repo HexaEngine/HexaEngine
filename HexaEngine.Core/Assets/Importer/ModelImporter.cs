@@ -206,7 +206,17 @@
                 }
             }
 
-            var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
+            AssimpScene* scene = default;
+            try
+            {
+                scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                return false;
+            }
+
             *outScene = scene;
 
             if (scene == null)
@@ -303,6 +313,7 @@
 
         private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
+            Logger.Info("Importing Textures");
             var device = Application.GraphicsDevice;
             var loader = device.TextureLoader;
 
@@ -344,6 +355,11 @@
                         default:
                             Logger.Warn($"Failed to import texture {tex->MFilename}, importer doesn't support {sHint} formats.");
                             continue;
+                    }
+
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        fileName = $"{texturePath[1..]}.{sHint}";
                     }
 
                     string targetPath = Path.Combine(outDir, fileName);

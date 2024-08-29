@@ -31,10 +31,10 @@
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             context.SetRenderTarget(lut.Value?.RTV, null);
-            context.SetPipelineState(lutPass.Value);
+            context.SetGraphicsPipelineState(lutPass.Value);
             context.SetViewport(new(128, 128));
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
     }

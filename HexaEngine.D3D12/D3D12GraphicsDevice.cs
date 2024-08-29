@@ -492,17 +492,27 @@
             throw new NotImplementedException();
         }
 
-        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
-        {
-            throw new NotImplementedException();
-        }
-
         public IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, Core.Graphics.GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }

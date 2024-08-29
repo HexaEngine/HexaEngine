@@ -50,7 +50,7 @@
         {
             TextureList.UnbindPS(context);
             TextureListDS.UnbindDS(context);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void Update(MaterialData desc)

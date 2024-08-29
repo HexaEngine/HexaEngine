@@ -91,7 +91,7 @@
             context.SetRenderTarget(Output, null);
             context.PSSetShaderResource(0, Input.SRV);
             context.SetViewport(OutputViewport);
-            context.SetPipelineState(copy);
+            context.SetGraphicsPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }
@@ -101,7 +101,7 @@
             context.SetRenderTarget(Current, null);
             context.PSSetShaderResource(0, previous.SRV);
             context.SetViewport(OutputViewport);
-            context.SetPipelineState(copy);
+            context.SetGraphicsPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
         }

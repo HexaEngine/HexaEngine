@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Lights
 {
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
@@ -32,6 +33,14 @@
         }
 
         public static LightManager? Current => SceneManager.Current?.LightManager;
+
+        public static event EventHandler<LightManager> ActiveLightsChanged
+        {
+            add => activeLightsChangedHandlers.AddHandler(value);
+            remove => activeLightsChangedHandlers.RemoveHandler(value);
+        }
+
+        private static readonly EventHandlers<LightManager> activeLightsChangedHandlers = new();
 
         public IReadOnlyList<Probe> Probes => probes;
 
@@ -147,6 +156,7 @@
         [Profiling.Profile]
         public unsafe void Update(IGraphicsContext context, ShadowAtlas shadowAtlas, Camera camera)
         {
+            bool activeLightsChanged = false;
             while (lightUpdateQueue.TryDequeue(out var lightSource))
             {
                 if (lightSource.IsEnabled)
@@ -154,6 +164,7 @@
                     if (!activeLights.Contains(lightSource))
                     {
                         activeLights.Add(lightSource);
+                        activeLightsChanged = true;
                     }
 
                     if (lightSource is Light light)
@@ -177,7 +188,13 @@
                 else
                 {
                     activeLights.Remove(lightSource);
+                    activeLightsChanged = true;
                 }
+            }
+
+            if (activeLightsChanged)
+            {
+                activeLightsChangedHandlers.Invoke(this, this);
             }
 
             UpdateLights(camera);
@@ -306,6 +323,11 @@
             GlobalProbes.Dispose();
             LightBuffer.Dispose();
             ShadowDataBuffer.Dispose();
+        }
+
+        public static void Shutdown()
+        {
+            activeLightsChangedHandlers.Clear();
         }
     }
 }

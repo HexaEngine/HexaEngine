@@ -54,6 +54,10 @@
         {
         }
 
+        public virtual void Prepare(GraphResourceBuilder creator)
+        {
+        }
+
         public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
         }

@@ -6,7 +6,7 @@
     using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline
+    public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline, IPipeline
     {
         private readonly string dbgName;
         private readonly D3D11GraphicsDevice device;
@@ -50,7 +50,7 @@
 
         public ShaderMacro[]? Macros { get => macros; set => macros = value; }
 
-        public event Action<IGraphicsPipeline>? OnCompile;
+        public event Action<IPipeline>? OnCompile;
 
         public event Action<IGraphicsPipeline, InputElementDescription[]?, Blob>? OnCreateLayout;
 
