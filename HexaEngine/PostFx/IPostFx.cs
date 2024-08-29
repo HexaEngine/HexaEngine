@@ -117,6 +117,11 @@
         /// <param name="context">The graphics context.</param>
         public void Update(IGraphicsContext context);
 
+        /// <summary>
+        /// Called when a resource has changed.
+        /// </summary>
+        void UpdateBindings();
+
         public void ResetSettings();
     }
 }

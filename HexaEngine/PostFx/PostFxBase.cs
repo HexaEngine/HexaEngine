@@ -157,6 +157,11 @@
         }
 
         /// <inheritdoc/>
+        public virtual void UpdateBindings()
+        {
+        }
+
+        /// <inheritdoc/>
         public virtual void Draw(IGraphicsContext context)
         {
         }

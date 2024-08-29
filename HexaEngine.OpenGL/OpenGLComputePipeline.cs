@@ -47,53 +47,6 @@
 
         public bool IsValid => valid;
 
-        public void BeginDispatch(IGraphicsContext context)
-        {
-            if (!valid)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            OpenGLGraphicsDevice.GL.UseProgram(program);
-        }
-
-        public void Dispatch(IGraphicsContext context, uint x, uint y, uint z)
-        {
-            if (!valid)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            OpenGLGraphicsDevice.GL.UseProgram(program);
-            OpenGLGraphicsDevice.GL.DispatchCompute(x, y, z);
-            OpenGLGraphicsDevice.GL.UseProgram(0);
-        }
-
-        public void EndDispatch(IGraphicsContext context)
-        {
-            if (!valid)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            OpenGLGraphicsDevice.GL.UseProgram(0);
-        }
-
         public void Recompile()
         {
             initialized = false;

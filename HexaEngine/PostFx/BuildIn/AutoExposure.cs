@@ -20,11 +20,11 @@ namespace HexaEngine.PostFx.BuildIn
         private int width;
         private int height;
 
-        private IComputePipeline lumaCompute;
+        private IComputePipelineState lumaCompute;
         private ConstantBuffer<LumaParams> lumaParams;
         private UavBuffer<uint> histogram;
 
-        private IComputePipeline lumaAvgCompute;
+        private IComputePipelineState lumaAvgCompute;
         private ConstantBuffer<LumaAvgParams> lumaAvgParams;
         private ResourceRef<Texture2D> lumaTex;
 
@@ -171,8 +171,8 @@ namespace HexaEngine.PostFx.BuildIn
 
             lumaParams = new(luma, CpuAccessFlags.Write);
 
-            lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
-            lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
+            lumaCompute = device.CreateComputePipelineState(new ComputePipelineDesc("compute/luma/shader.hlsl"));
+            lumaAvgCompute = device.CreateComputePipelineState(new ComputePipelineDesc("compute/lumaAvg/shader.hlsl"));
             compose = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 PixelShader = "effects/autoexposure/ps.hlsl",
@@ -224,7 +224,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.CSSetShaderResource(0, Input);
             context.CSSetConstantBuffer(0, lumaParams);
             context.CSSetUnorderedAccessView((void*)histogram.UAV.NativePointer);
-            lumaCompute.Dispatch(context, (uint)width / 16, (uint)height / 16, 1);
+            context.SetComputePipelineState(lumaCompute);
+            context.Dispatch((uint)width / 16, (uint)height / 16, 1);
+            context.SetComputePipelineState(null);
             nint* emptyUAVs = stackalloc nint[1];
             context.CSSetUnorderedAccessView(null);
             context.CSSetConstantBuffer(0, null);
@@ -234,7 +236,9 @@ namespace HexaEngine.PostFx.BuildIn
             uint* initialCount = stackalloc uint[] { uint.MaxValue, uint.MaxValue };
             context.CSSetConstantBuffer(0, lumaAvgParams);
             context.CSSetUnorderedAccessViews(2, (void**)lumaAvgUAVs, initialCount);
-            lumaAvgCompute.Dispatch(context, 1, 1, 1);
+            context.SetComputePipelineState(lumaAvgCompute);
+            context.Dispatch(1, 1, 1);
+            context.SetComputePipelineState(null);
             nint* emptyUAV2s = stackalloc nint[2];
             context.CSSetUnorderedAccessViews(2, (void**)emptyUAV2s, null);
             context.CSSetConstantBuffer(0, null);

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Dummy
 {
     using HexaEngine.Core.Graphics;
+    using System;
 
     public class DummyComputePipeline : DisposableBase, IComputePipeline
     {
@@ -19,17 +20,7 @@
 
         public bool IsValid { get; }
 
-        public void BeginDispatch(IGraphicsContext context)
-        {
-        }
-
-        public void Dispatch(IGraphicsContext context, uint x, uint y, uint z)
-        {
-        }
-
-        public void EndDispatch(IGraphicsContext context)
-        {
-        }
+        public event Action<IPipeline>? OnCompile;
 
         public void Recompile()
         {

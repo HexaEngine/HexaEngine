@@ -40,6 +40,10 @@
         {
         }
 
+        public void UpdateBindings()
+        {
+        }
+
         public void Draw(IGraphicsContext context)
         {
             context.CopyResource(OutputResource, InputResource);

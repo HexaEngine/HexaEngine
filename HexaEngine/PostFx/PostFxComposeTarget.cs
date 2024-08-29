@@ -90,5 +90,9 @@
         {
             // nothing to do.
         }
+
+        public void UpdateBindings()
+        {
+        }
     }
 }

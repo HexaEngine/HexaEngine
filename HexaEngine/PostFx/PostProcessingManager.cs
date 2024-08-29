@@ -588,6 +588,10 @@
                 {
                     groups[i].SetupInputOutputs(postContext);
                 }
+                for (int i = 0; i < activeEffects.Count; i++)
+                {
+                    activeEffects[i].UpdateBindings();
+                }
                 isDirty = false;
             }
 
