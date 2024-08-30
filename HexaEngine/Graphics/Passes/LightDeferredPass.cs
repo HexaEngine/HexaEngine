@@ -135,7 +135,7 @@ namespace HexaEngine.Graphics.Passes
             bindings.SetSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
 
             bindings.SetCBV("CameraBuffer", camera.Value);
-            bindings.SetCBV("WeatherCBuf", weather.Value);
+            bindings.SetCBV("WeatherBuffer", weather.Value);
 
             bindings.SetSRV("ssao", AOBuffer.Value.SRV);
             bindings.SetSRV("iblDFG", brdfLUT.Value.SRV);
@@ -174,21 +174,12 @@ namespace HexaEngine.Graphics.Passes
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);
 
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.DSSetConstantBuffer(1, camera.Value);
-            context.GSSetConstantBuffer(1, camera.Value);
-            context.CSSetConstantBuffer(1, camera.Value);
             cbs[0] = null;
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
 
             profiler?.Begin("LightForward.Background");
             RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.Background");
-
-            context.VSSetConstantBuffer(1, null);
-            context.DSSetConstantBuffer(1, null);
-            context.GSSetConstantBuffer(1, null);
-            context.CSSetConstantBuffer(1, null);
 
             context.Device.Profiler.Begin(context, "Light.Deferred");
             context.SetRenderTarget(lightBuffer.Value.RTV, null);

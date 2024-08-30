@@ -8,10 +8,12 @@
     [EditorDisplayName("Vignette")]
     public class Vignette : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VignetteParams> paramsBuffer;
 
         private ISamplerState samplerState;
+#nullable restore
 
         private float intensity = 1;
         private float ratio = 1;
@@ -135,19 +137,20 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetCBV("VignetteParams", paramsBuffer);
+            pipeline.Bindings.SetSampler("linearClampSampler", samplerState);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

@@ -132,7 +132,7 @@ namespace HexaEngine.PostFx.BuildIn
         public void Draw(IGraphicsContext context)
         {
             context.SetRenderTargetsAndUnorderedAccessViews(null, null, 0, voxels.UAV);
-            context.PSSetShaderResource(1, lights.SRV);
+
             context.SetGraphicsPipelineState(voxelize);
             context.SetViewport(new(VoxelResolution));
         }

@@ -1,4 +1,4 @@
-cbuffer Params : register(b0)
+cbuffer RemapParams : register(b0)
 {
 	float4 min;
 	float4 range;

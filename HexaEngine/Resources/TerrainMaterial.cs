@@ -5,14 +5,15 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Resources.Factories;
+    using Silk.NET.OpenAL;
     using System.Numerics;
 
     public class TerrainMaterial
     {
         public Guid Id;
         private MaterialShader shader;
-        private readonly MaterialTextureList textureListPS = [];
-        private readonly MaterialTextureList textureListDS = [];
+        private readonly MaterialTextureList textureList = [];
+
         private readonly TerrainLayerGroup group;
 
         public unsafe Guid Combine(Guid guid1, Guid guid2)
@@ -66,12 +67,8 @@
                     if (textureDesc.Type == MaterialTextureType.Displacement)
                     {
                         hasDisplacement = true;
-                        textureListDS.Add(texture);
                     }
-                    else
-                    {
-                        textureListPS.Add(texture);
-                    }
+                    textureList.Add(texture);
                 }
             }
             Id = guid;
@@ -79,15 +76,14 @@
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], true, hasDisplacement);
             shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc);
 
-            textureListPS.Update(shader);
-
-            textureListDS.Update(shader);
+            textureList.Update(shader);
         }
+
+        public MaterialShader Shader => shader;
 
         public void Update()
         {
-            textureListPS.DisposeResources();
-            textureListDS.DisposeResources();
+            textureList.DisposeResources();
 
             Guid guid = Guid.Empty;
             bool hasDisplacement = false;
@@ -118,13 +114,9 @@
                     var texture = ResourceManager.Shared.LoadTexture(textureDesc);
                     if (textureDesc.Type == MaterialTextureType.Displacement)
                     {
-                        textureListDS.Add(texture);
                         hasDisplacement = true;
                     }
-                    else
-                    {
-                        textureListPS.Add(texture);
-                    }
+                    textureList.Add(texture);
                 }
             }
 
@@ -142,9 +134,7 @@
             }
             Id = guid;
 
-            textureListPS.Update(shader);
-
-            textureListDS.Update(shader);
+            textureList.Update(shader);
         }
 
         public void Setup()
@@ -319,6 +309,17 @@
             return new(id, [.. macros], TerrainCellData.InputElements, passes);
         }
 
+        public MaterialShaderPass? GetPass(string passName)
+        {
+            var pass = shader.Find(passName);
+            if (pass == null)
+            {
+                return null;
+            }
+
+            return pass;
+        }
+
         public bool BeginDraw(IGraphicsContext context, string passName)
         {
             var pass = shader.Find(passName);
@@ -372,19 +373,13 @@
 
         public void Dispose()
         {
-            for (int i = 0; i < textureListPS.Count; i++)
+            for (int i = 0; i < textureList.Count; i++)
             {
-                textureListPS[i]?.Dispose();
-            }
-
-            for (int i = 0; i < textureListDS.Count; i++)
-            {
-                textureListDS[i]?.Dispose();
+                textureList[i]?.Dispose();
             }
 
             shader.Dispose();
-            textureListPS.Dispose();
-            textureListDS.Dispose();
+            textureList.Dispose();
         }
     }
 }

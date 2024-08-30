@@ -126,11 +126,19 @@
                 PixelShader = "internal/ui/prim/ps.hlsl"
             }, stateDesc);
 
+            primPso.Bindings.SetCBV("matrixBuffer", constantBuffer);
+            primPso.Bindings.SetSampler("fontSampler", fontSampler);
+            primPso.Bindings.SetCBV("CBSolidColorBrush", colorBuffer);
+
             texPso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "internal/ui/tex/vs.hlsl",
                 PixelShader = "internal/ui/tex/ps.hlsl"
             }, stateDesc);
+
+            texPso.Bindings.SetCBV("matrixBuffer", constantBuffer);
+            texPso.Bindings.SetSampler("fontSampler", fontSampler);
+            texPso.Bindings.SetCBV("CBSolidColorBrush", colorBuffer);
 
             stateDesc.InputElements = null;
 
@@ -139,6 +147,9 @@
                 VertexShader = "internal/ui/vec/vs.hlsl",
                 PixelShader = "internal/ui/vec/ps.hlsl"
             }, stateDesc);
+
+            bezierPso.Bindings.SetCBV("matrixBuffer", constantBuffer);
+            bezierPso.Bindings.SetCBV("CBSolidColorBrush", colorBuffer);
 
             constantBuffer = new(CpuAccessFlags.Write);
             colorBuffer = new(CpuAccessFlags.Write);
@@ -155,9 +166,6 @@
 
             ctx.SetVertexBuffer(0, vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-            ctx.VSSetConstantBuffer(0, constantBuffer);
-            ctx.PSSetSampler(0, fontSampler);
-            ctx.PSSetConstantBuffer(0, colorBuffer);
         }
 
         public void RenderDrawData(IGraphicsContext ctx, Viewport viewport, Matrix4x4 transform, UICommandList cmdList)
@@ -230,36 +238,11 @@
             uint global_idx_offset = 0;
             int global_vtx_offset = 0;
 
-            nint* srvs = stackalloc nint[2] { 0, 0 };
-
             for (int i = 0; i < cmdList.CmdBuffer.Count; i++)
             {
                 var cmd = cmdList.CmdBuffer[i];
                 var clip = cmd.ClipRect;
                 var bounds = cmd.Bounds.ToVec4();
-
-                switch (cmd.Type)
-                {
-                    case UICommandType.None:
-                        break;
-
-                    case UICommandType.DrawPrimitive:
-                        ctx.SetGraphicsPipelineState(primPso);
-                        break;
-
-                    case UICommandType.DrawTexture:
-                        ctx.SetGraphicsPipelineState(texPso);
-                        break;
-
-                    case UICommandType.DrawTextVector:
-                        ctx.SetGraphicsPipelineState(bezierPso);
-                        break;
-                }
-
-                srvs[0] = cmd.TextureId0;
-                srvs[1] = cmd.TextureId1;
-
-                ctx.PSSetShaderResources(0, 2, (void**)srvs);
 
                 if (cmd.Brush == null)
                 {
@@ -272,7 +255,28 @@
                 else if (cmd.Brush is ImageBrush imageBrush)
                 {
                     colorBuffer.Update(ctx, new(Vector4.One, bounds, 1));
-                    ctx.PSSetShaderResource(2, imageBrush.ImageSource.Texture);
+                    primPso.Bindings.SetSRV("brushTex", imageBrush.ImageSource.Texture);
+                }
+
+                switch (cmd.Type)
+                {
+                    case UICommandType.None:
+                        break;
+
+                    case UICommandType.DrawPrimitive:
+                        ctx.SetGraphicsPipelineState(primPso);
+                        break;
+
+                    case UICommandType.DrawTexture:
+                        texPso.Bindings.SetSRV("fontTex", new SRVWrapper(cmd.TextureId0));
+                        ctx.SetGraphicsPipelineState(texPso);
+                        break;
+
+                    case UICommandType.DrawTextVector:
+                        texPso.Bindings.SetSRV("glyphs", new SRVWrapper(cmd.TextureId0));
+                        texPso.Bindings.SetSRV("curves", new SRVWrapper(cmd.TextureId1));
+                        ctx.SetGraphicsPipelineState(bezierPso);
+                        break;
                 }
 
                 ctx.SetScissorRect(clip.Left, clip.Top, clip.Right, clip.Bottom);
@@ -286,12 +290,29 @@
             ctx.SetViewport(default);
             ctx.SetVertexBuffer(0, null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);
-            ctx.VSSetConstantBuffer(0, null);
-            ctx.PSSetConstantBuffer(0, null);
-            ctx.PSSetSampler(0, null);
-            ctx.PSSetShaderResource(0, null);
-            ctx.PSSetShaderResource(1, null);
             ctx.SetScissorRect(default, default, default, default);
+        }
+
+        private struct SRVWrapper : IShaderResourceView
+        {
+            public SRVWrapper(nint p)
+            {
+                NativePointer = p;
+            }
+
+            public ShaderResourceViewDescription Description { get; }
+
+            public nint NativePointer { get; }
+
+            public string DebugName { get; set; }
+
+            public bool IsDisposed { get; }
+
+            public event EventHandler OnDisposed;
+
+            public readonly void Dispose()
+            {
+            }
         }
 
         public void Release()

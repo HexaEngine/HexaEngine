@@ -16,6 +16,7 @@
     [EditorDisplayName("Volumetric Clouds")]
     public class VolumetricClouds : PostFxBase
     {
+#nullable disable
         private IGraphicsDevice device;
         private IGraphicsPipelineState pipeline;
         private ISamplerState linearWrapSampler;
@@ -33,6 +34,7 @@
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private ResourceRef<GBuffer> gbuffer;
+#nullable restore
 
         public override string Name { get; } = "VolumetricClouds";
 
@@ -82,8 +84,16 @@
             gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);
         }
 
-        public override void Update(IGraphicsContext context)
+        public override void UpdateBindings()
         {
+            pipeline.Bindings.SetSRV("weatherTex", weatherTex);
+            pipeline.Bindings.SetSRV("cloudTex", cloudTex);
+            pipeline.Bindings.SetSRV("worleyTex", worleyTex);
+            pipeline.Bindings.SetSRV("depthTex", depthMip.Value!.SRV);
+            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
+            pipeline.Bindings.SetCBV("WeatherBuffer", weather.Value);
+            pipeline.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+            pipeline.Bindings.SetSampler("pointWrapSampler", pointWrapSampler);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -93,22 +103,16 @@
                 return;
             }
 
-            context.ClearRenderTargetView(intermediateTex.RTV, default);
+            context.ClearRenderTargetView(intermediateTex.RTV!, default);
             context.SetRenderTarget(intermediateTex.RTV, depth.Value);
             context.SetViewport(Viewport);
-            nint* srvs = stackalloc nint[] { weatherTex.SRV.NativePointer, cloudTex.SRV.NativePointer, worleyTex.SRV.NativePointer, depthMip.Value.SRV.NativePointer };
-            context.PSSetShaderResources(0, 4, (void**)srvs);
-            nint* smps = stackalloc nint[] { linearWrapSampler.NativePointer, pointWrapSampler.NativePointer };
-            context.PSSetSamplers(0, 2, (void**)smps);
-            nint* cbcs = stackalloc nint[] { camera.Value.NativePointer, weather.Value.NativePointer };
-            context.PSSetConstantBuffers(1, 2, (void**)cbcs);
 
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.ClearState();
+            context.SetGraphicsPipelineState(null);
 
-            gaussianBlur.Blur(context, intermediateTex.SRV, Output, (int)Viewport.Width, (int)Viewport.Height);
+            gaussianBlur.Blur(context, intermediateTex.SRV!, Output, (int)Viewport.Width, (int)Viewport.Height);
         }
 
         public override void Resize(int width, int height)

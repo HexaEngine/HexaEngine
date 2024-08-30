@@ -4,7 +4,7 @@
 #define MAX_CASCADED_NUM 8
 #endif
 
-cbuffer CSMLightViewBuffer : register(b0)
+cbuffer lightBuffer : register(b0)
 {
     float4x4 views[MAX_CASCADED_NUM];
     uint cascadeCount;

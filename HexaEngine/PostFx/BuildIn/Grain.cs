@@ -95,20 +95,21 @@
             paramsBuffer.Update(context, new(Viewport.Width, Viewport.Height, Time.CumulativeFrameTime, grainIntensity, grainSize, grainColored, grainColorAmount, grainLumaAmount));
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("hdrTexture", Input);
+            pipeline.Bindings.SetCBV("Params", paramsBuffer);
+            pipeline.Bindings.SetSampler("linearClampSampler", samplerState.Value);
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState.Value);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

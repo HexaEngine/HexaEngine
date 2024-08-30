@@ -24,7 +24,7 @@
         private float contactShadowsMaxRayDistance;
         private float contactShadowsMaxDepthDistance;
         private bool volumetricsEnable;
-        private float volumetricsMultiplier;
+        private float volumetricsMultiplier = 1.0f;
 
         public Light()
         {
@@ -127,11 +127,11 @@
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Enable")]
-        public bool VolumetricsEnable { get => volumetricsEnable; set => volumetricsEnable = value; }
+        public bool VolumetricsEnable { get => volumetricsEnable; set => SetAndNotifyWithEqualsTest(ref volumetricsEnable, value); }
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Multiplier")]
-        public float VolumetricsMultiplier { get => volumetricsMultiplier; set => volumetricsMultiplier = value; }
+        public float VolumetricsMultiplier { get => volumetricsMultiplier; set => SetAndNotifyWithEqualsTest(ref volumetricsMultiplier, value); }
 
         #endregion Volumetrics
 

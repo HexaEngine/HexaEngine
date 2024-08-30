@@ -141,17 +141,17 @@
 
         public override void Update(IGraphicsContext context)
         {
-            renderer.Update(context, GameObject.Transform.Global);
+            renderer.Update(context, GameObject.Transform.Global, model!);
         }
 
         public override void DrawDepth(IGraphicsContext context)
         {
-            renderer.DrawDepth(context);
+            renderer.DrawDepth(context, model!);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            renderer.DrawShadowMap(context, light, type);
+            renderer.DrawShadowMap(context, model!, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
@@ -162,11 +162,11 @@
         {
             if (path == RenderPath.Deferred)
             {
-                renderer.DrawDeferred(context);
+                renderer.DrawDeferred(context, model!);
             }
             else
             {
-                renderer.DrawForward(context);
+                renderer.DrawForward(context, model!);
             }
         }
 

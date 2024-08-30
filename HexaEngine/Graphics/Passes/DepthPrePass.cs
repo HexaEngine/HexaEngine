@@ -70,10 +70,6 @@
             context.SetRenderTarget(null, depthStencilBuffer.DSV);
 
             context.SetViewport(depthStencilBuffer.Viewport);
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.DSSetConstantBuffer(1, camera.Value);
-            context.GSSetConstantBuffer(1, camera.Value);
-            context.CSSetConstantBuffer(1, camera.Value);
 
             profiler?.Begin("PrePass.Geometry");
             RenderManager.ExecuteGroupDepth(renderers.GeometryQueue, context, profiler, "Geometry");

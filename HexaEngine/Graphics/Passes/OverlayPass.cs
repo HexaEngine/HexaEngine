@@ -7,6 +7,7 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
+    using Silk.NET.OpenAL;
 
     public class OverlayPass : RenderPass
     {
@@ -44,6 +45,13 @@
             debugDrawRenderer = new(creator.Device);
         }
 
+        public override void Prepare(GraphResourceBuilder creator)
+        {
+            var bindings = copyPipeline.Value!.Bindings;
+            bindings.SetSRV("sourceTex", postFxBuffer.Value);
+            bindings.SetSampler("samplerState", samplerState.Value);
+        }
+
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoOverlay) == 0;
@@ -66,11 +74,7 @@
             context.SetRenderTarget(creator.Output, null);
             context.SetViewport(creator.OutputViewport);
             context.SetGraphicsPipelineState(copyPipeline.Value);
-            context.PSSetShaderResource(0, postFxBuffer.Value);
-            context.PSSetSampler(0, samplerState.Value);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
             context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);

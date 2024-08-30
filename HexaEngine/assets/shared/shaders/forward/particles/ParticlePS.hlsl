@@ -1,6 +1,6 @@
 #include "../../camera.hlsl"
 
-SamplerState linear_clamp_sampler : register(s0);
+SamplerState linearClampSampler : register(s0);
 
 struct PS_INPUT
 {
@@ -31,7 +31,7 @@ float4 main(PS_INPUT In) : SV_TARGET
 
     float4 albedo = 1.0f;
     albedo.a = depthFade;
-    albedo *= ParticleTexture.SampleLevel(linear_clamp_sampler, In.TexCoord, 0);
+    albedo *= ParticleTexture.SampleLevel(linearClampSampler, In.TexCoord, 0);
     float4 color = albedo * In.Color * depthFade;
 
     return color;

@@ -280,20 +280,14 @@ namespace HexaEngine.Editor.TerrainEditor
             cell.Bind(context);
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             context.SetViewport(Application.MainWindow.WindowViewport);
-            context.VSSetConstantBuffer(0, worldBuffer);
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.PSSetConstantBuffer(0, brushBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
+
             context.SetGraphicsPipelineState(brushOverlay);
 
             context.DrawIndexedInstanced(cell.Mesh.IndexCount, 1, 0, 0, 0);
 
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetConstantBuffer(1, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetConstantBuffer(1, null);
+
             context.SetGraphicsPipelineState(null);
         }
 
@@ -524,6 +518,9 @@ namespace HexaEngine.Editor.TerrainEditor
                     Topology = PrimitiveTopology.TriangleList,
                     InputElements = inputElements
                 });
+                brushOverlay.Bindings.SetCBV("WorldBuffer", worldBuffer);
+                brushOverlay.Bindings.SetCBV("CameraBuffer", camera.Value);
+                brushOverlay.Bindings.SetCBV("CBBrush", brushBuffer);
 
                 brushBuffer = new(CpuAccessFlags.Write);
                 worldBuffer = new(CpuAccessFlags.Write);

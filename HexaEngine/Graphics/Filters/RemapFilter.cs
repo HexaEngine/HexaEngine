@@ -58,6 +58,7 @@
                 State = stateDesc,
             });
             paramsBuffer = new(CpuAccessFlags.Write);
+            pso.Bindings.SetCBV("RemapParams", paramsBuffer);
         }
 
         public RemapFilter(IGraphResourceBuilder creator, bool alphaBlend = false, bool additive = false, bool scissors = false)
@@ -102,13 +103,10 @@
             context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(width, height));
-            context.PSSetShaderResource(0, source);
-            context.PSSetConstantBuffer(0, paramsBuffer);
+            pso.Bindings.SetSRV("inputTex", source);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetShaderResource(0, null);
-            context.PSSetConstantBuffer(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
         }
 
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, int srcWidth, int srcHeight, int dstWidth, int dstHeight)
@@ -117,13 +115,10 @@
             context.SetGraphicsPipelineState(pso);
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(dstWidth, dstHeight));
-            context.PSSetShaderResource(0, source);
-            context.PSSetConstantBuffer(0, paramsBuffer);
+            pso.Bindings.SetSRV("inputTex", source);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetShaderResource(0, null);
-            context.PSSetConstantBuffer(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
         }
 
         public void Remap(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, Point4 scissors, int width, int height)
@@ -133,13 +128,10 @@
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(width, height));
             context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);
-            context.PSSetShaderResource(0, source);
-            context.PSSetConstantBuffer(0, paramsBuffer);
+            pso.Bindings.SetSRV("inputTex", source);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetShaderResource(0, null);
-            context.PSSetConstantBuffer(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
             context.SetScissorRect(0, 0, 0, 0);
         }
 
@@ -150,13 +142,10 @@
             context.SetRenderTarget(destination, null);
             context.SetViewport(new(dstWidth, dstHeight));
             context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);
-            context.PSSetShaderResource(0, source);
-            context.PSSetConstantBuffer(0, paramsBuffer);
+            pso.Bindings.SetSRV("inputTex", source);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetShaderResource(0, null);
-            context.PSSetConstantBuffer(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
             context.SetScissorRect(0, 0, 0, 0);
         }
 

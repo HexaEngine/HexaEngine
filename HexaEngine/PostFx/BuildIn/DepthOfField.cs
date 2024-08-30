@@ -329,6 +329,31 @@ namespace HexaEngine.PostFx.BuildIn
             }
         }
 
+        public override void UpdateBindings()
+        {
+            coc.Bindings.SetSRV("depthTex", depth.Value);
+            coc.Bindings.SetCBV("DofParams", cbDof);
+            coc.Bindings.SetCBV("CameraBuffer", camera.Value);
+            coc.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+
+            bokehGenerate.Bindings.SetSRV("sceneTex", Input);
+            bokehGenerate.Bindings.SetSRV("depthTex", depth.Value);
+            bokehGenerate.Bindings.SetSRV("cocTex", cocBuffer.Value);
+            bokehGenerate.Bindings.SetCBV("BokehParams", cbBokeh);
+            bokehGenerate.Bindings.SetCBV("CameraBuffer", camera.Value);
+            bokehGenerate.Bindings.SetUAV("BokehStack", bokehBuffer.UAV, 0);
+            bokehGenerate.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+
+            dof.Bindings.SetSRV("sceneTexture", Input);
+            dof.Bindings.SetSRV("blurredTexture", buffer1.Value);
+            dof.Bindings.SetSRV("cocTex", cocBuffer.Value);
+            dof.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+
+            bokehDraw.Bindings.SetSRV("BokehStack", bokehBuffer.SRV);
+            bokehDraw.Bindings.SetSRV("bokehTexture", bokehTex.SRV);
+            bokehDraw.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+        }
+
         /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context)
         {
@@ -339,10 +364,6 @@ namespace HexaEngine.PostFx.BuildIn
 
             context.SetRenderTarget(cocBuffer.Value, null);
             context.SetViewport(cocBuffer.Value.Viewport);
-            context.PSSetSampler(0, linearWrapSampler);
-            context.PSSetShaderResource(0, depth.Value.SRV);
-            context.PSSetConstantBuffer(0, cbDof);
-            context.PSSetConstantBuffer(1, camera.Value);
             context.SetGraphicsPipelineState(coc);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetRenderTarget(null, null);
@@ -350,19 +371,7 @@ namespace HexaEngine.PostFx.BuildIn
             if (bokehEnabled)
             {
                 context.SetComputePipelineState(bokehGenerate);
-                nint* srvs_bokeh = stackalloc nint[] { Input.NativePointer, depth.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
-                context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
-                context.CSSetUnorderedAccessView(0, (void*)bokehBuffer.UAV.NativePointer, 0);
-                context.CSSetConstantBuffer(0, cbBokeh);
-                context.CSSetConstantBuffer(1, camera.Value);
-                context.CSSetSampler(0, linearWrapSampler);
                 context.Dispatch(DispatchArgs.X, DispatchArgs.Y, DispatchArgs.Z);
-                context.CSSetConstantBuffer(0, null);
-                context.CSSetConstantBuffer(1, null);
-                context.CSSetSampler(0, null);
-                context.CSSetUnorderedAccessView(0, null);
-                MemsetT(srvs_bokeh, 0, 3);
-                context.CSSetShaderResources(0, 3, (void**)srvs_bokeh);
                 context.SetComputePipelineState(null);
             }
 
@@ -371,30 +380,18 @@ namespace HexaEngine.PostFx.BuildIn
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetSampler(0, linearWrapSampler);
-            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, buffer1.Value.SRV.NativePointer, cocBuffer.Value.SRV.NativePointer };
-            context.PSSetShaderResources(0, 3, (void**)srvs_dof);
             context.SetGraphicsPipelineState(dof);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetConstantBuffer(1, null);
-            context.PSSetConstantBuffer(0, null);
-            MemsetT(srvs_dof, 0, 3);
-            context.PSSetShaderResources(0, 3, (void**)srvs_dof);
 
             if (bokehEnabled)
             {
                 context.CopyStructureCount(bokehIndirectBuffer, 0, bokehBuffer.UAV);
-                context.VSSetShaderResource(0, bokehBuffer.SRV);
-                context.PSSetShaderResource(0, bokehTex);
                 context.SetGraphicsPipelineState(bokehDraw);
                 context.DrawInstancedIndirect(bokehIndirectBuffer, 0);
                 context.SetGraphicsPipelineState(null);
-                context.PSSetShaderResource(0, null);
-                context.VSSetShaderResource(0, null);
             }
 
-            context.PSSetSampler(0, null);
             context.SetRenderTarget(null, null);
         }
 

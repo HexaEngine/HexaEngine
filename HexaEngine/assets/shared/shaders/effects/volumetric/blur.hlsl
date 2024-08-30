@@ -1,7 +1,7 @@
 Texture2D<float> depthTex : register(t0);
 Texture2D volumetricLightTex : register(t1);
 
-cbuffer paramsBuffer : register(b0)
+cbuffer BlurParams : register(b0)
 {
     float2 screenSize;
     float2 sourceSize;

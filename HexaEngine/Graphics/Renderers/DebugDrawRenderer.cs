@@ -79,6 +79,7 @@
             vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(uint), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(Matrix4x4), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+            pso.Bindings.SetCBV("matrixBuffer", constantBuffer);
 
             CreateFontsTexture();
         }
@@ -134,6 +135,8 @@
                 MaxLOD = 0f
             };
             fontSampler = device.CreateSamplerState(samplerDesc);
+            pso.Bindings.SetSRV("tex", fontTextureView);
+            pso.Bindings.SetSampler("samplerState", fontSampler);
             Free(pixels);
         }
 
@@ -188,12 +191,8 @@
             context.Write(constantBuffer, Matrix4x4.Transpose(camera));
 
             {
-                context.VSSetConstantBuffer(0, constantBuffer);
                 context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-                context.SetGraphicsPipelineState(pso);
-                context.VSSetConstantBuffer(0, constantBuffer);
-                context.PSSetSampler(0, fontSampler);
 
                 int voffset = 0;
                 uint ioffset = 0;
@@ -207,7 +206,9 @@
                     {
                         texId = fontTextureView.NativePointer;
                     }
-                    context.PSSetShaderResources(0, 1, (void**)&texId);
+                    var srv = new SRVWrapper(texId);
+                    pso.Bindings.SetSRV("fontTex", srv);
+                    context.SetGraphicsPipelineState(pso);
                     context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
                     voffset += (int)cmd.VertexCount;
@@ -220,24 +221,40 @@
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);
             context.SetPrimitiveTopology(PrimitiveTopology.Undefined);
-            context.VSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
 
 #if DEBUG
             context.EndEvent();
 #endif
         }
 
+        private struct SRVWrapper : IShaderResourceView
+        {
+            public SRVWrapper(nint p)
+            {
+                NativePointer = p;
+            }
+
+            public ShaderResourceViewDescription Description { get; }
+
+            public nint NativePointer { get; }
+
+            public string DebugName { get; set; }
+
+            public bool IsDisposed { get; }
+
+            public event EventHandler OnDisposed;
+
+            public void Dispose()
+            {
+            }
+        }
+
         private void SetupRenderState(DebugDrawData data)
         {
             context.SetViewport(new(data.Viewport.Offset, data.Viewport.Size));
-            context.VSSetConstantBuffer(0, constantBuffer);
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
             context.SetGraphicsPipelineState(pso);
-            context.VSSetConstantBuffer(0, constantBuffer);
-            context.PSSetSampler(0, fontSampler);
         }
 
         private void Render(DebugDrawData data)
@@ -299,7 +316,9 @@
                     {
                         texId = fontTextureView.NativePointer;
                     }
-                    context.PSSetShaderResources(0, 1, (void**)&texId);
+                    var srv = new SRVWrapper(texId);
+                    pso.Bindings.SetSRV("fontTex", srv);
+                    context.SetGraphicsPipelineState(pso);
                     context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
                     voffset += (int)cmd.VertexCount;
@@ -312,9 +331,6 @@
             context.SetVertexBuffer(null, 0, 0);
             context.SetIndexBuffer(null, default, 0);
             context.SetPrimitiveTopology(PrimitiveTopology.Undefined);
-            context.VSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
 
 #if DEBUG
             context.EndEvent();

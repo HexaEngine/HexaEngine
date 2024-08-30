@@ -78,12 +78,14 @@
         {
             {
                 var bindings = clusterBuilding.Value!.Bindings;
+                bindings.SetCBV("CameraBuffer", camera.Value);
                 bindings.SetUAV("clusters", ClusterBuffer.Value!.UAV!);
             }
 
             {
                 var lightBuffer = LightManager.Current?.LightBuffer;
                 var bindings = clusterCulling.Value!.Bindings;
+                bindings.SetCBV("CameraBuffer", camera.Value);
                 bindings.SetCBV("CBCullingParams", lightParamsBuffer.Value!);
                 bindings.SetSRV("clusters", ClusterBuffer.Value.SRV);
                 bindings.SetSRV("lights", lightBuffer?.SRV!);
@@ -116,7 +118,6 @@
             lights.LightBuffer.Update(context);
             lights.ShadowDataBuffer.Update(context);
 
-            context.CSSetConstantBuffer(1, camera.Value);
             if (recreateClusters)
             {
                 profiler?.Begin("RecreateClusters");

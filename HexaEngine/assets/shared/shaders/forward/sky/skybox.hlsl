@@ -1,5 +1,5 @@
 TextureCube cubeMap : register(t0);
-SamplerState linear_wrap_sampler : register(s0);
+SamplerState linearWrapSampler : register(s0);
 
 struct PixelInputType
 {
@@ -10,5 +10,5 @@ struct PixelInputType
 
 float4 main(PixelInputType input) : SV_Target
 {
-    return cubeMap.Sample(linear_wrap_sampler, input.tex);
+    return cubeMap.Sample(linearWrapSampler, input.tex);
 }

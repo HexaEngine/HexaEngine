@@ -186,6 +186,21 @@ namespace HexaEngine.PostFx.BuildIn
             linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        public override void UpdateBindings()
+        {
+            lumaCompute.Bindings.SetCBV("LuminanceHistogramBuffer", lumaParams);
+            lumaCompute.Bindings.SetSRV("HDRTexture", Input);
+            lumaCompute.Bindings.SetUAV("LuminanceHistogram", histogram.UAV);
+
+            lumaAvgCompute.Bindings.SetCBV("LuminanceHistogramAverageBuffer", lumaAvgParams);
+            lumaAvgCompute.Bindings.SetUAV("LuminanceHistogram", histogram.UAV);
+            lumaAvgCompute.Bindings.SetUAV("LuminanceOutput", lumaTex.Value.UAV);
+
+            compose.Bindings.SetSampler("linearClampSampler", linearSampler);
+            compose.Bindings.SetSRV("hdrTexture", Input);
+            compose.Bindings.SetSRV("lumaTexture", lumaTex.Value.SRV);
+        }
+
         /// <inheritdoc/>
         public override unsafe void Resize(int width, int height)
         {
@@ -221,39 +236,20 @@ namespace HexaEngine.PostFx.BuildIn
         /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context)
         {
-            context.CSSetShaderResource(0, Input);
-            context.CSSetConstantBuffer(0, lumaParams);
-            context.CSSetUnorderedAccessView((void*)histogram.UAV.NativePointer);
             context.SetComputePipelineState(lumaCompute);
             context.Dispatch((uint)width / 16, (uint)height / 16, 1);
             context.SetComputePipelineState(null);
-            nint* emptyUAVs = stackalloc nint[1];
-            context.CSSetUnorderedAccessView(null);
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetShaderResource(0, null);
 
-            nint* lumaAvgUAVs = stackalloc nint[] { histogram.UAV.NativePointer, lumaTex.Value.UAV.NativePointer };
-            uint* initialCount = stackalloc uint[] { uint.MaxValue, uint.MaxValue };
-            context.CSSetConstantBuffer(0, lumaAvgParams);
-            context.CSSetUnorderedAccessViews(2, (void**)lumaAvgUAVs, initialCount);
             context.SetComputePipelineState(lumaAvgCompute);
             context.Dispatch(1, 1, 1);
             context.SetComputePipelineState(null);
-            nint* emptyUAV2s = stackalloc nint[2];
-            context.CSSetUnorderedAccessViews(2, (void**)emptyUAV2s, null);
-            context.CSSetConstantBuffer(0, null);
 
-            nint* composeSRVs = stackalloc nint[] { Input.NativePointer, lumaTex.Value.SRV.NativePointer };
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.SetGraphicsPipelineState(compose);
-            context.PSSetShaderResources(0, 2, (void**)composeSRVs);
-            context.PSSetSampler(0, linearSampler);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResources(0, 2, (void**)emptyUAV2s);
             context.SetGraphicsPipelineState(null);
-            context.SetViewport(default);
+
             context.SetRenderTarget(null, null);
         }
 

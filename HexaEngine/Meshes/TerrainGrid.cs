@@ -5,9 +5,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
+    using System.Collections;
     using System.Numerics;
 
-    public class TerrainGrid
+    public class TerrainGrid : IEnumerable<TerrainCell>
     {
         private readonly TerrainFile terrain;
         private readonly List<TerrainCell> cells = new();
@@ -245,6 +246,16 @@
                 cells[i].Dispose();
             }
             Clear();
+        }
+
+        public IEnumerator<TerrainCell> GetEnumerator()
+        {
+            return cells.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return cells.GetEnumerator();
         }
     }
 }

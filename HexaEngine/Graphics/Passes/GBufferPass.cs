@@ -63,10 +63,6 @@
             context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
 
             context.SetViewport(gbuffer.Viewport);
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.DSSetConstantBuffer(1, camera.Value);
-            context.GSSetConstantBuffer(1, camera.Value);
-            context.CSSetConstantBuffer(1, camera.Value);
 
             profiler?.Begin("LightDeferred.Geometry");
             RenderManager.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);

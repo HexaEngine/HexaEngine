@@ -1,8 +1,8 @@
 #include "../../weather.hlsl"
 #include "../../camera.hlsl"
 
-SamplerState linear_wrap_sampler;
-SamplerState point_wrap_sampler;
+SamplerState linearWrapSampler;
+SamplerState pointWrapSampler;
 
 struct VertexOut
 {
@@ -112,14 +112,14 @@ float SampleCloudDensity(float3 p, bool useHighFreq, float lod)
         return 0.0f;
 
 	// low frequency sample
-    float4 lowFreqNoise = cloudTex.SampleLevel(linear_wrap_sampler, float3(UV * crispiness, heightFraction), lod);
+    float4 lowFreqNoise = cloudTex.SampleLevel(linearWrapSampler, float3(UV * crispiness, heightFraction), lod);
     float lowFreqFBM = dot(lowFreqNoise.gba, float3(0.625, 0.25, 0.125));
     float cloudSample = Remap(lowFreqNoise.r, -(1.0f - lowFreqFBM), 1.0f, 0.0f, 1.0f);
 
     float density = GetDensityForCloud(heightFraction, cloud_type);
     cloudSample *= density / max(heightFraction, 0.001f);
 
-    float3 weatherNoise = weatherTex.Sample(linear_wrap_sampler, dynamicUV).rgb;
+    float3 weatherNoise = weatherTex.Sample(linearWrapSampler, dynamicUV).rgb;
     float cloudWeatherCoverage = weatherNoise.r * coverage;
     float cloudSampleWithCoverage = Remap(cloudSample, cloudWeatherCoverage, 1.0f, 0.0f, 1.0f);
     cloudSampleWithCoverage *= cloudWeatherCoverage;
@@ -127,7 +127,7 @@ float SampleCloudDensity(float3 p, bool useHighFreq, float lod)
 	// high frequency sample
     if (useHighFreq)
     {
-        float3 highFreqNoise = worleyTex.SampleLevel(linear_wrap_sampler, float3(dynamicUV * crispiness, heightFraction) * curliness, lod).rgb;
+        float3 highFreqNoise = worleyTex.SampleLevel(linearWrapSampler, float3(dynamicUV * crispiness, heightFraction) * curliness, lod).rgb;
         float highFreqFBM = dot(highFreqNoise.rgb, float3(0.625, 0.25, 0.125));
         float highFreqNoiseModifier = lerp(highFreqFBM, 1.0f - highFreqFBM, clamp(heightFraction * 10.0f, 0.0f, 1.0f));
         cloudSampleWithCoverage = cloudSampleWithCoverage - highFreqNoiseModifier * (1.0 - cloudSampleWithCoverage);
@@ -319,7 +319,7 @@ struct Output
 
 Output main(VertexOut pin)
 {
-    float depth = depthTex.SampleLevel(point_wrap_sampler, pin.Tex, 0.0f).r;
+    float depth = depthTex.SampleLevel(pointWrapSampler, pin.Tex, 0.0f).r;
 
     Output output = (Output) 0;
     output.color = 0.0f;

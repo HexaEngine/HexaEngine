@@ -72,7 +72,7 @@
                             dir.QueueIndex = ShadowDataBuffer.Count;
                             LightBuffer.Add(new(dir));
                             ShadowDataBuffer.Add(new(dir, dir.ShadowMapSize));
-                            dir.UpdateShadowBuffer(ShadowDataBuffer, CameraManager.Current);
+                            dir.UpdateShadowBuffer(ShadowDataBuffer, CameraManager.Current!);
                             csmCount++;
                             break;
 

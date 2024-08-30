@@ -11,6 +11,12 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
+    public struct LightUpdatedEventArgs
+    {
+        public LightManager LightManager;
+        public LightSource Light;
+    }
+
     public partial class LightManager : ISceneSystem
     {
         private readonly List<Probe> probes = [];
@@ -24,6 +30,9 @@
         public readonly StructuredUavBuffer<ProbeData> GlobalProbes;
         public readonly StructuredUavBuffer<LightData> LightBuffer;
         public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
+
+        private static readonly EventHandlers<LightManager> activeLightsChangedHandlers = new();
+        private static readonly EventHandlers<LightUpdatedEventArgs> lightUpdatedHandlers = new();
 
         public LightManager()
         {
@@ -40,7 +49,11 @@
             remove => activeLightsChangedHandlers.RemoveHandler(value);
         }
 
-        private static readonly EventHandlers<LightManager> activeLightsChangedHandlers = new();
+        public static event EventHandler<LightUpdatedEventArgs> LightUpdated
+        {
+            add => lightUpdatedHandlers.AddHandler(value);
+            remove => lightUpdatedHandlers.RemoveHandler(value);
+        }
 
         public IReadOnlyList<Probe> Probes => probes;
 
@@ -190,11 +203,13 @@
                     activeLights.Remove(lightSource);
                     activeLightsChanged = true;
                 }
+
+                OnLightUpdated(lightSource);
             }
 
             if (activeLightsChanged)
             {
-                activeLightsChangedHandlers.Invoke(this, this);
+                OnActiveLightsChanged();
             }
 
             UpdateLights(camera);
@@ -239,6 +254,19 @@
                     }
                 }
             }
+        }
+
+        protected virtual void OnActiveLightsChanged()
+        {
+            activeLightsChangedHandlers.Invoke(this, this);
+        }
+
+        protected virtual void OnLightUpdated(LightSource light)
+        {
+            LightUpdatedEventArgs eventArgs;
+            eventArgs.LightManager = this;
+            eventArgs.Light = light;
+            lightUpdatedHandlers.Invoke(this, eventArgs);
         }
 
         private unsafe void UpdateLights(Camera camera)
@@ -328,6 +356,7 @@
         public static void Shutdown()
         {
             activeLightsChangedHandlers.Clear();
+            lightUpdatedHandlers.Clear();
         }
     }
 }

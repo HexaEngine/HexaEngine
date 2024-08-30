@@ -14,6 +14,7 @@
     [EditorDisplayName("Volumetric Lighting")]
     public class VolumetricLighting : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
 
         private ConstantBuffer<VolumetricLightingConstants> constantBuffer;
@@ -31,6 +32,8 @@
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<DepthMipChain> depthChain;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
+#nullable restore
+
         private VolumetricLightingQualityPreset qualityPreset = VolumetricLightingQualityPreset.Medium;
         private int sampleCount;
         private float density = 0.0015f;
@@ -200,23 +203,14 @@
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 
             buffer = creator.CreateBufferHalfRes("VOLUMETRIC_LIGHTNING_BUFFER");
+
+            LightManager.ActiveLightsChanged += ActiveLightsChanged;
+            LightManager.LightUpdated += LightUpdated;
         }
 
-        /// <inheritdoc/>
-        public override void Update(IGraphicsContext context)
+        private void LightUpdated(object? sender, LightUpdatedEventArgs e)
         {
-        }
-
-        /// <inheritdoc/>
-        public override void Draw(IGraphicsContext context)
-        {
-            var lights = LightManager.Current;
-
-            if (lights == null)
-            {
-                return;
-            }
-
+            var lights = e.LightManager;
             volumetricLightBuffer.ResetCounter();
             for (int i = 0; i < lights.ActiveCount; i++)
             {
@@ -235,10 +229,37 @@
 
                 if (light is DirectionalLight dir)
                 {
-                    context.PSSetShaderResource(2, dir.GetShadowMap());
+                    pipeline.Bindings.SetSRV("cascadeShadowMaps", dir.GetShadowMap());
                 }
             }
+        }
 
+        private void ActiveLightsChanged(object? sender, LightManager e)
+        {
+            pipeline.Bindings.SetSRV("shadowData", e.ShadowDataBuffer.SRV);
+        }
+
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetCBV("VolumetricParams", constantBuffer);
+            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
+
+            pipeline.Bindings.SetSRV("depthTex", depth.Value);
+            pipeline.Bindings.SetSRV("shadowAtlas", shadowAtlas.Value!.SRV);
+            pipeline.Bindings.SetSRV("lights", volumetricLightBuffer.SRV);
+            pipeline.Bindings.SetSRV("shadowData", LightManager.Current?.ShadowDataBuffer.SRV);
+
+            pipeline.Bindings.SetSampler("linearClampSampler", linearClampSampler);
+
+            blurPipeline.Bindings.SetSRV("depthTex", depthChain.Value!.SRV);
+            blurPipeline.Bindings.SetSRV("volumetricLightTex", buffer.Value);
+
+            blurPipeline.Bindings.SetCBV("BlurParams", blurParams);
+        }
+
+        /// <inheritdoc/>
+        public override void Draw(IGraphicsContext context)
+        {
             // early exit nothing to render
             if (volumetricLightBuffer.Count == 0)
             {
@@ -250,36 +271,14 @@
             constantBuffer.Update(context, new(volumetricLightBuffer.Count, density, rayleighCoefficient, mieCoefficient, mieG));
 
             // Volumetric pass
-
-            (context).SetRenderTarget(buffer.Value, null);
-            context.SetViewport(buffer.Value.Viewport);
-
-            context.PSSetConstantBuffer(0, constantBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-
-            context.PSSetShaderResource(0, depth.Value.SRV);
-            context.PSSetShaderResource(1, shadowAtlas.Value.SRV);
-            context.PSSetShaderResource(3, volumetricLightBuffer.SRV);
-            context.PSSetShaderResource(4, lights.ShadowDataBuffer.SRV);
-
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetSampler(1, shadowSampler);
+            context.SetRenderTarget(buffer.Value, null);
+            context.SetViewport(buffer.Value!.Viewport);
 
             context.SetGraphicsPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
             context.SetGraphicsPipelineState(null);
-
-            context.PSSetSampler(0, null);
-            context.PSSetSampler(1, null);
-
-            context.PSSetShaderResource(2, null);
-            context.PSSetShaderResource(3, null);
-            context.PSSetShaderResource(4, null);
-
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetConstantBuffer(1, null);
 
             // Blur Pass
 
@@ -288,21 +287,11 @@
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
 
-            context.PSSetConstantBuffer(0, blurParams);
-
-            context.PSSetShaderResource(0, depthChain.Value.SRV);
-            context.PSSetShaderResource(1, buffer.Value);
-
             context.SetGraphicsPipelineState(blurPipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
             context.SetGraphicsPipelineState(null);
-
-            context.PSSetShaderResource(0, null);
-            context.PSSetShaderResource(1, null);
-
-            context.PSSetConstantBuffer(0, null);
 
             context.SetRenderTarget(null, null);
             context.SetViewport(default);

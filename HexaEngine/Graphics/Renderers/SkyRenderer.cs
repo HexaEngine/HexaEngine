@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
@@ -39,6 +40,11 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
+            skybox.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
+            skybox.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            skybox.Bindings.SetSRV("cubeMap", environment);
+            skybox.Bindings.SetSampler("linearWrapSampler", samplerState);
+
             uniformColorSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
@@ -49,6 +55,11 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
+            uniformColorSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
+            uniformColorSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            uniformColorSky.Bindings.SetSRV("cubeMap", environment);
+            uniformColorSky.Bindings.SetSampler("linearWrapSampler", samplerState);
+
             hoseWilkieSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
@@ -59,6 +70,11 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
+            hoseWilkieSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
+            hoseWilkieSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            hoseWilkieSky.Bindings.SetSRV("cubeMap", environment);
+            hoseWilkieSky.Bindings.SetSampler("linearWrapSampler", samplerState);
+
             preethamSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "forward/sky/vs.hlsl",
@@ -69,6 +85,10 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
+            preethamSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
+            preethamSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            preethamSky.Bindings.SetSRV("cubeMap", environment);
+            preethamSky.Bindings.SetSampler("linearWrapSampler", samplerState);
         }
 
         public void Initialize(Skybox skybox)
@@ -114,34 +134,22 @@
                         return;
                     }
 
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetShaderResource(0, environment.SRV);
-                    context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, skybox);
                     break;
 
                 case SkyType.UniformColor:
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, uniformColorSky);
                     break;
 
                 case SkyType.HosekWilkie:
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, hoseWilkieSky);
                     break;
 
                 case SkyType.Preetham:
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, preethamSky);
                     break;
 
                 case SkyType.Custom:
-                    context.VSSetConstantBuffer(0, worldBuffer);
-                    context.PSSetShaderResource(0, environment?.SRV);
-                    context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, skybox);
                     break;
             }

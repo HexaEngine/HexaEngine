@@ -1,6 +1,6 @@
 #include "defs.hlsl"
 
-cbuffer cb
+cbuffer offsetBuffer
 {
     uint offset;
 }
@@ -8,7 +8,7 @@ cbuffer cb
 StructuredBuffer<float4x4> worldMatrices;
 StructuredBuffer<uint> worldMatrixOffsets;
 
-cbuffer LightBuffer : register(b1)
+cbuffer lightBuffer : register(b1)
 {
 	float4x4 lightView;
 	float4x4 lightViewProj;

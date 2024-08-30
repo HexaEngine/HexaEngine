@@ -6,11 +6,13 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
+    using Silk.NET.OpenAL;
     using System.Numerics;
 
     [EditorDisplayName("Velocity Buffer")]
     public class VelocityBuffer : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VelocityBufferParams> paramsBuffer;
 
@@ -22,6 +24,7 @@
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private PostFxGraphResourceBuilder creator;
+#nullable restore
 
         public override string Name => "VelocityBuffer";
 
@@ -88,17 +91,22 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("depthTex", depth.Value!.SRV);
+            pipeline.Bindings.SetCBV("VelocityBufferParams", paramsBuffer);
+            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
+            pipeline.Bindings.SetSampler("linearWrapSampler", sampler);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Velocity.Value?.RTV, null);
             context.SetViewport(Viewport);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-            context.PSSetSampler(0, sampler);
-            context.PSSetShaderResource(0, depth.Value.SRV);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.ClearState();
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
         }
 
         public override void Resize(int width, int height)

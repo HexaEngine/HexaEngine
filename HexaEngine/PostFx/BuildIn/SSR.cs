@@ -13,17 +13,20 @@
     [EditorDisplayName("SSR")]
     public class SSR : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipelineSSR;
 
         private ISamplerState pointClampSampler;
         private ISamplerState linearClampSampler;
         private ISamplerState linearBorderSampler;
+        private ISamplerState linearWrapSampler;
 
         private ConstantBuffer<SSRParams> ssrParamsBuffer;
 
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<GBuffer> gbuffer;
+#nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
         private int maxRayCount = 16;
@@ -253,6 +256,18 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
+        public override void UpdateBindings()
+        {
+            pipelineSSR.Bindings.SetSRV("inputTex", Input);
+            pipelineSSR.Bindings.SetSRV("depthTex", depth.Value);
+            pipelineSSR.Bindings.SetSRV("normalRoughnessTex", gbuffer.Value!.SRVs[1]);
+            pipelineSSR.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
+            pipelineSSR.Bindings.SetCBV("CameraBuffer", camera.Value);
+            pipelineSSR.Bindings.SetSampler("pointClampSampler", pointClampSampler);
+            pipelineSSR.Bindings.SetSampler("linearClampSampler", linearClampSampler);
+            pipelineSSR.Bindings.SetSampler("linearBorderSampler", linearBorderSampler);
+        }
+
         /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context)
         {
@@ -271,35 +286,12 @@
                 ssrParams.RayStep = rayStep;
                 ssrParams.RayHitThreshold = rayHitThreshold;
                 ssrParamsBuffer.Update(context, ssrParams);
-                nint* cbvs = stackalloc nint[] { ssrParamsBuffer.NativePointer, camera.Value.NativePointer };
-                context.PSSetConstantBuffers(0, 2, (void**)cbvs);
             }
-            else
-            {
-                context.PSSetConstantBuffer(1, camera.Value);
-            }
-
-            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, Input.NativePointer, gbuffer.Value.SRVs[2].NativePointer };
-            context.PSSetShaderResources(0, 4, (void**)srvs);
-
-            nint* smps = stackalloc nint[] { pointClampSampler.NativePointer, linearClampSampler.NativePointer, linearBorderSampler.NativePointer };
-            context.PSSetSamplers(0, 3, (void**)smps);
 
             context.SetGraphicsPipelineState(pipelineSSR);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-
-            nint* emptySmps = stackalloc nint[3];
-            context.PSSetSamplers(0, 3, (void**)emptySmps);
-
-            nint* emptySrvs = stackalloc nint[4];
-            context.PSSetShaderResources(0, 4, (void**)emptySrvs);
-
-            nint* emptyCbvs = stackalloc nint[2];
-            context.PSSetConstantBuffers(0, 2, (void**)emptyCbvs);
-
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
         }
 
         /// <inheritdoc/>

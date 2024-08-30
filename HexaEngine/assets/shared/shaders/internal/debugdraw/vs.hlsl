@@ -10,9 +10,9 @@ struct PS_INPUT
     float2 tex : TEXCOORD;
 	float4 color : COLOR;
 };
-cbuffer MVPBuffer
+cbuffer matrixBuffer
 {
-    matrix ProjectionMatrix;
+    float4x4 ProjectionMatrix;
 };
 PS_INPUT main(VS_INPUT input)
 {

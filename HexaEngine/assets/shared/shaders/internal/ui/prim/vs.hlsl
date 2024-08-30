@@ -11,7 +11,7 @@ struct PSIn
 	float4 color : COLOR;
 };
 
-cbuffer MVPBuffer : register(b0)
+cbuffer matrixBuffer : register(b0)
 {
 	float4x4 view;
 }

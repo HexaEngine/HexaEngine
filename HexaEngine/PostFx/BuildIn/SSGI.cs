@@ -13,6 +13,7 @@
     [EditorDisplayName("SSGI")]
     public class SSGI : PostFxBase
     {
+#nullable disable
         private PostFxGraphResourceBuilder creator;
         private IGraphicsPipelineState psoSSGI;
         private ConstantBuffer<SSGIParams> ssgiParamsBuffer;
@@ -23,6 +24,7 @@
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<GBuffer> gbuffer;
+#nullable restore
 
         private float intensity = 1;
         private float distance = 10;
@@ -250,6 +252,16 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            psoSSGI.Bindings.SetSRV("inputTex", Input);
+            psoSSGI.Bindings.SetSRV("depthTex", depth.Value);
+            psoSSGI.Bindings.SetSRV("normalTex", gbuffer.Value!.SRVs[1]);
+            psoSSGI.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
+            psoSSGI.Bindings.SetCBV("CameraBuffer", camera.Value);
+            psoSSGI.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             if (Output == null)
@@ -257,31 +269,16 @@
                 return;
             }
 
-            context.ClearRenderTargetView(ssgiBuffer.Value, default);
+            context.ClearRenderTargetView(ssgiBuffer.Value!, default);
 
             context.SetRenderTarget(ssgiBuffer.Value, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, depth.Value.SRV);
-            context.PSSetShaderResource(2, gbuffer.Value.SRVs[1]);
-            context.PSSetConstantBuffer(0, ssgiParamsBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-            context.PSSetSampler(0, linearWrapSampler);
-
             context.SetGraphicsPipelineState(psoSSGI);
-
             context.DrawInstanced(4, 1, 0, 0);
-
             context.SetGraphicsPipelineState(null);
-
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(1, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(1, null);
-            context.PSSetShaderResource(0, null);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, ssgiBuffer.Value, Output, Viewport.Width, Viewport.Height);
+            blur.Blur(context, ssgiBuffer.Value!, Output, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()

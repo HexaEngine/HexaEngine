@@ -4,14 +4,20 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using System.Numerics;
 
     public class PrimitiveRenderer : IRenderer, IDisposable
     {
+        private ulong dirtyFrame;
+
         private readonly ConstantBuffer<UPoint4> offsetBuffer;
         private readonly StructuredBuffer<Matrix4x4> transformBuffer;
         private readonly StructuredBuffer<uint> transformOffsetBuffer;
@@ -33,6 +39,9 @@
         {
             this.primitive = primitive;
             this.material = material;
+
+            transformBuffer.Resize += TransformBufferResize;
+
             initialized = true;
         }
 
@@ -40,7 +49,15 @@
         {
             this.primitive = primitive;
             this.material = material;
+
+            transformBuffer.Resize += TransformBufferResize;
+
             initialized = true;
+        }
+
+        private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)
+        {
+            dirtyFrame = Time.Frame;
         }
 
         public void Uninitialize()
@@ -48,6 +65,28 @@
             primitive = null;
             material = null;
             initialized = false;
+        }
+
+        public void Prepare(Material material)
+        {
+            foreach (var pass in material.Shader.Passes)
+            {
+                var bindings = pass.Bindings;
+                bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value!);
+                bindings.SetCBV("offsetBuffer", offsetBuffer);
+                if (pass.Name == "Deferred" || pass.Name == "Forward")
+                {
+                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
+                }
+                else
+                {
+                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
+                    //bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
+                    //bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
+                }
+            }
         }
 
         public void Update(IGraphicsContext context, Matrix4x4 transform)
@@ -84,17 +123,11 @@
                 return;
             }
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
             material.DrawIndexedInstanced(context, "Deferred", indexCount, 1);
             primitive.EndDraw(context);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public void DrawForward(IGraphicsContext context)
@@ -104,17 +137,11 @@
                 return;
             }
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
             material.DrawIndexedInstanced(context, "Forward", indexCount, 1);
             primitive.EndDraw(context);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public void DrawDepth(IGraphicsContext context)
@@ -124,17 +151,11 @@
                 return;
             }
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
             material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
             primitive.EndDraw(context);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public void DrawDepth(IGraphicsContext context, IBuffer camera)
@@ -144,17 +165,11 @@
                 return;
             }
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+            Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
             material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
             primitive.EndDraw(context);
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
@@ -164,21 +179,26 @@
                 return;
             }
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-            context.VSSetConstantBuffer(1, light);
-            context.GSSetConstantBuffer(0, light);
+            Prepare(material);
+
+            string name = EnumHelper<ShadowType>.GetName(type);
+
+            var pass = material.GetPass(name);
+
+            if (pass == null)
+            {
+                return;
+            }
+
+            pass.Bindings.SetCBV("lightBuffer", light);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawIndexedInstanced(context, type.ToString(), indexCount, 1);
+            if (pass.BeginDraw(context))
+            {
+                context.DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
+            }
+            pass.EndDraw(context);
             primitive.EndDraw(context);
-
-            context.VSSetConstantBuffer(1, null);
-            context.GSSetConstantBuffer(0, null);
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         protected virtual void Dispose(bool disposing)

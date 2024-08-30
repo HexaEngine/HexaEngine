@@ -52,8 +52,6 @@ namespace HexaEngine.Graphics.Renderers
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            ctx.VSSetConstantBuffer(0, constantBuffer);
-            ctx.PSSetSampler(0, fontSampler);
         }
 
         public static readonly Dictionary<ImTextureID, ISamplerState> Samplers = new();
@@ -190,16 +188,18 @@ namespace HexaEngine.Graphics.Renderers
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
 
                         // Bind texture, Draw
-                        var srv = (void*)cmd.TextureId.Handle;
-                        ctx.PSSetShaderResources(0, 1, &srv);
+                        var srv = new SRVWrapper(cmd.TextureId.Handle);
+                        pso.Bindings.SetSRV("fontTex", srv);
                         if (Samplers.TryGetValue(cmd.TextureId, out ISamplerState sampler))
                         {
-                            ctx.PSSetSampler(0, sampler);
+                            pso.Bindings.SetSampler("fontSampler", sampler);
                         }
                         else
                         {
-                            ctx.PSSetSampler(0, fontSampler);
+                            pso.Bindings.SetSampler("fontSampler", fontSampler);
                         }
+
+                        ctx.SetGraphicsPipelineState(pso);
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, (uint)(cmd.IdxOffset + global_idx_offset), (int)(cmd.VtxOffset + global_vtx_offset), 0);
                     }
                 }
@@ -212,13 +212,32 @@ namespace HexaEngine.Graphics.Renderers
             ctx.SetVertexBuffer(null, 0, 0);
             ctx.SetIndexBuffer(null, default, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.Undefined);
-            ctx.VSSetConstantBuffer(0, null);
-            ctx.PSSetSampler(0, null);
-            ctx.PSSetShaderResource(0, null);
 
 #if DEBUG
             context.EndEvent();
 #endif
+        }
+
+        private struct SRVWrapper : IShaderResourceView
+        {
+            public SRVWrapper(nint p)
+            {
+                NativePointer = p;
+            }
+
+            public ShaderResourceViewDescription Description { get; }
+
+            public nint NativePointer { get; }
+
+            public string DebugName { get; set; }
+
+            public bool IsDisposed { get; }
+
+            public event EventHandler OnDisposed;
+
+            public readonly void Dispose()
+            {
+            }
         }
 
         private static unsafe void CreateFontsTexture()
@@ -274,6 +293,9 @@ namespace HexaEngine.Graphics.Renderers
                 MaxLOD = 0f
             };
             fontSampler = device.CreateSamplerState(samplerDesc);
+
+            pso.Bindings.SetSampler("fontSampler", fontSampler);
+            pso.Bindings.SetSRV("fontTex", fontTextureView);
         }
 
         private static unsafe void CreateDeviceObjects()
@@ -341,6 +363,7 @@ namespace HexaEngine.Graphics.Renderers
                 CPUAccessFlags = CpuAccessFlags.Write,
             };
             constantBuffer = device.CreateBuffer(constBufferDesc);
+            pso.Bindings.SetCBV("matrixBuffer", constantBuffer);
 
             CreateFontsTexture();
         }

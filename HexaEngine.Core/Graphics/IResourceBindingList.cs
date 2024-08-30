@@ -14,8 +14,8 @@
 
         void SetSRV(string name, ShaderStage stage, IShaderResourceView? srv);
 
-        void SetUAV(string name, IUnorderedAccessView? uav);
+        void SetUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
 
-        void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav);
+        void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
     }
 }

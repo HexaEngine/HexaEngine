@@ -14,6 +14,9 @@
 		<LangVersion>preview</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
+
+		<NoWarn>CS1591</NoWarn>
+	
 	</PropertyGroup>
 
 

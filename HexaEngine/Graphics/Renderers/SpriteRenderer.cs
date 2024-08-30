@@ -29,6 +29,7 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
             constantBuffer = new(CpuAccessFlags.Write);
+            pipeline.Bindings.SetCBV("constants", constantBuffer);
         }
 
         public void Draw(IGraphicsContext context, SpriteBatch batch, SpriteAtlas atlas, Matrix4x4 transform)
@@ -46,21 +47,12 @@
             constantBuffer.Update(context, constants);
 
             context.SetGraphicsPipelineState(pipeline);
-            context.VSSetShaderResource(0, batch.Buffer.SRV);
-            context.VSSetConstantBuffer(0, constantBuffer);
-
-            context.PSSetShaderResource(0, atlas.SRV);
-            context.PSSetSampler(0, atlas.SamplerState);
+            pipeline.Bindings.SetSRV("spritebuffer", batch.Buffer.SRV);
+            pipeline.Bindings.SetSRV("atlasTex", atlas.SRV);
+            pipeline.Bindings.SetSampler("samplerState", atlas.SamplerState);
 
             context.DrawInstanced(4, batch.Count, 0, 0);
 
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
-
-            context.VSSetConstantBuffer(1, null);
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetConstantBuffer(1, null);
             context.SetGraphicsPipelineState(null);
         }
 
