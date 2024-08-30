@@ -1,1 +1,1 @@
-﻿global using static TestApp.Utils;
+﻿global using static Hexa.NET.Utilities.Utils;

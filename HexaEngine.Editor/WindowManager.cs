@@ -288,8 +288,9 @@
                     continue;
                 }
 
-                using (CPUProfiler.Global.BeginBlock($"{window.Name}.DrawWindow"))
-                    window.DrawWindow(context);
+                CPUProfiler.Global.Begin(window.Name);
+                window.DrawWindow(context);
+                CPUProfiler.Global.End(window.Name);
             }
         }
 

@@ -25,7 +25,7 @@
         private readonly string? reportFile;
         private readonly string reportMessage;
 
-        public CrashWindow() : base(WindowPosCentered, WindowPosCentered, 700, 400, Silk.NET.SDL.WindowFlags.Borderless)
+        public CrashWindow()
         {
             var args = Environment.GetCommandLineArgs();
 

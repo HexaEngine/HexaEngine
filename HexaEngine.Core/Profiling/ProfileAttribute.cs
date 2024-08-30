@@ -1,4 +1,4 @@
-﻿#define PROFILE
+﻿//#define PROFILE
 #nullable disable
 #if PROFILE
 

@@ -166,6 +166,19 @@
             return _objects.Contains(item);
         }
 
+        public bool Contains<T>(T item) where T : struct
+        {
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                var obj = _objects[i];
+                if (obj is T t && t.Equals(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void CopyTo(object[] array, int arrayIndex)
         {
             _objects.CopyTo(array, arrayIndex);

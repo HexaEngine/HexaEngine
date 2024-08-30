@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
@@ -13,6 +14,7 @@
 
     public sealed class MeshRenderer : BaseRenderer<Model>
     {
+        private ulong dirtyFrame;
 #nullable disable
         private ConstantBuffer<UPoint4> offsetBuffer;
         private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
@@ -30,6 +32,44 @@
             transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;
             transformBuffer = cullingContext.InstanceDataOutBuffer;
             transformOffsetBuffer = cullingContext.InstanceOffsets;
+
+            transformBuffer.Resize += TransformBufferResize;
+        }
+
+        private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)
+        {
+            dirtyFrame = Time.Frame;
+        }
+
+        public override void Prepare(Model instance)
+        {
+            if (dirtyFrame == 0 || dirtyFrame == Time.Frame - 1)
+            {
+                foreach (Material material in instance.Materials)
+                {
+                    Prepare(material);
+                }
+            }
+        }
+
+        public void Prepare(Material material)
+        {
+            foreach (var pass in material.Shader.Passes)
+            {
+                var bindings = pass.Bindings;
+                bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value!);
+                bindings.SetCBV("offsetBuffer", offsetBuffer);
+                if (pass.Name == "Deferred" || pass.Name == "Forward")
+                {
+                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
+                }
+                else
+                {
+                    bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
+                    bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
+                }
+            }
         }
 
         public override void Update(IGraphicsContext context, Matrix4x4 transform, Model model)
@@ -94,13 +134,11 @@
                 return;
             }
 
+            Prepare(model);
+
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
             Material[] materials = model.Materials;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer?.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -119,21 +157,15 @@
                 material.DrawIndexedInstancedIndirect(context, "Deferred", drawIndirectArgs, drawType.DrawIndirectOffset);
                 mesh.EndDraw(context);
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public override void DrawForward(IGraphicsContext context, Model model)
         {
+            Prepare(model);
+
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
             Material[] materials = model.Materials;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer?.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -152,21 +184,15 @@
                 material.DrawIndexedInstancedIndirect(context, "Forward", drawIndirectArgs, drawType.DrawIndirectOffset);
                 mesh.EndDraw(context);
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public override void DrawDepth(IGraphicsContext context, Model model)
         {
+            Prepare(model);
+
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
             Material[] materials = model.Materials;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer?.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -185,21 +211,15 @@
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Count);
                 mesh.EndDraw(context);
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public override void DrawDepth(IGraphicsContext context, Model model, IBuffer camera)
         {
+            Prepare(model);
+
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
             Material[] materials = model.Materials;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer?.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer?.SRV);
 
             for (uint i = 0; i < drawTypes.Length; i++)
             {
@@ -218,27 +238,18 @@
                 material.DrawIndexedInstanced(context, "DepthOnly", mesh.IndexCount, (uint)drawType.Instances.Count);
                 mesh.EndDraw(context);
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, Model model, IBuffer light, ShadowType type)
         {
+            Prepare(model);
+
             DrawType[] drawTypes = model.DrawTypes;
             Mesh[] meshes = model.Meshes;
             Material[] materials = model.Materials;
 
             string name = EnumHelper<ShadowType>.GetName(type);
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformNoBuffer.SRV);
-            context.VSSetShaderResource(1, transformNoOffsetBuffer.SRV);
-            context.VSSetConstantBuffer(1, light);
-            context.GSSetConstantBuffer(0, light);
-            context.PSSetConstantBuffer(0, light);
-
             for (uint i = 0; i < drawTypes.Length; i++)
             {
                 DrawType drawType = drawTypes[i];
@@ -252,17 +263,23 @@
                     continue;
                 }
 
+                var pass = material.GetPass(name);
+
+                if (pass == null)
+                {
+                    continue;
+                }
+
+                pass.Bindings.SetCBV("lightBuffer", light);
+
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, name, mesh.IndexCount, (uint)drawType.Instances.Count);
+                if (pass.BeginDraw(context))
+                {
+                    context.DrawIndexedInstanced(mesh.IndexCount, (uint)drawType.Instances.Count, 0, 0, 0);
+                }
+                pass.EndDraw(context);
                 mesh.EndDraw(context);
             }
-
-            context.VSSetConstantBuffer(1, null);
-            context.GSSetConstantBuffer(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
         }
 
         public override void Bake(IGraphicsContext context, Model model)
@@ -271,6 +288,7 @@
 
         protected override void DisposeCore()
         {
+            transformBuffer.Resize -= TransformBufferResize;
             offsetBuffer.Dispose();
             offsetBuffer = null;
             drawIndirectArgs = null;

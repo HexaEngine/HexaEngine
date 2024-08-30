@@ -3,11 +3,14 @@
     using HexaEngine.Core.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
+    using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public struct ShaderParameter
+    public unsafe struct ShaderParameter
     {
+        public char* Name;
+        public uint Hash;
         public uint Index;
         public uint Size;
         public ShaderStage Stage;
@@ -22,73 +25,156 @@
         Sampler,
     }
 
-    public unsafe class D3D11DescriptorRange
+    public unsafe struct D3D11DescriptorRange
     {
-        public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters, Dictionary<string, ShaderParameter> shaderParametersByName)
+        public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters)
         {
             Stage = stage;
             Type = type;
-            Parameters = parameters;
-            ShaderParametersByName = shaderParametersByName;
-            Ranges = [];
-            uint startSlot = uint.MaxValue;
 
-            uint maxSlot = 0;
-            for (int i = 0; i < parameters.Count; i++)
+            count = parameters.Count;
+            if (count > 0) // just allocate if we really need it.
             {
-                ShaderParameter parameter = parameters[i];
-                startSlot = Math.Min(startSlot, parameter.Index);
-                maxSlot = Math.Max(maxSlot, parameter.Index);
+                buckets = AllocT<ShaderParameter>(count);
+                ZeroMemoryT(buckets, count);
             }
 
-            uint count = parameters.Count == 0 ? 0 : (maxSlot + 1) - startSlot;
+            uint startSlot = uint.MaxValue;
+            uint maxSlot = 0;
+            foreach (ShaderParameter parameter in parameters)
+            {
+                startSlot = Math.Min(startSlot, parameter.Index);
+                maxSlot = Math.Max(maxSlot, parameter.Index);
+                var param = Find(buckets, parameters.Count, parameter.Hash, parameter.Name);
+                *param = parameter;
+            }
+
+            uint rangeWidth = parameters.Count == 0 ? 0 : (maxSlot + 1) - startSlot;
 
             StartSlot = startSlot;
-            Count = count;
+            Count = rangeWidth;
 
             if (count == 0)
             {
                 return;
             }
-            Resources = (void**)AllocT<nint>(count);
-            ZeroMemory(Resources, Count * sizeof(nint));
+            Resources = (void**)AllocT<nint>(rangeWidth);
+            ZeroMemory(Resources, rangeWidth * sizeof(nint));
         }
 
-        public readonly ShaderStage Stage;
-        public readonly ShaderParameterType Type;
-        public readonly uint StartSlot;
-        public readonly uint Count;
-        public readonly void** Resources;
+        private readonly ShaderParameter* Find(ShaderParameter* buckets, int capacity, uint hash, char* key)
+        {
+            uint index = (uint)(hash % capacity);
+            bool exit = false;
+            while (true)
+            {
+                var entry = &buckets[index];
+                if (entry->Hash == 0)
+                {
+                    return entry;
+                }
+                else if (entry->Hash == hash && StrCmp(key, entry->Name) == 0)
+                {
+                    return entry;
+                }
 
-        public readonly List<ShaderParameter> Parameters;
-        public readonly Dictionary<string, ShaderParameter> ShaderParametersByName;
-        public UnsafeList<ResourceRange> Ranges;
+                index++;
+                if (index == capacity)
+                {
+                    if (exit)
+                    {
+                        break;
+                    }
+
+                    index = 0;
+                    exit = true;
+                }
+            }
+
+            return null; // return null means not found and full.
+        }
+
+        private readonly ShaderStage Stage;
+        private readonly ShaderParameterType Type;
+        private readonly uint StartSlot;
+        private readonly uint Count;
+        private void** Resources;
+
+        private UnsafeList<ResourceRange> Ranges;
+        private ShaderParameter* buckets;
+        private int count;
 
         public struct ResourceRange
         {
             public void** Start;
             public int Length;
+        }
 
-            public ResourceRange(void** start, int length)
+        private readonly ShaderParameter GetByName(string name)
+        {
+            if (count == 0)
             {
-                Start = start;
-                Length = length;
+                // special case, check ahead to avoid unnecessary steps.
+                throw new KeyNotFoundException();
+            }
+
+            uint hash = (uint)name.GetHashCode();
+            fixed (char* pName = name)
+            {
+                var pEntry = Find(buckets, count, hash, pName);
+                if (pEntry != null && pEntry->Hash == hash)
+                {
+                    return *pEntry;
+                }
+                throw new KeyNotFoundException();
+            }
+        }
+
+        private readonly bool TryGetByName(string name, out ShaderParameter parameter)
+        {
+            if (count == 0)
+            {
+                // special case, check ahead to avoid unnecessary steps.
+                parameter = default;
+                return false;
+            }
+
+            uint hash = (uint)name.GetHashCode();
+            fixed (char* pName = name)
+            {
+                var pEntry = Find(buckets, count, hash, pName);
+                if (pEntry != null && pEntry->Hash == hash)
+                {
+                    parameter = *pEntry;
+                    return true;
+                }
+                parameter = default;
+                return false;
             }
         }
 
         public void SetByName(string name, void* resource)
         {
-            var parameter = ShaderParametersByName[name];
+            var parameter = GetByName(name);
+            var old = Resources[parameter.Index - StartSlot];
             Resources[parameter.Index - StartSlot] = resource;
-            UpdateRanges(parameter.Index - StartSlot, resource == null);
+            if (old != null ^ resource != null)
+            {
+                UpdateRanges(parameter.Index - StartSlot, resource == null);
+            }
         }
 
         public bool TrySetByName(string name, void* resource)
         {
-            if (ShaderParametersByName.TryGetValue(name, out var parameter))
+            if (TryGetByName(name, out var parameter))
             {
+                var old = Resources[parameter.Index - StartSlot];
                 Resources[parameter.Index - StartSlot] = resource;
-                UpdateRanges(parameter.Index - StartSlot, resource == null);
+                if (old != null ^ resource != null)
+                {
+                    UpdateRanges(parameter.Index - StartSlot, resource == null);
+                }
+
                 return true;
             }
             return false;
@@ -292,6 +378,17 @@
             if (Resources != null)
             {
                 Free(Resources);
+                Resources = null;
+            }
+            if (buckets != null)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    Free(buckets[i].Name);
+                }
+                Free(buckets);
+                buckets = null;
+                count = 0;
             }
             Ranges.Release();
         }
@@ -300,24 +397,17 @@
     public unsafe class D3D11ResourceBindingList : DisposableBase, IResourceBindingList
     {
         private readonly IPipeline pipeline;
-        private readonly List<ShaderParameter> shaderParameters = [];
-        private readonly Dictionary<string, ShaderParameter> shaderParametersByName = [];
-        private readonly List<D3D11DescriptorRange> rangesSRVs = [];
-        private readonly List<D3D11DescriptorRange> rangesUAVs = [];
-        private readonly List<D3D11DescriptorRange> rangesCBVs = [];
-        private readonly List<D3D11DescriptorRange> rangesSamplers = [];
+        private UnsafeList<D3D11DescriptorRange> rangesSRVs;
+        private UnsafeList<D3D11DescriptorRange> rangesUAVs;
+        private UnsafeList<D3D11DescriptorRange> rangesCBVs;
+        private UnsafeList<D3D11DescriptorRange> rangesSamplers;
 
         public D3D11ResourceBindingList(D3D11GraphicsPipeline pipeline)
         {
             pipeline.AddRef();
             pipeline.OnCompile += OnPipelineCompile;
             this.pipeline = pipeline;
-
-            Reflect(pipeline.vertexShaderBlob, ShaderStage.Vertex);
-            Reflect(pipeline.hullShaderBlob, ShaderStage.Hull);
-            Reflect(pipeline.domainShaderBlob, ShaderStage.Domain);
-            Reflect(pipeline.geometryShaderBlob, ShaderStage.Geometry);
-            Reflect(pipeline.pixelShaderBlob, ShaderStage.Pixel);
+            OnPipelineCompile(pipeline);
         }
 
         public D3D11ResourceBindingList(D3D11ComputePipeline pipeline)
@@ -325,76 +415,87 @@
             pipeline.AddRef();
             pipeline.OnCompile += OnPipelineCompile;
             this.pipeline = pipeline;
-
-            Reflect(pipeline.computeShaderBlob, ShaderStage.Compute);
+            OnPipelineCompile(pipeline);
         }
 
-        private void OnPipelineCompile(IPipeline pipe)
+        private void OnPipelineCompile(IPipeline pipeline)
         {
-            D3D11GraphicsPipeline pipeline = (D3D11GraphicsPipeline)pipe;
             Clear();
-            Reflect(pipeline.vertexShaderBlob, ShaderStage.Vertex);
-            Reflect(pipeline.hullShaderBlob, ShaderStage.Hull);
-            Reflect(pipeline.domainShaderBlob, ShaderStage.Domain);
-            Reflect(pipeline.geometryShaderBlob, ShaderStage.Geometry);
-            Reflect(pipeline.pixelShaderBlob, ShaderStage.Pixel);
+            if (pipeline is D3D11GraphicsPipeline graphicsPipeline)
+            {
+                Reflect(graphicsPipeline.vertexShaderBlob, ShaderStage.Vertex);
+                Reflect(graphicsPipeline.hullShaderBlob, ShaderStage.Hull);
+                Reflect(graphicsPipeline.domainShaderBlob, ShaderStage.Domain);
+                Reflect(graphicsPipeline.geometryShaderBlob, ShaderStage.Geometry);
+                Reflect(graphicsPipeline.pixelShaderBlob, ShaderStage.Pixel);
+            }
+
+            if (pipeline is D3D11ComputePipeline computePipeline)
+            {
+                Reflect(computePipeline.computeShaderBlob, ShaderStage.Compute);
+            }
+
+            rangesSRVs.ShrinkToFit();
+            rangesUAVs.ShrinkToFit();
+            rangesCBVs.ShrinkToFit();
+            rangesSamplers.ShrinkToFit();
         }
 
-        public void SetSRV(string name, IShaderResourceView srv)
+        public void SetSRV(string name, IShaderResourceView? srv)
         {
             var p = srv?.NativePointer ?? 0;
             for (int i = 0; i < rangesSRVs.Count; i++)
             {
-                rangesSRVs[i].TrySetByName(name, (void*)p);
+                rangesSRVs.GetPointer(i)->TrySetByName(name, (void*)p);
             }
         }
 
-        public void SetUAV(string name, IUnorderedAccessView uav)
+        public void SetUAV(string name, IUnorderedAccessView? uav)
         {
             var p = uav?.NativePointer ?? 0;
             for (int i = 0; i < rangesUAVs.Count; i++)
             {
-                rangesUAVs[i].TrySetByName(name, (void*)p);
+                rangesUAVs.GetPointer(i)->TrySetByName(name, (void*)p);
             }
         }
 
-        public void SetCBV(string name, IBuffer cbv)
+        public void SetCBV(string name, IBuffer? cbv)
         {
             var p = cbv?.NativePointer ?? 0;
             for (int i = 0; i < rangesCBVs.Count; i++)
             {
-                rangesCBVs[i].TrySetByName(name, (void*)p);
+                rangesCBVs.GetPointer(i)->TrySetByName(name, (void*)p);
             }
         }
 
-        public void SetSampler(string name, ISamplerState sampler)
+        public void SetSampler(string name, ISamplerState? sampler)
         {
             var p = sampler?.NativePointer ?? 0;
             for (int i = 0; i < rangesSamplers.Count; i++)
             {
-                rangesSamplers[i].TrySetByName(name, (void*)p);
+                rangesSamplers.GetPointer(i)->TrySetByName(name, (void*)p);
             }
         }
 
-        public void SetSRV(string name, ShaderStage stage, IShaderResourceView srv)
+        public void SetSRV(string name, ShaderStage stage, IShaderResourceView? srv)
         {
             var p = srv?.NativePointer ?? 0;
             rangesSRVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
-        public void SetUAV(string name, ShaderStage stage, IUnorderedAccessView uav)
+        public void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav)
         {
             var p = uav?.NativePointer ?? 0;
             rangesUAVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
-        public void SetCBV(string name, ShaderStage stage, IBuffer cbv)
+        public void SetCBV(string name, ShaderStage stage, IBuffer? cbv)
         {
             var p = cbv?.NativePointer ?? 0;
             rangesCBVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
-        public void SetSampler(string name, ShaderStage stage, ISamplerState sampler)
+        public void SetSampler(string name, ShaderStage stage, ISamplerState? sampler)
         {
             var p = sampler?.NativePointer ?? 0;
             rangesSamplers[(int)stage].TrySetByName(name, (void*)p);
@@ -404,10 +505,10 @@
         {
             if (shader == null)
             {
-                rangesSRVs.Add(new(stage, ShaderParameterType.SRV, new(), new()));
-                rangesUAVs.Add(new(stage, ShaderParameterType.UAV, new(), new()));
-                rangesCBVs.Add(new(stage, ShaderParameterType.CBV, new(), new()));
-                rangesSamplers.Add(new(stage, ShaderParameterType.Sampler, new(), new()));
+                rangesSRVs.Add(new(stage, ShaderParameterType.SRV, new()));
+                rangesUAVs.Add(new(stage, ShaderParameterType.UAV, new()));
+                rangesCBVs.Add(new(stage, ShaderParameterType.CBV, new()));
+                rangesSamplers.Add(new(stage, ShaderParameterType.Sampler, new()));
                 return;
             }
 
@@ -424,6 +525,7 @@
                 ShaderInputBindDesc shaderInputBindDesc;
                 reflection.GetResourceBindingDesc(i, &shaderInputBindDesc);
                 ShaderParameter parameter;
+
                 parameter.Index = shaderInputBindDesc.BindPoint;
                 parameter.Size = shaderInputBindDesc.BindCount;
                 parameter.Stage = stage;
@@ -445,49 +547,46 @@
                     D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderParameterType.UAV,
                     _ => throw new NotSupportedException($"ShaderInputType ({shaderInputBindDesc.Type}) is not supported!"),
                 };
-                shaderParameters.Add(parameter);
 
                 string name = ToStringFromUTF8(shaderInputBindDesc.Name) ?? throw new Exception("Name cannot be null, check your shader code ensure all resources are named!");
-                shaderParametersByName.Add(name, parameter);
+
+                parameter.Hash = (uint)name.GetHashCode();
+                parameter.Name = name.ToUTF16Ptr();
 
                 shaderParametersInStage.Add(parameter);
                 shaderParametersByNameInStage.Add(name, parameter);
             }
 
-            {
-                rangesSRVs.Add(new(stage, ShaderParameterType.SRV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.SRV).ToList(), shaderParametersByNameInStage.Where(x => x.Value.Type == ShaderParameterType.SRV).ToDictionary()));
-                rangesUAVs.Add(new(stage, ShaderParameterType.UAV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.UAV).ToList(), shaderParametersByNameInStage.Where(x => x.Value.Type == ShaderParameterType.UAV).ToDictionary()));
-                rangesCBVs.Add(new(stage, ShaderParameterType.CBV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.CBV).ToList(), shaderParametersByNameInStage.Where(x => x.Value.Type == ShaderParameterType.CBV).ToDictionary()));
-                rangesSamplers.Add(new(stage, ShaderParameterType.Sampler, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.Sampler).ToList(), shaderParametersByNameInStage.Where(x => x.Value.Type == ShaderParameterType.Sampler).ToDictionary()));
-            }
+            rangesSRVs.PushBack(new(stage, ShaderParameterType.SRV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.SRV).ToList()));
+            rangesUAVs.PushBack(new(stage, ShaderParameterType.UAV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.UAV).ToList()));
+            rangesCBVs.PushBack(new(stage, ShaderParameterType.CBV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.CBV).ToList()));
+            rangesSamplers.PushBack(new(stage, ShaderParameterType.Sampler, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.Sampler).ToList()));
 
             reflection.Release();
         }
 
         private void Clear()
         {
-            shaderParameters.Clear();
-            shaderParametersByName.Clear();
             for (int i = 0; i < rangesSRVs.Count; i++)
             {
                 rangesSRVs[i].Release();
             }
-            rangesSRVs.Clear();
+            rangesSRVs.Release();
             for (int i = 0; i < rangesUAVs.Count; i++)
             {
                 rangesUAVs[i].Release();
             }
-            rangesUAVs.Clear();
+            rangesUAVs.Release();
             for (int i = 0; i < rangesCBVs.Count; i++)
             {
                 rangesCBVs[i].Release();
             }
-            rangesCBVs.Clear();
+            rangesCBVs.Release();
             for (int i = 0; i < rangesSamplers.Count; i++)
             {
                 rangesSamplers[i].Release();
             }
-            rangesSamplers.Clear();
+            rangesSamplers.Release();
         }
 
         public void BindGraphics(ComPtr<ID3D11DeviceContext3> context)

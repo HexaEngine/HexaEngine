@@ -1,6 +1,6 @@
 #include "defs.hlsl"
 
-cbuffer cb
+cbuffer offsetBuffer
 {
 	uint offset;
 }

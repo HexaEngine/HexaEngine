@@ -141,7 +141,7 @@
                 flags |= ImGuiWindowFlags.UnsavedDocument;
             }
 
-            if (!ImGui.Begin("Scene", ref isShown, flags))
+            if (!ImGui.Begin("Scene"u8, ref isShown, flags))
             {
                 if (focus)
                 {
@@ -197,14 +197,14 @@
                 {
                     if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                     {
-                        if (ImGui.Button("3D"))
+                        if (ImGui.Button("3D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim2D;
                         }
                     }
                     else
                     {
-                        if (ImGui.Button("2D"))
+                        if (ImGui.Button("2D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim3D;
                         }
@@ -268,7 +268,7 @@
                     }
 
                     int cameraIndex = scene.Cameras.ActiveCameraIndex;
-                    if (ImGui.Combo("##ActiveCamCombo", ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
+                    if (ImGui.Combo("##ActiveCamCombo"u8, ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
                     {
                         scene.Cameras.ActiveCameraIndex = cameraIndex;
                     }
@@ -277,49 +277,49 @@
 
                     if (ImGui.BeginMenu($"{UwU.Gear}"))
                     {
-                        ImGui.Checkbox("Fullscreen", ref Fullframe);
+                        ImGui.Checkbox("Fullscreen"u8, ref Fullframe);
 
-                        ImGui.SeparatorText("Camera Settings");
+                        ImGui.SeparatorText("Camera Settings"u8);
 
                         float fov = EditorCameraController.Fov;
-                        if (ImGui.SliderAngle("Fov", ref fov, 0, 180))
+                        if (ImGui.SliderAngle("Fov"u8, ref fov, 0, 180))
                         {
                             EditorCameraController.Fov = fov;
                         }
 
                         float far = EditorCameraController.Far;
-                        if (ImGui.InputFloat("Far", ref far))
+                        if (ImGui.InputFloat("Far"u8, ref far))
                         {
                             EditorCameraController.Far = far;
                         }
 
                         float speed = EditorCameraController.Speed;
-                        if (ImGui.InputFloat("Speed", ref speed))
+                        if (ImGui.InputFloat("Speed"u8, ref speed))
                         {
                             EditorCameraController.Speed = speed;
                         }
 
                         float sensitivity = EditorCameraController.MouseSensitivity;
-                        if (ImGui.InputFloat("Sensitivity", ref sensitivity))
+                        if (ImGui.InputFloat("Sensitivity"u8, ref sensitivity))
                         {
                             EditorCameraController.MouseSensitivity = sensitivity;
                         }
 
-                        ImGui.SeparatorText("Shading Mode");
+                        ImGui.SeparatorText("Shading Mode"u8);
 
                         SceneRenderer? renderer = SceneRenderer.Current;
 
                         if (renderer != null)
                         {
-                            if (ImGui.RadioButton("Wireframe", renderer.Shading == ViewportShading.Wireframe))
+                            if (ImGui.RadioButton("Wireframe"u8, renderer.Shading == ViewportShading.Wireframe))
                             {
                                 renderer.Shading = ViewportShading.Wireframe;
                             }
-                            if (ImGui.RadioButton("Solid", renderer.Shading == ViewportShading.Solid))
+                            if (ImGui.RadioButton("Solid"u8, renderer.Shading == ViewportShading.Solid))
                             {
                                 renderer.Shading = ViewportShading.Solid;
                             }
-                            if (ImGui.RadioButton("Rendered", renderer.Shading == ViewportShading.Rendered))
+                            if (ImGui.RadioButton("Rendered"u8, renderer.Shading == ViewportShading.Rendered))
                             {
                                 renderer.Shading = ViewportShading.Rendered;
                             }
@@ -366,39 +366,43 @@
 
             ImGui.PushItemWidth(100);
 
-            var mode = Inspector.Mode;
-            if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
+            if (true)
             {
-                Inspector.Mode = mode;
+                var mode = Inspector.Mode;
+                if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
+                {
+                    Inspector.Mode = mode;
+                }
+
+                // something here causes gc pressue needs investigation.
+                ImGui.PopItemWidth();
+
+                if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Translate;
+                }
+                TooltipHelper.Tooltip("Translate");
+
+                if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Rotate;
+                }
+                TooltipHelper.Tooltip("Rotate");
+
+                if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Scale;
+                }
+                TooltipHelper.Tooltip("Scale");
+
+                if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Universal;
+                }
+                TooltipHelper.Tooltip("Translate & Rotate & Scale");
+
+                Inspector.Draw();
             }
-
-            ImGui.PopItemWidth();
-
-            if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Translate;
-            }
-            TooltipHelper.Tooltip("Translate");
-
-            if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Rotate;
-            }
-            TooltipHelper.Tooltip("Rotate");
-
-            if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Scale;
-            }
-            TooltipHelper.Tooltip("Scale");
-
-            if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Universal;
-            }
-            TooltipHelper.Tooltip("Translate & Rotate & Scale");
-
-            Inspector.Draw();
 
             ImGui.End();
         }

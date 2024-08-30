@@ -21,6 +21,8 @@
 
         public string Name => name;
 
+        public IResourceBindingList Bindings => pipelineState.Bindings;
+
         public bool BeginDraw(IGraphicsContext context)
         {
             if (!pipelineState.IsValid)

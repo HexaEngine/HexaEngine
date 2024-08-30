@@ -120,7 +120,7 @@
             var entries = ProjectHistory.Entries;
 
             Vector2 entryChildSize = new(entrySize.X, avail.Y);
-            ImGui.BeginChild("Entries", entryChildSize);
+            ImGui.BeginChild("Entries"u8, entryChildSize);
 
             ImGui.InputTextWithHint("##SearchBar", "Search ...", ref searchString, 1024);
 
@@ -163,7 +163,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("Today", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("Today"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 0;
                     }
                 }
@@ -176,7 +176,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("Yesterday", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("Yesterday"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 1;
                     }
                 }
@@ -189,7 +189,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("A week ago", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("A week ago"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 2;
                     }
                 }
@@ -202,7 +202,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("A month ago", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("A month ago"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 3;
                     }
                 }
@@ -213,7 +213,7 @@
                         ImGui.TreePop();
                     }
 
-                    open = ImGui.TreeNode("Older");
+                    open = ImGui.TreeNode("Older"u8);
                     activeNode = 4;
                 }
 

@@ -99,11 +99,7 @@
                   isValid = false;
               }*/
 
-            if ((desc.Flags & GraphicsPipelineStateFlags.CreateResourceBindingList) != 0)
-            {
-                resourceBindingList = new(pipeline);
-            }
-
+            resourceBindingList = new(pipeline);
             primitiveTopology = Helper.Convert(desc.Topology);
         }
 

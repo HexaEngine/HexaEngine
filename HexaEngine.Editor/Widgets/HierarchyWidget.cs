@@ -88,7 +88,7 @@
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        protected override string Name => $"{UwU.Sitemap} Hierarchy";
+        protected override string Name { get; } = $"{UwU.Sitemap} Hierarchy";
 
         public override void DrawContent(IGraphicsContext context)
         {

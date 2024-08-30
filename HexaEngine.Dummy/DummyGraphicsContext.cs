@@ -485,5 +485,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public void SetComputePipelineState(IComputePipelineState? state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExecuteCommandBuffer(ICommandBuffer commandBuffer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

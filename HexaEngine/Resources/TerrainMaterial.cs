@@ -76,15 +76,12 @@
             }
             Id = guid;
 
-            textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 4;
-            textureListPS.Update();
-            textureListDS.StartTextureSlot = 1;
-            textureListDS.StartSamplerSlot = 1;
-            textureListDS.Update();
-
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], true, hasDisplacement);
             shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc);
+
+            textureListPS.Update(shader);
+
+            textureListDS.Update(shader);
         }
 
         public void Update()
@@ -131,13 +128,6 @@
                 }
             }
 
-            textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 4;
-            textureListPS.Update();
-            textureListDS.StartTextureSlot = 1;
-            textureListDS.StartSamplerSlot = 1;
-            textureListDS.Update();
-
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(guid, [.. layerMacros], true, hasDisplacement);
 
             if (Id != guid)
@@ -151,6 +141,10 @@
                 ResourceManager.Shared.UpdateMaterialShader(shader, shaderDesc);
             }
             Id = guid;
+
+            textureListPS.Update(shader);
+
+            textureListDS.Update(shader);
         }
 
         public void Setup()
@@ -338,16 +332,11 @@
                 return false;
             }
 
-            textureListPS.BindPS(context);
-            textureListDS.BindDS(context);
-
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            textureListPS.UnbindPS(context);
-            textureListDS.UnbindDS(context);
             context.SetGraphicsPipelineState(null);
         }
 

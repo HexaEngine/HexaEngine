@@ -278,7 +278,7 @@
             SetFolder(ProjectManager.CurrentProjectAssetsFolder);
         }
 
-        protected override string Name => $"{UwU.LinesLeaning} Asset Browser";
+        protected override string Name { get; } = $"{UwU.LinesLeaning} Asset Browser";
 
         public AssetExplorerIconSize IconSize
         {
@@ -985,12 +985,12 @@
                 IconSize = iconSize;
             }
 
-            if (ImGui.Checkbox("Show Extensions", ref showExtensions))
+            if (ImGui.Checkbox("Show Extensions"u8, ref showExtensions))
             {
                 ShowExtensions = showExtensions;
             }
 
-            if (ImGui.Checkbox("Show Hidden", ref showHidden))
+            if (ImGui.Checkbox("Show Hidden"u8, ref showHidden))
             {
                 ShowHidden = showHidden;
             }
@@ -1288,6 +1288,7 @@
         {
             if (ImGui.BeginMenuBar())
             {
+                // something here causes gc pressue needs investigation.
                 if (ImGui.BeginMenu($"{UwU.Gear}"))
                 {
                     DrawSettings();

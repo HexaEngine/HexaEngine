@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
+    using HexaEngine.Meshes;
     using System.Numerics;
 
     public abstract class BaseRenderer<T> : IRenderer1<T>, IRenderer1
@@ -19,6 +20,10 @@
         public bool CanRender(object instance)
         {
             return instance is T;
+        }
+
+        public virtual void Prepare(T instance)
+        {
         }
 
         public abstract void Bake(IGraphicsContext context, T instance);

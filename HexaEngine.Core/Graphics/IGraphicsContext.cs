@@ -167,6 +167,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -174,6 +175,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -181,6 +183,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -188,6 +191,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -195,6 +199,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -202,6 +207,7 @@
         /// </summary>
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="constantBuffer">The constant buffer to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         /// <summary>
@@ -210,6 +216,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void VSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -218,6 +225,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void HSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -226,6 +234,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void DSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -234,6 +243,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void GSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -242,6 +252,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void PSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -250,6 +261,7 @@
         /// <param name="slot">The constant buffer slot to set.</param>
         /// <param name="count">The number of constant buffers to set.</param>
         /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void CSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
         /// <summary>
@@ -257,6 +269,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -264,6 +277,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -271,6 +285,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -278,6 +293,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -285,6 +301,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -292,6 +309,7 @@
         /// </summary>
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="shaderResourceView">The shader resource view to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         /// <summary>
@@ -300,6 +318,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void VSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -308,6 +327,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void HSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -316,6 +336,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void DSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -324,6 +345,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void GSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -332,6 +354,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void PSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -340,6 +363,7 @@
         /// <param name="slot">The shader resource view slot to set.</param>
         /// <param name="count">The number of shader resource views to set.</param>
         /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void CSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
         /// <summary>
@@ -347,6 +371,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void VSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -354,6 +379,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void HSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -361,6 +387,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void DSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -368,6 +395,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void GSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -375,6 +403,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void PSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -382,6 +411,7 @@
         /// </summary>
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="sampler">The sampler state to set.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         void CSSetSampler(uint slot, ISamplerState? sampler);
 
         /// <summary>
@@ -390,6 +420,7 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void VSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
@@ -398,6 +429,7 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void HSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
@@ -406,6 +438,7 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void DSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
@@ -414,6 +447,7 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void GSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
@@ -422,6 +456,7 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void PSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
@@ -430,7 +465,44 @@
         /// <param name="slot">The sampler state slot to set.</param>
         /// <param name="count">The number of sampler states to set.</param>
         /// <param name="samplers">An array of pointers to sampler states.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
         unsafe void CSSetSamplers(uint slot, uint count, void** samplers);
+
+        /// <summary>
+        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
+        /// </summary>
+        /// <param name="offset">The starting slot to which the unordered access views will be bound.</param>
+        /// <param name="count">The number of unordered access views to set.</param>
+        /// <param name="views">An array of pointers to unordered access views to set.</param>
+        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
+        unsafe void CSSetUnorderedAccessViews(uint offset, uint count, void** views, uint* uavInitialCounts);
+
+        /// <summary>
+        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
+        /// </summary>
+        /// <param name="count">The number of unordered access views to set.</param>
+        /// <param name="views">An array of pointers to unordered access views to set.</param>
+        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
+        unsafe void CSSetUnorderedAccessViews(uint count, void** views, uint* uavInitialCounts);
+
+        /// <summary>
+        /// Sets an unordered access view for the compute shader stage at a specified slot with an initial count.
+        /// </summary>
+        /// <param name="offset">The slot at which to bind the unordered access view.</param>
+        /// <param name="view">A pointer to the unordered access view to set.</param>
+        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
+        unsafe void CSSetUnorderedAccessView(uint offset, void* view, uint uavInitialCounts = unchecked((uint)-1));
+
+        /// <summary>
+        /// Sets an unordered access view for the compute shader stage at slot 0 with an initial count.
+        /// </summary>
+        /// <param name="view">A pointer to the unordered access view to set.</param>
+        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
+        [Obsolete("This method is deprecated. Use the new Descriptor Binding methods instead.")]
+        unsafe void CSSetUnorderedAccessView(void* view, uint uavInitialCounts = unchecked((uint)-1)) => CSSetUnorderedAccessView(0, view, uavInitialCounts);
 
         /// <summary>
         /// Clears the specified render target view with the specified clear color.
@@ -626,38 +698,6 @@
         /// <param name="destSubresource">The index of the destination subresource.</param>
         /// <param name="subresource">The subresource data containing the update.</param>
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
-
-        /// <summary>
-        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
-        /// </summary>
-        /// <param name="offset">The starting slot to which the unordered access views will be bound.</param>
-        /// <param name="count">The number of unordered access views to set.</param>
-        /// <param name="views">An array of pointers to unordered access views to set.</param>
-        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
-        unsafe void CSSetUnorderedAccessViews(uint offset, uint count, void** views, uint* uavInitialCounts);
-
-        /// <summary>
-        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
-        /// </summary>
-        /// <param name="count">The number of unordered access views to set.</param>
-        /// <param name="views">An array of pointers to unordered access views to set.</param>
-        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
-        unsafe void CSSetUnorderedAccessViews(uint count, void** views, uint* uavInitialCounts);
-
-        /// <summary>
-        /// Sets an unordered access view for the compute shader stage at a specified slot with an initial count.
-        /// </summary>
-        /// <param name="offset">The slot at which to bind the unordered access view.</param>
-        /// <param name="view">A pointer to the unordered access view to set.</param>
-        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
-        unsafe void CSSetUnorderedAccessView(uint offset, void* view, uint uavInitialCounts = unchecked((uint)-1));
-
-        /// <summary>
-        /// Sets an unordered access view for the compute shader stage at slot 0 with an initial count.
-        /// </summary>
-        /// <param name="view">A pointer to the unordered access view to set.</param>
-        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
-        unsafe void CSSetUnorderedAccessView(void* view, uint uavInitialCounts = unchecked((uint)-1)) => CSSetUnorderedAccessView(0, view, uavInitialCounts);
 
         /// <summary>
         /// Sets render targets for rendering using an array of views and an optional depth-stencil view.

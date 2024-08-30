@@ -87,6 +87,13 @@
 
         public GraphResourceContainer? Container { get => container; set => container = value; }
 
+        public static GraphResourceBuilder Global { get; private set; } = null!;
+
+        internal void MakeGlobal()
+        {
+            Global = this;
+        }
+
         private void ConstructList<TType, TDesc>(List<ResourceDescriptor<TDesc>> descriptors, List<TType> group) where TDesc : struct where TType : class, IDisposable
         {
             for (int i = 0; i < descriptors.Count; i++)

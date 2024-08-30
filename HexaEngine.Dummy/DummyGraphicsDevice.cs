@@ -139,27 +139,17 @@
             throw new NotImplementedException();
         }
 
-        public unsafe ISwapChain CreateSwapChain(Window* window)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
         public unsafe ISwapChain CreateSwapChain(SDLWindow* window)
         {
             throw new NotImplementedException();
         }
 
         public unsafe ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

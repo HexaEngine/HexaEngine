@@ -13,7 +13,7 @@
             IsShown = true;
         }
 
-        protected override string Name => $"{UwU.Bars} Properties";
+        protected override string Name { get; } = $"{UwU.Bars} Properties";
 
         public override void DrawContent(IGraphicsContext context)
         {

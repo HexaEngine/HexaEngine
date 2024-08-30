@@ -7,13 +7,22 @@
     {
         private MaterialData desc;
 
-        public MaterialShader Shader;
-        public MaterialTextureList TextureList = [];
-        public MaterialTextureList TextureListDS = [];
+        public MaterialShader Shader
+        {
+            get => shader; set
+            {
+                shader = value;
+                TextureList?.Dispose();
+                TextureList = new();
+            }
+        }
+
+        public MaterialTextureList TextureList;
 
         private readonly Dictionary<string, int> nameToPassIndex = [];
 
         private volatile bool loaded;
+        private MaterialShader shader;
 
         public Material(IResourceFactory factory, MaterialData desc, ResourceGuid id) : base(factory, id)
         {
@@ -21,6 +30,38 @@
         }
 
         public MaterialData Data => desc;
+
+        public IResourceBindingList? GetBindings(string passName)
+        {
+            if (!loaded)
+            {
+                return null;
+            }
+
+            var pass = Shader.Find(passName);
+            if (pass == null)
+            {
+                return null;
+            }
+
+            return pass.Bindings;
+        }
+
+        public MaterialShaderPass? GetPass(string passName)
+        {
+            if (!loaded)
+            {
+                return null;
+            }
+
+            var pass = Shader.Find(passName);
+            if (pass == null)
+            {
+                return null;
+            }
+
+            return pass;
+        }
 
         public bool BeginDraw(IGraphicsContext context, string passName)
         {
@@ -40,16 +81,11 @@
                 return false;
             }
 
-            TextureList.BindPS(context);
-            TextureListDS.BindDS(context);
-
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            TextureList.UnbindPS(context);
-            TextureListDS.UnbindDS(context);
             context.SetGraphicsPipelineState(null);
         }
 
@@ -67,8 +103,7 @@
         public void EndUpdate()
         {
 #nullable disable
-            TextureListDS.Update();
-            TextureList.Update();
+            TextureList.Update(Shader);
             loaded = true;
 #nullable enable
         }

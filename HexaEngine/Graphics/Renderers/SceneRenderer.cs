@@ -99,6 +99,7 @@ namespace HexaEngine.Graphics.Renderers
             RenderGraph.Build();
 
             graphExecuter = new(device, renderGraph, renderGraph.Passes);
+            graphExecuter.ResourceBuilder.MakeGlobal();
 
             return Task.Factory.StartNew(Initialize);
         }

@@ -25,14 +25,8 @@
                 if (FilterTextureForPBRCookTorrance(tex.Type, desc.Textures))
                 {
                     var texture = manager.LoadTexture(desc.Textures[i]);
-                    if (tex.Type == MaterialTextureType.Displacement)
-                    {
-                        instance.TextureListDS.Add(texture);
-                    }
-                    else
-                    {
-                        instance.TextureList.Add(texture);
-                    }
+
+                    instance.TextureList.Add(texture);
                 }
             }
 
@@ -50,14 +44,8 @@
                 if (FilterTextureForPBRCookTorrance(tex.Type, desc.Textures))
                 {
                     var texture = await manager.LoadTextureAsync(desc.Textures[i]);
-                    if (tex.Type == MaterialTextureType.Displacement)
-                    {
-                        instance.TextureListDS.Add(texture);
-                    }
-                    else
-                    {
-                        instance.TextureList.Add(texture);
-                    }
+
+                    instance.TextureList.Add(texture);
                 }
             }
 
