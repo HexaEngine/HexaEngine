@@ -10,7 +10,7 @@
 
 float4 main(VertexOut input) : SV_TARGET
 {
-    float depth = max(input.pos.z, depthTx.SampleLevel(linear_clamp_sampler, input.tex, 0));
+    float depth = max(input.pos.z, depthTex.SampleLevel(linearClampSampler, input.tex, 0));
     float3 position = GetPositionWS(input.tex, depth);
     float3 VN = GetCameraPos() - position;
     float3 V = normalize(VN);

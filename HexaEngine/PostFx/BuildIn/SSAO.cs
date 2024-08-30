@@ -156,25 +156,25 @@ namespace HexaEngine.PostFx.BuildIn
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("depthTex", depth.Value);
+            pipeline.Bindings.SetSRV("normalTex", gbuffer.Value.SRVs[1]);
+            pipeline.Bindings.SetSRV("noiseTex", noiseTex);
+            pipeline.Bindings.SetCBV("SSAOParams", paramsBuffer);
+            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
+            pipeline.Bindings.SetSampler("samplerState", samplerLinear);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
             context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
-            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
-            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
             context.SetRenderTarget(intermediateTex.RTV, null);
             context.SetViewport(viewport);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
-            context.PSSetSampler(0, samplerLinear);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            ZeroMemory(srvs, sizeof(nint) * 3);
-            ZeroMemory(cbs, sizeof(nint) * 2);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, null);
 
             blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);

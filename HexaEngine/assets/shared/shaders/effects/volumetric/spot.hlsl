@@ -29,7 +29,7 @@ float3 SpotlightVolumetric(float ditherValue, float3 position, float3 VN, float3
 
 				float distanceAttenuation = exp(-density) * Attenuation(distance, light.range);
 
-				float visibility = ShadowFactorSpotlight(linear_clamp_sampler, shadowAtlas, light, shadowData, x, 0);
+				float visibility = ShadowFactorSpotlight(linearClampSampler, shadowAtlas, light, shadowData, x, 0);
 				result += visibility * HenyeyGreenstein(V, L) * falloff * distanceAttenuation;
 			}
 		x += deltaStep;

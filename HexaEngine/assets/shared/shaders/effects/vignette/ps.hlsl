@@ -1,4 +1,4 @@
-Texture2D hdrTexture : register(t0);
+Texture2D inputTex : register(t0);
 SamplerState linearClampSampler : register(s0);
 
 struct VSOut
@@ -7,7 +7,7 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-cbuffer Params
+cbuffer VignetteParams
 {
 	float VignetteIntensity;
 	float VignetteRatio;
@@ -23,7 +23,7 @@ cbuffer Params
 
 float4 main(VSOut vs) : SV_Target
 {
-	float3 color = hdrTexture.Sample(linearClampSampler, vs.Tex).rgb;
+	float3 color = inputTex.Sample(linearClampSampler, vs.Tex).rgb;
 
 	float2 texCoord = vs.Tex - VignetteCenter;
 

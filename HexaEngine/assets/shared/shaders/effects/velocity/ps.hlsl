@@ -1,10 +1,10 @@
 #include "../../camera.hlsl"
 
-Texture2D<float> depth_texture : register(t0);
+Texture2D<float> depthTex : register(t0);
 
-SamplerState linear_wrap_sampler : register(s0);
+SamplerState linearWrapSampler : register(s0);
 
-cbuffer VelocityBufferParam
+cbuffer VelocityBufferParams
 {
 #ifndef Scale
     float Scale;
@@ -30,7 +30,7 @@ float4 GetClipSpacePosition(float2 texcoord, float depth)
 
 float2 main(VSOut pin) : SV_Target0
 {
-    float depth = depth_texture.Sample(linear_wrap_sampler, pin.Tex);
+    float depth = depthTex.Sample(linearWrapSampler, pin.Tex);
     float4 clip_space_position = GetClipSpacePosition(pin.Tex, depth);
 
     float4 world_pos = mul(clip_space_position, viewProjInv);

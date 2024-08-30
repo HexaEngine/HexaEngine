@@ -135,7 +135,7 @@ namespace HexaEngine.Graphics.Passes
             bindings.SetSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
 
             bindings.SetCBV("CameraBuffer", camera.Value);
-            bindings.SetCBV("WeatherCBuf", weather.Value);
+            bindings.SetCBV("WeatherBuffer", weather.Value);
 
             bindings.SetSRV("ssao", AOBuffer.Value.SRV);
             bindings.SetSRV("iblDFG", brdfLUT.Value.SRV);

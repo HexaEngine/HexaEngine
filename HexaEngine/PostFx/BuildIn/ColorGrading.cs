@@ -639,22 +639,22 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("InputTex", Input);
+            pipeline.Bindings.SetSRV("CurvesTex", curvesTex);
+            pipeline.Bindings.SetCBV("TonemapParams", paramsBuffer);
+            pipeline.Bindings.SetSampler("LinearClampSampler", samplerState);
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, curvesTex.SRV);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetShaderResource(1, null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

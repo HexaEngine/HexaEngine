@@ -12,6 +12,7 @@
     [EditorDisplayName("Lens Flare")]
     public class LensFlare : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState downsamplePipeline;
         private ConstantBuffer<DownsampleParams> downsampleCB;
         private ISamplerState samplerState;
@@ -26,7 +27,7 @@
 
         private IGraphicsPipelineState blendPipeline;
         private Texture2D lensDirt;
-
+#nullable restore
         private Vector4 scale = new(0.02f);
         private Vector4 bias = new(-3);
         private uint ghosts = 8;
@@ -140,30 +141,36 @@
             lensCB.Update(context, new(ghosts, ghostDispersal, downsampleViewport.Size, haloWidth, distortion));
         }
 
+        public override void UpdateBindings()
+        {
+            downsamplePipeline.Bindings.SetSRV("inputTexture", Input);
+            downsamplePipeline.Bindings.SetCBV("DownsampleParams", downsampleCB);
+            downsamplePipeline.Bindings.SetSampler("linearClampSampler", samplerState);
+
+            lensPipeline.Bindings.SetSRV("inputTexture", Input);
+            lensPipeline.Bindings.SetCBV("LensParams", lensCB);
+            lensPipeline.Bindings.SetSampler("linearClampSampler", samplerState);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             // downsample and threshold
             context.SetGraphicsPipelineState(downsamplePipeline);
-            context.SetRenderTarget(downsampleBuffer.Value.RTV, null);
+            context.SetRenderTarget(downsampleBuffer.Value!.RTV, null);
             context.SetViewport(downsampleBuffer.Value.Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetSampler(0, samplerState);
-            context.PSSetConstantBuffer(0, downsampleCB);
             context.DrawInstanced(4, 1, 0, 0);
 
             // lens
             context.SetGraphicsPipelineState(lensPipeline);
-            context.SetRenderTarget(accumBuffer.Value.RTV, null);
+            context.SetRenderTarget(accumBuffer.Value!.RTV, null);
             context.SetViewport(accumBuffer.Value.Viewport);
-            context.PSSetShaderResource(0, downsampleBuffer.Value.SRV);
-            context.PSSetConstantBuffer(0, lensCB);
             context.DrawInstanced(4, 1, 0, 0);
         }
 
         public override void Compose(IGraphicsContext context)
         {
             // upscale, blur and blend
-            blur.Blur(context, accumBuffer.Value.SRV, Output, accumBuffer.Value.Viewport.Width, accumBuffer.Value.Viewport.Height, Viewport.Width, Viewport.Height);
+            blur.Blur(context, accumBuffer.Value!.SRV!, Output, accumBuffer.Value.Viewport.Width, accumBuffer.Value.Viewport.Height, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()

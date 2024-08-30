@@ -16,7 +16,7 @@ float3 DirectionalLightVolumetric(float ditherValue, float3 position, float3 VN,
     for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         float attenuation = exp(-density);
-        float visibility = ShadowFactorDirectionalLight(linear_clamp_sampler, shadowAtlas, shadowData, x, 0);
+        float visibility = ShadowFactorDirectionalLight(linearClampSampler, shadowAtlas, shadowData, x, 0);
         result += visibility * HenyeyGreenstein(V, light.direction.xyz) * attenuation;
         x += deltaStep;
     }

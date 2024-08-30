@@ -270,6 +270,9 @@
             mipChainSRVs = new IShaderResourceView[levels];
             viewports = new Viewport[levels];
 
+            bindingListsDownsample = new IResourceBindingList[levels];
+            bindingListsUpsample = new IResourceBindingList[levels];
+
             for (int i = 0; i < levels; i++)
             {
                 var tex = creator.CreateTexture2D($"BLOOM_BUFFER_{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
@@ -285,17 +288,14 @@
                 {
                     bloomTex = tex;
                 }
+                bindingListsDownsample[i] = device.CreateResourceBindingList(downsample.Pipeline);
+                bindingListsUpsample[i] = device.CreateResourceBindingList(upsample.Pipeline);
             }
 
             this.width = width;
             this.height = height;
 
             dirty = true;
-        }
-
-        private void TextureReloaded(Texture2D obj)
-        {
-            NotifyReload();
         }
 
         /// <inheritdoc/>
@@ -328,6 +328,41 @@
             dirty = true;
         }
 
+        private IResourceBindingList[] bindingListsDownsample = null!;
+        private IResourceBindingList[] bindingListsUpsample = null!;
+
+        public override void UpdateBindings()
+        {
+            downsample.Bindings.SetSampler("samplerState", linearSampler);
+            downsample.Bindings.SetCBV("Params", downsampleCBuffer);
+            downsample.Bindings.SetSRV("srcTexture", Input);
+
+            upsample.Bindings.SetSampler("samplerState", linearSampler);
+            upsample.Bindings.SetCBV("Params", upsampleCBuffer);
+            upsample.Bindings.SetSRV("srcTexture", mipChainSRVs[0]);
+
+            compose.Bindings.SetCBV("CBBloom", bloomCBuffer);
+            compose.Bindings.SetSRV("hdrTexture", Input);
+            compose.Bindings.SetSRV("bloomTexture", bloomTex.Value);
+            compose.Bindings.SetSRV("lensDirtTexture", lensDirtTex);
+            compose.Bindings.SetSampler("linearClampSampler", linearSampler);
+
+            for (int i = 0; i < mipChainRTVs.Length; i++)
+            {
+                var downList = bindingListsDownsample[i];
+                if (i > 0)
+                {
+                    downList.SetSRV("srcTexture", mipChainSRVs[i - 1]);
+                }
+                else
+                {
+                    downList.SetSRV("srcTexture", Input);
+                }
+
+                bindingListsUpsample[i].SetSRV("srcTexture", mipChainSRVs[i]);
+            }
+        }
+
         /// <inheritdoc/>
         public override void Update(IGraphicsContext context)
         {
@@ -344,53 +379,31 @@
         /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context)
         {
-            context.PSSetConstantBuffer(0, downsampleCBuffer);
-            context.PSSetSampler(0, linearSampler);
             context.SetGraphicsPipelineState(downsample);
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
-                if (i > 0)
-                {
-                    context.PSSetShaderResource(0, mipChainSRVs[i - 1]);
-                }
-                else
-                {
-                    context.PSSetShaderResource(0, Input);
-                }
-
+                context.SetResourceBindingList(bindingListsDownsample[i]);
                 context.SetRenderTarget(mipChainRTVs[i], null);
                 context.SetViewport(viewports[i]);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);
             }
 
-            context.PSSetConstantBuffer(0, upsampleCBuffer);
             context.SetGraphicsPipelineState(upsample);
             for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
+                context.SetResourceBindingList(bindingListsUpsample[i]);
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
-                context.PSSetShaderResource(0, mipChainSRVs[i]);
                 context.SetViewport(viewports[i - 1]);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);
             }
 
-#nullable disable
-            nint* composeSRVs = stackalloc nint[] { Input.NativePointer, bloomTex.Value.SRV.NativePointer, lensDirtTex?.SRV?.NativePointer ?? 0 };
-#nullable restore
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.SetGraphicsPipelineState(compose);
-            context.PSSetConstantBuffer(0, bloomCBuffer);
-            context.PSSetShaderResources(0, 3, (void**)composeSRVs);
             context.DrawInstanced(4, 1, 0, 0);
-            nint* emptySRVs = stackalloc nint[] { 0, 0, 0 };
-            context.PSSetShaderResources(0, 3, (void**)emptySRVs);
-            context.PSSetConstantBuffer(0, null);
             context.SetGraphicsPipelineState(null);
-            context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
 
@@ -411,6 +424,8 @@
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
                 creator.DisposeResource($"BLOOM_BUFFER_{i}");
+                bindingListsUpsample[i].Dispose();
+                bindingListsDownsample[i].Dispose();
             }
         }
     }

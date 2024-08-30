@@ -60,6 +60,15 @@
             }
             Resources = (void**)AllocT<nint>(rangeWidth);
             ZeroMemory(Resources, rangeWidth * sizeof(nint));
+
+            if (type == ShaderParameterType.UAV)
+            {
+                InitialCounts = (uint*)Alloc(rangeWidth * sizeof(uint));
+                for (uint i = 0; i < rangeWidth; i++)
+                {
+                    InitialCounts[i] = uint.MaxValue;
+                }
+            }
         }
 
         private readonly ShaderParameter* Find(ShaderParameter* buckets, int capacity, uint hash, char* key)
@@ -99,6 +108,7 @@
         private readonly uint StartSlot;
         private readonly uint Count;
         private void** Resources;
+        private uint* InitialCounts;
 
         private UnsafeList<ResourceRange> Ranges;
         private ShaderParameter* buckets;
@@ -164,15 +174,20 @@
             }
         }
 
-        public bool TrySetByName(string name, void* resource)
+        public bool TrySetByName(string name, void* resource, uint initialValue = unchecked((uint)-1))
         {
             if (TryGetByName(name, out var parameter))
             {
-                var old = Resources[parameter.Index - StartSlot];
-                Resources[parameter.Index - StartSlot] = resource;
+                var index = parameter.Index - StartSlot;
+                var old = Resources[index];
+                Resources[index] = resource;
+                if (InitialCounts != null)
+                {
+                    InitialCounts[index] = initialValue;
+                }
                 if (old != null ^ resource != null)
                 {
-                    UpdateRanges(parameter.Index - StartSlot, resource == null);
+                    UpdateRanges(index, resource == null);
                 }
 
                 return true;
@@ -368,7 +383,7 @@
                 if (range.Length > 0)
                 {
                     var start = (uint)(range.Start - Resources);
-                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, (uint*)null);
+                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, InitialCounts + start);
                 }
             }
         }
@@ -379,6 +394,11 @@
             {
                 Free(Resources);
                 Resources = null;
+            }
+            if (InitialCounts != null)
+            {
+                Free(InitialCounts);
+                InitialCounts = null;
             }
             if (buckets != null)
             {
@@ -450,12 +470,12 @@
             }
         }
 
-        public void SetUAV(string name, IUnorderedAccessView? uav)
+        public void SetUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1))
         {
             var p = uav?.NativePointer ?? 0;
             for (int i = 0; i < rangesUAVs.Count; i++)
             {
-                rangesUAVs.GetPointer(i)->TrySetByName(name, (void*)p);
+                rangesUAVs.GetPointer(i)->TrySetByName(name, (void*)p, initialCount);
             }
         }
 
@@ -483,10 +503,10 @@
             rangesSRVs[(int)stage].TrySetByName(name, (void*)p);
         }
 
-        public void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav)
+        public void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1))
         {
             var p = uav?.NativePointer ?? 0;
-            rangesUAVs[(int)stage].TrySetByName(name, (void*)p);
+            rangesUAVs[(int)stage].TrySetByName(name, (void*)p, initialCount);
         }
 
         public void SetCBV(string name, ShaderStage stage, IBuffer? cbv)

@@ -45,6 +45,12 @@ namespace HexaEngine.PostFx.BuildIn
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("g_txProcessed", Input);
+            pipeline.Bindings.SetSampler("g_samLinear", sampler);
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
@@ -56,13 +62,9 @@ namespace HexaEngine.PostFx.BuildIn
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetSampler(0, sampler);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
             context.SetRenderTarget(null, null);
         }
 

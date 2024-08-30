@@ -5,7 +5,7 @@
 #endif
 
 #if SSGI_QUALITY == 0
-cbuffer CBSSGISettings : register(b0)
+cbuffer SSGIParams : register(b0)
 {
 	float intensity;
 	float distance;
@@ -15,13 +15,19 @@ cbuffer CBSSGISettings : register(b0)
 };
 
 #else
-cbuffer CBSSGISettings : register(b0)
+cbuffer SSGIParams : register(b0)
 {
 	float intensity;
 	float distance;
 };
 
 #endif
+
+Texture2D inputTex : register(t0);
+Texture2D<float> depthTex : register(t1);
+Texture2D normalTex : register(t2);
+
+SamplerState linearWrapSampler : register(s0);
 
 #if SSGI_QUALITY == 1
 #define SSGI_RAY_STEPS 1
@@ -41,11 +47,7 @@ cbuffer CBSSGISettings : register(b0)
 #define SSGI_DEPTH_BIAS 0.1
 #endif
 
-Texture2D inputTx : register(t0);
-Texture2D<float> depthTx : register(t1);
-Texture2D normalTx : register(t2);
 
-SamplerState linear_wrap_sampler : register(s0);
 
 #define PI 3.14159265359
 
@@ -85,7 +87,7 @@ float CalculateShadowRayCast(float3 startPosition, float3 endPosition, float2 st
 		float lod = GetMipLevel(currentUV - startUV);
 		float projectedDepth = 1.0 / projectedPosition.z;
 
-		float currentDepth = 1.0 / depthTx.SampleLevel(linear_wrap_sampler, currentUV, lod).r;
+		float currentDepth = 1.0 / depthTex.SampleLevel(linearWrapSampler, currentUV, lod).r;
 		if (projectedDepth > currentDepth + SSGI_DEPTH_BIAS)
 		{
 			return float(i - 1) / SSGI_RAY_STEPS;
@@ -97,7 +99,7 @@ float CalculateShadowRayCast(float3 startPosition, float3 endPosition, float2 st
 
 float3 GetViewPos(float2 coord, float4x4 ipm)
 {
-	float depth = depthTx.SampleLevel(linear_wrap_sampler, coord, 0.0f);
+	float depth = depthTex.SampleLevel(linearWrapSampler, coord, 0.0f);
 	return GetPositionWS(coord, depth);
 }
 float3 UnpackNormal(float3 normal)
@@ -107,7 +109,7 @@ float3 UnpackNormal(float3 normal)
 
 float3 GetViewNormal(float2 coord, float4x4 ipm, float2 texel)
 {
-	return UnpackNormal(normalTx.SampleLevel(linear_wrap_sampler, coord, 0).xyz);
+	return UnpackNormal(normalTex.SampleLevel(linearWrapSampler, coord, 0).xyz);
 }
 
 float2 dither(float2 coord, float seed, float2 size)
@@ -126,7 +128,7 @@ float3 LightBounce(float2 coord, float2 lightcoord, float3 normal, float3 positi
 {
 	float2 lightUV = coord + lightcoord;
 		
-	float3 lightColor = inputTx.SampleLevel(linear_wrap_sampler, lightUV, 0).rgb;
+	float3 lightColor = inputTex.SampleLevel(linearWrapSampler, lightUV, 0).rgb;
 	float3 lightPosition = GetViewPos((lightUV), projInv).xyz;
 
 	float3 lightDirection = lightPosition - position;
@@ -159,11 +161,11 @@ float3 SecondBounce(float2 coords, float r, float3 normal, float3 position)
 float4 main(VertexOut input) : SV_TARGET
 {
 
-	float depth = depthTx.SampleLevel(linear_wrap_sampler, input.Tex, 0.0f);
+	float depth = depthTex.SampleLevel(linearWrapSampler, input.Tex, 0.0f);
 	if (depth == 1)
 		discard;
 	uint3 dimensions;
-	inputTx.GetDimensions(0, dimensions.x, dimensions.y, dimensions.z);
+	inputTex.GetDimensions(0, dimensions.x, dimensions.y, dimensions.z);
 	float2 texSize = float2(dimensions.xy);
 	float2 inverse_size = 1.0f / float2(dimensions.xy);
 

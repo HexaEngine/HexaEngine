@@ -18,6 +18,7 @@
 
     public class VolumetricScattering : PostFxBase
     {
+#nullable disable
         private PostFxGraphResourceBuilder creator;
 
         private IGraphicsPipelineState godrays;
@@ -42,6 +43,7 @@
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private VolumetricScatteringQualityPreset quality;
+#nullable restore
 
         public override string Name => "GodRays";
 
@@ -268,26 +270,32 @@
                 return;
             }
 
-            context.ClearRenderTargetView(sunMask.Value, default);
+            context.ClearRenderTargetView(sunMask.Value!, default);
 
             context.SetRenderTarget(sunMask.Value, depth.Value);
             context.SetViewport(Viewport);
-            context.VSSetConstantBuffer(0, paramsWorldBuffer);
-            context.VSSetConstantBuffer(1, this.camera.Value);
-            context.PSSetShaderResource(0, sunSpriteTex);
-            context.PSSetSampler(0, linearClampSampler);
             quad.DrawAuto(context, sun);
-            context.ClearState();
 
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetShaderResource(0, sunMask.Value);
-            context.PSSetShaderResource(1, noiseTex);
-            context.PSSetSampler(0, linearClampSampler);
+
             context.SetGraphicsPipelineState(godrays);
             context.DrawInstanced(4, 1, 0, 0);
-            context.ClearState();
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
+        }
+
+        public override void UpdateBindings()
+        {
+            sun.Bindings.SetCBV("WorldBuffer", paramsWorldBuffer);
+            sun.Bindings.SetCBV("CameraBuffer", camera.Value);
+            sun.Bindings.SetSRV("sunTex", sunSpriteTex);
+            sun.Bindings.SetSampler("linearWrapSampler", linearClampSampler);
+
+            godrays.Bindings.SetCBV("GodrayParams", paramsBuffer);
+            godrays.Bindings.SetSRV("sunTex", sunMask.Value);
+            godrays.Bindings.SetSRV("noiseTex", noiseTex);
+            godrays.Bindings.SetSampler("linearClampSampler", linearClampSampler);
         }
 
         /// <inheritdoc/>

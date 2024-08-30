@@ -10,11 +10,12 @@
     [EditorDisplayName("Motion Blur")]
     public class MotionBlur : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<MotionBlurParams> paramsBuffer;
         private ISamplerState sampler;
         private ResourceRef<Texture2D> Velocity;
-
+#nullable restore
         private MotionBlurQualityPreset qualityPreset = MotionBlurQualityPreset.High;
         private float strength = 1;
         private int sampleCount = 16;
@@ -124,32 +125,22 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("sceneTexture", Input);
+            pipeline.Bindings.SetSRV("velocityBuffer", Velocity.Value);
+            pipeline.Bindings.SetCBV("MotionBlurCB", paramsBuffer);
+            pipeline.Bindings.SetSampler("linearWrapSampler", sampler);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
-            nint* srvs = stackalloc nint[2];
-            srvs[0] = Input.NativePointer;
-            srvs[1] = Velocity.Value.SRV.NativePointer;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-            context.PSSetSampler(0, sampler);
-
-            context.PSSetConstantBuffer(0, paramsBuffer);
-
             context.SetGraphicsPipelineState(pipeline);
-
             context.DrawInstanced(4, 1, 0, 0);
-
             context.SetGraphicsPipelineState(null);
-
-            context.PSSetConstantBuffer(0, null);
-
-            context.PSSetSampler(0, null);
-            ZeroMemory(srvs, sizeof(nint) * 2);
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-
             context.SetRenderTarget(null, null);
         }
 

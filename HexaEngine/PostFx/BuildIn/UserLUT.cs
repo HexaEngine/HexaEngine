@@ -9,10 +9,12 @@
     [EditorDisplayName("User LUT")]
     public class UserLUT : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<LUTParams> paramsBuffer;
         private ISamplerState samplerState;
         private ISamplerState lutSamplerState;
+#nullable enable
 
         private Texture2D? LUT;
 
@@ -76,22 +78,24 @@
             LUT = Texture2D.LoadFromAssets(lutTexPath);
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("input", Input);
+            pipeline.Bindings.SetSRV("lut", LUT?.SRV);
+            pipeline.Bindings.SetCBV("LUTParams", paramsBuffer);
+            pipeline.Bindings.SetSampler("samplerState", samplerState);
+            pipeline.Bindings.SetSampler("samplerLUT", lutSamplerState);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
-            nint* passSRVs = stackalloc nint[] { Input.NativePointer, LUT?.SRV?.NativePointer ?? 0 };
-            nint* passSMPs = stackalloc nint[] { samplerState.NativePointer, lutSamplerState.NativePointer };
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResources(0, 2, (void**)passSRVs);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSamplers(0, 2, (void**)passSMPs);
+
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            nint* empty = stackalloc nint[] { 0, 0 };
-            context.PSSetSamplers(0, 2, (void**)empty);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResources(0, 2, (void**)empty);
+
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

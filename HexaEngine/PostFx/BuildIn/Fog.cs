@@ -7,12 +7,14 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
+    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
 
     [EditorDisplayName("Fog")]
     public class Fog : PostFxBase
     {
+#nullable disable
         private ISamplerState linearClampSampler;
         private ISamplerState linearWrapSampler;
 
@@ -27,6 +29,7 @@
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
+#nullable restore
         private float minValue;
         private float maxValue;
         private bool animate;
@@ -194,12 +197,24 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            volume.Bindings.SetCBV("VolumeParams", volumeParamsBuffer);
+            volume.Bindings.SetCBV("CameraBuffer", camera.Value);
+            volume.Bindings.SetCBV("WeatherBuffer", weather.Value);
+            volume.Bindings.SetUAV("volumeTex", densityTex);
+
+            fog.Bindings.SetCBV("FogParams", fogParamsBuffer);
+            fog.Bindings.SetCBV("CameraBuffer", camera.Value);
+            fog.Bindings.SetSRV("hdrTexture", Input);
+            fog.Bindings.SetSRV("depthTexture", depth.Value);
+            fog.Bindings.SetSRV("volumeTex", densityTex);
+            fog.Bindings.SetSampler("linearClampSampler", linearClampSampler);
+            fog.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
-            context.CSSetConstantBuffer(0, volumeParamsBuffer);
-            context.CSSetConstantBuffer(1, camera.Value);
-            context.CSSetConstantBuffer(2, weather.Value);
-            context.CSSetUnorderedAccessView(0, (void*)densityTex.UAV.NativePointer);
             context.SetComputePipelineState(volume);
 
             uint threadGroupsX = (uint)Math.Ceiling(densityTex.Width / 16f);
@@ -209,32 +224,11 @@
 
             context.SetComputePipelineState(null);
 
-            context.CSSetUnorderedAccessView(0, null);
-            context.CSSetConstantBuffer(2, null);
-
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, depth.Value.SRV);
-            context.PSSetShaderResource(2, densityTex);
-            context.PSSetConstantBuffer(0, fogParamsBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetSampler(1, linearWrapSampler);
-
             context.SetGraphicsPipelineState(fog);
-
             context.DrawInstanced(4, 1, 0, 0);
-
             context.SetGraphicsPipelineState(null);
-
-            context.PSSetSampler(0, null);
-            context.PSSetSampler(1, null);
-            context.PSSetConstantBuffer(1, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(2, null);
-            context.PSSetShaderResource(1, null);
-            context.PSSetShaderResource(0, null);
             context.SetRenderTarget(null, null);
         }
 

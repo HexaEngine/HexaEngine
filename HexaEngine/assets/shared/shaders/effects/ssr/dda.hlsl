@@ -59,13 +59,13 @@ static const float4x4 viewToTextureSpaceMatrix =
 	0.0f, 0.0f, 0.0f, 1.0f
 };
 
-SamplerState point_clamp_sampler : register(s0);
-SamplerState linear_clamp_sampler : register(s1);
-SamplerState linear_border_sampler : register(s2);
+SamplerState pointClampSampler : register(s0);
+SamplerState linearClampSampler : register(s1);
+SamplerState linearBorderSampler : register(s2);
 
-Texture2D<float> depthTx : register(t0);
-Texture2D normalRoughnessTex : register(t1);
-Texture2D sceneTx : register(t2);
+Texture2D inputTex : register(t0);
+Texture2D<float> depthTex : register(t1);
+Texture2D normalRoughnessTex : register(t2);
 
 struct VertexOut
 {
@@ -101,7 +101,7 @@ void swap(inout float a, inout float b)
 
 float linearDepthTexelFetch(int2 hitPixel)
 {
-	return GetLinearDepth(depthTx.Load(int3(hitPixel, 0)));
+	return GetLinearDepth(depthTex.Load(int3(hitPixel, 0)));
 }
 
 // Returns true if the ray hit something
@@ -227,8 +227,8 @@ bool traceScreenSpaceRay(
 float4 main(VertexOut pin) : SV_TARGET
 {
 	uint2 screenPos = (uint2)(pin.Tex * screenDim);
-	float4 scene_color = sceneTx.Load(int3(screenPos, 0));
-	float depth = depthTx.Load(int3(screenPos, 0)).r;
+	float4 scene_color = inputTex.Load(int3(screenPos, 0));
+	float depth = depthTex.Load(int3(screenPos, 0)).r;
 
 	float4 NormalRoughness = normalRoughnessTex.Load(int3(screenPos, 0));
 	float roughness = NormalRoughness.a;
@@ -290,7 +290,7 @@ float4 main(VertexOut pin) : SV_TARGET
 	float rDotV = dot(rayDirectionVS, toPositionVS);
 #endif
 
-	depth = depthTx.Load(int3(hitPixel, 0)).r;
+	depth = depthTex.Load(int3(hitPixel, 0)).r;
 
 #if SSR_CONE_TRACE
 	return float4(hitPixel, depth, rDotV) * (intersection ? 1.0f : 0.0f);
@@ -298,7 +298,7 @@ float4 main(VertexOut pin) : SV_TARGET
 
 	//return float4(hitPixel, 0, 1) * (intersection ? 1.0f : 0.0f);
 
-	float3 reflectionColor = (intersection ? 1.0f : 0.0f) * sceneTx.Load(int3(hitPixel, 0)).rgb;
+	float3 reflectionColor = (intersection ? 1.0f : 0.0f) * inputTex.Load(int3(hitPixel, 0)).rgb;
 
 	//return float4(reflectionColor, 1);
 	return scene_color + max(0, float4(reflectionColor, 1.0f));
