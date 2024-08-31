@@ -7,6 +7,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
+    using Silk.NET.SPIRV;
     using System;
     using System.Globalization;
     using System.Runtime.CompilerServices;
@@ -660,6 +661,30 @@
         public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
             return new D3D11ResourceBindingList((D3D11ComputePipeline)pipeline);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetGlobalSRV(string name, IShaderResourceView? srv)
+        {
+            D3D11GlobalResourceList.SetSRV(name, srv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetGlobalCBV(string name, IBuffer? cbv)
+        {
+            D3D11GlobalResourceList.SetCBV(name, cbv);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetGlobalSampler(string name, ISamplerState? sampler)
+        {
+            D3D11GlobalResourceList.SetSampler(name, sampler);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
+        {
+            D3D11GlobalResourceList.SetUAV(name, uav, initialCount);
         }
     }
 }

@@ -17,6 +17,8 @@
 
         public override string Name => "Eraser";
 
+        public override IResourceBindingList Bindings => brushPipeline.Bindings;
+
         public override void Init(IGraphicsDevice device)
         {
             DepthStencilDescription depthStencil = new()
@@ -44,6 +46,7 @@
                 Topology = PrimitiveTopology.TriangleStrip,
             });
             opacityBuffer = new(CpuAccessFlags.Write);
+            brushPipeline.Bindings.SetCBV("OpacityBuffer", opacityBuffer);
         }
 
         public override void DrawSettings()
@@ -56,24 +59,20 @@
         {
             opacityBuffer.Update(context, new(opacity));
 
-            context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
             context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetConstantBuffer(1, null);
         }
 
         public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
             opacityBuffer.Update(context, new(opacity));
 
-            context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
             context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetConstantBuffer(1, null);
         }
 
         public override void Dispose()

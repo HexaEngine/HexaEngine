@@ -1,11 +1,11 @@
 #include "../../camera.hlsl"
 
-Texture2D<float4> txAlbedoDecal : register(t0);
-Texture2D<float4> txNormalDecal : register(t1);
-Texture2D<float> txDepth : register(t2);
+Texture2D<float4> baseColorTex : register(t0);
+Texture2D<float4> normalTex : register(t1);
+Texture2D<float> depthTex : register(t2);
 
-SamplerState linear_wrap_sampler : register(s0);
-SamplerState point_clamp_sampler : register(s1);
+SamplerState linearWrapsampler : register(s0);
+SamplerState pointClampsampler : register(s1);
 
 struct PS_DECAL_OUT
 {
@@ -27,9 +27,9 @@ struct PS_INPUT
 #define DECAL_XZ 2
 
 
-cbuffer DecalCBuffer : register(b0)
+cbuffer DecalBuffer : register(b0)
 {
-    int decal_type;
+    int decalType;
 }
 
 PS_DECAL_OUT main(PS_INPUT input)
@@ -38,7 +38,7 @@ PS_DECAL_OUT main(PS_INPUT input)
 
     float2 screen_pos = input.ClipSpacePos.xy / input.ClipSpacePos.w;
     float2 depth_coords = screen_pos * float2(0.5f, -0.5f) + 0.5f;
-    float depth = txDepth.Sample(point_clamp_sampler, depth_coords).r;
+    float depth = depthTex.Sample(pointClampsampler, depth_coords).r;
 
     float4 posVS = float4(GetPositionVS(depth_coords, depth), 1.0f);
     float4 posWS = mul(posVS, viewInv);
@@ -48,7 +48,7 @@ PS_DECAL_OUT main(PS_INPUT input)
     clip(0.5f - abs(posLS.xyz));
 
     float2 tex_coords = 0.0f;
-    switch (decal_type)
+    switch (decalType)
     {
         case DECAL_XY:
             tex_coords = posLS.xy + 0.5f;
@@ -64,7 +64,7 @@ PS_DECAL_OUT main(PS_INPUT input)
             return pout;
     }
 
-    float4 albedo = txAlbedoDecal.SampleLevel(linear_wrap_sampler, tex_coords, 0);
+    float4 albedo = baseColorTex.SampleLevel(linearWrapsampler, tex_coords, 0);
     if (albedo.a < 0.1)
         discard;
     pout.GBufferA.rgb = albedo.rgb;
@@ -80,7 +80,7 @@ PS_DECAL_OUT main(PS_INPUT input)
 
     float3x3 TBN = float3x3(tangent, binormal, normal);
 
-    float3 DecalNormal = txNormalDecal.Sample(linear_wrap_sampler, tex_coords);
+    float3 DecalNormal = normalTex.Sample(linearWrapsampler, tex_coords);
     DecalNormal = 2.0f * DecalNormal - 1.0f;
     DecalNormal = mul(DecalNormal, TBN);
     float3 DecalNormalVS = normalize(mul(DecalNormal, (float3x3)view));

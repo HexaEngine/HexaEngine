@@ -4,6 +4,73 @@
     using System.Collections.Generic;
 
     /// <summary>
+    /// A manager class responsible for managing graphics and compute pipeline states in the application.
+    /// </summary>
+    public static class PipelineStateManager
+    {
+        private static readonly List<IGraphicsPipelineState> graphicsPipelineStates = new();
+        private static readonly List<IComputePipelineState> computePipelineStates = new();
+
+        /// <summary>
+        /// Gets a list of registered graphics pipeline states.
+        /// </summary>
+        public static IReadOnlyList<IGraphicsPipelineState> GraphicsPipelineStates => graphicsPipelineStates;
+
+        /// <summary>
+        /// Gets a list of registered compute pipeline states.
+        /// </summary>
+        public static IReadOnlyList<IComputePipelineState> ComputePipelineStates => computePipelineStates;
+
+        /// <summary>
+        /// Registers a graphics pipeline.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline to register.</param>
+        public static void Register(IGraphicsPipelineState pipeline)
+        {
+            lock (graphicsPipelineStates)
+            {
+                graphicsPipelineStates.Add(pipeline);
+            }
+        }
+
+        /// <summary>
+        /// Registers a compute pipeline.
+        /// </summary>
+        /// <param name="pipeline">The compute pipeline to register.</param>
+        public static void Register(IComputePipelineState pipeline)
+        {
+            lock (graphicsPipelineStates)
+            {
+                computePipelineStates.Add(pipeline);
+            }
+        }
+
+        /// <summary>
+        /// Unregisters a graphics pipeline.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline to unregister.</param>
+        public static void Unregister(IGraphicsPipelineState pipeline)
+        {
+            lock (graphicsPipelineStates)
+            {
+                graphicsPipelineStates.Remove(pipeline);
+            }
+        }
+
+        /// <summary>
+        /// Unregisters a compute pipeline.
+        /// </summary>
+        /// <param name="pipeline">The compute pipeline to unregister.</param>
+        public static void Unregister(IComputePipelineState pipeline)
+        {
+            lock (graphicsPipelineStates)
+            {
+                computePipelineStates.Remove(pipeline);
+            }
+        }
+    }
+
+    /// <summary>
     /// A manager class responsible for managing graphics and compute pipelines in the application.
     /// </summary>
     public static class PipelineManager

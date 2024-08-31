@@ -73,6 +73,8 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             scaleBuffer = new(new NoiseParams(), CpuAccessFlags.Write);
+
+            pipeline.Bindings.SetCBV("ParamBuffer", scaleBuffer);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -81,11 +83,8 @@
             context.SetRenderTarget(rtv, null);
             context.SetViewport(viewport);
             context.SetGraphicsPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
             context.SetGraphicsPipelineState(null);
         }
 

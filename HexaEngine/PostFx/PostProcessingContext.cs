@@ -89,7 +89,7 @@
         public void CopyInputToOutput(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
-            context.PSSetShaderResource(0, Input.SRV);
+            copy.Bindings.SetSRV("sourceTex", Input);
             context.SetViewport(OutputViewport);
             context.SetGraphicsPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);
@@ -99,7 +99,7 @@
         public void CopyPreviousToCurrent(IGraphicsContext context)
         {
             context.SetRenderTarget(Current, null);
-            context.PSSetShaderResource(0, previous.SRV);
+            copy.Bindings.SetSRV("sourceTex", previous);
             context.SetViewport(OutputViewport);
             context.SetGraphicsPipelineState(copy);
             context.DrawInstanced(4, 1, 0, 0);

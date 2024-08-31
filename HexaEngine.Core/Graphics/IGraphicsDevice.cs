@@ -433,5 +433,13 @@
         /// <param name="flags">Flags to control fence behavior.</param>
         /// <returns>The created fence object.</returns>
         IFence CreateFence(ulong initialValue, FenceFlags flags);
+
+        void SetGlobalSRV(string name, IShaderResourceView? srv);
+
+        void SetGlobalCBV(string name, IBuffer? cbv);
+
+        void SetGlobalSampler(string name, ISamplerState? sampler);
+
+        void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
     }
 }

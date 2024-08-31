@@ -17,6 +17,8 @@
 
         public override ToolFlags Flags { get; } = ToolFlags.NoEdit;
 
+        public override IResourceBindingList Bindings => computePipeline.Bindings;
+
         public override void Init(IGraphicsDevice device)
         {
             computePipeline = device.CreateComputePipelineState(new ComputePipelineDesc()

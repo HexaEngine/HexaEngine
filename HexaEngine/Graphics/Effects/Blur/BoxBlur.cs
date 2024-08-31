@@ -31,6 +31,8 @@
 
             paramsBuffer = new(CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
+            SetupState();
         }
 
         public BoxBlur(IGraphResourceBuilder creator, string name)
@@ -45,6 +47,14 @@
 
             paramsBuffer = new(CpuAccessFlags.Write, name + "_BOX_BLUR_CONSTANT_BUFFER");
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
+            SetupState();
+        }
+
+        private void SetupState()
+        {
+            pso.Bindings.SetCBV("params", paramsBuffer);
+            pso.Bindings.SetSampler("state", linearClampSampler);
         }
 
         public int Size { get => size; set => size = value; }
@@ -60,16 +70,10 @@
 
             context.SetRenderTarget(dst, null);
             context.SetViewport(new(width, height));
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetShaderResource(0, src);
+            pso.Bindings.SetSRV("tex", src);
             context.SetGraphicsPipelineState(pso);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
 
@@ -82,16 +86,10 @@
 
             context.SetRenderTarget(dst, null);
             context.SetViewport(new(dstWidth, dstHeight));
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetShaderResource(0, src);
+            pso.Bindings.SetSRV("tex", src);
             context.SetGraphicsPipelineState(pso);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
 
@@ -110,6 +108,7 @@
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

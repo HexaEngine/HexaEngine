@@ -4,8 +4,126 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+
+    public delegate void StateChangedEventHandler(string name, ShaderParameterState oldState, ShaderParameterState state);
+
+    public class D3D11GlobalResourceList
+    {
+        private static readonly Dictionary<string, ShaderParameterState> states = new();
+        private static readonly SemaphoreSlim semaphore = new(1);
+
+        public static event StateChangedEventHandler? StateChanged;
+
+        public static void SetSRV(string name, IShaderResourceView? srv)
+        {
+            var p = srv?.NativePointer ?? 0; // Get native pointer or use 0 if null
+            UpdateState(name, p, ShaderParameterType.SRV);
+        }
+
+        public static void SetUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1))
+        {
+            var p = uav?.NativePointer ?? 0; // Get native pointer or use 0 if null
+            UpdateState(name, p, ShaderParameterType.UAV, initialCount);
+        }
+
+        public static void SetCBV(string name, IBuffer? cbv)
+        {
+            var p = cbv?.NativePointer ?? 0; // Get native pointer or use 0 if null
+            UpdateState(name, p, ShaderParameterType.CBV);
+        }
+
+        public static void SetSampler(string name, ISamplerState? sampler)
+        {
+            var p = sampler?.NativePointer ?? 0; // Get native pointer or use 0 if null
+            UpdateState(name, p, ShaderParameterType.Sampler);
+        }
+
+        private static unsafe void UpdateState(string name, nint pointer, ShaderParameterType type, uint initialCount = unchecked((uint)-1))
+        {
+            semaphore.Wait();
+            try
+            {
+                if (pointer == 0)
+                {
+                    states.TryGetValue(name, out var oldState);
+
+                    // If pointer is 0, remove the state if it exists to handle resource cleanup
+                    states.Remove(name);
+
+                    StateChanged?.Invoke(name, oldState, new() { Type = type });
+                }
+                else
+                {
+                    states.TryGetValue(name, out var oldState);
+
+                    ShaderParameterState state = new()
+                    {
+                        Type = type,
+                        Resource = (void*)pointer, // Cast nint to void*
+                        InitialCount = initialCount
+                    };
+
+                    // Update or create new state
+                    states[name] = state;
+
+                    // notify change.
+                    StateChanged?.Invoke(name, oldState, state);
+                }
+            }
+            finally
+            {
+                // events could fail somewhere better safe then sorry.
+                semaphore.Release();
+            }
+        }
+
+        public static unsafe void SetState(D3D11ResourceBindingList resourceBindingList)
+        {
+            semaphore.Wait();
+
+            try
+            {
+                resourceBindingList.Hook(); // hook inside of the semaphore lock so that we wont miss any events.
+                foreach (var pair in states)
+                {
+                    string name = pair.Key;
+                    var state = pair.Value;
+                    switch (state.Type)
+                    {
+                        case ShaderParameterType.SRV:
+                            resourceBindingList.SetSRV(name, state.Resource);
+                            break;
+
+                        case ShaderParameterType.UAV:
+                            resourceBindingList.SetUAV(name, state.Resource, state.InitialCount);
+                            break;
+
+                        case ShaderParameterType.CBV:
+                            resourceBindingList.SetCBV(name, state.Resource);
+                            break;
+
+                        case ShaderParameterType.Sampler:
+                            resourceBindingList.SetSampler(name, state.Resource);
+                            break;
+                    }
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
+    }
+
+    public unsafe struct ShaderParameterState
+    {
+        public ShaderParameterType Type;
+        public void* Resource;
+        public uint InitialCount; // only used by UAVs
+    }
 
     public unsafe struct ShaderParameter
     {
@@ -17,26 +135,18 @@
         public ShaderParameterType Type;
     }
 
-    public enum ShaderParameterType
-    {
-        SRV,
-        UAV,
-        CBV,
-        Sampler,
-    }
-
-    public unsafe struct D3D11DescriptorRange
+    public unsafe struct D3D11DescriptorRange : IEnumerable<BindingValuePair>
     {
         public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters)
         {
             Stage = stage;
             Type = type;
 
-            count = parameters.Count;
-            if (count > 0) // just allocate if we really need it.
+            bucketCount = parameters.Count;
+            if (bucketCount > 0) // just allocate if we really need it.
             {
-                buckets = AllocT<ShaderParameter>(count);
-                ZeroMemoryT(buckets, count);
+                buckets = AllocT<ShaderParameter>(bucketCount);
+                ZeroMemoryT(buckets, bucketCount);
             }
 
             uint startSlot = uint.MaxValue;
@@ -54,7 +164,7 @@
             StartSlot = startSlot;
             Count = rangeWidth;
 
-            if (count == 0)
+            if (bucketCount == 0)
             {
                 return;
             }
@@ -112,7 +222,7 @@
 
         private UnsafeList<ResourceRange> Ranges;
         private ShaderParameter* buckets;
-        private int count;
+        private int bucketCount;
 
         public struct ResourceRange
         {
@@ -122,7 +232,7 @@
 
         private readonly ShaderParameter GetByName(string name)
         {
-            if (count == 0)
+            if (bucketCount == 0)
             {
                 // special case, check ahead to avoid unnecessary steps.
                 throw new KeyNotFoundException();
@@ -131,7 +241,7 @@
             uint hash = (uint)name.GetHashCode();
             fixed (char* pName = name)
             {
-                var pEntry = Find(buckets, count, hash, pName);
+                var pEntry = Find(buckets, bucketCount, hash, pName);
                 if (pEntry != null && pEntry->Hash == hash)
                 {
                     return *pEntry;
@@ -142,7 +252,7 @@
 
         private readonly bool TryGetByName(string name, out ShaderParameter parameter)
         {
-            if (count == 0)
+            if (bucketCount == 0)
             {
                 // special case, check ahead to avoid unnecessary steps.
                 parameter = default;
@@ -152,7 +262,7 @@
             uint hash = (uint)name.GetHashCode();
             fixed (char* pName = name)
             {
-                var pEntry = Find(buckets, count, hash, pName);
+                var pEntry = Find(buckets, bucketCount, hash, pName);
                 if (pEntry != null && pEntry->Hash == hash)
                 {
                     parameter = *pEntry;
@@ -193,6 +303,30 @@
                 return true;
             }
             return false;
+        }
+
+        public void UpdateByName(string name, void* oldState, void* state, uint initialValue = unchecked((uint)-1))
+        {
+            if (TryGetByName(name, out var parameter))
+            {
+                var index = parameter.Index - StartSlot;
+                var old = Resources[index];
+
+                if (old != oldState) // indicates that the state was overwritten locally so don't update.
+                {
+                    return;
+                }
+
+                Resources[index] = state;
+                if (InitialCounts != null)
+                {
+                    InitialCounts[index] = initialValue;
+                }
+                if (old != null ^ state != null)
+                {
+                    UpdateRanges(index, state == null);
+                }
+            }
         }
 
         private void UpdateRanges(uint idx, bool clear)
@@ -402,15 +536,79 @@
             }
             if (buckets != null)
             {
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < bucketCount; i++)
                 {
                     Free(buckets[i].Name);
                 }
                 Free(buckets);
                 buckets = null;
-                count = 0;
+                bucketCount = 0;
             }
             Ranges.Release();
+        }
+
+        public readonly IEnumerator<BindingValuePair> GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        readonly IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public struct Enumerator : IEnumerator<BindingValuePair>
+        {
+            private readonly D3D11DescriptorRange descriptorRange;
+            private BindingValuePair current;
+            private ShaderParameter* currentBucket;
+
+            public Enumerator(D3D11DescriptorRange descriptorRange)
+            {
+                this.descriptorRange = descriptorRange;
+            }
+
+            public readonly BindingValuePair Current => current;
+
+            readonly object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                // Nothing to do here.
+            }
+
+            public bool MoveNext()
+            {
+                if (currentBucket == null)
+                {
+                    currentBucket = descriptorRange.buckets;
+                    if (currentBucket == null) return false;
+                    ReadFromBucket();
+                    return true;
+                }
+
+                var index = currentBucket - descriptorRange.buckets;
+                if (index == descriptorRange.bucketCount - 1)
+                {
+                    return false;
+                }
+                currentBucket++;
+                ReadFromBucket();
+                return true;
+            }
+
+            private void ReadFromBucket()
+            {
+                current.Name = new(currentBucket->Name);
+                current.Stage = descriptorRange.Stage;
+                current.Type = currentBucket->Type;
+                current.Value = descriptorRange.Resources[currentBucket->Index];
+            }
+
+            public void Reset()
+            {
+                currentBucket = null;
+            }
         }
     }
 
@@ -438,6 +636,55 @@
             OnPipelineCompile(pipeline);
         }
 
+        public IPipeline Pipeline => pipeline;
+
+        public IEnumerable<BindingValuePair> SRVs => EnumerateRanges(rangesSRVs);
+
+        public IEnumerable<BindingValuePair> CBVs => EnumerateRanges(rangesCBVs);
+
+        public IEnumerable<BindingValuePair> UAVs => EnumerateRanges(rangesUAVs);
+
+        public IEnumerable<BindingValuePair> Samplers => EnumerateRanges(rangesSamplers);
+
+        internal void Hook()
+        {
+            D3D11GlobalResourceList.StateChanged += GlobalStateChanged;
+        }
+
+        private void GlobalStateChanged(string name, ShaderParameterState oldState, ShaderParameterState state)
+        {
+            switch (state.Type)
+            {
+                case ShaderParameterType.SRV:
+                    for (int i = 0; i < rangesSRVs.Count; i++)
+                    {
+                        rangesSRVs.GetPointer(i)->UpdateByName(name, oldState.Resource, state.Resource);
+                    }
+                    break;
+
+                case ShaderParameterType.UAV:
+                    for (int i = 0; i < rangesUAVs.Count; i++)
+                    {
+                        rangesUAVs.GetPointer(i)->UpdateByName(name, oldState.Resource, state.Resource, state.InitialCount);
+                    }
+                    break;
+
+                case ShaderParameterType.CBV:
+                    for (int i = 0; i < rangesCBVs.Count; i++)
+                    {
+                        rangesCBVs.GetPointer(i)->UpdateByName(name, oldState.Resource, state.Resource);
+                    }
+                    break;
+
+                case ShaderParameterType.Sampler:
+                    for (int i = 0; i < rangesSRVs.Count; i++)
+                    {
+                        rangesSRVs.GetPointer(i)->UpdateByName(name, oldState.Resource, state.Resource);
+                    }
+                    break;
+            }
+        }
+
         private void OnPipelineCompile(IPipeline pipeline)
         {
             Clear();
@@ -459,6 +706,8 @@
             rangesUAVs.ShrinkToFit();
             rangesCBVs.ShrinkToFit();
             rangesSamplers.ShrinkToFit();
+
+            D3D11GlobalResourceList.SetState(this);
         }
 
         public void SetSRV(string name, IShaderResourceView? srv)
@@ -467,6 +716,14 @@
             for (int i = 0; i < rangesSRVs.Count; i++)
             {
                 rangesSRVs.GetPointer(i)->TrySetByName(name, (void*)p);
+            }
+        }
+
+        internal void SetSRV(string name, void* srv)
+        {
+            for (int i = 0; i < rangesSRVs.Count; i++)
+            {
+                rangesSRVs.GetPointer(i)->TrySetByName(name, srv);
             }
         }
 
@@ -479,6 +736,14 @@
             }
         }
 
+        public void SetUAV(string name, void* uav, uint initialCount = unchecked((uint)-1))
+        {
+            for (int i = 0; i < rangesUAVs.Count; i++)
+            {
+                rangesUAVs.GetPointer(i)->TrySetByName(name, uav, initialCount);
+            }
+        }
+
         public void SetCBV(string name, IBuffer? cbv)
         {
             var p = cbv?.NativePointer ?? 0;
@@ -488,12 +753,28 @@
             }
         }
 
+        public void SetCBV(string name, void* cbv)
+        {
+            for (int i = 0; i < rangesCBVs.Count; i++)
+            {
+                rangesCBVs.GetPointer(i)->TrySetByName(name, (void*)cbv);
+            }
+        }
+
         public void SetSampler(string name, ISamplerState? sampler)
         {
             var p = sampler?.NativePointer ?? 0;
             for (int i = 0; i < rangesSamplers.Count; i++)
             {
                 rangesSamplers.GetPointer(i)->TrySetByName(name, (void*)p);
+            }
+        }
+
+        public void SetSampler(string name, void* sampler)
+        {
+            for (int i = 0; i < rangesSamplers.Count; i++)
+            {
+                rangesSamplers.GetPointer(i)->TrySetByName(name, (void*)sampler);
             }
         }
 
@@ -689,10 +970,23 @@
 
         protected override void DisposeCore()
         {
+            D3D11GlobalResourceList.StateChanged -= GlobalStateChanged;
+
             pipeline.OnCompile -= OnPipelineCompile;
             pipeline.Dispose();
 
             Clear();
+        }
+
+        private static IEnumerable<BindingValuePair> EnumerateRanges(UnsafeList<D3D11DescriptorRange> ranges)
+        {
+            foreach (var range in ranges)
+            {
+                foreach (var pair in range)
+                {
+                    yield return pair;
+                }
+            }
         }
     }
 }

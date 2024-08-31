@@ -14,6 +14,8 @@
 
         public override string Name => "Pencil";
 
+        public override IResourceBindingList Bindings => brushPipeline.Bindings;
+
         public override void Init(IGraphicsDevice device)
         {
             DepthStencilDescription depthStencil = new()

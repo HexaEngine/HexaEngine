@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
+    using Silk.NET.Vulkan;
     using System.Numerics;
 
     public struct GPUDecal
@@ -42,6 +43,7 @@
             {
                 Rasterizer = RasterizerDescription.CullNone
             });
+
             pipelineModifyNormals = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/decal/vs.hlsl",
@@ -56,6 +58,16 @@
             worldBuffer = new(CpuAccessFlags.Write);
             decalBuffer = new(CpuAccessFlags.Write);
 
+            pipeline.Bindings.SetCBV("DecalBuffer", decalBuffer);
+            pipeline.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            pipeline.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+            pipeline.Bindings.SetSampler("pointClampSampler", pointClampSampler);
+
+            pipelineModifyNormals.Bindings.SetCBV("DecalBuffer", decalBuffer);
+            pipelineModifyNormals.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            pipelineModifyNormals.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+            pipelineModifyNormals.Bindings.SetSampler("pointClampSampler", pointClampSampler);
+
             depth = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
         }
 
@@ -64,27 +76,14 @@
             worldBuffer.Update(context, new(decal.Transform));
             decalBuffer.Update(context, new(decal));
 
-            nint* cbs = stackalloc nint[] { worldBuffer.NativePointer };
-            nint* srvs = stackalloc nint[] { decal.AlbedoDecalTexture?.SRV?.NativePointer ?? 0, decal.NormalDecalTexture?.SRV?.NativePointer ?? 0 };
-            nint* sps = stackalloc nint[] { linearWrapSampler.NativePointer, pointClampSampler.NativePointer };
-            context.VSSetConstantBuffers(0, 1, (void**)cbs);
-            cbs[0] = decalBuffer.NativePointer;
-            context.PSSetConstantBuffers(0, 1, (void**)cbs);
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-            context.PSSetSamplers(0, 2, (void**)sps);
+            IGraphicsPipelineState pso = decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline;
 
-            context.SetGraphicsPipelineState(decal.ModifyGBufferNormals ? pipelineModifyNormals : pipeline);
+            pso.Bindings.SetSRV("baseColorTex", decal.AlbedoDecalTexture?.SRV);
+            pso.Bindings.SetSRV("normalTex", decal.NormalDecalTexture?.SRV);
+
+            context.SetGraphicsPipelineState(pso);
             cube.DrawAuto(context);
             context.SetGraphicsPipelineState(null);
-
-            ZeroMemory(srvs, sizeof(nint) * 2);
-            ZeroMemory(cbs, sizeof(nint) * 2);
-            ZeroMemory(sps, sizeof(nint) * 2);
-
-            context.PSSetSamplers(0, 2, (void**)sps);
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-            context.PSSetConstantBuffers(0, 1, (void**)cbs);
-            context.VSSetConstantBuffers(0, 1, (void**)cbs);
         }
 
         public void Dispose()

@@ -10,6 +10,7 @@
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Meshes;
+    using Silk.NET.OpenAL;
     using System.Numerics;
 
     public class LayerPaintTool : TerrainTool
@@ -72,6 +73,12 @@
             brushBuffer = new(CpuAccessFlags.Write);
             remapBuffer = new(CpuAccessFlags.Write);
             channelBuffer = new(1, CpuAccessFlags.Read);
+
+            maskEdit.Bindings.SetCBV("BrushBuffer", brushBuffer);
+            maskEdit.Bindings.SetCBV("MaskBuffer", maskBuffer);
+
+            maskEdit.Bindings.SetSRV("maskTex", maskTexBuffer.SRV);
+            maskEdit.Bindings.SetSampler("samplerLinearClamp", maskSampler);
 
             occupationCheckPipeline.Bindings.SetCBV("ParamsBuffer", remapBuffer);
             occupationCheckPipeline.Bindings.SetUAV("outputBuffer", channelBuffer.UAV);
@@ -273,10 +280,6 @@
 
                 context.CopyResource(maskTexBuffer, maskTex);
 
-                context.PSSetShaderResource(0, maskTexBuffer.SRV);
-                context.PSSetSampler(0, maskSampler);
-                context.PSSetConstantBuffer(0, brushBuffer);
-                context.PSSetConstantBuffer(1, maskBuffer);
                 context.SetRenderTarget(maskTex.RTV, null);
                 context.SetViewport(vp);
 
@@ -284,12 +287,7 @@
                 context.DrawInstanced(4, 1, 0, 0);
                 context.SetGraphicsPipelineState(null);
 
-                context.SetViewport(default);
                 context.SetRenderTarget(null, null);
-                context.PSSetShaderResource(0, null);
-                context.PSSetSampler(0, null);
-                context.PSSetConstantBuffer(0, null);
-                context.PSSetConstantBuffer(1, null);
 
                 CheckDrawLayer(context, cell, layer, ref updated);
 

@@ -460,5 +460,25 @@
         {
             throw new NotImplementedException();
         }
+
+        public void SetGlobalSRV(string name, IShaderResourceView? srv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalCBV(string name, IBuffer? cbv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSampler(string name, ISamplerState? sampler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

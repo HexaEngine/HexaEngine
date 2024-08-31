@@ -29,12 +29,12 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<ISamplerState> linearWrapSampler;
         private ResourceRef<ISamplerState> pointClampSampler;
         private ResourceRef<ISamplerState> anisotropicClampSampler;
-        private unsafe void** cbs;
+
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
-        private const uint nConstantBuffers = 3;
 
         private ResourceRef<IGraphicsPipelineState> deferred;
+        private IGraphicsDevice dev;
 
         private readonly bool forceForward = true;
 
@@ -71,7 +71,6 @@ namespace HexaEngine.Graphics.Passes
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
             anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
 
-            cbs = AllocArrayAndZero(nConstantBuffers);
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
@@ -92,11 +91,9 @@ namespace HexaEngine.Graphics.Passes
 
         private unsafe void ActiveLightsChanged(object sender, LightManager manager)
         {
-            var bindings = deferred.Value.Bindings;
-
-            bindings.SetSRV("globalProbes", manager.GlobalProbes.SRV);
-            bindings.SetSRV("lights", manager.LightBuffer.SRV);
-            bindings.SetSRV("shadowData", manager.ShadowDataBuffer.SRV);
+            dev.SetGlobalSRV("globalProbes", manager.GlobalProbes.SRV);
+            dev.SetGlobalSRV("lights", manager.LightBuffer.SRV);
+            dev.SetGlobalSRV("shadowData", manager.ShadowDataBuffer.SRV);
 
             IShaderResourceView csmBuffer = null;
             for (int i = 0; i < manager.ActiveCount; i++)
@@ -108,7 +105,7 @@ namespace HexaEngine.Graphics.Passes
                     break;
                 }
             }
-            bindings.SetSRV("depthCSM", csmBuffer);
+            dev.SetGlobalSRV("depthCSM", csmBuffer);
 
             IShaderResourceView globalDiffuseIbl = null;
             IShaderResourceView globalSpecularIbl = null;
@@ -122,41 +119,31 @@ namespace HexaEngine.Graphics.Passes
                     break;
                 }
             }
-            bindings.SetSRV("globalDiffuse", globalDiffuseIbl);
-            bindings.SetSRV("globalSpecular", globalSpecularIbl);
+            dev.SetGlobalSRV("globalDiffuse", globalDiffuseIbl);
+            dev.SetGlobalSRV("globalSpecular", globalSpecularIbl);
         }
 
-        public override unsafe void Prepare(GraphResourceBuilder creator)
+        public override void Prepare(GraphResourceBuilder creator)
         {
-            var bindings = deferred.Value.Bindings;
-            bindings.SetSampler("linearClampSampler", linearClampSampler.Value);
-            bindings.SetSampler("linearWrapSampler", linearWrapSampler.Value);
-            bindings.SetSampler("pointClampSampler", pointClampSampler.Value);
-            bindings.SetSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
+            dev = creator.Device;
 
-            bindings.SetCBV("CameraBuffer", camera.Value);
-            bindings.SetCBV("WeatherBuffer", weather.Value);
+            dev.SetGlobalSRV("ssao", AOBuffer.Value.SRV);
+            dev.SetGlobalSRV("iblDFG", brdfLUT.Value.SRV);
 
-            bindings.SetSRV("ssao", AOBuffer.Value.SRV);
-            bindings.SetSRV("iblDFG", brdfLUT.Value.SRV);
-
-            bindings.SetSRV("lightIndexList", lightIndexList.Value.SRV);
-            bindings.SetSRV("lightGrid", lightGridBuffer.Value.SRV);
-            bindings.SetSRV("depthAtlas", shadowAtlas.Value.SRV);
+            dev.SetGlobalSRV("lightIndexList", lightIndexList.Value.SRV);
+            dev.SetGlobalSRV("lightGrid", lightGridBuffer.Value.SRV);
+            dev.SetGlobalSRV("depthAtlas", shadowAtlas.Value.SRV);
 
             GBuffer gbuffer = this.gbuffer.Value;
-            bindings.SetSRV("GBufferA", gbuffer.SRVs[0]);
-            bindings.SetSRV("GBufferB", gbuffer.SRVs[1]);
-            bindings.SetSRV("GBufferC", gbuffer.SRVs[2]);
-            bindings.SetSRV("GBufferD", gbuffer.SRVs[3]);
+            dev.SetGlobalSRV("GBufferA", gbuffer.SRVs[0]);
+            dev.SetGlobalSRV("GBufferB", gbuffer.SRVs[1]);
+            dev.SetGlobalSRV("GBufferC", gbuffer.SRVs[2]);
+            dev.SetGlobalSRV("GBufferD", gbuffer.SRVs[3]);
 
-            bindings.SetSRV("Depth", depthStencil.Value.SRV);
-
-            cbs[1] = (void*)camera.Value.NativePointer;
-            cbs[2] = (void*)weather.Value.NativePointer;
+            dev.SetGlobalSRV("Depth", depthStencil.Value.SRV);
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
         {
             if (forceForward)
             {
@@ -173,9 +160,6 @@ namespace HexaEngine.Graphics.Passes
 
             context.SetRenderTarget(lightBuffer.Value.RTV, depthStencil.Value);
             context.SetViewport(creator.Viewport);
-
-            cbs[0] = null;
-            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
 
             profiler?.Begin("LightForward.Background");
             RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);

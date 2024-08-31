@@ -52,6 +52,8 @@
             Register<PackageManagerWidget>();
             Register<ErrorListWidget>();
 
+            Register<GraphicsDebugger>();
+
             Register<BakeWindow>();
         }
 

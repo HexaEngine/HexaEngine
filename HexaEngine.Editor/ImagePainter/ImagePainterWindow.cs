@@ -353,16 +353,18 @@
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.Viewport);
-                context.PSSetShaderResource(0, source.SRV);
+                copyPipeline.Bindings.SetSRV("sourceTex", source.SRV);
                 context.SetGraphicsPipelineState(copyPipeline);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.ClearState();
+                context.SetGraphicsPipelineState(null);
+                context.SetRenderTarget(null, null);
 
                 var curPosGlob = ImGui.GetCursorScreenPos();
 
                 if (ImGui.IsMouseHoveringRect(curPosGlob, curPosGlob + size * zoom) && brushes.Current != null && toolbox.Current != null)
                 {
-                    var toolFlags = toolbox.Current.Flags;
+                    var tool = toolbox.Current;
+                    var toolFlags = tool.Flags;
                     var curPos = ImGui.GetMousePos() / zoom - curPosGlob / zoom;
                     var curPosD = curPos - lastpos;
                     lastpos = curPos;
@@ -382,9 +384,10 @@
                     }
                     isDown = changed;
 
-                    context.PSSetConstantBuffer(0, colorCB);
+                    var binds = tool.Bindings;
 
-                    brushes.Current.Apply(context);
+                    binds.SetCBV("BrushBuffer", colorCB);
+                    brushes.Current.Apply(context, binds);
 
                     toolContext.Position = curPos;
                     toolContext.Ratio = new Vector2(source.Viewport.Width, source.Viewport.Height) / size;
@@ -393,12 +396,12 @@
                     {
                         context.SetRenderTarget(source.RTV, overlay.DSV);
                         context.SetViewport(source.Viewport);
-                        toolbox.Current.Draw(context, toolContext);
+                        tool.Draw(context, toolContext);
                     }
                     else
                     {
                         context.SetRenderTarget(overlay.RTV, default);
-                        toolbox.Current.DrawPreview(context, toolContext);
+                        tool.DrawPreview(context, toolContext);
                     }
 
                     context.ClearState();

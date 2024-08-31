@@ -55,6 +55,8 @@
 
             samplerState = device.CreateSamplerState(description);
             paramBuffer = new(CpuAccessFlags.Write);
+
+            SetupState();
         }
 
         public CopyEffect(IGraphResourceBuilder creator, string name, CopyFilter filter)
@@ -93,6 +95,14 @@
 
             samplerState = device.CreateSamplerState(description);
             paramBuffer = new(CpuAccessFlags.Write);
+
+            SetupState();
+        }
+
+        private void SetupState()
+        {
+            pipeline.Bindings.SetCBV("params", paramBuffer);
+            pipeline.Bindings.SetSampler("samplerState", samplerState);
         }
 
         public void Copy(IGraphicsContext context, IShaderResourceView source, IRenderTargetView destination, Vector2 srcSize)
@@ -121,14 +131,10 @@
             paramBuffer.Update(context, vector);
             context.SetRenderTarget(destination, null);
             context.SetViewport(dstViewport);
-            context.PSSetShaderResource(0, source);
-            context.PSSetSampler(0, samplerState);
-            context.PSSetConstantBuffer(0, paramBuffer);
+            pipeline.Bindings.SetSRV("sourceTex", source);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
 

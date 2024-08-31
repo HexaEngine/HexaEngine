@@ -17,6 +17,8 @@
             pipeline.AddRef();
             this.pipeline = pipeline;
             this.dbgName = dbgName;
+            PipelineStateManager.Register(this);
+
             resourceBindingList = new(pipeline);
 
             pipeline.OnCompile += OnPipelineCompile;
@@ -55,6 +57,8 @@
 
         protected override void DisposeCore()
         {
+            PipelineStateManager.Unregister(this);
+
             pipeline.OnCompile -= OnPipelineCompile;
             pipeline.Dispose();
 

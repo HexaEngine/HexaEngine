@@ -20,9 +20,9 @@ struct VSOut
 
 // The input texture to blur.
 Texture2D tex : register(t0);
-SamplerState linearSampler : register(s0);
+SamplerState state : register(s0);
 
-cbuffer GaussianBlurConstantBuffer : register(b0)
+cbuffer params : register(b0)
 {
 	float2 textureDimensions; // The render target width/height.
 };
@@ -30,5 +30,5 @@ cbuffer GaussianBlurConstantBuffer : register(b0)
 // Gaussian blur in the horizontal direction.
 float4 main(VSOut input) : SV_TARGET
 {
-	return blur(tex, linearSampler, float2(1, 0), input.Tex, textureDimensions);
+	return blur(tex, state, float2(1, 0), input.Tex, textureDimensions);
 }

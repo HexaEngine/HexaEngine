@@ -45,6 +45,8 @@
             this.pipeline = pipeline;
             this.dbgName = dbgName;
 
+            PipelineStateManager.Register(this);
+
             {
                 pipeline.OnCompile += OnPipelineCompile;
                 pipeline.OnCreateLayout += CreateLayout;
@@ -241,6 +243,8 @@
 
         protected override void DisposeCore()
         {
+            PipelineStateManager.Unregister(this);
+
             pipeline.OnCompile -= OnPipelineCompile;
             pipeline.Dispose();
 
