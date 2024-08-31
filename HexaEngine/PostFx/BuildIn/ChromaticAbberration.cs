@@ -14,7 +14,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ChromaticAberrationParams> paramsBuffer;
-        private ISamplerState samplerState;
 #nullable restore
         private float intensity = 1;
 
@@ -74,15 +73,12 @@
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/chromaticaberration/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override void UpdateBindings()
         {
             pipeline.Bindings.SetSRV("hdrTexture", Input);
             pipeline.Bindings.SetCBV("Params", paramsBuffer);
-            pipeline.Bindings.SetSampler("linearClampSampler", samplerState);
         }
 
         /// <inheritdoc/>
@@ -112,7 +108,6 @@
         {
             paramsBuffer.Dispose();
             pipeline.Dispose();
-            samplerState.Dispose();
         }
     }
 }

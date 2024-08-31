@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
 
     /// <summary>
@@ -15,17 +14,7 @@
     {
 #nullable disable
         private IGraphicsPipelineState pipelineSSR;
-
-        private ISamplerState pointClampSampler;
-        private ISamplerState linearClampSampler;
-        private ISamplerState linearBorderSampler;
-        private ISamplerState linearWrapSampler;
-
         private ConstantBuffer<SSRParams> ssrParamsBuffer;
-
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<GBuffer> gbuffer;
 #nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
@@ -219,14 +208,6 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
-
-            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearBorderSampler = device.CreateSamplerState(SamplerStateDescription.LinearBorder);
-
             List<ShaderMacro> shaderMacros = new(macros)
             {
                 new("SSR_QUALITY", ((int)qualityPreset).ToString())
@@ -259,13 +240,7 @@
         public override void UpdateBindings()
         {
             pipelineSSR.Bindings.SetSRV("inputTex", Input);
-            pipelineSSR.Bindings.SetSRV("depthTex", depth.Value);
-            pipelineSSR.Bindings.SetSRV("normalRoughnessTex", gbuffer.Value!.SRVs[1]);
             pipelineSSR.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
-            pipelineSSR.Bindings.SetCBV("CameraBuffer", camera.Value);
-            pipelineSSR.Bindings.SetSampler("pointClampSampler", pointClampSampler);
-            pipelineSSR.Bindings.SetSampler("linearClampSampler", linearClampSampler);
-            pipelineSSR.Bindings.SetSampler("linearBorderSampler", linearBorderSampler);
         }
 
         /// <inheritdoc/>
@@ -298,9 +273,6 @@
         protected override void DisposeCore()
         {
             pipelineSSR.Dispose();
-            pointClampSampler.Dispose();
-            linearClampSampler.Dispose();
-            linearBorderSampler.Dispose();
             ssrParamsBuffer?.Dispose();
             ssrParamsBuffer = null;
         }

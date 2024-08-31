@@ -12,11 +12,9 @@
 #nullable disable
         private PostFxGraphResourceBuilder creator;
         private IGraphicsPipelineState pipeline;
-        private ISamplerState sampler;
 
         private ConstantBuffer<TAAParams> paramsBuffer;
 
-        private ResourceRef<Texture2D> Velocity;
         private ResourceRef<Texture2D> Previous;
 #nullable restore
 
@@ -93,9 +91,7 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = creator.GetTexture2D("VelocityBuffer");
             Previous = creator.CreateBuffer("TAA_PREVIOUS_BUFFER", creationFlags: ResourceCreationFlags.None);
 
             Viewport = new(width, height);
@@ -117,11 +113,9 @@
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("gTexColor", Input);
-            pipeline.Bindings.SetSRV("gTexMotionVec", Velocity.Value);
-            pipeline.Bindings.SetSRV("gTexPrevColor", Previous.Value);
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("previousTex", Previous.Value);
             pipeline.Bindings.SetCBV("PerFrameCB", paramsBuffer);
-            pipeline.Bindings.SetSampler("gSampler", sampler);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -143,7 +137,6 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            sampler.Dispose();
             paramsBuffer.Dispose();
             creator.DisposeResource("Previous");
         }

@@ -15,8 +15,6 @@
     public class Fog : PostFxBase
     {
 #nullable disable
-        private ISamplerState linearClampSampler;
-        private ISamplerState linearWrapSampler;
 
         private IComputePipelineState volume;
         private IGraphicsPipelineState fog;
@@ -26,9 +24,6 @@
 
         private Texture3D densityTex;
 
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<ConstantBuffer<CBWeather>> weather;
 #nullable restore
         private float minValue;
         private float maxValue;
@@ -165,13 +160,6 @@
             fogParamsBuffer = new(CpuAccessFlags.Write);
 
             densityTex = new(Format.R32Float, 160, 90, 128, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);
-
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
-
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearMirror);
         }
 
         public override void Update(IGraphicsContext context)
@@ -200,17 +188,11 @@
         public override void UpdateBindings()
         {
             volume.Bindings.SetCBV("VolumeParams", volumeParamsBuffer);
-            volume.Bindings.SetCBV("CameraBuffer", camera.Value);
-            volume.Bindings.SetCBV("WeatherBuffer", weather.Value);
             volume.Bindings.SetUAV("volumeTex", densityTex);
 
             fog.Bindings.SetCBV("FogParams", fogParamsBuffer);
-            fog.Bindings.SetCBV("CameraBuffer", camera.Value);
             fog.Bindings.SetSRV("hdrTexture", Input);
-            fog.Bindings.SetSRV("depthTexture", depth.Value);
             fog.Bindings.SetSRV("volumeTex", densityTex);
-            fog.Bindings.SetSampler("linearClampSampler", linearClampSampler);
-            fog.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
         }
 
         public override unsafe void Draw(IGraphicsContext context)

@@ -11,7 +11,7 @@ struct VSOut
 // Remember to use a floating-point texture format (for HDR)!
 // Remember to use edge clamping for this texture!
 Texture2D srcTexture : register(t0);
-SamplerState samplerState;
+SamplerState linearClampSampler;
 
 cbuffer Params
 {
@@ -33,17 +33,17 @@ float4 main(VSOut input) : SV_Target
 	// d - e - f
 	// g - h - i
 	// === ('e' is the current texel) ===
-	float3 a = srcTexture.Sample(samplerState, float2(texCoord.x - x, texCoord.y + y)).rgb;
-	float3 b = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y + y)).rgb;
-	float3 c = srcTexture.Sample(samplerState, float2(texCoord.x + x, texCoord.y + y)).rgb;
+	float3 a = srcTexture.Sample(linearClampSampler, float2(texCoord.x - x, texCoord.y + y)).rgb;
+	float3 b = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y + y)).rgb;
+	float3 c = srcTexture.Sample(linearClampSampler, float2(texCoord.x + x, texCoord.y + y)).rgb;
 
-	float3 d = srcTexture.Sample(samplerState, float2(texCoord.x - x, texCoord.y)).rgb;
-	float3 e = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y)).rgb;
-	float3 f = srcTexture.Sample(samplerState, float2(texCoord.x + x, texCoord.y)).rgb;
+	float3 d = srcTexture.Sample(linearClampSampler, float2(texCoord.x - x, texCoord.y)).rgb;
+	float3 e = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y)).rgb;
+	float3 f = srcTexture.Sample(linearClampSampler, float2(texCoord.x + x, texCoord.y)).rgb;
 
-	float3 g = srcTexture.Sample(samplerState, float2(texCoord.x - x, texCoord.y - y)).rgb;
-	float3 h = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y - y)).rgb;
-	float3 i = srcTexture.Sample(samplerState, float2(texCoord.x + x, texCoord.y - y)).rgb;
+	float3 g = srcTexture.Sample(linearClampSampler, float2(texCoord.x - x, texCoord.y - y)).rgb;
+	float3 h = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y - y)).rgb;
+	float3 i = srcTexture.Sample(linearClampSampler, float2(texCoord.x + x, texCoord.y - y)).rgb;
 
 	// Apply weighted distribution, by using a 3x3 tent filter:
 	//  1   | 1 2 1 |

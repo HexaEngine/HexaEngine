@@ -19,11 +19,7 @@
         private ConstantBuffer<SSGIParams> ssgiParamsBuffer;
         private ResourceRef<Texture2D> ssgiBuffer;
         private GaussianBlur blur;
-        private ISamplerState linearWrapSampler;
 
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<GBuffer> gbuffer;
 #nullable restore
 
         private float intensity = 1;
@@ -202,11 +198,6 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             List<ShaderMacro> shaderMacros = new(macros)
             {
@@ -255,11 +246,7 @@
         public override void UpdateBindings()
         {
             psoSSGI.Bindings.SetSRV("inputTex", Input);
-            psoSSGI.Bindings.SetSRV("depthTex", depth.Value);
-            psoSSGI.Bindings.SetSRV("normalTex", gbuffer.Value!.SRVs[1]);
             psoSSGI.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
-            psoSSGI.Bindings.SetCBV("CameraBuffer", camera.Value);
-            psoSSGI.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
         }
 
         public override void Draw(IGraphicsContext context)
@@ -285,7 +272,6 @@
         {
             creator.DisposeResource("SSGI_BUFFER");
             psoSSGI.Dispose();
-            linearWrapSampler.Dispose();
             ssgiParamsBuffer.Dispose();
             blur.Dispose();
         }

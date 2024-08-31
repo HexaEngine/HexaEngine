@@ -1,7 +1,7 @@
 //https://developer.nvidia.com/gpugems/gpugems3/part-iv-image-effects/chapter-27-motion-blur-post-processing-effect
 
-Texture2D sceneTexture : register(t0);
-Texture2D<float2> velocityBuffer : register(t1);
+Texture2D inputTex : register(t0);
+Texture2D<float2> velocityBufferTex : register(t1);
 
 SamplerState linearWrapSampler : register(s0);
 
@@ -42,17 +42,17 @@ struct VSOut
 
 float4 main(VSOut pin) : SV_TARGET
 {
-    float2 velocity = velocityBuffer.SampleLevel(linearWrapSampler, pin.Tex, 0) * strength;
+    float2 velocity = velocityBufferTex.SampleLevel(linearWrapSampler, pin.Tex, 0) * strength;
 
     float2 tex_coord = pin.Tex;
 
-    float4 color = sceneTexture.Sample(linearWrapSampler, tex_coord);
+    float4 color = inputTex.Sample(linearWrapSampler, tex_coord);
 
     tex_coord += velocity;
 
     for (int i = 1; i < SAMPLE_COUNT; ++i)
     {
-        float4 currentColor = sceneTexture.Sample(linearWrapSampler, tex_coord);
+        float4 currentColor = inputTex.Sample(linearWrapSampler, tex_coord);
 
         color += currentColor;
 

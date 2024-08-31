@@ -33,7 +33,6 @@
         private ResourceRef<IComputePipelineState> clusterCulling;
 
         private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public LightCullPass() : base("LightCull")
         {
@@ -44,8 +43,6 @@
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
             float screenWidth = creator.Viewport.Width;
             float screenHeight = creator.Viewport.Height;
 
@@ -78,14 +75,12 @@
         {
             {
                 var bindings = clusterBuilding.Value!.Bindings;
-                bindings.SetCBV("CameraBuffer", camera.Value);
                 bindings.SetUAV("clusters", ClusterBuffer.Value!.UAV!);
             }
 
             {
                 var lightBuffer = LightManager.Current?.LightBuffer;
                 var bindings = clusterCulling.Value!.Bindings;
-                bindings.SetCBV("CameraBuffer", camera.Value);
                 bindings.SetCBV("CBCullingParams", lightParamsBuffer.Value!);
                 bindings.SetSRV("clusters", ClusterBuffer.Value.SRV);
                 bindings.SetSRV("lights", lightBuffer?.SRV!);

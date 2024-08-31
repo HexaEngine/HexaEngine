@@ -113,7 +113,6 @@
             foreach (var pass in material.Shader.Passes)
             {
                 var bindings = pass.Bindings;
-                bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value!);
                 bindings.SetCBV("offsetBuffer", offsetBuffer);
                 if (pass.Name == "Deferred" || pass.Name == "Forward")
                 {

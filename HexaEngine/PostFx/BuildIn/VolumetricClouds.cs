@@ -19,8 +19,6 @@
 #nullable disable
         private IGraphicsDevice device;
         private IGraphicsPipelineState pipeline;
-        private ISamplerState linearWrapSampler;
-        private ISamplerState pointWrapSampler;
 
         private Texture2D weatherTex;
         private Texture3D cloudTex;
@@ -31,9 +29,7 @@
 
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<DepthMipChain> depthMip;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<ConstantBuffer<CBWeather>> weather;
-        private ResourceRef<GBuffer> gbuffer;
+
 #nullable restore
 
         public override string Name { get; } = "VolumetricClouds";
@@ -57,9 +53,6 @@
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             depthMip = creator.GetDepthMipChain("HiZBuffer");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
-            gbuffer = creator.GetGBuffer("GBuffer");
 
             this.device = device;
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -72,9 +65,6 @@
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
             });
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-            pointWrapSampler = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
             weatherTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
             cloudTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
@@ -90,10 +80,6 @@
             pipeline.Bindings.SetSRV("cloudTex", cloudTex);
             pipeline.Bindings.SetSRV("worleyTex", worleyTex);
             pipeline.Bindings.SetSRV("depthTex", depthMip.Value!.SRV);
-            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
-            pipeline.Bindings.SetCBV("WeatherBuffer", weather.Value);
-            pipeline.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
-            pipeline.Bindings.SetSampler("pointWrapSampler", pointWrapSampler);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -124,8 +110,6 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            linearWrapSampler.Dispose();
-            pointWrapSampler.Dispose();
             weatherTex.Dispose();
             cloudTex.Dispose();
             worleyTex.Dispose();

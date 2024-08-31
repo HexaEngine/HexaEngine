@@ -11,7 +11,6 @@
     public class ObjectCullPass : ComputePass
     {
         private bool isEnabled;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<DepthMipChain> chain;
 
         public ObjectCullPass() : base("ObjectCull")
@@ -23,7 +22,6 @@
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             chain = creator.GetDepthMipChain("HiZBuffer");
         }
 

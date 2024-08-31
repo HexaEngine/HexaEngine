@@ -21,7 +21,7 @@ Texture2D<float> depthTex : register(t0);
 Texture2D normalTex : register(t1);
 Texture2D noiseTex : register(t2);
 
-SamplerState samplerState;
+SamplerState linearClampSampler;
 
 static const float3 taps[16] =
 {
@@ -45,13 +45,13 @@ static const float3 taps[16] =
 
 float4 main(VSOut vs) : SV_Target
 {
-    float3 random = noiseTex.Sample(samplerState, vs.Tex * NoiseScale);
+    float3 random = noiseTex.Sample(linearClampSampler, vs.Tex * NoiseScale);
 
-    float depth = depthTex.Sample(samplerState, vs.Tex);
+    float depth = depthTex.Sample(linearClampSampler, vs.Tex);
 
     float3 position = GetPositionVS(vs.Tex, depth);
 
-    float3 normal = mul(UnpackNormal(normalTex.Sample(samplerState, vs.Tex).xyz), (float3x3) view);
+    float3 normal = mul(UnpackNormal(normalTex.Sample(linearClampSampler, vs.Tex).xyz), (float3x3) view);
 
     float3 tangent = normalize(random - normal * dot(random, normal));
     float3 bitangent = cross(normal, tangent);
@@ -68,7 +68,7 @@ float4 main(VSOut vs) : SV_Target
 
         offset.xy = ((offset.xy / offset.w) * float2(1.0f, -1.0f)) * 0.5f + 0.5f;
 
-        float sampleDepth = depthTex.Sample(samplerState, offset.xy);
+        float sampleDepth = depthTex.Sample(linearClampSampler, offset.xy);
 
         sampleDepth = GetPositionVS(offset.xy, sampleDepth).z;
 

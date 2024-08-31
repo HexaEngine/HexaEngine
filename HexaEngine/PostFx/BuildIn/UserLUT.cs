@@ -12,8 +12,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<LUTParams> paramsBuffer;
-        private ISamplerState samplerState;
-        private ISamplerState lutSamplerState;
 #nullable enable
 
         private Texture2D? LUT;
@@ -72,19 +70,14 @@
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(new LUTParams(), CpuAccessFlags.Write);
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            lutSamplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
             LUT = Texture2D.LoadFromAssets(lutTexPath);
         }
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("input", Input);
-            pipeline.Bindings.SetSRV("lut", LUT?.SRV);
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("lutTex", LUT?.SRV);
             pipeline.Bindings.SetCBV("LUTParams", paramsBuffer);
-            pipeline.Bindings.SetSampler("samplerState", samplerState);
-            pipeline.Bindings.SetSampler("samplerLUT", lutSamplerState);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -103,7 +96,6 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            samplerState.Dispose();
             paramsBuffer.Dispose();
             LUT?.Dispose();
         }

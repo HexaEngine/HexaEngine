@@ -23,15 +23,13 @@
         private IGraphicsPipelineState blurPipeline;
         private ConstantBuffer<BlurParams> blurParams;
 
-        private ISamplerState linearClampSampler;
         private ISamplerState shadowSampler;
 
         private ResourceRef<Texture2D> buffer;
         private PostFxGraphResourceBuilder creator;
-        private ResourceRef<ShadowAtlas> shadowAtlas;
-        private ResourceRef<DepthStencil> depth;
+
         private ResourceRef<DepthMipChain> depthChain;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+
 #nullable restore
 
         private VolumetricLightingQualityPreset qualityPreset = VolumetricLightingQualityPreset.Medium;
@@ -168,10 +166,8 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
-            shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+
             depthChain = creator.GetDepthMipChain("HiZBuffer");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             List<ShaderMacro> shaderMacros = new(macros)
             {
@@ -199,7 +195,6 @@
             blurParams = new(CpuAccessFlags.Write);
 
             volumetricLightBuffer = new(CpuAccessFlags.Write);
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             shadowSampler = device.CreateSamplerState(SamplerStateDescription.ComparisonLinearBorder);
 
             buffer = creator.CreateBufferHalfRes("VOLUMETRIC_LIGHTNING_BUFFER");
@@ -242,14 +237,8 @@
         public override void UpdateBindings()
         {
             pipeline.Bindings.SetCBV("VolumetricParams", constantBuffer);
-            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
 
-            pipeline.Bindings.SetSRV("depthTex", depth.Value);
-            pipeline.Bindings.SetSRV("shadowAtlas", shadowAtlas.Value!.SRV);
             pipeline.Bindings.SetSRV("lights", volumetricLightBuffer.SRV);
-            pipeline.Bindings.SetSRV("shadowData", LightManager.Current?.ShadowDataBuffer.SRV);
-
-            pipeline.Bindings.SetSampler("linearClampSampler", linearClampSampler);
 
             blurPipeline.Bindings.SetSRV("depthTex", depthChain.Value!.SRV);
             blurPipeline.Bindings.SetSRV("volumetricLightTex", buffer.Value);
@@ -305,7 +294,6 @@
             blurParams.Dispose();
             constantBuffer.Dispose();
             volumetricLightBuffer.Dispose();
-            linearClampSampler.Dispose();
             shadowSampler.Dispose();
         }
     }

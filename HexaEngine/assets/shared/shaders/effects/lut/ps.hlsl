@@ -17,15 +17,14 @@ cbuffer LUTParams
 	float LUTAmountLuma;
 };
 
-Texture2D input : register(t0);
-Texture2D lut : register(t1);
+Texture2D inputTex : register(t0);
+Texture2D lutTex : register(t1);
 
-SamplerState samplerState;
-SamplerState samplerLUT;
+SamplerState linearClampSampler;
 
 void main(float4 vpos : SV_Position, float2 texcoord : TEXCOORD, out float4 res : SV_Target0)
 {
-	float4 color = input.SampleLevel(samplerState, texcoord.xy, 0);
+	float4 color = inputTex.SampleLevel(linearClampSampler, texcoord.xy, 0);
 	float2 texelsize = 1.0 / LUT_TileSizeXY;
 	texelsize.x /= LUT_TileAmount;
 
@@ -33,7 +32,7 @@ void main(float4 vpos : SV_Position, float2 texcoord : TEXCOORD, out float4 res 
 	float lerpfact = frac(lutcoord.z);
 	lutcoord.x += (lutcoord.z - lerpfact) * texelsize.y;
 
-	float3 lutcolor = lerp(lut.SampleLevel(samplerLUT, float2(lutcoord.x, lutcoord.y), 0).xyz, lut.SampleLevel(samplerLUT, float2(lutcoord.x + texelsize.y, lutcoord.y), 0).xyz, lerpfact);
+	float3 lutcolor = lerp(lutTex.SampleLevel(linearClampSampler, float2(lutcoord.x, lutcoord.y), 0).xyz, lutTex.SampleLevel(linearClampSampler, float2(lutcoord.x + texelsize.y, lutcoord.y), 0).xyz, lerpfact);
 
 	color.xyz = lerp(normalize(color.xyz), normalize(lutcolor.xyz), LUTAmountChroma) * lerp(length(color.xyz), length(lutcolor.xyz), LUTAmountLuma);
 

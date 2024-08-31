@@ -5,8 +5,6 @@
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Lights.Types;
-    using HexaEngine.Meshes;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
@@ -15,21 +13,10 @@
     {
         private ResourceRef<DepthStencil> depthStencil;
         private ResourceRef<GBuffer> gbuffer;
-        private ResourceRef<Texture2D> AOBuffer;
-        private ResourceRef<Texture2D> brdfLUT;
-        private ResourceRef<StructuredUavBuffer<uint>> lightIndexList;
-        private ResourceRef<StructuredUavBuffer<LightGrid>> lightGridBuffer;
-        private ResourceRef<ShadowAtlas> shadowAtlas;
+
         private ResourceRef<Texture2D> lightBuffer;
 
-        private ResourceRef<ISamplerState> linearClampSampler;
-        private ResourceRef<ISamplerState> linearWrapSampler;
-        private ResourceRef<ISamplerState> pointClampSampler;
-        private ResourceRef<ISamplerState> anisotropicClampSampler;
-
         private ResourceRef<ConstantBuffer<ForwardLightParams>> lightParamsBuffer;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<ConstantBuffer<CBWeather>> weather;
 
         private unsafe void** forwardRTVs;
         private const uint nForwardRTVs = 3;
@@ -49,40 +36,13 @@
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             gbuffer = creator.GetGBuffer("GBuffer");
-            AOBuffer = creator.GetTexture2D("#AOBuffer");
-
-            brdfLUT = creator.GetTexture2D("BRDFLUT");
-
-            lightIndexList = creator.GetStructuredUavBuffer<uint>("LightIndexList");
-            lightGridBuffer = creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer");
-
-            shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
 
             var viewport = creator.Viewport;
             lightBuffer = creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), ResourceCreationFlags.LazyInit);
 
-            linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
-            linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
-            pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
-            anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
-
             lightParamsBuffer = creator.CreateConstantBuffer<ForwardLightParams>("ForwardLightParams", CpuAccessFlags.Write);
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             forwardRTVs = AllocArrayAndZero(nForwardRTVs);
-        }
-
-        public override void Prepare(GraphResourceBuilder creator)
-        {
-            creator.Device.SetGlobalSampler("linearClampSampler", linearClampSampler.Value);
-            creator.Device.SetGlobalSampler("linearWrapSampler", linearWrapSampler.Value);
-            creator.Device.SetGlobalSampler("pointClampSampler", pointClampSampler.Value);
-            creator.Device.SetGlobalSampler("anisotropicClampSampler", anisotropicClampSampler.Value);
-
-            creator.Device.SetGlobalCBV("CameraBuffer", camera.Value);
-            creator.Device.SetGlobalCBV("WeatherBuffer", weather.Value);
-            creator.Device.SetGlobalCBV("ForwardLightParams", lightParamsBuffer.Value);
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)

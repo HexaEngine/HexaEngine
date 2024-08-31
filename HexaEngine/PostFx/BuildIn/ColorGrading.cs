@@ -204,7 +204,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
-        private ISamplerState samplerState;
         private Texture1D curvesTex;
 #nullable restore
         private float shoulderStrength = 0.2f;
@@ -572,7 +571,6 @@
             GraphicsPipelineStateDesc.DefaultFullscreen
            );
 
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             curvesTex = curves.GetTexture(CpuAccessFlags.None);
         }
 
@@ -641,10 +639,9 @@
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("InputTex", Input);
-            pipeline.Bindings.SetSRV("CurvesTex", curvesTex);
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("curvesTex", curvesTex);
             pipeline.Bindings.SetCBV("TonemapParams", paramsBuffer);
-            pipeline.Bindings.SetSampler("LinearClampSampler", samplerState);
         }
 
         /// <inheritdoc/>
@@ -664,7 +661,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            samplerState.Dispose();
             curvesTex.Dispose();
         }
     }

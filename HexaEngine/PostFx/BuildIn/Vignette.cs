@@ -11,8 +11,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VignetteParams> paramsBuffer;
-
-        private ISamplerState samplerState;
 #nullable restore
 
         private float intensity = 1;
@@ -124,8 +122,6 @@
                 BlendFactor = default,
                 SampleMask = int.MaxValue
             });
-
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override unsafe void Update(IGraphicsContext context)
@@ -141,7 +137,6 @@
         {
             pipeline.Bindings.SetSRV("inputTex", Input);
             pipeline.Bindings.SetCBV("VignetteParams", paramsBuffer);
-            pipeline.Bindings.SetSampler("linearClampSampler", samplerState);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -159,7 +154,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            samplerState.Dispose();
         }
     }
 }

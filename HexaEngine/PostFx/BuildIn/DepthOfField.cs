@@ -24,10 +24,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         private ConstantBuffer<BokehParams> cbBokeh;
         private ConstantBuffer<DofParams> cbDof;
-        private ISamplerState linearWrapSampler;
         private PostFxGraphResourceBuilder creator;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private IComputePipelineState bokehGenerate;
         private GaussianBlur gaussianBlur;
         private IGraphicsPipelineState coc;
@@ -238,8 +235,6 @@ namespace HexaEngine.PostFx.BuildIn
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             this.width = width;
             this.height = height;
@@ -292,8 +287,6 @@ namespace HexaEngine.PostFx.BuildIn
             cbDof = new(CpuAccessFlags.Write);
 
             bokehTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
         }
 
         /// <inheritdoc/>
@@ -331,27 +324,19 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override void UpdateBindings()
         {
-            coc.Bindings.SetSRV("depthTex", depth.Value);
             coc.Bindings.SetCBV("DofParams", cbDof);
-            coc.Bindings.SetCBV("CameraBuffer", camera.Value);
-            coc.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
 
             bokehGenerate.Bindings.SetSRV("sceneTex", Input);
-            bokehGenerate.Bindings.SetSRV("depthTex", depth.Value);
             bokehGenerate.Bindings.SetSRV("cocTex", cocBuffer.Value);
             bokehGenerate.Bindings.SetCBV("BokehParams", cbBokeh);
-            bokehGenerate.Bindings.SetCBV("CameraBuffer", camera.Value);
             bokehGenerate.Bindings.SetUAV("BokehStack", bokehBuffer.UAV, 0);
-            bokehGenerate.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
 
             dof.Bindings.SetSRV("sceneTexture", Input);
             dof.Bindings.SetSRV("blurredTexture", buffer1.Value);
             dof.Bindings.SetSRV("cocTex", cocBuffer.Value);
-            dof.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
 
             bokehDraw.Bindings.SetSRV("BokehStack", bokehBuffer.SRV);
             bokehDraw.Bindings.SetSRV("bokehTexture", bokehTex.SRV);
-            bokehDraw.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
         }
 
         /// <inheritdoc/>
@@ -400,8 +385,6 @@ namespace HexaEngine.PostFx.BuildIn
         {
             cbBokeh.Dispose();
             cbDof.Dispose();
-
-            linearWrapSampler.Dispose();
 
             bokehGenerate.Dispose();
             gaussianBlur.Dispose();

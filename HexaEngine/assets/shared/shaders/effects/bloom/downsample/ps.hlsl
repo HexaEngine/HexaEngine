@@ -14,7 +14,7 @@ struct VSOut
 // Remember to use edge clamping for this texture!
 
 Texture2D srcTexture : register(t0);
-SamplerState samplerState;
+SamplerState linearClampSampler;
 
 cbuffer Params
 {
@@ -38,22 +38,22 @@ float4 main(VSOut input) : SV_Target
 	// g - h - i
 	// === ('e' is the current texel) ===
 
-	float3 a = srcTexture.Sample(samplerState, float2(texCoord.x - 2 * x, texCoord.y + 2 * y)).rgb;
-	float3 b = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y + 2 * y)).rgb;
-	float3 c = srcTexture.Sample(samplerState, float2(texCoord.x + 2 * x, texCoord.y + 2 * y)).rgb;
+	float3 a = srcTexture.Sample(linearClampSampler, float2(texCoord.x - 2 * x, texCoord.y + 2 * y)).rgb;
+	float3 b = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y + 2 * y)).rgb;
+	float3 c = srcTexture.Sample(linearClampSampler, float2(texCoord.x + 2 * x, texCoord.y + 2 * y)).rgb;
 
-	float3 d = srcTexture.Sample(samplerState, float2(texCoord.x - 2 * x, texCoord.y)).rgb;
-	float3 e = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y)).rgb;
-	float3 f = srcTexture.Sample(samplerState, float2(texCoord.x + 2 * x, texCoord.y)).rgb;
+	float3 d = srcTexture.Sample(linearClampSampler, float2(texCoord.x - 2 * x, texCoord.y)).rgb;
+	float3 e = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y)).rgb;
+	float3 f = srcTexture.Sample(linearClampSampler, float2(texCoord.x + 2 * x, texCoord.y)).rgb;
 
-	float3 g = srcTexture.Sample(samplerState, float2(texCoord.x - 2 * x, texCoord.y - 2 * y)).rgb;
-	float3 h = srcTexture.Sample(samplerState, float2(texCoord.x, texCoord.y - 2 * y)).rgb;
-	float3 i = srcTexture.Sample(samplerState, float2(texCoord.x + 2 * x, texCoord.y - 2 * y)).rgb;
+	float3 g = srcTexture.Sample(linearClampSampler, float2(texCoord.x - 2 * x, texCoord.y - 2 * y)).rgb;
+	float3 h = srcTexture.Sample(linearClampSampler, float2(texCoord.x, texCoord.y - 2 * y)).rgb;
+	float3 i = srcTexture.Sample(linearClampSampler, float2(texCoord.x + 2 * x, texCoord.y - 2 * y)).rgb;
 
-	float3 j = srcTexture.Sample(samplerState, float2(texCoord.x - x, texCoord.y + y)).rgb;
-	float3 k = srcTexture.Sample(samplerState, float2(texCoord.x + x, texCoord.y + y)).rgb;
-	float3 l = srcTexture.Sample(samplerState, float2(texCoord.x - x, texCoord.y - y)).rgb;
-	float3 m = srcTexture.Sample(samplerState, float2(texCoord.x + x, texCoord.y - y)).rgb;
+	float3 j = srcTexture.Sample(linearClampSampler, float2(texCoord.x - x, texCoord.y + y)).rgb;
+	float3 k = srcTexture.Sample(linearClampSampler, float2(texCoord.x + x, texCoord.y + y)).rgb;
+	float3 l = srcTexture.Sample(linearClampSampler, float2(texCoord.x - x, texCoord.y - y)).rgb;
+	float3 m = srcTexture.Sample(linearClampSampler, float2(texCoord.x + x, texCoord.y - y)).rgb;
 
 	// Apply weighted distribution:
 	// 0.5 + 0.125 + 0.125 + 0.125 + 0.125 = 1

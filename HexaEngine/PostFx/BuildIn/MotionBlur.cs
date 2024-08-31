@@ -13,9 +13,8 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<MotionBlurParams> paramsBuffer;
-        private ISamplerState sampler;
-        private ResourceRef<Texture2D> Velocity;
 #nullable restore
+
         private MotionBlurQualityPreset qualityPreset = MotionBlurQualityPreset.High;
         private float strength = 1;
         private int sampleCount = 16;
@@ -109,9 +108,6 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            Velocity = creator.GetTexture2D("VelocityBuffer");
 
             Viewport = new(width, height);
         }
@@ -127,10 +123,8 @@
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("sceneTexture", Input);
-            pipeline.Bindings.SetSRV("velocityBuffer", Velocity.Value);
+            pipeline.Bindings.SetSRV("inputTex", Input);
             pipeline.Bindings.SetCBV("MotionBlurCB", paramsBuffer);
-            pipeline.Bindings.SetSampler("linearWrapSampler", sampler);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -148,7 +142,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            sampler.Dispose();
         }
     }
 }

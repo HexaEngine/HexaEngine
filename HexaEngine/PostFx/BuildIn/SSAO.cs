@@ -22,12 +22,7 @@ namespace HexaEngine.PostFx.BuildIn
         private Texture2D intermediateTex;
         private GaussianBlur blur;
 
-        private ISamplerState samplerLinear;
-
         private ResourceRef<Texture2D> ao;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<GBuffer> gbuffer;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         private Viewport viewport;
 
@@ -97,9 +92,6 @@ namespace HexaEngine.PostFx.BuildIn
             this.device = device;
 
             ao = creator.GetTexture2D("#AOBuffer");
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
 
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -132,7 +124,6 @@ namespace HexaEngine.PostFx.BuildIn
                 noiseTex = new(description, initialData);
             }
 
-            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
 
@@ -158,12 +149,8 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("depthTex", depth.Value);
-            pipeline.Bindings.SetSRV("normalTex", gbuffer.Value.SRVs[1]);
             pipeline.Bindings.SetSRV("noiseTex", noiseTex);
             pipeline.Bindings.SetCBV("SSAOParams", paramsBuffer);
-            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
-            pipeline.Bindings.SetSampler("samplerState", samplerLinear);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -187,7 +174,6 @@ namespace HexaEngine.PostFx.BuildIn
             noiseTex.Dispose();
             intermediateTex.Dispose();
             blur.Dispose();
-            samplerLinear.Dispose();
         }
     }
 }

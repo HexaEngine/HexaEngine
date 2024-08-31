@@ -11,7 +11,6 @@
     public class DepthPrePass : RenderPass
     {
         private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public DepthPrePass() : base("PrePass")
         {
@@ -21,7 +20,7 @@
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+
             // force init.
             _ = CullingManager.Current;
         }

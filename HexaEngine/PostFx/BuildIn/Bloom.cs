@@ -333,11 +333,9 @@
 
         public override void UpdateBindings()
         {
-            downsample.Bindings.SetSampler("samplerState", linearSampler);
             downsample.Bindings.SetCBV("Params", downsampleCBuffer);
             downsample.Bindings.SetSRV("srcTexture", Input);
 
-            upsample.Bindings.SetSampler("samplerState", linearSampler);
             upsample.Bindings.SetCBV("Params", upsampleCBuffer);
             upsample.Bindings.SetSRV("srcTexture", mipChainSRVs[0]);
 
@@ -345,7 +343,6 @@
             compose.Bindings.SetSRV("hdrTexture", Input);
             compose.Bindings.SetSRV("bloomTexture", bloomTex.Value);
             compose.Bindings.SetSRV("lensDirtTexture", lensDirtTex);
-            compose.Bindings.SetSampler("linearClampSampler", linearSampler);
 
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {

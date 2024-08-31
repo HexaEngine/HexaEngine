@@ -33,10 +33,10 @@ cbuffer PerFrameCB
     bool gAntiFlicker;
 };
 
-Texture2D gTexColor;
-Texture2D gTexMotionVec;
-Texture2D gTexPrevColor;
-SamplerState gSampler;
+Texture2D inputTex;
+Texture2D velocityBufferTex;
+Texture2D previousTex;
+SamplerState linearWrapSampler;
 
 // Catmull-Rom filtering code from http://vec3.ca/bicubic-filtering-in-fewer-taps/
 float3 bicubicSampleCatmullRom(Texture2D tex, SamplerState samp, float2 samplePos, float2 texDim)
@@ -107,7 +107,7 @@ float4 main(float4 cPos : SV_Position, float2 texC : TEXCOORD) : SV_TARGET0
 
     uint2 texDim;
     uint levels;
-    gTexColor.GetDimensions(0, texDim.x, texDim.y, levels);
+    inputTex.GetDimensions(0, texDim.x, texDim.y, levels);
 
     float2 pos = texC * texDim;
     int2 ipos = int2(pos);
@@ -115,14 +115,14 @@ float4 main(float4 cPos : SV_Position, float2 texC : TEXCOORD) : SV_TARGET0
     // Fetch the current pixel color and compute the color bounding box
     // Details here: http://www.gdcvault.com/play/1023521/From-the-Lab-Bench-Real
     // and here: http://cwyman.org/papers/siga16_gazeTrackedFoveatedRendering.pdf
-    float3 color = gTexColor.Load(int3(ipos, 0)).rgb;
+    float3 color = inputTex.Load(int3(ipos, 0)).rgb;
     color = RGBToYCgCo(color);
     float3 colorAvg = color;
     float3 colorVar = color * color;
     [unroll]
     for (int k = 0; k < 8; k++)
     {
-        float3 c = gTexColor.Load(int3(ipos + offset[k], 0)).rgb;
+        float3 c = inputTex.Load(int3(ipos + offset[k], 0)).rgb;
         c = RGBToYCgCo(c);
         colorAvg += c;
         colorVar += c * c;
@@ -137,16 +137,16 @@ float4 main(float4 cPos : SV_Position, float2 texC : TEXCOORD) : SV_TARGET0
     float3 colorMax = colorAvg + gColorBoxSigma * sigma;
 
     // Find the longest motion vector
-    float2 motion = gTexMotionVec.Load(int3(ipos, 0)).xy;
+    float2 motion = velocityBufferTex.Load(int3(ipos, 0)).xy;
     [unroll]
     for (int a = 0; a < 8; a++)
     {
-        float2 m = gTexMotionVec.Load(int3(ipos + offset[a], 0)).rg;
+        float2 m = velocityBufferTex.Load(int3(ipos + offset[a], 0)).rg;
         motion = dot(m, m) > dot(motion, motion) ? m : motion;
     }
 
     // Use motion vector to fetch previous frame color (history)
-    float3 history = bicubicSampleCatmullRom(gTexPrevColor, gSampler, (texC + motion) * texDim, texDim);
+    float3 history = bicubicSampleCatmullRom(previousTex, linearWrapSampler, (texC + motion) * texDim, texDim);
 
     history = RGBToYCgCo(history);
 

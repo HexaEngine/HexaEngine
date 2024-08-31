@@ -15,7 +15,7 @@
 #nullable disable
         private IGraphicsPipelineState downsamplePipeline;
         private ConstantBuffer<DownsampleParams> downsampleCB;
-        private ISamplerState samplerState;
+
         private ResourceRef<Texture2D> downsampleBuffer;
         private Viewport downsampleViewport;
         private ResourceRef<Texture2D> accumBuffer;
@@ -111,7 +111,7 @@
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             downsampleCB = new(CpuAccessFlags.Write);
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
             downsampleViewport = creator.ViewportHalf;
 
@@ -145,11 +145,9 @@
         {
             downsamplePipeline.Bindings.SetSRV("inputTexture", Input);
             downsamplePipeline.Bindings.SetCBV("DownsampleParams", downsampleCB);
-            downsamplePipeline.Bindings.SetSampler("linearClampSampler", samplerState);
 
             lensPipeline.Bindings.SetSRV("inputTexture", Input);
             lensPipeline.Bindings.SetCBV("LensParams", lensCB);
-            lensPipeline.Bindings.SetSampler("linearClampSampler", samplerState);
         }
 
         public override void Draw(IGraphicsContext context)
@@ -177,7 +175,6 @@
         {
             downsamplePipeline.Dispose();
             downsampleCB.Dispose();
-            samplerState.Dispose();
             lensPipeline.Dispose();
             lensCB.Dispose();
             blur.Dispose();

@@ -15,16 +15,11 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VelocityBufferParams> paramsBuffer;
-
-        private ISamplerState sampler;
-
         private ResourceRef<Texture2D> Velocity;
-
-        private float scale = 64;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private PostFxGraphResourceBuilder creator;
 #nullable restore
+
+        private float scale = 64;
 
         public override string Name => "VelocityBuffer";
 
@@ -65,9 +60,6 @@
         {
             this.creator = creator;
 
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
@@ -76,9 +68,6 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
             Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
@@ -93,10 +82,8 @@
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("depthTex", depth.Value!.SRV);
+            creator.Device.SetGlobalSRV("velocityBufferTex", Velocity.Value);
             pipeline.Bindings.SetCBV("VelocityBufferParams", paramsBuffer);
-            pipeline.Bindings.SetCBV("CameraBuffer", camera.Value);
-            pipeline.Bindings.SetSampler("linearWrapSampler", sampler);
         }
 
         public override void Draw(IGraphicsContext context)
@@ -119,7 +106,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            sampler.Dispose();
             creator.DisposeResource("VelocityBuffer");
         }
     }

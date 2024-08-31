@@ -35,7 +35,6 @@ namespace HexaEngine.Editor.TerrainEditor
         private IGraphicsPipelineState brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
         private ConstantBuffer<Matrix4x4> worldBuffer;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         private readonly List<TerrainTool> tools = [];
         private TerrainTool? activeTool;
@@ -506,6 +505,9 @@ namespace HexaEngine.Editor.TerrainEditor
                 var device = context.Device;
                 var inputElements = TerrainCellData.InputElements;
 
+                brushBuffer = new(CpuAccessFlags.Write);
+                worldBuffer = new(CpuAccessFlags.Write);
+
                 brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
                     VertexShader = "tools/terrain/overlay/vs.hlsl",
@@ -518,14 +520,9 @@ namespace HexaEngine.Editor.TerrainEditor
                     Topology = PrimitiveTopology.TriangleList,
                     InputElements = inputElements
                 });
+
                 brushOverlay.Bindings.SetCBV("WorldBuffer", worldBuffer);
-                brushOverlay.Bindings.SetCBV("CameraBuffer", camera.Value);
                 brushOverlay.Bindings.SetCBV("CBBrush", brushBuffer);
-
-                brushBuffer = new(CpuAccessFlags.Write);
-                worldBuffer = new(CpuAccessFlags.Write);
-
-                camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
 
                 for (int i = 0; i < tools.Count; i++)
                 {

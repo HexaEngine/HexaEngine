@@ -3,7 +3,7 @@
 #define SAMPLES 32
 
 Texture2D hdrTexture : register(t0);
-Texture2D<float> depthTexture : register(t1);
+Texture2D<float> depthTex : register(t1);
 Texture3D<float> volumeTex : register(t2);
 SamplerState linearClampSampler : register(s0);
 SamplerState linearWrapSampler : register(s1);
@@ -64,7 +64,7 @@ float4 main(VSOut vs) : SV_Target
 {
 	float3 hdr = hdrTexture.Sample(linearClampSampler, vs.Tex).rgb;
 
-	float depth = depthTexture.Sample(linearClampSampler, vs.Tex);
+	float depth = depthTex.Sample(linearClampSampler, vs.Tex);
 	float3 position = GetPositionWS(vs.Tex, depth);
 	float3 VN = GetCameraPos() - position;
 	float3 V = normalize(VN);

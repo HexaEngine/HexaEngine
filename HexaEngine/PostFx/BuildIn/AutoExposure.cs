@@ -29,7 +29,6 @@ namespace HexaEngine.PostFx.BuildIn
         private ResourceRef<Texture2D> lumaTex;
 
         private IGraphicsPipelineState compose;
-        private ISamplerState linearSampler;
 
         private float minLogLuminance = -8;
         private float maxLogLuminance = 3;
@@ -182,8 +181,6 @@ namespace HexaEngine.PostFx.BuildIn
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
             lumaTex = creator.CreateTexture2D("Luma", new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, GpuAccessFlags.UA | GpuAccessFlags.Read), ResourceCreationFlags.None);
-
-            linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override void UpdateBindings()
@@ -196,7 +193,6 @@ namespace HexaEngine.PostFx.BuildIn
             lumaAvgCompute.Bindings.SetUAV("LuminanceHistogram", histogram.UAV);
             lumaAvgCompute.Bindings.SetUAV("LuminanceOutput", lumaTex.Value.UAV);
 
-            compose.Bindings.SetSampler("linearClampSampler", linearSampler);
             compose.Bindings.SetSRV("hdrTexture", Input);
             compose.Bindings.SetSRV("lumaTexture", lumaTex.Value.SRV);
         }
@@ -263,7 +259,6 @@ namespace HexaEngine.PostFx.BuildIn
             lumaAvgCompute.Dispose();
             lumaAvgParams.Dispose();
             compose.Dispose();
-            linearSampler.Dispose();
             creator.DisposeResource("Luma");
         }
     }

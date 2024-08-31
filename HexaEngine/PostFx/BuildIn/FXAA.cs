@@ -13,7 +13,6 @@ namespace HexaEngine.PostFx.BuildIn
     public class FXAA : PostFxBase
     {
         private IGraphicsPipelineState pipeline;
-        private ISamplerState sampler;
 
         /// <inheritdoc/>
         public override string Name => "FXAA";
@@ -42,13 +41,11 @@ namespace HexaEngine.PostFx.BuildIn
                 PixelShader = "effects/fxaa/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override void UpdateBindings()
         {
-            pipeline.Bindings.SetSRV("g_txProcessed", Input);
-            pipeline.Bindings.SetSampler("g_samLinear", sampler);
+            pipeline.Bindings.SetSRV("inputTex", Input);
         }
 
         /// <inheritdoc/>
@@ -72,7 +69,6 @@ namespace HexaEngine.PostFx.BuildIn
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            sampler.Dispose();
         }
     }
 }

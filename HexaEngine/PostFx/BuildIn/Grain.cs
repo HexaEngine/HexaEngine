@@ -14,7 +14,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<GrainParams> paramsBuffer;
-        private ResourceRef<ISamplerState> samplerState;
         private float grainIntensity = 0.05f;
         private float grainSize = 1.6f;
         private bool grainColored = false;
@@ -86,8 +85,6 @@
                 PixelShader = "effects/grain/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-
-            samplerState = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
         }
 
         public override void Update(IGraphicsContext context)
@@ -99,7 +96,6 @@
         {
             pipeline.Bindings.SetSRV("hdrTexture", Input);
             pipeline.Bindings.SetCBV("Params", paramsBuffer);
-            pipeline.Bindings.SetSampler("linearClampSampler", samplerState.Value);
         }
 
         /// <inheritdoc/>

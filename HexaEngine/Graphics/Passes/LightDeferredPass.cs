@@ -28,6 +28,7 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<ISamplerState> linearClampSampler;
         private ResourceRef<ISamplerState> linearWrapSampler;
         private ResourceRef<ISamplerState> pointClampSampler;
+        private ResourceRef<ISamplerState> pointWrapSampler;
         private ResourceRef<ISamplerState> anisotropicClampSampler;
 
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
@@ -69,6 +70,7 @@ namespace HexaEngine.Graphics.Passes
             linearClampSampler = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
+            pointWrapSampler = creator.CreateSamplerState("PointWrap", SamplerStateDescription.PointWrap);
             anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
 
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -127,20 +129,33 @@ namespace HexaEngine.Graphics.Passes
         {
             dev = creator.Device;
 
+            dev.SetGlobalCBV("CameraBuffer", camera.Value);
+            dev.SetGlobalCBV("WeatherBuffer", weather.Value);
+            dev.SetGlobalCBV("ForwardLightParams", lightParamsBuffer.Value);
+
+            dev.SetGlobalSampler("pointClampSampler", pointClampSampler.Value);
+            dev.SetGlobalSampler("pointWrapSampler", pointWrapSampler.Value);
+            dev.SetGlobalSampler("linearClampSampler", linearClampSampler.Value);
+            dev.SetGlobalSampler("linearWrapSampler", linearWrapSampler.Value);
+            dev.SetGlobalSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
+
             dev.SetGlobalSRV("ssao", AOBuffer.Value.SRV);
             dev.SetGlobalSRV("iblDFG", brdfLUT.Value.SRV);
 
             dev.SetGlobalSRV("lightIndexList", lightIndexList.Value.SRV);
             dev.SetGlobalSRV("lightGrid", lightGridBuffer.Value.SRV);
             dev.SetGlobalSRV("depthAtlas", shadowAtlas.Value.SRV);
+            dev.SetGlobalSRV("shadowAtlas", shadowAtlas.Value.SRV);
 
             GBuffer gbuffer = this.gbuffer.Value;
             dev.SetGlobalSRV("GBufferA", gbuffer.SRVs[0]);
             dev.SetGlobalSRV("GBufferB", gbuffer.SRVs[1]);
+            dev.SetGlobalSRV("normalTex", gbuffer.SRVs[1]);
             dev.SetGlobalSRV("GBufferC", gbuffer.SRVs[2]);
             dev.SetGlobalSRV("GBufferD", gbuffer.SRVs[3]);
 
             dev.SetGlobalSRV("Depth", depthStencil.Value.SRV);
+            dev.SetGlobalSRV("depthTex", depthStencil.Value.SRV);
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)

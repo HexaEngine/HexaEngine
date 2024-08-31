@@ -19,7 +19,6 @@
         private readonly IGraphicsPipelineState preethamSky;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
 
-        private ISamplerState samplerState;
         private Texture2D environment;
 
         private bool initialized;
@@ -40,11 +39,9 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
-            skybox.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
-            skybox.Bindings.SetCBV("WeatherBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBWeather>("CBWeather").Value);
+
             skybox.Bindings.SetCBV("WorldBuffer", worldBuffer);
             skybox.Bindings.SetSRV("cubeMap", environment);
-            skybox.Bindings.SetSampler("linearWrapSampler", samplerState);
 
             uniformColorSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -56,11 +53,9 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
-            uniformColorSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
-            uniformColorSky.Bindings.SetCBV("WeatherBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBWeather>("CBWeather").Value);
+
             uniformColorSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
             uniformColorSky.Bindings.SetSRV("cubeMap", environment);
-            uniformColorSky.Bindings.SetSampler("linearWrapSampler", samplerState);
 
             hoseWilkieSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -72,11 +67,9 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
-            hoseWilkieSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
-            hoseWilkieSky.Bindings.SetCBV("WeatherBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBWeather>("CBWeather").Value);
+
             hoseWilkieSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
             hoseWilkieSky.Bindings.SetSRV("cubeMap", environment);
-            hoseWilkieSky.Bindings.SetSampler("linearWrapSampler", samplerState);
 
             preethamSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -88,11 +81,9 @@
                 DepthStencil = DepthStencilDescription.DepthRead,
                 Blend = BlendDescription.Opaque
             });
-            preethamSky.Bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value);
-            preethamSky.Bindings.SetCBV("WeatherBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBWeather>("CBWeather").Value);
+
             preethamSky.Bindings.SetCBV("WorldBuffer", worldBuffer);
             preethamSky.Bindings.SetSRV("cubeMap", environment);
-            preethamSky.Bindings.SetSampler("linearWrapSampler", samplerState);
         }
 
         public void Initialize(Skybox skybox)
@@ -101,7 +92,7 @@
             {
                 return;
             }
-            samplerState = skybox.SamplerState;
+
             environment = skybox.Environment;
 
             initialized = true;
@@ -111,7 +102,6 @@
         {
             initialized = false;
 
-            samplerState = null;
             environment = null;
         }
 

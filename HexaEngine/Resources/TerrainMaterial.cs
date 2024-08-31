@@ -137,10 +137,6 @@
             textureList.Update(shader);
         }
 
-        public void Setup()
-        {
-        }
-
         private static MaterialShaderPassDesc[] GetMaterialShaderPasses(bool alphaBlend, bool tessellate)
         {
             List<MaterialShaderPassDesc> passes = [];

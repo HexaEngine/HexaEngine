@@ -22,7 +22,6 @@
         private PostFxGraphResourceBuilder creator;
 
         private IGraphicsPipelineState godrays;
-        private ISamplerState linearClampSampler;
         private Quad quad;
         private IGraphicsPipelineState sun;
         private ConstantBuffer<GodRaysParams> paramsBuffer;
@@ -31,6 +30,9 @@
         private ResourceRef<Texture2D> sunMask;
         private Texture2D noiseTex;
         private Texture2D sunSpriteTex;
+        private ResourceRef<DepthStencil> depth;
+#nullable restore
+
         private float sunSize = 15;
         private string sunSpriteTexPath = "sun/sunsprite.png";
 
@@ -40,10 +42,8 @@
         private float exposure = 1.0f;
 
         private bool sunPresent;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+
         private VolumetricScatteringQualityPreset quality;
-#nullable restore
 
         public override string Name => "GodRays";
 
@@ -137,7 +137,6 @@
         {
             this.creator = creator;
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             sunMask = creator.CreateBuffer("VOLUMETRIC_SCATTERING_SUN_MASK");
 
             // TODO: Integrate in new asset system.
@@ -195,8 +194,6 @@
             });
 
             paramsWorldBuffer = new(CpuAccessFlags.Write);
-
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             noiseTex = new(Format.R32Float, 256, 256, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>
@@ -288,27 +285,23 @@
         public override void UpdateBindings()
         {
             sun.Bindings.SetCBV("WorldBuffer", paramsWorldBuffer);
-            sun.Bindings.SetCBV("CameraBuffer", camera.Value);
             sun.Bindings.SetSRV("sunTex", sunSpriteTex);
-            sun.Bindings.SetSampler("linearWrapSampler", linearClampSampler);
 
             godrays.Bindings.SetCBV("GodrayParams", paramsBuffer);
             godrays.Bindings.SetSRV("sunTex", sunMask.Value);
             godrays.Bindings.SetSRV("noiseTex", noiseTex);
-            godrays.Bindings.SetSampler("linearClampSampler", linearClampSampler);
         }
 
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
             godrays.Dispose();
-            linearClampSampler.Dispose();
             paramsBuffer.Dispose();
             noiseTex.Dispose();
 
             quad.Dispose();
             sun.Dispose();
-            linearClampSampler.Dispose();
+
             paramsWorldBuffer.Dispose();
             sunSpriteTex.Dispose();
             creator.DisposeResource("SunMask");

@@ -62,7 +62,7 @@
             foreach (var pass in material.Shader.Passes)
             {
                 var bindings = pass.Bindings;
-                bindings.SetCBV("CameraBuffer", GraphResourceBuilder.Global.GetConstantBuffer<CBCamera>("CBCamera").Value!);
+
                 bindings.SetCBV("offsetBuffer", offsetBuffer);
                 if (pass.Name == "Deferred" || pass.Name == "Forward")
                 {
@@ -117,6 +117,7 @@
 
         public override void DrawDepth(IGraphicsContext context, TerrainGrid instance)
         {
+            Prepare(instance);
             for (int i = 0; i < instance.Count; i++)
             {
                 var cell = instance[i];
@@ -146,7 +147,6 @@
                     }
 
                     pass.Bindings.SetSRV("maskTex", layer.Mask.SRV);
-                    pass.Bindings.SetSampler("linearClampSampler", linearClampSampler);
 
                     if (pass.BeginDraw(context))
                     {
@@ -189,7 +189,6 @@
                     }
 
                     pass.Bindings.SetSRV("maskTex", layer.Mask.SRV);
-                    pass.Bindings.SetSampler("linearClampSampler", linearClampSampler);
 
                     if (pass.BeginDraw(context))
                     {
@@ -232,7 +231,6 @@
                     }
 
                     pass.Bindings.SetSRV("maskTex", layer.Mask.SRV);
-                    pass.Bindings.SetSampler("linearClampSampler", linearClampSampler);
 
                     if (pass.BeginDraw(context))
                     {
@@ -275,7 +273,6 @@
                     }
 
                     pass.Bindings.SetSRV("maskTex", layer.Mask.SRV);
-                    pass.Bindings.SetSampler("linearClampSampler", linearClampSampler);
 
                     if (pass.BeginDraw(context))
                     {
