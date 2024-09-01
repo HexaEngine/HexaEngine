@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
+    using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.UI.Graphics;
@@ -214,7 +215,7 @@
         // This function takes a single contour (defined by firstIndex and
         // lastIndex, both inclusive) from outline and converts it into individual
         // quadratic bezier curves, which are added to the curves vector.
-        private void ConvertContour(ref UnsafeList<BufferCurve> curves, FTOutline* outline, short firstIndex, short lastIndex, float emSize)
+        private void ConvertContour(ref UnsafeList<BufferCurve> curves, FTOutline* outline, short firstIndex, short lastIndex, double emSize)
         {
             // See https://freetype.org/freetype2/docs/glyphs/glyphs-6.html
             // for a detailed description of the outline format.
@@ -287,22 +288,12 @@
                 dIndex = -1;
             }
 
-            Vector2 Convert(FTVector v)
-            {
-                return new Vector2(v.X / emSize, v.Y / emSize);
-            };
-
-            Vector2 Midpoint(Vector2 a, Vector2 b)
-            {
-                return 0.5f * (a + b);
-            };
-
             // Find a point that is on the curve and remove it from the list.
-            Vector2 first;
+            Vector2D first;
             bool firstOnCurve = (outline->Tags[firstIndex] & FreeType.FT_CURVE_TAG_ON) != 0;
             if (firstOnCurve)
             {
-                first = Convert(outline->Points[firstIndex]);
+                first = Convert(outline->Points[firstIndex], emSize);
                 firstIndex += dIndex;
             }
             else
@@ -310,23 +301,23 @@
                 bool lastOnCurve = (outline->Tags[lastIndex] & FreeType.FT_CURVE_TAG_ON) != 0;
                 if (lastOnCurve)
                 {
-                    first = Convert(outline->Points[lastIndex]);
+                    first = Convert(outline->Points[lastIndex], emSize);
                     lastIndex -= dIndex;
                 }
                 else
                 {
-                    first = Midpoint(Convert(outline->Points[firstIndex]), Convert(outline->Points[lastIndex]));
+                    first = Midpoint(Convert(outline->Points[firstIndex], emSize), Convert(outline->Points[lastIndex], emSize));
                     // This is a virtual point, so we don't have to remove it.
                 }
             }
 
-            Vector2 start = first;
-            Vector2 control = first;
-            Vector2 previous = first;
+            Vector2D start = first;
+            Vector2D control = first;
+            Vector2D previous = first;
             char previousTag = (char)FreeType.FT_CURVE_TAG_ON;
             for (short index = firstIndex; index != lastIndex + dIndex; index += dIndex)
             {
-                Vector2 current = Convert(outline->Points[index]);
+                Vector2D current = Convert(outline->Points[index], emSize);
                 char currentTag = (char)outline->Tags[index];
                 if (currentTag == FreeType.FT_CURVE_TAG_CUBIC)
                 {
@@ -337,15 +328,15 @@
                 {
                     if (previousTag == FreeType.FT_CURVE_TAG_CUBIC)
                     {
-                        Vector2 b0 = start;
-                        Vector2 b1 = control;
-                        Vector2 b2 = previous;
-                        Vector2 b3 = current;
+                        Vector2D b0 = start;
+                        Vector2D b1 = control;
+                        Vector2D b2 = previous;
+                        Vector2D b3 = current;
 
-                        Vector2 c0 = b0 + 0.75f * (b1 - b0);
-                        Vector2 c1 = b3 + 0.75f * (b2 - b3);
+                        Vector2D c0 = b0 + 0.75 * (b1 - b0);
+                        Vector2D c1 = b3 + 0.75 * (b2 - b3);
 
-                        Vector2 d = Midpoint(c0, c1);
+                        Vector2D d = Midpoint(c0, c1);
 
                         curves.Add(new(b0, c0, d));
                         curves.Add(new(d, c1, b3));
@@ -372,7 +363,7 @@
                     else
                     {
                         // Create virtual on point.
-                        Vector2 mid = Midpoint(previous, current);
+                        Vector2D mid = Midpoint(previous, current);
                         curves.Add(new(start, previous, mid));
                         start = mid;
                         control = mid;
@@ -385,15 +376,15 @@
             // Close the contour.
             if (previousTag == FreeType.FT_CURVE_TAG_CUBIC)
             {
-                Vector2 b0 = start;
-                Vector2 b1 = control;
-                Vector2 b2 = previous;
-                Vector2 b3 = first;
+                Vector2D b0 = start;
+                Vector2D b1 = control;
+                Vector2D b2 = previous;
+                Vector2D b3 = first;
 
-                Vector2 c0 = b0 + 0.75f * (b1 - b0);
-                Vector2 c1 = b3 + 0.75f * (b2 - b3);
+                Vector2D c0 = b0 + 0.75 * (b1 - b0);
+                Vector2D c1 = b3 + 0.75 * (b2 - b3);
 
-                Vector2 d = Midpoint(c0, c1);
+                Vector2D d = Midpoint(c0, c1);
 
                 curves.Add(new(b0, c0, d));
                 curves.Add(new(d, c1, b3));
@@ -407,6 +398,16 @@
             {
                 curves.Add(new(start, previous, first));
             }
+        }
+
+        private static Vector2D Convert(FTVector v, double emSize)
+        {
+            return new Vector2D(v.X / emSize, v.Y / emSize);
+        }
+
+        private static Vector2D Midpoint(Vector2D a, Vector2D b)
+        {
+            return 0.5 * (a + b);
         }
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)

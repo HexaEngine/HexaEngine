@@ -1,20 +1,25 @@
-﻿#nullable disable
-
-namespace HexaEngine.PostFx.BuildIn
+﻿namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Editor.Attributes;
+    using System;
+    using System.Diagnostics;
     using System.Numerics;
 
-    public class GTAO
+    [EditorDisplayName("GTAO")]
+    public class GTAO : PostFxBase
     {
-        private IGraphicsDevice device;
+#nullable disable
         private IGraphicsPipelineState pipeline;
+        private IComputePipelineState prefilterDepth;
+        private IComputePipelineState gato;
+        private IComputePipelineState denoise;
+        private IComputePipelineState denoiseLastPass;
         private ConstantBuffer<GTAOParams> paramsBuffer;
-        private ISamplerState samplerLinear;
 
-        private bool disposedValue;
-        private int enabled;
+        private Texture2D hilbertLUT;
+#nullable restore
 
         public int QualityLevel = 2;        // 0: low; 1: medium; 2: high; 3: ultra
         public int DenoisePasses = 1;        // 0: disabled; 1: sharp; 2: medium; 3: soft
@@ -28,12 +33,6 @@ namespace HexaEngine.PostFx.BuildIn
         public float ThinOccluderCompensation = 0.0f;
         public float FinalValuePower = 2.2f;
         public float DepthMIPSamplingOffset = 3.30f;
-
-        public GTAO()
-        {
-        }
-
-        #region Structs
 
         private unsafe struct GTAOParams
         {
@@ -59,56 +58,98 @@ namespace HexaEngine.PostFx.BuildIn
             public float ThinOccluderCompensation;
             public float DepthMIPSamplingOffset;
             public int NoiseIndex;                         // frameIndex % 64 if using TAA or 0 otherwise
-
-            public GTAOParams()
-            {
-            }
         }
 
-        #endregion Structs
+        public override string Name => "GTAO";
 
-        #region Properties
+        public override PostFxFlags Flags { get; }
 
-        public string Name => "GTAO";
+        public override PostFxColorSpace ColorSpace { get; }
 
-        public bool Enabled { get => enabled == 1; set => enabled = value ? 1 : 0; }
-
-        #endregion Properties
-
-        public void Initialize(IGraphicsDevice device, int width, int height)
+        public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
-            this.device = device;
+            builder
+                .Override<SSAO>()
+                .Override<HBAO>();
+        }
 
-            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+        const uint XE_HILBERT_LEVEL = 6U;
+
+        const uint XE_HILBERT_WIDTH = (1U << (int)XE_HILBERT_LEVEL);
+
+        const uint XE_HILBERT_AREA = (XE_HILBERT_WIDTH * XE_HILBERT_WIDTH);
+
+        private static uint HilbertIndex(uint posX, uint posY)
+        {
+            uint index = 0U;
+            for (uint curLevel = XE_HILBERT_WIDTH / 2U; curLevel > 0U; curLevel /= 2U)
             {
-                VertexShader = "effects/gato/vs.hlsl",
-                PixelShader = "effects/gato/ps.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+                uint regionX = ((posX & curLevel) > 0U) ? 1u : 0u;
+                uint regionY = ((posY & curLevel) > 0U) ? 1u : 0u;
+                index += curLevel * curLevel * ((3U * regionX) ^ regionY);
+                if (regionY == 0U)
+                {
+                    if (regionX == 1U)
+                    {
+                        posX = XE_HILBERT_WIDTH - 1U - posX;
+                        posY = XE_HILBERT_WIDTH - 1U - posY;
+                    }
+
+                    (posY, posX) = (posX, posY);
+                }
+            }
+            return index;
+        }
+
+        public override unsafe void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
+        {
+            prefilterDepth = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Entry = "CSPrefilterDepths16x16",
+                Path = "effects/gtao/vaGTAO.hlsl"
+            });
+
+            gato = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Entry = "CSGTAOHigh",
+                Path = "effects/gtao/vaGTAO.hlsl"
+            });
+
+            denoise = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Entry = "CSDenoisePass",
+                Path = "effects/gtao/vaGTAO.hlsl"
+            });
+
+            denoiseLastPass = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Entry = "CSDenoiseLastPass",
+                Path = "effects/gtao/vaGTAO.hlsl"
+            });
+
             paramsBuffer = new(CpuAccessFlags.Write);
 
-            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            ushort* data = stackalloc ushort[64 * 64];
+            for (uint x = 0; x < 64; x++)
+                for (uint y = 0; y < 64; y++)
+                {
+                    uint r2index = HilbertIndex(x, y);
+                    Debug.Assert(r2index < 65536);
+                    data[x + 64 * y] = (ushort)r2index;
+                }
+
+            SubresourceData subresourceData = new(data, 64 * 2);
+            hilbertLUT = new(new Texture2DDescription(Format.R16UInt, 64, 64, 1, 1, GpuAccessFlags.Read));
         }
 
-        public unsafe void Draw(IGraphicsContext context)
+        public override void Draw(IGraphicsContext context)
         {
         }
 
-        protected virtual unsafe void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                pipeline.Dispose();
-                paramsBuffer.Dispose();
-                samplerLinear.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            pipeline.Dispose();
+            paramsBuffer.Dispose();
         }
     }
 }

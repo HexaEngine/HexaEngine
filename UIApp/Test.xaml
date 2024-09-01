@@ -21,9 +21,5 @@
 			<TextBox MinWidth="100" MinHeight="40" WordWrapping="Wrap" />
 		</StackPanel>
 		<Button Grid.Column="2">Test Button</Button>
-
-		<ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-			<Image ImageSource="" />
-		</ScrollViewer>
 	</Grid>
 </UIWindow>

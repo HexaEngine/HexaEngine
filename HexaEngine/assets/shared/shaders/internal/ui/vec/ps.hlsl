@@ -133,25 +133,12 @@ float2 rotate(float2 v) {
 	return float2(v.y, -v.x);
 }
 
-float2 SnapToPixel(float2 position, float2 uv)
-{
-	// Use fwidth to determine the size of a pixel in UV space
-	float2 pixelSize = fwidth(uv);
-
-	// Compute the snapped position by rounding to the nearest pixel grid in UV space
-	float2 snappedUV = floor(position / pixelSize + 0.5) * pixelSize;
-
-	return snappedUV;
-}
-
 float4 main(PSIn input) : SV_TARGET
 {
 	float2 uv = input.uv;
 uint bufferIndex = input.bufferIndex;
 
 	float alpha = 0;
-
-	uv = SnapToPixel(uv, uv);
 
 	// Size of the window (in pixels) used for 1-dimensional anti-aliasing along each rays.
 //   0 - no anti-aliasing

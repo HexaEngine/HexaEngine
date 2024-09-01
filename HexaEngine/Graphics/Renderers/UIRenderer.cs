@@ -120,6 +120,9 @@
                 Topology = PrimitiveTopology.TriangleList,
             };
 
+            constantBuffer = new(CpuAccessFlags.Write);
+            colorBuffer = new(CpuAccessFlags.Write);
+
             primPso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "internal/ui/prim/vs.hlsl",
@@ -150,9 +153,6 @@
 
             bezierPso.Bindings.SetCBV("matrixBuffer", constantBuffer);
             bezierPso.Bindings.SetCBV("CBSolidColorBrush", colorBuffer);
-
-            constantBuffer = new(CpuAccessFlags.Write);
-            colorBuffer = new(CpuAccessFlags.Write);
 
             CreateFontsTexture(device);
         }
@@ -273,8 +273,8 @@
                         break;
 
                     case UICommandType.DrawTextVector:
-                        texPso.Bindings.SetSRV("glyphs", new SRVWrapper(cmd.TextureId0));
-                        texPso.Bindings.SetSRV("curves", new SRVWrapper(cmd.TextureId1));
+                        bezierPso.Bindings.SetSRV("glyphs", new SRVWrapper(cmd.TextureId0));
+                        bezierPso.Bindings.SetSRV("curves", new SRVWrapper(cmd.TextureId1));
                         ctx.SetGraphicsPipelineState(bezierPso);
                         break;
                 }
