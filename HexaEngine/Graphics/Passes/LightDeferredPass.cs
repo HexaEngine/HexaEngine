@@ -24,13 +24,14 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<ShadowAtlas> shadowAtlas;
         private ResourceRef<ConstantBuffer<ProbeBufferParams>> probeParamsBuffer;
         private ResourceRef<ConstantBuffer<DeferredLightParams>> lightParamsBuffer;
-
+        private ResourceRef<ISamplerState> linearMirrorSampler;
         private ResourceRef<ISamplerState> linearClampSampler;
         private ResourceRef<ISamplerState> linearWrapSampler;
+        private ResourceRef<ISamplerState> linearBorderSampler;
         private ResourceRef<ISamplerState> pointClampSampler;
         private ResourceRef<ISamplerState> pointWrapSampler;
         private ResourceRef<ISamplerState> anisotropicClampSampler;
-
+        private ResourceRef<ISamplerState> anisotropicWrapSampler;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
 
@@ -67,11 +68,14 @@ namespace HexaEngine.Graphics.Passes
             probeParamsBuffer = creator.CreateConstantBuffer<ProbeBufferParams>("ProbeBufferParams", CpuAccessFlags.Write);
             lightParamsBuffer = creator.CreateConstantBuffer<DeferredLightParams>("DeferredLightParams", CpuAccessFlags.Write);
 
+            linearMirrorSampler = creator.CreateSamplerState("LinearMirror", SamplerStateDescription.LinearMirror);
             linearClampSampler = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
+            linearBorderSampler = creator.CreateSamplerState("LinearBorder", SamplerStateDescription.LinearBorder);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
             pointWrapSampler = creator.CreateSamplerState("PointWrap", SamplerStateDescription.PointWrap);
             anisotropicClampSampler = creator.CreateSamplerState("AnisotropicClamp", SamplerStateDescription.AnisotropicClamp);
+            anisotropicWrapSampler = creator.CreateSamplerState("AnisotropicWrap", SamplerStateDescription.AnisotropicWrap);
 
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
@@ -137,7 +141,10 @@ namespace HexaEngine.Graphics.Passes
             dev.SetGlobalSampler("pointWrapSampler", pointWrapSampler.Value);
             dev.SetGlobalSampler("linearClampSampler", linearClampSampler.Value);
             dev.SetGlobalSampler("linearWrapSampler", linearWrapSampler.Value);
+            dev.SetGlobalSampler("linearBorderSampler", linearBorderSampler.Value);
+            dev.SetGlobalSampler("linearMirrorSampler", linearMirrorSampler.Value);
             dev.SetGlobalSampler("ansiotropicClampSampler", anisotropicClampSampler.Value);
+            dev.SetGlobalSampler("anisotropicWrapSampler", anisotropicWrapSampler.Value);
 
             dev.SetGlobalSRV("ssao", AOBuffer.Value.SRV);
             dev.SetGlobalSRV("iblDFG", brdfLUT.Value.SRV);

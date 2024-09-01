@@ -65,7 +65,7 @@ SamplerState linearBorderSampler : register(s2);
 
 Texture2D inputTex : register(t0);
 Texture2D<float> depthTex : register(t1);
-Texture2D normalRoughnessTex : register(t2);
+Texture2D normalTex : register(t2);
 
 struct VertexOut
 {
@@ -230,7 +230,7 @@ float4 main(VertexOut pin) : SV_TARGET
 	float4 scene_color = inputTex.Load(int3(screenPos, 0));
 	float depth = depthTex.Load(int3(screenPos, 0)).r;
 
-	float4 NormalRoughness = normalRoughnessTex.Load(int3(screenPos, 0));
+	float4 NormalRoughness = normalTex.Load(int3(screenPos, 0));
 	float roughness = NormalRoughness.a;
 
 	if (depth == 1 || roughness > 0.8f)

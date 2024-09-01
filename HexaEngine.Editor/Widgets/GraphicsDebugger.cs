@@ -2,15 +2,22 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
+    using System;
 
     public class GraphicsDebugger : EditorWindow
     {
+        private string searchString = string.Empty;
         protected override string Name { get; } = $"{UwU.BugSlash} Graphics Debugger";
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
+            ImGui.InputTextWithHint("##Search", "Search", ref searchString, 1024);
+
             foreach (var pso in PipelineStateManager.GraphicsPipelineStates)
             {
+                if (Filter(pso))
+                    continue;
+
                 if (ImGui.CollapsingHeader(pso.DebugName ?? "<unknown>", ImGuiTreeNodeFlags.DefaultOpen))
                 {
                     ImGui.Indent();
@@ -41,17 +48,54 @@
             }
         }
 
+        private bool Filter(IGraphicsPipelineState pso)
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+            {
+                return false;
+            }
+
+            if (pso.DebugName.Contains(searchString))
+            {
+                return false;
+            }
+
+            var desc = pso.Pipeline.Description;
+
+            if (desc.VertexShader?.Contains(searchString) ?? false)
+            {
+                return false;
+            }
+            if (desc.HullShader?.Contains(searchString) ?? false)
+            {
+                return false;
+            }
+            if (desc.DomainShader?.Contains(searchString) ?? false)
+            {
+                return false;
+            }
+            if (desc.GeometryShader?.Contains(searchString) ?? false)
+            {
+                return false;
+            }
+            if (desc.PixelShader?.Contains(searchString) ?? false)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private unsafe void DisplayBindings(IEnumerable<BindingValuePair> bindings)
         {
             foreach (var binding in bindings)
             {
                 if (binding.Value == null)
                 {
-                    ImGui.TextColored(Colors.Crimson, $"{binding.Stage}, {binding.Name}, {(nint)binding.Value}");
+                    ImGui.TextColored(Colors.Crimson, $"{binding.Stage}, {binding.Name}, {(nint)binding.Value:X}");
                 }
                 else
                 {
-                    ImGui.Text($"{binding.Stage}, {binding.Name}, {(nint)binding.Value}");
+                    ImGui.Text($"{binding.Stage}, {binding.Name}, {(nint)binding.Value:X}");
                 }
             }
         }

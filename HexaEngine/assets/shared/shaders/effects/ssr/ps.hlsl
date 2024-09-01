@@ -48,7 +48,7 @@ SamplerState linearBorderSampler : register(s2);
 
 Texture2D inputTex : register(t0);
 Texture2D<float> depthTex : register(t1);
-Texture2D normalRoughnessTex : register(t2);
+Texture2D normalTex : register(t2);
 
 struct VertexOut
 {
@@ -127,7 +127,7 @@ bool bInsideScreen(in float2 vCoord)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-	float4 NormalRoughness = normalRoughnessTex.Sample(linearBorderSampler, pin.Tex);
+	float4 NormalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
 	float roughness = NormalRoughness.a;
 	float4 scene_color = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0);
 
