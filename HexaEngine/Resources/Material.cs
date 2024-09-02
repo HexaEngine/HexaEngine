@@ -31,6 +31,8 @@
 
         public MaterialData Data => desc;
 
+        public bool Dirty { get; set; }
+
         public IResourceBindingList? GetBindings(string passName)
         {
             if (!loaded)
@@ -105,6 +107,7 @@
 #nullable disable
             TextureList.Update(Shader);
             loaded = true;
+            Dirty = true;
 #nullable enable
         }
 

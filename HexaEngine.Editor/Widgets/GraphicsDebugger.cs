@@ -24,11 +24,11 @@
 
                     var desc = pso.Pipeline.Description;
 
-                    ImGui.Text(desc.VertexShader ?? "none");
-                    ImGui.Text(desc.HullShader ?? "none");
-                    ImGui.Text(desc.DomainShader ?? "none");
-                    ImGui.Text(desc.GeometryShader ?? "none");
-                    ImGui.Text(desc.PixelShader ?? "none");
+                    ImGui.Text(desc.VertexShader?.Identifier ?? "none");
+                    ImGui.Text(desc.HullShader?.Identifier ?? "none");
+                    ImGui.Text(desc.DomainShader?.Identifier ?? "none");
+                    ImGui.Text(desc.GeometryShader?.Identifier ?? "none");
+                    ImGui.Text(desc.PixelShader?.Identifier ?? "none");
 
                     var bindings = pso.Bindings;
                     if (ImGui.CollapsingHeader($"SRVs##{pso.DebugName}", ImGuiTreeNodeFlags.DefaultOpen))
@@ -62,23 +62,23 @@
 
             var desc = pso.Pipeline.Description;
 
-            if (desc.VertexShader?.Contains(searchString) ?? false)
+            if (desc.VertexShader?.Identifier.Contains(searchString) ?? false)
             {
                 return false;
             }
-            if (desc.HullShader?.Contains(searchString) ?? false)
+            if (desc.HullShader?.Identifier.Contains(searchString) ?? false)
             {
                 return false;
             }
-            if (desc.DomainShader?.Contains(searchString) ?? false)
+            if (desc.DomainShader?.Identifier.Contains(searchString) ?? false)
             {
                 return false;
             }
-            if (desc.GeometryShader?.Contains(searchString) ?? false)
+            if (desc.GeometryShader?.Identifier.Contains(searchString) ?? false)
             {
                 return false;
             }
-            if (desc.PixelShader?.Contains(searchString) ?? false)
+            if (desc.PixelShader?.Identifier.Contains(searchString) ?? false)
             {
                 return false;
             }

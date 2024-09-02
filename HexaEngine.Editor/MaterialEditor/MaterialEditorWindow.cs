@@ -11,6 +11,7 @@
     using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
@@ -28,10 +29,14 @@
     public class MaterialEditorWindow : EditorWindow
     {
         internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(MaterialEditor));
+
         private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
-
         private const string Version = "1.0.0.1";
+
+        private const string MetadataSurfaceVersionKey = "MatSurface.Version";
+        private const string MetadataSurfaceKey = "MatSurface.Data";
+        private const string SurfaceVersion = "1.0.0.0";
 
         private IGraphicsDevice device;
 
@@ -155,14 +160,13 @@
                 var path = sourceMetadata.GetFullPath();
                 FileStream? stream = null;
 
-                stream = File.OpenRead(path);
-                MaterialFile materialFile = MaterialFile.Read(stream);
-                this.path = path;
-                MaterialFile = materialFile;
-                assetRef = value;
-
                 try
                 {
+                    stream = File.OpenRead(path);
+                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    this.path = path;
+                    MaterialFile = materialFile;
+                    assetRef = value;
                 }
                 catch (Exception ex)
                 {
@@ -495,6 +499,7 @@
                 var desc = textureNode.SamplerDescription;
 
                 Core.IO.Binary.Materials.MaterialTexture texture;
+                texture.Name = textureNode.Name;
                 texture.Type = type;
                 texture.File = textureNode.Path;
                 texture.Blend = BlendMode.Default;
@@ -560,56 +565,74 @@
 
         public void Save()
         {
-            if (material != null && editor != null)
+            try
             {
-                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value = Version;
-                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
-                InsertProperties(material, editor);
-                InsertTextures(material, editor);
-
-                var metadata = assetRef.GetSourceMetadata();
-                if (metadata != null)
+                if (material != null && editor != null)
                 {
-                    metadata.Lock();
-                    material.Save(metadata.GetFullPath(), Encoding.UTF8);
-                    metadata.ReleaseLock();
-                    SourceAssetsDatabase.Update(metadata, false);
+                    material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value = Version;
+                    material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
+                    InsertProperties(material, editor);
+                    InsertTextures(material, editor);
 
-                    if (nameChanged)
+                    var metadata = assetRef.GetSourceMetadata();
+                    if (metadata != null)
                     {
-                        metadata.Rename(material.Name);
+                        metadata.Lock();
+                        material.Save(metadata.GetFullPath(), Encoding.UTF8);
+                        metadata.ReleaseLock();
+                        metadata.Update();
+
+                        if (nameChanged)
+                        {
+                            metadata.Rename(material.Name);
+                        }
                     }
                 }
-            }
 
-            unsavedData = false;
-            nameChanged = false;
+                unsavedData = false;
+                nameChanged = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                Logger.Error($"Failed to save material file, {path}");
+                MessageBox.Show($"Failed to save material file, {path}", ex.Message);
+            }
         }
 
         public void CreateNew()
         {
-            string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
-            MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
-            material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Endianness.LittleEndian, 0f));
-            material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Endianness.LittleEndian, 0.4f));
-            material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Endianness.LittleEndian, 1f));
-            MaterialFile = material;
+            SaveFileDialog dialog = new();
+            try
+            {
+                string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
+                MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
+                material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Endianness.LittleEndian, 0f));
+                material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Endianness.LittleEndian, 0.4f));
+                material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Endianness.LittleEndian, 1f));
+                MaterialFile = material;
 
-            path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);
+                path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);
 
-            material.Save(path, Encoding.UTF8);
-            var metadata = SourceAssetsDatabase.ImportFile(path);
+                SourceAssetMetadata metadata = SourceAssetsDatabase.CreateFile(path);
+                material.Save(path, Encoding.UTF8);
+                metadata.Update(); // make sure that the artefact database knows about the file.
 
-            var artifact = ArtifactDatabase.GetArtifactForSource(metadata.Guid);
-            assetRef = artifact?.Guid ?? Guid.Empty;
-            unsavedData = true;
+                Artifact artifact = metadata.GetArtifact()!;
+                assetRef = artifact.Guid;
+                unsavedData = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                Logger.Error($"Failed to create material file, {path}");
+                MessageBox.Show($"Failed to create material file, {path}", ex.Message);
+            }
         }
 
         protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
-
-            generator.OnPreBuildTable += GeneratorOnPreBuildTable;
 
             if (material != null)
             {
@@ -646,12 +669,6 @@
                 UpdateMaterial();
             }
             unsavedData = true;
-        }
-
-        private void GeneratorOnPreBuildTable(VariableTable table)
-        {
-            table.SetBaseSrv(2);
-            table.SetBaseSampler(2);
         }
 
         protected override void DisposeCore()
@@ -926,16 +943,12 @@
 
         private void UpdateMaterialTaskVoid()
         {
+            if (material == null || editor == null)
+                return;
             semaphore.Wait();
 
             InsertProperties(material, editor);
             InsertTextures(material, editor);
-
-            ResourceManager.Shared.BeginNoGCRegion();
-            ResourceManager.Shared.UpdateMaterial<Model>(material);
-            ResourceManager.Shared.EndNoGCRegion();
-
-            Directory.CreateDirectory("generated/" + "shaders/");
 
             try
             {
@@ -957,12 +970,17 @@
 
                 string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
 
-                File.WriteAllText("generated/usercodeMaterial.hlsl", result);
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceVersionKey).Value = SurfaceVersion;
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value = result;
             }
             catch (Exception ex)
             {
                 Logger.LogAndShowError("Failed to generate shader code", ex);
             }
+
+            ResourceManager.Shared.BeginNoGCRegion();
+            ResourceManager.Shared.UpdateMaterial<Model>(material);
+            ResourceManager.Shared.EndNoGCRegion();
 
             semaphore.Release();
         }

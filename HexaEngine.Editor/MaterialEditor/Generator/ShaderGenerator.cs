@@ -9,36 +9,6 @@
     using System.Globalization;
     using System.Text;
 
-    public struct IOSignature
-    {
-        public string Name;
-        public List<SignatureDef> Defs;
-
-        public IOSignature(string name)
-        {
-            Name = name;
-            Defs = new();
-        }
-
-        public IOSignature(string name, params SignatureDef[] defs)
-        {
-            Name = name;
-            Defs = new(defs);
-        }
-    }
-
-    public struct SignatureDef
-    {
-        public string Name;
-        public SType Type;
-
-        public SignatureDef(string name, SType type)
-        {
-            Type = type;
-            Name = name;
-        }
-    }
-
     public class ShaderGenerator
     {
         private readonly VariableTable table = new();
@@ -490,6 +460,7 @@
                 table.AddKeyword(functions[i]);
             }
             mapping.Clear();
+            samplerMapping.Clear();
             textureMapping.Clear();
 
             input = new(inputSignature.Name);

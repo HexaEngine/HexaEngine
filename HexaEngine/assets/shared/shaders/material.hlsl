@@ -1,6 +1,15 @@
 #ifndef MATERIAL_H_INCLUDED
 #define MATERIAL_H_INCLUDED
 
+struct Pixel
+{
+    float3 pos;    
+    float3 uv;
+    float3 normal;
+    float3 tangent;
+    float3 binormal;
+};
+
 #if defined(TARGET_MOBILE)
     // min roughness such that (MIN_PERCEPTUAL_ROUGHNESS^4) > 0 in fp16 (i.e. 2^(-14/4), rounded up)
 #define MIN_PERCEPTUAL_ROUGHNESS 0.089

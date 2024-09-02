@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Editor
 {
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.ImagePainter;
@@ -60,6 +63,8 @@
         public static IReadOnlyList<IEditorWindow> Windows => windows;
 
         public static IReadOnlyList<EditorWindowCategory> Categories => categories;
+
+        public static bool BlockInput { get; internal set; }
 
         public static EditorWindowCategory? GetCategory(string categoryName)
         {
@@ -281,6 +286,8 @@
         [Profiling.Profile]
         public static void Draw(IGraphicsContext context)
         {
+            ImGui.BeginDisabled(BlockInput);
+
             for (int i = 0; i < windows.Count; i++)
             {
                 var window = windows[i];
@@ -294,6 +301,12 @@
                 window.DrawWindow(context);
                 CPUProfiler.Global.End(window.Name);
             }
+
+            ImGui.EndDisabled();
+
+            DialogManager.Draw();
+            MessageBoxes.Draw();
+            AnimationManager.Tick();
         }
 
         public static unsafe void DrawMenu()

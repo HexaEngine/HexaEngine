@@ -23,7 +23,7 @@
         /// <summary>
         /// Gets the description of the compute pipeline.
         /// </summary>
-        ComputePipelineDesc Desc { get; }
+        ComputePipelineDescEx Desc { get; }
 
         /// <summary>
         /// Gets a value indicating whether the compute pipeline has been initialized.

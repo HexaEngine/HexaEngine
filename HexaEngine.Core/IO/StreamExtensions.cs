@@ -414,7 +414,7 @@
         /// <param name="version">The version read from the stream.</param>
         /// <returns>True if the version is within the specified range; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public static bool CompareVersion(this Stream stream, ulong min, ulong latest, Endianness endianness, out ulong version)
+        public static bool CompareVersion(this Stream stream, ulong min, ulong latest, Endianness endianness, out Version version)
         {
             version = stream.ReadUInt64(endianness);
             return version >= min && version <= latest;

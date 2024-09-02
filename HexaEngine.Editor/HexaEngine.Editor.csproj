@@ -15,6 +15,7 @@
 		<PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
 		<PackageReference Include="LibGit2Sharp" Version="0.30.0" />
 		<PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.9" />
+		<PackageReference Include="Hexa.NET.ImGui.Widgets" Version="1.1.11" />
 	</ItemGroup>
 
 	<ItemGroup>

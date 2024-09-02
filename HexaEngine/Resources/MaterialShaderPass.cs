@@ -13,7 +13,7 @@
             pipelineState = device.CreateGraphicsPipelineState(pipeline, desc);
         }
 
-        public MaterialShaderPass(string name, IGraphicsDevice device, GraphicsPipelineDesc pipelineDesc, GraphicsPipelineStateDesc desc)
+        public MaterialShaderPass(string name, IGraphicsDevice device, GraphicsPipelineDescEx pipelineDesc, GraphicsPipelineStateDesc desc)
         {
             this.name = name;
             pipelineState = device.CreateGraphicsPipelineState(pipelineDesc, desc);

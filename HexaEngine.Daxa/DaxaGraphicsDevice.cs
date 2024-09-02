@@ -264,5 +264,10 @@ namespace HexaEngine.Daxa
         {
             throw new NotImplementedException();
         }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

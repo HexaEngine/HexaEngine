@@ -9,7 +9,7 @@
         private readonly string dbgName;
         private bool disposedValue;
         protected InputElementDescription[]? inputElements;
-        protected readonly GraphicsPipelineDesc desc;
+        protected readonly GraphicsPipelineDescEx desc;
         protected ShaderMacro[]? macros;
         protected uint program;
         protected GraphicsPipelineStateDesc state = GraphicsPipelineStateDesc.Default;
@@ -19,7 +19,7 @@
 
         public event Action<IPipeline>? OnCompile;
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDescEx desc, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -28,7 +28,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDescEx desc, GraphicsPipelineStateDesc state, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -38,7 +38,7 @@
             initialized = true;
         }
 
-        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, string dbgName)
+        public OpenGLGraphicsPipeline(OpenGLGraphicsDevice device, GraphicsPipelineDescEx desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, string dbgName)
         {
             this.device = device;
             this.dbgName = dbgName;
@@ -103,7 +103,7 @@
             initialized = true;
         }
 
-        public GraphicsPipelineDesc Description => desc;
+        public GraphicsPipelineDescEx Description => desc;
 
         public string DebugName => dbgName;
 

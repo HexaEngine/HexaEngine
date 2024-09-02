@@ -796,7 +796,7 @@
 
             var path = Path.Combine(rootAssetsFolder, name);
 
-            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(path) ?? throw new InvalidOperationException();
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePathThrow(path);
             var metadata = AddFile(null, path, metadataFile, null, null);
 
             return metadata;

@@ -55,6 +55,8 @@
                 {
                     pass.Bindings.SetSRV($"{char.ToLower(name[0])}{name[1..]}Texture", texture.ShaderResourceView);
                     pass.Bindings.SetSampler($"{char.ToLower(name[0])}{name[1..]}TextureSampler", texture.Sampler);
+                    pass.Bindings.SetSRV($"Srv{texture.Desc.Name}", texture.ShaderResourceView);
+                    pass.Bindings.SetSampler($"Sampler{texture.Desc.Name}", texture.Sampler);
                 }
             }
             this.shader = shader;

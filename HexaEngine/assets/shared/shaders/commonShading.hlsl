@@ -148,7 +148,7 @@ float3 BRDF_IBL(SamplerState samplerState, TextureCube irradianceTex, TextureCub
 
 float3 BRDF_IBL(PixelParams surface, float ao)
 {
-	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
+/*	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
 	float3 irradiance = globalDiffuse.Sample(ansiotropicClampSampler, surface.N).rgb;
 	float3 diffuse = surface.DiffuseColor * irradiance * (1.0 - E) * ao;
 
@@ -159,9 +159,9 @@ float3 BRDF_IBL(PixelParams surface, float ao)
 	float3 specular = prefilteredColor * E;
 	specular *= ao * surface.EnergyCompensation;
 
-	return diffuse + specular;
+	return diffuse + specular;*/
 
-	/*
+	
 	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
 	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;
 	float3 kS = FresnelSchlickRoughness(surface.F0, surface.NdotV, surface.Roughness);
@@ -176,7 +176,7 @@ float3 BRDF_IBL(PixelParams surface, float ao)
 	float3 specular = prefilteredColor * (kS * brdf.x + brdf.y) * surface.EnergyCompensation;
 
 	return kD * diffuse + specular;
-	*/
+	
 }
 
 float3 DirectionalLightBRDF(Light light, PixelParams pixel)

@@ -17,7 +17,7 @@
 
         public void Build(CodeWriter builder)
         {
-            builder.WriteLine($"{SamplerType.GetTypeName()} {Name} : register(s{Slot.ToString(CultureInfo.InvariantCulture)});");
+            builder.WriteLine($"{SamplerType.GetTypeName()} {Name};");
         }
     }
 }

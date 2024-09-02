@@ -5,10 +5,10 @@
     public struct MaterialShaderPassDesc
     {
         public string Name;
-        public GraphicsPipelineDesc Pipeline;
+        public GraphicsPipelineDescEx Pipeline;
         public GraphicsPipelineStateDesc State;
 
-        public MaterialShaderPassDesc(string name, GraphicsPipelineDesc pipeline, GraphicsPipelineStateDesc state)
+        public MaterialShaderPassDesc(string name, GraphicsPipelineDescEx pipeline, GraphicsPipelineStateDesc state)
         {
             Name = name;
             Pipeline = pipeline;

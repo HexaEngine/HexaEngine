@@ -8,7 +8,7 @@
         /// <summary>
         /// Gets the description of the graphics pipeline, including shader information and other state settings.
         /// </summary>
-        GraphicsPipelineDesc Description { get; }
+        GraphicsPipelineDescEx Description { get; }
 
         /// <summary>
         /// Gets the name used for debugging and identification of the graphics pipeline.

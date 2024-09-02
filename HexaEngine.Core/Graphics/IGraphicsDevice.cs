@@ -353,7 +353,7 @@
         /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
         /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Creates a graphics pipeline state object.
@@ -373,7 +373,7 @@
         /// <param name="filename">The file path of the caller (automatically provided by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically provided by the compiler).</param>
         /// <returns>The created graphics pipeline state.</returns>
-        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDesc pipelineDesc, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDescEx pipelineDesc, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             var pipeline = CreateGraphicsPipeline(pipelineDesc, filename, line);
             var pso = CreateGraphicsPipelineState(pipeline, desc, filename, line);
@@ -409,7 +409,7 @@
         /// <param name="filename">The file path of the caller (automatically provided).</param>
         /// <param name="line">The line number of the caller (automatically provided).</param>
         /// <returns>The created graphics pipeline state object.</returns>
-        IComputePipelineState CreateComputePipelineState(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        IComputePipelineState CreateComputePipelineState(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             var pipeline = CreateComputePipeline(desc, filename, line);
             var pso = CreateComputePipelineState(pipeline, filename, line);
@@ -424,7 +424,7 @@
         /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
         /// <returns>The created compute pipeline.</returns>
-        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+        IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Creates a fence object.

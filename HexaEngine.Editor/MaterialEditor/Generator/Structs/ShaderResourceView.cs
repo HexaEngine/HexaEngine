@@ -23,11 +23,11 @@
         {
             if (Samples > 0)
             {
-                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name};");
             }
             else
             {
-                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name};");
             }
         }
     }

@@ -38,7 +38,7 @@
 
             Endianness = (Endianness)stream.ReadByte();
 
-            if (!stream.CompareVersion(MinVersion, Version, Endianness, out ulong version))
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
             {
                 throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }

@@ -386,26 +386,6 @@
             throw new NotImplementedException();
         }
 
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IComputePipeline CreateComputePipelineFromBytecode(ComputePipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
         public IFence CreateFence(ulong initialValue, FenceFlags flags)
         {
             throw new NotImplementedException();
@@ -457,6 +437,16 @@
         }
 
         public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }

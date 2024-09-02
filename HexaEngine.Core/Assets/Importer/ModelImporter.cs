@@ -621,6 +621,11 @@
                             case Assimp.MatkeyTextureBase:
                                 var filePath = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
 
+                                if (filePath.StartsWith("./") || filePath.StartsWith(".\\"))
+                                {
+                                    filePath = filePath[2..];
+                                }
+
                                 if (!texturePathToGuid.TryGetValue(filePath, out var guid))
                                 {
                                     guid = Guid.NewGuid();

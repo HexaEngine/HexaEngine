@@ -6,7 +6,6 @@
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
@@ -43,11 +42,12 @@
 
         public override void Prepare(Model instance)
         {
-            if (dirtyFrame == 0 || dirtyFrame == Time.Frame - 1)
+            foreach (Material material in instance.Materials)
             {
-                foreach (Material material in instance.Materials)
+                if (dirtyFrame == 0 || dirtyFrame == Time.Frame - 1 || material.Dirty)
                 {
                     Prepare(material);
+                    material.Dirty = false;
                 }
             }
         }

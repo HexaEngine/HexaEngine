@@ -16,7 +16,7 @@
 
         public void Build(CodeWriter builder)
         {
-            using (builder.PushBlockSemicolon($"cbuffer {Name} : register(b{Slot.ToString(CultureInfo.InvariantCulture)})"))
+            using (builder.PushBlockSemicolon($"cbuffer {Name}"))
             {
                 for (int i = 0; i < Defs.Count; i++)
                 {

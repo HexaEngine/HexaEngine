@@ -98,7 +98,7 @@
             MaterialLibrary library = new();
 
             MaterialLibraryHeader header = default;
-            header.Read(fs);
+            header.Read(fs, out var version);
 
             var stream = fs;
 
@@ -107,7 +107,7 @@
 
             for (int i = 0; i < header.MaterialCount; i++)
             {
-                library.materials.Add(MaterialData.Read(stream, header.Encoding, header.Endianness));
+                library.materials.Add(MaterialData.Read(stream, header.Encoding, header.Endianness, version));
             }
 
             stream.Close();

@@ -140,12 +140,22 @@
             return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+        }
+
         public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new D3D11ComputePipelineState((D3D11ComputePipeline)pipeline, $"({nameof(D3D11ComputePipelineState)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return new D3D11GraphicsPipeline(this, desc, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new D3D11GraphicsPipeline(this, desc, $"({nameof(D3D11GraphicsPipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }

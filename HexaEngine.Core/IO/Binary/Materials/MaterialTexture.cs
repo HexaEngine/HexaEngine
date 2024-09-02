@@ -53,6 +53,11 @@
         public static readonly string[] TextureMapModeNames = Enum.GetNames<TextureMapMode>();
 
         /// <summary>
+        /// Gets the name of the material texture.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
         /// Type of the material texture.
         /// </summary>
         public MaterialTextureType Type;
@@ -98,15 +103,11 @@
         public TextureFlags Flags;
 
         /// <summary>
-        /// Gets the name of the material texture.
-        /// </summary>
-        public readonly string Name => Type.ToString();
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MaterialTexture"/> struct.
         /// </summary>
-        public MaterialTexture(MaterialTextureType type, Guid file, BlendMode blend, TextureOp op, int mapping, int uVWSrc, TextureMapMode u, TextureMapMode v, TextureFlags flags)
+        public MaterialTexture(string name, MaterialTextureType type, Guid file, BlendMode blend, TextureOp op, int mapping, int uVWSrc, TextureMapMode u, TextureMapMode v, TextureFlags flags)
         {
+            Name = name;
             Type = type;
             File = file;
             Blend = blend;
@@ -124,11 +125,24 @@
         /// <param name="stream">The stream to read from.</param>
         /// <param name="encoding">The encoding used for reading strings.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
+        /// <param name="version">The sub version of the MaterialTexture sub type.</param>
         /// <returns>The read <see cref="MaterialTexture"/>.</returns>
-        public static MaterialTexture Read(Stream stream, Encoding encoding, Endianness endianness)
+        public static MaterialTexture Read(Stream stream, Encoding encoding, Endianness endianness, Version version)
         {
             MaterialTexture data = new();
+
+            if (version >= new Version(2, 0, 0, 0))
+            {
+                data.Name = stream.ReadString(encoding, endianness)!;
+            }
+
             data.Type = (MaterialTextureType)stream.ReadInt32(endianness);
+
+            if (version == new Version(1, 0, 0, 0))
+            {
+                data.Name = data.Type.ToString();
+            }
+
             data.File = stream.ReadGuid(endianness);
             data.Blend = (BlendMode)stream.ReadInt32(endianness);
             data.Op = (TextureOp)stream.ReadInt32(endianness);
@@ -148,6 +162,7 @@
         /// <param name="endianness">The endianness to use for writing.</param>
         public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
+            stream.WriteString(Name, encoding, endianness);
             stream.WriteInt32((int)Type, endianness);
             stream.WriteGuid(File, endianness);
             stream.WriteInt32((int)Blend, endianness);

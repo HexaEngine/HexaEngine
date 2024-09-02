@@ -10,13 +10,13 @@
         private bool valid;
         private bool initialized;
         private uint program;
-        private readonly ComputePipelineDesc desc;
+        private readonly ComputePipelineDescEx desc;
         private ShaderMacro[]? macros;
         private bool disposedValue;
 
         public event Action<IPipeline>? OnCompile;
 
-        public OpenGLComputePipeline(OpenGLGraphicsDevice device, ComputePipelineDesc desc, string dbgName)
+        public OpenGLComputePipeline(OpenGLGraphicsDevice device, ComputePipelineDescEx desc, string dbgName)
         {
             PipelineManager.Register(this);
             this.device = device;
@@ -26,7 +26,7 @@
             initialized = true;
         }
 
-        public OpenGLComputePipeline(OpenGLGraphicsDevice device, ComputePipelineDesc desc, ShaderMacro[] macros, string dbgName)
+        public OpenGLComputePipeline(OpenGLGraphicsDevice device, ComputePipelineDescEx desc, ShaderMacro[] macros, string dbgName)
         {
             PipelineManager.Register(this);
             this.device = device;
@@ -41,7 +41,7 @@
 
         public ShaderMacro[]? Macros { get => macros; set => macros = value; }
 
-        public ComputePipelineDesc Desc => desc;
+        public ComputePipelineDescEx Desc => desc;
 
         public bool IsInitialized => initialized;
 
@@ -65,6 +65,7 @@
 
         private void Compile(bool bypassCache = false)
         {
+            /*
             var macros = GetShaderMacros();
 
             if (desc.Path != null)
@@ -72,6 +73,7 @@
                 device.ShaderCompiler.GetProgramOrCompile(desc, macros, out program, bypassCache);
                 valid = true;
             }
+            */
         }
 
         private ShaderMacro[] GetShaderMacros()

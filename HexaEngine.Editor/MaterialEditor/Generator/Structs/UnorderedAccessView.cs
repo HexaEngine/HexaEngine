@@ -19,7 +19,7 @@
 
         public void Build(CodeWriter builder)
         {
-            builder.WriteLine($"{UavType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(u{Slot.ToString(CultureInfo.InvariantCulture)});");
+            builder.WriteLine($"{UavType.GetTypeName()}<{Type.GetTypeName()}> {Name};");
         }
     }
 }

@@ -238,6 +238,33 @@
             return metafile;
         }
 
+        public static string GetMetadataFilePathThrow(string? path)
+        {
+            if (path == null)
+            {
+                throw new InvalidOperationException($"Cannot get metadata file path for '{path}'. The path is null.");
+            }
+
+            ReadOnlySpan<char> span = path;
+            ReadOnlySpan<char> dir = Path.GetDirectoryName(span);
+
+            if (IgnoreDir(dir))
+            {
+                throw new InvalidOperationException($"Cannot get metadata file path for '{path}'. The path is ignored.");
+            }
+
+            ReadOnlySpan<char> name = Path.GetFileName(span);
+
+            if (IgnoreFile(name))
+            {
+                throw new InvalidOperationException($"Cannot get metadata file path for '{path}'. The path contains invalid characters.");
+            }
+
+            string metafile = $"{dir}\\{name}.meta";
+
+            return metafile;
+        }
+
         public bool TryGetKey<T>(string key, [MaybeNullWhen(false)] out T? value)
         {
             if (Additional.TryGetValue(key, out var metadataKey) && metadataKey is T t)
@@ -325,6 +352,16 @@
 
             var newPath = Path.Combine(dir, $"{newName}{extension}");
             SourceAssetsDatabase.Move(FilePath, newPath);
+        }
+
+        public Artifact? GetArtifact()
+        {
+            return ArtifactDatabase.GetArtifactForSource(Guid);
+        }
+
+        public IEnumerable<Artifact> GetArtifacts()
+        {
+            return ArtifactDatabase.GetArtifactsForSource(Guid);
         }
     }
 }

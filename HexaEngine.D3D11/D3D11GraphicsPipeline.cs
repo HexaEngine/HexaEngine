@@ -10,7 +10,7 @@
     {
         private readonly string dbgName;
         private readonly D3D11GraphicsDevice device;
-        private readonly GraphicsPipelineDesc desc;
+        private readonly GraphicsPipelineDescEx desc;
         private ShaderMacro[]? macros;
         internal ComPtr<ID3D11VertexShader> vs;
         internal ComPtr<ID3D11HullShader> hs;
@@ -29,7 +29,7 @@
         private bool valid;
         private volatile bool initialized;
 
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDescEx desc, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -42,7 +42,7 @@
 
         public string DebugName => dbgName;
 
-        public GraphicsPipelineDesc Description => desc;
+        public GraphicsPipelineDescEx Description => desc;
 
         public bool IsInitialized => initialized;
 

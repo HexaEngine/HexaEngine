@@ -8,7 +8,7 @@
     {
         private readonly string dbgName;
         private readonly D3D11GraphicsDevice device;
-        private ComputePipelineDesc desc;
+        private ComputePipelineDescEx desc;
         private ShaderMacro[]? macros;
 
         internal ComPtr<ID3D11ComputeShader> cs;
@@ -18,7 +18,7 @@
         private bool valid;
         private volatile bool initialized;
 
-        public D3D11ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc, string dbgName)
+        public D3D11ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDescEx desc, string dbgName)
         {
             PipelineManager.Register(this);
             this.device = device;
@@ -29,7 +29,7 @@
             initialized = true;
         }
 
-        public D3D11ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc, ShaderMacro[] macros, string dbgName)
+        public D3D11ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDescEx desc, ShaderMacro[] macros, string dbgName)
         {
             PipelineManager.Register(this);
             this.device = device;
@@ -42,7 +42,7 @@
 
         public string DebugName => dbgName;
 
-        public ComputePipelineDesc Desc => desc;
+        public ComputePipelineDescEx Desc => desc;
 
         public bool IsInitialized => initialized;
 
@@ -77,10 +77,10 @@
         {
             ShaderMacro[] macros = GetShaderMacros();
 
-            if (desc.Path != null)
+            if (desc.Source != null)
             {
                 Shader* shader;
-                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.Entry, desc.Source, "cs_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;

@@ -3,6 +3,7 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text;
 
@@ -106,6 +107,17 @@
             entry = new T();
             Properties.Add(key, entry);
             return (T)entry;
+        }
+
+        public bool TryGet<T>(string key, [MaybeNullWhen(false)] out T value) where T : MetadataEntry
+        {
+            if (Properties.TryGetValue(key, out var entry))
+            {
+                value = (T)entry;
+                return true;
+            }
+            value = default;
+            return false;
         }
 
         /// <summary>
