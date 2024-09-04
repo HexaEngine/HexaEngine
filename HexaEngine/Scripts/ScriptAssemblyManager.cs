@@ -333,7 +333,7 @@
 
         public static Type? GetType(string name)
         {
-            loadLock.Wait(); // where the dead lock happens when the script assembly had compiler errors.
+            loadLock.Wait();
 
             if (isInvalid)
             {
