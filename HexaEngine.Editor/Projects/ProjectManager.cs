@@ -5,6 +5,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
@@ -439,43 +440,48 @@
         {
             semaphore.Wait();
 
-            if (!scriptProjectChanged && !force)
+            try
             {
-                semaphore.Release();
-                return;
-            }
+                if (!scriptProjectChanged && !force)
+                {
+                    return;
+                }
 
-            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay | ProgressFlags.NoModal | ProgressFlags.BottomLeft, new(0.01f, 0.01f));
-            PopupManager.Show(modal);
+                ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay | ProgressFlags.NoModal | ProgressFlags.BottomLeft, new(0.01f, 0.01f));
+                PopupManager.Show(modal);
 
-            ScriptAssemblyManager.Unload();
-            if (CurrentProjectFolder == null)
-            {
-                ScriptAssemblyManager.SetInvalid(true);
-                semaphore.Release();
+                ScriptAssemblyManager.Unload();
+                if (CurrentProjectFolder == null)
+                {
+                    ScriptAssemblyManager.SetInvalid(true);
+                    modal.Close();
+                    return;
+                }
+
+                if (!Build())
+                {
+                    ScriptAssemblyManager.SetInvalid(true);
+                    scriptProjectBuildFailed = true;
+                    modal.Close();
+                    return;
+                }
+
+                scriptProjectBuildFailed = false;
+
+                string solutionName = Path.GetFileName(CurrentProjectFolder);
+                string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
+
+                ScriptAssemblyManager.Load(outputFilePath);
                 modal.Close();
-                return;
             }
-
-            if (!Build())
+            catch (Exception ex)
             {
-                ScriptAssemblyManager.SetInvalid(true);
-                scriptProjectBuildFailed = true;
-                semaphore.Release();
-                modal.Close();
-                return;
+                Logger.LogAndShowError("Fatal: Failed to build script assembly.", ex);
             }
-
-            scriptProjectBuildFailed = false;
-
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
-
-            ScriptAssemblyManager.Load(outputFilePath);
-
-            modal.Close();
-
-            semaphore.Release();
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         public static Task BuildScriptsAsync(bool force = false)

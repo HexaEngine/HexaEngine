@@ -21,13 +21,13 @@ struct Pixel
 
 struct Material
 {
-    float3 baseColor;
+    float4 baseColor;
     float3 normal;
     float roughness;
     float metallic;
     float reflectance;
     float ao;
-    float3 emissive;
+    float4 emissive;
 };
 
 float ComputeDielectricF0(float reflectance)

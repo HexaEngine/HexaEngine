@@ -26,7 +26,7 @@ PixelOutput main(PixelInput input)
 
     normal = material.normal;
 
-    float opacity = 1;
+    float opacity = material.baseColor.a;
 
     if (opacity < 0.1f)
         discard;

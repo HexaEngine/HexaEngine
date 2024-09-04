@@ -19,6 +19,9 @@ GeometryData main(PixelInput input)
 
 	Material material = setupMaterial(geometry);
 
+	if (material.baseColor.a < 0.5f)
+		discard;
+
 	int matID = 1;
 	return PackGeometryData(matID, 
 		material.baseColor.rgb, 
@@ -28,8 +31,8 @@ GeometryData main(PixelInput input)
 		material.reflectance, 
 		material.ao, 
 		1, 
-		material.emissive, 
-		1);
+		material.emissive.rgb, 
+		material.emissive.a);
 }
 
 #else

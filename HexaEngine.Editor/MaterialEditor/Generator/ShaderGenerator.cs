@@ -1,26 +1,14 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Generator
 {
-    using HexaEngine.Editor.MaterialEditor.Generator.Enums;
-    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
+    using HexaEngine.Editor.MaterialEditor.Generator.Analyzers;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.Editor.NodeEditor.Pins;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Text;
 
     public class ShaderGenerator
     {
-        private readonly VariableTable table = new();
-        private readonly Dictionary<Node, int> mapping = new();
-        private readonly Dictionary<ITextureNode, uint> textureMapping = new();
-        private readonly Dictionary<ITextureNode, uint> samplerMapping = new();
-
-        private Struct input;
-        private Operation inputVar;
-
-        private Struct output;
-        private OutputDefinition outputDef;
+        #region Instricts and Keywords.
 
         private readonly string[] functions =
         {
@@ -430,13 +418,24 @@
             "virtual",
         };
 
-        private struct OutputDefinition
-        {
-            public SType Type;
-        }
+        #endregion Instricts and Keywords.
+
+        private readonly GenerationContext context = new();
+        private readonly List<INodeAnalyzer> analyzers = [];
 
         public ShaderGenerator()
         {
+            analyzers.Add(new InputNodeAnalyzer());
+            analyzers.Add(new ComponentMaskNodeAnalyzer());
+            analyzers.Add(new ConstantNodeAnalyzer());
+            analyzers.Add(new ConvertNodeAnalyzer());
+            analyzers.Add(new FuncCallDeclarationNodeAnalyzer());
+            analyzers.Add(new FuncCallNodeAnalyzer());
+            analyzers.Add(new FuncCallVoidNodeAnalyzer());
+            analyzers.Add(new FuncOperatorNodeAnalyzer());
+            analyzers.Add(new PackNodeAnalyzer());
+            analyzers.Add(new SplitNodeAnalyzer());
+            analyzers.Add(new TextureNodeAnalyzer());
         }
 
         public const string VersionString = "v1.0.0";
@@ -449,7 +448,8 @@
 
         public string Generate(Node root, List<Node> nodes, string entryName, bool defineInputStruct, bool defineOutputStruct, IOSignature inputSignature, IOSignature outputSignature)
         {
-            table.Clear();
+            context.Reset();
+            var table = context.Table;
             OnPreBuildTable?.Invoke(table);
             for (int i = 0; i < keywords.Length; i++)
             {
@@ -459,11 +459,8 @@
             {
                 table.AddKeyword(functions[i]);
             }
-            mapping.Clear();
-            samplerMapping.Clear();
-            textureMapping.Clear();
 
-            input = new(inputSignature.Name);
+            var input = context.Input = new(inputSignature.Name);
             for (int i = 0; i < inputSignature.Defs.Count; i++)
             {
                 input.Defs.Add(new(inputSignature.Defs[i].Name, inputSignature.Defs[i].Type));
@@ -471,13 +468,13 @@
 
             if (defineInputStruct)
             {
-                input = table.AddStruct(input);
+                context.Input = input = table.AddStruct(input);
             }
 
-            inputVar = table.AddVariable(new(-1, table.GetUniqueName(input.Name.ToLower()), new(input.Name), string.Empty, false, true));
-            SType type = new(input.Name);
+            var inputVar = context.InputVar = table.AddVariable(new(-1, table.GetUniqueName(input.Name.ToLower()), new(input.Name), string.Empty, false, true));
+            context.InputType = new(input.Name);
 
-            output = new(outputSignature.Name);
+            var output = context.Output = new(outputSignature.Name);
             for (int i = 0; i < outputSignature.Defs.Count; i++)
             {
                 output.Defs.Add(new(outputSignature.Defs[i].Name, outputSignature.Defs[i].Type));
@@ -488,7 +485,7 @@
                 output = table.AddStruct(output);
             }
 
-            outputDef = new()
+            var outputDef = context.OutputDef = new()
             {
                 Type = new(output.Name),
             };
@@ -499,51 +496,16 @@
             {
                 builder.Clear();
                 var node = order[i];
-                var id = mapping.Count;
-                mapping.Add(node, id);
-                if (node is InputNode)
+                var id = context.Mapping.Count;
+                context.Mapping.Add(node, id);
+                context.Id = id;
+
+                for (int j = 0; j < analyzers.Count; j++)
                 {
-                    table.AddVariable(new(id, inputVar.Name, type, string.Empty, false, true));
-                }
-                else if (node is ITextureNode texture)
-                {
-                    Build(texture, builder);
-                }
-                else if (node is IFuncCallVoidNode funcCallVoid)
-                {
-                    Build(funcCallVoid, builder);
-                }
-                else if (node is IFuncCallNode funcCall)
-                {
-                    Build(funcCall, builder);
-                }
-                else if (node is IFuncOperatorNode funcOperator)
-                {
-                    Build(funcOperator, builder);
-                }
-                else if (node is IFuncCallDeclarationNode method)
-                {
-                    Build(method, builder);
-                }
-                else if (node is ConvertNode converter)
-                {
-                    Build(converter, builder);
-                }
-                else if (node is ComponentMaskNode compose)
-                {
-                    Build(compose, builder);
-                }
-                else if (node is PackNode pack)
-                {
-                    Build(pack, builder);
-                }
-                else if (node is SplitNode split)
-                {
-                    Build(split, builder);
-                }
-                else if (node is ConstantNode constant)
-                {
-                    Build(constant, builder);
+                    if (analyzers[j].TryAnalyze(node, context, builder))
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -557,9 +519,9 @@
             return builder.ToString();
         }
 
-        public IReadOnlyDictionary<ITextureNode, uint> TextureMapping => textureMapping;
+        public IReadOnlyDictionary<ITextureNode, uint> TextureMapping => context.TextureMapping;
 
-        public IReadOnlyDictionary<ITextureNode, uint> SamplerMapping => samplerMapping;
+        public IReadOnlyDictionary<ITextureNode, uint> SamplerMapping => context.SamplerMapping;
 
         public static List<Node> TopologicalSort(IList<Node> nodes)
         {
@@ -597,248 +559,20 @@
             }
         }
 
-        public void Analyse(Node[] nodes)
-        {
-            for (int i = 0; i < nodes.Length; i++)
-            {
-                var node = nodes[i];
-            }
-        }
-
-        public Definition GetVariable(Pin target, Node? other)
-        {
-            if (other == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            var op = Find(other);
-            if (!op.Type.IsStruct)
-            {
-                return new(op.Name, op.Type);
-            }
-            else
-            {
-                var link = Node.FindSourceLink(target, other);
-                if (link == null)
-                {
-                    throw new NullReferenceException();
-                }
-
-                return new($"{op.Type.Name}.{link.Output.Name}", op.Type);
-            }
-        }
-
-        public bool TryGetVariable(Pin target, Node? other, out Definition variable)
-        {
-            if (other == null)
-            {
-                variable = default;
-                return false;
-            }
-
-            var op = Find(other);
-            if (!op.Type.IsStruct)
-            {
-                variable = new(op.Name, op.Type);
-                return true;
-            }
-            else
-            {
-                var link = Node.FindSourceLink(target, other);
-                if (link == null)
-                {
-                    variable = default;
-                    return false;
-                }
-
-                variable = new($"{op.Type.Name}.{link.Output.Name}", op.Type);
-                return true;
-            }
-        }
-
-        public Definition GetVariable(Link? link)
-        {
-            if (link == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            var op = Find(link.OutputNode);
-            if (!op.Type.IsStruct)
-            {
-                return new(op.Name, op.Type);
-            }
-            else
-            {
-                return new($"{op.Type.Name}.{link.Output.Name}", op.Type);
-            }
-        }
-
-        public bool TryGetVariable(Link? link, out Definition variable)
-        {
-            if (link == null)
-            {
-                variable = default;
-                return false;
-            }
-
-            var op = Find(link.OutputNode);
-            if (!op.Type.IsStruct)
-            {
-                variable = new(op.Name, op.Type);
-                return true;
-            }
-            else
-            {
-                variable = new($"{op.Type.Name}.{link.Output.Name}", op.Type);
-                return true;
-            }
-        }
-
-        public Definition GetVariableLink(Pin pin, int index)
-        {
-            if (pin.Links.Count <= index)
-            {
-                return new Definition("0", new(ScalarType.Unknown));
-            }
-
-            var link = pin.Links[index];
-
-            var op = Find(link.OutputNode);
-            if (!op.Type.IsStruct)
-            {
-                return new(op.Name, op.Type);
-            }
-            else
-            {
-                return new($"{op.Name}.{link.Output.Name}", op.Type);
-            }
-        }
-
-        public Definition GetVariableFirstLink(Pin pin)
-        {
-            if (pin.Links.Count == 0 || pin.Kind == PinKind.Output)
-            {
-                if (pin.Parent is ITypedNode node && pin is IDefaultValuePin defaultValue)
-                {
-                    return new Definition(defaultValue.GetDefaultValue(), node.Type);
-                }
-                else if (pin is ITypedPin typedPin && pin is IDefaultValuePin defaultValue1)
-                {
-                    return new Definition(defaultValue1.GetDefaultValue(), typedPin.Type);
-                }
-                else if (pin is IDefaultValuePin defaultValue2)
-                {
-                    return new Definition(defaultValue2.GetDefaultValue(), new(ScalarType.Unknown));
-                }
-                else
-                {
-                    return new Definition("0", new(ScalarType.Unknown));
-                }
-            }
-
-            var link = pin.Links[0];
-
-            var op = Find(link.OutputNode);
-            if (!op.Type.IsStruct)
-            {
-                return new(op.Name, op.Type);
-            }
-            else
-            {
-                return new($"{op.Name}.{link.Output.Name}", op.Type);
-            }
-        }
-
-        public Definition GetVariableFirstLink(ITypedNode node, FloatPin pin)
-        {
-            if (pin.Links.Count == 0)
-            {
-                if (pin is IDefaultValuePin defaultValue)
-                {
-                    return new Definition(defaultValue.GetDefaultValue(), node.Type);
-                }
-                else
-                {
-                    return new Definition("0", new(ScalarType.Unknown));
-                }
-            }
-
-            var link = pin.Links[0];
-
-            var op = Find(link.OutputNode);
-
-            if (!op.Type.IsStruct)
-            {
-                return new(op.Name, op.Type);
-            }
-            else
-            {
-                return new($"{op.Name}.{link.Output.Name}", op.Type);
-            }
-        }
-
-        public bool TryGetVariableFirstLink(Pin pin, out Definition variable)
-        {
-            if (pin.Links.Count == 0)
-            {
-                variable = default;
-                return false;
-            }
-
-            var link = pin.Links[0];
-
-            var op = Find(link.OutputNode);
-            if (!op.Type.IsStruct)
-            {
-                variable = new(op.Name, op.Type);
-                return true;
-            }
-            else
-            {
-                variable = new($"{op.Type.Name}.{link.Output.Name}", op.Type);
-                return true;
-            }
-        }
-
-        private ShaderResourceView AddSrv(string name, SType srvType, SType type)
-        {
-            return table.AddShaderResourceView(new(table.GetUniqueName(name), srvType, type));
-        }
-
-        private SamplerState AddSampler(string name, SType samplerType)
-        {
-            return table.AddSamplerState(new(table.GetUniqueName(name), samplerType));
-        }
-
-        private Operation AddVariable(string name, Node node, SType type, string def, bool allowInline = true)
-        {
-            name = name.ToLower().Replace(" ", string.Empty);
-            string newName = table.GetUniqueName(name);
-            return table.AddVariable(new(mapping[node], newName, type, def, allowInline, true));
-        }
-
-        private Operation AddVariable(Node node, string def, bool allowInline = true)
-        {
-            return table.AddVariable(new(mapping[node], string.Empty, default, def, allowInline, false));
-        }
-
-        private Operation Find(Node node)
-        {
-            var id = mapping[node];
-            return table.GetVariable(id);
-        }
-
         private void BuildHeader(CodeWriter builder)
         {
-            table.Build(builder);
+            context.BuildTable(builder);
         }
 
         public bool Inline { get; set; }
 
         private void BuildBody(CodeWriter builder, Node root, string entryName)
         {
+            var table = context.Table;
+            var outputDef = context.OutputDef;
+            var input = context.Input;
+            var inputVar = context.InputVar;
+
             var type = outputDef.Type;
             var signature = "";
             if (type.IsStruct)
@@ -862,172 +596,24 @@
 
                     op.Append(builder, Inline);
                 }
-                Build(root, builder);
+                WriteRootNode(root, builder);
             }
         }
 
-        private Operation Build(ITextureNode node, StringBuilder builder)
+        private void WriteRootNode(Node node, CodeWriter builder)
         {
-            var tex = GetVariableFirstLink(node.InUV);
-            var srv = AddSrv($"Srv{node.Name}", new(TextureType.Texture2D), new(VectorType.Float4));
-            textureMapping.Add(node, srv.Slot);
-            var sampler = AddSampler($"Sampler{node.Name}", new(SamplerType.SamplerState));
-            samplerMapping.Add(node, sampler.Slot);
-            var output = AddVariable(node.Name, (Node)node, new(VectorType.Float4), $"{srv.Name}.Sample({sampler.Name}, {tex.Name})");
-            return output;
-        }
+            var table = context.Table;
+            var outputDef = context.OutputDef;
+            var inputVar = context.InputVar;
+            var output = context.Output;
 
-        private Operation Build(Definition left, Definition right, SType type, Node node, string op, StringBuilder builder)
-        {
-            if (VariableTable.NeedCastPerComponentMath(left.Type, right.Type))
-            {
-                var output = AddVariable(node.Name, node, type, $"{VariableTable.FromCastTo(left.Type, type)}{left.Name} {op} {VariableTable.FromCastTo(right.Type, type)}{right.Name}");
-                table.AddRef(left.Name, output);
-                table.AddRef(right.Name, output);
-                return output;
-            }
-            else
-            {
-                var output = AddVariable(node.Name, node, type, $"{left.Name} {op} {right.Name}");
-                table.AddRef(left.Name, output);
-                table.AddRef(right.Name, output);
-                return output;
-            }
-        }
-
-        private Operation Build(IFuncOperatorNode node, StringBuilder builder)
-        {
-            var left = GetVariableFirstLink(node, node.InLeft);
-            var right = GetVariableFirstLink(node, node.InRight);
-            return Build(left, right, node.Type, (Node)node, node.Op, builder);
-        }
-
-        private Operation Build(Definition[] definitions, SType type, Node node, string func, StringBuilder builder, bool isMathFunc = true)
-        {
-            builder.Append($"{func}(");
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                var definition = definitions[i];
-                builder.Append(definition.Name);
-                if (i + 1 < definitions.Length)
-                {
-                    builder.Append(',');
-                }
-            }
-            builder.Append(')');
-            var output = AddVariable(node.Name, node, type, builder.ToString());
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                var def = definitions[i];
-                if (isMathFunc)
-                {
-                    table.AddRef(def.Name, output);
-                }
-            }
-
-            return output;
-        }
-
-        private Operation Build(Definition[] definitions, Node node, string func, StringBuilder builder, bool isMathFunc = true)
-        {
-            builder.Append($"{func}(");
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                var definition = definitions[i];
-                builder.Append(definition.Name);
-                if (i + 1 < definitions.Length)
-                {
-                    builder.Append(',');
-                }
-            }
-            builder.Append(')');
-            var output = AddVariable(node, builder.ToString());
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                var def = definitions[i];
-                if (isMathFunc)
-                {
-                    table.AddRef(def.Name, output);
-                }
-            }
-
-            return output;
-        }
-
-        private Operation Build(IFuncCallNode node, StringBuilder builder)
-        {
-            Definition[] definitions = new Definition[node.Params.Count];
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                definitions[i] = GetVariableFirstLink(node, node.Params[i]);
-            }
-
-            return Build(definitions, node.Type, (Node)node, node.Op, builder);
-        }
-
-        private Operation Build(IFuncCallVoidNode node, StringBuilder builder)
-        {
-            Definition[] definitions = new Definition[node.Params.Count];
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                definitions[i] = GetVariableFirstLink(node, node.Params[i]);
-            }
-
-            return Build(definitions, (Node)node, node.Op, builder);
-        }
-
-        private Operation Build(ConvertNode node, StringBuilder builder)
-        {
-            var inVal = GetVariableFirstLink(node.In);
-            var output = AddVariable(node.Name, node, new(VectorType.Float4), $"float4({inVal.Name},{node.Value.ToString(CultureInfo.InvariantCulture)})");
-            table.AddRef(inVal.Name, output);
-            return output;
-        }
-
-        private Operation Build(ComponentMaskNode node, StringBuilder builder)
-        {
-            var def = GetVariableFirstLink(node.In);
-
-            var type = node.Type;
-            if (type.IsScalar)
-            {
-                var output = AddVariable(node.Name, node, new(ScalarType.Float), $"{def.Name}.{node.Mask}");
-                table.AddRef(def.Name, output);
-                return output;
-            }
-            if (type.IsVector)
-            {
-                if (type.VectorType == VectorType.Float2)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float2), $"{def.Name}.{node.Mask}");
-                    table.AddRef(def.Name, output);
-                    return output;
-                }
-                if (type.VectorType == VectorType.Float3)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float3), $"{def.Name}.{node.Mask}");
-                    table.AddRef(def.Name, output);
-                    return output;
-                }
-                if (type.VectorType == VectorType.Float4)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float4), $"{def.Name}.{node.Mask}");
-                    table.AddRef(def.Name, output);
-                    return output;
-                }
-            }
-            return default;
-        }
-
-        private Operation Build(Node node, CodeWriter builder)
-        {
             if (outputDef.Type.IsStruct && inputVar.Type.IsStruct && outputDef.Type.Name == inputVar.Type.Name)
             {
                 var name = inputVar.Name;
                 for (int i = 0; i < output.Defs.Count; i++)
                 {
                     var def = output.Defs[i];
-                    var ip = GetVariableFirstLink(node.Pins[i]);
+                    var ip = context.GetVariableFirstLink(node.Pins[i]);
                     builder.WriteLine($"{name}.{def.Name} = {ip.Name};");
                 }
                 builder.WriteLine($"return {name};");
@@ -1039,73 +625,11 @@
                 for (int i = 0; i < output.Defs.Count; i++)
                 {
                     var def = output.Defs[i];
-                    var ip = GetVariableFirstLink(node.Pins[i]);
+                    var ip = context.GetVariableFirstLink(node.Pins[i]);
                     builder.WriteLine($"{name}.{def.Name} = {ip.Name};");
                 }
                 builder.WriteLine($"return {name};");
             }
-
-            return default;
-        }
-
-        private Operation Build(IFuncCallDeclarationNode node, StringBuilder builder)
-        {
-            node.DefineMethod(table);
-            Definition[] definitions = new Definition[node.Params.Count];
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                definitions[i] = GetVariableFirstLink(node, node.Params[i]);
-            }
-
-            return Build(definitions, node.Type, (Node)node, node.MethodName, builder, false);
-        }
-
-        private Operation Build(ConstantNode node, StringBuilder builder)
-        {
-            var def = GetVariableFirstLink(node.Out);
-            var output = AddVariable(node.Name, node, node.Type, def.Name);
-            return output;
-        }
-
-        private Operation Build(SplitNode node, StringBuilder builder)
-        {
-            var def = GetVariableFirstLink(node.In);
-            table.AddVariable(new(mapping[node], def.Name, node.Type, string.Empty, false, true));
-            return default;
-        }
-
-        private Operation Build(PackNode node, StringBuilder builder)
-        {
-            var type = node.Type;
-            if (type.IsScalar)
-            {
-                var def = GetVariableFirstLink(node.Pins[0]);
-                var output = AddVariable(node.Name, node, new(ScalarType.Float), $"{def.Name}");
-                return output;
-            }
-            if (type.IsVector)
-            {
-                var defX = GetVariableFirstLink(node.InPins[0]);
-                var defY = GetVariableFirstLink(node.InPins[1]);
-                var defZ = GetVariableFirstLink(node.InPins[2]);
-                var defW = GetVariableFirstLink(node.InPins[3]);
-                if (type.VectorType == VectorType.Float2)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float2), $"float2({defX.Name},{defY.Name})");
-                    return output;
-                }
-                if (type.VectorType == VectorType.Float3)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float3), $"float3({defX.Name},{defY.Name},{defZ.Name})");
-                    return output;
-                }
-                if (type.VectorType == VectorType.Float4)
-                {
-                    var output = AddVariable(node.Name, node, new(VectorType.Float4), $"float4({defX.Name},{defY.Name},{defZ.Name},{defW.Name})");
-                    return output;
-                }
-            }
-            return default;
         }
     }
 }
