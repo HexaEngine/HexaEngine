@@ -34,6 +34,11 @@
             return new DummyBuffer(description);
         }
 
+        public unsafe IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICommandBuffer CreateCommandBuffer()
         {
             throw new NotImplementedException();
@@ -42,6 +47,11 @@
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new DummyComputePipeline(desc);
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)

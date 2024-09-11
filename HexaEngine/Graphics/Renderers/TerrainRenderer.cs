@@ -35,7 +35,7 @@
             transformBuffer = cullingContext.InstanceDataOutBuffer;
             transformOffsetBuffer = cullingContext.InstanceOffsets;
 
-            transformBuffer.Resize += TransformBufferResize;
+            CullingManager.Current.BuffersResized += TransformBufferResize;
         }
 
         private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)

@@ -1344,7 +1344,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             for (int i = 0; i < Mesh.UVChannelCount; i++)
             {
                 int uvDim = mesh.GetUVDimension(i);
-                string uvAttributeName = string.Format("uv{0}", i);
+                string uvAttributeName = $"uv{i}";
                 if (uvDim == 2)
                 {
                     vertUV2D ??= new UVChannels<Vector2>();

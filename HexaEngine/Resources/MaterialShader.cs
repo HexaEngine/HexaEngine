@@ -1,6 +1,12 @@
 ﻿namespace HexaEngine.Resources
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Metadata;
+    using HexaEngine.Materials;
+    using System.Text;
     using System.Threading.Tasks;
 
     public class MaterialShader : ResourceInstance, IDisposable
@@ -19,6 +25,8 @@
 
         public IReadOnlyList<MaterialShaderPass> Passes => passes;
 
+        public MaterialShaderDesc Description => desc;
+
         public void Initialize()
         {
             Compile();
@@ -30,7 +38,7 @@
             {
                 return;
             }
-            ShaderMacro[] globalMacros = desc.Macros;
+            ShaderMacro[] globalMacros = [.. desc.Macros, .. desc.MeshMacros];
             for (int i = 0; i < desc.Passes.Length; i++)
             {
                 MaterialShaderPassDesc passDesc = desc.Passes[i];

@@ -12,12 +12,13 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Editor.MaterialEditor.Generator;
-    using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
-    using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
-    using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
-    using HexaEngine.Editor.NodeEditor;
+    using HexaEngine.Materials;
+    using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes;
+    using HexaEngine.Materials.Nodes.Functions;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
@@ -40,7 +41,7 @@
 
         private IGraphicsDevice device;
 
-        private NodeEditor? editor;
+        private ImNodesNodeEditor? editor;
         private InputNode geometryNode;
         private BRDFShadingModelNode outputNode;
 
@@ -60,12 +61,24 @@
         private bool unsavedData;
         private bool nameChanged;
         private bool unsavedDataDialogIsOpen;
+
         private string path;
+
+        private bool showCode;
 
         public MaterialEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
+
+            NodeEditorRegistry.RegisterNodeSingleton<ComponentMaskNode, ComponentMaskNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<SplitNode, SplitNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<TypedNodeBase, TypedNodeBaseRenderer>();
+            NodeEditorRegistry.RegisterNodeInstanced<TextureFileNode, TextureFileNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<ConstantNode, ConstantNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<FlipUVNode, FlipUVNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<ConvertNode, ConvertNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<PackNode, PackNodeRenderer>();
 
             Application.OnEditorPlayStateTransition += ApplicationOnEditorPlayStateTransition;
             Application.MainWindow.Closing += MainWindowClosing;
@@ -223,7 +236,7 @@
                     }
                     else
                     {
-                        editor = NodeEditor.Deserialize(json);
+                        editor = ImNodesNodeEditor.Deserialize(json);
                     }
                 }
                 catch (Exception ex)
@@ -252,14 +265,13 @@
 
                 foreach (var tex in editor.GetNodes<TextureFileNode>())
                 {
-                    tex.Device = device;
                     tex.Reload();
                     textureFiles.Add(tex);
                 }
             }
         }
 
-        protected override string Name { get; } = "Material Editor";
+        protected override string Name { get; } = $"{UwU.PenRuler} Material Editor";
 
         public void Sort()
         {
@@ -377,9 +389,9 @@
                 MaterialFile = material;
             }
 
-            intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
-            intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
-            operatorFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
+            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
+            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
+            operatorFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
         }
 
         private void LinkRemoved(object? sender, Link e)
@@ -433,6 +445,25 @@
             }
 
             DrawMenuBar(context);
+
+            if (showCode && material != null)
+            {
+                if (ImGui.Begin("Code View"u8, ref showCode))
+                {
+                    if (ImGui.Button("Apply"))
+                    {
+                        ResourceManager.Shared.BeginNoGCRegion();
+                        ResourceManager.Shared.UpdateMaterial<Model>(material);
+                        ResourceManager.Shared.EndNoGCRegion();
+                    }
+                    var code = material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value ?? string.Empty;
+                    if (ImGui.InputTextMultiline("##Code", ref code, 4096, ImGui.GetContentRegionAvail()))
+                    {
+                        material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value = code;
+                    }
+                }
+                ImGui.End();
+            }
 
             ImGui.BeginTable("Table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable);
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
@@ -538,6 +569,13 @@
                         Unload();
                     }
 
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Show Code"))
+                    {
+                        ShowCode();
+                    }
+
                     ImGui.EndMenu();
                 }
 
@@ -562,6 +600,11 @@
             }
         }
 
+        private void ShowCode()
+        {
+            showCode = !showCode;
+        }
+
         private void DrawNodesMenu(IGraphicsContext context)
         {
             if (editor == null)
@@ -573,7 +616,7 @@
             {
                 if (ImGui.MenuItem("Texture File"))
                 {
-                    TextureFileNode node = new(editor.GetUniqueId(), true, false, context.Device);
+                    TextureFileNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                     textureFiles.Add(node);
                 }
@@ -586,6 +629,11 @@
                 if (ImGui.MenuItem("Normal Map"))
                 {
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
+                if (ImGui.MenuItem("Flip UVs"))
+                {
+                    FlipUVNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
 
@@ -691,6 +739,7 @@
             try
             {
                 IOSignature inputSig = new("Pixel",
+            new SignatureDef("color", new(VectorType.Float4)),
             new SignatureDef("pos", new(VectorType.Float4)),
             new SignatureDef("uv", new(VectorType.Float3)),
             new SignatureDef("normal", new(VectorType.Float3)),

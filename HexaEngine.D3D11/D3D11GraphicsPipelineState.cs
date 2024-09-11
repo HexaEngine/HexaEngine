@@ -144,9 +144,16 @@
                 ComPtr<ID3D11InputLayout> il;
                 InputElementDesc* descs = AllocT<InputElementDesc>(inputElements.Length);
                 Helper.Convert(inputElements, descs);
-                device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
+                HResult result = device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
                 Helper.Free(descs, inputElements.Length);
                 Free(descs);
+
+                if (!result.IsSuccess)
+                {
+                    isValid = false;
+                    return;
+                }
+
                 layout = il;
 
                 Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");

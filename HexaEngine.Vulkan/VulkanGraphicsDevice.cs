@@ -96,7 +96,12 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
         {
             throw new NotImplementedException();
         }
@@ -292,16 +297,6 @@
         }
 
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             throw new NotImplementedException();
         }

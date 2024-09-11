@@ -6,13 +6,31 @@
 [earlydepthstencil]
 GeometryData main(PixelInput input)
 {
-	float3 normal = normalize(input.normal);
-  	float3 tangent = normalize(input.tangent);
+#if VtxNormals
+    float3 normal = normalize(input.normal);
+#else 
+    float3 normal = 0;
+#endif
+
+#if VtxTangents
+    float3 tangent = normalize(input.tangent);
+#else
+    float3 tangent = 0;
+#endif
   	float3 bitangent = cross(normal, tangent);
 
   	Pixel geometry;
+#if VtxColors
+    geometry.color = input.color;
+#else 
+    geometry.color = 0;
+#endif
   	geometry.pos = input.position;
-  	geometry.uv = input.tex;
+#if VtxUVs
+    geometry.uv = input.tex;
+#else 
+    geometry.uv = 0;
+#endif 	
   	geometry.normal = normal;
   	geometry.tangent = tangent;
   	geometry.binormal = bitangent;

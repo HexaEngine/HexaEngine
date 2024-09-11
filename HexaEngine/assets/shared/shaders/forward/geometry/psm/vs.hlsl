@@ -41,11 +41,11 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID) : SV_Positio
 			continue;
 		if (input.boneIds[i] >= MaxBones)
 		{
-			totalPosition = float4(input.pos, 1.0f);
+			totalPosition = float4(input.position, 1.0f);
 			break;
 		}
 
-		float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
+		float4 localPosition = mul(float4(input.position, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
 		totalPosition += localPosition * input.weights[i];
 	}
 
@@ -66,7 +66,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	float4x4 world = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
 	PixelInput output;
-	output.position = mul(float4(input.pos, 1), world);
+	output.position = mul(float4(input.position, 1), world);
 	output.pos = mul(output.position, lightView);
 	output.position = mul(output.position, lightViewProj);
 

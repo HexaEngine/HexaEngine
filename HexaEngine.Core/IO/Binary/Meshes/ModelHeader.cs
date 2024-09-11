@@ -18,7 +18,7 @@
         /// <summary>
         /// Current version of the model file format.
         /// </summary>
-        public static readonly Version Version = new(11, 0, 0, 1);
+        public static readonly Version Version = new(11, 0, 0, 3);
 
         /// <summary>
         /// Minimum supported version of the model file format.

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using K4os.Compression.LZ4;
@@ -11,12 +12,24 @@
     using System.IO.Compression;
     using System.Numerics;
     using System.Text;
+    using Version = Version;
+
+    public struct UVChannelInfo
+    {
+        public UVType Channel0;
+        public UVType Channel1;
+        public UVType Channel2;
+        public UVType Channel3;
+
+        public const int MaxChannels = 4;
+    }
 
     /// <summary>
     /// Represents mesh data including vertex and index information, bounding volumes, and vertex flags.
     /// </summary>
     public unsafe class MeshData : IMeshData
     {
+        private Version subVersion;
         private Endianness endianness;
         private Compression compression;
 
@@ -42,6 +55,11 @@
         /// Flags indicating which vertex components are present in the mesh.
         /// </summary>
         public VertexFlags Flags;
+
+        /// <summary>
+        /// UV Channel info.
+        /// </summary>
+        public UVChannelInfo ChannelInfo;
 
         /// <summary>
         /// The number of bones in the mesh.
@@ -78,12 +96,15 @@
         /// <param name="guid">The GUID of the mesh.</param>
         /// <param name="materialName">The name of the material associated with the mesh.</param>
         /// <param name="flags"></param>
-        public MeshData(string name, Guid guid, Guid materialName, VertexFlags flags, BoneData[]? bones)
+        /// <param name="channelInfo"></param>
+        /// <param name="bones"></param>
+        public MeshData(string name, Guid guid, Guid materialName, VertexFlags flags, UVChannelInfo channelInfo, BoneData[]? bones)
         {
             this.name = name;
             this.guid = guid;
             MaterialId = materialName;
             Flags = flags;
+            ChannelInfo = channelInfo;
             BoneCount = (uint)(bones?.Length ?? 0);
             Bones = bones;
         }
@@ -96,15 +117,33 @@
         /// <param name="endianness">The endianness used for reading numerical data.</param>
         /// <param name="compression"></param>
         /// <param name="loadMode"></param>
-        public static MeshData Read(Stream stream, Encoding encoding, Endianness endianness, Compression compression, MeshLoadMode loadMode)
+        /// <param name="version">The sub version.</param>
+        public static MeshData Read(Stream stream, Encoding encoding, Endianness endianness, Compression compression, MeshLoadMode loadMode, Version version)
         {
             MeshData data = new();
+            data.subVersion = version;
             data.endianness = endianness;
             data.compression = compression;
             data.name = stream.ReadString(encoding, endianness) ?? string.Empty;
             data.guid = stream.ReadGuid(endianness);
             data.MaterialId = stream.ReadGuid(endianness);
             data.Flags = (VertexFlags)stream.ReadInt32(endianness);
+            if (version == new Version(1, 0, 0, 0))
+            {
+                data.ChannelInfo.Channel0 = (data.Flags & VertexFlags.UVs) != 0 ? UVType.UV2D : UVType.Empty;
+            }
+            else
+            {
+                UVChannelInfo info;
+                var pType = (UVType*)&info;
+                for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+                {
+                    *pType = (UVType)stream.ReadByte();
+                    pType++;
+                }
+                data.ChannelInfo = info;
+            }
+
             data.BoneCount = stream.ReadUInt32(endianness);
             if ((data.Flags & VertexFlags.Skinned) != 0)
             {
@@ -126,7 +165,7 @@
 
                     Stream decompressor = CreateDecompressionStream(stream, compression, out var isCompressed);
 
-                    MeshLODData lod = MeshLODData.Read(decompressor, data.Flags, endianness);
+                    MeshLODData lod = MeshLODData.Read(decompressor, data.Flags, endianness, version, data.ChannelInfo);
                     data.LODs.Add(lod);
 
                     if (isCompressed)
@@ -197,6 +236,12 @@
             stream.WriteGuid(guid, endianness);
             stream.WriteGuid(MaterialId, endianness);
             stream.WriteInt32((int)Flags, endianness);
+            UVChannelInfo info = ChannelInfo;
+            var pType = (UVType*)&info;
+            for (int i = 0; i < UVChannelInfo.MaxChannels; i++, pType++)
+            {
+                stream.WriteByte((byte)*pType);
+            }
             stream.WriteUInt32(BoneCount, endianness);
             if ((Flags & VertexFlags.Skinned) != 0)
             {
@@ -244,7 +289,7 @@
             stream.Position = offset;
 
             Stream decompressor = CreateDecompressionStream(stream, compression, out var isCompressed);
-            MeshLODData data = MeshLODData.Read(decompressor, Flags, endianness);
+            MeshLODData data = MeshLODData.Read(decompressor, Flags, endianness, subVersion, ChannelInfo);
 
             if (isCompressed)
             {
@@ -297,41 +342,113 @@
             return (boneIds, weigths);
         }
 
-        public InputElementDescription[] InputElements
+        public unsafe InputElementDescription[] InputElements
         {
             get
             {
+                List<InputElementDescription> inputElements = [];
+                int offset = 0;
+                if ((Flags & VertexFlags.Colors) != 0)
+                {
+                    inputElements.Add(new("COLOR", 0, Format.R32G32B32A32Float, offset, 0));
+                    offset += 16;
+                }
+                if ((Flags & VertexFlags.Positions) != 0)
+                {
+                    inputElements.Add(new("POSITION", 0, Format.R32G32B32Float, offset, 0));
+                    offset += 12;
+                }
+                if ((Flags & VertexFlags.UVs) != 0)
+                {
+                    var info = ChannelInfo;
+                    UVType* pType = (UVType*)&info;
+                    for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+                    {
+                        switch (pType[i])
+                        {
+                            case UVType.Empty:
+                                continue;
+
+                            case UVType.UV2D:
+                                inputElements.Add(new("TEXCOORD", 0, Format.R32G32Float, offset, i));
+                                offset += 8;
+                                break;
+
+                            case UVType.UV3D:
+                                inputElements.Add(new("TEXCOORD", 0, Format.R32G32B32Float, offset, i));
+                                offset += 12;
+                                break;
+
+                            case UVType.UV4D:
+                                inputElements.Add(new("TEXCOORD", 0, Format.R32G32B32A32Float, offset, i));
+                                offset += 16;
+                                break;
+                        }
+                    }
+                }
+                if ((Flags & VertexFlags.Normals) != 0)
+                {
+                    inputElements.Add(new("NORMAL", 0, Format.R32G32B32Float, offset, 0));
+                    offset += 12;
+                }
+                if ((Flags & VertexFlags.Tangents) != 0)
+                {
+                    inputElements.Add(new("TANGENT", 0, Format.R32G32B32Float, offset, 0));
+                    offset += 12;
+                }
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
-                    return skinnedInputElements;
+                    inputElements.Add(new("BLENDINDICES", 0, Format.R32G32B32A32UInt, offset, 0));
+                    offset += 16;
+                    inputElements.Add(new("BLENDWEIGHT", 0, Format.R32G32B32A32Float, offset, 0));
+                    // offset += 16; // Commented out for potential future use
                 }
-                return inputElements;
+
+                return [.. inputElements];
             }
         }
 
-        /// <summary>
-        /// Describes the input elements for a non-skinned mesh.
-        /// </summary>
-        private static readonly InputElementDescription[] inputElements =
-        [
-            new("POSITION", 0, Format.R32G32B32Float, 0, 0),
-            new("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
-            new("NORMAL", 0, Format.R32G32B32Float, 24, 0),
-            new("TANGENT", 0, Format.R32G32B32Float, 36, 0),
-        ];
+        public ShaderMacro[] GetShaderMacros()
+        {
+            List<ShaderMacro> macros = [];
+            if ((Flags & VertexFlags.Colors) != 0)
+            {
+                macros.Add(new("VtxColors", "1"));
+            }
+            if ((Flags & VertexFlags.Positions) != 0)
+            {
+                macros.Add(new("VtxPos", "1"));
+            }
+            if ((Flags & VertexFlags.UVs) != 0)
+            {
+                macros.Add(new("VtxUVs", "1"));  // TODO: UV channels, not supported yet by the file format.
+                var info = ChannelInfo;
+                UVType* pType = (UVType*)&info;
+                for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+                {
+                    var type = pType[i];
 
-        /// <summary>
-        /// Describes the input elements for a skinned mesh.
-        /// </summary>
-        private static readonly InputElementDescription[] skinnedInputElements =
-        [
-            new("POSITION", 0, Format.R32G32B32Float, 0, 0),
-            new("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
-            new("NORMAL", 0, Format.R32G32B32Float, 24, 0),
-            new("TANGENT", 0, Format.R32G32B32Float, 36, 0),
-            new("BLENDINDICES", 0, Format.R32G32B32A32UInt, 48, 0),
-            new("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 64, 0),
-        ];
+                    if (type == UVType.Empty)
+                        continue;
+
+                    macros.Add(new($"VtxUVs{i}", "1"));
+                    macros.Add(new($"VtxUV{i}Type", type.ToHLSL()));
+                }
+            }
+            if ((Flags & VertexFlags.Normals) != 0)
+            {
+                macros.Add(new("VtxNormals", "1"));
+            }
+            if ((Flags & VertexFlags.Tangents) != 0)
+            {
+                macros.Add(new("VtxTangents", "1"));
+            }
+            if ((Flags & VertexFlags.Skinned) != 0)
+            {
+                macros.Add(new("VtxSkinned", "1"));
+            }
+            return [.. macros];
+        }
 
         /// <summary>
         /// Removes bone-related information from the mesh.
@@ -340,7 +457,7 @@
         {
             BoneCount = 0;
             Bones = null;
-            Flags ^= VertexFlags.Skinned;
+            Flags &= ~VertexFlags.Skinned;
         }
     }
 }

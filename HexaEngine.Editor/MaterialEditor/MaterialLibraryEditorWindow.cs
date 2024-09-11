@@ -8,6 +8,7 @@
     using HexaEngine.Editor.Dialogs;
     using System.Text;
 
+    [Obsolete("Legacy Component. Use MaterialEditorWindow instead.")]
     public class MaterialLibraryEditorWindow : EditorWindow
     {
         private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
@@ -284,13 +285,15 @@
                 isActive |= ImGui.IsItemActive();
 
                 /*  var file = tex.File;
-                  if (ImGui.InputText($"File##{i}", ref file, 1024))
-                  {
-                      material.Textures.MutateItem(i, x => { x.File = file; return x; });
-                      hasChanged = true;
-                  }
-                  isActive |= ImGui.IsItemActive();*/
+                if (ImGui.InputText($"File##{i}", ref file, 1024))
+                {
+                    material.Textures.MutateItem(i, x => { x.File = file; return x; });
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+                */
 
+                /*
                 var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
                 if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
                 {
@@ -314,6 +317,7 @@
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
+                */
 
                 var uvwSrc = tex.UVWSrc;
                 if (ImGui.InputInt($"UVWSrc##{i}", ref uvwSrc))

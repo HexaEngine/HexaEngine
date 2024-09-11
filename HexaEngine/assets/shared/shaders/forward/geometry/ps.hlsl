@@ -134,9 +134,24 @@ struct PixelOutput
 PixelOutput main(PixelInput input)
 {
     float3 position = input.pos;
+    
+#if VtxColors
+    float4 baseColor = input.color;
+#else
     float4 baseColor = BaseColor;
+#endif
+
+#if VtxNormals
     float3 normal = normalize(input.normal);
+#else 
+    float3 normal = 0;
+#endif
+
+#if VtxTangents
     float3 tangent = normalize(input.tangent);
+#else
+    float3 tangent = 0;
+#endif
 
     float opacity = 1;
 

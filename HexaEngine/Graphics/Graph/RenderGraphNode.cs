@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Collections;
+    using HexaEngine.Core.Collections;
 
-    public class RenderGraphNode : INode
+    public class RenderGraphNode : INode<RenderGraphNode>
     {
         public RenderGraphNode(string name)
         {
@@ -39,7 +39,7 @@
 
         public int QueueIndex { get; internal set; }
 
-        List<INode> INode.Dependencies => Dependencies.Cast<INode>().ToList();
+        IEnumerable<RenderGraphNode> INode<RenderGraphNode>.Dependencies => Dependencies;
 
         public override string ToString()
         {

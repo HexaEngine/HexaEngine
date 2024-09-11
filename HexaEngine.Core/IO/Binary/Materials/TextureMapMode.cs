@@ -6,23 +6,28 @@
     public enum TextureMapMode
     {
         /// <summary>
-        /// Wraps the texture coordinates.
+        /// Tile the texture at every integer junction.
         /// </summary>
-        Wrap = 0x0,
+        Wrap = unchecked(1),
 
         /// <summary>
-        /// Clamps the texture coordinates.
+        /// Flip the texture at every integer junction.
         /// </summary>
-        Clamp = 0x1,
+        Mirror = unchecked(2),
 
         /// <summary>
-        /// Mirrors the texture coordinates.
+        /// Texture coordinates outside the range [0, 1] are clamped to the border.
         /// </summary>
-        Mirror = 0x2,
+        Clamp = unchecked(3),
 
         /// <summary>
-        /// Applies decal mapping.
+        /// Texture coordinates outside the range [0, 1] are set to the border color.
         /// </summary>
-        Decal = 0x3,
+        Border = unchecked(4),
+
+        /// <summary>
+        /// Similar to <see cref="Mirror"/>, but only mirrors once.
+        /// </summary>
+        MirrorOnce = unchecked(5)
     }
 }

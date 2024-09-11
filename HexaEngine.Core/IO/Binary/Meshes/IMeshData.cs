@@ -9,5 +9,7 @@
         public Guid Guid { get; }
 
         InputElementDescription[] InputElements { get; }
+
+        ShaderMacro[] GetShaderMacros();
     }
 }

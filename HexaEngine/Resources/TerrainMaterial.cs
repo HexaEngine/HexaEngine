@@ -225,9 +225,9 @@
                 pipelineDescDepth.DomainShader = "forward/terrain/depth/ds.hlsl";
             }
 
-            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward));
-            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred));
-            passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth));
+            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, false, "forward/terrain/surface.hlsl"));
+            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, false, "deferred/terrain/surface.hlsl"));
+            passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth, false));
 
             GraphicsPipelineDesc pipelineDescUnlit = new()
             {
@@ -290,9 +290,9 @@
                 Topology = PrimitiveTopology.TriangleList,
             };
 
-            passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc));
-            passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc));
-            passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc));
+            passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc, false));
+            passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc, false));
+            passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc, false));
 
             //flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.DepthTest;
 
@@ -302,7 +302,7 @@
         private static MaterialShaderDesc GetMaterialShaderDesc(Guid id, ShaderMacro[] macros, bool alphaBlend, bool tessellate)
         {
             var passes = GetMaterialShaderPasses(alphaBlend, tessellate);
-            return new(id, [.. macros], TerrainCellData.InputElements, passes);
+            return new(id, [.. macros], [], TerrainCellData.InputElements, passes);
         }
 
         public MaterialShaderPass? GetPass(string passName)

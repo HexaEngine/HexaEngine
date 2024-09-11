@@ -340,7 +340,7 @@
             {
                 // Get content region.
                 Vector2 vMin = ImGui.GetCursorPos();
-                Vector2 vMax = ImGui.GetContentRegionAvail();
+                Vector2 vMax = ImGui.GetWindowSize();
                 Vector2 wPos = ImGui.GetWindowPos();
 
                 // Viewport window.

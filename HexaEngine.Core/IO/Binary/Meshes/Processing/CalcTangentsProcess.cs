@@ -31,7 +31,7 @@
 
             Vector3[] meshPos = pMesh.Positions;
             Vector3[] meshNorm = pMesh.Normals;
-            Vector3[] meshTex = pMesh.UVs;
+            Vector2[] meshTex = pMesh.UVChannels[0].GetUV2D();
             Vector3[] meshTang = pMesh.Tangents;
 
             // calculate the tangent and bitangent for every face
@@ -188,6 +188,8 @@
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
             MemsetT(vertTangents, 0, (int)pMesh.VertexCount);
 
+            Vector2[] meshTex = pMesh.UVChannels[0].GetUV2D();
+
             for (uint i = 0; i < nFace; ++i)
             {
                 var i0 = pMesh.Indices[i * 3];
@@ -201,8 +203,8 @@
                 Vector3 v = vtxP2 - vtxP1;
                 Vector3 w = vtxP3 - vtxP1;
 
-                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
-                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
+                float sx = meshTex[i1].X - meshTex[i0].X, sy = meshTex[i1].Y - meshTex[i0].Y;
+                float tx = meshTex[i2].X - meshTex[i0].X, ty = meshTex[i2].Y - meshTex[i0].Y;
 
                 float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
 

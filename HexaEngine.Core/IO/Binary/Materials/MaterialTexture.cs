@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using System.Collections.Generic;
+    using System.Numerics;
     using System.Text;
 
     /// <summary>
@@ -68,24 +69,14 @@
         public Guid File;
 
         /// <summary>
-        /// Blend mode of the texture.
-        /// </summary>
-        public BlendMode Blend;
-
-        /// <summary>
-        /// Texture operation.
-        /// </summary>
-        public TextureOp Op;
-
-        /// <summary>
-        /// Mapping value.
-        /// </summary>
-        public int Mapping;
-
-        /// <summary>
         /// UVW source.
         /// </summary>
         public int UVWSrc;
+
+        /// <summary>
+        /// Texture filter mode.
+        /// </summary>
+        public TextureMapFilter Filter;
 
         /// <summary>
         /// U-axis texture map mode.
@@ -98,24 +89,60 @@
         public TextureMapMode V;
 
         /// <summary>
+        /// W-axis texture map mode.
+        /// </summary>
+        public TextureMapMode W;
+
+        /// <summary>
+        /// Gets or sets the bias to apply to mip level calculations.
+        /// </summary>
+        public float MipLODBias = 0.0f;
+
+        /// <summary>
+        /// Gets or sets the maximum anisotropy value.
+        /// </summary>
+        public int MaxAnisotropy = MaxMaxAnisotropy;
+
+        /// <summary>
+        /// Gets or sets the border color for texture addressing mode <see cref="TextureMapMode.Border"/>.
+        /// </summary>
+        public Vector4 BorderColor = Vector4.Zero;
+
+        /// <summary>
+        /// Gets or sets the minimum level-of-detail value.
+        /// </summary>
+        public float MinLOD = float.MinValue;
+
+        /// <summary>
+        /// Gets or sets the maximum level-of-detail value.
+        /// </summary>
+        public float MaxLOD = float.MaxValue;
+
+        /// <summary>
         /// Texture flags.
         /// </summary>
         public TextureFlags Flags;
 
+        public const int MaxMaxAnisotropy = unchecked(16);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MaterialTexture"/> struct.
         /// </summary>
-        public MaterialTexture(string name, MaterialTextureType type, Guid file, BlendMode blend, TextureOp op, int mapping, int uVWSrc, TextureMapMode u, TextureMapMode v, TextureFlags flags)
+        public MaterialTexture(string name, MaterialTextureType type, Guid file, int uVWSrc, TextureMapFilter filter, TextureMapMode u, TextureMapMode v, TextureMapMode w, float mipLODBias, int maxAnisotropy, Vector4 borderColor, float minLOD, float maxLOD, TextureFlags flags)
         {
             Name = name;
             Type = type;
             File = file;
-            Blend = blend;
-            Op = op;
-            Mapping = mapping;
             UVWSrc = uVWSrc;
+            Filter = filter;
             U = u;
             V = v;
+            W = w;
+            MipLODBias = mipLODBias;
+            MaxAnisotropy = maxAnisotropy;
+            BorderColor = borderColor;
+            MinLOD = minLOD;
+            MaxLOD = maxLOD;
             Flags = flags;
         }
 
@@ -144,12 +171,16 @@
             }
 
             data.File = stream.ReadGuid(endianness);
-            data.Blend = (BlendMode)stream.ReadInt32(endianness);
-            data.Op = (TextureOp)stream.ReadInt32(endianness);
-            data.Mapping = stream.ReadInt32(endianness);
             data.UVWSrc = stream.ReadInt32(endianness);
+            data.Filter = (TextureMapFilter)stream.ReadInt32(endianness);
             data.U = (TextureMapMode)stream.ReadInt32(endianness);
             data.V = (TextureMapMode)stream.ReadInt32(endianness);
+            data.W = (TextureMapMode)stream.ReadInt32(endianness);
+            data.MipLODBias = stream.ReadFloat(endianness);
+            data.MaxAnisotropy = stream.ReadInt32(endianness);
+            data.BorderColor = stream.ReadVector4(endianness);
+            data.MinLOD = stream.ReadFloat(endianness);
+            data.MaxLOD = stream.ReadFloat(endianness);
             data.Flags = (TextureFlags)stream.ReadInt32(endianness);
             return data;
         }
@@ -165,12 +196,16 @@
             stream.WriteString(Name, encoding, endianness);
             stream.WriteInt32((int)Type, endianness);
             stream.WriteGuid(File, endianness);
-            stream.WriteInt32((int)Blend, endianness);
-            stream.WriteInt32((int)Op, endianness);
-            stream.WriteInt32(Mapping, endianness);
             stream.WriteInt32(UVWSrc, endianness);
+            stream.WriteInt32((int)Filter, endianness);
             stream.WriteInt32((int)U, endianness);
             stream.WriteInt32((int)V, endianness);
+            stream.WriteInt32((int)W, endianness);
+            stream.WriteFloat(MipLODBias, endianness);
+            stream.WriteInt32(MaxAnisotropy, endianness);
+            stream.WriteVector4(BorderColor, endianness);
+            stream.WriteFloat(MinLOD, endianness);
+            stream.WriteFloat(MaxLOD, endianness);
             stream.WriteInt32((int)Flags, endianness);
         }
 
@@ -180,7 +215,7 @@
         /// <returns>The <see cref="SamplerStateDescription"/> for the material texture.</returns>
         public readonly SamplerStateDescription GetSamplerDesc()
         {
-            return new(Filter.Anisotropic, Convert(U), Convert(V), TextureAddressMode.Clamp, 0, 16, ComparisonFunction.Never, default, 0, int.MaxValue);
+            return new SamplerStateDescription((Filter)Filter, Convert(U), Convert(V), Convert(W), MipLODBias, MaxAnisotropy, ComparisonFunction.Never, BorderColor, MinLOD, MaxLOD);
         }
 
         /// <summary>
@@ -206,8 +241,9 @@
                 TextureMapMode.Wrap => TextureAddressMode.Wrap,
                 TextureMapMode.Clamp => TextureAddressMode.Clamp,
                 TextureMapMode.Mirror => TextureAddressMode.Mirror,
-                TextureMapMode.Decal => TextureAddressMode.Clamp,
-                _ => throw new NotSupportedException(),
+                TextureMapMode.Border => TextureAddressMode.Border,
+                TextureMapMode.MirrorOnce => TextureAddressMode.MirrorOnce,
+                _ => TextureAddressMode.Clamp,
             };
         }
 
@@ -223,7 +259,9 @@
                 TextureAddressMode.Wrap => TextureMapMode.Wrap,
                 TextureAddressMode.Clamp => TextureMapMode.Clamp,
                 TextureAddressMode.Mirror => TextureMapMode.Mirror,
-                _ => throw new NotSupportedException(),
+                TextureAddressMode.Border => TextureMapMode.Border,
+                TextureAddressMode.MirrorOnce => TextureMapMode.MirrorOnce,
+                _ => TextureMapMode.Clamp,
             };
         }
 
@@ -232,7 +270,7 @@
         /// </summary>
         public override readonly string ToString()
         {
-            return $"{Type}, {File}, {Blend}, {Op}, {Mapping}, {UVWSrc}, {U}, {V}, {Flags}";
+            return $"{Type}, {File}, {UVWSrc}, {Filter}, {U}, {V}, {W}, {Flags}";
         }
 
         /// <summary>
@@ -257,12 +295,16 @@
             MaterialTexture texture = default;
             texture.Type = Type;
             texture.File = File;
-            texture.Blend = Blend;
-            texture.Op = Op;
-            texture.Mapping = Mapping;
             texture.UVWSrc = UVWSrc;
+            texture.Filter = Filter;
             texture.U = U;
             texture.V = V;
+            texture.W = W;
+            texture.MipLODBias = MipLODBias;
+            texture.MaxAnisotropy = MaxAnisotropy;
+            texture.BorderColor = BorderColor;
+            texture.MinLOD = MinLOD;
+            texture.MaxLOD = MaxLOD;
             texture.Flags = Flags;
             return texture;
         }

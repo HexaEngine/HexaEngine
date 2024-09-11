@@ -344,5 +344,10 @@
                 }
             }
         }
+
+        public ShaderMacro[] GetShaderMacros()
+        {
+            return []; // nothing needed terrain meshes have a static vertex layout.
+        }
     }
 }

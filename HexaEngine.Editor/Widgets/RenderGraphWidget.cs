@@ -351,10 +351,10 @@
                     ImGui.Text(node.Name);
                     ImNodes.EndNodeTitleBar();
 
-                    ImNodes.BeginInputAttribute(imNode.Input, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginInputAttribute(imNode.Input, PinShape.CircleFilled);
                     ImNodes.EndInputAttribute();
                     ImGui.SameLine();
-                    ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginOutputAttribute(imNode.Output, PinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
                     for (int j = 0; j < node.Dependencies.Count; j++)
@@ -369,7 +369,7 @@
                     {
                         var dep = node.WriteDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginOutputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
+                        ImNodes.BeginOutputAttribute(atrri.Id, PinShape.CircleFilled);
                         ImGui.Text(dep.Name);
                         ImNodes.EndOutputAttribute();
                     }
@@ -378,7 +378,7 @@
                     {
                         var dep = node.ReadDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginInputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
+                        ImNodes.BeginInputAttribute(atrri.Id, PinShape.CircleFilled);
                         ImGui.Text(dep.Name);
                         ImNodes.EndInputAttribute();
                     }

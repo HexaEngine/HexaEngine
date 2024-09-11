@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.Utilities;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
@@ -71,7 +72,7 @@
             meshes = model.Meshes;
             materials = model.Materials;
 
-            transformBuffer.Resize += TransformBufferResize;
+            CullingManager.Current.BuffersResized += TransformBufferResize;
 
             initialized = true;
         }

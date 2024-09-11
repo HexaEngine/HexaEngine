@@ -14,6 +14,7 @@ namespace HexaEngine.Core.Assets
         {
             RegisterImporter<ScriptImporter>();
             RegisterImporter<TextureImporter>();
+            //RegisterImporter<GLTFImporter>();
             RegisterImporter<ModelImporter>();
             RegisterImporter<AnimationImporter>();
             RegisterImporter<MaterialImporter>();

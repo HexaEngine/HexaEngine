@@ -7,7 +7,6 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
-    using Silk.NET.OpenAL;
 
     public class OverlayPass : RenderPass
     {
@@ -16,8 +15,6 @@
 
         private ResourceRef<DepthStencil> depthStencil;
         private ResourceRef<Texture2D> postFxBuffer;
-
-        private DebugDrawRenderer debugDrawRenderer;
 
         public OverlayPass() : base("OverlayPass")
         {
@@ -41,8 +38,6 @@
 
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             postFxBuffer = creator.GetTexture2D("PostFxBuffer");
-
-            debugDrawRenderer = new(creator.Device);
         }
 
         public override void Prepare(GraphResourceBuilder creator)
@@ -62,11 +57,11 @@
                 context.SetRenderTarget(postFxBuffer.Value, depthStencil.Value);
                 DebugDraw.SetViewport(creator.Viewport.Offset, creator.Viewport.Size);
                 profiler?.Begin("DebugDraw.EndDraw");
-                debugDrawRenderer?.EndDraw();
+                DebugDrawRenderer.EndDraw();
                 profiler?.End("DebugDraw.EndDraw");
                 context.SetViewport(creator.Viewport);
                 profiler?.Begin("DebugDraw.BeginDraw");
-                debugDrawRenderer?.BeginDraw();
+                DebugDrawRenderer.BeginDraw();
                 profiler?.End("DebugDraw.BeginDraw");
                 profiler?.End("DebugDraw");
             }
@@ -78,11 +73,6 @@
             context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
-        }
-
-        public override void Release()
-        {
-            debugDrawRenderer.Dispose();
         }
     }
 }

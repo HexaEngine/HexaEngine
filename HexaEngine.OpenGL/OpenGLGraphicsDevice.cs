@@ -188,6 +188,23 @@
             return new OpenGLBuffer(buffer, description);
         }
 
+        public unsafe IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
+        {
+            uint size = (uint)(stride * count);
+            description.ByteWidth = (int)size;
+            var buffer = GL.GenBuffer();
+            CheckError();
+
+            var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
+            var usage = Helper.Convert(description.Usage);
+            GL.BindBuffer(target, buffer);
+            GL.BufferData(target, (nuint)description.ByteWidth, values, usage);
+            GL.BindBuffer(target, 0);
+            CheckError();
+
+            return new OpenGLBuffer(buffer, description);
+        }
+
         public unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);

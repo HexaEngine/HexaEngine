@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Collections;
+    using HexaEngine.Core.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
 
-    public class ScriptNode : INode
+    public class ScriptNode : INode<ScriptNode>
     {
         private readonly List<ScriptNode> dependencies = [];
         private readonly List<ScriptNode> dependants = [];
@@ -21,7 +20,7 @@
 
         public Type ScriptType => scriptType;
 
-        List<INode> INode.Dependencies => dependencies.Cast<INode>().ToList();
+        IEnumerable<ScriptNode> INode<ScriptNode>.Dependencies => dependencies;
 
         public List<ScriptNode> Dependencies => dependencies;
 

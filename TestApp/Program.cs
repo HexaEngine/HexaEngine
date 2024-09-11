@@ -1,5 +1,7 @@
 ﻿namespace TestApp
 {
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Assets.Importer;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
@@ -9,6 +11,25 @@
     {
         public static void Main(string[] args)
         {
+            string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(root);
+            Directory.CreateDirectory(Path.Combine(root, "assets"));
+            SourceAssetsDatabase.Init(root, new ProgressDummy()).Wait();
+
+            var path = "gltftest/DamagedHelmet.gltf";
+
+            SourceAssetMetadata metadata = new(path, Guid.Empty, DateTime.Now, 0x0);
+            metadata.Save();
+            ImportContext context = new(DefaultGuidProvider.Instance, metadata, "gltftest/DamagedHelmet.gltf", null);
+
+            SourceAssetsDatabase.ImportFile(path);
+        }
+
+        private struct ProgressDummy : IProgress<float>
+        {
+            public readonly void Report(float value)
+            {
+            }
         }
 
         /* public static void Main()

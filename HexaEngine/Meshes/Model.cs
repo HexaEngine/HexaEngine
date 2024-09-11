@@ -484,17 +484,17 @@
 
             if ((flags & ModelMaterialShaderFlags.Forward) != 0)
             {
-                passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward));
+                passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, true, "forward/geometry/surface.hlsl"));
             }
 
             if ((flags & ModelMaterialShaderFlags.Deferred) != 0)
             {
-                passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred));
+                passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, true, "deferred/geometry/surface.hlsl"));
             }
 
             if ((flags & ModelMaterialShaderFlags.DepthTest) != 0)
             {
-                passes.Add(new("DepthOnly", pipelineDescDepthOnly, pipelineStateDescDepthOnly));
+                passes.Add(new("DepthOnly", pipelineDescDepthOnly, pipelineStateDescDepthOnly, false));
             }
 
             if ((flags & ModelMaterialShaderFlags.Shadow) != 0)
@@ -551,9 +551,9 @@
                     Topology = PrimitiveTopology.TriangleList,
                 };
 
-                passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc));
-                passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc));
-                passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc));
+                passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc, false));
+                passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc, false));
+                passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc, false));
             }
 
             return passes;
@@ -561,20 +561,13 @@
 
         public static void BuildSurfaceShader(MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
         {
-            if (version.Value == SurfaceVersion)
-            {
-                StringBuilder sb = new();
-                sb.AppendLine($"#include \"../../material.hlsl\"");
-                sb.AppendLine(shader.Value);
-                sb.AppendLine(FileSystem.ReadAllText(Paths.CurrentShaderPath + baseShader));
-                pipelineDesc.PixelShader = ShaderSource.FromCode(baseShader, sb.ToString());
-            }
+            MaterialShaderResourceFactoryExtensions.BuildSurfaceShader(version, shader, ref pipelineDesc, baseShader);
         }
 
         public static MaterialShaderDesc GetMaterialShaderDesc(Mesh mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
-            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses(((MeshData)mesh.Data), material, debone, out flags);
-            return new(material, mesh.InputElements, [.. passes]);
+            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses((MeshData)mesh.Data, material, debone, out flags);
+            return new(material, mesh.Data.GetShaderMacros(), mesh.InputElements, [.. passes]);
         }
 
         public void Unload()

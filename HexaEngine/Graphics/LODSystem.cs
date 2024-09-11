@@ -4,6 +4,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Globalization;
+    using System.Numerics;
     using System.Xml;
     using System.Xml.Schema;
     using System.Xml.Serialization;
@@ -124,6 +125,10 @@
         private int updatesPerSecond = 20;
         private float updateDelta;
 
+        private Vector3 cameraPosition;
+        private float far;
+        private float near;
+
         public void Update(float delta)
         {
             var camera = CameraManager.Current;
@@ -142,28 +147,30 @@
 
             accumulator -= updateDelta;
 
-            var cameraPosition = camera.Transform.GlobalPosition;
+            cameraPosition = camera.Transform.GlobalPosition;
 
-            var far = 100;
-            var near = 10;
+            far = 100;
+            near = 10;
 
-            for (int i = 0; i < lodRenderers.Count; i++)
+            Parallel.For(0, lodRenderers.Count, UpdateBatch);
+        }
+
+        private void UpdateBatch(int index)
+        {
+            var lodRenderer = lodRenderers[index];
+
+            float distance = lodRenderer.Distance(cameraPosition);
+            int min = lodRenderer.MinLODLevel;
+            int max = lodRenderer.MaxLODLevel;
+            float bias = LODBias;
+            int level = ComputeLODLevel(distance, min, max, bias, near, far);
+
+            if (lodRenderer.LODLevel == level)
             {
-                var lodRenderer = lodRenderers[i];
-
-                float distance = lodRenderer.Distance(cameraPosition);
-                int min = lodRenderer.MinLODLevel;
-                int max = lodRenderer.MaxLODLevel;
-                float bias = LODBias;
-                int level = ComputeLODLevel(distance, min, max, bias, near, far);
-
-                if (lodRenderer.LODLevel == level)
-                {
-                    continue;
-                }
-
-                lodRenderer.SetLODLevel(level);
+                return;
             }
+
+            lodRenderer.SetLODLevel(level);
         }
 
         private static int ComputeLODLevel(float distance, int minLODLevel, int maxLODLevel, float bias, float minDistance, float maxDistance)

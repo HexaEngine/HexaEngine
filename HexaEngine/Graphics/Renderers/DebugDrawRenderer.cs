@@ -6,7 +6,7 @@
     using System;
     using System.Numerics;
 
-    public unsafe class DebugDrawRenderer : IDisposable
+    public static unsafe class DebugDrawRenderer
     {
         private static IGraphicsDevice device;
         private static IGraphicsContext context;
@@ -21,12 +21,10 @@
 
         private static int vertexBufferSize = 5000;
         private static int indexBufferSize = 10000;
-        private bool disposedValue;
 
-        public DebugDrawRenderer(IGraphicsDevice device)
+        public static void Init(IGraphicsDevice device)
         {
             DebugDrawRenderer.device = device;
-
             context = device.Context;
             debugDrawContext = DebugDraw.CreateContext();
             CreateDeviceObjects();
@@ -140,91 +138,16 @@
             Free(pixels);
         }
 
-        public void BeginDraw()
+        public static void BeginDraw()
         {
             DebugDraw.SetCurrentContext(debugDrawContext);
             DebugDraw.NewFrame();
         }
 
-        public void EndDraw()
+        public static void EndDraw()
         {
             DebugDraw.Render();
             Render(DebugDraw.GetDrawData());
-        }
-
-        private void Render(DebugDrawCommandList queue, Matrix4x4 camera)
-        {
-            if (!Application.InEditorMode)
-            {
-                return;
-            }
-
-#if DEBUG
-            context.BeginEvent("DebugDrawRenderer");
-#endif
-
-            if (queue.VertexCount > vertexBufferSize)
-            {
-                vertexBuffer.Dispose();
-                vertexBufferSize = (int)(queue.VertexCount * 1.5f);
-                vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            }
-
-            if (queue.IndexCount > indexBufferSize)
-            {
-                indexBuffer.Dispose();
-                indexBufferSize = (int)(queue.IndexCount * 1.5f);
-                indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(uint), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            }
-
-            var vertexResource = context.Map(vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
-            var indexResource = context.Map(indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
-            var vertexResourcePointer = (DebugDrawVert*)vertexResource.PData;
-            var indexResourcePointer = (uint*)indexResource.PData;
-
-            MemcpyT(queue.Vertices, vertexResourcePointer, queue.VertexCount);
-            MemcpyT(queue.Indices, indexResourcePointer, queue.IndexCount);
-
-            context.Unmap(vertexBuffer, 0);
-            context.Unmap(indexBuffer, 0);
-
-            context.Write(constantBuffer, Matrix4x4.Transpose(camera));
-
-            {
-                context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
-                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-
-                int voffset = 0;
-                uint ioffset = 0;
-
-                for (int i = 0; i < queue.Commands.Count; i++)
-                {
-                    var cmd = queue.Commands[i];
-
-                    var texId = cmd.TextureId;
-                    if (texId == 0)
-                    {
-                        texId = fontTextureView.NativePointer;
-                    }
-                    var srv = new SRVWrapper(texId);
-                    pso.Bindings.SetSRV("fontTex", srv);
-                    context.SetGraphicsPipelineState(pso);
-                    context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
-                    context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);
-                    voffset += (int)cmd.VertexCount;
-                    ioffset += cmd.IndexCount;
-                }
-            }
-
-            context.SetGraphicsPipelineState(null);
-            context.SetViewport(default);
-            context.SetVertexBuffer(null, 0, 0);
-            context.SetIndexBuffer(null, default, 0);
-            context.SetPrimitiveTopology(PrimitiveTopology.Undefined);
-
-#if DEBUG
-            context.EndEvent();
-#endif
         }
 
         private struct SRVWrapper : IShaderResourceView
@@ -249,7 +172,7 @@
             }
         }
 
-        private void SetupRenderState(DebugDrawData data)
+        private static void SetupRenderState(DebugDrawData data)
         {
             context.SetViewport(new(data.Viewport.Offset, data.Viewport.Size));
             context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
@@ -257,7 +180,7 @@
             context.SetGraphicsPipelineState(pso);
         }
 
-        private void Render(DebugDrawData data)
+        private static void Render(DebugDrawData data)
         {
             if (!Application.InEditorMode || data.Viewport.Width <= 0 || data.Viewport.Height <= 0)
             {
@@ -337,26 +260,15 @@
 #endif
         }
 
-        protected virtual void Dispose(bool disposing)
+        public static void Shutdown()
         {
-            if (!disposedValue)
-            {
-                debugDrawContext.Dispose();
-                pso.Dispose();
-                constantBuffer.Dispose();
-                vertexBuffer.Dispose();
-                indexBuffer.Dispose();
-                fontSampler.Dispose();
-                fontTextureView.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            debugDrawContext.Dispose();
+            pso.Dispose();
+            constantBuffer.Dispose();
+            vertexBuffer.Dispose();
+            indexBuffer.Dispose();
+            fontSampler.Dispose();
+            fontTextureView.Dispose();
         }
     }
 }

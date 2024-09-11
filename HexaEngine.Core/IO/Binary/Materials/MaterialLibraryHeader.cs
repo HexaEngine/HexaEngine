@@ -16,12 +16,12 @@
         /// <summary>
         /// Current version of the material library file format.
         /// </summary>
-        public static readonly Version Version = new(6, 0, 0, 1);
+        public static readonly Version Version = new(2, 0, 0, 2);
 
         /// <summary>
         /// Minimum supported version of the material library file format.
         /// </summary>
-        public static readonly Version MinVersion = new(5, 0, 0, 0);
+        public static readonly Version MinVersion = new(2, 0, 0, 2);
 
         /// <summary>
         /// The endianness of the material library file.

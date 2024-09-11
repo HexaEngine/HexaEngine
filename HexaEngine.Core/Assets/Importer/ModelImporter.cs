@@ -14,6 +14,7 @@
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
     using HexaEngine.Core.UI;
+    using HexaEngine.Materials;
     using Silk.NET.Assimp;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -443,7 +444,7 @@
                                 }
                             }
                             var index = textures.Count;
-                            textures.Add(new MaterialTexture() { Type = t });
+                            textures.Add(new MaterialTexture() { Type = t, Filter = TextureMapFilter.Anisotropic, MaxAnisotropy = MaterialTexture.MaxMaxAnisotropy, W = IO.Binary.Materials.TextureMapMode.Clamp, MinLOD = float.MinValue, MaxLOD = float.MaxValue });
                             return ref textures.GetInternalArray()[index];
                         }
 
@@ -459,7 +460,7 @@
                                 }
                             }
                             var index = textures.Count;
-                            textures.Add(new MaterialTexture() { Type = t, File = guid });
+                            textures.Add(new MaterialTexture() { Type = t, File = guid, Filter = TextureMapFilter.Anisotropic, MaxAnisotropy = MaterialTexture.MaxMaxAnisotropy, W = IO.Binary.Materials.TextureMapMode.Clamp, MinLOD = float.MinValue, MaxLOD = float.MaxValue });
                             return index;
                         }
 
@@ -646,15 +647,15 @@
                                 break;
 
                             case Assimp.MatkeyTexopBase:
-                                FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                //FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                                 break;
 
                             case Assimp.MatkeyMappingBase:
-                                FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                                //FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
                                 break;
 
                             case Assimp.MatkeyTexblendBase:
-                                FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                //FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                                 break;
 
                             case Assimp.MatkeyMappingmodeUBase:
@@ -713,8 +714,18 @@
                         material.Name = i.ToString();
                     }
 
+                    for (int j = 0; j < i; j++)
+                    {
+                        if (j != i && materials[j]?.Name == material.Name)
+                        {
+                            material.Name += i.ToString();
+                        }
+                    }
+
                     material.Properties = properties;
                     material.Textures = textures;
+
+                    MaterialNodeConverter.Convert(material, Logger);
 
                     // try
                     {
@@ -854,17 +865,73 @@
                     Mesh* msh = scene->MMeshes[i];
 
                     uint[] indices = new uint[msh->MNumFaces * 3];
-                    for (int j = 0; j < msh->MNumFaces; j++)
+                    fixed (uint* pFixedIndices = indices)
                     {
-                        var face = msh->MFaces[j];
-                        for (int k = 0; k < 3; k++)
+                        var pIndices = pFixedIndices;
+                        for (int j = 0; j < msh->MNumFaces; j++)
                         {
-                            indices[j * 3 + k] = face.MIndices[k];
+                            Silk.NET.Assimp.Face* face = &msh->MFaces[j];  // Pointer to the current face
+                            *pIndices++ = face->MIndices[0];
+                            *pIndices++ = face->MIndices[1];
+                            *pIndices++ = face->MIndices[2];
                         }
                     }
 
                     Vector4[]? colors = ToManaged(msh->MColors.Element0, msh->MNumVertices);
                     Vector3[]? positions = ToManaged(msh->MVertices, msh->MNumVertices);
+
+                    UVChannelInfo channelInfo;
+                    UVChannel[] channels = new UVChannel[UVChannelInfo.MaxChannels];
+                    UVType* pType = (UVType*)&channelInfo;
+
+                    for (int j = 0; j < UVChannelInfo.MaxChannels; j++)
+                    {
+                        var pUVs = msh->MTextureCoords[j];
+                        if (pUVs == null)
+                        {
+                            pType[j] = UVType.Empty;
+                            continue;
+                        }
+
+                        var componentCount = msh->MNumUVComponents[j];
+
+                        UVChannel channel = default;
+                        switch (componentCount)
+                        {
+                            case 2:
+                                {
+                                    var type = pType[j] = UVType.UV2D;
+                                    channel = new(type, msh->MNumVertices);
+                                    Vector2[] channelData = channel.GetUV2D();
+                                    for (int k = 0; k < msh->MNumVertices; k++)
+                                    {
+                                        Vector3 uvw = pUVs[k];
+                                        channelData[k] = new(uvw.X, uvw.Y);
+                                    }
+                                }
+                                break;
+
+                            case 3:
+                                {
+                                    var type = pType[j] = UVType.UV3D;
+                                    channel = new(type, msh->MNumVertices);
+                                    Vector3[] channelData = channel.GetUV3D();
+                                    for (int k = 0; k < msh->MNumVertices; k++)
+                                    {
+                                        channelData[k] = pUVs[k];
+                                    }
+                                }
+                                break;
+
+                            case 4: // assimp doesnt support 4D UVs
+                            default:
+                                pType[j] = UVType.Empty; // do not attempt to copy if invalid
+                                break;
+                        }
+
+                        channels[j] = channel;
+                    }
+
                     Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
                     Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
                     Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
@@ -953,7 +1020,7 @@
                         flags |= VertexFlags.Skinned;
                     }
 
-                    MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, bones);
+                    MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, channelInfo, bones);
 
                     BoneWeight[]? weights = null;
                     if (bones != null)
@@ -965,7 +1032,7 @@
                         }
                     }
 #nullable disable
-                    MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, uvs, normals, tangents, weights);
+                    MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, channels, normals, tangents, weights);
 #nullable restore
                     mesh.LODs.Add(data);
 
@@ -1001,7 +1068,7 @@
                     {
                         ModelFile modelFile = new(meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
-                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
+                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.None);
                         progressContext.AddProgress();
                     }
                     catch (Exception ex)
@@ -1154,7 +1221,6 @@
             {
                 TextureMapMode.Wrap => IO.Binary.Materials.TextureMapMode.Wrap,
                 TextureMapMode.Clamp => IO.Binary.Materials.TextureMapMode.Clamp,
-                TextureMapMode.Decal => IO.Binary.Materials.TextureMapMode.Decal,
                 TextureMapMode.Mirror => IO.Binary.Materials.TextureMapMode.Mirror,
                 _ => throw new NotImplementedException(),
             };

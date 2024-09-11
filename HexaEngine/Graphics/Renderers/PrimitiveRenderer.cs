@@ -40,7 +40,7 @@
             this.primitive = primitive;
             this.material = material;
 
-            transformBuffer.Resize += TransformBufferResize;
+            CullingManager.Current.BuffersResized += TransformBufferResize;
 
             initialized = true;
         }
@@ -50,7 +50,7 @@
             this.primitive = primitive;
             this.material = material;
 
-            transformBuffer.Resize += TransformBufferResize;
+            CullingManager.Current.BuffersResized += TransformBufferResize;
 
             initialized = true;
         }

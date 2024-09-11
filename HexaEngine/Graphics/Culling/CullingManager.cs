@@ -9,7 +9,6 @@
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public class CullingManager
     {
@@ -30,6 +29,8 @@
 
         private StructuredBuffer<uint> instanceOffsetsNoCull;
         private StructuredBuffer<Matrix4x4> instanceDataNoCull;
+
+        private readonly EventHandlers<CapacityChangedEventArgs> resizedEventHandlers = new();
 
         private ConstantBuffer<OcclusionParams> occlusionParamBuffer;
         private SamplerState sampler;
@@ -73,14 +74,19 @@
 
             context = new(instanceOffsetsNoCull, instanceDataNoCull, instanceOffsets, instanceDataOutBuffer, typeDataBuffer, instanceDataBuffer, swapBuffer, drawIndirectArgs, visibleListBuffer);
 
-            instanceDataOutBuffer.Resize += InstanceDataOutBufferResize;
+            instanceDataBuffer.Resize += BufferResize;
+            instanceDataOutBuffer.Resize += BufferResize;
+            instanceOffsets.Resize += BufferResize;
+            swapBuffer.Resize += BufferResize;
+            visibleListBuffer.Resize += BufferResize;
         }
 
         private bool resized;
 
-        private void InstanceDataOutBufferResize(object? sender, CapacityChangedEventArgs e)
+        private void BufferResize(object? sender, CapacityChangedEventArgs e)
         {
             resized = true;
+            resizedEventHandlers.Invoke(this, e);
         }
 
         public static CullingManager Current { get; internal set; } = new(Application.GraphicsDevice);
@@ -92,6 +98,12 @@
         public float DepthBias { get => depthBias; set => depthBias = value; }
 
         public CullingStats Stats { get => stats; }
+
+        public event EventHandler<CapacityChangedEventArgs> BuffersResized
+        {
+            add => resizedEventHandlers.AddHandler(value);
+            remove => resizedEventHandlers.RemoveHandler(value);
+        }
 
         public void UpdateCamera(IGraphicsContext context, Camera camera, Viewport viewport)
         {
@@ -182,6 +194,8 @@
 
         public void Release()
         {
+            resizedEventHandlers.Clear();
+
             occlusionCameraBuffer.Dispose();
             occlusionCameraBuffer = null;
             instanceOffsets.Dispose();

@@ -56,11 +56,19 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	HullInput output;
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-
+#if VtxColors
+	output.color = input.color;
+#endif
 	output.position = mul(float4(totalPosition, 1), mat).xyzw;
+#if VtxUVs	
 	output.tex = input.tex;
+#endif
+#if VtxNormals
 	output.normal = mul(totalNormal, (float3x3)mat);
+#endif
+#if VtxTangents
 	output.tangent = mul(totalTangent, (float3x3)mat);
+#endif
 
 	output.TessFactor = ComputeTessFactor(output.position);
 	return output;
@@ -73,10 +81,19 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	HullInput output;
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+#if VtxColors
+	output.color = input.color;
+#endif
 	output.position = mul(float4(input.position, 1), mat).xyz;
+#if VtxUVs	
 	output.tex = input.tex;
+#endif
+#if VtxNormals
 	output.normal = mul(input.normal, (float3x3)mat);
+#endif
+#if VtxTangents
 	output.tangent = mul(input.tangent, (float3x3)mat);
+#endif
 	output.TessFactor = ComputeTessFactor(output.position);
 
 	return output;
@@ -102,12 +119,19 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	PixelInput output;
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-
-	output.position = mul(totalPosition, mat).xyzw;
-	output.pos = output.position;
+#if VtxColors
+	output.color = input.color;
+#endif
+	output.position = mul(float4(totalPosition, 1), mat).xyzw;
+#if VtxUVs	
 	output.tex = input.tex;
+#endif
+#if VtxNormals
 	output.normal = mul(totalNormal, (float3x3)mat);
+#endif
+#if VtxTangents
 	output.tangent = mul(totalTangent, (float3x3)mat);
+#endif
 	output.position = mul(output.position, viewProj);
 
 	return output;
@@ -122,11 +146,19 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	PixelInput output;
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-
+#if VtxColors
+	output.color = input.color;
+#endif
 	output.position = mul(float4(input.position, 1), mat).xyzw;
+#if VtxUVs	
 	output.tex = input.tex;
+#endif
+#if VtxNormals
 	output.normal = mul(input.normal, (float3x3)mat);
+#endif
+#if VtxTangents
 	output.tangent = mul(input.tangent, (float3x3)mat);
+#endif
 	output.position = mul(output.position, viewProj);
 
 	return output;

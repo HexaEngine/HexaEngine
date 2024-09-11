@@ -31,8 +31,7 @@
             transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;
             transformBuffer = cullingContext.InstanceDataOutBuffer;
             transformOffsetBuffer = cullingContext.InstanceOffsets;
-
-            transformBuffer.Resize += TransformBufferResize;
+            CullingManager.Current.BuffersResized += TransformBufferResize;
         }
 
         private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)
@@ -44,11 +43,7 @@
         {
             foreach (Material material in instance.Materials)
             {
-                if (dirtyFrame == 0 || dirtyFrame == Time.Frame - 1 || material.Dirty)
-                {
-                    Prepare(material);
-                    material.Dirty = false;
-                }
+                Prepare(material);
             }
         }
 

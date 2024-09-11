@@ -11,13 +11,31 @@ struct PixelOutput
 PixelOutput main(PixelInput input)
 {
     float3 position = input.pos;
-	float3 normal = normalize(input.normal);
-  	float3 tangent = normalize(input.tangent);
+#if VtxNormals
+    float3 normal = normalize(input.normal);
+#else 
+    float3 normal = 0;
+#endif
+
+#if VtxTangents
+    float3 tangent = normalize(input.tangent);
+#else
+    float3 tangent = 0;
+#endif
   	float3 bitangent = cross(normal, tangent);
 
   	Pixel geometry;
+#if VtxColors
+    geometry.color = input.color;
+#else 
+    geometry.color = 0;
+#endif
   	geometry.pos = input.position;
-  	geometry.uv = input.tex;
+#if VtxUVs
+    geometry.uv = input.tex;
+#else 
+    geometry.uv = 0;
+#endif 	
   	geometry.normal = normal;
   	geometry.tangent = tangent;
   	geometry.binormal = bitangent;
@@ -39,7 +57,7 @@ PixelOutput main(PixelInput input)
     float2 screenUV = GetScreenUV(input.position);
 
     float3 direct = ComputeDirectLightning(input.position.z / input.position.w, pixel);
-    float3 ambient = ComputeIndirectLightning(screenUV, pixel, material.ao, material.emissive);
+    float3 ambient = ComputeIndirectLightning(screenUV, pixel, material.ao, material.emissive.rgb * material.emissive.a);
 
     PixelOutput output;
     output.Color = float4(ambient + direct, opacity);

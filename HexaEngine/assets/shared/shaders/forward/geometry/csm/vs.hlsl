@@ -24,11 +24,11 @@ GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
 			continue;
 		if (input.boneIds[i] >= MaxBones)
 		{
-			totalPosition = float4(input.pos, 1.0f);
+			totalPosition = float4(input.position, 1.0f);
 			break;
 		}
 
-		float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
+		float4 localPosition = mul(float4(input.position, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
 		totalPosition += localPosition * input.weights[i];
 	}
 
@@ -49,7 +49,7 @@ GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-	output.pos = mul(float4(input.pos, 1), mat).xyz;
+	output.pos = mul(float4(input.position, 1), mat).xyz;
 
 	return output;
 }

@@ -269,5 +269,15 @@ namespace HexaEngine.Daxa
         {
             throw new NotImplementedException();
         }
+
+        public IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

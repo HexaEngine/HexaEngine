@@ -79,6 +79,7 @@ namespace Editor
         protected override void OnRendererInitialize(IGraphicsDevice device)
         {
             imGuiRenderer = new(this, graphicsDevice, graphicsContext);
+            DebugDrawRenderer.Init(device);
 
             initEditorTask = Task.Factory.StartNew(() =>
             {
@@ -263,6 +264,7 @@ namespace Editor
             {
                 initEditorTask.Wait();
             }
+            DebugDrawRenderer.Shutdown();
             imGuiRenderer.Dispose();
             Designer.Dispose();
         }

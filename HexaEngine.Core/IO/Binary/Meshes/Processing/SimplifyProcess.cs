@@ -24,7 +24,26 @@
             mesh.Colors = data.Colors;
             mesh.Normals = data.Normals;
             mesh.Tangents = data.Tangents;
-            mesh.SetUVs(0, data.UVs);
+
+            for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+            {
+                var channel = data.UVChannels[i];
+                switch (channel.Type)
+                {
+                    case UVType.UV2D:
+                        mesh.SetUVs(i, channel.GetUV2D());
+                        break;
+
+                    case UVType.UV3D:
+                        mesh.SetUVs(i, channel.GetUV3D());
+                        break;
+
+                    case UVType.UV4D:
+                        mesh.SetUVs(i, channel.GetUV4D());
+                        break;
+                }
+            }
+
             mesh.BoneWeights = data.BoneWeights?.Select(x => new BoneWeight(x.BoneIds, x.Weights)).ToArray();
 
             logger.Info($"Simplify Input: Vertices {data.VertexCount}, Indices {data.IndexCount}, Tris: {mesh.TriangleCount}");
@@ -47,7 +66,7 @@
             outputData.Positions = new Vector3[outputMesh.VertexCount];
             outputData.Normals = outputMesh.Normals;
             outputData.Tangents = outputMesh.Tangents;
-            outputData.UVs = new Vector3[outputMesh.VertexCount];
+            outputData.UVChannels = new UVChannel[UVChannelInfo.MaxChannels];
             outputData.BoneWeights = outputMesh.BoneWeights?.Select(x => new IO.BoneWeight(x.BoneIndex0, x.BoneIndex1, x.BoneIndex2, x.BoneIndex3, x.BoneWeight0, x.BoneWeight1, x.BoneWeight2, x.BoneWeight3)).ToArray();
 
             for (int i = 0; i < outputMesh.VertexCount; i++)
@@ -55,7 +74,25 @@
                 outputData.Positions[i] = outputMesh.Vertices[i];
             }
 
-            outputData.UVs = outputMesh.GetUVs3D(0);
+            for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+            {
+                var channel = outputData.UVChannels[i];
+                switch (channel.Type)
+                {
+                    case UVType.UV2D:
+                        channel.SetUVs(outputMesh.GetUVs2D(0)!);
+                        break;
+
+                    case UVType.UV3D:
+                        channel.SetUVs(outputMesh.GetUVs3D(0)!);
+                        break;
+
+                    case UVType.UV4D:
+                        channel.SetUVs(outputMesh.GetUVs4D(0)!);
+                        break;
+                }
+                outputData.UVChannels[i] = channel;
+            }
 
             outputData.GenerateBounds();
 

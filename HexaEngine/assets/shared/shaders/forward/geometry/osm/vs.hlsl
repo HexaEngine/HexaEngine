@@ -22,7 +22,7 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-	output.pos = mul(float4(input.pos, 1), mat).xyz;
+	output.pos = mul(float4(input.position, 1), mat).xyz;
 
 	output.TessFactor = TessellationFactor;
 	return output;
@@ -44,11 +44,11 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 			continue;
 		if (input.boneIds[i] >= MaxBones)
 		{
-			totalPosition = float4(input.pos, 1.0f);
+			totalPosition = float4(input.position, 1.0f);
 			break;
 		}
 
-		float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
+		float4 localPosition = mul(float4(input.position, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
 		totalPosition += localPosition * input.weights[i];
 	}
 
@@ -71,7 +71,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-	output.position = mul(float4(input.pos, 1), mat).xyzw;
+	output.position = mul(float4(input.position, 1), mat).xyzw;
 	float3 L = output.position.xyz - lightPosition;
 	output.position = mul(output.position, view);
 	output.depth = length(L) / lightFar;

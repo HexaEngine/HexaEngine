@@ -174,16 +174,6 @@
             return new D3D11Buffer(buffer, description);
         }
 
-        public IBuffer CreateBuffer(void* src, uint length, BufferDescription description)
-        {
-            ComPtr<ID3D11Buffer> buffer;
-            description.ByteWidth = (int)length;
-            BufferDesc desc = Helper.Convert(description);
-            var data = Helper.Convert(new SubresourceData(src, description.ByteWidth));
-            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
-            return new D3D11Buffer(buffer, description);
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
         {
@@ -203,13 +193,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
-        {
-            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
-            return CreateBuffer(value, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
         {
             uint size = (uint)(sizeof(T) * count);
@@ -222,10 +205,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        public IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
         {
-            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
-            return CreateBuffer(values, count, description);
+            uint size = (uint)(stride * count);
+            ComPtr<ID3D11Buffer> buffer;
+            description.ByteWidth = (int)size;
+            BufferDesc desc = Helper.Convert(description);
+            var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
+            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
+            return new D3D11Buffer(buffer, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

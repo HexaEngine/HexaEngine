@@ -154,6 +154,16 @@
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged;
 
         /// <summary>
+        /// Creates a buffer with the given description and initial values.
+        /// </summary>
+        /// <param name="values">The array of initial values.</param>
+        /// <param name="stride">The stride of the buffer.</param>
+        /// <param name="count">The number of values in the array.</param>
+        /// <param name="description">The description of the buffer.</param>
+        /// <returns>The created buffer.</returns>
+        unsafe IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description);
+
+        /// <summary>
         /// Creates a depth-stencil view for a resource.
         /// </summary>
         /// <param name="resource">The resource to create the view for.</param>
