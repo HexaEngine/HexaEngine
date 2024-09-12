@@ -374,7 +374,7 @@
                 {
                     void** resources = range.Start;
                     var start = (uint)(range.Start - Resources);
-                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, (uint*)null);
+                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, InitialCounts);
                 }
             }
         }
