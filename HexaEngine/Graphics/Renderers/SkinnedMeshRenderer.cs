@@ -379,9 +379,7 @@
                     continue;
                 }
 
-                var pass = material.GetPass(name);
-
-                if (pass == null)
+                if (!material.BeginDraw(name, out var pass))
                 {
                     continue;
                 }
@@ -393,7 +391,7 @@
                 {
                     context.DrawIndexedInstanced(mesh.IndexCount, (uint)drawable.Length, 0, 0, 0);
                 }
-                pass.EndDraw(context);
+                material.EndDraw(context);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)

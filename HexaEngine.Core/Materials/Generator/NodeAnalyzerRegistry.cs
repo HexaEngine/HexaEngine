@@ -12,7 +12,6 @@
             AddAnalyzer<InputNodeAnalyzer>();
             AddAnalyzer<ComponentMaskNodeAnalyzer>();
             AddAnalyzer<ConstantNodeAnalyzer>();
-            AddAnalyzer<ConvertNodeAnalyzer>();
             AddAnalyzer<FlipUVNodeAnalyzer>();
             AddAnalyzer<FuncCallDeclarationNodeAnalyzer>();
             AddAnalyzer<FuncCallNodeAnalyzer>();

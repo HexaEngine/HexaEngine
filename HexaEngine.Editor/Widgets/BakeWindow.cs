@@ -84,7 +84,7 @@
 
             var renderers = current.RenderManager;
 
-            var sky = renderers.Renderers.FirstOrDefault(x => x is SkyRendererComponent);
+            var sky = renderers.Drawables.FirstOrDefault(x => x is SkyRendererComponent);
 
             if (sky == null)
             {
@@ -96,7 +96,7 @@
 
             task = Task.Run(() =>
             {
-                foreach (var renderer in renderers.Renderers)
+                foreach (var renderer in renderers.Drawables)
                 {
                     if (renderer is MeshRendererComponent rendererComponent && rendererComponent.ModelInstance != null)
                     {

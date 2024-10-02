@@ -3,6 +3,7 @@
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
@@ -17,8 +18,11 @@
         [JsonIgnore]
         public FloatPin[] InPins = new FloatPin[4];
 
-        public PackNode(int id, bool removable, bool isStatic) : base(id, "Components to Vector", removable, isStatic)
+        public PackNode(int id, bool removable, bool isStatic) : base(id, "Pack Vector", removable, isStatic)
         {
+            TitleColor = 0x5D3874FF.RGBAToVec4();
+            TitleHoveredColor = 0x6F4C85FF.RGBAToVec4();
+            TitleSelectedColor = 0x79578FFF.RGBAToVec4();
             modes = [PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4];
             names = modes.Select(x => x.ToString()).ToArray();
         }

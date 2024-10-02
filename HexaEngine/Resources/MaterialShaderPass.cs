@@ -34,11 +34,6 @@
             return true;
         }
 
-        public void EndDraw(IGraphicsContext context)
-        {
-            context.SetGraphicsPipelineState(null);
-        }
-
         public void Dispose()
         {
             GC.SuppressFinalize(this);

@@ -1272,7 +1272,7 @@
                 {
                     return;
                 }
-                var popup = PopupManager.Show(new ProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ...", ProgressType.Bar));
+                var popup = PopupManager.Show(new ImportProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ..."));
                 try
                 {
                     await SourceAssetsDatabase.ImportFileAsync(file, currentDir.FullName, null, popup);

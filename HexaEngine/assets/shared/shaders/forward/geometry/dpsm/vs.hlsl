@@ -13,6 +13,9 @@ cbuffer lightBuffer : register(b1)
 	float hemiDir;
 };
 
+#define DPSM_BIAS 0.1
+#define Z_BIAS_THRESHOLD 0.1
+
 StructuredBuffer<float4x4> worldMatrices;
 StructuredBuffer<uint> worldMatrixOffsets;
 
@@ -39,7 +42,7 @@ inline PixelInput TransformToDPSMSpace(uint instanceId, float3 position)
 	output.position /= len;
 
 	// save for clipping
-	output.clip = output.position.z;
+	output.clip = output.position.z + DPSM_BIAS * (abs(output.position.z) < Z_BIAS_THRESHOLD);
 
 	// calc "normal" on intersection, by adding the
 	// reflection-vector(0,0,1) and divide through

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
-    using Hexa.NET.Mathematics;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using System.Collections.Generic;
 
@@ -12,9 +12,9 @@
 
         public FuncCallDeclarationBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
-            TitleColor = MathUtil.PackARGB(0xff, 0x0f, 0x9e, 0x00);
-            TitleHoveredColor = MathUtil.PackARGB(0xff, 0x13, 0xc4, 0x00);
-            TitleSelectedColor = MathUtil.PackARGB(0xff, 0x16, 0xe4, 0x00);
+            TitleColor = 0x473874FF.RGBAToVec4();
+            TitleHoveredColor = 0x685797FF.RGBAToVec4();
+            TitleSelectedColor = 0x74679AFF.RGBAToVec4();
         }
 
         public abstract string MethodName { get; }
@@ -72,6 +72,6 @@
             base.DestroyPin(pin);
         }
 
-        public abstract void DefineMethod(VariableTable table);
+        public abstract void DefineMethod(GenerationContext context, VariableTable table);
     }
 }

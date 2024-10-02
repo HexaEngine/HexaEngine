@@ -4,16 +4,17 @@
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
     public class CamPosNode : FuncCallDeclarationBaseNode
     {
-#pragma warning disable CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
-
-        public CamPosNode(int id, bool removable, bool isStatic) : base(id, "camera Pos", removable, isStatic)
-#pragma warning restore CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
+        public CamPosNode(int id, bool removable, bool isStatic) : base(id, "Camera Pos", removable, isStatic)
         {
+            TitleColor = 0x473874FF.RGBAToVec4();
+            TitleHoveredColor = 0x685797FF.RGBAToVec4();
+            TitleSelectedColor = 0x74679AFF.RGBAToVec4();
         }
 
         public override void Initialize(NodeEditor editor)
@@ -23,9 +24,9 @@
             base.Initialize(editor);
         }
 
-        public override void DefineMethod(VariableTable table)
+        public override void DefineMethod(GenerationContext context, VariableTable table)
         {
-            table.AddInclude("cam.hlsl");
+            table.AddInclude("../../camera.hlsl");
         }
 
         public override FloatPin Out { get; protected set; }

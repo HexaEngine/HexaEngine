@@ -49,6 +49,11 @@
 
         public void Prepare(Material material)
         {
+            if (!material.BeginUse())
+            {
+                return;
+            }
+
             foreach (var pass in material.Shader.Passes)
             {
                 var bindings = pass.Bindings;
@@ -64,6 +69,7 @@
                     bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
                 }
             }
+            material.EndUse();
         }
 
         public override void Update(IGraphicsContext context, Matrix4x4 transform, Model model)
@@ -257,9 +263,7 @@
                     continue;
                 }
 
-                var pass = material.GetPass(name);
-
-                if (pass == null)
+                if (!material.BeginDraw(name, out var pass))
                 {
                     continue;
                 }
@@ -271,7 +275,7 @@
                 {
                     context.DrawIndexedInstanced(mesh.IndexCount, (uint)drawType.Instances.Count, 0, 0, 0);
                 }
-                pass.EndDraw(context);
+                material.EndDraw(context);
                 mesh.EndDraw(context);
             }
         }

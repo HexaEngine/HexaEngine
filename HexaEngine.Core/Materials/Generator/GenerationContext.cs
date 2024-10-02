@@ -465,12 +465,46 @@
             }
         }
 
+        private readonly StringBuilder builder = new();
+
+        public void AnalyzeNode(Node node)
+        {
+            if (Mapping.ContainsKey(node)) // skip.
+                return;
+
+            builder.Clear();
+
+            var id = Mapping.Count;
+            Mapping.Add(node, id);
+            Id = id;
+
+            for (int j = 0; j < NodeAnalyzerRegistry.Analyzers.Count; j++)
+            {
+                if (NodeAnalyzerRegistry.Analyzers[j].TryAnalyze(node, this, builder))
+                {
+                    break;
+                }
+            }
+        }
+
         #region Lookup Helpers
 
         public Operation Find(Node node)
         {
+            if (!Mapping.ContainsKey(node))
+            {
+                AnalyzeNode(node);
+            }
+
             var id = Mapping[node];
-            return Table.GetVariable(id);
+            var op = Table.GetVariable(id);
+
+            if (op == null)
+            {
+                AnalyzeNode(node);
+                return Find(node);
+            }
+            return op;
         }
 
         public Definition GetVariable(Pin target, Node? other)
@@ -713,7 +747,7 @@
             Table.AddRef(name, refTo);
         }
 
-        public Operation BuildFunctionCall(Definition[] definitions, Node node, string func, StringBuilder builder, bool isMathFunc = true)
+        public Operation BuildFunctionCallVoid(Definition[] definitions, Node node, string func, StringBuilder builder, bool isMathFunc = true)
         {
             builder.Append($"{func}(");
             for (int i = 0; i < definitions.Length; i++)
@@ -739,8 +773,13 @@
             return output;
         }
 
-        public Operation BuildFunctionCall(Definition[] definitions, SType type, Node node, string func, StringBuilder builder, bool isMathFunc = true)
+        public Operation BuildFunctionCall(Definition[] definitions, SType returnType, Node node, string func, StringBuilder builder, bool isMathFunc = true)
         {
+            if (returnType.IsVoid)
+            {
+                return BuildFunctionCallVoid(definitions, node, func, builder, false);
+            }
+
             builder.Append($"{func}(");
             for (int i = 0; i < definitions.Length; i++)
             {
@@ -752,7 +791,7 @@
                 }
             }
             builder.Append(')');
-            var output = AddVariable(node.Name, node, type, builder.ToString());
+            var output = AddVariable(node.Name, node, returnType, builder.ToString());
             for (int i = 0; i < definitions.Length; i++)
             {
                 var def = definitions[i];

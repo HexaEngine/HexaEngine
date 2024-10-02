@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using System.Runtime.CompilerServices;
 
     public abstract class Modal : IPopup

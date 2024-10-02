@@ -11,6 +11,7 @@
     using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
     using System.Runtime.InteropServices;
 
@@ -21,6 +22,15 @@
         HosekWilkie,
         Preetham,
         Custom,
+    }
+
+    [Flags]
+    public enum FogMode
+    {
+        Linear = 0,
+        Exp = 1,
+        Exp2 = 2,
+        HeightBased = 4,
     }
 
     /// <summary>
@@ -64,6 +74,13 @@
         private float phaseFunctionG = 0.2f;
         private SkyType skyModel;
         private float overcast;
+        private Vector3 fogColor;
+        private float fogIntensity;
+        private float fogHeight;
+        private float fogStart;
+        private float fogEnd;
+        private FogMode fogMode;
+        private float fogDensity;
 
         /// <summary>
         /// Gets a value indicating whether the weather has a sun.
@@ -262,6 +279,69 @@
             }
         }
 
+        public Vector3 FogColor
+        {
+            get => fogColor;
+            set
+            {
+                fogColor = value; isDirty = true;
+            }
+        }
+
+        public float FogIntensity
+        {
+            get => fogIntensity;
+            set
+            {
+                fogIntensity = value; isDirty = true;
+            }
+        }
+
+        public float FogStart
+        {
+            get => fogStart;
+            set
+            {
+                fogStart = value; isDirty = true;
+            }
+        }
+
+        public float FogEnd
+        {
+            get => fogEnd;
+            set
+            {
+                fogEnd = value; isDirty = true;
+            }
+        }
+
+        public float FogHeight
+        {
+            get => fogHeight;
+            set
+            {
+                fogHeight = value; isDirty = true;
+            }
+        }
+
+        public FogMode FogMode
+        {
+            get => fogMode;
+            set
+            {
+                fogMode = value; isDirty = true;
+            }
+        }
+
+        public float FogDensity
+        {
+            get => fogDensity;
+            set
+            {
+                fogDensity = value; isDirty = true;
+            }
+        }
+
         /// <summary>
         /// Gets the constant buffer containing weather information for graphics rendering.
         /// </summary>
@@ -338,6 +418,13 @@
             weather.DensityFactor = densityFactor;
             weather.CloudType = cloudType;
             weather.PhaseFunctionG = phaseFunctionG;
+            weather.FogColor = fogColor;
+            weather.FogIntensity = fogIntensity;
+            weather.FogStart = fogStart;
+            weather.FogEnd = fogEnd;
+            weather.FogHeight = fogHeight;
+            weather.FogMode = (int)fogMode;
+            weather.FogDensity = fogDensity;
 
             Vector3 sunDir = Vector3.Normalize(new Vector3(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
             if (skyModel == SkyType.HosekWilkie)
@@ -368,7 +455,7 @@
                 weather.F = skyParams[(int)EnumSkyParams.F];
             }
 
-            weatherBuffer?.Value?.Update(context, weather);
+            weatherBuffer!.Value!.Update(context, weather);
             isDirty = false;
         }
     }

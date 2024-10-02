@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
     using HexaEngine.Materials;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
@@ -8,6 +9,9 @@
     {
         protected FuncOperatorBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
+            TitleColor = 0x293580FF.RGBAToVec4();
+            TitleHoveredColor = 0x34418CFF.RGBAToVec4();
+            TitleSelectedColor = 0x414D96FF.RGBAToVec4();
         }
 
         [JsonIgnore]

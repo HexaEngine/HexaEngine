@@ -1,16 +1,16 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
-    using Hexa.NET.Mathematics;
     using HexaEngine.Materials;
+    using HexaEngine.Materials.Nodes.Textures;
     using Newtonsoft.Json;
 
     public class InputNode : Node
     {
         public InputNode(int id, bool removable, bool isStatic) : base(id, "Geometry", removable, isStatic)
         {
-            TitleColor = MathUtil.PackARGB(0xff, 0x23, 0x00, 0xc8);
-            TitleHoveredColor = MathUtil.PackARGB(0xff, 0x28, 0x00, 0xe4);
-            TitleSelectedColor = MathUtil.PackARGB(0xff, 0x2d, 0x00, 0xff);
+            TitleColor = 0xC82A2AFF.RGBAToVec4();
+            TitleHoveredColor = 0xDA3C3CFF.RGBAToVec4();
+            TitleSelectedColor = 0xE04949FF.RGBAToVec4();
         }
 
         public override void Initialize(NodeEditor editor)
@@ -21,6 +21,7 @@
             Normal = CreateOrGetPin(editor, "normal", PinKind.Output, PinType.Float3, PinShape.CircleFilled);
             Tangent = CreateOrGetPin(editor, "tangent", PinKind.Output, PinType.Float3, PinShape.CircleFilled);
             Bitangent = CreateOrGetPin(editor, "binormal", PinKind.Output, PinType.Float3, PinShape.CircleFilled);
+            ViewDir = CreateOrGetPin(editor, "viewDir", PinKind.Output, PinType.Float3, PinShape.CircleFilled);
             base.Initialize(editor);
         }
 
@@ -41,5 +42,8 @@
 
         [JsonIgnore]
         public Pin Bitangent;
+
+        [JsonIgnore]
+        public Pin ViewDir;
     }
 }

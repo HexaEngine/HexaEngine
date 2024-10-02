@@ -374,14 +374,49 @@
             }
             return default;
         }
-
-        public Operation GetVariable(string name)
+        public UnorderedAccessView GetUnorderedAccessView(uint slot)
         {
-            for (int i = 0; i < operations.Count; i++)
+            for (int i = 0; i < unorderedAccessViews.Count; i++)
             {
-                if (operations[i].Name == name)
+                if (unorderedAccessViews[i].Slot == slot)
                 {
-                    return operations[i];
+                    return unorderedAccessViews[i];
+                }
+            }
+            return default;
+        }
+
+        public ShaderResourceView GetShaderResourceView(uint slot)
+        {
+            for (int i = 0; i < shaderResourceViews.Count; i++)
+            {
+                if (shaderResourceViews[i].Slot == slot)
+                {
+                    return shaderResourceViews[i];
+                }
+            }
+            return default;
+        }
+
+        public SamplerState GetSamplerState(uint slot)
+        {
+            for (int i = 0; i < samplers.Count; i++)
+            {
+                if (samplers[i].Slot == slot)
+                {
+                    return samplers[i];
+                }
+            }
+            return default;
+        }
+
+        public ConstantBuffer GetConstantBuffer(uint slot)
+        {
+            for (int i = 0; i < constantBuffers.Count; i++)
+            {
+                if (constantBuffers[i].Slot == slot)
+                {
+                    return constantBuffers[i];
                 }
             }
             return default;
@@ -400,7 +435,7 @@
             }
         }
 
-        public Operation GetVariable(int id)
+        public Operation? GetVariable(int id)
         {
             for (int i = 0; i < operations.Count; i++)
             {
@@ -408,8 +443,9 @@
                 {
                     return operations[i];
                 }
-            }
-            return default;
+            }       
+
+            return null;
         }
 
         public Struct GetStruct(string name)

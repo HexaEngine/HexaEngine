@@ -14,7 +14,8 @@
             PostProcessSteps.ImproveCacheLocality |
             PostProcessSteps.Triangulate |
             PostProcessSteps.FindInstances |
-            PostProcessSteps.LimitBoneWeights;
+            PostProcessSteps.LimitBoneWeights |
+            PostProcessSteps.RemoveRedundantMaterials;
 
         [JsonIgnore]
         [EditorProperty("Optimize Meshes")]

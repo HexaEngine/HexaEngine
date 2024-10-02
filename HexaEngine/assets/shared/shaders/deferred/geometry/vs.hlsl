@@ -123,6 +123,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	output.color = input.color;
 #endif
 	output.position = mul(float4(totalPosition, 1), mat).xyzw;
+	output.pos = output.position.xyz;
 #if VtxUVs	
 	output.tex = input.tex;
 #endif
@@ -150,6 +151,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	output.color = input.color;
 #endif
 	output.position = mul(float4(input.position, 1), mat).xyzw;
+	output.pos = output.position.xyz;
 #if VtxUVs	
 	output.tex = input.tex;
 #endif
@@ -158,8 +160,19 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 #endif
 #if VtxTangents
 	output.tangent = mul(input.tangent, (float3x3)mat);
+
+	float3 N = output.normal;
+    float3 T = normalize(output.tangent - dot(output.tangent, N) * N);
+    float3 B = cross(N, T);
+	output.binormal = B;
+	float3x3 TBN = float3x3(T, B, N);
+	output.tangentViewPos = mul(camPos, TBN);
+	output.tangentPos = mul(output.pos, TBN);
+
 #endif
 	output.position = mul(output.position, viewProj);
+
+
 
 	return output;
 }

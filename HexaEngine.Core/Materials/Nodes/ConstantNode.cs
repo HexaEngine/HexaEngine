@@ -3,6 +3,7 @@
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
@@ -15,7 +16,10 @@
 
         public ConstantNode(int id, bool removable, bool isStatic) : base(id, "Constant", removable, isStatic)
         {
-            modes = new PinType[] { PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4 };
+            TitleColor = 0x5A37A1FF.RGBAToVec4();
+            TitleHoveredColor = 0x6A48B0FF.RGBAToVec4();
+            TitleSelectedColor = 0x7D5CBFFF.RGBAToVec4();
+            modes = [PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4];
             names = modes.Select(x => x.ToString()).ToArray();
             Type = new(VectorType.Float4);
         }

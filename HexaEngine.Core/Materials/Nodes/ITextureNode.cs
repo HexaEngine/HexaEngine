@@ -7,5 +7,9 @@
         string Name { get; }
 
         Pin InUV { get; }
+
+        Pin OutColor { get; }
+
+        Pin OutTex { get; }
     }
 }

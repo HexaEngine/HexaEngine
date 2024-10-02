@@ -3,6 +3,7 @@
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes.Textures;
     using Newtonsoft.Json;
 
     public abstract class TypedNodeBase : Node, ITypedNode
@@ -17,9 +18,9 @@
 
         protected TypedNodeBase(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
-            TitleColor = 0x0069d5ff;
-            TitleHoveredColor = 0x0078f3ff;
-            TitleSelectedColor = 0x007effff;
+            TitleColor = 0x3160A1FF.RGBAToVec4();
+            TitleHoveredColor = 0x4371B0FF.RGBAToVec4();
+            TitleSelectedColor = 0x5480BBFF.RGBAToVec4();
             modes = [PinType.Float, PinType.Float2OrFloat, PinType.Float3OrFloat, PinType.Float4OrFloat];
             names = modes.Select(x => x.ToString()).ToArray();
         }

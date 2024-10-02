@@ -3,15 +3,16 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Nodes.Textures;
     using Newtonsoft.Json;
 
     public class BRDFShadingModelNode : Node, ITypedNode
     {
         public BRDFShadingModelNode(int id, bool removable, bool isStatic) : base(id, "BRDF", removable, isStatic)
         {
-            TitleColor = MathUtil.PackARGB(0xff, 0x0f, 0x9e, 0x00);
-            TitleHoveredColor = MathUtil.PackARGB(0xff, 0x13, 0xc4, 0x00);
-            TitleSelectedColor = MathUtil.PackARGB(0xff, 0x16, 0xe4, 0x00);
+            TitleColor = 0x31762CFF.RGBAToVec4();
+            TitleHoveredColor = 0x4D9648FF.RGBAToVec4();
+            TitleSelectedColor = 0x6FB269FF.RGBAToVec4();
         }
 
         [JsonIgnore]

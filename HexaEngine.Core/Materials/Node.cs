@@ -1,28 +1,33 @@
 ﻿namespace HexaEngine.Materials
 {
     using HexaEngine.Core.Collections;
+    using HexaEngine.Materials.Nodes.Textures;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Numerics;
 
     public class Node : INode<Node>
     {
-        private NodeEditor? editor;
+        protected NodeEditor? editor;
         private int id;
 
         private readonly List<Pin> pins = new();
         private readonly List<Link> links = new();
+        private readonly List<Node> dependencies = new();
 
         public readonly bool Removable = true;
         public readonly bool IsStatic;
         public string Name;
         public string OriginalName;
 
-        public uint TitleColor = 0x6930c3ff;
+        [JsonIgnore]
+        public Vector4 TitleColor = 0x6930c3ff.ABGRToVec4();
 
-        public uint TitleHoveredColor = 0x5e60ceff;
+        [JsonIgnore]
+        public Vector4 TitleHoveredColor = 0x5e60ceff.ABGRToVec4();
 
-        public uint TitleSelectedColor = 0x7400b8ff;
+        [JsonIgnore]
+        public Vector4 TitleSelectedColor = 0x7400b8ff.ABGRToVec4();
 
         public bool isEditing;
         public Vector2 position;
@@ -57,10 +62,10 @@
         public int Id => id;
 
         [JsonIgnore]
-        public List<Link> Links => links;
+        public IReadOnlyList<Link> Links => links;
 
         [JsonIgnore]
-        public List<Pin> Pins => pins;
+        public IReadOnlyList<Pin> Pins => pins;
 
         [JsonIgnore]
         public Vector2 Position
@@ -83,20 +88,10 @@
         public bool IsHovered { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<Node> Dependencies => GetDependencies();
+        IEnumerable<Node> INode<Node>.Dependencies => dependencies;
 
-        private IEnumerable<Node> GetDependencies()
-        {
-            foreach (var link in links)
-            {
-                if (link.InputNode != this)
-                {
-                    continue;
-                }
-
-                yield return link.OutputNode;
-            }
-        }
+        [JsonIgnore]
+        public IReadOnlyList<Node> Dependencies => dependencies;
 
         public virtual void Initialize(NodeEditor editor)
         {
@@ -293,12 +288,60 @@
         {
             links.Add(link);
             LinkAdded?.Invoke(this, link);
+            if (link.InputNode == this && !dependencies.Contains(link.OutputNode))
+            {
+                dependencies.Add(link.OutputNode);
+                dependencies.Sort(new DependencyComparer(this));
+            }
         }
 
         public virtual void RemoveLink(Link link)
         {
+            if (link.InputNode == this)
+            {
+                dependencies.Remove(link.OutputNode);
+            }
             links.Remove(link);
             LinkRemoved?.Invoke(this, link);
+        }
+
+        public Link? FindLink(Node node)
+        {
+            foreach (Link link in links)
+            {
+                if (link.OutputNode == node || link.InputNode == node)
+                {
+                    return link;
+                }
+            }
+
+            return null;
+        }
+
+        private readonly struct DependencyComparer : IComparer<Node>
+        {
+            private readonly Node parent;
+
+            public DependencyComparer(Node parent)
+            {
+                this.parent = parent;
+            }
+
+            public int Compare(Node? x, Node? y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+
+                Link linkA = parent.FindLink(x)!;
+                Link linkB = parent.FindLink(y)!;
+
+                int idxA = parent.pins.IndexOf(linkA.Input);
+                int idxB = parent.pins.IndexOf(linkB.Input);
+
+                return idxA.CompareTo(idxB);
+            }
         }
 
         public virtual void Destroy()
@@ -316,6 +359,9 @@
                 pins[i].ValueChanging -= ValueChanging;
                 pins[i].Destroy();
             }
+            dependencies.Clear();
+            links.Clear();
+            pins.Clear();
             editor.RemoveNode(this);
             editor = null;
         }

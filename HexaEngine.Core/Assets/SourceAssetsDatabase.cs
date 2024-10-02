@@ -429,7 +429,7 @@
 
         public static string CacheFolder => cacheFolder;
 
-        internal static SourceAssetMetadata AddFile(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IProgress<float>? progress)
+        internal static SourceAssetMetadata AddFile(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IImportProgress? progress)
         {
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
@@ -447,7 +447,7 @@
             return sourceAsset;
         }
 
-        internal static async Task<SourceAssetMetadata> AddFileAsync(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IProgress<float>? progress)
+        internal static async Task<SourceAssetMetadata> AddFileAsync(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IImportProgress? progress)
         {
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
@@ -465,7 +465,7 @@
             return sourceAsset;
         }
 
-        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IProgress<float>? progress)
+        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -486,7 +486,7 @@
             sourceAsset.Save();
         }
 
-        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IProgress<float>? progress)
+        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -517,7 +517,7 @@
             sourceAsset.Save();
         }
 
-        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IProgress<float>? progress)
+        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -546,7 +546,7 @@
             sourceAsset.Save();
         }
 
-        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IProgress<float>? progress)
+        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -575,7 +575,7 @@
             sourceAsset.Save();
         }
 
-        public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
@@ -617,7 +617,7 @@
             return AddFile(path, filePath, metadataFile, provider, progress);
         }
 
-        public static SourceAssetMetadata? ImportFile(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static SourceAssetMetadata? ImportFile(string path, string outputDir, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
 
@@ -680,7 +680,7 @@
             ImportFiles(Directory.GetFiles(folder));
         }
 
-        public static Task<SourceAssetMetadata> ImportFileAsync(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
@@ -722,7 +722,7 @@
             return AddFileAsync(null, filePath, metadataFile, provider, progress);
         }
 
-        public static Task<SourceAssetMetadata> ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
 

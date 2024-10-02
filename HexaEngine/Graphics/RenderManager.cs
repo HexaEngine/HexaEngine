@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics
 {
+    using Hexa.NET.FreeType;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
@@ -22,7 +23,7 @@
         private ICommandList? commandList;
         private readonly RenderQueueIndex index;
         private QueueGroupFlags flags;
-        private readonly List<IRendererComponent> renderers = [];
+        private readonly List<IDrawable> renderers = [];
         private readonly string pass;
         private uint baseIndex;
         private uint lastIndex;
@@ -59,7 +60,7 @@
 
         public int Count => renderers.Count;
 
-        public void Add(IRendererComponent renderer)
+        public void Add(IDrawable renderer)
         {
             renderers.Add(renderer);
             renderers.Sort(SortRendererAscending.Instance);
@@ -67,7 +68,7 @@
             baseIndex = renderers[^1].QueueIndex;
         }
 
-        public void Remove(IRendererComponent renderer)
+        public void Remove(IDrawable renderer)
         {
             if (renderers.Remove(renderer))
             {
@@ -144,7 +145,7 @@
     public class RenderQueue
     {
         private readonly List<RenderQueueGroup> groups = new();
-        private readonly List<IRendererComponent> renderers = new();
+        private readonly List<IDrawable> renderers = new();
         private readonly IGraphicsContext deferred;
         private RenderQueueIndex queueIndex;
         private string pass;
@@ -162,7 +163,7 @@
             }
         }
 
-        public void Add(IRendererComponent component)
+        public void Add(IDrawable component)
         {
             renderers.Add(component);
 
@@ -200,7 +201,7 @@
             groupLast.Add(component);
         }
 
-        public void Remove(IRendererComponent component)
+        public void Remove(IDrawable component)
         {
         }
     }
@@ -209,16 +210,18 @@
     {
         private readonly IGraphicsDevice device;
         private readonly IGraphicsContext deferredContext;
-        private readonly ComponentTypeQuery<IRendererComponent> renderers = new();
-        private readonly List<IRendererComponent> backgroundQueue = new();
-        private readonly List<IRendererComponent> geometryQueue = new();
-        private readonly List<IRendererComponent> alphaTestQueue = new();
-        private readonly List<IRendererComponent> geometryLastQueue = new();
-        private readonly List<IRendererComponent> transparencyQueue = new();
-        private readonly List<IRendererComponent> overlayQueue = new();
+        private readonly ComponentTypeQuery<IDrawable> drawables = new();
+        private readonly List<IDrawable> backgroundQueue = new();
+        private readonly List<IDrawable> geometryQueue = new();
+        private readonly List<IDrawable> alphaTestQueue = new();
+        private readonly List<IDrawable> geometryLastQueue = new();
+        private readonly List<IDrawable> transparencyQueue = new();
+        private readonly List<IDrawable> overlayQueue = new();
         private readonly SortRendererAscending comparer = new();
         private readonly LightManager lights;
         private readonly CullingManager culling;
+
+        private readonly BVHTree<IDrawable> tree = new();
 
         private bool isLoaded;
 
@@ -230,25 +233,27 @@
         {
             this.device = device;
             deferredContext = device.CreateDeferredContext();
-            renderers.OnAdded += RendererOnAdded;
-            renderers.OnRemoved += RendererOnRemoved;
+            drawables.OnAdded += DrawableOnAdded;
+            drawables.OnRemoved += DrawableOnRemoved;
             this.lights = lights;
             culling = new(device);
         }
 
-        public IReadOnlyList<IRendererComponent> Renderers => renderers;
+        public BVHTree<IDrawable> DrawablesTree => tree;
 
-        public IReadOnlyList<IRendererComponent> BackgroundQueue => backgroundQueue;
+        public IReadOnlyList<IDrawable> Drawables => drawables;
 
-        public IReadOnlyList<IRendererComponent> GeometryQueue => geometryQueue;
+        public IReadOnlyList<IDrawable> BackgroundQueue => backgroundQueue;
 
-        public IReadOnlyList<IRendererComponent> AlphaTestQueue => alphaTestQueue;
+        public IReadOnlyList<IDrawable> GeometryQueue => geometryQueue;
 
-        public IReadOnlyList<IRendererComponent> GeometryLastQueue => geometryLastQueue;
+        public IReadOnlyList<IDrawable> AlphaTestQueue => alphaTestQueue;
 
-        public IReadOnlyList<IRendererComponent> TransparencyQueue => transparencyQueue;
+        public IReadOnlyList<IDrawable> GeometryLastQueue => geometryLastQueue;
 
-        public IReadOnlyList<IRendererComponent> OverlayQueue => overlayQueue;
+        public IReadOnlyList<IDrawable> TransparencyQueue => transparencyQueue;
+
+        public IReadOnlyList<IDrawable> OverlayQueue => overlayQueue;
 
         public void Invalidate(RenderQueueIndexFlags flags)
         {
@@ -256,16 +261,16 @@
 
         public void Awake(Scene scene)
         {
-            scene.QueryManager.AddQuery(renderers);
+            scene.QueryManager.AddQuery(drawables);
         }
 
         public void Load(IGraphicsDevice device)
         {
             if (!isLoaded)
             {
-                Parallel.For(0, renderers.Count, i =>
+                Parallel.For(0, drawables.Count, i =>
                 {
-                    renderers[i].Load(device);
+                    drawables[i].Load(device);
                 });
 
                 isLoaded = true;
@@ -276,9 +281,14 @@
         {
             if (isLoaded)
             {
-                for (int i = 0; i < renderers.Count; i++)
+                foreach (IDrawable drawable in drawables)
                 {
-                    renderers[i].Unload();
+                    drawable.Unload();
+
+                    if (drawable.LeafId != -1)
+                    {
+                        tree.RemoveLeaf(drawable.LeafId);
+                    }
                 }
                 isLoaded = false;
             }
@@ -318,7 +328,7 @@
             }
         }
 
-        private static void DrawDepthList(IGraphicsContext context, List<IRendererComponent> renderers)
+        private static void DrawDepthList(IGraphicsContext context, List<IDrawable> renderers)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -326,7 +336,7 @@
             }
         }
 
-        private static void DrawList(IGraphicsContext context, List<IRendererComponent> renderers, RenderPath path)
+        private static void DrawList(IGraphicsContext context, List<IDrawable> renderers, RenderPath path)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -334,7 +344,7 @@
             }
         }
 
-        private static void VisibilityTestList(CullingContext context, List<IRendererComponent> renderers)
+        private static void VisibilityTestList(CullingContext context, List<IDrawable> renderers)
         {
             var cam = CameraManager.Current;
             for (int i = 0; i < renderers.Count; i++)
@@ -343,12 +353,26 @@
             }
         }
 
-        private void GameObjectTransformed(GameObject obj, Transform transform)
+        private void GameObjectTransformed(GameObject sender, Transform transform)
         {
-            lights.RendererUpdateQueue.EnqueueComponentIfIs(obj);
+            var queue = lights.DrawableUpdateQueue;
+            var components = sender.Components;
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[i] is IDrawable drawable)
+                {
+                    queue.Enqueue(drawable);
+                    if (drawable.LeafId != -1)
+                    {
+                        tree.RemoveLeaf(drawable.LeafId);
+                    }
+
+                    drawable.LeafId = tree.InsertLeaf(drawable, drawable.BoundingBox);
+                }
+            }
         }
 
-        private void QueueIndexChanged(IRendererComponent sender, uint oldIndex, uint newIndex)
+        private void QueueIndexChanged(IDrawable sender, uint oldIndex, uint newIndex)
         {
             if (!RemoveFromQueue(sender))
             {
@@ -361,18 +385,18 @@
         [Profiling.Profile]
         public void Update(IGraphicsContext context)
         {
-            for (int i = 0; i < renderers.Count; i++)
+            for (int i = 0; i < drawables.Count; i++)
             {
-                renderers[i].Update(context);
+                drawables[i].Update(context);
             }
         }
 
         public void Destroy()
         {
             deferredContext.Dispose();
-            for (int i = 0; i < renderers.Count; i++)
+            for (int i = 0; i < drawables.Count; i++)
             {
-                renderers[i].Destroy();
+                drawables[i].Destroy();
             }
 
             backgroundQueue.Clear();
@@ -385,34 +409,43 @@
             culling.Release();
         }
 
-        private void RendererOnRemoved(GameObject gameObject, IRendererComponent renderer)
+        private void DrawableOnRemoved(GameObject gameObject, IDrawable drawable)
         {
             if (isLoaded)
             {
-                renderer.Unload();
+                drawable.Unload();
             }
 
             gameObject.TransformUpdated -= GameObjectTransformed;
-            renderer.QueueIndexChanged -= QueueIndexChanged;
-            RemoveFromQueue(renderer);
+            drawable.QueueIndexChanged -= QueueIndexChanged;
+            if (drawable.LeafId != -1)
+            {
+                tree.RemoveLeaf(drawable.LeafId);
+            }
+
+            RemoveFromQueue(drawable);
         }
 
-        private void RendererOnAdded(GameObject gameObject, IRendererComponent renderer)
+        private int currentObjectId = 0;
+
+        private void DrawableOnAdded(GameObject gameObject, IDrawable drawable)
         {
             if (isLoaded)
             {
                 Task.Factory.StartNew(device =>
                 {
-                    renderer.Load((IGraphicsDevice)device);
+                    drawable.Load((IGraphicsDevice)device);
                 }, device);
+
+                tree.InsertLeaf(drawable, drawable.BoundingBox);
             }
 
             gameObject.TransformUpdated += GameObjectTransformed;
-            renderer.QueueIndexChanged += QueueIndexChanged;
-            AddToQueue(renderer);
+            drawable.QueueIndexChanged += QueueIndexChanged;
+            AddToQueue(drawable);
         }
 
-        public void AddToQueue(IRendererComponent renderer)
+        public void AddToQueue(IDrawable renderer)
         {
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
             {
@@ -449,7 +482,7 @@
             overlayQueue.Sort(comparer);
         }
 
-        public bool RemoveFromQueue(IRendererComponent renderer)
+        public bool RemoveFromQueue(IDrawable renderer)
         {
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
             {
@@ -476,7 +509,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ExecuteGroupVisibilityTest(IReadOnlyList<IRendererComponent> renderers, CullingContext context, ICPUProfiler? profiler, string groupDebugName)
+        public static void ExecuteGroupVisibilityTest(IReadOnlyList<IDrawable> renderers, CullingContext context, ICPUProfiler? profiler, string groupDebugName)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -488,7 +521,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ExecuteGroup(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path)
+        public static void ExecuteGroup(IReadOnlyList<IDrawable> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -500,7 +533,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ExecuteGroupDepth(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName)
+        public static void ExecuteGroupDepth(IReadOnlyList<IDrawable> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -512,7 +545,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void ExecuteGroup(IReadOnlyList<IRendererComponent> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path, void** rtvs, uint rtvCount, IDepthStencilView dsv)
+        public static unsafe void ExecuteGroup(IReadOnlyList<IDrawable> renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path, void** rtvs, uint rtvCount, IDepthStencilView dsv)
         {
             for (int i = 0; i < renderers.Count; i++)
             {

@@ -9,10 +9,7 @@
 
     public class NormalMapNode : FuncCallDeclarationBaseNode
     {
-#pragma warning disable CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
-
         public NormalMapNode(int id, bool removable, bool isStatic) : base(id, "Normal Map", removable, isStatic)
-#pragma warning restore CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
         }
 
@@ -27,6 +24,7 @@
             base.Initialize(editor);
         }
 
+        [JsonIgnore]
         public override FloatPin Out { get; protected set; }
 
         [JsonIgnore]
@@ -35,7 +33,7 @@
         [JsonIgnore]
         public override SType Type { get; } = new SType(VectorType.Float3);
 
-        public override void DefineMethod(VariableTable table)
+        public override void DefineMethod(GenerationContext context, VariableTable table)
         {
             string body = @"
 	// Uncompress each component from [0,1] to [-1,1].

@@ -152,7 +152,7 @@
                     {
                         context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     }
-                    pass.EndDraw(context);
+                    material.EndDraw(context);
                 }
                 cell.Unbind(context);
             }
@@ -194,7 +194,7 @@
                     {
                         context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     }
-                    pass.EndDraw(context);
+                    material.EndDraw(context);
                 }
                 cell.Unbind(context);
             }
@@ -236,7 +236,7 @@
                     {
                         context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     }
-                    pass.EndDraw(context);
+                    material.EndDraw(context);
                 }
                 cell.Unbind(context);
             }
@@ -278,7 +278,7 @@
                     {
                         context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     }
-                    pass.EndDraw(context);
+                    material.EndDraw(context);
                 }
                 cell.Unbind(context);
             }
@@ -322,7 +322,7 @@
                     {
                         context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     }
-                    pass.EndDraw(context);
+                    material.EndDraw(context);
 
                     break;
                 }

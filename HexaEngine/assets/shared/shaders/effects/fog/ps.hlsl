@@ -1,4 +1,5 @@
 #include "../../camera.hlsl"
+#include "../../weather.hlsl"
 
 #define SAMPLES 32
 
@@ -14,24 +15,14 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-cbuffer FogParams
-{
-	float4 FogColor;
-	float FogIntensity;
-	float FogStart;
-	float FogEnd;
-	float FogHeightEnd;
-};
-
-float3 LinearFog(float3 color, float d)
-{
-	float factor = clamp((d - FogStart) / (FogEnd - FogStart), 0, 1) * FogIntensity;
-	return lerp(color, FogColor.rgb, factor);
-}
-
 float SampleDensityForFog(float3 pos)
 {
-	float heightFactor = saturate(exp(-pos.y + FogHeightEnd));
+	bool useHeightBased = (fog_mode & 0x04) != 0;
+	float heightFactor = 1;
+	if (useHeightBased)
+	{
+		heightFactor = GetFogHeightFactor(pos.y);
+	}
 	float density = volumeTex.SampleLevel(linearWrapSampler, pos * 0.003f, 0);
 	return density * heightFactor;
 }
@@ -55,9 +46,9 @@ float3 VolumetricFog(float3 hdr, float3 position, float3 V, float d)
 
 	accumulatedDensity /= SAMPLES;
 
-	float factor = accumulatedDensity * FogIntensity;
+	float factor = accumulatedDensity * fog_intensity;
 
-	return max(lerp(hdr, FogColor.rgb, max(factor, 0)), 0);
+	return max(lerp(hdr, fog_color.rgb, max(factor, 0)), 0);
 }
 
 float4 main(VSOut vs) : SV_Target
@@ -70,17 +61,11 @@ float4 main(VSOut vs) : SV_Target
 	float3 V = normalize(VN);
 	float d = length(VN);
 
-	if (d < FogStart)
-		discard;
-	/*
-	if (d > FogEnd)
-	{
-		float factor = saturate(exp(-position.y + FogHeightEnd)) * FogIntensity;
+	if (d < fog_start)
+		return float4(hdr, 1);
 
-		return float4(max(lerp(hdr, FogColor.rgb, max(factor, 0)), 0), 1);
-	}*/
-
-	float3 color = VolumetricFog(hdr, position, V, d);
+	//float3 color = VolumetricFog(hdr, position, V, d);
+	float3 color = lerp(hdr, fog_color, GetFogFactor(position, GetCameraPos()));
 
 	return float4(color, 1);
 }

@@ -9,6 +9,8 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Core.Logging;
+    using HexaEngine.Core.Materials.Nodes.Functions;
+    using HexaEngine.Core.Materials.Nodes.Noise;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
@@ -22,7 +24,6 @@
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using System.Numerics;
     using System.Reflection;
     using System.Text;
 
@@ -74,10 +75,10 @@
             NodeEditorRegistry.RegisterNodeSingleton<ComponentMaskNode, ComponentMaskNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<SplitNode, SplitNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<TypedNodeBase, TypedNodeBaseRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<ParallaxMapNode, ParallaxMapNodeRenderer>();
             NodeEditorRegistry.RegisterNodeInstanced<TextureFileNode, TextureFileNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<ConstantNode, ConstantNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<FlipUVNode, FlipUVNodeRenderer>();
-            NodeEditorRegistry.RegisterNodeSingleton<ConvertNode, ConvertNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<PackNode, PackNodeRenderer>();
 
             Application.OnEditorPlayStateTransition += ApplicationOnEditorPlayStateTransition;
@@ -227,7 +228,7 @@
                 {
                     if (string.IsNullOrEmpty(json) || version != Version)
                     {
-                        editor = new();
+                        editor = new(NodeEditorContextMenu);
                         geometryNode = new(editor.GetUniqueId(), false, false);
                         outputNode = new(editor.GetUniqueId(), false, false);
                         editor.AddNode(geometryNode);
@@ -236,7 +237,7 @@
                     }
                     else
                     {
-                        editor = ImNodesNodeEditor.Deserialize(json);
+                        editor = ImNodesNodeEditor.Deserialize(json, NodeEditorContextMenu);
                     }
                 }
                 catch (Exception ex)
@@ -245,7 +246,7 @@
                     Logger.Error($"Failed to deserialize node material data: {value.Name}");
                     Logger.Log(ex);
 
-                    editor = new();
+                    editor = new(NodeEditorContextMenu);
                     geometryNode = new(editor.GetUniqueId(), false, false);
                     outputNode = new(editor.GetUniqueId(), false, false);
                     editor.AddNode(geometryNode);
@@ -271,38 +272,23 @@
             }
         }
 
+        private void NodeEditorContextMenu()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override string Name { get; } = $"{UwU.PenRuler} Material Editor";
 
-        public void Sort()
+        public void Layout()
         {
             if (editor == null)
             {
                 return;
             }
 
-            var groups = NodeEditor.TreeTraversal2(outputNode, true);
-            Array.Reverse(groups);
-            Vector2 padding = new(10);
-            Vector2 pos = padding;
-
-            float maxWidth = 0;
+            NodeLayout layout = new();
             editor.BeginModify();
-            for (int i = 0; i < groups.Length; i++)
-            {
-                var group = groups[i];
-                for (int j = 0; j < group.Length; j++)
-                {
-                    var node = group[j];
-                    node.Position = pos;
-                    var size = node.Size;
-                    pos.Y += size.Y + padding.Y;
-                    maxWidth = Math.Max(maxWidth, size.X);
-                }
-
-                pos.Y = padding.Y;
-                pos.X += maxWidth + padding.X;
-                maxWidth = 0;
-            }
+            layout.Layout(outputNode);
             editor.EndModify();
         }
 
@@ -585,10 +571,11 @@
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.MenuItem("Sort"))
+                if (ImGui.MenuItem("Layout"))
                 {
-                    Sort();
+                    Layout();
                 }
+
                 if (ImGui.MenuItem("Generate"))
                 {
                     UpdateMaterial();
@@ -631,6 +618,16 @@
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
+                if (ImGui.MenuItem("Parallax Map"))
+                {
+                    ParallaxMapNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
+                if (ImGui.MenuItem("Rotate UV"))
+                {
+                    RotateUVNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
                 if (ImGui.MenuItem("Flip UVs"))
                 {
                     FlipUVNode node = new(editor.GetUniqueId(), true, false);
@@ -640,13 +637,18 @@
                 ImGui.EndMenu();
             }
 
-            if (ImGui.BeginMenu("Constants"))
+            if (ImGui.BeginMenu("Noise"))
             {
-                if (ImGui.MenuItem("Converter"))
+                if (ImGui.MenuItem("Generic Noise"))
                 {
-                    ConvertNode node = new(editor.GetUniqueId(), true, false);
+                    GenericNoiseNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
+                ImGui.EndMenu();
+            }
+
+            if (ImGui.BeginMenu("Constants"))
+            {
                 if (ImGui.MenuItem("Constant"))
                 {
                     ConstantNode node = new(editor.GetUniqueId(), true, false);

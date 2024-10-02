@@ -3,6 +3,24 @@
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Generator.Structs;
 
+    [Flags]
+    public enum TypeFlags
+    {
+        None = 0,
+        Scalar = 1 << 0,
+        Vector = 1 << 1,
+        Matrix = 1 << 2,
+        Sampler = 1 << 3,
+        Buffer = 1 << 4,
+        Texture = 1 << 5,
+        UavBuffer = 1 << 6,
+        UavTexture = 1 << 7,
+        ConstantBuffer = 1 << 8,
+        Struct = 1 << 9,
+        Unknown = 1 << 10,
+        Void = 1 << 11,
+    }
+
     public struct SType
     {
         private static readonly Dictionary<string, SType> map = new();
@@ -96,27 +114,163 @@
         public string Name { get => GetTypeName(); }
 
         public string? Semantic;
-        public bool IsScalar;
         public ScalarType ScalarType;
-        public bool IsVector;
         public VectorType VectorType;
-        public bool IsMatrix;
         public MatrixType MatrixType;
-        public bool IsSampler;
         public SamplerType SamplerType;
-        public bool IsBuffer;
         public BufferType BufferType;
-        public bool IsTexture;
         public TextureType TextureType;
-        public bool IsUavBuffer;
         public UavBufferType UavBufferType;
-        public bool IsUavTexture;
         public UavTextureType UavTextureType;
-        public bool IsConstantBuffer;
-        public bool IsStruct;
-        public bool IsUnknown;
+        private TypeFlags _flags;
 
-        public List<Operator> Operators = new();
+        public bool IsScalar
+        {
+            readonly get => (_flags & TypeFlags.Scalar) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Scalar;
+                else
+                    _flags &= ~TypeFlags.Scalar;
+            }
+        }
+
+        public bool IsVector
+        {
+            readonly get => (_flags & TypeFlags.Vector) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Vector;
+                else
+                    _flags &= ~TypeFlags.Vector;
+            }
+        }
+
+        public bool IsMatrix
+        {
+            readonly get => (_flags & TypeFlags.Matrix) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Matrix;
+                else
+                    _flags &= ~TypeFlags.Matrix;
+            }
+        }
+
+        public bool IsSampler
+        {
+            readonly get => (_flags & TypeFlags.Sampler) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Sampler;
+                else
+                    _flags &= ~TypeFlags.Sampler;
+            }
+        }
+
+        public bool IsBuffer
+        {
+            readonly get => (_flags & TypeFlags.Buffer) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Buffer;
+                else
+                    _flags &= ~TypeFlags.Buffer;
+            }
+        }
+
+        public bool IsTexture
+        {
+            readonly get => (_flags & TypeFlags.Texture) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Texture;
+                else
+                    _flags &= ~TypeFlags.Texture;
+            }
+        }
+
+        public bool IsUavBuffer
+        {
+            readonly get => (_flags & TypeFlags.UavBuffer) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.UavBuffer;
+                else
+                    _flags &= ~TypeFlags.UavBuffer;
+            }
+        }
+
+        public bool IsUavTexture
+        {
+            readonly get => (_flags & TypeFlags.UavTexture) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.UavTexture;
+                else
+                    _flags &= ~TypeFlags.UavTexture;
+            }
+        }
+
+        public bool IsConstantBuffer
+        {
+            readonly get => (_flags & TypeFlags.ConstantBuffer) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.ConstantBuffer;
+                else
+                    _flags &= ~TypeFlags.ConstantBuffer;
+            }
+        }
+
+        public bool IsStruct
+        {
+            readonly get => (_flags & TypeFlags.Struct) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Struct;
+                else
+                    _flags &= ~TypeFlags.Struct;
+            }
+        }
+
+        public bool IsUnknown
+        {
+            readonly get => (_flags & TypeFlags.Unknown) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Unknown;
+                else
+                    _flags &= ~TypeFlags.Unknown;
+            }
+        }
+
+        public bool IsVoid
+        {
+            readonly get => (_flags & TypeFlags.Void) != 0;
+            set
+            {
+                if (value)
+                    _flags |= TypeFlags.Void;
+                else
+                    _flags &= ~TypeFlags.Void;
+            }
+        }
+
+        public static SType Void => new() { _flags = TypeFlags.Void };
+
+        public List<Operator> Operators = [];
 
         public SType(string name)
         {

@@ -4,20 +4,24 @@
     using Hexa.NET.ImNodes;
     using HexaEngine.Core;
     using HexaEngine.Materials;
+    using HexaEngine.Materials.Nodes.Textures;
+    using System.Numerics;
 
     public class BaseNodeRenderer : DisposableRefBase, INodeRenderer
     {
+        private bool fullEdit = true;
+
         public virtual void Draw(Node node)
         {
             if (node.wantsSetPosition)
             {
-                ImNodes.SetNodeEditorSpacePos(node.Id, node.position);
+                ImNodes.SetNodeGridSpacePos(node.Id, node.position);
                 node.wantsSetPosition = false;
             }
 
-            ImNodes.PushColorStyle(ImNodesCol.TitleBar, node.TitleColor);
-            ImNodes.PushColorStyle(ImNodesCol.TitleBarHovered, node.TitleHoveredColor);
-            ImNodes.PushColorStyle(ImNodesCol.TitleBarSelected, node.TitleSelectedColor);
+            ImNodes.PushColorStyle(ImNodesCol.TitleBar, node.TitleColor.Vec4ToABGR());
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarHovered, node.TitleHoveredColor.Vec4ToABGR());
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarSelected, node.TitleSelectedColor.Vec4ToABGR());
             ImNodes.BeginNode(node.Id);
             ImNodes.BeginNodeTitleBar();
             if (node.isEditing)
@@ -48,6 +52,30 @@
 
             ImNodes.EndNodeTitleBar();
 
+            if (fullEdit && node.isEditing)
+            {
+                ImGui.PushItemWidth(200);
+                Vector4 c = node.TitleColor;
+                if (ImGui.ColorEdit4("Title Bar", ref c))
+                {
+                    node.TitleColor = c;
+                }
+                Vector4 c2 = node.TitleHoveredColor;
+                if (ImGui.ColorEdit4("Title Hovered", ref c2))
+                {
+                    node.TitleHoveredColor = c2;
+                }
+                Vector4 c3 = node.TitleSelectedColor;
+                if (ImGui.ColorEdit4("Title Bar Selected", ref c3))
+                {
+                    node.TitleSelectedColor = c3;
+                }
+                ImGui.PopItemWidth();
+                ImNodes.EndNode();
+                ImNodes.PopColorStyle();
+                return;
+            }
+
             DrawContentBeforePins(node);
 
             for (int i = 0; i < node.Pins.Count; i++)
@@ -60,7 +88,7 @@
             ImNodes.EndNode();
             ImNodes.PopColorStyle();
 
-            node.position = ImNodes.GetNodeEditorSpacePos(node.Id);
+            node.position = ImNodes.GetNodeGridSpacePos(node.Id);
             node.size = ImNodes.GetNodeDimensions(node.Id);
         }
 
@@ -79,6 +107,8 @@
 
     public class BaseNodeRenderer<T> : DisposableRefBase, INodeRenderer where T : Node
     {
+        private bool fullEdit = true;
+
         public void Draw(Node node)
         {
             if (node is T t)
@@ -91,13 +121,13 @@
         {
             if (node.wantsSetPosition)
             {
-                ImNodes.SetNodeEditorSpacePos(node.Id, node.position);
+                ImNodes.SetNodeGridSpacePos(node.Id, node.position);
                 node.wantsSetPosition = false;
             }
 
-            ImNodes.PushColorStyle(ImNodesCol.TitleBar, node.TitleColor);
-            ImNodes.PushColorStyle(ImNodesCol.TitleBarHovered, node.TitleHoveredColor);
-            ImNodes.PushColorStyle(ImNodesCol.TitleBarSelected, node.TitleSelectedColor);
+            ImNodes.PushColorStyle(ImNodesCol.TitleBar, node.TitleColor.Vec4ToABGR());
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarHovered, node.TitleHoveredColor.Vec4ToABGR());
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarSelected, node.TitleSelectedColor.Vec4ToABGR());
             ImNodes.BeginNode(node.Id);
             ImNodes.BeginNodeTitleBar();
             if (node.isEditing)
@@ -128,6 +158,30 @@
 
             ImNodes.EndNodeTitleBar();
 
+            if (fullEdit && node.isEditing)
+            {
+                ImGui.PushItemWidth(200);
+                Vector4 c = node.TitleColor;
+                if (ImGui.ColorEdit4("Title Bar", ref c))
+                {
+                    node.TitleColor = c;
+                }
+                Vector4 c2 = node.TitleHoveredColor;
+                if (ImGui.ColorEdit4("Title Hovered", ref c2))
+                {
+                    node.TitleHoveredColor = c2;
+                }
+                Vector4 c3 = node.TitleSelectedColor;
+                if (ImGui.ColorEdit4("Title Bar Selected", ref c3))
+                {
+                    node.TitleSelectedColor = c3;
+                }
+                ImGui.PopItemWidth();
+                ImNodes.EndNode();
+                ImNodes.PopColorStyle();
+                return;
+            }
+
             DrawContentBeforePins(node);
 
             for (int i = 0; i < node.Pins.Count; i++)
@@ -140,7 +194,7 @@
             ImNodes.EndNode();
             ImNodes.PopColorStyle();
 
-            node.position = ImNodes.GetNodeEditorSpacePos(node.Id);
+            node.position = ImNodes.GetNodeGridSpacePos(node.Id);
             node.size = ImNodes.GetNodeDimensions(node.Id);
         }
 

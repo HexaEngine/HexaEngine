@@ -6,12 +6,37 @@
     using HexaEngine.Materials;
     using HexaEngine.Materials.Pins;
 
+    public struct LinkStartedEventArgs
+    {
+        public Pin Pin;
+        public Node Node;
+
+        public LinkStartedEventArgs(Pin pin, Node node)
+        {
+            Pin = pin;
+            Node = node;
+        }
+    }
+
+    public struct LinkDroppedEventArgs
+    {
+        public Pin Pin;
+        public Node Node;
+
+        public LinkDroppedEventArgs(Pin pin, Node node)
+        {
+            Pin = pin;
+            Node = node;
+        }
+    }
+
     public class ImNodesNodeEditor : NodeEditor
     {
         private ImNodesEditorContextPtr context;
         private string? state;
+        private readonly DrawContextMenu drawContextMenuCallback;
 
-        public ImNodesNodeEditor()
+        public ImNodesNodeEditor(DrawContextMenu drawContextMenuCallback)
         {
             NodeEditorRegistry.SetDefaultRenderers(new BaseNodeRenderer(), new BasePinRenderer());
             NodeEditorRegistry.RegisterPinSingleton<BoolPin, BoolPinRenderer>();
@@ -20,23 +45,30 @@
             NodeEditorRegistry.RegisterPinSingleton<HalfPin, HalfPinRenderer>();
             NodeEditorRegistry.RegisterPinSingleton<IntPin, IntPinRenderer>();
             NodeEditorRegistry.RegisterPinSingleton<UIntPin, UIntPinRenderer>();
+            this.drawContextMenuCallback = drawContextMenuCallback;
         }
+
+        public delegate void DrawContextMenu();
+
+        public event EventHandler<LinkStartedEventArgs>? LinkStarted;
+
+        public event EventHandler<LinkDroppedEventArgs>? LinkDropped;
 
         public ImNodesMiniMapLocation Location { get; set; }
 
         public bool Minimap { get; set; }
 
-        public void BeginModify()
+        public override void BeginModify()
         {
             ImNodes.EditorContextSet(context);
         }
 
-        public void EndModify()
+        public override void EndModify()
         {
             ImNodes.EditorContextSet(null);
         }
 
-        public new static ImNodesNodeEditor Deserialize(string json)
+        public static ImNodesNodeEditor Deserialize(string json, DrawContextMenu drawContextMenuCallback)
         {
             JsonSerializerSettings settings = new()
             {
@@ -50,11 +82,12 @@
                 CheckAdditionalContent = true,
                 MetadataPropertyHandling = MetadataPropertyHandling.Default,
                 NullValueHandling = NullValueHandling.Include,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
                 MaxDepth = int.MaxValue
             };
 
             var container = JsonConvert.DeserializeObject<NodeContainer>(json, settings)!;
-            ImNodesNodeEditor editor = new();
+            ImNodesNodeEditor editor = new(drawContextMenuCallback);
             container.Build(editor);
             return editor;
         }
@@ -163,9 +196,19 @@
                     }
                 }
             }
+
             int idpinStart = 0;
             if (ImNodes.IsLinkStarted(ref idpinStart))
             {
+                var pin = GetPin(idpinStart);
+                LinkStarted?.Invoke(this, new LinkStartedEventArgs(pin, pin.Parent));
+            }
+
+            int startedAt = 0;
+            if (ImNodes.IsLinkDropped(ref startedAt))
+            {
+                //  var pin = GetPin(idpinStart);
+                //  LinkDropped?.Invoke(this, new LinkDroppedEventArgs(pin, pin.Parent));
             }
 
             for (int i = 0; i < nodes.Count; i++)

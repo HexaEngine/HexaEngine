@@ -29,11 +29,11 @@
 
                 if (flags != PinFlags.ColorEdit && flags != PinFlags.ColorPicker)
                 {
-                    changed |= ImGui.InputScalarN(pin.name, ImGuiDataType.Float, val, components);
+                    changed |= ImGui.InputScalarN(pin.name, ImGuiDataType.Float, val, components, "%.6f");
                 }
                 else if (flags == PinFlags.Slider)
                 {
-                    changed |= ImGui.SliderScalarN(pin.name, ImGuiDataType.Float, val, components, &min, &max);
+                    changed |= ImGui.SliderScalarN(pin.name, ImGuiDataType.Float, val, components, &min, &max, "%.6f");
                 }
                 else if (flags == PinFlags.ColorEdit)
                 {

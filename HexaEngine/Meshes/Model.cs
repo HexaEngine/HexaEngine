@@ -366,7 +366,6 @@
 
         private const string MetadataSurfaceVersionKey = "MatSurface.Version";
         private const string MetadataSurfaceKey = "MatSurface.Data";
-        private const string SurfaceVersion = "1.0.0.0";
 
         private static List<MaterialShaderPassDesc> GetMaterialShaderPasses(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
@@ -635,12 +634,6 @@
                 stream.Dispose();
                 disposedValue = true;
             }
-        }
-
-        ~Model()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
         }
 
         public void Dispose()

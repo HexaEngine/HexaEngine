@@ -23,11 +23,19 @@
         public float DensityFactor;
         public float CloudType;
         public float PhaseFunctionG;
-        public float _padd;
+        public float FogIntensity;
+
+        public Vector3 FogColor;
+        public float FogHeight;
+
+        public float FogStart;
+        public float FogEnd;
+        public int FogMode;
+        public float FogDensity;
 
         //sky parameters
-        public Vector3 A;
 
+        public Vector3 A;
         public float _paddA;
         public Vector3 B;
         public float _paddB;

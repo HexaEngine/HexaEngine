@@ -93,10 +93,15 @@ namespace HexaEngine.Graphics.Passes
             });
 
             LightManager.ActiveLightsChanged += ActiveLightsChanged;
+            if (LightManager.Current != null)
+            {
+                ActiveLightsChanged(LightManager.Current, new(LightManager.Current));
+            }
         }
 
-        private unsafe void ActiveLightsChanged(object sender, LightManager manager)
+        private unsafe void ActiveLightsChanged(object sender, ActiveLightsChangedEventArgs e)
         {
+            var manager = e.LightManager;
             dev.SetGlobalSRV("globalProbes", manager.GlobalProbes.SRV);
             dev.SetGlobalSRV("lights", manager.LightBuffer.SRV);
             dev.SetGlobalSRV("shadowData", manager.ShadowDataBuffer.SRV);

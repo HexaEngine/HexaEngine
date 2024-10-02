@@ -12,6 +12,6 @@
 
         IReadOnlyList<FloatPin> Params { get; }
 
-        void DefineMethod(VariableTable table);
+        void DefineMethod(GenerationContext context, VariableTable table);
     }
 }

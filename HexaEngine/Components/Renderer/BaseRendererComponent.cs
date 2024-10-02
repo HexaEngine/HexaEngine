@@ -7,7 +7,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
 
-    public abstract class BaseRendererComponent : IRendererComponent
+    public abstract class BaseRendererComponent : IDrawable
     {
         private volatile bool loaded = false;
         private uint queueIndex = (uint)RenderQueueIndex.Geometry;
@@ -59,6 +59,8 @@
 
         public bool BatchSupport { get; }
 
+        int IDrawable.LeafId { get; set; } = -1;
+
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
         protected abstract void LoadCore(IGraphicsDevice device);
@@ -104,7 +106,7 @@
             }
         }
 
-        void IRendererComponent.Update(IGraphicsContext context)
+        void IDrawable.Update(IGraphicsContext context)
         {
             if (loaded && GameObject.IsVisible)
             {
@@ -112,7 +114,7 @@
             }
         }
 
-        void IRendererComponent.VisibilityTest(CullingContext context)
+        void IDrawable.VisibilityTest(CullingContext context)
         {
             if (loaded && GameObject.IsVisible)
             {
@@ -120,7 +122,7 @@
             }
         }
 
-        void IRendererComponent.DrawDepth(IGraphicsContext context)
+        void IDrawable.DrawDepth(IGraphicsContext context)
         {
             if (loaded && GameObject.IsVisible)
             {
@@ -128,7 +130,7 @@
             }
         }
 
-        void IRendererComponent.DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        void IDrawable.DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (loaded && GameObject.IsVisible)
             {
@@ -136,7 +138,7 @@
             }
         }
 
-        void IRendererComponent.Draw(IGraphicsContext context, RenderPath path)
+        void IDrawable.Draw(IGraphicsContext context, RenderPath path)
         {
             if (loaded && GameObject.IsVisible)
             {
@@ -144,7 +146,7 @@
             }
         }
 
-        void IRendererComponent.Bake(IGraphicsContext context)
+        void IDrawable.Bake(IGraphicsContext context)
         {
             if (loaded && GameObject.IsVisible)
             {

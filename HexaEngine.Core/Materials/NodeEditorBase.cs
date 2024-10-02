@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Hexa.NET.ImNodes;
+using Newtonsoft.Json;
 
 namespace HexaEngine.Materials
 {
@@ -218,7 +219,7 @@ namespace HexaEngine.Materials
                         group.Add(pNodes[j].Item2);
                     }
                 }
-                nodes[i] = group.ToArray();
+                nodes[i] = [.. group];
             }
 
             return nodes;
@@ -349,7 +350,24 @@ namespace HexaEngine.Materials
                     return node;
                 }
             }
-            throw new();
+            throw new KeyNotFoundException();
+        }
+
+        public Pin GetPin(int id)
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                Node node = nodes[i];
+                for (int j = 0; j < node.Pins.Count; j++)
+                {
+                    var pin = node.Pins[j];
+                    if (pin.Id == id)
+                    {
+                        return pin;
+                    }
+                }
+            }
+            throw new KeyNotFoundException();
         }
 
         public T GetNode<T>() where T : Node
@@ -476,6 +494,14 @@ namespace HexaEngine.Materials
         private void OnValueChanging(object? sender)
         {
             ValueChanging?.Invoke(sender, this);
+        }
+
+        public virtual void BeginModify()
+        {
+        }
+
+        public virtual void EndModify()
+        {
         }
     }
 }

@@ -41,7 +41,7 @@
             {
                 IOSignature inputSig = new("Pixel",
             new SignatureDef("color", new(VectorType.Float4)),
-            new SignatureDef("pos", new(VectorType.Float4)),
+            new SignatureDef("pos", new(VectorType.Float3)),
             new SignatureDef("uv", new(VectorType.Float3)),
             new SignatureDef("normal", new(VectorType.Float3)),
             new SignatureDef("tangent", new(VectorType.Float3)),
@@ -53,7 +53,7 @@
                     new SignatureDef("roughness", new(ScalarType.Float)),
                     new SignatureDef("metallic", new(ScalarType.Float)),
                     new SignatureDef("reflectance", new(ScalarType.Float)),
-                new SignatureDef("ao", new(ScalarType.Float)),
+                    new SignatureDef("ao", new(ScalarType.Float)),
                     new SignatureDef("emissive", new(VectorType.Float4)));
 
                 string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
@@ -335,14 +335,10 @@
 
                 var connection = textureNode.OutColor.FindLink<BRDFShadingModelNode>(PinKind.Input);
 
-                if (connection is not PropertyPin propertyPin)
+                MaterialTextureType type = MaterialTextureType.Unknown;
+                if (connection is PropertyPin propertyPin)
                 {
-                    continue;
-                }
-
-                if (!Enum.TryParse<MaterialTextureType>(propertyPin.PropertyName, true, out var type))
-                {
-                    type = MaterialTextureType.Unknown;
+                    Enum.TryParse(propertyPin.PropertyName, true, out type);
                 }
 
                 MaterialTexture texture;
@@ -361,16 +357,7 @@
                 texture.MaxLOD = textureNode.MaxLOD;
                 texture.Flags = TextureFlags.None;
 
-                int index = material.GetTextureIndex(type);
-
-                if (index != -1)
-                {
-                    material.Textures[index] = texture;
-                }
-                else
-                {
-                    material.Textures.Add(texture);
-                }
+                material.Textures.Add(texture);
             }
         }
     }

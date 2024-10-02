@@ -22,6 +22,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 #endif
 
     output.position = float4(bary.x * tri[0].position + bary.y * tri[1].position + bary.z * tri[2].position, 1);
+    output.pos = output.position.xyz;
 
 #if VtxUVs
     output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
@@ -37,9 +38,8 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 
 #if HasDisplacementTex
     output.position.xyz = ComputeDisplacement(displacementTexture, displacementTextureSampler, DisplacementStrength, output.position.xyz, output.tex.xy, output.normal);
+    output.pos = output.position.xyz;
 #endif
-
-    output.position = mul(output.position, viewProj);
     
 #if VtxUVs
     output.tex = output.tex;
@@ -51,7 +51,18 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 
 #if VtxTangents
     output.tangent = normalize(output.tangent);
+
+    float3 N = output.normal;
+    float3 T = normalize(output.tangent - dot(output.tangent, N) * N);
+    float3 B = cross(N, T);
+	output.binormal = B;
+	float3x3 TBN = float3x3(T, B, N);
+	output.tangentViewPos = mul(camPos, TBN);
+	output.tangentPos = mul(output.pos, TBN);
+
 #endif
+
+    output.position = mul(output.position, viewProj);
 
     return output;
 }

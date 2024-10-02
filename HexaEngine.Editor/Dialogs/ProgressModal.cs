@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.UI;
     using System;
     using System.Numerics;
@@ -22,7 +23,7 @@
         BottomRight = 1 << 6,
     }
 
-    public sealed class ProgressModal : Modal, IDisposable, IProgress<float>
+    public sealed class ProgressModal : Modal, IProgress<float>
     {
         private readonly string title;
         private readonly string message;
@@ -166,14 +167,14 @@
             ImGui.Text(message);
         }
 
+        public void Report(float value)
+        {
+            progress = MathUtil.Clamp01(value);
+        }
+
         public void Dispose()
         {
             Close();
-        }
-
-        public void Report(float value)
-        {
-            progress = value;
         }
     }
 }

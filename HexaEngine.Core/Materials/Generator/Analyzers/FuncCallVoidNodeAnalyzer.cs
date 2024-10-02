@@ -16,7 +16,7 @@
                 definitions[i] = context.GetVariableFirstLink(node, node.Params[i]);
             }
 
-            context.BuildFunctionCall(definitions, (Node)node, node.Op, builder);
+            context.BuildFunctionCallVoid(definitions, (Node)node, node.Op, builder);
         }
     }
 }

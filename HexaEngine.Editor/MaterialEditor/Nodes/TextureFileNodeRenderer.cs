@@ -7,11 +7,14 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.UI;
     using HexaEngine.Materials.Nodes.Textures;
+    using System.Numerics;
 
     public class TextureFileNodeRenderer : BaseNodeRendererInstanced<TextureFileNode>
     {
         public Ref<Texture2D>? image;
         public SamplerState? sampler;
+        public bool showMore;
+        public Vector2 size = new(128, 128);
 
         public override void OnSetInstance(TextureFileNode node)
         {
@@ -75,7 +78,7 @@
 
         protected override void DrawContent(TextureFileNode node)
         {
-            ImGui.Image(image?.Value?.SRV?.NativePointer ?? 0, node.Size);
+            ImGui.Image(image?.Value?.SRV?.NativePointer ?? 0, size);
 
             ImGui.PushItemWidth(100);
 
@@ -88,17 +91,17 @@
                 node.OnValueChanged();
             }
 
-            if (!node.showMore && ImGui.Button("more..."))
+            if (!showMore && ImGui.Button("more..."))
             {
-                node.showMore = true;
+                showMore = true;
             }
 
-            if (node.showMore && ImGui.Button("less..."))
+            if (showMore && ImGui.Button("less..."))
             {
-                node.showMore = false;
+                showMore = false;
             }
 
-            if (node.showMore)
+            if (showMore)
             {
                 bool active = false;
                 bool changed = false;

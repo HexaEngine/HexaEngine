@@ -56,27 +56,15 @@
             };
 
             var order = sorter.TopologicalSort(nodes);
-            StringBuilder builder = new();
-            for (int i = 0; i < order.Count; i++)
-            {
-                builder.Clear();
-                var node = order[i];
-                var id = context.Mapping.Count;
-                context.Mapping.Add(node, id);
-                context.Id = id;
 
-                for (int j = 0; j < NodeAnalyzerRegistry.Analyzers.Count; j++)
-                {
-                    if (NodeAnalyzerRegistry.Analyzers[j].TryAnalyze(node, context, builder))
-                    {
-                        break;
-                    }
-                }
+            foreach (Node node in order)
+            {
+                context.AnalyzeNode(node);
             }
 
             OnPostBuildTable?.Invoke(table);
 
-            builder.Clear();
+            StringBuilder builder = new();
             CodeWriter writer = new(builder);
             BuildHeader(writer);
             BuildBody(writer, root, entryName);

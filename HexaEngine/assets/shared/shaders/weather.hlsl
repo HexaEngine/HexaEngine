@@ -21,9 +21,16 @@ cbuffer WeatherBuffer : register(b2)
 
 	float density_factor;
 	float cloud_type;
-
 	float phaseFunctionG;
-	float _padd;
+	float fog_intensity;
+
+	float3 fog_color;
+	float fog_height;
+
+	float fog_start;
+	float fog_end;
+	int fog_mode;
+	float fog_density;
 
 	float3 A;
 	float _paddA;
@@ -45,6 +52,73 @@ cbuffer WeatherBuffer : register(b2)
 	float _paddI;
 	float3 Z;
 	float _paddZ;
+}
+
+// Linear Fog Factor
+inline float GetLinearFogFactor(float distance)
+{
+	return saturate((distance - fog_start) / (fog_end - fog_start));
+}
+
+// Exponential Fog Factor
+inline float GetExpFogFactor(float distance)
+{
+	return saturate(1.0 - exp(-distance * fog_density));
+}
+
+// Exponential Squared Fog Factor
+inline float GetExp2FogFactor(float distance)
+{
+	return saturate(1.0 - exp(-distance * distance * fog_density));
+}
+
+// Height-based Fog Factor
+inline float GetFogHeightFactor(float height)
+{
+	return saturate(exp(-height + fog_height));
+}
+
+float GetFogDistanceFactor(float distance, int mode)
+{
+	float fogFactor = 0.0;
+	switch (mode)
+	{
+	case 0:
+		fogFactor = GetLinearFogFactor(distance);
+		break;
+
+	case 1:
+		fogFactor = GetExpFogFactor(distance);
+		break;
+
+	case 2:
+		fogFactor = GetExp2FogFactor(distance);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return fogFactor;
+}
+
+float GetFogFactor(float3 pos, float3 cameraPos)
+{
+	float3 VN = cameraPos - pos;
+	float d = length(VN);
+
+	int mode = fog_mode & 0x03;
+	bool useHeightBased = (fog_mode & 0x04) != 0;
+
+	float fogFactor = GetFogDistanceFactor(d, mode);
+
+	if (useHeightBased)
+	{
+		float heightFactor = GetFogHeightFactor(pos.y);
+		fogFactor *= heightFactor;  // No need for saturate since both factors are between [0, 1]
+	}
+
+	return fogFactor * fog_intensity;  // Allow intensity to exceed 1 if necessary
 }
 
 #endif

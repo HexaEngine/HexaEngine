@@ -182,9 +182,7 @@
 
             string name = EnumHelper<ShadowType>.GetName(type);
 
-            var pass = material.GetPass(name);
-
-            if (pass == null)
+            if (!material.BeginDraw(name, out var pass))
             {
                 return;
             }
@@ -196,7 +194,7 @@
             {
                 context.DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
             }
-            pass.EndDraw(context);
+            material.EndDraw(context);
             primitive.EndDraw(context);
         }
 

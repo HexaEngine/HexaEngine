@@ -15,6 +15,30 @@
     {
         public LightManager LightManager;
         public LightSource Light;
+
+        public LightUpdatedEventArgs(LightManager lightManager, LightSource light)
+        {
+            LightManager = lightManager;
+            Light = light;
+        }
+    }
+
+    public struct ActiveLightsChangedEventArgs
+    {
+        public LightManager LightManager;
+        public IReadOnlyList<LightSource> ActiveLights;
+
+        public ActiveLightsChangedEventArgs(LightManager lightManager, IReadOnlyList<LightSource> activeLights)
+        {
+            LightManager = lightManager;
+            ActiveLights = activeLights;
+        }
+
+        public ActiveLightsChangedEventArgs(LightManager lightManager)
+        {
+            LightManager = lightManager;
+            ActiveLights = lightManager.Active;
+        }
     }
 
     public partial class LightManager : ISceneSystem
@@ -25,13 +49,13 @@
 
         private readonly ConcurrentQueue<Probe> probeUpdateQueue = new();
         private readonly ConcurrentQueue<LightSource> lightUpdateQueue = new();
-        public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
+        public readonly ConcurrentQueue<IDrawable> DrawableUpdateQueue = new();
 
         public readonly StructuredUavBuffer<ProbeData> GlobalProbes;
         public readonly StructuredUavBuffer<LightData> LightBuffer;
         public readonly StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
-        private static readonly EventHandlers<LightManager> activeLightsChangedHandlers = new();
+        private static readonly EventHandlers<ActiveLightsChangedEventArgs> activeLightsChangedHandlers = new();
         private static readonly EventHandlers<LightUpdatedEventArgs> lightUpdatedHandlers = new();
 
         public LightManager()
@@ -43,7 +67,7 @@
 
         public static LightManager? Current => SceneManager.Current?.LightManager;
 
-        public static event EventHandler<LightManager> ActiveLightsChanged
+        public static event EventHandler<ActiveLightsChangedEventArgs> ActiveLightsChanged
         {
             add => activeLightsChangedHandlers.AddHandler(value);
             remove => activeLightsChangedHandlers.RemoveHandler(value);
@@ -207,14 +231,9 @@
                 OnLightUpdated(lightSource);
             }
 
-            if (activeLightsChanged)
-            {
-                OnActiveLightsChanged();
-            }
-
             UpdateLights(camera);
 
-            while (RendererUpdateQueue.TryDequeue(out var renderer))
+            while (DrawableUpdateQueue.TryDequeue(out var renderer))
             {
                 for (int i = 0; i < activeLights.Count; i++)
                 {
@@ -254,11 +273,19 @@
                     }
                 }
             }
+
+            if (activeLightsChanged)
+            {
+                OnActiveLightsChanged();
+            }
         }
 
         protected virtual void OnActiveLightsChanged()
         {
-            activeLightsChangedHandlers.Invoke(this, this);
+            ActiveLightsChangedEventArgs eventArgs;
+            eventArgs.LightManager = this;
+            eventArgs.ActiveLights = activeLights;
+            activeLightsChangedHandlers.Invoke(this, eventArgs);
         }
 
         protected virtual void OnLightUpdated(LightSource light)

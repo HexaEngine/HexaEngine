@@ -3,6 +3,7 @@
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
@@ -15,11 +16,11 @@
         [JsonIgnore]
         public FloatPin[] OutPins = new FloatPin[4];
 
-#pragma warning disable CS8618 // Non-nullable field 'In' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
-        public SplitNode(int id, bool removable, bool isStatic) : base(id, "Vector to Components", removable, isStatic)
-#pragma warning restore CS8618 // Non-nullable field 'In' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        public SplitNode(int id, bool removable, bool isStatic) : base(id, "Split Vector", removable, isStatic)
         {
+            TitleColor = 0x5D3874FF.RGBAToVec4();
+            TitleHoveredColor = 0x6F4C85FF.RGBAToVec4();
+            TitleSelectedColor = 0x79578FFF.RGBAToVec4();
         }
 
         public PinType Mode { get => mode; set => mode = value; }

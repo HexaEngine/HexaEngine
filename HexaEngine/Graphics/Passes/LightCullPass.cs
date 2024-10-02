@@ -63,12 +63,16 @@
             LightGridBuffer = creator.CreateStructuredUavBuffer<LightGrid>("LightGridBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
 
             LightManager.ActiveLightsChanged += ActiveLightsChanged;
+            if (LightManager.Current != null)
+            {
+                ActiveLightsChanged(LightManager.Current, new(LightManager.Current));
+            }
         }
 
-        private void ActiveLightsChanged(object? sender, LightManager e)
+        private void ActiveLightsChanged(object? sender, ActiveLightsChangedEventArgs e)
         {
             var bindings = clusterCulling.Value!.Bindings;
-            bindings.SetSRV("lights", e.LightBuffer.SRV!);
+            bindings.SetSRV("lights", e.LightManager.LightBuffer.SRV!);
         }
 
         public override void Prepare(GraphResourceBuilder creator)

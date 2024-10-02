@@ -201,6 +201,12 @@
 
             LightManager.ActiveLightsChanged += ActiveLightsChanged;
             LightManager.LightUpdated += LightUpdated;
+
+            if (LightManager.Current != null)
+            {
+                LightUpdated(LightManager.Current, new(LightManager.Current, null!));
+                ActiveLightsChanged(LightManager.Current, new(LightManager.Current));
+            }
         }
 
         private void LightUpdated(object? sender, LightUpdatedEventArgs e)
@@ -229,9 +235,9 @@
             }
         }
 
-        private void ActiveLightsChanged(object? sender, LightManager e)
+        private void ActiveLightsChanged(object? sender, ActiveLightsChangedEventArgs e)
         {
-            pipeline.Bindings.SetSRV("shadowData", e.ShadowDataBuffer.SRV);
+            pipeline.Bindings.SetSRV("shadowData", e.LightManager.ShadowDataBuffer.SRV);
         }
 
         public override void UpdateBindings()

@@ -52,7 +52,8 @@
 
             var camera = CameraManager.Current;
 
-            var renderers = scene.RenderManager.Renderers;
+            var drawables = scene.RenderManager.Drawables;
+            var tree = scene.RenderManager.DrawablesTree;
             var lights = scene.LightManager;
 
             profiler?.Begin("ShadowMap.UpdateBuffer");
@@ -70,15 +71,15 @@
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        DoDirectional(context, profiler, camera, renderers, lights, light);
+                        DoDirectional(context, profiler, camera, tree, lights, light);
                         break;
 
                     case LightType.Point:
-                        DoPoint(context, profiler, renderers, lights, light);
+                        DoPoint(context, profiler, tree, lights, light);
                         break;
 
                     case LightType.Spot:
-                        DoSpot(context, profiler, renderers, lights, light);
+                        DoSpot(context, profiler, tree, lights, light);
                         break;
                 }
                 light.InUpdateQueue = false;
@@ -136,7 +137,9 @@
             }
         }
 
-        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private readonly Stack<int> stack = [];
+
+        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdateSpot");
             var spotlight = (Spotlight)light;
@@ -151,19 +154,15 @@
 
             context.SetRenderTarget(tex.RTV, depth.DSV);
             context.SetViewport(sourceViewport);
-
-            for (int i = 0; i < renderers.Count; i++)
+            foreach (var node in tree.Enumerate(SpotFilter, stack, spotlight.ShadowFrustum))
             {
-                var renderer = renderers[i];
-                profiler?.Begin($"ShadowMap.UpdateSpot.{renderer.DebugName}");
-                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                var drawable = node.Value;
+                profiler?.Begin($"ShadowMap.UpdateSpot.{drawable.DebugName}");
+                if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                 {
-                    if (spotlight.IntersectFrustum(renderer.BoundingBox))
-                    {
-                        renderer.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
-                    }
+                    drawable.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
                 }
-                profiler?.End($"ShadowMap.UpdateSpot.{renderer.DebugName}");
+                profiler?.End($"ShadowMap.UpdateSpot.{drawable.DebugName}");
             }
 
             Filter(context, tex);
@@ -172,7 +171,16 @@
             profiler?.End("ShadowMap.UpdateSpot");
         }
 
-        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private static BVHFilterResult SpotFilter(BVHNode<IDrawable> node, BoundingFrustum frustum)
+        {
+            if (node.Box.Intersects(frustum))
+            {
+                return BVHFilterResult.Keep;
+            }
+            return BVHFilterResult.Skip;
+        }
+
+        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdatePoint");
             var pointLight = (PointLight)light;
@@ -189,18 +197,15 @@
                 context.SetRenderTarget(tex.RTV, depth.DSV);
                 context.SetViewport(sourceViewport);
 
-                for (int j = 0; j < renderers.Count; j++)
+                foreach (var node in tree.Enumerate(PointFilter, stack, pointLight.ShadowBox))
                 {
-                    var renderer = renderers[j];
-                    profiler?.Begin($"ShadowMap.UpdatePoint.{renderer.DebugName}");
-                    if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                    var drawable = node.Value;
+                    profiler?.Begin($"ShadowMap.UpdatePoint.{drawable.DebugName}");
+                    if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                     {
-                        if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
-                        {
-                            renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
-                        }
+                        drawable.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
                     }
-                    profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");
+                    profiler?.End($"ShadowMap.UpdatePoint.{drawable.DebugName}");
                 }
 
                 Filter(context, tex);
@@ -209,30 +214,34 @@
             profiler?.End("ShadowMap.UpdatePoint");
         }
 
+        private static BVHFilterResult PointFilter(BVHNode<IDrawable> node, BoundingBox box)
+        {
+            if (node.Box.Intersects(box))
+            {
+                return BVHFilterResult.Keep;
+            }
+            return BVHFilterResult.Skip;
+        }
+
         private int[] cascadeUpdateFrequency = [1, 2, 4, 8];
 
-        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdateDirectional");
             var directionalLight = (DirectionalLight)light;
             directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
-            for (int i = 0; i < renderers.Count; i++)
+
+            foreach (var node in tree.Enumerate(CascadeFilter, stack, directionalLight.ShadowFrustra))
             {
-                var renderer = renderers[i];
-                profiler?.Begin($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
-                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                var drawable = node.Value;
+                profiler?.Begin($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
+                if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                 {
-                    for (int j = 0; j < directionalLight.ShadowFrustra.Count; j++)
-                    {
-                        if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
-                        {
-                            renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
-                            break;
-                        }
-                    }
+                    drawable.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
                 }
-                profiler?.End($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
+                profiler?.End($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
             }
+
             var map = directionalLight.GetMap();
             if (map != null)
             {
@@ -240,6 +249,18 @@
             }
 
             profiler?.End("ShadowMap.UpdateDirectional");
+        }
+
+        private static BVHFilterResult CascadeFilter(BVHNode<IDrawable> node, IReadOnlyList<BoundingFrustum> frusta)
+        {
+            for (int i = 0; i < frusta.Count; i++)
+            {
+                if (frusta[i].Intersects(node.Box))
+                {
+                    return BVHFilterResult.Keep;
+                }
+            }
+            return BVHFilterResult.Skip;
         }
 
         public override void Release()

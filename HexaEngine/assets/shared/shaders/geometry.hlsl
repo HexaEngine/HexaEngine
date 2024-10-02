@@ -13,6 +13,7 @@ struct Pixel
 	float3 normal;
 	float3 tangent;
 	float3 binormal;
+	float3 viewDir;
 };
 
 #ifndef VtxColors
@@ -122,6 +123,7 @@ struct PixelInput
 #endif
 #if VtxPos
 	float4 position : SV_POSITION;
+	float3 pos : POSITION;
 #endif
 #if VtxUVs
 	VtxUV0Type tex : TEXCOORD;
@@ -131,6 +133,9 @@ struct PixelInput
 #endif
 #if VtxTangents
 	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+	float3 tangentViewPos : TEXCOORD4;
+	float3 tangentPos : TEXCOORD5;
 #endif
 };
 

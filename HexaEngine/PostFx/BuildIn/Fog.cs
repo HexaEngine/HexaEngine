@@ -3,11 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
 
@@ -32,7 +28,6 @@
         private float fogIntensity;
         private float fogStart;
         private float fogEnd;
-        private float fogDensity;
         private Vector3 fogColor;
         private float fogHeightEnd;
         private float noiseScale = 0.003f;

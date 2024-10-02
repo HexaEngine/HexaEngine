@@ -1,14 +1,36 @@
 ﻿namespace TestApp
 {
-    using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Assets.Importer;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
+    using HexaEngine.Graphics;
     using System;
 
     public static unsafe partial class Program
     {
+        public static void Main(string[] args)
+        {
+            BVHTree<int> tree = new();
+
+            tree.InsertLeaf(0, new(new(-1), new(1)));
+            var leaf = tree.InsertLeaf(0, new(new(-2), new(3)));
+
+            tree.InsertLeaf(0, new(new(-3), new(2)));
+
+            tree.InsertLeaf(0, new(new(-10), new(-5)));
+
+            Console.WriteLine(tree.Debug());
+
+            tree.RemoveLeaf(leaf);
+
+            Console.WriteLine(tree.Debug());
+
+            tree.InsertLeaf(0, new(new(-2), new(3)));
+
+            Console.WriteLine(tree.Debug());
+        }
+
+        /*
         public static void Main(string[] args)
         {
             string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -24,6 +46,7 @@
 
             SourceAssetsDatabase.ImportFile(path);
         }
+        */
 
         private struct ProgressDummy : IProgress<float>
         {

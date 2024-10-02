@@ -2,7 +2,7 @@
 {
     public class AddNode : FuncOperatorBaseNode
     {
-        public AddNode(int id, bool removable, bool isStatic) : base(id, "ObjectAdded", removable, isStatic)
+        public AddNode(int id, bool removable, bool isStatic) : base(id, "Add", removable, isStatic)
         {
         }
 

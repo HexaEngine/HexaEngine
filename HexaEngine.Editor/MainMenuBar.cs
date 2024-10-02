@@ -55,7 +55,7 @@
         {
             if (ImGui.IsAnyMouseDown())
             {
-                popup?.Close();
+                //popup?.Close();
             }
 
             if (filePicker.Draw())
@@ -326,6 +326,22 @@
                     {
                         popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress", ProgressType.Bar));
                         ((ProgressModal)popup).Report(0.8f);
+                    }
+
+                    if (ImGui.MenuItem("Progress Import Test"))
+                    {
+                        ImportProgressModal modal = new("Test progress", "Test progress");
+                        popup = PopupManager.Show(modal);
+                        modal.Report(0.8f);
+                        modal.BeginStep("Test step 1");
+                        modal.LogMessage(new LogMessage(null!, LogSeverity.Error, "Test message 1"));
+                        modal.EndStep();
+                        modal.BeginStep("Test step 2");
+                        modal.LogMessage(new LogMessage(null!, LogSeverity.Warning, "Test message 2"));
+                        modal.EndStep();
+                        modal.BeginStep("Test step 3");
+                        modal.LogMessage(new LogMessage(null!, LogSeverity.Info, "Test message 3"));
+                        modal.EndStep();
                     }
 
                     ImGui.EndMenu();

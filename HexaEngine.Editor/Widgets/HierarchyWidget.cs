@@ -576,7 +576,7 @@
                 labelBuffer.PushBack(UwU.Scroll);
             }
 
-            if (element.HasComponent<IRendererComponent>())
+            if (element.HasComponent<IDrawable>())
             {
                 labelBuffer.PushBack(UwU.DrawPolygon);
             }
