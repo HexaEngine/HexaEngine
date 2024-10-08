@@ -15,7 +15,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]
-    public class SkyRendererComponent : BaseRendererComponent
+    public class SkyRendererComponent : BaseDrawableComponent
     {
         private SkyRenderer renderer;
         private Skybox skybox;

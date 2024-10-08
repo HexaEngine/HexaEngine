@@ -18,7 +18,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
-    public class MeshRendererComponent : BaseRendererComponent, ILODRendererComponent, ISelectableRayTest
+    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
     {
         private ModelManager modelManager;
         private MaterialManager materialManager;
@@ -382,6 +382,7 @@
                     component.QueueIndex = (uint)RenderQueueIndex.Transparency;
                 }
                 component.GameObject.SendUpdateTransformed();
+                component.Invalidate();
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
 

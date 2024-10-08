@@ -16,7 +16,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent<SpriteRendererComponent>("Sprite Renderer")]
-    public class SpriteRendererComponent : BaseRendererComponent
+    public class SpriteRendererComponent : BaseDrawableComponent
     {
         private IGraphicsDevice? device;
         private SpriteRenderer renderer;

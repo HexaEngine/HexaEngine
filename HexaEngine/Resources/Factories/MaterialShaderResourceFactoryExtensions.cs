@@ -59,7 +59,7 @@
                     if (pass.SurfaceShader && pass.BaseShader != null)
                     {
                         var pipeline = pass.Pipeline;
-                        BuildSurfaceShader(versionKey, shaderKey, ref pipeline, pass.BaseShader);
+                        BuildSurfaceShader(desc.Guid, versionKey, shaderKey, ref pipeline, pass.BaseShader);
                         pass.Pipeline = pipeline;
                         shaderDesc.Passes[i] = pass;
                     }
@@ -72,7 +72,7 @@
             shader.Reload();
         }
 
-        public static void BuildSurfaceShader(MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
+        public static void BuildSurfaceShader(Guid guid, MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
         {
             if (version.Value == MaterialNodeConverter.SurfaceVersion)
             {
@@ -81,7 +81,7 @@
                 sb.AppendLine($"#include \"../../geometry.hlsl\"");
                 sb.AppendLine(shader.Value);
                 sb.AppendLine(FileSystem.ReadAllText(Paths.CurrentShaderPath + baseShader));
-                pipelineDesc.PixelShader = ShaderSource.FromCode(baseShader, sb.ToString());
+                pipelineDesc.PixelShader = ShaderSource.FromCode($"{guid}", sb.ToString(), Path.GetDirectoryName(baseShader));
             }
         }
 
@@ -114,7 +114,7 @@
                     if (pass.SurfaceShader && pass.BaseShader != null)
                     {
                         var pipeline = pass.Pipeline;
-                        BuildSurfaceShader(versionKey, shaderKey, ref pipeline, pass.BaseShader);
+                        BuildSurfaceShader(material.Guid, versionKey, shaderKey, ref pipeline, pass.BaseShader);
                         pass.Pipeline = pipeline;
                         shaderDesc.Passes[i] = pass;
                     }

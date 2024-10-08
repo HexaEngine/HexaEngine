@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
-    using HexaEngine.Core.MeshDecimator.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Numerics;

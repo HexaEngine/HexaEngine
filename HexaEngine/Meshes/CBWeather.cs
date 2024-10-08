@@ -55,5 +55,12 @@
         public float _paddI;
         public Vector3 Z;
         public float _paddZ;
+
+        public Vector3 SunColor;
+        public float SunRadius;
+
+        public float SunIntensity;
+        public float SunFalloff;
+        public Vector2 _padd0;
     };
 }

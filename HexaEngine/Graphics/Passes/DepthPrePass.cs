@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;

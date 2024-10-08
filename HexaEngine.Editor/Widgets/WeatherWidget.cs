@@ -172,6 +172,30 @@
             {
                 manager.FogDensity = fogDensity;
             }
+
+            var sunColor = manager.SunColor;
+            if (ImGui.ColorEdit3("Sun Color", ref sunColor))
+            {
+                manager.SunColor = sunColor;
+            }
+
+            var sunIntensity = manager.SunIntensity;
+            if (ImGui.InputFloat("Sun Intensity", ref sunIntensity))
+            {
+                manager.SunIntensity = sunIntensity;
+            }
+
+            var sunRadius = manager.SunRadius;
+            if (ImGui.InputFloat("Sun Radius", ref sunRadius))
+            {
+                manager.SunRadius = sunRadius;
+            }
+
+            var sunFalloff = manager.SunFalloff;
+            if (ImGui.InputFloat("Sun Falloff", ref sunFalloff))
+            {
+                manager.SunFalloff = sunFalloff;
+            }
         }
 
         private static readonly FogMode[] modes = [FogMode.Linear, FogMode.Exp, FogMode.Exp2];

@@ -18,7 +18,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
-    public class SkinnedMeshRendererComponent : BaseRendererComponent
+    public class SkinnedMeshRendererComponent : BaseDrawableComponent
     {
         private AssetRef modelAsset;
 

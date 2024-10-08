@@ -48,7 +48,7 @@
             return null;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
+        protected override void OnCreateShadowMap(ShadowAtlas atlas)
         {
             if (HasShadowMap)
             {
@@ -59,7 +59,7 @@
             last = ShadowMapResolution;
         }
 
-        public override void DestroyShadowMap()
+        protected override void OnDestroyShadowMap()
         {
             if (!HasShadowMap)
             {

@@ -477,8 +477,8 @@
 
             if (hasSurfaceShader)
             {
-                BuildSurfaceShader(surfaceVersion!, surfaceShader!, ref pipelineDescDeferred, "deferred/geometry/surface.hlsl");
-                BuildSurfaceShader(surfaceVersion!, surfaceShader!, ref pipelineDescForward, "forward/geometry/surface.hlsl");
+                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescDeferred, "deferred/geometry/surface.hlsl");
+                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescForward, "forward/geometry/surface.hlsl");
             }
 
             if ((flags & ModelMaterialShaderFlags.Forward) != 0)
@@ -558,9 +558,9 @@
             return passes;
         }
 
-        public static void BuildSurfaceShader(MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
+        public static void BuildSurfaceShader(Guid guid, MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
         {
-            MaterialShaderResourceFactoryExtensions.BuildSurfaceShader(version, shader, ref pipelineDesc, baseShader);
+            MaterialShaderResourceFactoryExtensions.BuildSurfaceShader(guid, version, shader, ref pipelineDesc, baseShader);
         }
 
         public static MaterialShaderDesc GetMaterialShaderDesc(Mesh mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)

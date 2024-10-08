@@ -81,6 +81,10 @@
         private float fogEnd;
         private FogMode fogMode;
         private float fogDensity;
+        private Vector3 sunColor = new(1, 1, 0.5f);
+        private float sunIntensity = 10;
+        private float sunRadius = 0.05f;
+        private float sunFalloff = 2;
 
         /// <summary>
         /// Gets a value indicating whether the weather has a sun.
@@ -342,6 +346,42 @@
             }
         }
 
+        public Vector3 SunColor
+        {
+            get => sunColor;
+            set
+            {
+                sunColor = value; isDirty = true;
+            }
+        }
+
+        public float SunIntensity
+        {
+            get => sunIntensity;
+            set
+            {
+                sunIntensity = value; isDirty = true;
+            }
+        }
+
+        public float SunRadius
+        {
+            get => sunRadius;
+            set
+            {
+                sunRadius = value; isDirty = true;
+            }
+        }
+
+        public float SunFalloff
+        {
+            get => sunFalloff;
+            set
+            {
+                sunFalloff = value; isDirty = true;
+            }
+        }
+
         /// <summary>
         /// Gets the constant buffer containing weather information for graphics rendering.
         /// </summary>
@@ -425,6 +465,10 @@
             weather.FogHeight = fogHeight;
             weather.FogMode = (int)fogMode;
             weather.FogDensity = fogDensity;
+            weather.SunColor = sunColor;
+            weather.SunIntensity = sunIntensity;
+            weather.SunRadius = sunRadius;
+            weather.SunFalloff = sunFalloff;
 
             Vector3 sunDir = Vector3.Normalize(new Vector3(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
             if (skyModel == SkyType.HosekWilkie)

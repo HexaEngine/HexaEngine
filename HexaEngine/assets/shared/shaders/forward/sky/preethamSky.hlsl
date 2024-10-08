@@ -72,13 +72,8 @@ float4 main(VertexOut pin) : SV_TARGET
 
 	skyLuminance *= 0.05; // hdr compensation.
 
-	float distanceToSun = distance(light_dir.xyz, dir);
-	float sunRadius = 0.05f;
-	float sunIntensity = 10.0f;
-	float brightness = saturate(1.0f - distanceToSun / sunRadius);
-	float3 sunColor = float3(1.0f, 1.0f, 0.5f);
-	float3 L0 = sunColor * brightness * sunIntensity;
-	float3 finalColor = skyLuminance + L0;
+	float3 sunContribution = ComputeSunContribution(dir);
+	float3 finalColor = skyLuminance + sunContribution;
 
 	// Fog blending logic
 

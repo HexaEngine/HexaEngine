@@ -987,6 +987,14 @@
                         }
                     }
 
+                    if (msh->MNumAnimMeshes > 0)
+                    {
+                        for (int j = 0; j < msh->MNumAnimMeshes; j++)
+                        {
+                            AnimMesh* animMesh = msh->MAnimMeshes[j];
+                        }
+                    }
+
                     Guid materialId = Guid.Empty;
                     if (materialIds != null)
                     {

@@ -21,7 +21,7 @@ namespace HexaEngine.D3D11
         private static readonly ILogger Logger = LoggerFactory.General;
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
-        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
+        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
@@ -59,7 +59,7 @@ namespace HexaEngine.D3D11
 
             string systemInclude = Paths.CurrentShaderPath;
 
-            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty, systemInclude);
+            IncludeHandler handler = new(Path.Combine(Paths.CurrentShaderPath, basePath) ?? string.Empty, systemInclude);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
             include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
             include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
@@ -104,7 +104,7 @@ namespace HexaEngine.D3D11
             return true;
         }
 
-        public static unsafe bool Compile(byte* pSource, int sourceLen, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
+        public static unsafe bool Compile(byte* pSource, int sourceLen, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
@@ -140,7 +140,7 @@ namespace HexaEngine.D3D11
 
             string systemInclude = Paths.CurrentShaderPath;
 
-            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty, systemInclude);
+            IncludeHandler handler = new(Path.Combine(Paths.CurrentShaderPath, basePath), systemInclude);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
             include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
             include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
@@ -272,34 +272,6 @@ namespace HexaEngine.D3D11
             return shaderReflection;
         }
 
-        public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
-        {
-            var fullName = Paths.CurrentShaderPath + path;
-            uint crc = FileSystem.GetCrc32Hash(fullName);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out _))
-            {
-                Compile(FileSystem.ReadAllText(fullName), macros, entry, path, profile, out var shaderBlob, out string? error);
-
-                if (shaderBlob != null)
-                {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
-                }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    return;
-                }
-
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
         public unsafe void GetShaderOrCompileFile(string entry, ShaderSource source, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader = null;
@@ -321,7 +293,7 @@ namespace HexaEngine.D3D11
 
                 fixed (byte* pData = data)
                 {
-                    Compile(pData, data.Length, macros, entry, source.Identifier, profile, out shaderBlob, out error);
+                    Compile(pData, data.Length, macros, entry, source.Identifier, source.WorkingDir, profile, out shaderBlob, out error);
                 }
                 if (shaderBlob != null)
                 {
@@ -340,78 +312,6 @@ namespace HexaEngine.D3D11
                 ShaderCache.CacheShader(source.Identifier, crc, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompileCode(string entry, string path, string code, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
-        {
-            uint crc = FileSystem.GetCrc32HashFromText(code);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out _))
-            {
-                Compile(code, macros, entry, path, profile, out var shaderBlob, out string? error);
-
-                if (shaderBlob != null)
-                {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
-                }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    return;
-                }
-
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, [], pShader);
-            }
-            *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompileFileOrCode(string entry, string path, string? code, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
-        {
-            if (code == null)
-            {
-                GetShaderOrCompileFile(entry, path, profile, macros, shader, bypassCache);
-            }
-            else
-            {
-                GetShaderOrCompileCode(entry, path, code, profile, macros, shader, bypassCache);
-            }
-        }
-
-        public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            var fullName = Paths.CurrentShaderPath + path;
-            uint crc = FileSystem.GetCrc32Hash(fullName);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
-            {
-                Compile(FileSystem.ReadAllText(fullName), macros, entry, path, profile, out var shaderBlob, out string? error);
-
-                if (shaderBlob != null)
-                {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
-                }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    signature = null;
-                    inputElements = null;
-                    return;
-                }
-
-                signature = GetInputSignature(pShader);
-                inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
-            }
-            *shader = pShader;
-            signature = GetInputSignature(pShader);
         }
 
         public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, ShaderSource source, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
@@ -438,7 +338,7 @@ namespace HexaEngine.D3D11
 
                 fixed (byte* pData = data)
                 {
-                    Compile(pData, data.Length, macros, entry, source.Identifier, profile, out shaderBlob, out error);
+                    Compile(pData, data.Length, macros, entry, source.Identifier, source.WorkingDir, profile, out shaderBlob, out error);
                 }
 
                 if (shaderBlob != null)
@@ -463,50 +363,6 @@ namespace HexaEngine.D3D11
             }
             *shader = pShader;
             signature = GetInputSignature(pShader);
-        }
-
-        public unsafe void GetShaderOrCompileCodeWithInputSignature(string entry, string path, string code, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            uint crc = FileSystem.GetCrc32HashFromText(code);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
-            {
-                Compile(code, macros, entry, path, profile, out var shaderBlob, out string? error);
-
-                if (shaderBlob != null)
-                {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
-                }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    signature = null;
-                    inputElements = null;
-                    return;
-                }
-
-                signature = GetInputSignature(pShader);
-                inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
-            }
-            *shader = pShader;
-            signature = GetInputSignature(pShader);
-        }
-
-        public unsafe void GetShaderOrCompileFileOrCodeWithInputSignature(string entry, string path, string? code, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            if (code == null)
-            {
-                GetShaderOrCompileFileWithInputSignature(entry, path, profile, macros, shader, out inputElements, out signature, bypassCache);
-            }
-            else
-            {
-                GetShaderOrCompileCodeWithInputSignature(entry, path, code, profile, macros, shader, out inputElements, out signature, bypassCache);
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

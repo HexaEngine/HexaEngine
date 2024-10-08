@@ -9,36 +9,40 @@
 
     public delegate void QueueIndexChangedEventHandler(IDrawable sender, uint oldIndex, uint newIndex);
 
+    public delegate void DrawableInvalidatedEventHandler(IDrawable sender);
+
     public interface IDrawable : IComponent, IHasFlags<RendererFlags>
     {
         internal int LeafId { get; set; }
 
-        public uint QueueIndex { get; }
+        uint QueueIndex { get; }
 
-        public bool BatchSupport { get; }
+        bool BatchSupport { get; }
 
-        public event QueueIndexChangedEventHandler? QueueIndexChanged;
+        event QueueIndexChangedEventHandler? QueueIndexChanged;
 
-        public BoundingBox BoundingBox { get; }
+        event DrawableInvalidatedEventHandler? DrawableInvalidated;
 
-        public void Load(IGraphicsDevice device);
+        BoundingBox BoundingBox { get; }
 
-        public void Unload();
+        void Load(IGraphicsDevice device);
 
-        public void Update(IGraphicsContext context);
+        void Unload();
 
-        public void VisibilityTest(CullingContext context);
+        void Update(IGraphicsContext context);
 
-        public void DrawDepth(IGraphicsContext context);
+        void VisibilityTest(CullingContext context);
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type);
+        void DrawDepth(IGraphicsContext context);
 
-        public void Draw(IGraphicsContext context, RenderPath path);
+        void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type);
 
-        public void Bake(IGraphicsContext context);
+        void Draw(IGraphicsContext context, RenderPath path);
+
+        void Bake(IGraphicsContext context);
 
         void Draw(IGraphicsContext deferred, string pass);
 
-        public string DebugName { get; }
+        string DebugName { get; }
     }
 }

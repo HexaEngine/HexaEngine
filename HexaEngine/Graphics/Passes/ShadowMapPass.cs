@@ -26,6 +26,8 @@
 
         private GaussianBlur blurFilter;
         private CopyEffect copyEffect;
+        private ReprojectEffect reprojectEffect;
+        private ClearSliceEffect clearSliceEffect;
 
         public ShadowMapPass() : base("ShadowMap")
         {
@@ -40,6 +42,8 @@
             osmBuffer = creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write);
             blurFilter = new(creator, "GaussianBlur", Format.R32G32Float, 1, 1);
             copyEffect = new(creator, "CopyPass", CopyFilter.None);
+            clearSliceEffect = new(creator);
+            reprojectEffect = new(creator);
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -105,7 +109,7 @@
             blurFilter.Blur(context, source.SRV, source.RTV, source.Width, source.Height);
         }
 
-        private void FilterArray(IGraphicsContext context, Texture2D source)
+        private void FilterArray(IGraphicsContext context, Texture2D source, uint cascadeMask, CSMShadowParams old, CSMShadowParams now, bool reproject)
         {
             if (source.Width != blurFilter.Width || source.Height != blurFilter.Height || source.Format != blurFilter.Format)
             {
@@ -114,7 +118,15 @@
 
             for (int i = 0; i < source.ArraySize; i++)
             {
-                blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                if ((cascadeMask & (1 << i)) != 0)
+                {
+                    blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                }
+                else if (reproject)
+                {
+                    Reproject(context, source, i, old, now);
+                    blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                }
             }
         }
 
@@ -223,15 +235,28 @@
             return BVHFilterResult.Skip;
         }
 
-        private int[] cascadeUpdateFrequency = [1, 2, 4, 8];
-
         private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
+            var old = csmBuffer.Value![0];
             profiler?.Begin("ShadowMap.UpdateDirectional");
             var directionalLight = (DirectionalLight)light;
-            directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
+            if (!directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value!, camera!, out uint cascadeMask, out var reproject))
+            {
+                return; // false return means nothing to update.
+            }
 
-            foreach (var node in tree.Enumerate(CascadeFilter, stack, directionalLight.ShadowFrustra))
+            var map = directionalLight.GetMap()!;
+            var csmDepthBuffer = directionalLight.GetDepthStencil()!;
+
+            clearSliceEffect.Clear(context, map.UAV!, (uint)map.Width, (uint)map.Height, (uint)map.ArraySize, cascadeMask);
+            context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
+
+            context.SetRenderTarget(map.RTV, csmDepthBuffer.DSV);
+            context.SetViewport(map.Viewport);
+
+            var now = csmBuffer.Value![0];
+
+            foreach (var node in tree.Enumerate(CascadeFilter, stack, (directionalLight.ShadowFrustra, cascadeMask)))
             {
                 var drawable = node.Value;
                 profiler?.Begin($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
@@ -242,20 +267,17 @@
                 profiler?.End($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
             }
 
-            var map = directionalLight.GetMap();
-            if (map != null)
-            {
-                FilterArray(context, map);
-            }
+            FilterArray(context, map, cascadeMask, old, now, reproject);
 
             profiler?.End("ShadowMap.UpdateDirectional");
         }
 
-        private static BVHFilterResult CascadeFilter(BVHNode<IDrawable> node, IReadOnlyList<BoundingFrustum> frusta)
+        private static BVHFilterResult CascadeFilter(BVHNode<IDrawable> node, (IReadOnlyList<BoundingFrustum> frusta, uint mask) args)
         {
+            (IReadOnlyList<BoundingFrustum> frusta, uint mask) = args;
             for (int i = 0; i < frusta.Count; i++)
             {
-                if (frusta[i].Intersects(node.Box))
+                if ((mask & (1u << i)) != 0 && frusta[i].Intersects(node.Box))
                 {
                     return BVHFilterResult.Keep;
                 }
@@ -263,8 +285,21 @@
             return BVHFilterResult.Skip;
         }
 
+        private unsafe void Reproject(IGraphicsContext context, Texture2D texture, int slice, CSMShadowParams old, CSMShadowParams now)
+        {
+            var oldViewProj = Matrix4x4.Transpose(old[slice]);
+            var newViewProj = now[slice];
+
+            Matrix4x4.Invert(oldViewProj, out var oldViewProjInv);
+            oldViewProjInv = Matrix4x4.Transpose(oldViewProjInv);
+
+            reprojectEffect.Reproject(context, texture.UAVArraySlices![slice], (uint)texture.Width, (uint)texture.Height, oldViewProjInv, newViewProj, ReprojectFlags.VSM);
+        }
+
         public override void Release()
         {
+            clearSliceEffect.Dispose();
+            reprojectEffect.Dispose();
             copyEffect.Dispose();
             blurFilter.Dispose();
             tex?.Dispose();

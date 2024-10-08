@@ -33,8 +33,6 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
     /// </summary>
     public abstract class DecimationAlgorithm
     {
-        #region Delegates
-
         /// <summary>
         /// A callback for decimation status reports.
         /// </summary>
@@ -44,19 +42,11 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// <param name="targetTris">The target count of triangles.</param>
         public delegate void StatusReportCallback(int iteration, uint originalTris, uint currentTris, uint targetTris);
 
-        #endregion
-
-        #region Fields
-
         private bool preserveBorders = false;
         private uint maxVertexCount = 0;
         private bool verbose = false;
 
         private StatusReportCallback? statusReportInvoker;
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Gets or sets if borders should be preserved.
@@ -88,10 +78,6 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             set { verbose = value; }
         }
 
-        #endregion
-
-        #region Events
-
         /// <summary>
         /// An event for status reports for this algorithm.
         /// </summary>
@@ -100,10 +86,6 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             add { statusReportInvoker += value; }
             remove { statusReportInvoker -= value; }
         }
-
-        #endregion
-
-        #region Protected Methods
 
         /// <summary>
         /// Reports the current status of the decimation.
@@ -116,10 +98,6 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         {
             statusReportInvoker?.Invoke(iteration, originalTris, currentTris, targetTris);
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Initializes the algorithm with the original mesh.
@@ -143,7 +121,5 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
         /// </summary>
         /// <returns>The resulting mesh.</returns>
         public abstract Mesh ToMesh();
-
-        #endregion
     }
 }

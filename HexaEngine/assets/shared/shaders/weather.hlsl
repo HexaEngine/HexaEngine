@@ -52,6 +52,21 @@ cbuffer WeatherBuffer : register(b2)
 	float _paddI;
 	float3 Z;
 	float _paddZ;
+
+	float3 sun_color;
+	float sun_radius;
+
+	float sun_intensity;
+	float sun_falloff;
+	float2 _padd0;
+}
+
+inline float3 ComputeSunContribution(float3 viewDir)
+{
+	float distanceToSun = distance(light_dir.xyz, viewDir);
+	float brightness = saturate(1.0f - pow(distanceToSun / sun_radius, sun_falloff));
+	float3 L0 = sun_color * brightness * sun_intensity;
+	return L0;
 }
 
 // Linear Fog Factor

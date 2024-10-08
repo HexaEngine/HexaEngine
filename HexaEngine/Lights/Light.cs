@@ -3,6 +3,7 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Components;
     using HexaEngine.Configuration;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -11,6 +12,8 @@
 
     public abstract class Light : LightSource
     {
+        protected EventHandlers<Light, IShaderResourceView?> lightShadowMapChangedHandlers = new();
+
         private float range = 50;
         private bool shadowMapEnable;
         private ShadowResolution shadowMapResolution;
@@ -135,6 +138,12 @@
 
         #endregion Volumetrics
 
+        public event EventHandler<Light, IShaderResourceView?> ShadowMapChanged
+        {
+            add => lightShadowMapChangedHandlers.AddHandler(value);
+            remove => lightShadowMapChangedHandlers.RemoveHandler(value);
+        }
+
         public abstract bool HasShadowMap { get; }
 
         [JsonIgnore]
@@ -154,10 +163,28 @@
 
         public abstract bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas);
 
-        public abstract void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas);
+        public void CreateShadowMap(ShadowAtlas atlas)
+        {
+            OnCreateShadowMap(atlas);
+            lightShadowMapChangedHandlers?.Invoke(this, GetShadowMap());
+        }
 
-        public abstract void DestroyShadowMap();
+        protected abstract void OnCreateShadowMap(ShadowAtlas atlas);
+
+        public void DestroyShadowMap()
+        {
+            OnDestroyShadowMap();
+            lightShadowMapChangedHandlers?.Invoke(this, null);
+        }
+
+        protected abstract void OnDestroyShadowMap();
 
         public uint GetQueueIndex() => QueueIndex;
+
+        public override void Uninitialize()
+        {
+            base.Uninitialize();
+            lightShadowMapChangedHandlers.Clear();
+        }
     }
 }

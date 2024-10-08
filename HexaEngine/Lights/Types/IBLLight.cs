@@ -17,10 +17,10 @@ namespace HexaEngine.Lights.Types
         public override LightType LightType { get; } = LightType.IBL;
 
         [EditorProperty("Diffuse Map", AssetType.TextureCube)]
-        public AssetRef DiffuseMapAsset { get => diffuseMapAsset; set => diffuseMapAsset = value; }
+        public AssetRef DiffuseMapAsset { get => diffuseMapAsset; set => SetAndNotifyWithEqualsTest(ref diffuseMapAsset, value); }
 
         [EditorProperty("Specular Map", AssetType.TextureCube)]
-        public AssetRef SpecularMapAsset { get => specularMapAsset; set => specularMapAsset = value; }
+        public AssetRef SpecularMapAsset { get => specularMapAsset; set => SetAndNotifyWithEqualsTest(ref specularMapAsset, value); }
 
         public Texture2D? DiffuseMap => diffuseMap;
 

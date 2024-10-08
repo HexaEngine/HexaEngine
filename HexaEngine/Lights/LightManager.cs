@@ -11,6 +11,20 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
+    public struct LightShadowMapChangedEventArgs
+    {
+        public LightManager LightManager;
+        public Light Light;
+        public IShaderResourceView? View;
+
+        public LightShadowMapChangedEventArgs(LightManager lightManager, Light light, IShaderResourceView? view)
+        {
+            LightManager = lightManager;
+            Light = light;
+            View = view;
+        }
+    }
+
     public struct LightUpdatedEventArgs
     {
         public LightManager LightManager;
@@ -57,6 +71,7 @@
 
         private static readonly EventHandlers<ActiveLightsChangedEventArgs> activeLightsChangedHandlers = new();
         private static readonly EventHandlers<LightUpdatedEventArgs> lightUpdatedHandlers = new();
+        private static readonly EventHandlers<LightShadowMapChangedEventArgs> lightShadowMapChangedHandlers = new();
 
         public LightManager()
         {
@@ -77,6 +92,12 @@
         {
             add => lightUpdatedHandlers.AddHandler(value);
             remove => lightUpdatedHandlers.RemoveHandler(value);
+        }
+
+        public static event EventHandler<LightShadowMapChangedEventArgs> LightShadowMapChanged
+        {
+            add => lightShadowMapChangedHandlers.AddHandler(value);
+            remove => lightShadowMapChangedHandlers.RemoveHandler(value);
         }
 
         public IReadOnlyList<Probe> Probes => probes;
@@ -113,7 +134,18 @@
         {
             lock (lights)
             {
+                foreach (var lightSource in lights)
+                {
+                    if (lightSource is Light light)
+                    {
+                        light.DestroyShadowMap();
+                        light.TransformUpdated += LightTransformed;
+                        light.PropertyChanged += LightPropertyChanged;
+                        light.ShadowMapChanged += OnLightShadowMapChanged;
+                    }
+                }
                 lights.Clear();
+                activeLights.Clear();
             }
         }
 
@@ -152,8 +184,14 @@
                 {
                     light.TransformUpdated += LightTransformed;
                     light.PropertyChanged += LightPropertyChanged;
+                    light.ShadowMapChanged += OnLightShadowMapChanged;
                 }
             }
+        }
+
+        private void OnLightShadowMapChanged(Light sender, IShaderResourceView? e)
+        {
+            lightShadowMapChangedHandlers?.Invoke(sender, new(this, sender, e));
         }
 
         public unsafe void AddProbe(Probe probe)
@@ -171,8 +209,10 @@
             {
                 if (lightSource is Light light)
                 {
+                    light.DestroyShadowMap();
                     light.PropertyChanged -= LightPropertyChanged;
                     light.TransformUpdated -= LightTransformed;
+                    light.ShadowMapChanged -= OnLightShadowMapChanged;
                 }
 
                 lights.Remove(lightSource);
@@ -208,7 +248,7 @@
                     {
                         if (light.ShadowMapEnable)
                         {
-                            light.CreateShadowMap(context.Device, shadowAtlas);
+                            light.CreateShadowMap(shadowAtlas);
                         }
                         else
                         {
@@ -384,6 +424,7 @@
         {
             activeLightsChangedHandlers.Clear();
             lightUpdatedHandlers.Clear();
+            lightShadowMapChangedHandlers.Clear();
         }
     }
 }

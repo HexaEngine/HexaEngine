@@ -16,10 +16,11 @@
         public Matrix4x4 View6;
         public Matrix4x4 View7;
         public uint CascadeCount;
+        public uint ActiveCascades;
         public float ESMExponent;
-        public UPoint2 Padding;
+        public uint Padding;
 
-        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7, uint cascadesCount, float esmExponent)
+        public CSMShadowParams(Matrix4x4 view0, Matrix4x4 view1, Matrix4x4 view2, Matrix4x4 view3, Matrix4x4 view4, Matrix4x4 view5, Matrix4x4 view6, Matrix4x4 view7, uint cascadesCount, uint activeCascades, float esmExponent)
         {
             View0 = view0;
             View1 = view1;
@@ -30,10 +31,17 @@
             View6 = view6;
             View7 = view7;
             CascadeCount = cascadesCount;
+            ActiveCascades = activeCascades;
             ESMExponent = esmExponent;
         }
 
         public unsafe Matrix4x4 this[uint index]
+        {
+            get => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index];
+            set => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index] = value;
+        }
+
+        public unsafe Matrix4x4 this[int index]
         {
             get => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index];
             set => ((Matrix4x4*)Unsafe.AsPointer(ref this))[index] = value;

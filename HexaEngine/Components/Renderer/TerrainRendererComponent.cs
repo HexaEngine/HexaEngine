@@ -18,7 +18,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
-    public class TerrainRendererComponent : BaseRendererComponent, ISelectableRayTest
+    public class TerrainRendererComponent : BaseDrawableComponent, ISelectableRayTest
     {
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;

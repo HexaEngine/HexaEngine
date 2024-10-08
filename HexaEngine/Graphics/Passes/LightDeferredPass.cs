@@ -93,9 +93,18 @@ namespace HexaEngine.Graphics.Passes
             });
 
             LightManager.ActiveLightsChanged += ActiveLightsChanged;
+            LightManager.LightShadowMapChanged += LightShadowMapChanged;
             if (LightManager.Current != null)
             {
                 ActiveLightsChanged(LightManager.Current, new(LightManager.Current));
+            }
+        }
+
+        private void LightShadowMapChanged(object sender, LightShadowMapChangedEventArgs e)
+        {
+            if (e.Light is DirectionalLight)
+            {
+                dev.SetGlobalSRV("depthCSM", e.View);
             }
         }
 

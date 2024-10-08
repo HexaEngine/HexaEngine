@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using HexaEngine.Meshes;
     using System.Numerics;
 
     public abstract class BaseRenderer<T> : IRenderer1<T>, IRenderer1

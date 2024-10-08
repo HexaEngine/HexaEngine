@@ -7,13 +7,13 @@
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
 
-    public abstract class BaseRendererComponent : IDrawable
+    public abstract class BaseDrawableComponent : IDrawable
     {
         private volatile bool loaded = false;
         private uint queueIndex = (uint)RenderQueueIndex.Geometry;
 
         /// <summary>
-        /// The GUID of the <see cref="BaseRendererComponent"/>.
+        /// The GUID of the <see cref="BaseDrawableComponent"/>.
         /// </summary>
         /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
         public Guid Guid { get; set; } = Guid.NewGuid();
@@ -63,6 +63,8 @@
 
         public event QueueIndexChangedEventHandler? QueueIndexChanged;
 
+        public event DrawableInvalidatedEventHandler? DrawableInvalidated;
+
         protected abstract void LoadCore(IGraphicsDevice device);
 
         protected abstract void UnloadCore();
@@ -74,6 +76,11 @@
 
         public void Destroy()
         {
+        }
+
+        public void Invalidate()
+        {
+            DrawableInvalidated?.Invoke(this);
         }
 
         public abstract void Draw(IGraphicsContext context, RenderPath path);
@@ -92,6 +99,7 @@
         {
             if (!loaded)
             {
+                GameObject.EnabledChanged += EnabledChanged;
                 LoadCore(device);
                 loaded = true;
             }
@@ -101,9 +109,15 @@
         {
             if (loaded)
             {
+                GameObject.EnabledChanged -= EnabledChanged;
                 UnloadCore();
                 loaded = false;
             }
+        }
+
+        private void EnabledChanged(GameObject sender, bool e)
+        {
+            Invalidate();
         }
 
         void IDrawable.Update(IGraphicsContext context)

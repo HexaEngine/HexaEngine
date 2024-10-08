@@ -12,7 +12,7 @@
     using HexaEngine.Lights;
     using System.Numerics;
 
-    public abstract class PrimitiveRenderComponent : BaseRendererComponent
+    public abstract class PrimitiveRenderComponent : BaseDrawableComponent
     {
         protected AssetRef materialAsset;
         protected PrimitiveRenderer renderer;

@@ -364,10 +364,12 @@
                     queue.Enqueue(drawable);
                     if (drawable.LeafId != -1)
                     {
-                        tree.RemoveLeaf(drawable.LeafId);
+                        drawable.LeafId = tree.UpdateLeaf(drawable.LeafId, drawable.BoundingBox);
                     }
-
-                    drawable.LeafId = tree.InsertLeaf(drawable, drawable.BoundingBox);
+                    else
+                    {
+                        drawable.LeafId = tree.InsertLeaf(drawable, drawable.BoundingBox);
+                    }
                 }
             }
         }
