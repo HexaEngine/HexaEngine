@@ -226,14 +226,14 @@
                     outputLogWriter.ReleaseLock();
                 }
 
-                ImGui.SeparatorEx(ImGuiSeparatorFlags.Vertical, 1);
+                ImGuiP.SeparatorEx(ImGuiSeparatorFlags.Vertical, 1);
 
                 if (ImGui.MenuItem($"{UwU.CircleXmark}", false, logQueue != null))
                 {
                     logQueue?.Clear();
                 }
 
-                ImGui.SeparatorEx(ImGuiSeparatorFlags.Vertical, 1);
+                ImGuiP.SeparatorEx(ImGuiSeparatorFlags.Vertical, 1);
 
                 if (ImGui.MenuItem($"{UwU.Reply}"))
                 {

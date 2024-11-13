@@ -26,7 +26,7 @@
             ImGui.SameLine();
             ImGui.PlotLines("R", ref data[0], 2, 0, -80, 0, new Vector2(15, 200));
             ImGui.EndGroup();
-            ImGui.GetForegroundDrawList().AddRect(ImGui.GetItemRectMin() - new Vector2(2, 2), ImGui.GetItemRectMax() + new Vector2(2, 2), 0xFFAFAFAF);
+            ImGuiP.GetForegroundDrawList().AddRect(ImGui.GetItemRectMin() - new Vector2(2, 2), ImGui.GetItemRectMax() + new Vector2(2, 2), 0xFFAFAFAF);
             ImGui.Dummy(default);
         }
     }

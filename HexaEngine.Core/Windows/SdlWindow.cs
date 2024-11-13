@@ -252,7 +252,7 @@
         ///</summary>
         ///<returns>The created OpenGL context.</returns>
         ///<exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
-        public IGLContext OpenGLCreateContext()
+        public HexaGen.Runtime.IGLContext OpenGLCreateContext()
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             var context = SDL.GLCreateContext(window);
@@ -260,7 +260,7 @@
             return new WrapperContext(window, context);
         }
 
-        private struct WrapperContext : IGLContext
+        private struct WrapperContext : HexaGen.Runtime.IGLContext
         {
             private SDLWindow* window;
             private SDLGLContext context;
@@ -287,9 +287,14 @@
                 this = default;
             }
 
-            public readonly nint GetProcAddress(string proc, int? slot = null)
+            public readonly nint GetProcAddress(string proc)
             {
                 return (nint)SDL.GLGetProcAddress(proc);
+            }
+
+            public bool IsExtensionSupported(string extensionName)
+            {
+                return SDL.GLExtensionSupported(extensionName) == SDLBool.True;
             }
 
             public readonly void MakeCurrent()
@@ -307,7 +312,7 @@
                 SDL.GLSetSwapInterval(interval);
             }
 
-            public readonly bool TryGetProcAddress(string proc, out nint addr, int? slot = null)
+            public readonly bool TryGetProcAddress(string proc, out nint addr)
             {
                 addr = (nint)SDL.GLGetProcAddress(proc);
                 return addr != 0;

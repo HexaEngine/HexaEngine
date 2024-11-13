@@ -16,7 +16,7 @@
 
         public int Height => (int)Image.Height;
 
-        public Format Format => Helper.ConvertBack((Silk.NET.DXGI.Format)Image.Format);
+        public Format Format => Helper.ConvertBack((Hexa.NET.DXGI.Format)Image.Format);
 
         public int RowPitch => (int)Image.RowPitch;
 

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.OpenGL
 {
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -10,11 +10,11 @@
     {
         public static void CheckError()
         {
-            var error = OpenGLGraphicsDevice.GL.GetError();
-            if (error != GLEnum.NoError)
+            var error = (GLErrorCode)OpenGLGraphicsDevice.GL.GetError();
+            if (error != GLErrorCode.NoError)
             {
-                var msg = OpenGLGraphicsDevice.GL.GetStringS(error);
-                throw new OpenGLException((ErrorCode)error, msg);
+                var msg = ToStringFromUTF8(OpenGLGraphicsDevice.GL.GetString((GLStringName)error))!;
+                throw new OpenGLException(error, msg);
             }
         }
 

@@ -3,12 +3,12 @@
     using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Contexts;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System;
     using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.CompilerServices;
+    using HexaGen.Runtime;
 
     public unsafe class OpenGLGraphicsDevice : IGraphicsDevice
     {
@@ -18,11 +18,11 @@
         public OpenGLGraphicsDevice(IWindow window, bool debug)
         {
             glContext = window.OpenGLCreateContext();
-            GL = GL.GetApi(glContext);
+            GL = new(glContext);
 
             if (debug)
             {
-                GL.Enable(EnableCap.DebugOutput);
+                GL.Enable(GLEnableCap.DebugOutput);
                 GL.DebugMessageCallback(DebugMsg, null);
             }
 
@@ -37,9 +37,9 @@
             };
         }
 
-        public void DebugMsg(GLEnum source, GLEnum type, int id, GLEnum severity, int length, nint message, nint userParam)
+        private void DebugMsg(GLEnum source, GLEnum type, uint id, GLEnum severity, int length, byte* message, void* userParam)
         {
-            var msg = ToStringFromUTF8((byte*)message);
+            var msg = ToStringFromUTF8(message);
             Trace.WriteLine(msg);
         }
 
@@ -47,25 +47,25 @@
         {
             GraphicsDeviceCapabilitiesFlags flags = GraphicsDeviceCapabilitiesFlags.None;
 
-            if (GL.IsExtensionPresent("GL_NV_command_list"))
+            if (glContext.IsExtensionSupported("GL_NV_command_list"))
             {
                 flags |= GraphicsDeviceCapabilitiesFlags.SupportsCommandLists;
             }
 
-            if (GL.IsExtensionPresent("GL_ARB_geometry_shader4"))
+            if (glContext.IsExtensionSupported("GL_ARB_geometry_shader4"))
             {
                 flags |= GraphicsDeviceCapabilitiesFlags.SupportsGeometryShaders;
             }
 
-            if (GL.IsExtensionPresent("GL_ARB_tessellation_shader"))
+            if (glContext.IsExtensionSupported("GL_ARB_tessellation_shader"))
             {
                 flags |= GraphicsDeviceCapabilitiesFlags.SupportsTessellationShaders;
             }
 
-            if (GL.IsExtensionPresent("GL_NV_conservative_raster") ||
-                GL.IsExtensionPresent("GL_INTEL_conservative_rasterization") ||
-                GL.IsExtensionPresent("GL_AMD_conservative_depth") ||
-                GL.IsExtensionPresent("GL_ARB_conservative_depth"))
+            if (glContext.IsExtensionSupported("GL_NV_conservative_raster") ||
+                glContext.IsExtensionSupported("GL_INTEL_conservative_rasterization") ||
+                glContext.IsExtensionSupported("GL_AMD_conservative_depth") ||
+                glContext.IsExtensionSupported("GL_ARB_conservative_depth"))
             {
                 flags |= GraphicsDeviceCapabilitiesFlags.SupportsConservativeRasterization;
             }
@@ -78,28 +78,32 @@
             return flags;
         }
 
-        private static bool CheckForTessellationShaderSupport()
+        private bool CheckForTessellationShaderSupport()
         {
+            int result;
+            GL.GetIntegerv(GLGetPName.MaxTessControlUniformBlocks, &result);
             // Check for the presence of the geometry shader feature
-            return GL.GetInteger(GetPName.MaxTessControlUniformBlocks) != 0;
+            return result != 0;
         }
 
-        private static bool CheckForGeometryShaderSupport()
+        private bool CheckForGeometryShaderSupport()
         {
+            int result;
+            GL.GetIntegerv(GLGetPName.MaxGeometryUniformComponents, &result);
             // Check for the presence of the geometry shader feature
-            return GL.GetInteger(GetPName.MaxGeometryUniformComponents) != 0;
+            return result != 0;
         }
 
-        private static bool CheckForConservativeRasterizationSupport()
+        private bool CheckForConservativeRasterizationSupport()
         {
             // Check for the presence of the GL_NV_conservative_raster extension
-            return GL.IsExtensionPresent("GL_NV_conservative_raster");
+            return glContext.IsExtensionSupported("GL_NV_conservative_raster");
         }
 
-        private static bool CheckForRayTracingSupport()
+        private bool CheckForRayTracingSupport()
         {
             // Check for the presence of the ray tracing extension (e.g., GL_NV_ray_tracing)
-            return GL.IsExtensionPresent("GL_NV_ray_tracing");
+            return glContext.IsExtensionSupported("GL_NV_ray_tracing");
         }
 
         public GraphicsBackend Backend => GraphicsBackend.OpenGL;
@@ -126,7 +130,7 @@
             var buffer = GL.GenBuffer();
             CheckError();
 
-            GL.BufferData(Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags), (nuint)description.ByteWidth, null, Helper.Convert(description.Usage));
+            GL.BufferData(Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags), (nint)description.ByteWidth, null, Helper.Convert(description.Usage));
 
             return new OpenGLBuffer(buffer, description);
         }
@@ -139,7 +143,7 @@
 
             var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             GL.BindBuffer(target, buffer);
-            GL.BufferData(target, length, src, Helper.Convert(description.Usage));
+            GL.BufferData(target, (nint)length, src, Helper.Convert(description.Usage));
             GL.BindBuffer(target, 0);
             CheckError();
 
@@ -158,7 +162,7 @@
 
             var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             GL.BindBuffer(target, buffer);
-            GL.BufferData(target, (nuint)description.ByteWidth, &value, Helper.Convert(description.Usage));
+            GL.BufferData(target, (nint)description.ByteWidth, &value, Helper.Convert(description.Usage));
             GL.BindBuffer(target, 0);
             CheckError();
 
@@ -181,7 +185,7 @@
             var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             var usage = Helper.Convert(description.Usage);
             GL.BindBuffer(target, buffer);
-            GL.BufferData(target, (nuint)description.ByteWidth, values, usage);
+            GL.BufferData(target, (nint)description.ByteWidth, values, usage);
             GL.BindBuffer(target, 0);
             CheckError();
 
@@ -198,7 +202,7 @@
             var target = Helper.ConvertBufferTarget(description.BindFlags, description.MiscFlags);
             var usage = Helper.Convert(description.Usage);
             GL.BindBuffer(target, buffer);
-            GL.BufferData(target, (nuint)description.ByteWidth, values, usage);
+            GL.BufferData(target, (nint)description.ByteWidth, values, usage);
             GL.BindBuffer(target, 0);
             CheckError();
 
@@ -330,12 +334,12 @@
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
         {
             ShaderResourceViewDescription description = new(ShaderResourceViewDimension.Buffer);
-            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
+            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, GLObjectIdentifier.Buffer);
         }
 
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
         {
-            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, ObjectIdentifier.Buffer);
+            return new OpenGLShaderResourceView((uint)buffer.NativePointer, description, GLObjectIdentifier.Buffer);
         }
 
         public ISwapChain CreateSwapChain(SdlWindow window)

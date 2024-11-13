@@ -1,121 +1,121 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System;
 
     public static class Helper
     {
-        public static TriangleFace Convert(CullMode mode)
+        public static GLTriangleFace Convert(CullMode mode)
         {
             return mode switch
             {
-                CullMode.Back => TriangleFace.Back,
-                CullMode.Front => TriangleFace.Front,
-                CullMode.None => TriangleFace.FrontAndBack,
+                CullMode.Back => GLTriangleFace.Back,
+                CullMode.Front => GLTriangleFace.Front,
+                CullMode.None => GLTriangleFace.FrontAndBack,
                 _ => throw new NotSupportedException()
             };
         }
 
-        public static PolygonMode Convert(FillMode mode)
+        public static GLPolygonMode Convert(FillMode mode)
         {
             return mode switch
             {
-                FillMode.Wireframe => PolygonMode.Line,
-                FillMode.Solid => PolygonMode.Fill,
+                FillMode.Wireframe => GLPolygonMode.Line,
+                FillMode.Solid => GLPolygonMode.Fill,
                 _ => throw new NotSupportedException()
             };
         }
 
-        public static DepthFunction Convert(ComparisonFunction function)
+        public static GLDepthFunction Convert(ComparisonFunction function)
         {
             return function switch
             {
-                ComparisonFunction.Never => DepthFunction.Never,
-                ComparisonFunction.Less => DepthFunction.Less,
-                ComparisonFunction.Equal => DepthFunction.Equal,
-                ComparisonFunction.LessEqual => DepthFunction.Lequal,
-                ComparisonFunction.Greater => DepthFunction.Greater,
-                ComparisonFunction.NotEqual => DepthFunction.Notequal,
-                ComparisonFunction.GreaterEqual => DepthFunction.Gequal,
-                ComparisonFunction.Always => DepthFunction.Always,
+                ComparisonFunction.Never => GLDepthFunction.Never,
+                ComparisonFunction.Less => GLDepthFunction.Less,
+                ComparisonFunction.Equal => GLDepthFunction.Equal,
+                ComparisonFunction.LessEqual => GLDepthFunction.Lequal,
+                ComparisonFunction.Greater => GLDepthFunction.Greater,
+                ComparisonFunction.NotEqual => GLDepthFunction.Notequal,
+                ComparisonFunction.GreaterEqual => GLDepthFunction.Gequal,
+                ComparisonFunction.Always => GLDepthFunction.Always,
             };
         }
 
-        public static StencilFunction Convert2(ComparisonFunction function)
+        public static GLStencilFunction Convert2(ComparisonFunction function)
         {
             return function switch
             {
-                ComparisonFunction.Never => StencilFunction.Never,
-                ComparisonFunction.Less => StencilFunction.Less,
-                ComparisonFunction.Equal => StencilFunction.Equal,
-                ComparisonFunction.LessEqual => StencilFunction.Lequal,
-                ComparisonFunction.Greater => StencilFunction.Greater,
-                ComparisonFunction.NotEqual => StencilFunction.Notequal,
-                ComparisonFunction.GreaterEqual => StencilFunction.Gequal,
-                ComparisonFunction.Always => StencilFunction.Always,
+                ComparisonFunction.Never => GLStencilFunction.Never,
+                ComparisonFunction.Less => GLStencilFunction.Less,
+                ComparisonFunction.Equal => GLStencilFunction.Equal,
+                ComparisonFunction.LessEqual => GLStencilFunction.Lequal,
+                ComparisonFunction.Greater => GLStencilFunction.Greater,
+                ComparisonFunction.NotEqual => GLStencilFunction.Notequal,
+                ComparisonFunction.GreaterEqual => GLStencilFunction.Gequal,
+                ComparisonFunction.Always => GLStencilFunction.Always,
             };
         }
 
-        public static StencilOp Convert(StencilOperation operation)
+        public static GLStencilOp Convert(StencilOperation operation)
         {
             return operation switch
             {
-                StencilOperation.Keep => StencilOp.Keep,
-                StencilOperation.Zero => StencilOp.Zero,
-                StencilOperation.Replace => StencilOp.Replace,
-                StencilOperation.IncrementSaturate => StencilOp.IncrWrap,
-                StencilOperation.DecrementSaturate => StencilOp.DecrWrap,
-                StencilOperation.Invert => StencilOp.Invert,
-                StencilOperation.Increment => StencilOp.Incr,
-                StencilOperation.Decrement => StencilOp.Decr,
+                StencilOperation.Keep => GLStencilOp.Keep,
+                StencilOperation.Zero => GLStencilOp.Zero,
+                StencilOperation.Replace => GLStencilOp.Replace,
+                StencilOperation.IncrementSaturate => GLStencilOp.IncrWrap,
+                StencilOperation.DecrementSaturate => GLStencilOp.DecrWrap,
+                StencilOperation.Invert => GLStencilOp.Invert,
+                StencilOperation.Increment => GLStencilOp.Incr,
+                StencilOperation.Decrement => GLStencilOp.Decr,
             };
         }
 
-        public static BlendingFactor Convert(Blend blend)
+        public static GLBlendingFactor Convert(Blend blend)
         {
             return blend switch
             {
-                Blend.Zero => BlendingFactor.Zero,
-                Blend.One => BlendingFactor.One,
-                Blend.SourceColor => BlendingFactor.SrcColor,
-                Blend.InverseSourceColor => BlendingFactor.OneMinusSrcColor,
-                Blend.SourceAlpha => BlendingFactor.SrcAlpha,
-                Blend.InverseSourceAlpha => BlendingFactor.OneMinusSrcAlpha,
-                Blend.DestinationAlpha => BlendingFactor.DstAlpha,
-                Blend.InverseDestinationAlpha => BlendingFactor.OneMinusDstAlpha,
-                Blend.DestinationColor => BlendingFactor.DstColor,
-                Blend.InverseDestinationColor => BlendingFactor.OneMinusDstColor,
-                Blend.SourceAlphaSaturate => BlendingFactor.SrcAlphaSaturate,
-                Blend.BlendFactor => BlendingFactor.ConstantColor,
-                Blend.InverseBlendFactor => BlendingFactor.OneMinusConstantColor,
-                Blend.Source1Color => BlendingFactor.Src1Color,
-                Blend.InverseSource1Color => BlendingFactor.OneMinusSrc1Color,
-                Blend.Source1Alpha => BlendingFactor.Src1Alpha,
-                Blend.InverseSource1Alpha => BlendingFactor.OneMinusSrc1Alpha,
+                Blend.Zero => GLBlendingFactor.Zero,
+                Blend.One => GLBlendingFactor.One,
+                Blend.SourceColor => GLBlendingFactor.SrcColor,
+                Blend.InverseSourceColor => GLBlendingFactor.OneMinusSrcColor,
+                Blend.SourceAlpha => GLBlendingFactor.SrcAlpha,
+                Blend.InverseSourceAlpha => GLBlendingFactor.OneMinusSrcAlpha,
+                Blend.DestinationAlpha => GLBlendingFactor.DstAlpha,
+                Blend.InverseDestinationAlpha => GLBlendingFactor.OneMinusDstAlpha,
+                Blend.DestinationColor => GLBlendingFactor.DstColor,
+                Blend.InverseDestinationColor => GLBlendingFactor.OneMinusDstColor,
+                Blend.SourceAlphaSaturate => GLBlendingFactor.SrcAlphaSaturate,
+                Blend.BlendFactor => GLBlendingFactor.ConstantColor,
+                Blend.InverseBlendFactor => GLBlendingFactor.OneMinusConstantColor,
+                Blend.Source1Color => GLBlendingFactor.Src1Color,
+                Blend.InverseSource1Color => GLBlendingFactor.OneMinusSrc1Color,
+                Blend.Source1Alpha => GLBlendingFactor.Src1Alpha,
+                Blend.InverseSource1Alpha => GLBlendingFactor.OneMinusSrc1Alpha,
             };
         }
 
-        public static BlendEquationModeEXT Convert(BlendOperation operation)
+        public static GLBlendEquationModeEXT Convert(BlendOperation operation)
         {
             return operation switch
             {
-                BlendOperation.Add => BlendEquationModeEXT.FuncAdd,
-                BlendOperation.Subtract => BlendEquationModeEXT.FuncSubtract,
-                BlendOperation.ReverseSubtract => BlendEquationModeEXT.FuncReverseSubtract,
-                BlendOperation.Min => BlendEquationModeEXT.Min,
-                BlendOperation.Max => BlendEquationModeEXT.Max,
+                BlendOperation.Add => GLBlendEquationModeEXT.FuncAdd,
+                BlendOperation.Subtract => GLBlendEquationModeEXT.FuncSubtract,
+                BlendOperation.ReverseSubtract => GLBlendEquationModeEXT.FuncReverseSubtract,
+                BlendOperation.Min => GLBlendEquationModeEXT.Min,
+                BlendOperation.Max => GLBlendEquationModeEXT.Max,
             };
         }
 
-        public static BufferTargetARB ConvertBufferTarget(BindFlags bindFlags, ResourceMiscFlag resourceMiscFlag)
+        public static GLBufferTargetARB ConvertBufferTarget(BindFlags bindFlags, ResourceMiscFlag resourceMiscFlag)
         {
-            BufferTargetARB target = bindFlags switch
+            GLBufferTargetARB target = bindFlags switch
             {
-                BindFlags.IndexBuffer => BufferTargetARB.ElementArrayBuffer,
-                BindFlags.ConstantBuffer => BufferTargetARB.UniformBuffer,
-                BindFlags.ShaderResource => BufferTargetARB.ShaderStorageBuffer,
-                BindFlags.VertexBuffer => BufferTargetARB.ArrayBuffer,
+                BindFlags.IndexBuffer => GLBufferTargetARB.ElementArrayBuffer,
+                BindFlags.ConstantBuffer => GLBufferTargetARB.UniformBuffer,
+                BindFlags.ShaderResource => GLBufferTargetARB.ShaderStorageBuffer,
+                BindFlags.VertexBuffer => GLBufferTargetARB.ArrayBuffer,
                 BindFlags.StreamOutput => throw new NotSupportedException(),
                 BindFlags.RenderTarget => throw new NotSupportedException(),
                 BindFlags.DepthStencil => throw new NotSupportedException(),
@@ -136,9 +136,9 @@
                 ResourceMiscFlag.GenerateMips => throw new NotSupportedException(),
                 ResourceMiscFlag.Shared => throw new NotSupportedException(),
                 ResourceMiscFlag.TextureCube => throw new NotSupportedException(),
-                ResourceMiscFlag.DrawIndirectArguments => BufferTargetARB.DrawIndirectBuffer | BufferTargetARB.DispatchIndirectBuffer,
+                ResourceMiscFlag.DrawIndirectArguments => GLBufferTargetARB.DrawIndirectBuffer | GLBufferTargetARB.DispatchIndirectBuffer,
                 ResourceMiscFlag.BufferAllowRawViews => throw new NotImplementedException(),
-                ResourceMiscFlag.BufferStructured => BufferTargetARB.ShaderStorageBuffer,
+                ResourceMiscFlag.BufferStructured => GLBufferTargetARB.ShaderStorageBuffer,
                 ResourceMiscFlag.ResourceClamp => throw new NotSupportedException(),
                 ResourceMiscFlag.SharedKeyedMutex => throw new NotSupportedException(),
                 ResourceMiscFlag.GdiCompatible => throw new NotSupportedException(),
@@ -156,14 +156,14 @@
             };
         }
 
-        public static BufferUsageARB Convert(Usage usage)
+        public static GLBufferUsageARB Convert(Usage usage)
         {
             return usage switch
             {
-                Usage.Default => BufferUsageARB.DynamicDraw,
-                Usage.Immutable => BufferUsageARB.StaticDraw,
-                Usage.Dynamic => BufferUsageARB.StreamDraw,
-                Usage.Staging => BufferUsageARB.DynamicDraw,
+                Usage.Default => GLBufferUsageARB.DynamicDraw,
+                Usage.Immutable => GLBufferUsageARB.StaticDraw,
+                Usage.Dynamic => GLBufferUsageARB.StreamDraw,
+                Usage.Staging => GLBufferUsageARB.DynamicDraw,
                 _ => throw new NotImplementedException(),
             };
         }

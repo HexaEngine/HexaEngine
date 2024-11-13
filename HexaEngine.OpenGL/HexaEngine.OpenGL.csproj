@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
+    <PackageReference Include="Hexa.NET.OpenGL4" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

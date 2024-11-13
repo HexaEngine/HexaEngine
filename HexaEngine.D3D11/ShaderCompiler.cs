@@ -1,5 +1,7 @@
 ﻿//#define SHADER_FORCE_OPTIMIZE
 
+using Silk.NET.Core.Native;
+
 namespace HexaEngine.D3D11
 {
     using Hexa.NET.Logging;
@@ -9,17 +11,20 @@ namespace HexaEngine.D3D11
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Security.Cryptography;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D.Compilers;
-    using Silk.NET.Direct3D11;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
+    using Hexa.NET.D3DCompiler;
+    using Hexa.NET.D3DCommon;
+    using ShaderMacro = Core.Graphics.ShaderMacro;
+    using D3DShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
+    using D3DRegisterComponentType = Hexa.NET.D3DCommon.RegisterComponentType;
+    using HexaGen.Runtime.COM;
+    using Hexa.NET.D3D11;
 
     public class ShaderCompiler
     {
         private static readonly ILogger Logger = LoggerFactory.General;
-        private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
         {
@@ -96,7 +101,7 @@ namespace HexaEngine.D3D11
                 return false;
             }
 
-            shaderBlob = new(vBlob->Buffer.ToArray());
+            shaderBlob = new(vBlob->GetBufferPointer(), vBlob->GetBufferSize(), copy: true);
             vBlob->Release();
 
             Logger.Info($"Done: {sourceName}");
@@ -176,7 +181,7 @@ namespace HexaEngine.D3D11
                 return false;
             }
 
-            shaderBlob = new(vBlob->Buffer.ToArray());
+            shaderBlob = new(vBlob->GetBufferPointer(), vBlob->GetBufferSize(), copy: true);
             vBlob->Release();
 
             Logger.Info($"Done: {sourceName}");
@@ -186,31 +191,25 @@ namespace HexaEngine.D3D11
 
         public unsafe Blob GetInputSignature(Blob shader)
         {
-            lock (D3DCompiler)
-            {
-                ID3D10Blob* signature;
-                D3DCompiler.GetInputSignatureBlob((void*)shader.BufferPointer, (nuint)(int)shader.PointerSize, &signature);
-                Blob output = new(signature->Buffer.ToArray());
-                signature->Release();
-                return output;
-            }
+            ID3D10Blob* signature;
+            D3DCompiler.GetInputSignatureBlob((void*)shader.BufferPointer, (nuint)(int)shader.PointerSize, &signature);
+            Blob output = new(signature->GetBufferPointer(), signature->GetBufferSize(), copy: true);
+            signature->Release();
+            return output;
         }
 
         public unsafe Blob GetInputSignature(Shader* shader)
         {
-            lock (D3DCompiler)
-            {
-                ID3D10Blob* signature;
-                D3DCompiler.GetInputSignatureBlob(shader->Bytecode, shader->Length, &signature);
-                Blob output = new(signature->Buffer.ToArray());
-                signature->Release();
-                return output;
-            }
+            ID3D10Blob* signature;
+            D3DCompiler.GetInputSignatureBlob(shader->Bytecode, shader->Length, &signature);
+            Blob output = new(signature->GetBufferPointer(), signature->GetBufferSize(), copy: true);
+            signature->Release();
+            return output;
         }
 
-        public static unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
+        public static unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComObject<T>
         {
-            D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
+            D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector).ThrowIf();
         }
 
         public unsafe ShaderReflection Reflect(Shader* blob)
@@ -245,17 +244,17 @@ namespace HexaEngine.D3D11
             for (uint i = 0; i < shaderDesc.ConstantBuffers; i++)
             {
                 var cb = reflection.GetConstantBufferByIndex(i);
-                Silk.NET.Direct3D11.ShaderBufferDesc shaderBufferDesc;
+                Hexa.NET.D3D11.ShaderBufferDesc shaderBufferDesc;
                 cb->GetDesc(&shaderBufferDesc);
                 shaderReflection.ConstantBuffers[i] = Helper.ConvertBack(shaderBufferDesc);
                 for (uint j = 0; j < shaderBufferDesc.Variables; j++)
                 {
                     var vb = cb->GetVariableByIndex(j);
-                    Silk.NET.Direct3D11.ShaderVariableDesc shaderVariableDesc;
+                    Hexa.NET.D3D11.ShaderVariableDesc shaderVariableDesc;
                     vb->GetDesc(&shaderVariableDesc);
                     shaderReflection.ConstantBuffers[i].Variables[j] = Helper.ConvertBack(shaderVariableDesc);
                     var tb = vb->GetType();
-                    Silk.NET.Direct3D11.ShaderTypeDesc shaderTypeDesc;
+                    Hexa.NET.D3D11.ShaderTypeDesc shaderTypeDesc;
                     tb->GetDesc(&shaderTypeDesc);
                 }
             }
@@ -392,9 +391,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -403,9 +402,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -414,9 +413,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32B32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32B32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32B32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -425,9 +424,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32A32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32A32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32A32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32B32A32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32B32A32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32B32A32Float,
                         _ => Format.Unknown,
                     };
                 }

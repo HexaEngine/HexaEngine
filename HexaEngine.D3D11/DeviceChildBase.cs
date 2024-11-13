@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Direct3D11;
     using System;
     using System.Text;
 
@@ -59,12 +58,12 @@
                         Encoding.UTF8.GetBytes(src, value.Length, pName, byteCount);
                     }
 
-                    child->SetPrivateData(&guid, (uint)Encoding.UTF8.GetByteCount(value), pName).ThrowHResult();
+                    child->SetPrivateData(&guid, (uint)Encoding.UTF8.GetByteCount(value), pName).ThrowIf();
                     Free(pName);
                 }
                 else
                 {
-                    child->SetPrivateData(&guid, 0, null).ThrowHResult();
+                    child->SetPrivateData(&guid, 0, null).ThrowIf();
                 }
 
                 debugName = value;

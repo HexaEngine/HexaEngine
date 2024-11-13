@@ -1,22 +1,22 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild
     {
         protected uint nativePointer;
 
-        protected abstract ObjectIdentifier Identifier { get; }
+        protected abstract GLObjectIdentifier Identifier { get; }
 
         public string? DebugName
         {
             get
             {
-                uint len;
-                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
+                int len;
+                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, (byte*)null);
                 byte* pName = (byte*)Alloc((nuint)len);
-                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
+                OpenGLGraphicsDevice.GL.GetObjectLabel(Identifier, nativePointer, 0, &len, (byte*)null);
                 string str = ToStr(pName, len);
                 Free(pName);
                 return str;
@@ -26,7 +26,7 @@
                 if (value != null)
                 {
                     byte* pName = value.ToUTF8Ptr();
-                    OpenGLGraphicsDevice.GL.ObjectLabel(Identifier, nativePointer, (uint)value.Length, pName);
+                    OpenGLGraphicsDevice.GL.ObjectLabel(Identifier, nativePointer, value.Length, pName);
                 }
                 else
                 {

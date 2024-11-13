@@ -2,6 +2,8 @@
 {
     using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities.Threading;
+    using MagicPhysX;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public enum BVHFilterResult
@@ -101,6 +103,16 @@
             }
         }
 
+        public void Clear()
+        {
+            readWriteLock.BeginWrite();
+            deadlist = int.MaxValue;
+            deadlistCount = 0;
+            nodeCount = 0;
+            Array.Clear(nodes);
+            readWriteLock.EndWrite();
+        }
+
         private int GetNextIndex()
         {
             int index;
@@ -197,13 +209,17 @@
 
         private void RefitHierarchy(int startIndex)
         {
-            while (startIndex != 0)
+            while (startIndex != 0 && startIndex != -1)
             {
                 int child1 = nodes[startIndex].Child1;
                 int child2 = nodes[startIndex].Child2;
-                nodes[startIndex].Box = BoundingBox.CreateMerged(nodes[child1].Box, nodes[child2].Box);
+                var a = nodes[child1].Box;
+                var b = nodes[child2].Box;
+                nodes[startIndex].Box.Min = Vector3.Min(a.Min, b.Min);
+                nodes[startIndex].Box.Max = Vector3.Max(a.Max, b.Max);
                 startIndex = nodes[startIndex].ParentIndex;
             }
+
             // Update the root node box as well
             int rootChild1 = nodes[0].Child1;
             int rootChild2 = nodes[0].Child2;

@@ -432,7 +432,7 @@
                 // Auto-scroll logs.
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
                 {
-                    ImGui.SetScrollY(dummyHeight);
+                    ImGuiP.SetScrollY(dummyHeight);
 
                     scrollToBottom = false;
                 }
@@ -443,7 +443,7 @@
 
             if (cmdSuggestions.Count > 0)
             {
-                if (ImGui.BeginChild("Suggestions", new(0, suggestionHeight), ImGuiChildFlags.Border))
+                if (ImGui.BeginChild("Suggestions", new(0, suggestionHeight), ImGuiChildFlags.Borders))
                 {
                     for (int i = 0; i < cmdSuggestions.Count; i++)
                     {

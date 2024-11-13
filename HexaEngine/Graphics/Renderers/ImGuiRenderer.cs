@@ -188,7 +188,7 @@ namespace HexaEngine.Graphics.Renderers
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
 
                         // Bind texture, Draw
-                        var srv = new SRVWrapper(cmd.TextureId.Handle);
+                        var srv = new SRVWrapper((nint)cmd.TextureId.Handle);
                         pso.Bindings.SetSRV("fontTex", srv);
                         if (Samplers.TryGetValue(cmd.TextureId, out ISamplerState sampler))
                         {
@@ -279,7 +279,7 @@ namespace HexaEngine.Graphics.Renderers
             fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
             texture.Dispose();
 
-            io.Fonts.TexID = fontTextureView.NativePointer;
+            io.Fonts.TexID = (ulong)fontTextureView.NativePointer;
 
             var samplerDesc = new SamplerStateDescription
             {

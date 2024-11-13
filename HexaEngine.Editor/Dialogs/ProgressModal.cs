@@ -124,7 +124,7 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else if ((progressFlags & ProgressFlags.BottomLeft) != 0)
             {
@@ -132,13 +132,13 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += size.Y - windowSize.Y - offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else
             {
                 Vector2 mainViewportPos = mainViewport.Pos;
                 var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
-                ImGui.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
+                ImGuiP.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
             }
 
             if (type == ProgressType.Spinner)
@@ -150,7 +150,7 @@
             if (type == ProgressType.Bar)
             {
                 const float padding = 5;
-                var win = ImGui.GetCurrentWindow();
+                var win = ImGuiP.GetCurrentWindow();
                 var pos = win.OuterRectClipped.Min + new Vector2(padding);
                 var drawList = ImGui.GetWindowDrawList();
                 drawList.PushClipRect(win.OuterRectClipped.Min, win.OuterRectClipped.Max);

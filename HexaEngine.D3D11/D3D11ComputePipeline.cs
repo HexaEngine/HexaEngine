@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
 
     public unsafe class D3D11ComputePipeline : DisposableBase, IComputePipeline, IPipeline
     {
@@ -89,7 +87,7 @@
                 ComPtr<ID3D11ComputeShader> computeShader;
                 device.Device.CreateComputeShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &computeShader.Handle);
                 cs = computeShader;
-                Utils.SetDebugName(cs, dbgName);
+                Utils.SetDebugName(cs.Handle, dbgName);
 
                 computeShaderBlob = shader;
             }

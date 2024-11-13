@@ -135,7 +135,7 @@
             var cursor = ImGui.GetCursorPos();
             ImGui.SetCursorPos(new(cursor.X - width - padding, cursor.Y));
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff181818);
-            if (ImGui.BeginChild($"Find##{name.Id}", new Vector2(width, frameHeight), ImGuiChildFlags.Border))
+            if (ImGui.BeginChild($"Find##{name.Id}", new Vector2(width, frameHeight), ImGuiChildFlags.Borders))
             {
                 ImGui.PopStyleColor();
 
@@ -386,7 +386,7 @@
             uint selectedBgColor = ImGui.GetColorU32(ImGuiCol.TabSelected);
             uint id = ImGui.GetID(label);
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
             ImGuiStylePtr style = ImGui.GetStyle();
 
@@ -396,13 +396,13 @@
             ImRect bb = new() { Min = pos + new Vector2(padding.X, 0), Max = new(pos.X + size.X, pos.Y + size.Y) };
             ImRect bbFull = new() { Min = pos, Max = new Vector2(pos.X + size.X, pos.Y + size.Y) + padding * 2 };
 
-            ImGui.ItemSizeRect(bbFull, 0.0f);
-            if (!ImGui.ItemAdd(bbFull, id, &bbFull, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bbFull, 0.0f);
+            if (!ImGuiP.ItemAdd(bbFull, id, &bbFull, ImGuiItemFlags.None))
                 return false;
 
             bool isHovered = false;
-            bool isClicked = ImGui.ButtonBehavior(bbFull, id, &isHovered, null, 0);
-            bool isActive = isHovered && ImGui.IsMouseDown(0);
+            bool isClicked = ImGuiP.ButtonBehavior(bbFull, id, &isHovered, null, 0);
+            bool isActive = isHovered && ImGuiP.IsMouseDown(0);
 
             uint color = isActive ? activeColor : isHovered ? hoverColor : selected ? selectedBgColor : default;
 
@@ -448,7 +448,7 @@
         {
             uint id = ImGui.GetID(label);
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImGuiStyle* style = ImGui.GetStyle();
             ImGuiIO* io = ImGui.GetIO();
             ImDrawList* draw = ImGui.GetWindowDrawList();
@@ -468,8 +468,8 @@
             Vector2 localCursor = ImGui.GetCursorPos();
             ImRect bb = new() { Min = cursor, Max = cursor + textAreaSize };
 
-            ImGui.ItemSizeRect(bb, 0.0f);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, 0.0f);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             bool isHovered = ImGui.IsItemHovered(0);
@@ -496,7 +496,7 @@
 
                 Vector2 min = cursor + new Vector2(start, lineIdx * lineHeight);
                 Vector2 max = min + new Vector2(xwidth, lineHeight);
-                ImGui.ScrollToRect(window, new ImRect() { Min = min, Max = max }, jump.Flags);
+                ImGuiP.ScrollToRect(window, new ImRect() { Min = min, Max = max }, jump.Flags);
                 jumpTo = null;
             }
 
@@ -615,21 +615,21 @@
         [Profiling.Profile]
         private void HandleMouseInput(uint id, ImGuiWindow* window, float lineHeight, StdWString* text, bool isHovered, bool isFocused, Vector2 mousePos, Vector2 origin, char* pText)
         {
-            bool isMouseDown = isHovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
-            bool isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
-            bool isDoubleClick = ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
+            bool isMouseDown = isHovered && ImGuiP.IsMouseDown(ImGuiMouseButton.Left);
+            bool isClick = ImGuiP.IsMouseClicked(ImGuiMouseButton.Left);
+            bool isDoubleClick = ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left);
 
             if (isHovered)
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.TextInput);
                 if (isMouseDown)
                 {
-                    ImGui.SetFocusID(id, window);
-                    ImGui.SetActiveID(id, window);
+                    ImGuiP.SetFocusID(id, window);
+                    ImGuiP.SetActiveID(id, window);
                 }
                 else
                 {
-                    ImGui.ClearActiveID();
+                    ImGuiP.ClearActiveID();
                 }
 
                 if (isClick && !ImGui.IsMouseDragging(ImGuiMouseButton.Left) && !isDoubleClick)
@@ -764,10 +764,10 @@
                     PreEdit(TextEditOp.Insert);
                     for (int i = 0; i < io.InputQueueCharacters.Size; i++)
                     {
-                        char c = io.InputQueueCharacters.Data[i];
+                        uint c = io.InputQueueCharacters.Data[i];
                         if (c >= 32) // Handle regular characters
                         {
-                            text->Insert(cursorState, c);
+                            text->Insert(cursorState, (char)c);
                             cursorState++;
                             changed = true;
                         }
@@ -776,7 +776,7 @@
                     PostEdit();
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.Backspace) && cursorState > 0) // Handle backspace
+                if (ImGuiP.IsKeyPressed(ImGuiKey.Backspace) && cursorState > 0) // Handle backspace
                 {
                     PreEdit(TextEditOp.Erase);
                     if (!selection.IsValid() && text->Size > 0)
@@ -809,7 +809,7 @@
                     PostEdit();
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.Enter) || ImGui.IsKeyPressed(ImGuiKey.KeypadEnter)) // Handle enter
+                if (ImGuiP.IsKeyPressed(ImGuiKey.Enter) || ImGuiP.IsKeyPressed(ImGuiKey.KeypadEnter)) // Handle enter
                 {
                     PreEdit(TextEditOp.Insert);
                     switch (source.NewLineType)
@@ -841,7 +841,7 @@
                     PostEdit();
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.Tab))
+                if (ImGuiP.IsKeyPressed(ImGuiKey.Tab))
                 {
                     PreEdit(TextEditOp.Insert);
                     text->Insert(cursorState, '\t');
@@ -849,26 +849,26 @@
                     PostEdit();
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) && cursorState > 0)
+                if (ImGuiP.IsKeyPressed(ImGuiKey.LeftArrow) && cursorState > 0)
                 {
                     MoveCursorHorizontally(-1);
                 }
-                if (ImGui.IsKeyPressed(ImGuiKey.RightArrow) && cursorState < text->Size)
+                if (ImGuiP.IsKeyPressed(ImGuiKey.RightArrow) && cursorState < text->Size)
                 {
                     MoveCursorHorizontally(1);
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.UpArrow) && cursorState.Line > 0)
+                if (ImGuiP.IsKeyPressed(ImGuiKey.UpArrow) && cursorState.Line > 0)
                 {
                     MoveCursorVertically(-1);
                 }
 
-                if (ImGui.IsKeyPressed(ImGuiKey.DownArrow) && cursorState.Line < source.Lines.Count - 1)
+                if (ImGuiP.IsKeyPressed(ImGuiKey.DownArrow) && cursorState.Line < source.Lines.Count - 1)
                 {
                     MoveCursorVertically(1);
                 }
 
-                if (io.KeyCtrl && ImGui.IsKeyDown(ImGuiKey.V))
+                if (io.KeyCtrl && ImGuiP.IsKeyDown(ImGuiKey.V))
                 {
                     if (!pasted)
                     {
@@ -894,12 +894,12 @@
                     pasteRepeatTimer = 0.0f;
                 }
 
-                if (io.KeyCtrl && ImGui.IsKeyDown(ImGuiKey.C) && selection.IsValid())
+                if (io.KeyCtrl && ImGuiP.IsKeyDown(ImGuiKey.C) && selection.IsValid())
                 {
                     CopySelectionToClipboard();
                 }
 
-                if (io.KeyCtrl && ImGui.IsKeyDown(ImGuiKey.X) && selection.IsValid())
+                if (io.KeyCtrl && ImGuiP.IsKeyDown(ImGuiKey.X) && selection.IsValid())
                 {
                     CopySelectionToClipboard();
                     PreEdit(TextEditOp.Cut);

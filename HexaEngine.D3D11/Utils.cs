@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using Silk.NET.Direct3D11;
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;

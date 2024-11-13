@@ -6,19 +6,13 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Contexts;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
-    using Silk.NET.DXGI;
-    using Silk.NET.Maths;
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
-    using InfoQueueFilter = Silk.NET.DXGI.InfoQueueFilter;
+    using InfoQueueFilter = Hexa.NET.DXGI.InfoQueueFilter;
 
     public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter, IDisposable
     {
-        internal readonly DXGI DXGI;
-        internal readonly INativeWindowSource source;
         internal readonly List<GPU> gpus = new();
         private readonly bool debug;
 
@@ -39,7 +33,6 @@
 
         public DXGIAdapterD3D11(INativeWindowSource source, bool debug)
         {
-            DXGI = DXGI.GetApi(source);
             if (debug)
             {
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);
@@ -47,7 +40,7 @@
 
                 InfoQueueFilter filter = new();
                 filter.DenyList.NumIDs = 1;
-                filter.DenyList.PIDList = (int*)AllocT(MessageID.SetprivatedataChangingparams);
+                filter.DenyList.PIDList = (int*)AllocT(MessageId.SetprivatedataChangingparams);
                 IDXGIInfoQueue.AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Message, false);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Info, false);
@@ -61,7 +54,6 @@
 
             IDXGIAdapter = GetHardwareAdapter(null);
             IDXGIOutput = GetOutput(null);
-            this.source = source;
             this.debug = debug;
         }
 
@@ -197,7 +189,7 @@
         {
             AdapterDesc1 desc;
             IDXGIAdapter.GetDesc1(&desc);
-            string name = new(desc.Description);
+            string name = new(&desc.Description_0);
 
             LoggerFactory.General.Info("Backend: Using Graphics API: D3D11");
             LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");
@@ -215,10 +207,10 @@
                 Height = (uint)window.Height,
                 Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
                 BufferCount = 2,
-                BufferUsage = DXGI.UsageRenderTargetOutput,
+                BufferUsage = (uint)DXGI.DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 SampleDesc = new(1, 0),
-                Scaling = Silk.NET.DXGI.Scaling.Stretch,
-                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
+                Scaling = Hexa.NET.DXGI.Scaling.Stretch,
+                SwapEffect = Hexa.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
                 Stereo = false,
             };
@@ -227,12 +219,11 @@
             {
                 Windowed = 1,
                 RefreshRate = new Rational(0, 1),
-                Scaling = Silk.NET.DXGI.ModeScaling.Unspecified,
-                ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
+                Scaling = Hexa.NET.DXGI.ModeScaling.Unspecified,
+                ScanlineOrdering = Hexa.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            ComPtr<IDXGISwapChain2> swapChain = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -245,8 +236,7 @@
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
-            ComPtr<IDXGISwapChain2> swapChain = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -270,10 +260,10 @@
                 Height = (uint)height,
                 Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
                 BufferCount = 2,
-                BufferUsage = DXGI.UsageRenderTargetOutput,
+                BufferUsage = (uint)DXGI.DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 SampleDesc = new(1, 0),
-                Scaling = Silk.NET.DXGI.Scaling.Stretch,
-                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
+                Scaling = Hexa.NET.DXGI.Scaling.Stretch,
+                SwapEffect = Hexa.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing)
             };
 
@@ -281,12 +271,11 @@
             {
                 Windowed = true,
                 RefreshRate = new Rational(0, 1),
-                Scaling = Silk.NET.DXGI.ModeScaling.Unspecified,
-                ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
+                Scaling = Hexa.NET.DXGI.ModeScaling.Unspecified,
+                ScanlineOrdering = Hexa.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            ComPtr<IDXGISwapChain2> swapChain = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -303,8 +292,7 @@
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
-            ComPtr<IDXGISwapChain2> swapChain = default;
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, IDXGIOutput, ref swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -313,15 +301,15 @@
         {
             ComPtr<IDXGIAdapter4> selected = null;
             for (uint adapterIndex = 0;
-                (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out ComPtr<IDXGIAdapter4> adapter) !=
+                (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out ComPtr<IDXGIAdapter4> adapter).Value !=
                 ResultCode.DXGI_ERROR_NOT_FOUND;
                 adapterIndex++)
             {
                 AdapterDesc1 desc;
-                adapter.GetDesc1(&desc).ThrowHResult();
-                gpus.Add(new(new(desc.Description), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, new(desc.AdapterLuid.Low, desc.AdapterLuid.High), desc.Flags));
+                adapter.GetDesc1(&desc).ThrowIf();
+                gpus.Add(new(new(&desc.Description_0), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, new(desc.AdapterLuid.LowPart, desc.AdapterLuid.HighPart), desc.Flags));
 
-                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(desc.Description);
+                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(&desc.Description_0);
 
                 // select by adapter name (description)
                 if (name != null && nameSpan == name)
@@ -355,33 +343,35 @@
         private ComPtr<IDXGIOutput6> GetOutput(string? name)
         {
             ComPtr<IDXGIOutput6> selected = null;
-            ComPtr<IDXGIOutput6> output = null;
+            ComPtr<IDXGIOutput> output = null;
 
             for (uint outputIndex = 0;
-                (ResultCode)IDXGIAdapter.EnumOutputs(outputIndex, ref output) !=
+                (ResultCode)IDXGIAdapter.EnumOutputs(outputIndex, out output).Value !=
                 ResultCode.DXGI_ERROR_NOT_FOUND;
                 outputIndex++)
             {
+                output.QueryInterface(out ComPtr<IDXGIOutput6> output6);
+
                 OutputDesc1 desc;
-                output.GetDesc1(&desc).ThrowHResult();
+                output6.GetDesc1(&desc).ThrowIf();
 
                 // select the user chosen display by name.
-                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(desc.DeviceName);
+                var nameSpan = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(&desc.DeviceName_0);
                 if (name != null)
                 {
                     if (nameSpan == name)
                     {
-                        return output;
+                        return output6;
                     }
 
-                    output.Release();
+                    output6.Release();
                     continue;
                 }
 
-                selected = output;
+                selected = output6;
 
                 // select primary monitor.
-                if (desc.DesktopCoordinates.Min == Vector2D<int>.Zero)
+                if (desc.DesktopCoordinates.Top == 0 && desc.DesktopCoordinates.Left == 0)
                 {
                     break;
                 }
@@ -395,14 +385,14 @@
             return selected;
         }
 
-        private static bool CheckSwapChainFormat(ComPtr<ID3D11Device5> device, Silk.NET.DXGI.Format target)
+        private static bool CheckSwapChainFormat(ComPtr<ID3D11Device5> device, Hexa.NET.DXGI.Format target)
         {
             FormatSupport formatSupport;
-            device.CheckFormatSupport(target, (uint*)&formatSupport).ThrowHResult();
+            device.CheckFormatSupport(target, (uint*)&formatSupport).ThrowIf();
             return formatSupport.HasFlag(FormatSupport.Display | FormatSupport.RenderTarget);
         }
 
-        private static Silk.NET.DXGI.Format ChooseSwapChainFormat(ComPtr<ID3D11Device5> device, Silk.NET.DXGI.Format preferredFormat)
+        private static Hexa.NET.DXGI.Format ChooseSwapChainFormat(ComPtr<ID3D11Device5> device, Hexa.NET.DXGI.Format preferredFormat)
         {
             // Check if the preferred format is supported
             if (CheckSwapChainFormat(device, preferredFormat))
@@ -413,27 +403,32 @@
             else
             {
                 // Fallback to B8G8R8A8_UNorm if the preferred format is not supported
-                return Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm;
+                return Hexa.NET.DXGI.Format.B8G8R8A8Unorm;
             }
         }
 
-        private static Silk.NET.DXGI.Format AutoChooseSwapChainFormat(ComPtr<ID3D11Device5> device, ComPtr<IDXGIOutput6> output)
+        private static Hexa.NET.DXGI.Format AutoChooseSwapChainFormat(ComPtr<ID3D11Device5> device, ComPtr<IDXGIOutput6> output)
         {
+            if (output.Handle == null)
+            {
+                return Hexa.NET.DXGI.Format.B8G8R8A8Unorm;
+            }
+
             OutputDesc1 desc;
-            output.GetDesc1(&desc).ThrowHResult();
+            output.GetDesc1(&desc).ThrowIf();
 
             if (desc.ColorSpace == ColorSpaceType.RgbFullG2084NoneP2020)
             {
-                return ChooseSwapChainFormat(device, Silk.NET.DXGI.Format.FormatR10G10B10A2Unorm);
+                return ChooseSwapChainFormat(device, Hexa.NET.DXGI.Format.R10G10B10A2Unorm);
             }
 
             if (desc.ColorSpace == ColorSpaceType.RgbFullG22NoneP709)
             {
-                return ChooseSwapChainFormat(device, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm);
+                return ChooseSwapChainFormat(device, Hexa.NET.DXGI.Format.B8G8R8A8Unorm);
             }
 
             // If none of the preferred formats is supported, choose a fallback format
-            return Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm;
+            return Hexa.NET.DXGI.Format.B8G8R8A8Unorm;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -445,7 +440,6 @@
                 IDXGIOutput.Release();
                 IDXGIAdapter.Release();
                 IDXGIFactory.Release();
-                DXGI.Dispose();
 
                 disposedValue = true;
             }

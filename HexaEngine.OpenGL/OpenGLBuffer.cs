@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
 
     public class OpenGLBuffer : DeviceChildBase, IBuffer
     {
@@ -21,7 +21,7 @@
 
         public ResourceDimension Dimension => ResourceDimension.Buffer;
 
-        protected override ObjectIdentifier Identifier => ObjectIdentifier.Buffer;
+        protected override GLObjectIdentifier Identifier => GLObjectIdentifier.Buffer;
 
         protected override void DisposeCore()
         {

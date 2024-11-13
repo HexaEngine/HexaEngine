@@ -32,13 +32,13 @@
             return this;
         }
 
-        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, ReadOnlySpan<char> glyphRanges)
+        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, ReadOnlySpan<uint> glyphRanges)
         {
-            fixed (char* pGlyphRanges = glyphRanges)
+            fixed (uint* pGlyphRanges = glyphRanges)
                 return AddFontFromFileTTF(path, size, pGlyphRanges);
         }
 
-        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, char* glyphRanges)
+        public ImGuiFontBuilder AddFontFromFileTTF(string path, float size, uint* glyphRanges)
         {
             font = fontAtlas.AddFontFromFileTTF(path, size, config, glyphRanges);
             config.MergeMode = true;
@@ -61,24 +61,24 @@
             return this;
         }
 
-        public ImGuiFontBuilder AddFontFromMemoryTTF(ReadOnlySpan<byte> fontData, float size, ReadOnlySpan<char> glyphRanges)
+        public ImGuiFontBuilder AddFontFromMemoryTTF(ReadOnlySpan<byte> fontData, float size, ReadOnlySpan<uint> glyphRanges)
         {
             fixed (byte* pFontData = fontData)
             {
-                fixed (char* pGlyphRanges = glyphRanges)
+                fixed (uint* pGlyphRanges = glyphRanges)
                 {
                     return AddFontFromMemoryTTF(pFontData, fontData.Length, size, pGlyphRanges);
                 }
             }
         }
 
-        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, ReadOnlySpan<char> glyphRanges)
+        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, ReadOnlySpan<uint> glyphRanges)
         {
-            fixed (char* pGlyphRanges = glyphRanges)
+            fixed (uint* pGlyphRanges = glyphRanges)
                 return AddFontFromMemoryTTF(fontData, fontDataSize, size, pGlyphRanges);
         }
 
-        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, char* pGlyphRanges)
+        public ImGuiFontBuilder AddFontFromMemoryTTF(byte* fontData, int fontDataSize, float size, uint* pGlyphRanges)
         {
             // IMPORTANT: AddFontFromMemoryTTF() by default transfer ownership of the data buffer to the font atlas, which will attempt to free it on destruction.
             // This was to avoid an unnecessary copy, and is perhaps not a good API (a future version will redesign it).
@@ -730,11 +730,11 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
             fonts.TexDesiredWidth = 2048;
 
-            char* glyphRanges = stackalloc char[]
+            uint* glyphRanges = stackalloc uint[]
             {
-                (char)0xe005, (char)0xe684,
-                (char)0xF000, (char)0xF8FF,
-                (char)0 // null terminator
+                (uint)0xe005, (uint)0xe684,
+                (uint)0xF000, (uint)0xF8FF,
+                (uint)0 // null terminator
             };
 
             ImGuiFontBuilder defaultBuilder = new(fonts);
@@ -751,10 +751,10 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
 
-            char* glyphMaterialRanges = stackalloc char[]
+            uint* glyphMaterialRanges = stackalloc uint[]
            {
-                (char)0xe003, (char)0xF8FF,
-                (char)0 // null terminator
+                (uint)0xe003, (uint)0xF8FF,
+                (uint)0 // null terminator
             };
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
@@ -821,7 +821,7 @@ DockSpace                 ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=2560,140
             colors[(int)ImGuiCol.TableRowBgAlt] = new Vector4(1.00f, 1.00f, 1.00f, 0.06f);
             colors[(int)ImGuiCol.TextSelectedBg] = new Vector4(0.20f, 0.22f, 0.23f, 1.00f);
             colors[(int)ImGuiCol.DragDropTarget] = new Vector4(0.33f, 0.67f, 0.86f, 1.00f);
-            colors[(int)ImGuiCol.NavHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);
+            colors[(int)ImGuiCol.NavCursor] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);
             colors[(int)ImGuiCol.NavWindowingHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 0.70f);
             colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.20f);
             colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0.10f, 0.10f, 0.10f, 0.00f);

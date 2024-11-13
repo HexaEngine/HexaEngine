@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -706,7 +704,7 @@
             ShaderCompiler.Reflect<ID3D11ShaderReflection>(shader, out var reflection);
 
             ShaderDesc shaderDesc;
-            reflection.GetDesc(&shaderDesc);
+            reflection.GetDesc(&shaderDesc).ThrowIf();
 
             List<ShaderParameter> shaderParametersInStage = new();
             Dictionary<string, ShaderParameter> shaderParametersByNameInStage = new();
@@ -722,20 +720,20 @@
                 parameter.Stage = stage;
                 parameter.Type = shaderInputBindDesc.Type switch
                 {
-                    D3DShaderInputType.D3DSitCbuffer => ShaderParameterType.CBV,
-                    D3DShaderInputType.D3DSitTbuffer => ShaderParameterType.SRV,
-                    D3DShaderInputType.D3DSitTexture => ShaderParameterType.SRV,
-                    D3DShaderInputType.D3DSitSampler => ShaderParameterType.Sampler,
-                    D3DShaderInputType.D3DSitUavRwtyped => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitStructured => ShaderParameterType.SRV,
-                    D3DShaderInputType.D3DSitUavRwstructured => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitByteaddress => ShaderParameterType.SRV,
-                    D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitUavAppendStructured => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitUavConsumeStructured => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderParameterType.UAV,
-                    D3DShaderInputType.D3DSitRtaccelerationstructure => throw new NotSupportedException("Ray tracing is not supported in D3D11!"),
-                    D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderParameterType.UAV,
+                    ShaderInputType.SitCbuffer => ShaderParameterType.CBV,
+                    ShaderInputType.SitTbuffer => ShaderParameterType.SRV,
+                    ShaderInputType.SitTexture => ShaderParameterType.SRV,
+                    ShaderInputType.SitSampler => ShaderParameterType.Sampler,
+                    ShaderInputType.SitUavRwtyped => ShaderParameterType.UAV,
+                    ShaderInputType.SitStructured => ShaderParameterType.SRV,
+                    ShaderInputType.SitUavRwstructured => ShaderParameterType.UAV,
+                    ShaderInputType.SitByteaddress => ShaderParameterType.SRV,
+                    ShaderInputType.SitUavRwbyteaddress => ShaderParameterType.UAV,
+                    ShaderInputType.SitUavAppendStructured => ShaderParameterType.UAV,
+                    ShaderInputType.SitUavConsumeStructured => ShaderParameterType.UAV,
+                    ShaderInputType.SitUavRwstructuredWithCounter => ShaderParameterType.UAV,
+                    ShaderInputType.SitRtaccelerationstructure => throw new NotSupportedException("Ray tracing is not supported in D3D11!"),
+                    ShaderInputType.SitUavFeedbacktexture => ShaderParameterType.UAV,
                     _ => throw new NotSupportedException($"ShaderInputType ({shaderInputBindDesc.Type}) is not supported!"),
                 };
 

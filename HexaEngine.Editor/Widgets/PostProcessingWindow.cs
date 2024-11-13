@@ -117,11 +117,11 @@
                 ImGui.Text("Reloading");
             }
 
-            ImGui.CheckboxFlags("HDR", ref flags, (int)PostProcessingFlags.HDR);
+            ImGuiP.CheckboxFlags("HDR", ref flags, (int)PostProcessingFlags.HDR);
             ImGui.SameLine();
-            ImGui.CheckboxFlags("Debug", ref flags, (int)PostProcessingFlags.Debug);
+            ImGuiP.CheckboxFlags("Debug", ref flags, (int)PostProcessingFlags.Debug);
             ImGui.SameLine();
-            ImGui.CheckboxFlags("Force Dynamic", ref flags, (int)PostProcessingFlags.ForceDynamic);
+            ImGuiP.CheckboxFlags("Force Dynamic", ref flags, (int)PostProcessingFlags.ForceDynamic);
 
             ImGui.BeginTable("PostProcess", 3, ImGuiTableFlags.SizingFixedFit);
             ImGui.TableSetupColumn("");
@@ -261,7 +261,7 @@
                 {
                     size.Y = size.X * aspect;
                 }
-                ImGui.Image(buffer.SRV.NativePointer, size);
+                ImGui.Image((ulong)buffer.SRV.NativePointer, size);
             }
 
             ImGui.EndTable();

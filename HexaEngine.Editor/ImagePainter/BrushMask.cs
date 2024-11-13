@@ -43,7 +43,7 @@
 
         public void DrawPreview(Vector2 size)
         {
-            ImGui.Image(_shaderResourceView.NativePointer, size);
+            ImGui.Image((ulong)_shaderResourceView.NativePointer, size);
         }
 
         protected virtual void Dispose(bool disposing)

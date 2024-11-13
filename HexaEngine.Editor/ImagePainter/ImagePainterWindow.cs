@@ -296,12 +296,12 @@
                         zoom_changed = true;
                     }
 
-                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadAdd))
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadAdd))
                     {
                         new_zoom = zoom * zoom_step;
                         zoom_changed = true;
                     }
-                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadSubtract))
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadSubtract))
                     {
                         new_zoom = zoom / zoom_step;
                         zoom_changed = true;
@@ -316,20 +316,20 @@
 
                     var new_mouse_position_on_list = mouse_position_on_list * (size * new_zoom);
                     var new_scroll = new_mouse_position_on_list - mouse_position_on_window;
-                    ImGui.SetScrollX(new_scroll.X);
-                    ImGui.SetScrollY(new_scroll.Y);
+                    ImGuiP.SetScrollX(new_scroll.X);
+                    ImGuiP.SetScrollY(new_scroll.Y);
                     zoom = new_zoom;
                 }
 
-                if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                if (ImGuiP.IsMouseDown(ImGuiMouseButton.Middle))
                 {
                     if (delta.X != 0.0f)
                     {
-                        ImGui.SetScrollX(ImGui.GetScrollX() + delta.X);
+                        ImGuiP.SetScrollX(ImGui.GetScrollX() + delta.X);
                     }
                     if (delta.Y != 0.0f)
                     {
-                        ImGui.SetScrollY(ImGui.GetScrollY() + delta.Y);
+                        ImGuiP.SetScrollY(ImGui.GetScrollY() + delta.Y);
                     }
                 }
             }
@@ -368,7 +368,7 @@
                     var curPos = ImGui.GetMousePos() / zoom - curPosGlob / zoom;
                     var curPosD = curPos - lastpos;
                     lastpos = curPos;
-                    var changed = ImGui.IsMouseDown(ImGuiMouseButton.Left);
+                    var changed = ImGuiP.IsMouseDown(ImGuiMouseButton.Left);
                     var first = false;
                     var moved = ImGui.IsMouseDragging(ImGuiMouseButton.Left) && curPosD != Vector2.Zero;
 
@@ -407,7 +407,7 @@
                     context.ClearState();
                 }
 
-                ImGui.Image(overlay.SRV.NativePointer, size * zoom);
+                ImGui.Image((ulong)overlay.SRV.NativePointer, size * zoom);
                 var focusedTmp = focused;
                 focused = ImGui.IsWindowFocused();
                 gotFocus = focused && !focusedTmp;

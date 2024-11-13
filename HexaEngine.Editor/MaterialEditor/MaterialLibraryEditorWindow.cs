@@ -234,12 +234,12 @@
             }
 
             var flags = (int)material.Flags;
-            if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+            if (ImGuiP.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
             {
                 material.Flags = (MaterialFlags)flags;
                 hasChanged = true;
             }
-            if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
+            if (ImGuiP.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
             {
                 material.Flags = (MaterialFlags)flags;
                 hasChanged = true;
@@ -344,19 +344,19 @@
                 isActive |= ImGui.IsItemActive();
 
                 var texFlags = (int)tex.Flags;
-                if (ImGui.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
+                if (ImGuiP.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.Invert; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
-                if (ImGui.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
+                if (ImGuiP.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.UseAlpha; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
-                if (ImGui.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
+                if (ImGuiP.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.IgnoreAlpha; return x; });
                     hasChanged = true;

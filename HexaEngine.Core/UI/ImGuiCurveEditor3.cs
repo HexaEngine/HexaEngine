@@ -26,9 +26,9 @@
 
         public static bool Curve(string label, Vector2 size, ref Curve curve, Vector2 rangeMin, Vector2 rangeMax, int* selection)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
 
-            uint id = ImGui.ImGuiWindowGetID(window, label, (byte*)null);
+            uint id = ImGuiP.GetID(window, label, (byte*)null);
             if (window->SkipItems != 0)
                 return false;
 
@@ -40,17 +40,17 @@
                 Max = cursorPos + size
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, &bb, 0))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, 0))
                 return false;
 
             ImGui.PushID(label);
 
-            bool hovered = ImGui.ItemHoverable(bb, id, 0);
+            bool hovered = ImGuiP.ItemHoverable(bb, id, 0);
 
             ImGuiStylePtr style = ImGui.GetStyle();
             ImGuiIOPtr io = ImGui.GetIO();
-            ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
+            ImGuiP.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
 
             Vector2 canvas = new(bb.Max.X - bb.Min.X, bb.Max.Y - bb.Min.Y);
 
@@ -71,10 +71,10 @@
                 if (draggingPoint)
                 {
                     if (selection != null)
-                        ImGui.SetActiveID(id, window);
+                        ImGuiP.SetActiveID(id, window);
 
-                    ImGui.SetFocusID(id, window);
-                    ImGui.FocusWindow(window, ImGuiFocusRequestFlags.None);
+                    ImGuiP.SetFocusID(id, window);
+                    ImGuiP.FocusWindow(window, ImGuiFocusRequestFlags.None);
 
                     modified = true;
 
@@ -93,15 +93,15 @@
                     point.Pos = pos;
                     curve.Points[currentSelection] = point;
                 }
-                else if (!ImGui.IsMouseDown(ImGuiMouseButton.Left))
+                else if (!ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     currentSelection = -1;
                 }
             }
 
-            if (!ImGui.IsMouseDragging(0) && ImGui.GetActiveID() == id && selection != null && *selection != -1 && currentSelection == -1)
+            if (!ImGui.IsMouseDragging(0) && ImGuiP.GetActiveID() == id && selection != null && *selection != -1 && currentSelection == -1)
             {
-                ImGui.ClearActiveID();
+                ImGuiP.ClearActiveID();
             }
 
             uint gridColor1 = ImGui.GetColorU32(ImGuiCol.TextDisabled, 0.15f);
@@ -169,7 +169,7 @@
 
                     color = 0xFF00FFFF;
 
-                    if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && currentSelection == -1)
+                    if (ImGuiP.IsMouseDown(ImGuiMouseButton.Left) && currentSelection == -1)
                     {
                         currentSelection = i;
                     }
@@ -178,7 +178,7 @@
                 drawList->AddCircleFilled(pos, pointRadiusInPixels, color);
             }
 
-            if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            if (hovered && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
                 if (currentSelection == -1 && !draggingPoint)
                 {
@@ -223,7 +223,7 @@
                 pos.X = MathUtil.Lerp(rangeMin.X, rangeMax.X, pos.X);
                 pos.Y = MathUtil.Lerp(rangeMin.Y, rangeMax.Y, pos.Y);
 
-                ImGui.RenderTextClipped(new Vector2(bb.Min.X, bb.Min.Y + style.FramePadding.Y), bb.Max, $"({pos.X:N2},{pos.Y:N2})", (byte*)null, (Vector2*)null, new Vector2(1f, 1f), &bb);
+                ImGuiP.RenderTextClipped(new Vector2(bb.Min.X, bb.Min.Y + style.FramePadding.Y), bb.Max, $"({pos.X:N2},{pos.Y:N2})", (byte*)null, (Vector2*)null, new Vector2(1f, 1f), &bb);
             }
 
             ImGui.PopID();

@@ -367,7 +367,7 @@ namespace HexaEngine.Graphics.Renderers
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image(srv, size);
+                ImGui.Image((ulong)srv, size);
             }
         }
 
@@ -384,7 +384,7 @@ namespace HexaEngine.Graphics.Renderers
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image(srv, size, tint);
+                ImGui.Image((ulong)srv, size, tint);
             }
         }
 

@@ -37,7 +37,7 @@
             }
 
             var flags = (int)manager.CullingFlags;
-            if (ImGui.CheckboxFlags("Enable", ref flags, (int)CullingFlags.Debug))
+            if (ImGuiP.CheckboxFlags("Enable", ref flags, (int)CullingFlags.Debug))
             {
                 manager.CullingFlags |= CullingFlags.Debug;
                 return; // we have to skip this frame.
@@ -85,8 +85,8 @@
             ImGui.Text($"Draw Calls: {stats.DrawCalls}/{stats.ActualDrawCalls}, Instances: {stats.DrawInstanceCount}/{stats.ActualDrawInstanceCount}, Vertices: {vertexCount}{suffix}");
 
             bool changed = false;
-            changed |= ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
-            changed |= ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
+            changed |= ImGuiP.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
+            changed |= ImGuiP.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
             if (changed)
             {
                 manager.CullingFlags = (CullingFlags)flags;

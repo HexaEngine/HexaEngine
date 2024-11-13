@@ -129,7 +129,7 @@
             ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
             ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
 
-            ImGuiTablePtr table = ImGui.GetCurrentTable();
+            ImGuiTablePtr table = ImGuiP.GetCurrentTable();
 
             ImGui.Indent();
             ImGui.TableHeadersRow();
@@ -352,7 +352,7 @@
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
 
-            ImRect rect = ImGui.TableGetCellBgRect(table, 1);
+            ImRect rect = ImGuiP.TableGetCellBgRect(table, 1);
             rect.Max.X = avail.X + rect.Min.X;
             rect.Max.Y += ImGui.GetTextLineHeight();
 
@@ -487,7 +487,7 @@
 
         private void HandleInput(GameObject element, bool hovered)
         {
-            if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            if (hovered && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
             {
                 if (ImGui.GetIO().KeyCtrl)
                 {
@@ -506,7 +506,7 @@
                     SelectionCollection.Global.AddOverwriteSelection(element);
                 }
             }
-            if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            if (hovered && ImGuiP.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 ImGui.OpenPopup(element.FullName);
                 if (!element.IsEditorSelected && !ImGui.GetIO().KeyCtrl)
@@ -516,20 +516,20 @@
             }
             if (focused)
             {
-                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center != element.Transform.GlobalPosition)
+                if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center != element.Transform.GlobalPosition)
                 {
                     EditorCameraController.Center = element.Transform.GlobalPosition;
                 }
-                else if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center == element.Transform.GlobalPosition)
+                else if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center == element.Transform.GlobalPosition)
                 {
                     EditorCameraController.Center = Vector3.Zero;
                 }
-                if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
+                if (element.IsEditorSelected && ImGuiP.IsKeyReleased(ImGuiKey.Delete))
                 {
                     SceneManager.Current.UnsavedChanged = true;
                     SelectionCollection.Global.PurgeSelection();
                 }
-                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
+                if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.U))
                 {
                     SelectionCollection.Global.ClearSelection();
                 }

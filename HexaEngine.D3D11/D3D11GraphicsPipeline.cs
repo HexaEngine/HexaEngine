@@ -2,8 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using System;
 
     public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline, IPipeline
@@ -155,7 +153,7 @@
                 ComPtr<ID3D11VertexShader> vertexShader;
                 device.Device.CreateVertexShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &vertexShader.Handle);
                 vs = vertexShader;
-                Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
+                Utils.SetDebugName(vs.Handle, $"{dbgName}.{nameof(vs)}");
 
                 vertexShaderBlob = shader;
             }
@@ -173,7 +171,7 @@
                 ComPtr<ID3D11HullShader> hullShader;
                 device.Device.CreateHullShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &hullShader.Handle);
                 hs = hullShader;
-                Utils.SetDebugName(hs, $"{dbgName}.{nameof(hs)}");
+                Utils.SetDebugName(hs.Handle, $"{dbgName}.{nameof(hs)}");
 
                 hullShaderBlob = shader;
             }
@@ -191,7 +189,7 @@
                 ComPtr<ID3D11DomainShader> domainShader;
                 device.Device.CreateDomainShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &domainShader.Handle);
                 ds = domainShader;
-                Utils.SetDebugName(ds, $"{dbgName}.{nameof(hs)}");
+                Utils.SetDebugName(ds.Handle, $"{dbgName}.{nameof(hs)}");
 
                 domainShaderBlob = shader;
             }
@@ -209,7 +207,7 @@
                 ComPtr<ID3D11GeometryShader> geometryShader;
                 device.Device.CreateGeometryShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &geometryShader.Handle);
                 gs = geometryShader;
-                Utils.SetDebugName(gs, $"{dbgName}.{nameof(gs)}");
+                Utils.SetDebugName(gs.Handle, $"{dbgName}.{nameof(gs)}");
 
                 geometryShaderBlob = shader;
             }
@@ -227,7 +225,7 @@
                 ComPtr<ID3D11PixelShader> pixelShader;
                 device.Device.CreatePixelShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &pixelShader.Handle);
                 ps = pixelShader;
-                Utils.SetDebugName(ps, $"{dbgName}.{nameof(ps)}");
+                Utils.SetDebugName(ps.Handle, $"{dbgName}.{nameof(ps)}");
 
                 pixelShaderBlob = shader;
             }

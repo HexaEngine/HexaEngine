@@ -260,7 +260,7 @@
         /// Creates an OpenGL context for the window.
         /// </summary>
         /// <returns>The created OpenGL context.</returns>
-        IGLContext OpenGLCreateContext();
+        HexaGen.Runtime.IGLContext OpenGLCreateContext();
 
         /// <summary>
         /// Gets the underlying native window pointer.

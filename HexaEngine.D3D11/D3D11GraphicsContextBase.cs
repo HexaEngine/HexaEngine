@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.D3D11;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
+    using HexaGen.Runtime;
     using Silk.NET.Maths;
     using System;
     using System.Numerics;
@@ -221,7 +220,7 @@
         public ICommandList FinishCommandList(bool restoreState)
         {
             ComPtr<ID3D11CommandList> commandList = default;
-            DeviceContext.FinishCommandList((Bool32)restoreState, ref commandList);
+            DeviceContext.FinishCommandList((Bool32)restoreState, out commandList);
             return new D3D11CommandList(commandList);
         }
 
@@ -240,7 +239,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags)
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             DeviceContext.Map((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex, (Map)Helper.Convert((MapMode)mode), (uint)Helper.Convert(flags), &data);
             return new(data.PData, data.RowPitch, data.DepthPitch);
         }
@@ -266,9 +265,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Read(IBuffer buffer, void* values, int length)
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Silk.NET.Direct3D11.Map.Read, 0, &data);
+            DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.Read, 0, &data);
 
             long destinationLength = length;
             long bytesToCopy = data.RowPitch > destinationLength ? destinationLength : data.RowPitch;
@@ -280,9 +279,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Silk.NET.Direct3D11.Map.Read, 0, &data);
+            DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.Read, 0, &data);
 
             long destinationLength = count * sizeof(T);
             long bytesToCopy = data.RowPitch > destinationLength ? destinationLength : data.RowPitch;
@@ -364,7 +363,7 @@
             ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(depthStencilView?.NativePointer);
             ID3D11UnorderedAccessView* uav = (ID3D11UnorderedAccessView*)(unorderedAccessView?.NativePointer);
 #nullable enable
-            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(1, &rtv, dsv, uavSlot, 1, &uav, uavInitialCount);
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(1u, &rtv, dsv, uavSlot, 1u, &uav, &uavInitialCount);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -381,7 +380,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetScissorRect(int x, int y, int z, int w)
         {
-            Box2D<int> rect = new(x, y, z, w);
+            Rect32 rect = new(x, y, z, w);
             DeviceContext.RSSetScissorRects(1, &rect);
         }
 
@@ -441,7 +440,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetViewports(uint count, Viewport* viewports)
         {
-            Silk.NET.Direct3D11.Viewport* vps = stackalloc Silk.NET.Direct3D11.Viewport[(int)count];
+            Hexa.NET.D3D11.Viewport* vps = stackalloc Hexa.NET.D3D11.Viewport[(int)count];
             Helper.Convert(viewports, vps, count);
             DeviceContext.RSSetViewports(count, vps);
         }
@@ -461,9 +460,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(IBuffer buffer, void* value, int size)
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.WriteDiscard, 0, &data).ThrowIf();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }
@@ -471,9 +470,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(IBuffer buffer, void* value, int size, MapMode flags)
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowIf();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }
@@ -481,9 +480,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T value) where T : unmanaged
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.WriteDiscard, 0, &data).ThrowIf();
 
             Buffer.MemoryCopy(&value, data.PData, data.RowPitch, sizeof(T));
 
@@ -493,9 +492,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T* value, int size) where T : unmanaged
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.WriteDiscard, 0, &data).ThrowIf();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }
@@ -503,9 +502,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T* value, int size, MapMode flags) where T : unmanaged
         {
-            Silk.NET.Direct3D11.MappedSubresource data;
+            Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowHResult();
+            DeviceContext.Map(resource, 0, (Map)Helper.Convert((Core.Graphics.MapMode)flags), 0, &data).ThrowIf();
             Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
             DeviceContext.Unmap(resource, 0);
         }

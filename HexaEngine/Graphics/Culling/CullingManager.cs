@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Culling
 {
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -108,6 +109,37 @@
         public void UpdateCamera(IGraphicsContext context, Camera camera, Viewport viewport)
         {
             occlusionCameraBuffer.Update(context, new(camera, new(viewport.Width, viewport.Height)));
+        }
+
+        private Vector4 Frustum;
+        private float CamNear;
+        private float CamFar;
+
+        public void ComputePlanes(Camera camera)
+        {
+            Matrix4x4 projection = camera.Transform.Projection;
+
+            Matrix4x4 projectionT = Matrix4x4.Transpose(projection);
+
+            Vector4 frustumX = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(0)); // x + w < 0
+            Vector4 frustumY = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(1)); // y + w < 0
+
+            Frustum = new(frustumX.X, frustumX.Z, frustumY.Y, frustumY.Z);
+            CamNear = camera.Near;
+            CamFar = camera.Far;
+        }
+
+        public bool IsVisible(Vector3 center, float radius)
+        {
+            bool visible = true;
+
+            // the left/top/right/bottom plane culling utilizes frustum symmetry to cull against two planes at the same time
+            visible = visible && center.Z * Frustum[1] - Math.Abs(center.X) * Frustum[0] > -radius;
+            visible = visible && center.Z * Frustum[3] - Math.Abs(center.Y) * Frustum[2] > -radius;
+            // the near/far plane culling uses camera space Z directly
+            visible = visible && center.Z + radius > CamNear && center.Z - radius < CamFar;
+
+            return visible;
         }
 
         public unsafe void ExecuteCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain, ICPUProfiler? profiler)

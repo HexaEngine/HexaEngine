@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using Hexa.NET.Mathematics;
+    using Hexa.NET.OpenGL;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using Silk.NET.Core.Contexts;
-    using Silk.NET.OpenGL;
+    using HexaGen.Runtime;
     using System;
 
     public class OpenGLSwapChain : ISwapChain

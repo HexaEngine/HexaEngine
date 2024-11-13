@@ -3,8 +3,6 @@
     using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using System.Numerics;
 
     public abstract class D3D11PipelineState : DisposableBase
@@ -35,7 +33,7 @@
         private GraphicsPipelineStateDesc desc = GraphicsPipelineStateDesc.Default;
         private bool isValid = false;
 
-        private D3DPrimitiveTopology primitiveTopology;
+        private Hexa.NET.D3DCommon.PrimitiveTopology primitiveTopology;
 
         public D3D11GraphicsPipelineState(D3D11GraphicsDevice device, D3D11GraphicsPipeline pipeline, GraphicsPipelineStateDesc desc, string dbgName = "")
         {
@@ -156,7 +154,7 @@
 
                 layout = il;
 
-                Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
+                Utils.SetDebugName(layout.Handle, $"{dbgName}.{nameof(layout)}");
             }
             else
             {
@@ -212,18 +210,18 @@
 
         internal override void SetState(ComPtr<ID3D11DeviceContext3> context)
         {
-            context.VSSetShader(vs, null, 0);
-            context.HSSetShader(hs, null, 0);
-            context.DSSetShader(ds, null, 0);
-            context.GSSetShader(gs, null, 0);
-            context.PSSetShader(ps, null, 0);
+            context.VSSetShader(vs, (ID3D11ClassInstance**)null, 0);
+            context.HSSetShader(hs, (ID3D11ClassInstance**)null, 0);
+            context.DSSetShader(ds, (ID3D11ClassInstance**)null, 0);
+            context.GSSetShader(gs, (ID3D11ClassInstance**)null, 0);
+            context.PSSetShader(ps, (ID3D11ClassInstance**)null, 0);
 
-            context.RSSetState(RasterizerState);
+            context.RSSetState(RasterizerState.As<ID3D11RasterizerState>());
 
             var factor = desc.BlendFactor;
             float* fac = (float*)&factor;
 
-            context.OMSetBlendState(BlendState, fac, uint.MaxValue);
+            context.OMSetBlendState(BlendState.As<ID3D11BlendState>(), fac, uint.MaxValue);
             context.OMSetDepthStencilState(DepthStencilState, desc.StencilRef);
             context.IASetInputLayout(layout);
             context.IASetPrimitiveTopology(primitiveTopology);
@@ -233,11 +231,11 @@
 
         internal override void UnsetState(ComPtr<ID3D11DeviceContext3> context)
         {
-            context.VSSetShader((ID3D11VertexShader*)null, null, 0);
-            context.HSSetShader((ID3D11HullShader*)null, null, 0);
-            context.DSSetShader((ID3D11DomainShader*)null, null, 0);
-            context.GSSetShader((ID3D11GeometryShader*)null, null, 0);
-            context.PSSetShader((ID3D11PixelShader*)null, null, 0);
+            context.VSSetShader((ID3D11VertexShader*)null, (ID3D11ClassInstance**)null, 0);
+            context.HSSetShader((ID3D11HullShader*)null, (ID3D11ClassInstance**)null, 0);
+            context.DSSetShader((ID3D11DomainShader*)null, (ID3D11ClassInstance**)null, 0);
+            context.GSSetShader((ID3D11GeometryShader*)null, (ID3D11ClassInstance**)null, 0);
+            context.PSSetShader((ID3D11PixelShader*)null, (ID3D11ClassInstance**)null, 0);
 
             context.RSSetState((ID3D11RasterizerState*)null);
             context.OMSetBlendState((ID3D11BlendState*)null, (float*)null, uint.MaxValue);

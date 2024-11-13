@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System.Buffers.Binary;
     using System.Diagnostics;
     using Shader = Core.Graphics.Shader;
@@ -18,7 +18,7 @@
             this.gl = gl;
         }
 
-        public bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, ShaderType type, out uint shader, out string? error)
+        public bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, GLShaderType type, out uint shader, out string? error)
         {
             Debug.WriteLine($"Compiling: {sourceName}");
             error = null;
@@ -59,7 +59,7 @@
         public bool CompileProgram(ComputePipelineDesc desc, ShaderMacro[] macros, out uint program, out string? error)
         {
             program = 0;
-            if (!Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + desc.Path), macros, desc.Entry, desc.Path, ShaderType.ComputeShader, out var shader, out error))
+            if (!Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + desc.Path), macros, desc.Entry, desc.Path, GLShaderType.ComputeShader, out var shader, out error))
             {
                 return false;
             }
@@ -69,7 +69,7 @@
             gl.LinkProgram(program);
 
             //Checking the linking for errors.
-            gl.GetProgram(program, GLEnum.LinkStatus, out var status);
+            gl.GetProgramiv(program, GLProgramPropertyARB.LinkStatus, out var status);
             if (status == 0)
             {
                 error = $"Error linking shader {gl.GetProgramInfoLog(program)}";
@@ -85,11 +85,11 @@
 
         public Shader* GetProgramBinary(uint program)
         {
-            var length = gl.GetProgram(program, GLEnum.ProgramBinaryLength);
+            gl.GetProgramiv(program, GLProgramPropertyARB.BinaryLength, out var length);
             var buffer = (byte*)Alloc((nint)(length + 4));
-            uint written;
+            int written;
             GLEnum format;
-            gl.GetProgramBinary(program, (uint)length, &written, &format, buffer + 4);
+            gl.GetProgramBinary(program, (int)length, &written, &format, buffer + 4);
 
             var shader = AllocT<Shader>();
             shader->Bytecode = buffer;
@@ -120,7 +120,7 @@
             program = gl.CreateProgram();
             var span = pShader->AsSpan();
             GLEnum format = (GLEnum)BinaryPrimitives.ReadInt32LittleEndian(span);
-            gl.ProgramBinary(program, format, pShader->Bytecode + 4, (uint)(pShader->Length - 4));
+            gl.ProgramBinary(program, format, pShader->Bytecode + 4, (int)(pShader->Length - 4));
             gl.LinkProgram(program);
         }
     }

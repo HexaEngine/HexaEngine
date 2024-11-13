@@ -66,7 +66,7 @@ namespace HexaEngine.Core.UI
             ImGuiStylePtr Style = ImGui.GetStyle();
             // ImGuiIOPtr IO = ImGui.GetIO();
             ImDrawList* DrawList = ImGui.GetWindowDrawList();
-            ImGuiWindow* Window = ImGui.GetCurrentWindow();
+            ImGuiWindow* Window = ImGuiP.GetCurrentWindow();
             if (Window->SkipItems != 0)
             {
                 return false;
@@ -90,16 +90,16 @@ namespace HexaEngine.Core.UI
                 Max = Window->DC.CursorPos + cursorPos + Canvas
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
             {
                 return changed;
             }
 
-            uint id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
-            hovered |= ImGui.ItemHoverable(new ImRect() { Min = bb.Min - new Vector2(grabRadius), Max = bb.Min + new Vector2(avail, dim) + new Vector2(grabRadius) }, id, ImGuiItemFlags.None);
+            uint id = ImGuiP.GetID(Window, label, (byte*)null);
+            hovered |= ImGuiP.ItemHoverable(new ImRect() { Min = bb.Min - new Vector2(grabRadius), Max = bb.Min + new Vector2(avail, dim) + new Vector2(grabRadius) }, id, ImGuiItemFlags.None);
 
-            ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);
+            ImGuiP.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);
 
             // background grid
             for (int i = 0; i <= Canvas.X; i += (int)(Canvas.X / 4))
@@ -140,7 +140,7 @@ namespace HexaEngine.Core.UI
                 {
                     ImGui.SetTooltip($"({P[selected].X}, {P[selected].Y})");
 
-                    if (/*hovered &&*/ (ImGui.IsMouseClicked(0) || ImGui.IsMouseDragging(0)))
+                    if (/*hovered &&*/ (ImGuiP.IsMouseClicked(0) || ImGui.IsMouseDragging(0)))
                     {
                         float canvasScale = 1.0f / ImGui.GetFontSize();
                         float px = P[selected].X += ImGui.GetIO().MouseDelta.X / (Canvas.X);

@@ -9,18 +9,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
-    public struct ResourceRefBinding<T> where T : class, INative, IDisposable
-    {
-        public ResourceRef<T> Ref;
-        public uint Slot;
-        public ShaderStage Stage;
-    }
-
-    public class ShaderResourceViewCollection
-    {
-        private List<ResourceRefBinding<IShaderResourceView>> bindings = new();
-    }
+    using System.Runtime.CompilerServices;
 
     public class GraphResourceBuilder : IGraphResourceBuilder
     {
@@ -467,7 +456,7 @@
 
         public void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)
         {
-            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates);
+            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipelineState(desc, name), graphicsPipelineStates);
         }
 
         public ResourceRef<IGraphicsPipelineState> GetGraphicsPipelineState(string name)
@@ -477,7 +466,7 @@
 
         public void UpdateComputePipelineState(string name, ComputePipelineDesc desc)
         {
-            UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates);
+            UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipelineState(desc, name), computePipelineStates);
         }
 
         public ResourceRef<IComputePipeline> GetComputePipeline(string name)

@@ -56,7 +56,6 @@
 
             var camera = CameraManager.Current;
 
-            var drawables = scene.RenderManager.Drawables;
             var tree = scene.RenderManager.DrawablesTree;
             var lights = scene.LightManager;
 

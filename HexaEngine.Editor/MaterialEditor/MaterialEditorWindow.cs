@@ -478,25 +478,25 @@
                 }
 
                 var flags = (int)material.Flags;
-                if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+                if (ImGuiP.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
+                if (ImGuiP.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Depth Test", ref flags, (int)MaterialFlags.DepthTest))
+                if (ImGuiP.CheckboxFlags("Depth Test", ref flags, (int)MaterialFlags.DepthTest))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Depth Always", ref flags, (int)MaterialFlags.DepthAlways))
+                if (ImGuiP.CheckboxFlags("Depth Always", ref flags, (int)MaterialFlags.DepthAlways))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
@@ -524,7 +524,7 @@
                 return;
             }
 
-            if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl) && ImGui.IsKeyDown(ImGuiKey.S))
+            if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyDown(ImGuiKey.S))
             {
                 Save();
             }

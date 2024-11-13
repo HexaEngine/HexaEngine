@@ -125,7 +125,7 @@
                     ImGui.TextColored(new(0, 1, 0, 1), $"Filtering...");
                 }
 
-                ImGui.Image(dstSrv.NativePointer, new(128, 128));
+                ImGui.Image((ulong)dstSrv.NativePointer, new(128, 128));
             }
 
             if (compute)

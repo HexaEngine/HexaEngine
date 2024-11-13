@@ -105,7 +105,7 @@
                 return shown;
             }
 
-            ImGui.SetWindowPos(ImGui.GetIO().DisplaySize * 0.5f, ImGuiCond.Appearing);
+            ImGuiP.SetWindowPos(ImGui.GetIO().DisplaySize * 0.5f, ImGuiCond.Appearing);
 
             ImGui.Text(Message);
 

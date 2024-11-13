@@ -115,7 +115,7 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else if ((progressFlags & ProgressFlags.BottomLeft) != 0)
             {
@@ -123,13 +123,13 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += size.Y - windowSize.Y - offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else
             {
                 Vector2 mainViewportPos = mainViewport.Pos;
                 var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
-                ImGui.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
+                ImGuiP.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
             }
 
             {
@@ -198,7 +198,7 @@
 
         public static unsafe void Spinner(string label, float radius, float thickness, uint color)
         {
-            var window = ImGui.GetCurrentWindow();
+            var window = ImGuiP.GetCurrentWindow();
             if (window.SkipItems)
             {
                 return;
@@ -212,8 +212,8 @@
 
             ImRect bb = new(pos, pos + size);
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, null, ImGuiItemFlags.None))
             {
                 return;
             }
@@ -254,7 +254,7 @@
             var heightComputed = messages.Count * lineHeight + style.FramePadding.Y * 2 + style.ChildBorderSize * 2;
             var avail = ImGui.GetContentRegionAvail();
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xFF3c3c3c);
-            if (ImGui.BeginChild(title, new Vector2(Math.Max(avail.X, 300), Math.Min(heightComputed, maxHeight)), ImGuiChildFlags.Border, ImGuiWindowFlags.HorizontalScrollbar))
+            if (ImGui.BeginChild(title, new Vector2(Math.Max(avail.X, 300), Math.Min(heightComputed, maxHeight)), ImGuiChildFlags.Borders, ImGuiWindowFlags.HorizontalScrollbar))
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
@@ -283,7 +283,7 @@
 
         private static unsafe void ProgressBar(string title, float progress)
         {
-            ImGuiWindowPtr win = ImGui.GetCurrentWindow();
+            ImGuiWindowPtr win = ImGuiP.GetCurrentWindow();
 
             if (win.SkipItems)
             {
@@ -303,8 +303,8 @@
             Vector2 size = new(Math.Max(avail.X, textSize.X + padding * 2), height);
             ImRect bb = new(pos, pos + size);
 
-            ImGui.ItemSizeRect(bb, 0);
-            if (!ImGui.ItemAdd(bb, id, ref bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, 0);
+            if (!ImGuiP.ItemAdd(bb, id, ref bb, ImGuiItemFlags.None))
             {
                 return;
             }

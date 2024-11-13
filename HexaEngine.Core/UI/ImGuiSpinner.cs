@@ -8,7 +8,7 @@
     {
         public static unsafe void BufferingBar(string label, float value, Vector2 size, uint backgroundColor, uint foregroundColor)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems == 1)
             {
                 return;
@@ -27,8 +27,8 @@
             cursorPos -= window->WindowPadding;
 
             ImRect bb = new() { Min = pos + cursorPos, Max = pos + cursorPos + size };
-            ImGui.ItemSizeRect(bb, style.FramePadding.Y);
-            if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, style.FramePadding.Y);
+            if (!ImGuiP.ItemAdd(bb, id, null, ImGuiItemFlags.None))
             {
                 return;
             }
@@ -63,7 +63,7 @@
     {
         public static unsafe void Spinner(string label, float radius, float thickness, uint color)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems == 1)
             {
                 return;
@@ -85,8 +85,8 @@
                 Max = window->DC.CursorPos + cursorPos + size
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, null, ImGuiItemFlags.None))
             {
                 return;
             }

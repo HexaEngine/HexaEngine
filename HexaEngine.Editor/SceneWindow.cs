@@ -145,7 +145,7 @@
             {
                 if (focus)
                 {
-                    ImGui.FocusWindow(ImGui.GetCurrentWindow(), ImGuiFocusRequestFlags.UnlessBelowModal);
+                    ImGuiP.FocusWindow(ImGuiP.GetCurrentWindow(), ImGuiFocusRequestFlags.UnlessBelowModal);
                 }
                 isVisible = false;
                 ImGui.End();
@@ -171,7 +171,7 @@
             var scene = SceneManager.Current;
             if (scene != null)
             {
-                if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
+                if (ImGui.IsWindowHovered() && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
                 {
                     var ca = CameraManager.Current;
                     Vector3 rayDir = Mouse.ScreenToWorld(ca.Transform.Projection, ca.Transform.ViewInv, RenderViewport);
@@ -182,7 +182,7 @@
                     GameObject? gameObject = scene.SelectObject(ray);
                     if (gameObject != null)
                     {
-                        if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                        if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                         {
                             SelectionCollection.Global.AddSelection(gameObject);
                         }
@@ -409,19 +409,19 @@
 
         private static void HandleHotkeys()
         {
-            if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+            if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
             {
-                if (ImGui.IsKeyPressed(ImGuiKey.S))
+                if (ImGuiP.IsKeyPressed(ImGuiKey.S))
                 {
                     SceneManager.Save();
                 }
             }
 
-            if (ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
+            if (ImGuiP.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
             {
                 TransitionToState(EditorPlayState.Edit);
             }
-            if (ImGui.IsKeyDown(ImGuiKey.F5) && Application.InEditMode)
+            if (ImGuiP.IsKeyDown(ImGuiKey.F5) && Application.InEditMode)
             {
                 TransitionToState(EditorPlayState.Play);
             }

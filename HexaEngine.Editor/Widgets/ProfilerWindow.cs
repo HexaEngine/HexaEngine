@@ -73,7 +73,7 @@
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImDrawList* list = ImGui.GetWindowDrawList();
 
             Vector2 pos = window->DC.CursorPos;

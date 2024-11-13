@@ -195,7 +195,7 @@
                 ImGui.EndChild();
 
                 ImGui.SameLine();
-                if (ImGui.BeginChild(2, new Vector2(width, -footerHeightToReserve), ImGuiChildFlags.Border, 0))
+                if (ImGui.BeginChild(2, new Vector2(width, -footerHeightToReserve), ImGuiChildFlags.Borders, 0))
                 {
                     if (currentDir.Exists)
                     {
@@ -232,7 +232,7 @@
                                 selectedFile = file.Filename;
                             }
 
-                            if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
+                            if (ImGui.IsItemClicked(0) && ImGuiP.IsMouseDoubleClicked(0))
                             {
                                 Result = SaveFileResult.Ok;
                                 ImGui.EndChild();

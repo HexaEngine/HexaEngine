@@ -2,7 +2,7 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System;
     using System.Numerics;
 
@@ -10,9 +10,9 @@
     {
         private readonly GL GL;
 
-        private PrimitiveType primitiveType;
+        private GLPrimitiveType primitiveType;
         private void* indexBuffer;
-        private DrawElementsType indexType;
+        private GLDrawElementsType indexType;
 
         public OpenGLGraphicsContext(GL gL)
         {
@@ -111,7 +111,7 @@
 
         public void DrawIndexedInstanced(uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
         {
-            GL.DrawElementsInstancedBaseVertexBaseInstance(primitiveType, indexCount - indexOffset, indexType, indexBuffer, instanceCount, vertexOffset, instanceOffset);
+            GL.DrawElementsInstancedBaseVertexBaseInstance(primitiveType, (int)(indexCount - indexOffset), indexType, indexBuffer, (int)instanceCount, vertexOffset, instanceOffset);
         }
 
         public void DrawIndexedInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs)
@@ -439,15 +439,15 @@
             var face = Helper.Convert(rasterizer.CullMode);
             GL.PolygonMode(face, Helper.Convert(rasterizer.FillMode));
             GL.CullFace(face);
-            GL.FrontFace(rasterizer.FrontCounterClockwise ? FrontFaceDirection.Ccw : FrontFaceDirection.CW);
+            GL.FrontFace(rasterizer.FrontCounterClockwise ? GLFrontFaceDirection.Ccw : GLFrontFaceDirection.Cw);
 
             if (rasterizer.DepthBias != 0)
             {
-                GL.Enable(EnableCap.PolygonOffsetFill);
+                GL.Enable(GLEnableCap.PolygonOffsetFill);
             }
             else
             {
-                GL.Disable(EnableCap.PolygonOffsetFill);
+                GL.Disable(GLEnableCap.PolygonOffsetFill);
             }
 
             GL.PolygonOffset(rasterizer.SlopeScaledDepthBias, 1);
@@ -455,38 +455,38 @@
 
             if (rasterizer.DepthClipEnable)
             {
-                GL.Enable(EnableCap.DepthClamp);
+                GL.Enable(GLEnableCap.DepthClamp);
             }
             else
             {
-                GL.Disable(EnableCap.DepthClamp);
+                GL.Disable(GLEnableCap.DepthClamp);
             }
 
             if (rasterizer.ScissorEnable)
             {
-                GL.Enable(EnableCap.ScissorTest);
+                GL.Enable(GLEnableCap.ScissorTest);
             }
             else
             {
-                GL.Disable(EnableCap.ScissorTest);
+                GL.Disable(GLEnableCap.ScissorTest);
             }
 
             if (rasterizer.MultisampleEnable)
             {
-                GL.Enable(EnableCap.Multisample);
+                GL.Enable(GLEnableCap.Multisample);
             }
             else
             {
-                GL.Disable(EnableCap.Multisample);
+                GL.Disable(GLEnableCap.Multisample);
             }
 
             if (rasterizer.AntialiasedLineEnable)
             {
-                GL.Enable(EnableCap.LineSmooth);
+                GL.Enable(GLEnableCap.LineSmooth);
             }
             else
             {
-                GL.Disable(EnableCap.LineSmooth);
+                GL.Disable(GLEnableCap.LineSmooth);
             }
         }
 
@@ -494,11 +494,11 @@
         {
             if (depthStencil.DepthEnable)
             {
-                GL.Enable(EnableCap.DepthTest);
+                GL.Enable(GLEnableCap.DepthTest);
             }
             else
             {
-                GL.Disable(EnableCap.DepthTest);
+                GL.Disable(GLEnableCap.DepthTest);
             }
 
             GL.DepthFunc(Helper.Convert(depthStencil.DepthFunc));
@@ -506,29 +506,29 @@
 
             if (depthStencil.StencilEnable)
             {
-                GL.Enable(EnableCap.StencilTest);
+                GL.Enable(GLEnableCap.StencilTest);
             }
             else
             {
-                GL.Disable(EnableCap.StencilTest);
+                GL.Disable(GLEnableCap.StencilTest);
             }
 
             GL.StencilMask(depthStencil.StencilWriteMask);
-            GL.StencilOpSeparate(TriangleFace.Front, Helper.Convert(depthStencil.FrontFace.StencilFailOp), Helper.Convert(depthStencil.FrontFace.StencilDepthFailOp), Helper.Convert(depthStencil.FrontFace.StencilPassOp));
-            GL.StencilFuncSeparate(TriangleFace.Front, Helper.Convert2(depthStencil.FrontFace.StencilFunc), (int)stencilRef, depthStencil.StencilWriteMask);
-            GL.StencilOpSeparate(TriangleFace.Back, Helper.Convert(depthStencil.BackFace.StencilFailOp), Helper.Convert(depthStencil.BackFace.StencilDepthFailOp), Helper.Convert(depthStencil.BackFace.StencilPassOp));
-            GL.StencilFuncSeparate(TriangleFace.Back, Helper.Convert2(depthStencil.BackFace.StencilFunc), (int)stencilRef, depthStencil.StencilWriteMask);
+            GL.StencilOpSeparate(GLTriangleFace.Front, Helper.Convert(depthStencil.FrontFace.StencilFailOp), Helper.Convert(depthStencil.FrontFace.StencilDepthFailOp), Helper.Convert(depthStencil.FrontFace.StencilPassOp));
+            GL.StencilFuncSeparate(GLTriangleFace.Front, Helper.Convert2(depthStencil.FrontFace.StencilFunc), (int)stencilRef, depthStencil.StencilWriteMask);
+            GL.StencilOpSeparate(GLTriangleFace.Back, Helper.Convert(depthStencil.BackFace.StencilFailOp), Helper.Convert(depthStencil.BackFace.StencilDepthFailOp), Helper.Convert(depthStencil.BackFace.StencilPassOp));
+            GL.StencilFuncSeparate(GLTriangleFace.Back, Helper.Convert2(depthStencil.BackFace.StencilFunc), (int)stencilRef, depthStencil.StencilWriteMask);
         }
 
         internal void SetBlendState(BlendDescription blend, Vector4 blendFactor, uint sampleMask)
         {
             if (blend.AlphaToCoverageEnable)
             {
-                GL.Enable(EnableCap.SampleAlphaToCoverage);
+                GL.Enable(GLEnableCap.SampleAlphaToCoverage);
             }
             else
             {
-                GL.Disable(EnableCap.SampleAlphaToCoverage);
+                GL.Disable(GLEnableCap.SampleAlphaToCoverage);
             }
 
             for (uint i = 0; i < blend.RenderTarget.Length; i++)
@@ -536,18 +536,18 @@
                 var blendRT = blend.RenderTarget[i];
                 if (blendRT.IsBlendEnabled)
                 {
-                    GL.Enable(EnableCap.Blend, i);
+                    GL.Enablei(GLEnableCap.Blend, i);
                 }
                 else
                 {
-                    GL.Disable(EnableCap.Blend, i);
+                    GL.Disablei(GLEnableCap.Blend, i);
                 }
 
-                GL.BlendEquationSeparate(i, Helper.Convert(blendRT.BlendOperation), Helper.Convert(blendRT.BlendOperationAlpha));
-                GL.BlendFuncSeparate(i, Helper.Convert(blendRT.SourceBlend), Helper.Convert(blendRT.DestinationBlend), Helper.Convert(blendRT.SourceBlendAlpha), Helper.Convert(blendRT.DestinationBlendAlpha));
+                GL.BlendEquationSeparatei(i, Helper.Convert(blendRT.BlendOperation), Helper.Convert(blendRT.BlendOperationAlpha));
+                GL.BlendFuncSeparatei(i, Helper.Convert(blendRT.SourceBlend), Helper.Convert(blendRT.DestinationBlend), Helper.Convert(blendRT.SourceBlendAlpha), Helper.Convert(blendRT.DestinationBlendAlpha));
             }
             GL.BlendColor(blendFactor.X, blendFactor.Y, blendFactor.Z, blendFactor.W);
-            GL.SampleMask(sampleMask, 1);
+            GL.SampleMaski(sampleMask, 1);
         }
 
         public void CopyStructureCount(IBuffer dst, uint alignedByteOffset, IUnorderedAccessView uav)

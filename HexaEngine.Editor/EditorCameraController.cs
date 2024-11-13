@@ -238,7 +238,7 @@
             }
 
             Vector2 delta = Vector2.Zero;
-            bool mouseDown = ImGui.IsMouseDown(ImGuiMouseButton.Right);
+            bool mouseDown = ImGuiP.IsMouseDown(ImGuiMouseButton.Right);
             if (mouseDown && !leftCtrl)
             {
                 capturedMouse = true;
@@ -284,7 +284,7 @@
 
                     if (newMousePos != mousePos)
                     {
-                        ImGui.TeleportMousePos(newMousePos);
+                        ImGuiP.TeleportMousePos(newMousePos);
                         ignoreMouseInputFrames = 2;
                     }
                 }
@@ -306,7 +306,7 @@
             }
 
             bool changed = false;
-            var leftCtrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
+            var leftCtrl = ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl);
             var delta = UpdateMouse(leftCtrl, hovered);
             if (editorCameraState.Dimension == EditorCameraDimension.Dim3D)
             {
@@ -367,38 +367,38 @@
                     }
 
                     var speedMult = Speed;
-                    if (ImGui.IsKeyDown(ImGuiKey.LeftShift))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.LeftShift))
                     {
                         speedMult *= 2;
                     }
                     speedMult *= Time.Delta;
 
-                    if (ImGui.IsKeyDown(ImGuiKey.W))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.W))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), editorCamera.Transform.Rotation.Y.ToRad(), 0f);
                         position += Vector3.Transform(Vector3.UnitZ, rotationM) * speedMult;
                     }
-                    if (ImGui.IsKeyDown(ImGuiKey.S))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.S))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitZ, rotationM) * speedMult;
                     }
-                    if (ImGui.IsKeyDown(ImGuiKey.A))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.A))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitX, rotationM) * speedMult;
                     }
-                    if (ImGui.IsKeyDown(ImGuiKey.D))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.D))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
                         position += Vector3.Transform(Vector3.UnitX, rotationM) * speedMult;
                     }
-                    if (ImGui.IsKeyDown(ImGuiKey.Space))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.Space))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
                         position += Vector3.Transform(Vector3.UnitY, rotationM) * speedMult;
                     }
-                    if (ImGui.IsKeyDown(ImGuiKey.C))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.C))
                     {
                         var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitY, rotationM) * speedMult;

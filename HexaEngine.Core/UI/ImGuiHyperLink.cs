@@ -13,19 +13,19 @@
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
             uint id = ImGui.GetID(label);
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
 
             Vector2 pos = ImGui.GetCursorScreenPos();
             Vector2 size = ImGui.CalcTextSize(label);
             ImRect bb = new() { Min = pos, Max = new(pos.X + size.X, pos.Y + size.Y) };
 
-            ImGui.ItemSizeRect(bb, 0.0f);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, 0.0f);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             bool isHovered = false;
-            bool isClicked = ImGui.ButtonBehavior(bb, id, &isHovered, null, 0);
+            bool isClicked = ImGuiP.ButtonBehavior(bb, id, &isHovered, null, 0);
             bool isFocused = ImGui.IsItemFocused();
 
             uint color = isHovered ? linkHoverColor : isFocused ? linkFocusColor : linkColor;
@@ -48,19 +48,19 @@
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
             uint id = ImGui.GetID(label);
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
 
             Vector2 pos = ImGui.GetCursorScreenPos();
             Vector2 size = ImGui.CalcTextSize(label);
             ImRect bb = new() { Min = pos, Max = new(pos.X + size.X, pos.Y + size.Y) };
 
-            ImGui.ItemSizeRect(bb, 0.0f);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, 0.0f);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             bool isHovered = false;
-            bool isClicked = ImGui.ButtonBehavior(bb, id, &isHovered, null, 0);
+            bool isClicked = ImGuiP.ButtonBehavior(bb, id, &isHovered, null, 0);
             bool isFocused = ImGui.IsItemFocused();
 
             uint color = isHovered ? linkHoverColor : isFocused ? linkFocusColor : linkColor;
@@ -83,19 +83,19 @@
             uint linkFocusColor = ImGui.ColorConvertFloat4ToU32(new(0.6f, 0.4f, 0.8f, 1));
             uint id = ImGui.GetID(ref label);
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImDrawList* draw = ImGui.GetWindowDrawList();
 
             Vector2 pos = ImGui.GetCursorScreenPos();
             Vector2 size = ImGui.CalcTextSize(ref label);
             ImRect bb = new() { Min = pos, Max = new(pos.X + size.X, pos.Y + size.Y) };
 
-            ImGui.ItemSizeRect(bb, 0.0f);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, 0.0f);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             bool isHovered = false;
-            bool isClicked = ImGui.ButtonBehavior(bb, id, &isHovered, null, 0);
+            bool isClicked = ImGuiP.ButtonBehavior(bb, id, &isHovered, null, 0);
             bool isFocused = ImGui.IsItemFocused();
 
             uint color = isHovered ? linkHoverColor : isFocused ? linkFocusColor : linkColor;

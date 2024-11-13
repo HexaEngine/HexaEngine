@@ -334,7 +334,7 @@
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                ImGui.TreeNodeSetOpen(id, !isOpen);
+                ImGuiP.TreeNodeSetOpen(id, !isOpen);
             }
         }
 

@@ -143,8 +143,6 @@
             for (uint i = 0; i < drawTypes.Length; i++)
             {
                 DrawType drawType = drawTypes[i];
-                offsetBuffer.Update(context, new(drawType.TypeId));
-
                 Mesh mesh = meshes[i];
                 Material material = materials[i];
 
@@ -152,6 +150,8 @@
                 {
                     continue;
                 }
+
+                offsetBuffer.Update(context, new(drawType.TypeId));
 
                 mesh.BeginDraw(context);
                 material.DrawIndexedInstancedIndirect(context, "Deferred", drawIndirectArgs, drawType.DrawIndirectOffset);

@@ -50,7 +50,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image(baker.Texture.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.Texture.SRVArraySlices[i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();
@@ -59,7 +59,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image(baker.TextureFinal.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.TextureFinal.SRVArraySlices[i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();

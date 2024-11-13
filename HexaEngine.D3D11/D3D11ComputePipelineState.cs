@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
 
     public unsafe class D3D11ComputePipelineState : D3D11PipelineState, IComputePipelineState
     {
@@ -43,14 +41,14 @@
 
         internal override void SetState(ComPtr<ID3D11DeviceContext3> context)
         {
-            context.CSSetShader(cs, null, 0);
+            context.CSSetShader(cs, (ID3D11ClassInstance**)null, 0);
 
             resourceBindingList.BindCompute(context);
         }
 
         internal override void UnsetState(ComPtr<ID3D11DeviceContext3> context)
         {
-            context.CSSetShader((ID3D11ComputeShader*)null, null, 0);
+            context.CSSetShader((ID3D11ComputeShader*)null, (ID3D11ClassInstance**)null, 0);
 
             resourceBindingList.UnbindCompute(context);
         }

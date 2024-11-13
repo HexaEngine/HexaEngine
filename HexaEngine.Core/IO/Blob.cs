@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using System.Runtime.InteropServices;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Represents a blob of data that can be manipulated using pointer operations.
@@ -34,10 +35,20 @@
         /// </summary>
         /// <param name="bufferPointer">A pointer to the data buffer.</param>
         /// <param name="pointerSize">The size of the data buffer.</param>
-        public Blob(void* bufferPointer, nuint pointerSize)
+        /// <param name="copy">Copies the buffer instead of assigning it.</param>
+        public Blob(void* bufferPointer, nuint pointerSize, bool copy)
         {
-            this.bufferPointer = new(bufferPointer);
-            this.pointerSize = (int)pointerSize;
+            if (copy)
+            {
+                this.bufferPointer = Marshal.AllocHGlobal((nint)pointerSize);
+                Memcpy(bufferPointer, (void*)this.bufferPointer, (nint)pointerSize, (nint)pointerSize);
+                this.pointerSize = (int)pointerSize;
+            }
+            else
+            {
+                this.bufferPointer = new(bufferPointer);
+                this.pointerSize = (int)pointerSize;
+            }
         }
 
         /// <summary>

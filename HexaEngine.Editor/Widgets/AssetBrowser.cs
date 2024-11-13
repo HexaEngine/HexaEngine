@@ -518,10 +518,10 @@
 
             if (ImGui.IsWindowHovered())
             {
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
                 {
                     AssetFileInfo info = new(dir.Path, dir.Metadata);
-                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                    if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                     {
                         SelectionCollection.Global.AddSelection(info);
                     }
@@ -530,7 +530,7 @@
                         SelectionCollection.Global.AddOverwriteSelection(info);
                     }
 
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                    if (ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                     {
                         SetFolder(dir.Path);
                     }
@@ -700,7 +700,7 @@
             if (isSelected)
             {
                 ImDrawList* drawList = ImGui.GetWindowDrawList();
-                ImGuiWindow* window = ImGui.GetCurrentWindow();
+                ImGuiWindow* window = ImGuiP.GetCurrentWindow();
                 uint col = ImGui.GetColorU32(ImGuiCol.TextSelectedBg);
                 Vector2 min = window->DC.CursorPos;
                 Vector2 max = min + window->Size;
@@ -709,7 +709,7 @@
 
             if (file.Thumbnail != null && !file.Thumbnail.IsNull)
             {
-                ImageHelper.ImageCenteredH(file.Thumbnail.Value.SRV.NativePointer, imageSize);
+                ImageHelper.ImageCenteredH((ulong)file.Thumbnail.Value.SRV.NativePointer, imageSize);
             }
             else
             {
@@ -783,10 +783,10 @@
                 return;
             }
 
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
             {
                 AssetFileInfo info = new(file.Path, file.Metadata);
-                if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                 {
                     SelectionCollection.Global.AddSelection(info);
                 }
@@ -794,13 +794,13 @@
                 {
                     SelectionCollection.Global.AddOverwriteSelection(info);
                 }
-                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                if (ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                 {
                     Designer.OpenFile(file.Path);
                 }
             }
 
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 ImGui.OpenPopup(file.Path);
 
@@ -1134,11 +1134,11 @@
 
                 if (ImGui.IsWindowHovered(ImGuiHoveredFlags.ChildWindows | ImGuiHoveredFlags.RootWindow))
                 {
-                    if (ImGui.IsMouseClicked((ImGuiMouseButton)3))
+                    if (ImGuiP.IsMouseClicked((ImGuiMouseButton)3))
                     {
                         TryGoBack();
                     }
-                    if (ImGui.IsMouseClicked((ImGuiMouseButton)4))
+                    if (ImGuiP.IsMouseClicked((ImGuiMouseButton)4))
                     {
                         TryGoForward();
                     }
@@ -1178,7 +1178,7 @@
                     refreshLock.Release();
                 }
 
-                if (!isContentHovered && ImGui.IsWindowHovered() && ImGui.IsMouseClicked(0))
+                if (!isContentHovered && ImGui.IsWindowHovered() && ImGuiP.IsMouseClicked(0))
                 {
                     SelectionCollection.Global.Clear();
                 }

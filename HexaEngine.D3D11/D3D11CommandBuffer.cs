@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
 
     public unsafe class D3D11CommandBuffer : D3D11GraphicsContextBase, ICommandBuffer
     {
@@ -24,7 +22,7 @@
 
         public void End()
         {
-            DeviceContext.FinishCommandList(false, ref commandList);
+            DeviceContext.FinishCommandList(false, out commandList);
         }
 
         public void Signal(IFence fence, ulong value)

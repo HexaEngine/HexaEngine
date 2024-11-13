@@ -43,6 +43,7 @@
 	<Target Name="PublishPackAssets" AfterTargets="Publish">
 		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 2 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
 	</Target>
+	
 	<ItemGroup>
 		<None Update="imgui.ini">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>

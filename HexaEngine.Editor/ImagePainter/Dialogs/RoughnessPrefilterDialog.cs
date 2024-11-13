@@ -164,7 +164,7 @@
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image(dstSRVs.Views[i].NativePointer, new(128, 128));
+                    ImGui.Image((ulong)dstSRVs.Views[i].NativePointer, new(128, 128));
                     if (i != 5)
                     {
                         ImGui.SameLine();

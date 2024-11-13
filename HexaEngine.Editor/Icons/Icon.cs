@@ -239,7 +239,7 @@
 
         public static implicit operator ImTextureID(Icon icon)
         {
-            return icon.icon.SRV.NativePointer;
+            return (ulong)icon.icon.SRV.NativePointer;
         }
 
         public static implicit operator nint(Icon icon)

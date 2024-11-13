@@ -127,9 +127,15 @@ bool bInsideScreen(in float2 vCoord)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
+	float depth = depthTex.Sample(linearClampSampler, pin.Tex);
+
+	float4 scene_color = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0);
+
+	if (depth == 1)
+		return scene_color;
+
 	float4 NormalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
 	float roughness = NormalRoughness.a;
-	float4 scene_color = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0);
 
 	if (roughness > 0.8f)
 		return scene_color;
@@ -138,7 +144,6 @@ float4 main(VertexOut pin) : SV_TARGET
 	Normal = 2 * Normal - 1.0;
 	Normal = normalize(mul(Normal, (float3x3)view));
 
-	float depth = depthTex.Sample(linearClampSampler, pin.Tex);
 	float3 Position = GetPositionVS(pin.Tex, depth);
 	float3 ReflectDir = normalize(reflect(Position, Normal));
 

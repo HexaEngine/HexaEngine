@@ -78,7 +78,7 @@
 
         protected override void DrawContent(TextureFileNode node)
         {
-            ImGui.Image(image?.Value?.SRV?.NativePointer ?? 0, size);
+            ImGui.Image((ulong)(image?.Value?.SRV?.NativePointer ?? 0), size);
 
             ImGui.PushItemWidth(100);
 

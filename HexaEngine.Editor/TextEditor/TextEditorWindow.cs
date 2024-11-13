@@ -271,22 +271,22 @@
 
         private void HandleShortcuts()
         {
-            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.S)))
+            if (ImGuiP.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.S)))
             {
                 Save();
             }
 
-            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Z)))
+            if (ImGuiP.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Z)))
             {
                 CurrentTab?.Undo();
             }
 
-            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Y)))
+            if (ImGuiP.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.Y)))
             {
                 CurrentTab?.Redo();
             }
 
-            if (ImGui.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.F)))
+            if (ImGuiP.Shortcut((int)(ImGuiKey.ModCtrl | ImGuiKey.F)))
             {
                 CurrentTab?.ShowFind();
             }

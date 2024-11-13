@@ -1,9 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
-    using Silk.NET.Maths;
     using Rectangle = Hexa.NET.Mathematics.Rectangle;
 
     public unsafe class D3D11RenderPass : DeviceChildBase, IRenderPass
@@ -31,7 +28,7 @@
         {
             ComPtr<ID3D11DeviceContext3> ctx = ((D3D11GraphicsContextBase)context).DeviceContext;
 
-            Box2D<int> box = new(workingArea.Left, workingArea.Top, workingArea.Right, workingArea.Bottom);
+            Rect32 box = new(workingArea.Left, workingArea.Top, workingArea.Right, workingArea.Bottom);
             for (uint i = 0; i < rtvCount && i < clearValueCount; i++)
             {
                 var rtv = rtvs[i];

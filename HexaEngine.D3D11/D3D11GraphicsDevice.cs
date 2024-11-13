@@ -1,19 +1,16 @@
 ﻿namespace HexaEngine.D3D11
 {
     using Hexa.NET.SDL2;
+    using Hexa.NET.D3D11;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
-    using Silk.NET.DXGI;
-    using Silk.NET.SPIRV;
     using System;
     using System.Globalization;
     using System.Runtime.CompilerServices;
-    using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
+    using D3D11SubresourceData = Hexa.NET.D3D11.SubresourceData;
     using Format = Core.Graphics.Format;
-    using ID3D11Device = Silk.NET.Direct3D11.ID3D11Device;
+    using ID3D11Device = Hexa.NET.D3D11.ID3D11Device;
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
@@ -21,8 +18,6 @@
 
     public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
-        internal readonly D3D11 D3D11;
-
         protected readonly DXGIAdapterD3D11 adapter;
         protected bool disposedValue;
 
@@ -41,7 +36,6 @@
         protected D3D11GraphicsDevice(DXGIAdapterD3D11 adapter)
         {
             this.adapter = adapter;
-            D3D11 = D3D11.GetApi(adapter.source);
             TextureLoader = new D3D11TextureLoader(this);
         }
 
@@ -49,11 +43,10 @@
         {
             this.adapter = adapter;
 
-            D3D11 = D3D11.GetApi(adapter.source);
-            D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
+            FeatureLevel[] levelsArr = new FeatureLevel[]
             {
-                D3DFeatureLevel.Level111,
-                D3DFeatureLevel.Level110
+                FeatureLevel.Level111,
+                FeatureLevel.Level110
             };
 
             CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
@@ -66,10 +59,10 @@
             ID3D11Device* tempDevice;
             ID3D11DeviceContext* tempContext;
 
-            D3DFeatureLevel level = 0;
-            D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
+            FeatureLevel level = 0;
+            FeatureLevel* levels = (FeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
-            D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter.Handle, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, (uint)levelsArr.Length, D3D11.SdkVersion, &tempDevice, &level, &tempContext).ThrowHResult();
+            D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter.Handle, DriverType.Unknown, IntPtr.Zero, (uint)flags, levels, (uint)levelsArr.Length, D3D11.D3D11_SDK_VERSION, &tempDevice, &level, &tempContext).ThrowIf();
             Level = level;
 
             tempDevice->QueryInterface(out Device);
@@ -110,7 +103,7 @@
 
         public event EventHandler? OnDisposed;
 
-        public D3DFeatureLevel Level { get; protected set; }
+        public FeatureLevel Level { get; protected set; }
 
         // TODO: Implement this
         public GraphicsDeviceCapabilities Capabilities { get; }
@@ -170,7 +163,7 @@
         {
             ComPtr<ID3D11Buffer> buffer;
             BufferDesc desc = Helper.Convert(description);
-            Device.CreateBuffer(&desc, (D3D11SubresourceData*)null, &buffer.Handle).ThrowHResult();
+            Device.CreateBuffer(&desc, (D3D11SubresourceData*)null, &buffer.Handle).ThrowIf();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -187,7 +180,7 @@
 
             D3D11SubresourceData bufferData = new(&value, (uint)description.ByteWidth);
 
-            Device.CreateBuffer(&desc, bufferData, &buffer.Handle).ThrowHResult();
+            Device.CreateBuffer(&desc, &bufferData, &buffer.Handle).ThrowIf();
 
             return new D3D11Buffer(buffer, description);
         }
@@ -200,7 +193,7 @@
             description.ByteWidth = (int)size;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
-            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
+            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowIf();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -212,7 +205,7 @@
             description.ByteWidth = (int)size;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
-            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
+            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowIf();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -258,7 +251,7 @@
         {
             ComPtr<ID3D11DepthStencilView> view;
             var desc = Helper.Convert(description);
-            Device.CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle).ThrowHResult();
+            Device.CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle).ThrowIf();
             return new D3D11DepthStencilView(view, description);
         }
 
@@ -312,7 +305,7 @@
         {
             ComPtr<ID3D11RenderTargetView> rtv;
             var desc = Helper.Convert(description);
-            Device.CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv.Handle).ThrowHResult();
+            Device.CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv.Handle).ThrowIf();
             return new D3D11RenderTargetView(rtv, description);
         }
 
@@ -321,7 +314,7 @@
         {
             ComPtr<ID3D11SamplerState> sampler;
             var desc = Helper.Convert(description);
-            Device.CreateSamplerState(&desc, &sampler.Handle).ThrowHResult();
+            Device.CreateSamplerState(&desc, &sampler.Handle).ThrowIf();
             return new D3D11SamplerState(sampler, description);
         }
 
@@ -379,7 +372,7 @@
         {
             ComPtr<ID3D11ShaderResourceView> srv;
             var desc = Helper.Convert(description);
-            Device.CreateShaderResourceView((ID3D11Resource*)resource.NativePointer, &desc, &srv.Handle).ThrowHResult();
+            Device.CreateShaderResourceView((ID3D11Resource*)resource.NativePointer, &desc, &srv.Handle).ThrowIf();
             return new D3D11ShaderResourceView(srv, description);
         }
 
@@ -387,7 +380,7 @@
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
         {
             ComPtr<ID3D11ShaderResourceView> srv;
-            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, (ShaderResourceViewDesc*)null, &srv.Handle).ThrowHResult();
+            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, (ShaderResourceViewDesc*)null, &srv.Handle).ThrowIf();
             return new D3D11ShaderResourceView(srv, default);
         }
 
@@ -396,7 +389,7 @@
         {
             ComPtr<ID3D11ShaderResourceView> srv;
             var desc = Helper.Convert(description);
-            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv.Handle).ThrowHResult();
+            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv.Handle).ThrowIf();
             return new D3D11ShaderResourceView(srv, default);
         }
 
@@ -405,7 +398,7 @@
         {
             ComPtr<ID3D11Texture1D> texture;
             Texture1DDesc desc = Helper.Convert(description);
-            Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+            Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             return new D3D11Texture1D(texture, description);
         }
 
@@ -418,12 +411,12 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowIf();
                 Free(data);
             }
             else
             {
-                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
             return new D3D11Texture1D(texture, description);
         }
@@ -445,12 +438,12 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowIf();
                 Free(data);
             }
             else
             {
-                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
 
             return new D3D11Texture1D(texture, description);
@@ -461,7 +454,7 @@
         {
             ComPtr<ID3D11Texture2D> texture;
             Texture2DDesc desc = Helper.Convert(description);
-            Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+            Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             return new D3D11Texture2D(texture, description);
         }
 
@@ -474,12 +467,12 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowIf();
                 Free(data);
             }
             else
             {
-                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
             return new D3D11Texture2D(texture, description);
         }
@@ -501,12 +494,12 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowIf();
                 Free(data);
             }
             else
             {
-                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
 
             return new D3D11Texture2D(texture, description);
@@ -517,7 +510,7 @@
         {
             ComPtr<ID3D11Texture3D> texture;
             Texture3DDesc desc = Helper.Convert(description);
-            Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+            Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             return new D3D11Texture3D(texture, description);
         }
 
@@ -530,11 +523,11 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowIf();
             }
             else
             {
-                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
             return new D3D11Texture3D(texture, description);
         }
@@ -556,11 +549,11 @@
             {
                 D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
+                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowIf();
             }
             else
             {
-                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
+                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowIf();
             }
 
             return new D3D11Texture3D(texture, description);
@@ -588,8 +581,6 @@
                     Debug.ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
                     Debug.Release();
                 }
-
-                D3D11.Dispose();
 
                 disposedValue = true;
             }

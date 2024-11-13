@@ -1,15 +1,15 @@
 ﻿namespace HexaEngine.OpenGL
 {
-    using Silk.NET.OpenGL;
+    using Hexa.NET.OpenGL;
     using System;
 
     public class OpenGLException : Exception
     {
-        public OpenGLException(ErrorCode code, string message) : base(message)
+        public OpenGLException(GLErrorCode code, string message) : base(message)
         {
             Code = code;
         }
 
-        public ErrorCode Code { get; }
+        public GLErrorCode Code { get; }
     }
 }
