@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -11,7 +11,6 @@
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
 		<Configurations>Debug;Release;TraceLeak;</Configurations>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<LangVersion>preview</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
 
