@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.D3D12
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Direct3D12;
     using System;
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild

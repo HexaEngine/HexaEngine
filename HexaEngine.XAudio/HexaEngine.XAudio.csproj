@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Hexa.NET.X3DAudio" Version="1.0.3" />
-		<PackageReference Include="Hexa.NET.XAudio2" Version="1.0.3" />
+		<PackageReference Include="Hexa.NET.X3DAudio" Version="1.0.6" />
+		<PackageReference Include="Hexa.NET.XAudio2" Version="1.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>

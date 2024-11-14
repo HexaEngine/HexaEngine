@@ -4,23 +4,18 @@
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Native;
-    using Silk.NET.DXGI;
+    using Hexa.NET.DXGI;
     using System.Collections.Generic;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D12 : IGraphicsAdapter
     {
-        internal readonly DXGI DXGI;
-
         internal IDXGIFactory4* IDXGIFactory;
         internal ComPtr<IDXGIAdapter1> IDXGIAdapter;
         internal ComPtr<IDXGIAdapter3> IDXGIAdapter3;
 
         public DXGIAdapterD3D12()
         {
-            DXGI = DXGI.GetApi();
-
             IDXGIFactory4* factory;
             DXGI.CreateDXGIFactory1(Utils.Guid(IDXGIFactory4.Guid), (void**)&factory);
             IDXGIFactory = factory;
@@ -78,7 +73,7 @@
         {
             AdapterDesc1 desc;
             IDXGIAdapter.GetDesc1(&desc);
-            string name = new(desc.Description);
+            string name = new(&desc.Description_0);
 
             LoggerFactory.General.Info("Backend: Using Graphics API: D3D11");
             LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");
@@ -93,18 +88,18 @@
             SwapChainDesc desc = new()
             {
                 BufferCount = 2,
-                BufferUsage = DXGI.UsageRenderTargetOutput,
+                BufferUsage = (uint)DXGI.DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 SampleDesc = new(1, 0),
-                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
+                SwapEffect = Hexa.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
                 Windowed = true,
                 BufferDesc = new(1, 0)
                 {
-                    Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
+                    Format = Hexa.NET.DXGI.Format.B8G8R8A8Unorm,
                     Height = (uint)window.Height,
                     Width = (uint)window.Width,
-                    Scaling = Silk.NET.DXGI.ModeScaling.Stretched,
-                    ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified
+                    Scaling = Hexa.NET.DXGI.ModeScaling.Stretched,
+                    ScanlineOrdering = Hexa.NET.DXGI.ModeScanlineOrder.Unspecified
                 },
                 OutputWindow = Hwnd
             };
@@ -126,7 +121,7 @@
             if (factory6 != null)
             {
                 for (uint adapterIndex = 0;
-                    (ResultCode)factory6->EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, adapterGuid, (void**)&adapter) !=
+                    (ResultCode)factory6->EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, adapterGuid, (void**)&adapter).Value !=
                     ResultCode.DXGI_ERROR_NOT_FOUND;
                     adapterIndex++)
                 {
@@ -149,12 +144,12 @@
             if (adapter == null)
             {
                 for (uint adapterIndex = 0;
-                    (ResultCode)IDXGIFactory->EnumAdapters1(adapterIndex, &adapter) != ResultCode.DXGI_ERROR_NOT_FOUND;
+                    (ResultCode)IDXGIFactory->EnumAdapters1(adapterIndex, &adapter).Value != ResultCode.DXGI_ERROR_NOT_FOUND;
                     adapterIndex++)
                 {
                     AdapterDesc1 desc;
                     adapter->GetDesc1(&desc);
-                    string name = new(desc.Description);
+                    string name = new(&desc.Description_0);
 
                     if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                     {

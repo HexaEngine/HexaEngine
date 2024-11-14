@@ -1,8 +1,5 @@
 ﻿namespace HexaEngine.D3D12
 {
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D12;
-
     public class D3D12GraphicsPipeline
     {
         private ComPtr<ID3D12PipelineState> pso;

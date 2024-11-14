@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.D3D12
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Direct3D12;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;

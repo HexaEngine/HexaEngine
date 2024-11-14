@@ -1,17 +1,15 @@
 ﻿namespace HexaEngine.Core.Graphics.Shaders.Reflection
 {
-    using Silk.NET.SPIRV.Reflect;
+    using Hexa.NET.SPIRVReflect;
     using System.Diagnostics.CodeAnalysis;
 
     public unsafe class ShaderReflector
     {
-        private static readonly Reflect Reflect = Reflect.GetApi();
-
         public static bool ReflectShader(ShaderSpirvIL shader, [NotNullWhen(true)] out ShaderReflection? reflection)
         {
-            ReflectShaderModule module;
-            Result result = Reflect.CreateShaderModule((nuint)shader.Length, shader.Bytecode, &module);
-            if (result != Result.Success)
+            SpvReflectShaderModule module;
+            SpvReflectResult result = SPIRVReflect.CreateShaderModule((nuint)shader.Length, shader.Bytecode, &module);
+            if (result != SpvReflectResult.Success)
             {
                 reflection = null;
                 return false;
@@ -20,16 +18,16 @@
             List<ConstantBuffer> constantBuffers = new();
             for (int i = 0; i < module.DescriptorBindingCount; i++)
             {
-                DescriptorBinding binding = module.DescriptorBindings[i];
+                SpvReflectDescriptorBinding binding = module.DescriptorBindings[i];
 
-                if (binding.DescriptorType == DescriptorType.SampledImage ||
-                    binding.DescriptorType == DescriptorType.StorageImage ||
-                    binding.DescriptorType == DescriptorType.UniformBuffer)
+                if (binding.DescriptorType == SpvReflectDescriptorType.SampledImage ||
+                    binding.DescriptorType == SpvReflectDescriptorType.StorageImage ||
+                    binding.DescriptorType == SpvReflectDescriptorType.UniformBuffer)
                 {
                     Console.WriteLine($"Descriptor binding: {ToStringFromUTF8(binding.Name)}, Type: {binding.DescriptorType}");
                 }
 
-                if (binding.DescriptorType == DescriptorType.UniformBuffer)
+                if (binding.DescriptorType == SpvReflectDescriptorType.UniformBuffer)
                 {
                     var name = ToStringFromUTF8(binding.Name);
                     var members = GetConstantBufferMembers(binding);
@@ -39,12 +37,12 @@
 
             reflection = new([.. constantBuffers]);
 
-            Reflect.DestroyShaderModule(&module);
+            SPIRVReflect.DestroyShaderModule(&module);
 
             return true;
         }
 
-        private static ConstantBufferMemberInfo[] GetConstantBufferMembers(DescriptorBinding binding)
+        private static ConstantBufferMemberInfo[] GetConstantBufferMembers(SpvReflectDescriptorBinding binding)
         {
             List<ConstantBufferMemberInfo> members = new();
 
@@ -54,12 +52,12 @@
             return [.. members];
         }
 
-        private static void ProcessBlockVariable(BlockVariable blockVariable, List<ConstantBufferMemberInfo> members)
+        private static void ProcessBlockVariable(SpvReflectBlockVariable blockVariable, List<ConstantBufferMemberInfo> members)
         {
             for (uint i = 0; i < blockVariable.MemberCount; ++i)
             {
-                BlockVariable member = blockVariable.Members[i];
-                if ((member.TypeDescription->TypeFlags & (uint)TypeFlagBits.Struct) != 0)
+                SpvReflectBlockVariable member = blockVariable.Members[i];
+                if ((member.TypeDescription->TypeFlags & SpvReflectTypeFlags.Struct) != 0)
                 {
                     // If the member is a struct, recursively process its members
                     ProcessBlockVariable(member, members);
@@ -80,7 +78,7 @@
             }
         }
 
-        private static TypeInfo Convert(TypeDescription description)
+        private static TypeInfo Convert(SpvReflectTypeDescription description)
         {
             TypeInfo info;
             info.Id = description.Id;
@@ -128,7 +126,7 @@
             return info;
         }
 
-        private static TypeTraits Convert(Traits traits)
+        private static TypeTraits Convert(SpvReflectTypeDescription.TraitsUnion traits)
         {
             return new TypeTraits()
             {
@@ -138,7 +136,7 @@
             };
         }
 
-        private static ArrayTraits Convert(Silk.NET.SPIRV.Reflect.ArrayTraits array)
+        private static ArrayTraits Convert(SpvReflectArrayTraits array)
         {
             ArrayTraits result;
             result.Stride = array.Stride;
@@ -146,14 +144,14 @@
             result.DimsCount = array.DimsCount;
             for (int i = 0; i < result.DimsCount; i++)
             {
-                result.Dims[i] = array.Dims[i];
-                result.SpecConstantOpIds[i] = array.SpecConstantOpIds[i];
+                result.Dims[i] = (&array.Dims_0)[i];
+                result.SpecConstantOpIds[i] = (&array.SpecConstantOpIds_0)[i];
             }
 
             return result;
         }
 
-        private static ImageTraits Convert(Silk.NET.SPIRV.Reflect.ImageTraits image)
+        private static ImageTraits Convert(SpvReflectImageTraits image)
         {
             ImageTraits result;
             result.Dim = (Dimension)image.Dim;
@@ -166,7 +164,7 @@
             return result;
         }
 
-        private static NumericTraits Convert(Silk.NET.SPIRV.Reflect.NumericTraits numeric)
+        private static NumericTraits Convert(SpvReflectNumericTraits numeric)
         {
             NumericTraits result;
             result.Scalar = new Scalar() { Width = numeric.Scalar.Width, Signed = numeric.Scalar.Signedness != 0 };

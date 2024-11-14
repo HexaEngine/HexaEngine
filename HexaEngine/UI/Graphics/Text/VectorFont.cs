@@ -97,8 +97,8 @@
             FTError error;
 
             FTFace faceHandle;
-            error = (FTError)FreeType.FTNewFace(library, path, 0, &faceHandle);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.NewFace(library, path, 0, &faceHandle);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to load font file, {error}");
             }
@@ -125,7 +125,7 @@
                 emSize = fontSize * 64f;
 
                 error = (FTError)faceHandle.SetPixelSizes(0, (uint)MathF.Ceiling(fontSize));
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to set pixel sizes, {error}");
                 }
@@ -147,7 +147,7 @@
                 }
 
                 error = (FTError)faceHandle.LoadGlyph(glyphIndex, loadFlags);
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load glyph for character {charcode} : {error}");
                 }
@@ -174,7 +174,7 @@
             for (int i = 0; i < face->Glyph->Outline.NContours; i++)
             {
                 // Note: The end indices in face->glyph->outline.contours are inclusive.
-                ConvertContour(ref bufferCurves, &face->Glyph->Outline, start, face->Glyph->Outline.Contours[i], emSize);
+                ConvertContour(ref bufferCurves, &face->Glyph->Outline, start, (short)face->Glyph->Outline.Contours[i], emSize);
                 start = (short)(face->Glyph->Outline.Contours[i] + 1);
             }
 
@@ -455,7 +455,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -549,7 +549,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -606,7 +606,7 @@
         {
             FTVector ikerning;
             FTError error = (FTError)faceHandle.GetKerning(left, right, kerningMode, &ikerning);
-            if (error == FTError.FtErrOk)
+            if (error == FTError.Ok)
             {
                 kerning = new(ikerning.X, ikerning.Y);
                 return true;
@@ -640,7 +640,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, metrics.Glyph, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         x += kerning.X / emSize * fontSize;
                     }

@@ -88,8 +88,8 @@
             FTError error;
 
             FTFace faceHandle;
-            error = (FTError)FreeType.FTNewFace(library, path, 0, &faceHandle);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.NewFace(library, path, 0, &faceHandle);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to load font file, {error}");
             }
@@ -104,7 +104,7 @@
                 emSize = fontSize * 64f;
 
                 error = (FTError)faceHandle.SetPixelSizes(0, (uint)MathF.Ceiling(fontSize));
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -128,7 +128,7 @@
                 }
 
                 error = (FTError)faceHandle.LoadGlyph(glyphIndex, loadFlags);
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -163,9 +163,9 @@
 
             if (glyph->Format != FTGlyphFormat.Bitmap)
             {
-                FTError error = (FTError)FreeType.FTRenderGlyph(new FTGlyphSlot((nint)face->Glyph), FTRenderMode.Normal);
+                FTError error = (FTError)FreeType.RenderGlyph(new FTGlyphSlot((nint)face->Glyph), FTRenderMode.Normal);
 
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -246,7 +246,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -333,7 +333,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -374,7 +374,7 @@
         {
             FTVector ikerning;
             FTError error = (FTError)faceHandle.GetKerning(left, right, kerningMode, &ikerning);
-            if (error == FTError.FtErrOk)
+            if (error == FTError.Ok)
             {
                 kerning = new(ikerning.X, ikerning.Y);
                 return true;

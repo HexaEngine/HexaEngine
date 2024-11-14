@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D12
 {
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D.Compilers;
+    using Hexa.NET.DXC;
+    using HexaGen.Runtime;
     using System;
 
     public unsafe class IncludeHandler
