@@ -829,7 +829,14 @@
                 UpdateMonitors();
             }
 
-            io.DeltaTime = Time.Delta;
+            if (Time.Delta > 0)
+            {
+                io.DeltaTime = Time.Delta;
+            }
+            else
+            {
+                io.DeltaTime = 0.0000001f;
+            }
 
             if (bd->MouseLastLeaveFrame != 0 && bd->MouseLastLeaveFrame >= ImGui.GetFrameCount() && bd->MouseButtonsDown == 0)
             {

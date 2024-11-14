@@ -814,7 +814,7 @@
 
         private void FileContextMenu(Item file)
         {
-            if (ImGui.BeginPopupContextItem(file.Path, ImGuiPopupFlags.MouseButtonMask))
+            if (ImGui.BeginPopupContextItem(file.Path, ImGuiPopupFlags.MouseButtonRight))
             {
                 if (ImGui.MenuItem($"{UwU.OpenFile} Open"))
                 {

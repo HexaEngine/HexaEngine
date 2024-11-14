@@ -123,52 +123,54 @@
                 levelColor = sceneLevelColor;
             }
 
-            ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths);
-            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-
-            ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
-            ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
-
-            ImGuiTablePtr table = ImGuiP.GetCurrentTable();
-
-            ImGui.Indent();
-            ImGui.TableHeadersRow();
-            ImGui.Unindent();
-
-            if (ImGui.BeginDragDropTarget())
+            if (ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths))
             {
-                unsafe
+                ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+
+                ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
+                ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
+
+                ImGuiTablePtr table = ImGuiP.GetCurrentTable();
+
+                ImGui.Indent();
+                ImGui.TableHeadersRow();
+                ImGui.Unindent();
+
+                if (ImGui.BeginDragDropTarget())
                 {
-                    var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
-                    if (!payload.IsNull)
+                    unsafe
                     {
-                        Guid id = *(Guid*)payload.Data;
-                        var child = scene.FindByGuid(id);
-                        if (child != null)
+                        var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
+                        if (!payload.IsNull)
                         {
-                            scene.AddChild(child);
+                            Guid id = *(Guid*)payload.Data;
+                            var child = scene.FindByGuid(id);
+                            if (child != null)
+                            {
+                                scene.AddChild(child);
+                            }
                         }
                     }
+                    ImGui.EndDragDropTarget();
                 }
-                ImGui.EndDragDropTarget();
-            }
-            if (scene.IsPrefabScene)
-            {
-                DisplayNode(scene.Root, true, false, drawList, table, avail, 0, true);
-            }
-            else
-            {
-                for (int i = 0; i < scene.Root.Children.Count; i++)
+                if (scene.IsPrefabScene)
                 {
-                    var element = scene.Root.Children[i];
-                    bool isLast = i == scene.Root.Children.Count - 1;
-                    DisplayNode(element, false, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                    DisplayNode(scene.Root, true, false, drawList, table, avail, 0, true);
                 }
-            }
+                else
+                {
+                    for (int i = 0; i < scene.Root.Children.Count; i++)
+                    {
+                        var element = scene.Root.Children[i];
+                        bool isLast = i == scene.Root.Children.Count - 1;
+                        DisplayNode(element, false, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                    }
+                }
 
-            ImGui.PopStyleColor();
-            ImGui.PopStyleColor();
-            ImGui.EndTable();
+                ImGui.PopStyleColor();
+                ImGui.PopStyleColor();
+                ImGui.EndTable();
+            }
 
             if (scene.IsPrefabScene)
             {
@@ -250,7 +252,7 @@
 
         private static void DisplayNodeContextMenu(GameObject element)
         {
-            if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonMask))
+            if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonRight))
             {
                 if (ImGui.MenuItem($"{UwU.MagnifyingGlassPlus} Focus"))
                 {
@@ -352,7 +354,7 @@
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
 
-            ImRect rect = ImGuiP.TableGetCellBgRect(table, 1);
+            ImRect rect = ImGuiP.TableGetCellBgRect(table, 0);
             rect.Max.X = avail.X + rect.Min.X;
             rect.Max.Y += ImGui.GetTextLineHeight();
 

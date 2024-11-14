@@ -112,7 +112,11 @@
                 ImGui.EndMenuBar();
             }
 
-            ImGui.BeginTable("ErrorTable", 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable);
+            if (!ImGui.BeginTable("ErrorTable", 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable))
+            {
+                return;
+            }
+
             ImGui.TableSetupColumn("");
             ImGui.TableSetupColumn("");
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);

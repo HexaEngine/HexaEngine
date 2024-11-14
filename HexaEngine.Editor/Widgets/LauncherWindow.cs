@@ -227,7 +227,7 @@
             {
                 ImGui.TreePop();
             }
-
+            ImGui.Dummy(new(1));
             ImGui.EndChild();
 
             Vector2 childSize = new(widthSide - padding.X, avail.Y);
