@@ -59,13 +59,13 @@
         {
             ImGui.SeparatorText(Name);
             Vector2 avail = ImGui.GetContentRegionAvail();
-            const float footerHeight = 40;
+            const float footerHeight = 50;
             avail.Y -= footerHeight;
             ImGui.BeginChild("Content", avail);
 
             Icon icon = IconManager.GetIconByName("Logo") ?? throw new();
             Vector2 imageSize = new(48);
-            ImGui.Image(icon, imageSize);
+            icon.Image(imageSize);
             ImGui.SameLine();
 
             switch (page)
@@ -149,11 +149,11 @@
             string projectsPath;
             if (OperatingSystem.IsWindows())
             {
-                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HexaEngine", "Projects");
+                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HexaEngine", "Projects");
             }
             else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
             {
-                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "HexaEngine", "Projects");
+                projectsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HexaEngine", "Projects");
             }
             else
             {

@@ -83,7 +83,6 @@
             }
             if ((progressFlags & ProgressFlags.NoModal) != 0)
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 30);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
                 ImGui.PushStyleColor(ImGuiCol.WindowBg, 0xff1c1c1c);
@@ -92,21 +91,17 @@
                     DrawContent();
                     ImGui.End();
                 }
-                ImGui.PopStyleColor();
-                ImGui.PopStyleColor();
-                ImGui.PopStyleVar();
+                ImGui.PopStyleColor(2);
                 ImGui.PopStyleVar();
             }
             else
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 30);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
 
                 base.Draw();
 
                 ImGui.PopStyleColor();
-                ImGui.PopStyleVar();
                 ImGui.PopStyleVar();
             }
         }
