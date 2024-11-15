@@ -69,6 +69,8 @@
 
         public static EditorConfig Default { get; } = Load();
 
+        public string? SelectedLayout { get; set; }
+
         public void Save()
         {
             File.WriteAllText(configPath, JsonConvert.SerializeObject(this));

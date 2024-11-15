@@ -6,6 +6,8 @@
     using Hexa.NET.ImPlot;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Editor;
+    using System;
     using System.IO;
     using System.Numerics;
 
@@ -17,10 +19,9 @@
 
         public unsafe ImGuiManager(SdlWindow window, IGraphicsDevice device, IGraphicsContext context, ImGuiConfigFlags flags = ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad | ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable)
         {
-            resetLayout = !File.Exists("imgui.ini");
-
             guiContext = ImGui.CreateContext(null);
             ImGui.SetCurrentContext(guiContext);
+            resetLayout = !LayoutManager.Init();
 
             ImGui.SetCurrentContext(guiContext);
             ImGuizmo.SetImGuiContext(guiContext);
@@ -67,10 +68,17 @@
             iconsRegularBuilder.Destroy();
 
             uint* glyphMaterialRanges = stackalloc uint[]
-           {
-                (uint)0xe003, (uint)0xF8FF,
-                (uint)0 // null terminator
+            {
+                0xe003, 0xF8FF,
+                0 // null terminator
             };
+
+            ImGuiFontBuilder widgetsFontBuilder = new(fonts);
+            widgetsFontBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.ttf", size: 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges);
+            aliasToFont.Add("WidgetsFont", widgetsFontBuilder.Font);
+            widgetsFontBuilder.Destroy();
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
             textEditorFontBuilder.AddFontFromFileTTF("assets/shared/fonts/CascadiaMono.ttf", size: 16)
@@ -184,6 +192,8 @@
             ImNodes.SetCurrentContext(nodesContext);
             ImPlot.SetCurrentContext(plotContext);
 
+            LayoutManager.NewFrame();
+
             ImGuiSDL2Platform.NewFrame();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
@@ -201,8 +211,10 @@
             ImGui.PopStyleColor(1);
         }
 
-        private static unsafe void ResetLayout()
+        public static unsafe void ResetLayout()
         {
+            ImGuiP.ClearIniSettings();
+
             uint rootDockspace = DockSpaceId;
 
             ImGuiP.DockBuilderRemoveNode(rootDockspace);
@@ -250,6 +262,15 @@
         {
             ImGuiRenderer.Shutdown();
             ImGuiSDL2Platform.Shutdown();
+
+            ImGui.SetCurrentContext(null);
+            ImGuizmo.SetImGuiContext(null);
+            ImPlot.SetImGuiContext(null);
+            ImNodes.SetImGuiContext(null);
+
+            ImNodes.DestroyContext(nodesContext);
+            ImPlot.DestroyContext(plotContext);
+            ImGui.DestroyContext(guiContext);
         }
 
         private static readonly Dictionary<string, ImFontPtr> aliasToFont = new();

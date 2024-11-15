@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.UI;
 
     public class Program
     {
@@ -11,6 +12,7 @@
         {
             Application.Boot(GraphicsBackend.D3D11, AudioBackend.Auto);
             EditorWindow window = new();
+
             Platform.Init(window, true);
             Application.Run(window);
             Platform.Shutdown();

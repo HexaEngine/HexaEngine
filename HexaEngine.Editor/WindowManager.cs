@@ -10,7 +10,10 @@
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
+    using HexaEngine.Windows;
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
@@ -191,6 +194,14 @@
             category.Add(window);
         }
 
+        public static void ShowWindow<T>() where T : IEditorWindow, new()
+        {
+            IEditorWindow window = new T();
+            window.Shown += Shown;
+            window.Closed += ClosedDestroy;
+            windows.Add(window);
+        }
+
         public static void Register(IEditorWindow window)
         {
             window.Shown += Shown;
@@ -262,6 +273,11 @@
         {
         }
 
+        private static void ClosedDestroy(IEditorWindow window)
+        {
+            windows.Remove(window);
+        }
+
         private static void Shown(IEditorWindow window)
         {
             if (!window.Initialized && device != null)
@@ -304,9 +320,11 @@
 
             ImGui.EndDisabled();
 
+            ImGuiManager.PushFont("WidgetsFont");
             DialogManager.Draw();
             MessageBoxes.Draw();
             AnimationManager.Tick();
+            ImGuiManager.PopFont();
         }
 
         public static unsafe void DrawMenu()

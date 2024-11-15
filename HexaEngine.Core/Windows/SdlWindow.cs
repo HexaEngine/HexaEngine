@@ -7,12 +7,14 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
+    using HexaEngine.Core.Windows.UI;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using System.Runtime.Versioning;
     using System.Text;
     using static Extensions.SdlErrorHandlingExtensions;
     using Key = Input.Key;
@@ -50,6 +52,8 @@
         private readonly DropEventArgs dropEventArgs = new();
         private readonly DropFileEventArgs dropFileEventArgs = new();
         private readonly DropTextEventArgs dropTextEventArgs = new();
+
+        private ITitleBar? titlebar;
 
         private SDLWindow* window;
         private bool created;
@@ -234,6 +238,15 @@
             SDL.SetWindowFullscreen(window, (uint)mode);
         }
 
+        [SupportedOSPlatform("windows")]
+        public nint GetHWND()
+        {
+            SDLSysWMInfo wmInfo;
+            SDL.GetVersion(&wmInfo.Version);
+            SDL.GetWindowWMInfo(window, &wmInfo);
+            return wmInfo.Info.Win.Window;
+        }
+
         ///<summary>
         /// Creates a Vulkan surface for the window.
         ///</summary>
@@ -410,6 +423,28 @@
                 SDL.SetWindowSize(window, width, value);
                 Viewport = new(width, height);
                 OnResized(resizedEventArgs);
+            }
+        }
+
+        public ITitleBar? TitleBar
+        {
+            get => titlebar;
+            set
+            {
+                if (titlebar != null)
+                {
+                    DetatchTitlebar(titlebar);
+                }
+
+                if (value != null)
+                {
+                    AttachTitlebar(value);
+                }
+                else
+                {
+                }
+
+                titlebar = value;
             }
         }
 
@@ -1175,6 +1210,114 @@
         }
 
         #endregion Events
+
+        private SDLHitTest callback;
+
+        private void AttachTitlebar(ITitleBar titlebar)
+        {
+            titlebar.CloseWindowRequest += OnTitleBarCloseWindowRequest;
+            titlebar.MinimizeWindowRequest += OnTitleBarMinimizeWindowRequest;
+            titlebar.MaximizeWindowRequest += OnTitleBarMaximizeWindowRequest;
+            titlebar.RestoreWindowRequest += OnTitlebarRestoreWindowRequest;
+
+            callback = HitTestCallback;
+            SDL.SetWindowHitTest(window, callback, null);
+            titlebar.OnAttach((CoreWindow)this);
+        }
+
+        private SDLHitTestResult HitTestCallback(SDLWindow* win, SDLPoint* area, void* data)
+        {
+            var titlebarHeight = titlebar!.Height;
+            int mouseGrabPadding = 4;
+
+            if (state != WindowState.Normal) // remove padding on maximized state.
+            {
+                mouseGrabPadding = 0;
+            }
+
+            if (area->Y < mouseGrabPadding)
+            {
+                if (area->X < mouseGrabPadding)
+                {
+                    return SDLHitTestResult.ResizeTopleft;
+                }
+                else if (area->X > Width - mouseGrabPadding)
+                {
+                    return SDLHitTestResult.ResizeTopright;
+                }
+                else
+                {
+                    return SDLHitTestResult.ResizeTop;
+                }
+            }
+            else if (area->Y > Height - mouseGrabPadding)
+            {
+                if (area->X < mouseGrabPadding)
+                {
+                    return SDLHitTestResult.ResizeBottomleft;
+                }
+                else if (area->X > Width - mouseGrabPadding)
+                {
+                    return SDLHitTestResult.ResizeBottomright;
+                }
+                else
+                {
+                    return SDLHitTestResult.ResizeBottom;
+                }
+            }
+            else if (area->X < mouseGrabPadding)
+            {
+                return SDLHitTestResult.ResizeLeft;
+            }
+            else if (area->X > Width - mouseGrabPadding)
+            {
+                return SDLHitTestResult.ResizeRight;
+            }
+            else if (area->Y < titlebarHeight)
+            {
+                return titlebar.HitTest(win, area, data);
+            }
+
+            return SDLHitTestResult.Normal; // SDL_HITTEST_NORMAL <- Windows behaviour
+        }
+
+        private void DetatchTitlebar(ITitleBar titlebar)
+        {
+            titlebar.OnDetach((CoreWindow)this);
+            titlebar.CloseWindowRequest -= OnTitleBarCloseWindowRequest;
+            titlebar.MinimizeWindowRequest -= OnTitleBarMinimizeWindowRequest;
+            titlebar.MaximizeWindowRequest -= OnTitleBarMaximizeWindowRequest;
+            titlebar.RestoreWindowRequest -= OnTitlebarRestoreWindowRequest;
+        }
+
+        protected virtual void OnTitlebarRestoreWindowRequest(object? sender, RestoreWindowRequest e)
+        {
+            SDL.RestoreWindow(window);
+            state = WindowState.Normal;
+        }
+
+        protected virtual void OnTitleBarMaximizeWindowRequest(object? sender, MaximizeWindowRequest e)
+        {
+            SDL.MaximizeWindow(window);
+            state = WindowState.Maximized;
+        }
+
+        protected virtual void OnTitleBarMinimizeWindowRequest(object? sender, MinimizeWindowRequest e)
+        {
+            SDL.MinimizeWindow(window);
+            state = WindowState.Minimized;
+        }
+
+        protected virtual void OnTitleBarCloseWindowRequest(object? sender, CloseWindowRequest e)
+        {
+            closeEventArgs.Handled = false;
+            SDL.HideWindow(window);
+            OnClosing(closeEventArgs);
+            if (closeEventArgs.Handled)
+            {
+                SDL.ShowWindow(window);
+            }
+        }
 
         /// <summary>
         /// Processes a window event received from the message loop.

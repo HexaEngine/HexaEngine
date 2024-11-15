@@ -77,7 +77,7 @@ namespace HexaEngine.Editor
         [Profile]
         public static void Draw(IGraphicsContext context)
         {
-            MainMenuBar.Draw();
+            //MainMenuBar.Draw();
             WindowManager.Draw(context);
             ImGuiConsole.Draw();
             MessageBoxes.Draw();

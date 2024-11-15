@@ -11,6 +11,7 @@ namespace Editor
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.UI;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
@@ -36,6 +37,7 @@ namespace Editor
         {
             Flags = RendererFlags.None;
             Title = "Editor";
+            TitleBar = new TitleBar();
         }
 
         private bool firstTime = true;
@@ -167,6 +169,13 @@ namespace Editor
 
             // Invoke virtual method for pre-render operations.
             OnRenderBegin(context);
+
+            ImGuiManager.PushFont("WidgetsFont");
+            if (editorInitialized)
+            {
+                TitleBar?.Draw();
+            }
+            ImGuiManager.PopFont();
 
             // Determine if rendering should occur based on initialization status.
             var drawing = rendererInitialized;
