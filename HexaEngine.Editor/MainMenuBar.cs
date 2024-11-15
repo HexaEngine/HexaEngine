@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
@@ -16,18 +17,14 @@
     using HexaEngine.Windows;
     using System;
     using System.Diagnostics;
+    using OpenFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.OpenFileDialog;
+    using SaveFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.SaveFileDialog;
 
     public static class MainMenuBar
     {
         private static float height;
         private static bool isShown = true;
 
-        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
-
-        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
-        private static Action<OpenFileResult, string>? filePickerCallback;
-        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
-        private static Task? recompileShadersTask;
         private static bool recompileShadersTaskIsComplete = true;
         private static float progress = -1;
         private static string? progressOverlay;
@@ -56,16 +53,6 @@
             if (ImGui.IsAnyMouseDown())
             {
                 //popup?.Close();
-            }
-
-            if (filePicker.Draw())
-            {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
-            }
-
-            if (fileSaver.Draw())
-            {
-                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
             if (!isShown)
@@ -105,32 +92,16 @@
                 {
                     if (ImGui.MenuItem("Load Project"))
                     {
-                        filePicker.AllowedExtensions.Add(".hexproj");
-                        filePicker.OnlyAllowFilteredExtensions = true;
-                        filePickerCallback = (e, r) =>
-                        {
-                            if (e == OpenFileResult.Ok)
-                            {
-                                ProjectManager.Load(r);
-                            }
-
-                            filePicker.AllowedExtensions.Clear();
-                            filePicker.OnlyAllowFilteredExtensions = false;
-                        };
-                        filePicker.Show();
+                        OpenFileDialog dialog = new();
+                        dialog.AllowedExtensions.Add(".hexproj");
+                        dialog.OnlyAllowFilteredExtensions = true;
+                        dialog.Show(OpenProjectCallback);
                     }
 
                     if (ImGui.MenuItem("New Project"))
                     {
-                        fileSaverCallback = (e, r) =>
-                        {
-                            if (e == SaveFileResult.Ok)
-                            {
-                                Directory.CreateDirectory(r.FullPath);
-                                ProjectManager.Create(r.FullPath);
-                            }
-                            fileSaver.Show();
-                        };
+                        SaveFileDialog dialog = new SaveFileDialog();
+                        dialog.Show(NewProjectCallback);
                     }
 
                     if (ImGui.MenuItem("Init Git"))
@@ -270,23 +241,23 @@
                     if (ImGui.MenuItem("Reload All Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
                     {
                         recompileShadersTaskIsComplete = false;
-                        recompileShadersTask = Task.Run(() =>
-                        {
-                            ShaderCache.Clear();
-                            PipelineManager.Recompile();
-                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                        var recompileShadersTask = Task.Run(() =>
+                           {
+                               ShaderCache.Clear();
+                               PipelineManager.Recompile();
+                           }).ContinueWith(x => { recompileShadersTaskIsComplete = true; });
                     }
                     if (ImGui.MenuItem("Reload Material Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
                     {
                         recompileShadersTaskIsComplete = false;
-                        recompileShadersTask = Task.Run(() =>
-                        {
-                            progressOverlay = "Reload Shaders";
-                            progress = 0.1f;
-                            ResourceManager.Shared.RecompileShaders();
-                            progress = 1;
-                            progressOverlay = "Reload Shaders Done";
-                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                        var recompileShadersTask = Task.Run(() =>
+                            {
+                                progressOverlay = "Reload Shaders";
+                                progress = 0.1f;
+                                ResourceManager.Shared.RecompileShaders();
+                                progress = 1;
+                                progressOverlay = "Reload Shaders Done";
+                            }).ContinueWith(x => { recompileShadersTaskIsComplete = true; });
                     }
                     if (ImGui.MenuItem("Take Screenshot"))
                     {
@@ -402,6 +373,19 @@
                     ImGui.ShowDemoWindow();
                 }
             }
+        }
+
+        private static void NewProjectCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok || sender is not SaveFileDialog dialog) return;
+            Directory.CreateDirectory(dialog.SelectedFile!);
+            ProjectManager.Create(dialog.SelectedFile!);
+        }
+
+        private static void OpenProjectCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            ProjectManager.Load(dialog.SelectedFile!);
         }
 
         private static unsafe void EditSubMenu()

@@ -130,7 +130,7 @@
 
             if (compute)
             {
-                brdfLut.Draw(context, size, size);
+                brdfLut!.Draw(context, size, size);
 
                 compute = false;
             }

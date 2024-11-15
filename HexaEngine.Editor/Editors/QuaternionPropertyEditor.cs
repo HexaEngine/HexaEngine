@@ -25,7 +25,7 @@
 
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            Quaternion q = (Quaternion)value;
+            Quaternion q = (Quaternion)value!;
 
             var val = q.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
 

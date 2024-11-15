@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.Logging;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
@@ -11,18 +12,18 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
     using System.Numerics;
+    using OpenFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.OpenFileDialog;
 
     [EditorWindowCategory("Tools")]
     public class ImagePainterWindow : EditorWindow
     {
         internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ImagePainter));
         private IGraphicsDevice device;
-        private readonly OpenFileDialog openDialog = new();
         private readonly ModalCollection<Modal> modals = new();
 
         private string? CurrentFile;
 
-        private ImageExporter exporter;
+        private ImageExporter exporter = null!;
         private Vector2 lastpos;
 
         private Vector2 last;
@@ -33,8 +34,10 @@
 
         private readonly ColorPicker colorPicker = new();
         private readonly Toolbox toolbox = new();
+
         private readonly ImageProperties imageProperties;
         private readonly ToolProperties toolProperties;
+
         private readonly Brushes brushes = new();
         private readonly ToolContext toolContext;
 
@@ -46,14 +49,15 @@
         private ImageSource? source;
         private ImageSourceOverlay? overlay;
 
-        private IGraphicsPipelineState copyPipeline;
+        private IGraphicsPipelineState copyPipeline = null!;
 
-        private ConstantBuffer<Vector4> colorCB;
+        private ConstantBuffer<Vector4> colorCB = null!;
 
-        private ISamplerState samplerState;
+        private ISamplerState samplerState = null!;
 
         public ImagePainterWindow()
         {
+            device = Application.GraphicsDevice;
             toolContext = new(this);
             imageProperties = new(this);
             toolProperties = new(toolbox);
@@ -136,7 +140,8 @@
                     }
                     if (ImGui.MenuItem(UwU.OpenFile + " Open"))
                     {
-                        openDialog.Show();
+                        OpenFileDialog dialog = new();
+                        dialog.Show(OpenFileCallback);
                     }
 
                     ImGui.Separator();
@@ -248,17 +253,16 @@
             }
         }
 
+        private void OpenFileCallback(object? sender, Hexa.NET.ImGui.Widgets.Dialogs.DialogResult result)
+        {
+            if (result != Hexa.NET.ImGui.Widgets.Dialogs.DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            Open(dialog.SelectedFile!);
+        }
+
         private void DrawWindows(IGraphicsContext context)
         {
             modals.Draw();
             exporter.Draw();
-            if (openDialog.Draw())
-            {
-                if (openDialog.Result == OpenFileResult.Ok)
-                {
-                    Open(openDialog.FullPath);
-                }
-            }
 
             colorPicker.DrawWindow(context);
             toolbox.DrawWindow(context);

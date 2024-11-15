@@ -32,6 +32,7 @@
                 PinType.UInt2 or PinType.UInt2OrUInt => 2,
                 PinType.UInt3 or PinType.UInt3OrUInt => 3,
                 PinType.UInt4 or PinType.UInt4OrUInt => 4,
+                _ => throw new NotSupportedException(),
             };
         }
     }

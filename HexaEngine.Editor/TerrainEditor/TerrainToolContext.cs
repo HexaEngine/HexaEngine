@@ -14,9 +14,9 @@
 
         public Vector3 UV { get; set; }
 
-        public TerrainGrid Grid { get; set; }
+        public TerrainGrid Grid { get; set; } = null!;
 
-        public TerrainCell Cell { get; set; }
+        public TerrainCell Cell { get; set; } = null!;
 
         public Matrix4x4 Transform => Cell.Transform;
 
@@ -38,7 +38,7 @@
 
         public Vector2 GridDimensions { get; set; } = new(32);
 
-        public TerrainToolShape Shape { get; set; }
+        public TerrainToolShape Shape { get; set; } = null!;
 
         public bool TestVertex(TerrainTool tool, int i, out TerrainVertex vertex, out float distance)
         {

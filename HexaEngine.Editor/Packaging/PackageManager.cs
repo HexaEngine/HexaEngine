@@ -55,7 +55,7 @@
                 throw new InvalidOperationException($"Couldn't find package '{identifier}'.");
             }
 
-            string location = cache.Set(identifier, metadata, packageSource);
+            string location = cache.Set(identifier, metadata!, packageSource!);
         }
     }
 }

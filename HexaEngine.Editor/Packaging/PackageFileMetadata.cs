@@ -2,7 +2,7 @@
 {
     public class PackageFileMetadata
     {
-        public string Path { get; set; }
+        public string Path { get; set; } = null!;
 
         public ContentType ContentType { get; set; }
     }

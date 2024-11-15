@@ -280,7 +280,7 @@
                 ImGui.TableSetColumnIndex(3);
                 ImGui.Text(message.Project);
                 ImGui.TableSetColumnIndex(4);
-                if (ImGuiHyperLink.HyperLink(message.FileName))
+                if (ImGui.TextLink(message.FileName))
                 {
                     ProjectManager.OpenFileInEditor($"{message.File}##{i}", message.Line, message.Column);
                 }

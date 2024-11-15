@@ -10,8 +10,8 @@
     {
         private Vector2 brushSize = Vector2.One;
         private float opacity = 1;
-        private IGraphicsPipelineState brushPipeline;
-        private ConstantBuffer<Vector4> opacityBuffer;
+        private IGraphicsPipelineState brushPipeline = null!;
+        private ConstantBuffer<Vector4> opacityBuffer = null!;
 
         public override string Icon => UwU.Eraser + "##EraserTool";
 

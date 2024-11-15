@@ -8,8 +8,6 @@
     [EditorWindowCategory("Debug")]
     public class PipelineWidget : EditorWindow
     {
-        private Task task;
-
 #pragma warning disable CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
         public PipelineWidget()

@@ -40,18 +40,18 @@
         private const string MetadataSurfaceKey = "MatSurface.Data";
         private const string SurfaceVersion = "1.0.0.0";
 
-        private IGraphicsDevice device;
+        private IGraphicsDevice device = null!;
 
         private ImNodesNodeEditor? editor;
-        private InputNode geometryNode;
-        private BRDFShadingModelNode outputNode;
+        private InputNode geometryNode = null!;
+        private BRDFShadingModelNode outputNode = null!;
 
-        private (string, Type)[] intrinsicFuncs;
-        private (string, Type)[] operatorFuncs;
+        private (string, Type)[] intrinsicFuncs = null!;
+        private (string, Type)[] operatorFuncs = null!;
         private readonly ShaderGenerator generator = new();
         private bool autoGenerate = true;
 
-        private Task updateMaterialTask;
+        private Task? updateMaterialTask;
 
         private readonly SemaphoreSlim semaphore = new(1);
 
@@ -63,7 +63,7 @@
         private bool nameChanged;
         private bool unsavedDataDialogIsOpen;
 
-        private string path;
+        private string? path;
 
         private bool showCode;
 
@@ -338,7 +338,6 @@
 
         public void CreateNew()
         {
-            SaveFileDialog dialog = new();
             try
             {
                 string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
@@ -685,7 +684,7 @@
                     var func = operatorFuncs[i];
                     if (ImGui.MenuItem(func.Item1))
                     {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false);
+                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
                         editor.AddNode(node);
                     }
                 }
@@ -700,7 +699,7 @@
                     var func = intrinsicFuncs[i];
                     if (ImGui.MenuItem(func.Item1))
                     {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false);
+                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
                         editor.AddNode(node);
                     }
                 }

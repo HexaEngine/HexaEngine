@@ -3,6 +3,7 @@
     using Hexa.NET.Logging;
     using Hexa.NET.Utilities;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
@@ -18,13 +19,13 @@
     [EditorComponent<ConvexMeshCollider>("Convex Mesh Collider")]
     public unsafe class ConvexMeshCollider : ColliderShape
     {
-        private string model = string.Empty;
+        private AssetRef model = default;
 
         private readonly List<Pointer<PxConvexMesh>> pxConvexMeshes = new();
         private Node[]? nodes;
 
-        [EditorProperty("Model", startingPath: null, ".model")]
-        public string Model
+        [EditorProperty("Model", AssetType.Model)]
+        public AssetRef Model
         {
             get => model; set
             {
@@ -40,9 +41,14 @@
 
         private void CookShape(PxPhysics* physics, bool bypassCache = false)
         {
-            string path = Paths.CurrentAssetsPath + this.model;
+            string? path = this.model.GetPath();
 
-            if (!FileSystem.Exists(path))
+            if (path == null)
+            {
+                return;
+            }
+
+            if (!File.Exists(path))
             {
                 LoggerFactory.General.Error("Failed to load model, model file not found!");
                 return;

@@ -1,12 +1,9 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Properties;
     using System.Reflection;
 
@@ -14,8 +11,6 @@
     {
         private readonly ImGuiName guiName;
         private readonly EditorPropertyMode mode;
-        private readonly string relativeTo;
-        private readonly OpenFileDialog dialog;
 
         public StringPropertyEditor(EditorPropertyAttribute nameAttr, PropertyInfo property)
         {
@@ -24,11 +19,6 @@
             guiName = new(nameAttr.Name);
 
             mode = nameAttr.Mode;
-            relativeTo = nameAttr.RelativeTo;
-            if (mode == EditorPropertyMode.Filepicker)
-            {
-                dialog = new(nameAttr.StartingPath ?? Paths.CurrentProjectFolder, nameAttr.Filter);
-            }
         }
 
         public string Name { get; }
@@ -55,36 +45,6 @@
                         value = val;
                         ImGui.PopItemWidth();
                         return true;
-                    }
-                    break;
-
-                case EditorPropertyMode.Filepicker:
-                    if (ImGui.InputText(guiName.Id, ref val, 2048, ImGuiInputTextFlags.EnterReturnsTrue))
-                    {
-                        value = val;
-                        ImGui.PopItemWidth();
-                        return true;
-                    }
-                    ImGui.SameLine();
-                    if (ImGui.Button($"...##{guiName.RawId}"))
-                    {
-                        dialog.Show();
-                    }
-                    if (dialog.Draw())
-                    {
-                        if (dialog.Result == OpenFileResult.Ok)
-                        {
-                            if (relativeTo != null)
-                            {
-                                value = Path.GetRelativePath(relativeTo, FileSystem.GetRelativePath(dialog.FullPath));
-                            }
-                            else
-                            {
-                                value = FileSystem.GetRelativePath(dialog.FullPath);
-                            }
-                            ImGui.PopItemWidth();
-                            return true;
-                        }
                     }
                     break;
             }

@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Editor
 {
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -29,7 +30,7 @@ namespace HexaEngine.Editor
         public static void Init(IGraphicsDevice device)
         {
             MainMenuBar.Init(device);
-            IconManager.Init(device);
+            IconManager.Init();
             WindowManager.Init(device);
 #if !BypassLauncher
             PopupManager.Show<LauncherWindow>();
@@ -59,9 +60,9 @@ namespace HexaEngine.Editor
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
             PropertyObjectEditorRegistry.RegisterEditor<AssetFileEditor>();
 
-            ObjectEditorFactory.RegisterEditor(typeof(ScriptComponent), new ScriptBehaviourEditor());
-            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
-            ObjectEditorFactory.RegisterEditor(typeof(Volume), new VolumeObjectEditor());
+            ObjectEditorFactory.RegisterEditor<ScriptComponent>(new ScriptBehaviourEditor());
+            ObjectEditorFactory.RegisterEditor<TerrainRendererComponent>(new TerrainObjectEditor());
+            ObjectEditorFactory.RegisterEditor<Volume>(new VolumeObjectEditor());
             PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
         }
 

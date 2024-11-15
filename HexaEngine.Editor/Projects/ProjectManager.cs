@@ -70,8 +70,6 @@
 
         public static event ProjectLoadingHandler? ProjectLoading;
 
-        public static event ProjectLoadFailedHandler? ProjectLoadFailed;
-
         public static event ProjectLoadedHandler? ProjectLoaded;
 
         public delegate void ProjectUnloadedHandler(string? projectFile);
@@ -101,7 +99,7 @@
 
                     loaded = true;
 
-                    CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath);
+                    CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath) ?? throw new Exception($"GetDirectoryName returned null for '{CurrentProjectFilePath}'");
 
                     HexaProjectReader reader = new(path);
 
@@ -517,7 +515,8 @@
 
         private static bool Build()
         {
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            if (CurrentProjectFolder == null) return false;
+            string solutionName = Path.GetFileName(CurrentProjectFolder) ?? throw new Exception();
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
 
             string output = Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
@@ -532,7 +531,8 @@
 
         private static void Clean()
         {
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            if (CurrentProjectFolder == null) return;
+            string solutionName = Path.GetFileName(CurrentProjectFolder) ?? throw new Exception();
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
             AnalyseLog(Dotnet.Clean(projectFilePath));
             scriptProjectChanged = true;
@@ -623,7 +623,7 @@
             string scriptPublishPath = Path.Combine(scriptProjPath, "bin", "Publish");
             PublishOptions scriptPublishOptions = new()
             {
-                Framework = "net8.0",
+                Framework = "net9.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = false,
@@ -708,7 +708,7 @@
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
-                Framework = "net8.0",
+                Framework = "net9.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = settings.ReadyToRun,
@@ -721,7 +721,7 @@
 
             // copy native runtimes
             string localRuntimesPath = Path.GetFullPath("runtimes");
-            string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier, "native");
+            string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier!, "native");
 
             CopyDirectory(targetRuntimePath, appTempPublishPath, true);
 

@@ -24,13 +24,13 @@
 
         public float TimeToFrame(float time)
         {
-            float framerateInv = 1 / (float)Animation.TicksPerSecond;
+            float framerateInv = 1 / (float)Animation!.TicksPerSecond;
             return time / framerateInv;
         }
 
         public float FrameToTime(float frame)
         {
-            float framerateInv = 1 / (float)Animation.TicksPerSecond;
+            float framerateInv = 1 / (float)Animation!.TicksPerSecond;
             return frame * framerateInv;
         }
 
@@ -81,7 +81,7 @@
 
         public unsafe void DrawChannel(string label, ref NodeChannel channel, Vector2 maxSize)
         {
-            int frameCount = (int)(Animation.Duration * Animation.TicksPerSecond);
+            int frameCount = (int)(Animation!.Duration * Animation.TicksPerSecond);
             ImGui.InputText("Node:", ref channel.NodeName, 256);
             var cursor = ImGui.GetCursorPos();
             ImGui.PushID($"CH{channel.NodeName}");

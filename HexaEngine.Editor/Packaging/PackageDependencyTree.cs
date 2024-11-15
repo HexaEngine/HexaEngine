@@ -104,9 +104,9 @@
                 index = -1;
             }
 
-            public readonly PackageDependencyTreeNode Current => current;
+            public readonly PackageDependencyTreeNode Current => current!;
 
-            readonly object IEnumerator.Current => current;
+            readonly object IEnumerator.Current => current!;
 
             public void Dispose()
             {

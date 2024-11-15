@@ -165,7 +165,7 @@
 
             if (compute)
             {
-                diffuseIrradianceCompute.Dispatch(context, size, size);
+                diffuseIrradianceCompute!.Dispatch(context, size, size);
 
                 compute = false;
                 srcTex?.Dispose();

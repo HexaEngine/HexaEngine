@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
@@ -234,7 +236,7 @@
                         if (ImGui.MenuItem(item.Key))
                         {
                             var node = item.Value.Constructor();
-                            var name = scene.GetAvailableName(item.Key);
+                            var name = scene!.GetAvailableName(item.Key);
                             node.Name = name;
                             scene.AddChild(node);
                             scene.UnsavedChanged = true;
@@ -279,7 +281,15 @@
                         var item = SelectionCollection.Global[i];
                         if (item is GameObject gameObject)
                         {
-                            element.GetScene().AddChild(Instantiator.Instantiate(gameObject));
+                            try
+                            {
+                                var instance = Instantiator.Instantiate(gameObject) ?? throw new Exception("Failed to Clone object.");
+                                element.GetScene().AddChild(instance);
+                            }
+                            catch (Exception ex)
+                            {
+                                LoggerFactory.General.LogAndShowError("Failed to Clone object.", ex);
+                            }
                         }
                     }
                 }
@@ -469,7 +479,7 @@
                         //Guid id = *(Guid*)payload.Data;
                         //var gameObject = SceneManager.Current.FindByGuid(id);
                         SelectionCollection.Global.MoveSelection(element);
-                        SceneManager.Current.UnsavedChanged = true;
+                        SceneManager.Current!.UnsavedChanged = true;
                     }
                 }
                 ImGui.EndDragDropTarget();
@@ -500,7 +510,7 @@
                     var last = SelectionCollection.Global.Last<GameObject>();
                     if (last != null)
                     {
-                        SelectionCollection.Global.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
+                        SelectionCollection.Global.AddMultipleSelection(SceneManager.Current!.GetRange(last, element));
                     }
                 }
                 else if (!element.IsEditorSelected)
@@ -528,7 +538,7 @@
                 }
                 if (element.IsEditorSelected && ImGuiP.IsKeyReleased(ImGuiKey.Delete))
                 {
-                    SceneManager.Current.UnsavedChanged = true;
+                    SceneManager.Current!.UnsavedChanged = true;
                     SelectionCollection.Global.PurgeSelection();
                 }
                 if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.U))

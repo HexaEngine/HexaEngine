@@ -441,36 +441,43 @@
             {
                 int index = walkStack.Pop();
                 var n = nodes[index];
-                var node1 = nodes[n.Child1];
-                var node2 = nodes[n.Child2];
-                var result1 = selector(node1);
-                var result2 = selector(node2);
-                if (result1 != BVHFilterResult.Skip)
+                if (n.Child1 != -1)
                 {
-                    if (node1.IsLeaf)
+                    var node1 = nodes[n.Child1];
+                    var result1 = selector(node1);
+                    if (result1 != BVHFilterResult.Skip)
                     {
-                        if (result1 != BVHFilterResult.SkipReturnKeep)
+                        if (node1.IsLeaf)
                         {
-                            yield return node1;
+                            if (result1 != BVHFilterResult.SkipReturnKeep)
+                            {
+                                yield return node1;
+                            }
                         }
-                    }
-                    else
-                    {
-                        walkStack.Push(n.Child1);
+                        else
+                        {
+                            walkStack.Push(n.Child1);
+                        }
                     }
                 }
-                if (result2 != BVHFilterResult.Skip)
+
+                if (n.Child2 != -1)
                 {
-                    if (node2.IsLeaf)
+                    var node2 = nodes[n.Child2];
+                    var result2 = selector(node2);
+                    if (result2 != BVHFilterResult.Skip)
                     {
-                        if (result2 != BVHFilterResult.SkipReturnKeep)
+                        if (node2.IsLeaf)
                         {
-                            yield return node2;
+                            if (result2 != BVHFilterResult.SkipReturnKeep)
+                            {
+                                yield return node2;
+                            }
                         }
-                    }
-                    else
-                    {
-                        walkStack.Push(n.Child2);
+                        else
+                        {
+                            walkStack.Push(n.Child2);
+                        }
                     }
                 }
             }
@@ -504,36 +511,43 @@
             {
                 int index = walkStack.Pop();
                 var n = nodes[index];
-                var node1 = nodes[n.Child1];
-                var node2 = nodes[n.Child2];
-                var result1 = selector(node1, userdata);
-                var result2 = selector(node2, userdata);
-                if (result1 != BVHFilterResult.Skip)
+                if (n.Child1 != -1)
                 {
-                    if (node1.IsLeaf)
+                    var node1 = nodes[n.Child1];
+                    var result1 = selector(node1, userdata);
+                    if (result1 != BVHFilterResult.Skip)
                     {
-                        if (result1 != BVHFilterResult.SkipReturnKeep)
+                        if (node1.IsLeaf)
                         {
-                            yield return node1;
+                            if (result1 != BVHFilterResult.SkipReturnKeep)
+                            {
+                                yield return node1;
+                            }
                         }
-                    }
-                    else
-                    {
-                        walkStack.Push(n.Child1);
+                        else
+                        {
+                            walkStack.Push(n.Child1);
+                        }
                     }
                 }
-                if (result2 != BVHFilterResult.Skip)
+
+                if (n.Child2 != -1)
                 {
-                    if (node2.IsLeaf)
+                    var node2 = nodes[n.Child2];
+                    var result2 = selector(node2, userdata);
+                    if (result2 != BVHFilterResult.Skip)
                     {
-                        if (result2 != BVHFilterResult.SkipReturnKeep)
+                        if (node2.IsLeaf)
                         {
-                            yield return node2;
+                            if (result2 != BVHFilterResult.SkipReturnKeep)
+                            {
+                                yield return node2;
+                            }
                         }
-                    }
-                    else
-                    {
-                        walkStack.Push(n.Child2);
+                        else
+                        {
+                            walkStack.Push(n.Child2);
+                        }
                     }
                 }
             }

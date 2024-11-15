@@ -57,24 +57,6 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, starting path, filter, relativeTo, and mode for file picker.
-        /// </summary>
-        /// <param name="name">The name of the property.</param>
-        /// <param name="startingPath">The starting path for the file picker.</param>
-        /// <param name="filter">The filename filter for the file picker.</param>
-        /// <param name="relativeTo">The path relative to this value.</param>
-        /// <param name="mode">The editor property mode for file picker.</param>
-        [Obsolete("Use the AssetType overload instead.")]
-        public EditorPropertyAttribute(string name, string? startingPath, string? filter = null, string? relativeTo = null, EditorPropertyMode mode = EditorPropertyMode.Filepicker)
-        {
-            Name = name;
-            StartingPath = startingPath;
-            Filter = filter;
-            RelativeTo = relativeTo;
-            Mode = mode;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EditorPropertyAttribute"/> class with the specified name, enum values, enum names, and mode for enum property.
         /// </summary>
         /// <param name="name">The name of the property.</param>

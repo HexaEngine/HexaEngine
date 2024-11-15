@@ -23,7 +23,7 @@
         private readonly Dictionary<ResourceBinding, ImAttribute> resourceBindings = new();
         private ViewMode viewMode = ViewMode.NodeTree;
 
-        private string viewSettings;
+        private string viewSettings = null!;
 
         private enum ViewMode
         {
@@ -197,6 +197,7 @@
                 {
                     var pass = passes[i];
                     var node = renderGraph.GetGraphNodeByName(pass.Name);
+                    if (node == null) continue;
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -426,7 +427,7 @@
                     return node.Key;
                 }
             }
-            return default;
+            return default!;
         }
     }
 }

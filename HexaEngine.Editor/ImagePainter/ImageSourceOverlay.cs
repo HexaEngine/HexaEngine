@@ -30,8 +30,8 @@
             {
                 var desc = image.Textures[i].Description;
                 textures[i] = new(desc);
-                srvs[i] = textures[i].SRV;
-                rtvs[i] = textures[i].RTV;
+                srvs[i] = textures[i].SRV!;
+                rtvs[i] = textures[i].RTV!;
                 viewports[i] = new(desc.Width, desc.Height);
                 ImGuiRenderer.Samplers.Add((ulong)srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;

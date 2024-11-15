@@ -129,7 +129,7 @@
                 if (ImGui.Button("Apply") && dstSrv != null)
                 {
                     var loader = device.TextureLoader;
-                    var image = loader.CaptureTexture(device.Context, dstTex);
+                    var image = loader.CaptureTexture(device.Context, dstTex!);
                     imagePainter.Load(image);
                     image.Dispose();
                     Discard();
@@ -176,12 +176,12 @@
             {
                 if (useComputeShader)
                 {
-                    roughnessPrefilterCompute.Roughness = roughness;
+                    roughnessPrefilterCompute!.Roughness = roughness;
                     roughnessPrefilterCompute.Dispatch(context, size, size);
                 }
                 else
                 {
-                    roughnessPrefilter.Roughness = roughness;
+                    roughnessPrefilter!.Roughness = roughness;
                     roughnessPrefilter.Draw(context, size, size);
                 }
 

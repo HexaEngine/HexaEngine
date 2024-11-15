@@ -12,7 +12,7 @@
     {
         private static readonly TexFileFormat[] formats = Enum.GetValues<TexFileFormat>();
         private static readonly string[] formatNames = Enum.GetNames<TexFileFormat>();
-        private BaseExporter exporter;
+        private BaseExporter exporter = null!;
         private bool isExporterOpen;
         private TexFileFormat format;
         private IScratchImage? image;
@@ -21,7 +21,7 @@
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         public string RootFolder;
-        private string currentFolder;
+        private string currentFolder = null!;
         private string selectedFile = string.Empty;
         public List<string> AllowedExtensions = new();
         public bool OnlyAllowFolders;
@@ -93,7 +93,7 @@
             image?.Dispose();
             image = null;
             isExporterOpen = false;
-            exporter = null;
+            exporter = null!;
         }
 
         protected override unsafe void DrawContent()

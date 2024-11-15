@@ -82,9 +82,9 @@
 
     public class Package
     {
-        public PackageMetadata Metadata { get; set; }
+        public PackageMetadata Metadata { get; set; } = null!;
 
-        public List<PackageData> Data { get; set; }
+        public List<PackageData> Data { get; set; } = null!;
 
         public static PackageMetadata? ReadMetadata(string file)
         {
@@ -93,7 +93,7 @@
             try
             {
                 fs = File.OpenRead(file);
-                result = ReadMetadata(fs);
+                result = ReadMetadata(fs)!;
             }
             catch (Exception ex)
             {

@@ -16,9 +16,9 @@
             Version = version;
         }
 
-        public string Include { get; set; }
+        public string Include { get; set; } = null!;
 
-        public string Version { get; set; }
+        public string Version { get; set; } = null!;
 
         public string Name { get; } = nameof(PackageReference);
 
@@ -30,8 +30,8 @@
         public void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
-            Include = reader.GetAttribute("Include");
-            Version = reader.GetAttribute("Version");
+            Include = reader.GetAttribute("Include")!;
+            Version = reader.GetAttribute("Version")!;
             reader.Read();
         }
 

@@ -1,20 +1,16 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using System;
     using System.Numerics;
 
-    public class LauncherWindow : Modal
+    public class LauncherWindow : HexaEngine.Editor.Dialogs.Modal
     {
-        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
-        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
-        private static Action<OpenFileResult, string>? filePickerCallback;
-        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
         private string searchString = string.Empty;
         private HistoryEntry historyEntry;
         private bool first = false;
@@ -35,16 +31,6 @@
             {
                 base.Draw();
                 return;
-            }
-
-            if (filePicker.Draw())
-            {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
-            }
-
-            if (fileSaver.Draw())
-            {
-                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
             if (ImGui.BeginPopupModal("DeleteNonExistingProject"))
@@ -240,23 +226,10 @@
             }
             if (ImGui.Button($"{UwU.MagnifyingGlass} Open Project", new(childSize.X, 50)))
             {
-                filePicker.AllowedExtensions.Add(".hexproj");
-                filePicker.OnlyAllowFilteredExtensions = true;
-                filePickerCallback = (e, r) =>
-                {
-                    if (e == OpenFileResult.Ok)
-                    {
-                        if (File.Exists(r))
-                        {
-                            ProjectManager.Load(r);
-                            Close();
-                        }
-                    }
-
-                    filePicker.AllowedExtensions.Clear();
-                    filePicker.OnlyAllowFilteredExtensions = false;
-                };
-                filePicker.Show();
+                OpenFileDialog dialog = new();
+                dialog.AllowedExtensions.Add(".hexproj");
+                dialog.OnlyAllowFilteredExtensions = true;
+                dialog.Show(OpenProjectCallback);
             }
             if (ImGui.Button($"{UwU.Clone} Clone Project", new(childSize.X, 50)))
             {
@@ -264,6 +237,13 @@
             }
 
             ImGui.EndChild();
+        }
+
+        private void OpenProjectCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            ProjectManager.Load(dialog.SelectedFile!);
+            Close();
         }
 
         private string newProjectName = "New Project";

@@ -47,7 +47,7 @@
 
         public bool SetupDone { get; set; }
 
-        public string ProjectsFolder { get; set; }
+        public string ProjectsFolder { get; set; } = null!;
 
         public int Width { get; set; } = 1280;
 
@@ -79,7 +79,7 @@
             EditorConfig config;
             if (File.Exists(configPath))
             {
-                config = JsonConvert.DeserializeObject<EditorConfig>(File.ReadAllText(configPath));
+                config = JsonConvert.DeserializeObject<EditorConfig>(File.ReadAllText(configPath)) ?? new();
             }
             else
             {

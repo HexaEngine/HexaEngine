@@ -8,7 +8,7 @@
     public class Pencil : Tool
     {
         private Vector2 brushSize = Vector2.One;
-        private IGraphicsPipelineState brushPipeline;
+        private IGraphicsPipelineState brushPipeline = null!;
 
         public override string Icon => UwU.Pen + "##PencilTool";
 

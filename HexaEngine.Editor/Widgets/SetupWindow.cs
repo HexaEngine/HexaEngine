@@ -1,17 +1,13 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Editor.Dialogs;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Editor.Icons;
     using System;
     using System.Numerics;
 
-    public class SetupWindow : Modal
+    public class SetupWindow : Dialogs.Modal
     {
-        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
-        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
-        private static Action<OpenFileResult, string>? filePickerCallback;
-        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
         private int page = 0;
         private bool first = true;
         private const int pageCount = 3;
@@ -22,18 +18,6 @@
 
         public override unsafe void Draw()
         {
-            if (filePicker.Draw())
-            {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
-                Show();
-            }
-
-            if (fileSaver.Draw())
-            {
-                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
-                Show();
-            }
-
             Vector2 main_viewport_pos = ImGui.GetMainViewport().Pos;
             Vector2 main_viewport_size = ImGui.GetMainViewport().Size;
             ImGui.SetNextWindowPos(main_viewport_pos);
@@ -175,17 +159,14 @@
             ImGui.SameLine();
             if (ImGui.Button("..."))
             {
-                filePicker.OnlyAllowFolders = true;
-                filePickerCallback = (e, r) =>
+                OpenFileDialog dialog = new();
+                dialog.OnlyAllowFolders = true;
+                dialog.Show((s, e) =>
                 {
-                    if (e == OpenFileResult.Ok)
-                    {
-                        projectsFolder = r;
-                    }
-
-                    filePicker.OnlyAllowFolders = false;
-                };
-                filePicker.Show();
+                    if (e != DialogResult.Ok) return;
+                    projectsFolder = ((OpenFileDialog)s!).SelectedFile!;
+                    Show();
+                });
             }
 
             ImGui.Unindent();

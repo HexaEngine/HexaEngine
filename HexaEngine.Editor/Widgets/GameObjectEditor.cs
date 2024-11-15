@@ -32,12 +32,13 @@
         public GameObjectEditor()
         {
             componentCache.AddRange(
-                AppDomain.CurrentDomain.GetAssemblies().SelectMany(x =>
+                AppDomain.CurrentDomain.GetAssemblies().SelectMany(static x =>
                 x.GetTypes()
                 .AsParallel()
                 .Where(x => x.IsAssignableTo(typeof(IComponent)))
                 .Select(x => x.GetCustomAttribute<EditorComponentAttribute>())
-                .Where(x => x != null && !x.IsHidden && !x.IsInternal)));
+                .Where(x => x != null && !x.IsHidden && !x.IsInternal)
+                .Select(x => x!)));
         }
 
         private static void SetPosition(object context)

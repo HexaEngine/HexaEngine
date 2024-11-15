@@ -7,9 +7,9 @@
 
     public class ColorGrabber : Tool
     {
-        private IComputePipelineState computePipeline;
-        private ConstantBuffer<Vector4> mousePosBuffer;
-        private StructuredUavBuffer<Vector4> resultBuffer;
+        private IComputePipelineState computePipeline = null!;
+        private ConstantBuffer<Vector4> mousePosBuffer = null!;
+        private StructuredUavBuffer<Vector4> resultBuffer = null!;
 
         public override string Icon => UwU.EyeDropper + "##ColorGrabber";
 

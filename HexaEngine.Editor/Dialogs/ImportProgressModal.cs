@@ -12,7 +12,7 @@
         private readonly string title;
         private readonly string message;
         private readonly ProgressFlags progressFlags;
-        private readonly Vector2 offsetCenter;
+        private Vector2 offsetCenter;
         private float progress;
         private readonly List<Step> steps = [];
         private int current;
@@ -52,6 +52,8 @@
 
         protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse;
 
+        public Vector2 OffsetCenter { get => offsetCenter; set => offsetCenter = value; }
+
         public override unsafe void Draw()
         {
             if (!shown || signalClose)
@@ -77,7 +79,6 @@
             }
             if ((progressFlags & ProgressFlags.NoModal) != 0)
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 8);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
                 ImGui.PushStyleColor(ImGuiCol.WindowBg, 0xff1c1c1c);
@@ -87,18 +88,17 @@
                     ImGui.End();
                 }
                 ImGui.PopStyleColor(2);
-                ImGui.PopStyleVar(2);
+                ImGui.PopStyleVar(1);
             }
             else
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 8);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
 
                 base.Draw();
 
                 ImGui.PopStyleColor();
-                ImGui.PopStyleVar(2);
+                ImGui.PopStyleVar(1);
             }
         }
 

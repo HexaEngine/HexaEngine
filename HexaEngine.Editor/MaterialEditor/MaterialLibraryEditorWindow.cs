@@ -184,11 +184,8 @@
         private MaterialPropertyType newPropType;
         private MaterialValueType newPropValueType;
 
-        private string newTexPath = string.Empty;
-        private MaterialTextureType newTexType;
         private bool isActive;
         private bool hasChanged;
-        private bool hasFileSaved;
 
         public bool EditMaterial(MaterialData material)
         {
@@ -373,7 +370,6 @@
             if (hasChanged && !isActive)
             {
                 hasChanged = false;
-                hasFileSaved = false;
                 result = true;
             }
 

@@ -15,19 +15,19 @@
 
     public class LayerPaintTool : TerrainTool
     {
-        private IGraphicsPipelineState maskEdit;
+        private IGraphicsPipelineState maskEdit = null!;
 
-        private IComputePipelineState occupationCheckPipeline;
-        private IComputePipelineState channelRemapPipeline;
+        private IComputePipelineState occupationCheckPipeline = null!;
+        private IComputePipelineState channelRemapPipeline = null!;
 
-        private Texture2D maskTexBuffer;
-        private ISamplerState maskSampler;
+        private Texture2D maskTexBuffer = null!;
+        private ISamplerState maskSampler = null!;
 
-        private ConstantBuffer<CBBrush> brushBuffer;
-        private ConstantBuffer<CBColorMask> maskBuffer;
-        private ConstantBuffer<CBChannelRemap> remapBuffer;
+        private ConstantBuffer<CBBrush> brushBuffer = null!;
+        private ConstantBuffer<CBColorMask> maskBuffer = null!;
+        private ConstantBuffer<CBChannelRemap> remapBuffer = null!;
 
-        private StructuredUavBuffer<UPoint4> channelBuffer;
+        private StructuredUavBuffer<UPoint4> channelBuffer = null!;
 
         private int selectedLayerIndex;
 

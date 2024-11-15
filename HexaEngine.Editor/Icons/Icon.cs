@@ -10,7 +10,7 @@
 
     public class Icon
     {
-        private Texture2D icon;
+        private Texture2D icon = null!;
         private Point2 position;
         private Point2 size;
         private Vector2 uv0;
@@ -149,7 +149,7 @@
 
         public Vector4 Tint => tint;
 
-        public IconDescription Description { get; }
+        public IconDescription Description { get; } = null!;
 
         public void SetAtlas(Texture2D texture)
         {
@@ -239,12 +239,12 @@
 
         public static implicit operator ImTextureID(Icon icon)
         {
-            return (ulong)icon.icon.SRV.NativePointer;
+            return (ulong)icon.icon.SRV!.NativePointer;
         }
 
         public static implicit operator nint(Icon icon)
         {
-            return icon.icon.SRV.NativePointer;
+            return icon.icon.SRV!.NativePointer;
         }
     }
 }

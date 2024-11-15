@@ -6,6 +6,6 @@
     public class IconsDescription
     {
         [XmlElement(ElementName = "Icon")]
-        public List<IconDescription> Icons { get; set; }
+        public List<IconDescription> Icons { get; set; } = null!;
     }
 }

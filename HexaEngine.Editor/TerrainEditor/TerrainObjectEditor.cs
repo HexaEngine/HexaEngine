@@ -16,12 +16,10 @@ namespace HexaEngine.Editor.TerrainEditor
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
+    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor.Shapes;
     using HexaEngine.Editor.TerrainEditor.Tools;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Graph;
-    using HexaEngine.Graphics.Renderers;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using System;
@@ -32,16 +30,15 @@ namespace HexaEngine.Editor.TerrainEditor
     public class TerrainObjectEditor : IObjectEditor
     {
         internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TerrainEditor));
-        private IGraphicsPipelineState brushOverlay;
-        private ConstantBuffer<CBBrush> brushBuffer;
-        private ConstantBuffer<Matrix4x4> worldBuffer;
+        private IGraphicsPipelineState brushOverlay = null!;
+        private ConstantBuffer<CBBrush> brushBuffer = null!;
+        private ConstantBuffer<Matrix4x4> worldBuffer = null!;
 
         private readonly List<TerrainTool> tools = [];
         private TerrainTool? activeTool;
         private readonly TerrainToolContext toolContext = new();
 
         private bool isDown;
-        private bool isEdited;
 
         private bool init;
 
@@ -50,7 +47,8 @@ namespace HexaEngine.Editor.TerrainEditor
         private bool hoversOverTerrain;
         private Vector3 position;
         private Vector3 uv;
-        private bool hasChanged;
+        private bool unsavedChanges;
+        private bool unsavedDataDialogIsOpen;
         private Vector2 lastMousePosition;
         private readonly Queue<TerrainCell> updateQueue = new();
 
@@ -63,6 +61,40 @@ namespace HexaEngine.Editor.TerrainEditor
             tools.Add(new NoiseTool());
 
             toolContext.Shape = new CircleToolShape();
+
+            Application.MainWindow.Closing += MainWindowClosing;
+        }
+
+        private void MainWindowClosing(object? sender, CloseEventArgs e)
+        {
+            if (unsavedChanges)
+            {
+                e.Handled = true;
+                if (!unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("(Material Editor) Unsaved changes", $"Do you want to save the changes in terrain?", this, (messageBox, state) =>
+                    {
+                        if (state is not TerrainObjectEditor terrainEditor)
+                        {
+                            return;
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            terrainEditor.signalSave = true;
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            terrainEditor.unsavedChanges = false;
+                            Application.MainWindow.Close();
+                        }
+
+                        terrainEditor.unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
         }
 
         public string Name => "Terrain";
@@ -165,9 +197,14 @@ namespace HexaEngine.Editor.TerrainEditor
                 terrain.RegenerateAll(context);
             }
 
-            if (ImGui.Button("Save"))
+            if (signalSave || ImGui.Button("Save"))
             {
                 Save(context, component, terrain);
+                if (signalSave)
+                {
+                    signalSave = false;
+                    Application.MainWindow.Close();
+                }
             }
 
             return changed;
@@ -223,7 +260,7 @@ namespace HexaEngine.Editor.TerrainEditor
                             if (editTerrain)
                             {
                                 hasAffected |= activeTool.Modify(context, toolContext);
-                                hasChanged = true;
+                                unsavedChanges = true;
                             }
 
                             if (editTerrain && hasAffected)
@@ -273,7 +310,7 @@ namespace HexaEngine.Editor.TerrainEditor
         private void DrawBrushOverlay(IGraphicsContext context, TerrainCell cell)
         {
             var swapChain = Application.MainWindow.SwapChain;
-            CBBrush brush = new(position, activeTool.Size, activeTool.BlendStart, activeTool.BlendEnd);
+            CBBrush brush = new(position, activeTool!.Size, activeTool.BlendStart, activeTool.BlendEnd);
             brushBuffer.Update(context, brush);
 
             cell.Bind(context);
@@ -420,7 +457,7 @@ namespace HexaEngine.Editor.TerrainEditor
                             TerrainCell terrainCell = grid.CreateCell(cell.ID + new Point2(1, 0));
                             grid.Add(terrainCell);
                             grid.FindNeighbors();
-                            hasChanged = true;
+                            unsavedChanges = true;
                         }
 
                         if (ImGui.IsItemHovered())
@@ -437,7 +474,7 @@ namespace HexaEngine.Editor.TerrainEditor
                             TerrainCell terrainCell = grid.CreateCell(cell.ID + new Point2(0, 1));
                             grid.Add(terrainCell);
                             grid.FindNeighbors();
-                            hasChanged = true;
+                            unsavedChanges = true;
                         }
 
                         if (ImGui.IsItemHovered())
@@ -452,7 +489,7 @@ namespace HexaEngine.Editor.TerrainEditor
 
         private void Save(IGraphicsContext context, TerrainRendererComponent component, TerrainGrid terrain)
         {
-            hasChanged = false;
+            unsavedChanges = false;
 
             for (int i = 0; i < terrain.Count; i++)
             {
@@ -541,6 +578,7 @@ namespace HexaEngine.Editor.TerrainEditor
         private Vector2 scale = new(0.002f);
         private float min = 0f;
         private float max = 10f;
+        private bool signalSave;
 
         private void GenerationMenu(TerrainGrid terrain)
         {

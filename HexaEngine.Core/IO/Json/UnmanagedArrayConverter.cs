@@ -20,7 +20,7 @@
         /// <param name="hasExistingValue">A flag indicating whether there is an existing value.</param>
         /// <param name="serializer">The JSON serializer.</param>
         /// <returns>An array of unmanaged elements.</returns>
-        public override T[] ReadJson(JsonReader reader, Type objectType, T[] existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override T[] ReadJson(JsonReader reader, Type objectType, T[]? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JToken token = JToken.ReadFrom(reader);
             if (token.Type != JTokenType.Bytes)
@@ -28,7 +28,7 @@
                 throw new InvalidDataException();
             }
 
-            byte[] value = token.Value<byte[]>();
+            byte[] value = token.Value<byte[]>()!;
 
             return MemoryMarshal.Cast<byte, T>(value.AsSpan()).ToArray();
         }
@@ -39,7 +39,7 @@
         /// <param name="writer">The JSON writer.</param>
         /// <param name="value">The array of unmanaged elements to serialize.</param>
         /// <param name="serializer">The JSON serializer.</param>
-        public override void WriteJson(JsonWriter writer, T[] value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, T[]? value, JsonSerializer serializer)
         {
             JToken t = JToken.FromObject(MemoryMarshal.AsBytes(value.AsSpan()).ToArray());
             t.WriteTo(writer);

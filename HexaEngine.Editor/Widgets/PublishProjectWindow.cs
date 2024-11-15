@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Projects;
     using System;
     using System.Threading.Tasks;
@@ -12,23 +12,12 @@
         private readonly PublishSettings options = new();
         private static readonly string[] profiles = { "Release", "Debug" };
         private static readonly string[] rids = { "win-x64", "linux-x64" };
-#pragma warning disable CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private Task task;
-#pragma warning restore CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private readonly OpenFileDialog filePicker = new("", ".hexlvl");
+        private Task? task;
 
         protected override string Name => $"{UwU.Upload} Publish";
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (filePicker.Draw())
-            {
-                if (filePicker.Result == OpenFileResult.Ok)
-                {
-                    options.Scenes.Add(Path.GetFileName(filePicker.FullPath));
-                }
-            }
-
             bool disable = task != null && !task.IsCompleted;
             if (disable)
             {
@@ -95,8 +84,9 @@
 
                 if (ImGui.Button("Add Scene"))
                 {
-                    filePicker.SetFolder(ProjectManager.CurrentProjectAssetsFolder ?? string.Empty);
-                    filePicker.Show();
+                    OpenFileDialog dialog = new("", ".hexlvl");
+                    dialog.CurrentFolder = (ProjectManager.CurrentProjectAssetsFolder ?? string.Empty);
+                    dialog.Show(AddSceneCallback);
                 }
             }
 
@@ -109,6 +99,12 @@
             {
                 ImGui.EndDisabled();
             }
+        }
+
+        private void AddSceneCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            options.Scenes.Add(Path.GetFileName(dialog.SelectedFile!));
         }
     }
 }

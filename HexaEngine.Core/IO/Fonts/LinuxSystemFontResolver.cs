@@ -105,7 +105,7 @@ namespace HexaEngine.UI.Graphics.Text
             }
         }
 
-        private static string GetString(IntPtr handle, string obj)
+        private static string? GetString(IntPtr handle, string obj)
         {
             var ptr = IntPtr.Zero;
             var result = FcPatternGetString(handle, obj, 0, ref ptr);
@@ -199,7 +199,7 @@ namespace HexaEngine.UI.Graphics.Text
                 Regex confRegex = new Regex("<dir>(?<dir>.*)</dir>", RegexOptions.Compiled);
                 using (var reader = new StreamReader(File.OpenRead("/etc/fonts/fonts.conf")))
                 {
-                    string line;
+                    string? line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         Match match = confRegex.Match(line);

@@ -54,14 +54,14 @@
 
         private static byte[] LookupSidByName(string accountName)
         {
-            byte[] sid = null;
+            byte[]? sid = null;
             uint cbSid = 0;
             StringBuilder referencedDomainName = new StringBuilder();
             uint cchReferencedDomainName = (uint)referencedDomainName.Capacity;
             SID_NAME_USE sidUse;
 
             int err = S_OK;
-            if (!LookupAccountName(null, accountName, sid, ref cbSid, referencedDomainName, ref cchReferencedDomainName, out sidUse))
+            if (!LookupAccountName(null!, accountName, sid!, ref cbSid, referencedDomainName, ref cchReferencedDomainName, out sidUse))
             {
                 err = Marshal.GetLastWin32Error();
                 if (err == ERROR_INSUFFICIENT_BUFFER)
@@ -69,7 +69,7 @@
                     sid = new byte[cbSid];
                     referencedDomainName.EnsureCapacity((int)cchReferencedDomainName);
                     err = S_OK;
-                    if (!LookupAccountName(null, accountName, sid, ref cbSid, referencedDomainName, ref cchReferencedDomainName, out sidUse))
+                    if (!LookupAccountName(null!, accountName, sid, ref cbSid, referencedDomainName, ref cchReferencedDomainName, out sidUse))
                     {
                         err = Marshal.GetLastWin32Error();
                     }
@@ -84,7 +84,7 @@
 
             // display the SID associated to the given user
             nint ptrSid;
-            if (!ConvertSidToStringSid(sid, out ptrSid))
+            if (!ConvertSidToStringSid(sid!, out ptrSid))
             {
                 err = Marshal.GetLastWin32Error();
                 var lastErrorMessage = new Win32Exception(err).Message;
@@ -92,12 +92,12 @@
             }
             else
             {
-                string sidString = Marshal.PtrToStringAuto(ptrSid);
+                string sidString = Marshal.PtrToStringAuto(ptrSid)!;
                 LocalFree(ptrSid);
                 Console.WriteLine($"Account ({referencedDomainName}){accountName} mapped to {sidString}");
             }
 
-            return sid;
+            return sid!;
         }
 
         [DllImport("Sechost.dll", SetLastError = true)]
@@ -235,8 +235,8 @@
         private bool _isProfiling = false;
 
         private static readonly int Pid = Environment.ProcessId;
-        private TextWriter log;
-        private SymbolReader reader;
+        private TextWriter log = null!;
+        private SymbolReader reader = null!;
 
         public DeepProfilerWindow()
         {
@@ -265,7 +265,6 @@
 
             var Pid = Environment.ProcessId;
             Guid perfInfoTaskGuid = new(0xce1dbfb4, 0x137e, 0x4da6, 0x87, 0xb0, 0x3f, 0x59, 0xaa, 0x10, 0x2c, 0xbc);
-            int profileOpcode = 46;
 
             _profilingTask = Task.Factory.StartNew(() =>
             {

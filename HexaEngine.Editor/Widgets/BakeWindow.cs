@@ -13,7 +13,7 @@
     public class BakeWindow : EditorWindow
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger("Baking");
-        private MeshBaker2 baker;
+        private MeshBaker2 baker = null!;
         private Task? task;
         private CancellationTokenSource cancellationToken = new();
 
@@ -50,7 +50,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image((ulong)baker.Texture.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.Texture.SRVArraySlices![i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();
@@ -59,7 +59,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image((ulong)baker.TextureFinal.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.TextureFinal.SRVArraySlices![i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();

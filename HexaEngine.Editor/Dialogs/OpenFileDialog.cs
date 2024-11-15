@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using System.Numerics;
 
+    [Obsolete("Use Widgets instead.")]
     public class OpenFileDialog
     {
         private bool shown;
@@ -11,8 +12,8 @@
         private readonly List<Item> files = [];
         private readonly List<Item> dirs = [];
         public string RootFolder;
-        private string currentFolder;
-        private string currentFolderBar;
+        private string currentFolder = null!;
+        private string currentFolderBar = null!;
         private string selectedFile = string.Empty;
         public List<string> AllowedExtensions = [];
         public bool OnlyAllowFolders;

@@ -9,7 +9,7 @@
 
     public class InputManagerWindow : EditorWindow
     {
-        private InputMap inputMap;
+        private InputMap inputMap = null!;
 
         private VirtualAxis? currentAxis = null;
         private int currentBinding = -1;
@@ -18,6 +18,7 @@
         private bool recordMouseButton;
 
         private bool unsavedChanges = false;
+        private bool unsavedDataDialogIsOpen;
 
         public InputManagerWindow()
         {
@@ -39,6 +40,35 @@
 
         private void MainWindowClosing(object? sender, Core.Windows.Events.CloseEventArgs e)
         {
+            if (unsavedChanges)
+            {
+                e.Handled = true;
+                if (unsavedDataDialogIsOpen)
+                {
+                    MessageBox.Show("(Input Manager) Unsaved changes", $"Do you want to save the changes in input map?", this, static (messageBox, state) =>
+                    {
+                        if (state is not InputManagerWindow inputManager)
+                        {
+                            return;
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.Yes)
+                        {
+                            inputManager.Save();
+                            Application.MainWindow.Close();
+                        }
+
+                        if (messageBox.Result == MessageBoxResult.No)
+                        {
+                            inputManager.unsavedChanges = false;
+                            Application.MainWindow.Close();
+                        }
+
+                        inputManager.unsavedDataDialogIsOpen = false;
+                    }, MessageBoxType.YesNoCancel);
+                    unsavedDataDialogIsOpen = true;
+                }
+            }
         }
 
         protected override void OnClosed()

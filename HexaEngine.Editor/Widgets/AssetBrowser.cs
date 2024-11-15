@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using Hexa.NET.Utilities;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
@@ -14,6 +15,8 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
+    using OpenFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.OpenFileDialog;
+    using RenameFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.RenameFileDialog;
 
     public enum PasteMode
     {
@@ -130,9 +133,6 @@
         private static readonly ConfigKey config = Config.Global.GetOrCreateKey("Editor").GetOrCreateKey("Asset Browser");
         private DirectoryInfo? currentDir;
         private DirectoryInfo? parentDir;
-        private readonly RenameFileDialog renameFileDialog = new(false);
-        private readonly RenameDirectoryDialog renameDirectoryDialog = new(false);
-        private readonly OpenFileDialog importFileDialog = new();
         private Directory rootDir;
         private readonly List<Item> files = [];
         private readonly List<Item> dirs = [];
@@ -500,7 +500,7 @@
                 var destFile = Path.Combine(destDirName, rel);
 
                 var destFileDirectory = Path.GetDirectoryName(destFile);
-                System.IO.Directory.CreateDirectory(destFileDirectory);
+                System.IO.Directory.CreateDirectory(destFileDirectory!);
 
                 File.Copy(file, destFile, overwrite);
             }
@@ -627,15 +627,16 @@
                             return;
                         }
 
-                        System.IO.Directory.Delete((string)c, true);
+                        System.IO.Directory.Delete((string)c!, true);
                         Refresh(true);
                     }, MessageBoxType.YesCancel);
                 }
 
                 if (ImGui.MenuItem($"{UwU.Rename} Rename"))
                 {
-                    renameDirectoryDialog.Directory = dir.Path;
-                    renameDirectoryDialog.Show();
+                    RenameFileDialog dialog = new();
+                    dialog.File = dir.Path;
+                    dialog.Show();
                 }
 
                 ImGui.Separator();
@@ -709,7 +710,7 @@
 
             if (file.Thumbnail != null && !file.Thumbnail.IsNull)
             {
-                ImageHelper.ImageCenteredH((ulong)file.Thumbnail.Value.SRV.NativePointer, imageSize);
+                ImageHelper.ImageCenteredH((ulong)file.Thumbnail.Value!.SRV!.NativePointer, imageSize);
             }
             else
             {
@@ -844,7 +845,7 @@
                 {
                     MessageBox.Show("Delete file", $"Are you sure you want to delete the file(s)?", this, (x, c) =>
                     {
-                        AssetBrowser browser = (AssetBrowser)c;
+                        AssetBrowser browser = (AssetBrowser)c!;
                         if (x.Result != MessageBoxResult.Yes)
                         {
                             return;
@@ -864,8 +865,9 @@
 
                 if (ImGui.MenuItem($"{UwU.Rename} Rename"))
                 {
-                    renameFileDialog.File = file.Path;
-                    renameFileDialog.Show();
+                    RenameFileDialog dialog = new();
+                    dialog.File = file.Path;
+                    dialog.Show();
                 }
 
                 ImGui.Separator();
@@ -1054,22 +1056,6 @@
                 return;
             }
 
-            if (renameFileDialog.Draw())
-            {
-                Refresh(false);
-            }
-            if (renameDirectoryDialog.Draw())
-            {
-                Refresh(true);
-            }
-            if (importFileDialog.Draw())
-            {
-                if (importFileDialog.Result == OpenFileResult.Ok)
-                {
-                    ImportAsync(importFileDialog.FullPath);
-                }
-            }
-
             ImGui.BeginTable("", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable);
             ImGui.TableSetupColumn("", 200f);
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
@@ -1256,10 +1242,10 @@
                 return;
             }
 
-            ImportAsync(e.GetString());
+            ImportFileAsync(e.GetString());
         }
 
-        private void ImportAsync(string? file)
+        private void ImportFileAsync(string? file)
         {
             if (file == null || currentDir == null)
             {
@@ -1284,6 +1270,38 @@
             }, (file, currentDir));
         }
 
+        private void ImportFilesAsync(IReadOnlyList<string> files)
+        {
+            if (files == null || currentDir == null || files.Count == 0)
+            {
+                return;
+            }
+
+            Task.Factory.StartNew(async args =>
+            {
+                if (args is not (IReadOnlyList<string> files, DirectoryInfo currentDir))
+                {
+                    return;
+                }
+
+                foreach (var file in files)
+                {
+                    var popup = PopupManager.Show(new ImportProgressModal("Importing asset(s) ...", "Please wait, importing asset(s) ..."));
+                    try
+                    {
+                        await SourceAssetsDatabase.ImportFileAsync(file, currentDir.FullName, null, popup);
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        popup.Dispose();
+                    }
+                }
+            }, (files, currentDir));
+        }
+
         private void DrawMenuBar()
         {
             if (ImGui.BeginMenuBar())
@@ -1297,10 +1315,22 @@
 
                 if (ImGui.Button($"{UwU.FileImport} Import"))
                 {
-                    importFileDialog.Show();
+                    OpenFileDialog openFileDialog = new();
+                    openFileDialog.AllowMultipleSelection = true;
+                    openFileDialog.Show(ImportCallback);
                 }
 
                 ImGui.EndMenuBar();
+            }
+        }
+
+        private void ImportCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok) return;
+
+            if (sender is OpenFileDialog importFileDialog)
+            {
+                ImportFilesAsync(importFileDialog.Selection);
             }
         }
     }

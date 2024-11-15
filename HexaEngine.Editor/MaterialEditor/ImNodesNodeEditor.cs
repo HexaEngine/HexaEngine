@@ -52,7 +52,7 @@
 
         public event EventHandler<LinkStartedEventArgs>? LinkStarted;
 
-        public event EventHandler<LinkDroppedEventArgs>? LinkDropped;
+        // public event EventHandler<LinkDroppedEventArgs>? LinkDropped;
 
         public ImNodesMiniMapLocation Location { get; set; }
 
