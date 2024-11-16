@@ -15,16 +15,16 @@
         }
 
         [JsonIgnore]
-        public FloatPin InLeft { get; private set; }
+        public FloatPin InLeft { get; private set; } = null!;
 
         [JsonIgnore]
-        public FloatPin InRight { get; private set; }
+        public FloatPin InRight { get; private set; } = null!;
 
         [JsonIgnore]
         public abstract string Op { get; }
 
         [JsonIgnore]
-        public Pin Out { get; private set; }
+        public Pin Out { get; private set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {

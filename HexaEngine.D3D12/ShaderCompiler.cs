@@ -51,7 +51,7 @@
             stringArgs.PushBack(DXC.DXC_ARG_SKIP_OPTIMIZATIONS);
             stringArgs.PushBack(DXC.DXC_ARG_DEBUG_NAME_FOR_SOURCE);
 #else
-            stringArgs.PushBack(DXC.ArgOptimizationLevel3);
+            stringArgs.PushBack(DXC.DXC_ARG_OPTIMIZATION_LEVEL3);
 #endif
 
             UnsafeList<Hexa.NET.Utilities.Pointer<char>> arguments = [];

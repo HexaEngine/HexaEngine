@@ -16,7 +16,7 @@
     {
         private readonly D3D11GraphicsDevice device;
         private readonly D3D11GraphicsPipeline pipeline;
-        private readonly D3D11ResourceBindingList? resourceBindingList;
+        private readonly D3D11ResourceBindingList resourceBindingList;
         private readonly string dbgName;
 
         private ComPtr<ID3D11VertexShader> vs;

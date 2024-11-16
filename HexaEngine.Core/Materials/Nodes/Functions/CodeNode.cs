@@ -22,7 +22,7 @@
         public override SType Type => type;
 
         [JsonIgnore]
-        public override FloatPin Out { get; protected set; }
+        public override FloatPin Out { get; protected set; } = null!;
 
         public string CodeBody
         {

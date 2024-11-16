@@ -17,6 +17,10 @@
 
     public class ParallaxMapNode : FuncCallDeclarationBaseNode
     {
+        private ParallaxMode parallaxMode;
+        private int maxLayers = 32;
+        private int minLayers = 8;
+
         public ParallaxMapNode(int id, bool removable, bool isStatic) : base(id, "Parallax Map", removable, isStatic)
         {
         }
@@ -70,12 +74,9 @@
         }
 
         [JsonIgnore]
-        public override FloatPin Out { get; protected set; }
+        public override FloatPin Out { get; protected set; } = null!;
 
-        [JsonIgnore] public Pin InTex;
-        private ParallaxMode parallaxMode;
-        private int maxLayers = 32;
-        private int minLayers = 8;
+        [JsonIgnore] public Pin InTex { get; protected set; } = null!;
 
         [JsonIgnore]
         public override string MethodName => "ParallaxMap";

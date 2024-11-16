@@ -59,13 +59,13 @@
 
             var outputMesh = MeshDecimation.DecimateMesh(algorithm, mesh, targetTri);
 
-            MeshLODData outputData = new(0, (uint)outputMesh.VertexCount, (uint)outputMesh.Indices.Length, default, default, default, default, default, default, default, default, default);
+            MeshLODData outputData = new(0, (uint)outputMesh.VertexCount, (uint)outputMesh.Indices.Length, default, default, default!, default!, default!, default!, default!, default!, default);
 
             outputData.Indices = outputMesh.Indices.Select(x => x).ToArray();
-            outputData.Colors = outputMesh.Colors;
+            outputData.Colors = outputMesh.Colors!;
             outputData.Positions = new Vector3[outputMesh.VertexCount];
-            outputData.Normals = outputMesh.Normals;
-            outputData.Tangents = outputMesh.Tangents;
+            outputData.Normals = outputMesh.Normals!;
+            outputData.Tangents = outputMesh.Tangents!;
             outputData.UVChannels = new UVChannel[UVChannelInfo.MaxChannels];
             outputData.BoneWeights = outputMesh.BoneWeights?.Select(x => new IO.BoneWeight(x.BoneIndex0, x.BoneIndex1, x.BoneIndex2, x.BoneIndex3, x.BoneWeight0, x.BoneWeight1, x.BoneWeight2, x.BoneWeight3)).ToArray();
 

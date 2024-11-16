@@ -570,7 +570,7 @@
 
             cacheStream.Position = entry.Position;
             var span = entry.AsSpan();
-            cacheStream.Read(span);
+            cacheStream.ReadExactly(span);
 
             cacheFileSemaphore.Release();
         }
@@ -1266,7 +1266,7 @@
 
             cacheStream.Position = entry.Position;
             var span = entry.AsSpan();
-            cacheStream.Read(span);
+            cacheStream.ReadExactly(span);
 
             cacheFileSemaphore.Release();
         }

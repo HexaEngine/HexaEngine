@@ -37,7 +37,7 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ModelImporter));
         private static readonly Assimp assimp = Assimp.GetApi();
-        private ImportContext context;
+        private ImportContext context = null!;
 
         public Type? SettingsType { get; } = typeof(ModelImporterSettings);
 

@@ -67,7 +67,7 @@
                     // Otherwise, add the member to the list
                     members.Add(new ConstantBufferMemberInfo
                     {
-                        Name = ToStringFromUTF8(member.Name),
+                        Name = ToStringFromUTF8(member.Name)!,
                         AbsoluteOffset = member.AbsoluteOffset,
                         Offset = member.Offset,
                         PaddedSize = member.PaddedSize,

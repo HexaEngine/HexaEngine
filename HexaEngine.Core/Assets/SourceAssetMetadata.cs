@@ -31,7 +31,7 @@
         }
 
         [JsonIgnore]
-        internal string MetadataFilePath { get; set; }
+        internal string MetadataFilePath { get; set; } = null!;
 
         public string FilePath { get; internal set; }
 
@@ -108,7 +108,7 @@
 
                 try
                 {
-                    metadata = (SourceAssetMetadata?)serializer.Deserialize(reader, typeof(SourceAssetMetadata));
+                    metadata = (SourceAssetMetadata?)serializer.Deserialize(reader, typeof(SourceAssetMetadata)) ?? throw new Exception($"Metadata was null, '{metafile}'");
                     metadata.MetadataFilePath = metafile;
                 }
                 finally
@@ -286,11 +286,11 @@
                     return t;
                 }
 
-                Additional[key] = defaultValue;
+                Additional[key] = defaultValue!;
                 return defaultValue;
             }
 
-            Additional.Add(key, defaultValue);
+            Additional.Add(key, defaultValue!);
             return defaultValue;
         }
 
@@ -301,7 +301,7 @@
 
         public void SetValue<T>(string key, T value)
         {
-            Additional[key] = value;
+            Additional[key] = value!;
         }
 
         public T? GetAdditionalMetadata<T>(string key) where T : class

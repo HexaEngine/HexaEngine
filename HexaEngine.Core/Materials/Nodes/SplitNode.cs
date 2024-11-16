@@ -64,6 +64,6 @@
         public SType Type { get; private set; }
 
         [JsonIgnore]
-        public Pin In;
+        public Pin In { get; private set; } = null!;
     }
 }

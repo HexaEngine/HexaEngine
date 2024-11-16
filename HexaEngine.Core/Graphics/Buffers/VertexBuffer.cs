@@ -28,7 +28,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexBuffer{T}"/> class with default capacity.
         /// </summary>
-        /// <param name="device">The graphics device associated with the buffer.</param>
         /// <param name="flags">The CPU access flags for the buffer.</param>
         /// <param name="filename">The name of the file calling the constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the file calling the constructor (for debugging purposes).</param>

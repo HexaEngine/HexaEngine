@@ -41,7 +41,7 @@ namespace HexaEngine.Core.Graphics
 
         public override string Identifier => filePath;
 
-        public override string WorkingDir => Path.GetDirectoryName(filePath);
+        public override string WorkingDir => Path.GetDirectoryName(filePath)!;
 
         public override byte[] GetData()
         {

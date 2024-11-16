@@ -16,6 +16,7 @@
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Text;
+    using YamlDotNet.Core.Tokens;
     using static Extensions.SdlErrorHandlingExtensions;
     using Key = Input.Key;
 
@@ -382,6 +383,10 @@
             get => y;
             set
             {
+                if (titlebar != null)
+                {
+                    value += titlebar.Height;
+                }
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 y = value;
                 SDL.SetWindowPosition(window, x, value);
@@ -413,9 +418,16 @@
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public int Height
         {
-            get => height;
+            get
+            {
+                return height;
+            }
             set
             {
+                if (titlebar != null)
+                {
+                    value -= titlebar.Height;
+                }
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 resizedEventArgs.OldHeight = height;
                 resizedEventArgs.NewHeight = value;
@@ -1211,7 +1223,7 @@
 
         #endregion Events
 
-        private SDLHitTest callback;
+        private SDLHitTest? callback;
 
         private void AttachTitlebar(ITitleBar titlebar)
         {

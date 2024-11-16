@@ -8,9 +8,6 @@
 
     public class GenericNoiseNode : FuncCallDeclarationBaseNode
     {
-        private FloatPin InUV;
-        private FloatPin Scale;
-
         public GenericNoiseNode(int id, bool removable, bool isStatic) : base(id, "Generic Noise", removable, isStatic)
         {
         }
@@ -19,13 +16,13 @@
 
         public override SType Type { get; } = new SType(ScalarType.Float);
 
-        public override FloatPin Out { get; protected set; }
+        public override FloatPin Out { get; protected set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {
             Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.CircleFilled, PinKind.Output, PinType.Float));
-            InUV = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1, defaultExpression: "pixel.uv"));
-            Scale = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "scale", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1, defaultExpression: "pixel.uv"));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "scale", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1));
 
             base.Initialize(editor);
         }

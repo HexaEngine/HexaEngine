@@ -25,15 +25,15 @@
         {
         }
 
-        public IThreadDispatcher Dispatcher { get; private set; }
+        public IThreadDispatcher Dispatcher { get; private set; } = null!;
 
-        public IAudioDevice AudioDevice { get; private set; }
+        public IAudioDevice AudioDevice { get; private set; } = null!;
 
-        public IGraphicsDevice GraphicsDevice { get; private set; }
+        public IGraphicsDevice GraphicsDevice { get; private set; } = null!;
 
-        public IGraphicsContext GraphicsContext { get; private set; }
+        public IGraphicsContext GraphicsContext { get; private set; } = null!;
 
-        public ISwapChain SwapChain { get; private set; }
+        public ISwapChain SwapChain { get; private set; } = null!;
 
         public abstract Viewport RenderViewport { get; }
 

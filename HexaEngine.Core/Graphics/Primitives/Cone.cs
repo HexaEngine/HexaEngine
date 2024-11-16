@@ -21,7 +21,6 @@
         /// <summary>
         /// Initializes the cone mesh.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the cone mesh.
         /// </returns>

@@ -136,7 +136,7 @@
 
             for (int i = 0; i < header.Layers; i++)
             {
-                layers.Add(TerrainLayer.Read(stream, header.Encoding, header.Endianness));
+                layers.Add(TerrainLayer.Read(stream, header.Encoding!, header.Endianness));
             }
 
             for (int i = 0; i < header.LayerGroups; i++)

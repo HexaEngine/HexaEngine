@@ -438,6 +438,7 @@
 
         public GenerationContext()
         {
+            InputVar = null!;
         }
 
         public GenerationContext(Struct input, Operation inputVar, Struct output, OutputDefinition outputDef)

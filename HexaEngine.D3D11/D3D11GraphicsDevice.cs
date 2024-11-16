@@ -22,7 +22,7 @@
         protected bool disposedValue;
 
         public static readonly ShaderCompiler Compiler;
-        private long graphicsMemoryUsage;
+
         public ComPtr<ID3D11Device5> Device;
         public ComPtr<ID3D11DeviceContext4> DeviceContext;
 
@@ -87,13 +87,11 @@
 
         public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;
 
-        public IGraphicsContext Context { get; protected set; }
+        public IGraphicsContext Context { get; protected set; } = null!;
 
         public ITextureLoader TextureLoader { get; }
 
-        public IGPUProfiler Profiler { get; }
-
-        public long GraphicsMemoryUsage => graphicsMemoryUsage;
+        public IGPUProfiler Profiler { get; } = null!;
 
         public string? DebugName { get; set; } = string.Empty;
 

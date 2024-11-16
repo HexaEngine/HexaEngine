@@ -6,7 +6,7 @@
 
     public class LerpNode : FuncCallNodeBase
     {
-        private FloatPin mix;
+        private FloatPin mix = null!;
 
         public LerpNode(int id, bool removable, bool isStatic) : base(id, "Lerp", removable, isStatic)
         {

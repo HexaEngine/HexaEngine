@@ -70,7 +70,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepthMipChain"/> class with a specified width and height.
         /// </summary>
-        /// <param name="device">The graphics device for rendering.</param>
         /// <param name="width">The width of the depth texture.</param>
         /// <param name="height">The height of the depth texture.</param>
         /// <param name="filename">The name of the source file (automatically generated).</param>

@@ -43,7 +43,7 @@
             if (!FileSystem.TryOpenRead(path, out VirtualStream? fs))
             {
                 Trace.WriteLine($"Warning couldn't find texture {path}");
-                return default;
+                return default!;
             }
 
             ScratchImage image = DirectXTex.CreateScratchImage();
@@ -192,7 +192,7 @@
         {
             ScratchImage image = DirectXTex.CreateScratchImage();
             var data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
+            stream.ReadExactly(data);
             string extension = Path.GetExtension(filename);
 
             fixed (byte* p = data)
@@ -224,7 +224,7 @@
         {
             ScratchImage image = DirectXTex.CreateScratchImage();
             var data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
+            stream.ReadExactly(data);
 
             fixed (byte* p = data)
             {

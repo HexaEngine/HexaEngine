@@ -71,7 +71,7 @@ namespace HexaEngine.Core.IO.Binary.Meshes
 
         public unsafe void Read(Stream stream, Encoding encoding, Endianness endianness, UVChannelInfo info)
         {
-            Name = stream.ReadString(encoding, endianness);
+            Name = stream.ReadString(encoding, endianness)!;
             Weight = stream.ReadFloat(endianness);
             Flags = (VertexFlags)stream.ReadInt32(endianness);
             VertexCount = stream.ReadUInt32(endianness);

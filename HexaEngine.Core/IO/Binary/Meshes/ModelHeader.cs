@@ -92,7 +92,9 @@
 
             if (version == new Version(11, 0, 0, 0))
             {
+#pragma warning disable CS0618 // Legacy support.
                 MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+#pragma warning restore CS0618 // Legacy support.
             }
             else if (version == Version)
             {
@@ -131,7 +133,9 @@
 
             if (version == new Version(11, 0, 0, 0))
             {
+#pragma warning disable CS0618 // Legacy support.
                 MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+#pragma warning restore CS0618 // Legacy support.
             }
             else if (version == Version)
             {

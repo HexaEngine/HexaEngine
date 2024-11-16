@@ -247,7 +247,7 @@
             {
                 for (int i = 0; i < BoneCount; i++)
                 {
-                    Bones[i].Write(stream, encoding, endianness);
+                    Bones![i].Write(stream, encoding, endianness);
                 }
             }
 

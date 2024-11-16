@@ -210,12 +210,14 @@
             DeviceContext.EndEvent();
         }
 
+        [Obsolete("Use command buffers")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ExecuteCommandList(ICommandList commandList, bool restoreState)
         {
             DeviceContext.ExecuteCommandList((ID3D11CommandList*)commandList.NativePointer, restoreState);
         }
 
+        [Obsolete("Use command buffers")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ICommandList FinishCommandList(bool restoreState)
         {

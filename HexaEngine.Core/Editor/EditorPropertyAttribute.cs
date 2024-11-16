@@ -236,7 +236,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorPropertyAttribute{T}"/> class with the specified name.
         /// </summary>
-        /// <param name="name">The name of the property.</param>
         public EditorPropertyAttribute() :
             base(string.Empty,
                 Enum.GetValues<T>().Cast<object>().ToArray(),

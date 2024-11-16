@@ -17,7 +17,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="GeodesicSphere"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         public GeodesicSphere() : base()
         {
         }

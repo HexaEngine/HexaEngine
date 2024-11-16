@@ -54,7 +54,7 @@ namespace HexaEngine.Materials
                 MaxDepth = int.MaxValue
             };
 
-            var container = JsonConvert.DeserializeObject<NodeContainer>(json, settings);
+            var container = JsonConvert.DeserializeObject<NodeContainer>(json, settings) ?? throw new Exception("Container is null deserialization failed.");
             NodeEditor editor = new();
             container.Build(editor);
             return editor;

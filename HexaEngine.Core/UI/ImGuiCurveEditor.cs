@@ -9,10 +9,7 @@ namespace HexaEngine.Core.UI
 
     public static unsafe class ImGuiCurveEditor
     {
-        private static float NODE_SLOT_RADIUS = 4.0f;
-
-        private static Vector2 node_pos;
-        private static int last_node_id;
+        private const float NODE_SLOT_RADIUS = 4.0f;
 
         public enum CurveEditorFlags
         {

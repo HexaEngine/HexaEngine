@@ -6,7 +6,7 @@
 
     public class SmoothStepNode : FuncCallNodeBase
     {
-        private FloatPin mix;
+        private FloatPin mix = null!;
 
         public SmoothStepNode(int id, bool removable, bool isStatic) : base(id, "SmoothStep", removable, isStatic)
         {

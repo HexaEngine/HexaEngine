@@ -81,7 +81,7 @@
             return signature[0];
         }
 
-        private static bool TryGetEntry(SHA256Signature key, [MaybeNullWhen(false)] out ShaderCacheEntry? entry)
+        private static bool TryGetEntry(SHA256Signature key, [NotNullWhen(true)] out ShaderCacheEntry? entry)
         {
             return keyToEntry.TryGetValue(key, out entry);
         }

@@ -93,7 +93,7 @@
             ContentStart = stream.ReadInt64(Endianness);
             CRC32 = stream.ReadUInt32(Endianness);
             Span<byte> buffer = stackalloc byte[32];
-            stream.Read(buffer);
+            stream.ReadExactly(buffer);
             SHA256 = new(buffer, Endianness == Endianness.BigEndian);
         }
 

@@ -145,7 +145,7 @@
         /// <returns>The read <see cref="ThumbnailCacheEntry"/>.</returns>
         public static ThumbnailCacheEntry Read(Stream stream, Span<byte> buffer)
         {
-            stream.Read(buffer);
+            stream.ReadExactly(buffer);
             Guid key = new(buffer.Slice(0, 16));
             long size = BinaryPrimitives.ReadInt64LittleEndian(buffer[16..]);
             long position = BinaryPrimitives.ReadInt64LittleEndian(buffer[24..]);
@@ -674,7 +674,7 @@
 
             cacheStream.Position = entry.Position;
             var span = entry.AsSpan();
-            cacheStream.Read(span);
+            cacheStream.ReadExactly(span);
 
             cacheFileSemaphore.Release();
         }

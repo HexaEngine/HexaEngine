@@ -107,7 +107,7 @@
 
             for (int i = 0; i < header.MaterialCount; i++)
             {
-                library.materials.Add(MaterialData.Read(stream, header.Encoding, header.Endianness, version));
+                library.materials.Add(MaterialData.Read(stream, header.Encoding!, header.Endianness, version));
             }
 
             stream.Close();

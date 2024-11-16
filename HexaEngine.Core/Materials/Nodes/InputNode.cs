@@ -26,24 +26,24 @@
         }
 
         [JsonIgnore]
-        public Pin Color;
+        public Pin Color { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin WorldPos;
+        public Pin WorldPos { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin TexCoord;
+        public Pin TexCoord { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin Normal;
+        public Pin Normal { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin Tangent;
+        public Pin Tangent { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin Bitangent;
+        public Pin Bitangent { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin ViewDir;
+        public Pin ViewDir { get; private set; } = null!;
     }
 }

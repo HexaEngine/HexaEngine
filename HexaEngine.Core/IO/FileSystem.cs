@@ -736,7 +736,7 @@
         {
             var fs = OpenRead(path);
             var buffer = new byte[fs.Length];
-            fs.Read(buffer, 0, buffer.Length);
+            fs.ReadExactly(buffer, 0, buffer.Length);
             fs.Close();
             return buffer;
         }
@@ -750,7 +750,7 @@
         {
             var fs = OpenRead(path);
             var blob = new FileBlob((nint)fs.Length);
-            fs.Read(blob.AsSpan());
+            fs.ReadExactly(blob.AsSpan());
             fs.Close();
             return blob;
         }

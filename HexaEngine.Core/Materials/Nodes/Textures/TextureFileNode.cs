@@ -165,11 +165,11 @@
             }
         }
 
-        [JsonIgnore] public Pin OutColor { get; private set; }
+        [JsonIgnore] public Pin OutColor { get; private set; } = null!;
 
-        [JsonIgnore] public Pin OutTex { get; private set; }
+        [JsonIgnore] public Pin OutTex { get; private set; } = null!;
 
-        [JsonIgnore] public Pin InUV { get; private set; }
+        [JsonIgnore] public Pin InUV { get; private set; } = null!;
 
         [JsonIgnore] string ITextureNode.Name => Name;
 

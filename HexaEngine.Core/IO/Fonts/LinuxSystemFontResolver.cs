@@ -150,11 +150,8 @@ namespace HexaEngine.UI.Graphics.Text
             {
                 return ResolveFontConfig().Where(x => x.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)).ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-#if DEBUG
-                Console.Error.WriteLine(ex.ToString());
-#endif
                 return ResolveFallback().Where(x => x.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)).ToArray();
             }
         }
@@ -218,12 +215,8 @@ namespace HexaEngine.UI.Graphics.Text
                     } // Whend
                 } // End Using reader
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-#if DEBUG
-                Console.Error.WriteLine(ex.Message);
-                Console.Error.WriteLine(ex.StackTrace);
-#endif
             }
 
             dirs.Add("/usr/share/fonts");

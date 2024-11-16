@@ -84,7 +84,6 @@
         /// </summary>
         /// <param name="path">The path from which the model file will be loaded.</param>
         /// <param name="loadMode"></param>
-        /// <param name="stream"></param>
         /// <returns>The loaded model file.</returns>
         public static ModelFile Load(string path, MeshLoadMode loadMode)
         {

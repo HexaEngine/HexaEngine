@@ -20,7 +20,6 @@
         /// <summary>
         /// Initializes the dodecahedron mesh with vertices and indices.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the dodecahedron mesh.
         /// </returns>

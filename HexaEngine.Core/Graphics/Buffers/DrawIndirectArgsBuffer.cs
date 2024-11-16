@@ -130,7 +130,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawIndirectArgsBuffer{T}"/> class with an array of initial data elements, count, and specified CPU access flags.
         /// </summary>
-        /// <param name="device">The graphics device associated with this buffer.</param>
         /// <param name="initialData">An array of initial data to populate the buffer.</param>
         /// <param name="count">The number of elements in the initial data array.</param>
         /// <param name="cpuAccessFlags">The CPU access flags for the buffer.</param>

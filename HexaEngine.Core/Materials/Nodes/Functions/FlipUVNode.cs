@@ -28,10 +28,10 @@
         }
 
         [JsonIgnore]
-        public Pin InUV;
+        public Pin InUV { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin Out;
+        public Pin Out { get; private set; } = null!;
 
         public FlipMode FlipMode;
     }

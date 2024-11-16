@@ -8,7 +8,9 @@
 		<DebugType>embedded</DebugType>
 		<DefineConstants>$(DefineConstants)</DefineConstants>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<LangVersion>preview</LangVersion>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
 	</PropertyGroup>
 
 

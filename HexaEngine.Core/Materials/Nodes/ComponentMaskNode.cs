@@ -22,13 +22,13 @@
         }
 
         [JsonIgnore]
-        public Pin In;
+        public Pin In { get; private set; } = null!;
 
         [JsonIgnore]
-        public Pin Out;
+        public Pin Out { get; private set; } = null!;
 
         [JsonIgnore]
-        public SType Type;
+        public SType Type { get; private set; }
 
         public string Mask { get => mask; set => mask = value; }
 

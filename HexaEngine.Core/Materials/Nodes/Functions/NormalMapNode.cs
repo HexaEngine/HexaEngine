@@ -25,7 +25,7 @@
         }
 
         [JsonIgnore]
-        public override FloatPin Out { get; protected set; }
+        public override FloatPin Out { get; protected set; } = null!;
 
         [JsonIgnore]
         public override string MethodName => "NormalMap";

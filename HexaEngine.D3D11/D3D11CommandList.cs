@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
 
+    [Obsolete("Use command buffers")]
     public unsafe class D3D11CommandList : DeviceChildBase, ICommandList
     {
         internal readonly ComPtr<ID3D11CommandList> commandList;

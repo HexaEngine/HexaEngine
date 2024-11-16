@@ -21,7 +21,6 @@
         /// <summary>
         /// Initializes the cylinder mesh with vertices and indices.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the cylinder mesh.
         /// </returns>

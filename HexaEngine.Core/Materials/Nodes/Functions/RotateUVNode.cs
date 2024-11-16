@@ -14,10 +14,6 @@
 
     public class RotateUVNode : FuncCallDeclarationBaseNode
     {
-        private FloatPin InUV;
-        private FloatPin Rotate;
-        private FloatPin Mid;
-
         public RotateUVNode(int id, bool removable, bool isStatic) : base(id, "Rotate UV", removable, isStatic)
         {
         }
@@ -28,14 +24,14 @@
         [JsonIgnore]
         public override SType Type { get; } = new SType(ScalarType.Float);
 
-        public override FloatPin Out { get; protected set; }
+        public override FloatPin Out { get; protected set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {
             Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.CircleFilled, PinKind.Output, PinType.Float2));
-            InUV = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1, defaultExpression: "pixel.uv"));
-            Rotate = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "rotation", PinShape.CircleFilled, PinKind.Input, PinType.Float, 1));
-            Mid = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "mid", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1, defaultExpression: "pixel.uv"));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "rotation", PinShape.CircleFilled, PinKind.Input, PinType.Float, 1));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "mid", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1));
 
             base.Initialize(editor);
         }

@@ -17,9 +17,5 @@
         public MetadataNotFoundException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
-
-        protected MetadataNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

@@ -77,6 +77,6 @@
         public SType Type { get; private set; }
 
         [JsonIgnore]
-        public Pin Out;
+        public Pin Out { get; private set; } = null!;
     }
 }

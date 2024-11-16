@@ -20,7 +20,7 @@
         public IReadOnlyList<FloatPin> Params => pins;
 
         [JsonIgnore]
-        public Pin Out { get; private set; }
+        public Pin Out { get; private set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {

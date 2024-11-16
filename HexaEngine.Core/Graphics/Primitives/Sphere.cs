@@ -22,7 +22,6 @@
         /// <summary>
         /// Initializes the sphere mesh by creating vertex and index buffers.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
         protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
         {

@@ -5,7 +5,7 @@
 
     public class JsonMaterialFile
     {
-        public string Name;
+        public string Name = null!;
         public List<MaterialProperty> Properties = [];
         public List<MaterialTexture> Textures = [];
         public List<MaterialShader> Shaders = [];

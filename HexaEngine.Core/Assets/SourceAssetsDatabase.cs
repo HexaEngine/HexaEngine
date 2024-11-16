@@ -31,7 +31,7 @@
             }
             else
             {
-                pool.TryPop(out accessHandle.Semaphore);
+                pool.TryPop(out accessHandle.Semaphore!);
                 accessHandle.Semaphore ??= new(1);
                 accessHandle.Refs++;
                 handles[file] = accessHandle;
@@ -73,11 +73,11 @@
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
         private static readonly object _lock = new();
-        private static string rootFolder;
-        private static string rootAssetsFolder;
-        private static string cacheRootFolder;
-        private static string cacheFolder;
-        private static ThumbnailCache thumbnailCache;
+        private static string rootFolder = null!;
+        private static string rootAssetsFolder = null!;
+        private static string cacheRootFolder = null!;
+        private static string cacheFolder = null!;
+        private static ThumbnailCache thumbnailCache = null!;
         private static FileSystemWatcher? watcher;
         private static readonly List<SourceAssetMetadata> sourceAssets = [];
         private static readonly Dictionary<Guid, SourceAssetMetadata> guidToSourceAsset = [];
@@ -697,7 +697,7 @@
             {
                 if (importedFiles.Contains(filePath))
                 {
-                    return Task.FromResult(GetMetadata(filePath));
+                    return Task.FromResult(GetMetadata(filePath))!;
                 }
                 importedFiles.Add(filePath);
             }
@@ -716,7 +716,7 @@
                     File.Delete(filePath);
                 }
 
-                return Task.FromResult<SourceAssetMetadata>(null);
+                return Task.FromResult<SourceAssetMetadata>(null!);
             }
 
             return AddFileAsync(null, filePath, metadataFile, provider, progress);
@@ -745,7 +745,7 @@
             {
                 if (importedFiles.Contains(filePath))
                 {
-                    return Task.FromResult(GetMetadata(filePath));
+                    return Task.FromResult(GetMetadata(filePath))!;
                 }
                 importedFiles.Add(filePath);
             }
@@ -764,7 +764,7 @@
                     File.Delete(filePath);
                 }
 
-                return Task.FromResult<SourceAssetMetadata>(null);
+                return Task.FromResult<SourceAssetMetadata>(null!);
             }
 
             return AddFileAsync(path, filePath, metadataFile, provider, progress);

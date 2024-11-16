@@ -55,7 +55,7 @@
         public void Read(Stream src)
         {
             Span<byte> buffer = stackalloc byte[12];
-            src.Read(buffer);
+            src.ReadExactly(buffer);
             Width = BinaryPrimitives.ReadInt32LittleEndian(buffer);
             Height = BinaryPrimitives.ReadInt32LittleEndian(buffer[4..]);
             Format = (Format)BinaryPrimitives.ReadInt32LittleEndian(buffer[8..]);

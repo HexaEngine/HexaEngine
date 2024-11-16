@@ -25,7 +25,7 @@
 
             paths.Push(basePath);
             var dirName = Path.GetDirectoryName(path);
-            basePath = dirName;
+            basePath = dirName!;
 
             *ppData = AllocCopyT(data);
             *pBytes = (uint)data.Length;
