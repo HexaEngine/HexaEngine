@@ -11,7 +11,7 @@
     public class ObjectCullPass : ComputePass
     {
         private bool isEnabled;
-        private ResourceRef<DepthMipChain> chain;
+        private ResourceRef<DepthMipChain> chain = null!;
 
         public ObjectCullPass() : base("ObjectCull")
         {
@@ -27,12 +27,12 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            var camera = CameraManager.Culling;
+            var camera = CameraManager.Culling!;
             var manager = CullingManager.Current;
             var cull = manager.Context;
 
             manager.UpdateCamera(context, camera, creator.Viewport);
-            manager.ExecuteCulling(context, camera, cull.Count, cull.TypeCount, chain.Value, profiler);
+            manager.ExecuteCulling(context, camera, cull.Count, cull.TypeCount, chain.Value!, profiler);
         }
     }
 }

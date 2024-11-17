@@ -21,7 +21,7 @@
         }
 
         [JsonIgnore]
-        public bool Enabled { get => (bool)Data["Enabled"]; set => Data["Enabled"] = value; }
+        public bool Enabled { get => (bool)Data["Enabled"]!; set => Data["Enabled"] = value; }
 
         public void Apply(object target, PostFxProxy proxyBase, float blend, VolumeTransitionMode mode)
         {

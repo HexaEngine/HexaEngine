@@ -164,7 +164,8 @@
                         continue;
                     }
                     DebugDraw.DrawQuadBillboard(cam.Transform.GlobalPosition, pos, Vector3.UnitY, forward, new(0.25f), cameraUVStart, cameraUVEnd, cameraTint, cameraIconPtr);
-                    //DebugDraw.DrawFrustum(cam.Transform.NormalizedFrustum, Vector4.One);
+                    var cn = (Vector3[])cam.Transform.NormalizedFrustum.Corners;
+                    DebugDraw.DrawFrustum(cn, Vector4.One);
                 }
             }
 

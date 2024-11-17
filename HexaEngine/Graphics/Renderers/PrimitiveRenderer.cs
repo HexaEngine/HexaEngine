@@ -4,25 +4,20 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using System.Numerics;
 
     public class PrimitiveRenderer : IRenderer, IDisposable
     {
-        private ulong dirtyFrame;
-
-        private readonly ConstantBuffer<UPoint4> offsetBuffer;
-        private readonly StructuredBuffer<Matrix4x4> transformBuffer;
-        private readonly StructuredBuffer<uint> transformOffsetBuffer;
-        private Material material;
-        private IPrimitive primitive;
+        private readonly ConstantBuffer<UPoint4> offsetBuffer = null!;
+        private readonly StructuredBuffer<Matrix4x4> transformBuffer = null!;
+        private readonly StructuredBuffer<uint> transformOffsetBuffer = null!;
+        private Material material = null!;
+        private IPrimitive primitive = null!;
         private BoundingBox boundingBox;
         private bool initialized;
 
@@ -40,8 +35,6 @@
             this.primitive = primitive;
             this.material = material;
 
-            CullingManager.Current.BuffersResized += TransformBufferResize;
-
             initialized = true;
         }
 
@@ -50,20 +43,13 @@
             this.primitive = primitive;
             this.material = material;
 
-            CullingManager.Current.BuffersResized += TransformBufferResize;
-
             initialized = true;
-        }
-
-        private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)
-        {
-            dirtyFrame = Time.Frame;
         }
 
         public void Uninitialize()
         {
-            primitive = null;
-            material = null;
+            primitive = null!;
+            material = null!;
             initialized = false;
         }
 

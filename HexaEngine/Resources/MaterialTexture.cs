@@ -4,9 +4,9 @@
 
     public class MaterialTexture : ResourceInstance
     {
-        public Texture2D Texture;
-        public IShaderResourceView ShaderResourceView;
-        public ISamplerState Sampler;
+        public Texture2D Texture = null!;
+        public IShaderResourceView ShaderResourceView = null!;
+        public ISamplerState Sampler = null!;
         public Core.IO.Binary.Materials.MaterialTexture Desc;
         private volatile bool initialized = false;
 
@@ -20,7 +20,7 @@
         public void Initialize(Texture2D texture, ISamplerState sampler)
         {
             Texture = texture;
-            ShaderResourceView = texture.SRV;
+            ShaderResourceView = texture.SRV!;
             Sampler = sampler;
             initialized = true;
         }

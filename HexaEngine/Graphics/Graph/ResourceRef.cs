@@ -89,7 +89,7 @@
 
         public static implicit operator T(ResourceRef<T> resourceRef)
         {
-            return resourceRef.Value;
+            return resourceRef.Value!;
         }
 
         public void Dispose()

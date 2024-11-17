@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.UI
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Graphics.Renderers;
     using System.Numerics;
 
     public delegate void DrawMainMenuBar(TitleBarContext context);
@@ -23,6 +24,7 @@
 
         public override void Draw(TitleBarContext context)
         {
+            ImGuiManager.PushFont("Default");
             ImGui.PushStyleColor(ImGuiCol.MenuBarBg, context.BackgroundColor);
             if (ImGui.BeginMainMenuBar())
             {
@@ -33,6 +35,7 @@
                 ImGui.EndMainMenuBar();
             }
             ImGui.PopStyleColor();
+            ImGuiManager.PopFont();
         }
     }
 }

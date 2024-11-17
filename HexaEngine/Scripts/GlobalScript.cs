@@ -80,7 +80,7 @@
         {
             lock (this)
             {
-                scriptType = ScriptAssemblyManager.GetType(scriptTypeName);
+                scriptType = ScriptAssemblyManager.GetType(scriptTypeName!);
 
                 if (scriptType == null)
                 {

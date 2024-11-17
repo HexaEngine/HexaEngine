@@ -13,8 +13,8 @@
     {
         internal PxQueryFilterCallback* queryFilterCallback;
         private bool disposedValue;
-        private readonly QueryFilterCallbackDelegate callback;
-        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter;
+        private readonly QueryFilterCallbackDelegate callback = null!;
+        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter = null!;
 
         public QueryFilterCallback(RigidBody actorToIgnore)
         {

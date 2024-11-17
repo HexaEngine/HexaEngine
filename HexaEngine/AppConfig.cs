@@ -35,8 +35,8 @@
             if (reader.MoveToContent() == XmlNodeType.Element)
             {
                 AppName = reader.GetAttribute("AppName");
-                StartupScene = reader.GetAttribute("StartupScene");
-                ScriptAssembly = reader.GetAttribute("ScriptAssembly");
+                StartupScene = reader.GetAttribute("StartupScene")!;
+                ScriptAssembly = reader.GetAttribute("ScriptAssembly")!;
             }
 
             reader.ReadStartElement();

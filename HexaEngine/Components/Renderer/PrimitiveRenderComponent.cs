@@ -15,8 +15,8 @@
     public abstract class PrimitiveRenderComponent : BaseDrawableComponent
     {
         protected AssetRef materialAsset;
-        protected PrimitiveRenderer renderer;
-        protected IPrimitive primitive;
+        protected PrimitiveRenderer renderer = null!;
+        protected IPrimitive primitive = null!;
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(PrimitiveRenderer);

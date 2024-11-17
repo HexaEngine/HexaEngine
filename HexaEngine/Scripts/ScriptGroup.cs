@@ -23,6 +23,7 @@
 
         public bool AddInstance(IScriptComponent component)
         {
+            if (component.ScriptType == null) return false;
             lock (_lock)
             {
                 if (map.TryGetValue(component.ScriptType, out int index))

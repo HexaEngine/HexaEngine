@@ -1,4 +1,5 @@
-﻿namespace HexaEngine.PostFx.BuildIn
+﻿/*
+namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -153,3 +154,4 @@
         }
     }
 }
+*/

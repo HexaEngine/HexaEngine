@@ -29,21 +29,21 @@
         {
             commandList.PrimReserve(6, 4);
             commandList.PrimRect(origin, origin + size, Vector2.Zero, Vector2.One, uint.MaxValue);
-            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV!.NativePointer);
         }
 
         public void DrawImage(UICommandList commandList, Vector2 origin, Vector2 size, Vector2 uv0, Vector2 uv1)
         {
             commandList.PrimReserve(6, 4);
             commandList.PrimRect(origin, origin + size, uv0, uv1, uint.MaxValue);
-            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV!.NativePointer);
         }
 
         public void DrawImage(UICommandList commandList, Vector2 origin, Vector2 size, Vector2 uv0, Vector2 uv1, Vector4 tint)
         {
             commandList.PrimReserve(6, 4);
             commandList.PrimRect(origin, origin + size, uv0, uv1, tint.Col4ToUInt());
-            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV.NativePointer);
+            commandList.RecordDraw(UICommandType.DrawTexture, null, texture.SRV!.NativePointer);
         }
 
         public static ImageSource CreateFromFile(string path)

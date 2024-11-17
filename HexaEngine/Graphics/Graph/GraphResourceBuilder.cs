@@ -638,7 +638,7 @@
 
             if ((flags & ResourceCreationFlags.LazyInit) == 0)
             {
-                ResourceDescriptor<TDesc> descriptor = resourceDescriptor != null ? (ResourceDescriptor<TDesc>)resourceDescriptor : new ResourceDescriptor<TDesc>(description, resourceRef.Resource, container, null, flags);
+                ResourceDescriptor<TDesc> descriptor = resourceDescriptor != null ? (ResourceDescriptor<TDesc>)resourceDescriptor : new ResourceDescriptor<TDesc>(description, resourceRef.Resource, container, null!, flags);
                 if (!contains)
                 {
                     descriptors.Add(descriptor);

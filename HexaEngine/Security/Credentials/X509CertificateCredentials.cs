@@ -6,14 +6,15 @@
 
     public class X509CertificateCredentials : DisposableBase, ICredentials
     {
-        public X509Certificate Certificate { get; set; }
+        public X509Certificate Certificate { get; set; } = null!;
 
         public CredentialType Type => CredentialType.X509Certificate;
 
         public int Read(Span<byte> src)
         {
             src.ReadInt32(out int length);
-            Certificate = new(src.Slice(4, length).ToArray());
+
+            Certificate = X509CertificateLoader.LoadCertificate(src.Slice(4, length).ToArray());
             return 4 + length;
         }
 

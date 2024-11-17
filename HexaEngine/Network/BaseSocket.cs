@@ -5,8 +5,8 @@
 
     public class BaseSocket : IDisposable
     {
-        protected readonly Socket socket;
-        private NetworkStream stream;
+        protected readonly Socket socket = null!;
+        private NetworkStream stream = null!;
 
         private bool disposedValue;
 
@@ -34,9 +34,9 @@
 
         public int SendTimeout { get => socket.SendTimeout; set => socket.SendTimeout = value; }
 
-        public EndPoint RemoteEndPoint => socket.RemoteEndPoint;
+        public EndPoint RemoteEndPoint => socket.RemoteEndPoint!;
 
-        public EndPoint LocalEndPoint => socket.LocalEndPoint;
+        public EndPoint LocalEndPoint => socket.LocalEndPoint!;
 
         public event Action<SocketError>? Error;
 

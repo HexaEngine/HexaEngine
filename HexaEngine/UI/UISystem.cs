@@ -7,7 +7,7 @@
 
     public class UISystem : ISceneSystem
     {
-        private TextFactory textFactory;
+        private TextFactory textFactory = null!;
         private readonly UICommandList commandList = new();
 
         public string Name { get; } = "UI";

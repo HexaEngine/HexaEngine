@@ -1,0 +1,12 @@
+﻿<linker>
+	<assembly fullname="HexaEngine.Editor" preserve="all" />
+	<assembly fullname="HexaEngine" preserve="all" />
+	<assembly fullname="HexaEngine.D3D11" preserve="all" />
+	<assembly fullname="HexaEngine.D3D12" preserve="all" />
+	<assembly fullname="HexaEngine.OpenAL" preserve="all" />
+	<assembly fullname="HexaEngine.OpenGL" preserve="all" />
+	<assembly fullname="HexaEngine.Vulkan" preserve="all" />
+	<assembly fullname="HexaEngine.XAudio" preserve="all" />
+	<assembly fullname="HexaEngine" preserve="all" />
+	<assembly fullname="HexaEngine.Core" preserve="all" />
+</linker>

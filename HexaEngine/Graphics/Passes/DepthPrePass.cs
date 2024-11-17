@@ -9,7 +9,7 @@
 
     public class DepthPrePass : RenderPass
     {
-        private ResourceRef<DepthStencil> depthStencil;
+        private ResourceRef<DepthStencil> depthStencil = null!;
 
         public DepthPrePass() : base("PrePass")
         {
@@ -64,7 +64,7 @@
             profiler?.End("VisibilityTest.Update");
 
             var depthStencilBuffer = depthStencil.Value;
-            context.ClearDepthStencilView(depthStencilBuffer.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+            context.ClearDepthStencilView(depthStencilBuffer!.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.SetRenderTarget(null, depthStencilBuffer.DSV);
 
             context.SetViewport(depthStencilBuffer.Viewport);

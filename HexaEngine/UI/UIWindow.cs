@@ -14,9 +14,9 @@
 
         public Color BackgroundColor { get; set; } = Colors.White;
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public UIElementCollection Children { get; }
+        public UIElementCollection Children { get; } = null!;
 
         public float X { get; set; }
 
@@ -61,7 +61,7 @@
             InvalidateArrange();
         }
 
-        private void MouseWheel(object? sender, MouseWheelEventArgs e)
+        private new void MouseWheel(object? sender, MouseWheelEventArgs e)
         {
             e.RoutedEvent = MouseWheelEvent;
             mouseFocused?.RaiseEvent(e);

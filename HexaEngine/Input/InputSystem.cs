@@ -5,7 +5,7 @@
 
     public class InputSystem : ISceneSystem
     {
-        private InputManager inputManager;
+        private InputManager inputManager = null!;
 
         public string Name { get; } = "Input System";
 
@@ -52,7 +52,7 @@
         public void Destroy()
         {
             var tmp = Input.Current;
-            Input.Current = null;
+            Input.Current = null!;
             tmp.Dispose();
         }
     }

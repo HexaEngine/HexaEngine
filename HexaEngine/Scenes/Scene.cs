@@ -29,6 +29,7 @@ namespace HexaEngine.Scenes
         private readonly Dictionary<Guid, GameObject> guidToObject = [];
         private readonly Dictionary<Guid, IComponent> guidToComponent = [];
         private readonly CameraContainer cameraContainer = new();
+        private readonly SceneCameraTracker cameraTracker = new();
 
         private IServiceProvider serviceProvider;
         private IServiceCollection services;
@@ -162,6 +163,9 @@ namespace HexaEngine.Scenes
         public SceneDispatcher Dispatcher { get; } = new();
 
         public CameraContainer Cameras { get => cameraContainer; }
+
+        [JsonIgnore]
+        public SceneCameraTracker CameraTracker { get => cameraTracker; }
 
         [JsonIgnore]
         public LightManager LightManager => GetRequiredService<LightManager>();
@@ -416,6 +420,22 @@ namespace HexaEngine.Scenes
 #if PROFILE
                 Profiler.End(update[i]);
 #endif
+            }
+
+            if (cameraTracker.Tick())
+            {
+                var camUpdate = systems[SystemFlags.CameraUpdate];
+
+                for (int i = 0; i < camUpdate.Count; i++)
+                {
+#if PROFILE
+                    Profiler.Start(update[i]);
+#endif
+                    camUpdate[i].Update(delta);
+#if PROFILE
+                    Profiler.End(update[i]);
+#endif
+                }
             }
 
             var late = systems[SystemFlags.LateUpdate];

@@ -20,15 +20,15 @@
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
     public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
     {
-        private ModelManager modelManager;
-        private MaterialManager materialManager;
+        private ModelManager modelManager = null!;
+        private MaterialManager materialManager = null!;
         private Model? model;
         private AssetRef modelAsset;
         private int maxLODLevel;
         private int minLODLevel;
         private int currentLODLevel;
 
-        private static MeshRenderer meshRenderer1;
+        private static MeshRenderer meshRenderer1 = null!;
         private static int instances;
 
         static MeshRendererComponent()

@@ -42,7 +42,7 @@
 
         protected override void DisposeCore()
         {
-            imageSource = null;
+            imageSource = null!;
         }
     }
 }

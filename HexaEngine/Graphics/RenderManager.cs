@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Graphics
+﻿#pragma warning disable CS0618 // Type or member is obsolete
+
+namespace HexaEngine.Graphics
 {
-    using Hexa.NET.FreeType;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
@@ -148,7 +149,7 @@
         private readonly List<IDrawable> renderers = new();
         private readonly IGraphicsContext deferred;
         private RenderQueueIndex queueIndex;
-        private string pass;
+        private string pass = null!;
 
         public RenderQueue(IGraphicsContext deferred)
         {
@@ -436,7 +437,7 @@
             {
                 Task.Factory.StartNew(device =>
                 {
-                    drawable.Load((IGraphicsDevice)device);
+                    drawable.Load((IGraphicsDevice)device!);
                 }, device);
 
                 tree.InsertLeaf(drawable, drawable.BoundingBox);
@@ -567,3 +568,5 @@
         }
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

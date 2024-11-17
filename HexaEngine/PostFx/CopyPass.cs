@@ -8,11 +8,8 @@
 
     public sealed class CopyPass : IPostFx
     {
-        private IShaderResourceView Input;
-        private IResource InputResource;
-        private IRenderTargetView Output;
-        private IResource OutputResource;
-        private Viewport Viewport;
+        private IResource InputResource = null!;
+        private IResource OutputResource = null!;
 
         public string Name { get; } = "Copy";
 
@@ -60,14 +57,11 @@
 
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
-            Output = view;
             OutputResource = resource;
-            Viewport = viewport;
         }
 
         public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
-            Input = view;
             InputResource = resource;
         }
 

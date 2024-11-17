@@ -9,14 +9,14 @@
 
     public class HizDepthPass : ComputePass
     {
-        private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<IComputePipelineState> downsample;
-        private ResourceRef<ConstantBuffer<Vector4>> cbDownsample;
-        private ResourceRef<IGraphicsPipelineState> copy;
-        private ResourceRef<ISamplerState> samplerState;
-        private ResourceRef<DepthMipChain> chain;
-        private string[] names;
-        private IResourceBindingList[] lists;
+        private ResourceRef<DepthStencil> depthStencil = null!;
+        private ResourceRef<IComputePipelineState> downsample = null!;
+        private ResourceRef<ConstantBuffer<Vector4>> cbDownsample = null!;
+        private ResourceRef<IGraphicsPipelineState> copy = null!;
+        private ResourceRef<ISamplerState> samplerState = null!;
+        private ResourceRef<DepthMipChain> chain = null!;
+        private string[] names = null!;
+        private IResourceBindingList[] lists = null!;
 
         public HizDepthPass() : base("HiZDepth")
         {

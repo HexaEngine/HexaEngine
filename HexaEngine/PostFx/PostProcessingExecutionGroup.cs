@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.PostFx
+﻿#pragma warning disable CS0618 // Type or member is obsolete
+
+namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
@@ -9,7 +11,7 @@
         private bool isFirst = isFirst;
         private bool isLastGroup = isLastGroup;
         private ICommandList? commandList;
-        private PostProcessingExecutionGroup next;
+        private PostProcessingExecutionGroup next = null!;
 
         public List<IPostFx> Passes = [];
 
@@ -24,6 +26,7 @@
         public PostProcessingExecutionGroup Next { get => next; set => next = value; }
 
         public ICommandList Record(IGraphicsContext context, GraphResourceBuilder creator)
+
         {
             if (isDynamicGroup)
             {
@@ -62,7 +65,7 @@
 
                 if ((flags & PostFxFlags.NoInput) == 0 && (flags & PostFxFlags.ComposeTarget) == 0)
                 {
-                    effect.SetInput(postContext.Previous.SRV, postContext.Previous);
+                    effect.SetInput(postContext.Previous.SRV!, postContext.Previous);
                 }
 
                 if ((flags & PostFxFlags.NoOutput) == 0 && (flags & PostFxFlags.Compose) == 0)
@@ -75,7 +78,7 @@
                     }
                     else
                     {
-                        effect.SetOutput(buffer.RTV, buffer, buffer.Viewport);
+                        effect.SetOutput(buffer.RTV!, buffer, buffer.Viewport);
                     }
 
                     bool skipSwap = false;
@@ -145,3 +148,5 @@
         }
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

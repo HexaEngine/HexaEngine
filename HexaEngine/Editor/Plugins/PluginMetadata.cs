@@ -6,29 +6,29 @@
 
     public class PluginMetadata
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
-        public string Version { get; set; }
+        public string Version { get; set; } = null!;
 
         public DateTime PublishDate { get; set; }
 
-        public string Autors { get; set; }
+        public string Autors { get; set; } = null!;
 
-        public string ProjectUrl { get; set; }
+        public string ProjectUrl { get; set; } = null!;
 
-        public string RepositoryUrl { get; set; }
+        public string RepositoryUrl { get; set; } = null!;
 
-        public string RepositoryType { get; set; }
+        public string RepositoryType { get; set; } = null!;
 
-        public string Copyright { get; set; }
+        public string Copyright { get; set; } = null!;
 
-        public string LicenseUrl { get; set; }
+        public string LicenseUrl { get; set; } = null!;
 
-        public string Tags { get; set; }
+        public string Tags { get; set; } = null!;
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
@@ -43,7 +43,7 @@
 
         public string SpecsVersion { get; set; } = CurrentSpecsVersion;
 
-        public PluginMetadata Metadata { get; set; }
+        public PluginMetadata Metadata { get; set; } = null!;
 
         public List<string> Files { get; set; } = [];
     }

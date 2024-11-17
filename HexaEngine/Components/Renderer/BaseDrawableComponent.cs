@@ -45,7 +45,7 @@
         public abstract string DebugName { get; protected set; }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         [JsonIgnore]
         public abstract RendererFlags Flags { get; }

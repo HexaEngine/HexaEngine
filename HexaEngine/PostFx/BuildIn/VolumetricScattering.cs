@@ -199,7 +199,7 @@
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>
             {
                 Noise noise = new(device, NoiseType.Blue2D);
-                noise.Draw2D(device.Context, noiseTex.RTV, new(256), Vector2.One);
+                noise.Draw2D(device.Context, noiseTex.RTV!, new(256), Vector2.One);
                 noise.Dispose();
             });
 

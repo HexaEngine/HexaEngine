@@ -66,7 +66,7 @@
                 return;
             }
 
-            atlasHandle.Dispose();
+            atlasHandle?.Dispose();
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
@@ -82,7 +82,7 @@
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
-            float texel = 1.0f / atlasHandle.Atlas.Size;
+            float texel = 1.0f / atlasHandle!.Atlas.Size;
 
             var vp = atlasHandle.Handle.Viewport;
             coords[0] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
@@ -112,7 +112,7 @@
 
         public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
         {
-            return false;
+#if false
             var distance = camera.DistanceTo(this);
 
             var distanceScaled = distance / Range;
@@ -144,8 +144,9 @@
             }
 
             atlasHandle = atlas.Alloc(size, cacheHandle);
-
             return true;
+#endif
+            return false;
         }
 
         public float GetConeRadius(float z)

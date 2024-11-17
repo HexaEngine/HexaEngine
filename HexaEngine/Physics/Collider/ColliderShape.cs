@@ -51,7 +51,7 @@
         { get => restitution; set { restitution = value; } }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public void Awake()
         {

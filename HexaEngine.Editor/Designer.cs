@@ -2,7 +2,6 @@
 
 namespace HexaEngine.Editor
 {
-    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;

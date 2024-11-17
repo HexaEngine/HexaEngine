@@ -23,7 +23,7 @@
         }
 
         [Ambient]
-        public Type TargetType { get; set; }
+        public Type TargetType { get; set; } = null!;
 
         [Ambient]
         public Style? BasedOn { get; set; }

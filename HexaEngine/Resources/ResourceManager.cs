@@ -41,7 +41,7 @@
 
         public IServiceProvider ServiceProvider => serviceProvider;
 
-        public static ResourceManager Shared { get; internal set; }
+        public static ResourceManager Shared { get; internal set; } = null!;
 
         public void BeginNoGCRegion()
         {

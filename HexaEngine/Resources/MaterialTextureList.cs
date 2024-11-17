@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Resources
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.Utilities;
     using System.Collections;
@@ -14,7 +13,7 @@
         }
 
         private bool disposedValue;
-        private MaterialShader shader;
+        private MaterialShader shader = null!;
 
         public int Count => textures.Count;
 

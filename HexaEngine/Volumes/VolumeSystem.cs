@@ -104,7 +104,7 @@
     public class VolumeSystem : ISceneSystem
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(VolumeSystem));
-        private PostProcessingManager postManager;
+        private PostProcessingManager postManager = null!;
         private readonly ObjectTypeQuery<Volume> volumes = new();
         private Volume? activeVolume;
 
@@ -112,7 +112,7 @@
 
         public string Name { get; } = "VolumeSystem";
 
-        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Destroy | SystemFlags.Update;
+        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Destroy | SystemFlags.CameraUpdate;
 
         public Volume? ActiveVolume => activeVolume;
 
@@ -369,7 +369,7 @@
         public void Destroy()
         {
             volumes.Dispose();
-            postManager = null;
+            postManager = null!;
             transitionStartList.Clear();
             transitionEndList.Clear();
             transitionAbortedList.Clear();

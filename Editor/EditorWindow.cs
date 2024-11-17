@@ -170,12 +170,10 @@ namespace Editor
             // Invoke virtual method for pre-render operations.
             OnRenderBegin(context);
 
-            ImGuiManager.PushFont("WidgetsFont");
             if (editorInitialized)
             {
                 TitleBar?.Draw();
             }
-            ImGuiManager.PopFont();
 
             // Determine if rendering should occur based on initialization status.
             var drawing = rendererInitialized;

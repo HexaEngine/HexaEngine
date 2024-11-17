@@ -57,7 +57,7 @@
                 var oldSize = sceneRenderer.Size;
                 sceneRenderer.Size = Texture.Viewport.Size;
                 sceneRenderer.DrawFlags = SceneDrawFlags.NoPostProcessing | SceneDrawFlags.NoOverlay;
-                context.ClearRenderTargetView(Texture.RTV, default);
+                context.ClearRenderTargetView(Texture.RTV!, default);
                 var position = nodeGlobal.Translation;
                 SetViewPoint(position);
 
@@ -65,7 +65,7 @@
                 {
                     CameraManager.Current = cameras[i];
                     context.BeginEvent($"Render face {i}");
-                    sceneRenderer.RenderTo(context, Texture.RTVArraySlices[i], Texture.Viewport, SceneManager.Current, cameras[i]);
+                    sceneRenderer.RenderTo(context, Texture.RTVArraySlices![i], Texture.Viewport, SceneManager.Current!, cameras[i]);
                     context.EndEvent();
                 }
                 CameraManager.Current = null;

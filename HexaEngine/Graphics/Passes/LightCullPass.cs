@@ -24,15 +24,15 @@
 
         public const uint CLUSTER_MAX_LIGHTS = 128;
 
-        private ResourceRef<StructuredUavBuffer<Cluster>> ClusterBuffer;
-        private ResourceRef<StructuredUavBuffer<uint>> LightIndexCounter;
-        private ResourceRef<StructuredUavBuffer<uint>> LightIndexList;
-        private ResourceRef<StructuredUavBuffer<LightGrid>> LightGridBuffer;
+        private ResourceRef<StructuredUavBuffer<Cluster>> ClusterBuffer = null!;
+        private ResourceRef<StructuredUavBuffer<uint>> LightIndexCounter = null!;
+        private ResourceRef<StructuredUavBuffer<uint>> LightIndexList = null!;
+        private ResourceRef<StructuredUavBuffer<LightGrid>> LightGridBuffer = null!;
 
-        private ResourceRef<IComputePipelineState> clusterBuilding;
-        private ResourceRef<IComputePipelineState> clusterCulling;
+        private ResourceRef<IComputePipelineState> clusterBuilding = null!;
+        private ResourceRef<IComputePipelineState> clusterCulling = null!;
 
-        private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer;
+        private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer = null!;
 
         public LightCullPass() : base("LightCull")
         {

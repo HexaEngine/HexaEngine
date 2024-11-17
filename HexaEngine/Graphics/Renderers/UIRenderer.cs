@@ -10,16 +10,16 @@
     public unsafe class UIRenderer
     {
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
-        private readonly IGraphicsDevice device;
+        private readonly IGraphicsDevice device = null!;
 
-        private IGraphicsPipelineState primPso;
-        private IGraphicsPipelineState texPso;
-        private IGraphicsPipelineState bezierPso;
-        private IBuffer vertexBuffer;
-        private IBuffer indexBuffer;
-        private ConstantBuffer<Matrix4x4> constantBuffer;
-        private ConstantBuffer<CBBrush> colorBuffer;
-        private ISamplerState fontSampler;
+        private IGraphicsPipelineState primPso = null!;
+        private IGraphicsPipelineState texPso = null!;
+        private IGraphicsPipelineState bezierPso = null!;
+        private IBuffer vertexBuffer = null!;
+        private IBuffer indexBuffer = null!;
+        private ConstantBuffer<Matrix4x4> constantBuffer = null!;
+        private ConstantBuffer<CBBrush> colorBuffer = null!;
+        private ISamplerState fontSampler = null!;
 
         private struct CBBrush
         {
@@ -304,11 +304,11 @@
 
             public nint NativePointer { get; }
 
-            public string DebugName { get; set; }
+            public string? DebugName { get; set; }
 
             public bool IsDisposed { get; }
 
-            public event EventHandler OnDisposed;
+            public event EventHandler? OnDisposed;
 
             public readonly void Dispose()
             {

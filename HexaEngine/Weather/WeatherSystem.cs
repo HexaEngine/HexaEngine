@@ -385,7 +385,7 @@
         /// <summary>
         /// Gets the constant buffer containing weather information for graphics rendering.
         /// </summary>
-        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value;
+        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value!;
 
         /// <inheritdoc/>
         public string Name { get; } = "Weather System";
@@ -534,7 +534,7 @@
 
     public unsafe class WeatherParameterDefinition
     {
-        public string Name { get; }
+        public string Name { get; } = null!;
 
         public WeatherParameterType Type { get; }
 
@@ -616,7 +616,7 @@
 
         public long Id { get; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public List<WeatherParameter> Parameters { get; } = new();
 

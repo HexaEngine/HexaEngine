@@ -30,9 +30,9 @@
             texture.DebugName = dbgName;
         }
 
-        public IRenderTargetView RTV => texture.RTV;
+        public IRenderTargetView RTV => texture.RTV!;
 
-        public IShaderResourceView SRV => texture.SRV;
+        public IShaderResourceView SRV => texture.SRV!;
 
         public string DebugName => dbgName;
 
@@ -69,8 +69,8 @@
             }
             else
             {
-                handle = allocator.Alloc(size);
-                handle ??= cache.AllocFromCache(size);
+                handle = allocator.Alloc(size)!;
+                handle ??= cache.AllocFromCache(size)!;
             }
 
             mutex.ReleaseMutex();
@@ -88,8 +88,8 @@
             }
             else
             {
-                handle = allocator.Alloc(size);
-                handle ??= cache.AllocFromCache(size);
+                handle = allocator.Alloc(size)!;
+                handle ??= cache.AllocFromCache(size)!;
             }
 
             mutex.ReleaseMutex();
@@ -120,7 +120,7 @@
                     {
                         var handle = allocator.Alloc(new(desiredSize));
                         handle ??= cache.AllocFromCache(new(desiredSize));
-                        handles[i] = handle;
+                        handles[i] = handle!;
                     }
                 }
             }
@@ -130,7 +130,7 @@
                 {
                     var handle = allocator.Alloc(new(desiredSize));
                     handle ??= cache.AllocFromCache(new(desiredSize));
-                    handles[i] = handle;
+                    handles[i] = handle!;
                 }
             }
             mutex.ReleaseMutex();

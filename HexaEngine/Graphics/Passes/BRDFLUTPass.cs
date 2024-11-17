@@ -6,8 +6,8 @@
 
     public class BRDFLUTPass : RenderPass
     {
-        private ResourceRef<Texture2D> lut;
-        private ResourceRef<IGraphicsPipelineState> lutPass;
+        private ResourceRef<Texture2D> lut = null!;
+        private ResourceRef<IGraphicsPipelineState> lutPass = null!;
 
         public BRDFLUTPass() : base("BRDFLUT", RenderPassType.OneHit)
         {

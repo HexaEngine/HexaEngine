@@ -11,7 +11,7 @@
         private VirtualAxisBindingState[] bindingStates = [];
 
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [XmlArrayItem(ElementName = "Binding")]
         public List<VirtualAxisBinding> Bindings { get; }
@@ -291,7 +291,7 @@
         {
             reader.MoveToContent();
 
-            Name = reader.GetAttribute("Name");
+            Name = reader.GetAttribute("Name")!;
             string? gravityAttr = reader.GetAttribute("Gravity");
             if (gravityAttr != null)
             {

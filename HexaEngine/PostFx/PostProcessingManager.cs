@@ -43,7 +43,9 @@
 
             postContext = new(device, format, width, height, bufferCount);
 
+#pragma warning disable CS0618 // Type or member is obsolete
             deferredContext = device.CreateDeferredContext();
+#pragma warning restore CS0618 // Type or member is obsolete
             macros = [];
         }
 

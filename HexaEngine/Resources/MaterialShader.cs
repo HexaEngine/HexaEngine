@@ -8,7 +8,7 @@
     {
         private readonly IGraphicsDevice device;
         private readonly List<MaterialShaderPass> passes = [];
-        private FrozenDictionary<string, MaterialShaderPass> nameToPass;
+        private FrozenDictionary<string, MaterialShaderPass> nameToPass = null!;
         private MaterialShaderDesc desc;
         private volatile bool initialized;
 

@@ -58,6 +58,7 @@
                           .SetOption(conf => conf.GlyphMinAdvanceX = 16)
                           .AddFontFromFileTTF("assets/shared/fonts/fa-solid-900.ttf", 14, glyphRanges)
                           .AddFontFromFileTTF("assets/shared/fonts/fa-brands-400.ttf", 14, glyphRanges);
+            aliasToFont.Add("Default", defaultBuilder.Font);
             defaultBuilder.Destroy();
 
             ImGuiFontBuilder iconsRegularBuilder = new(fonts);

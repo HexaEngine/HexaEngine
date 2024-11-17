@@ -23,7 +23,7 @@
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;
 
-        private static TerrainRenderer renderer1;
+        private static TerrainRenderer renderer1 = null!;
         private static int instances;
         private int currentLODLevel;
         private int maxLODLevel;

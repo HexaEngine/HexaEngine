@@ -84,7 +84,7 @@
                         if (indexOfDot != -1)
                         {
                             string propName = reader.Name[(indexOfDot + 1)..];
-                            object nextProp = CreatePropertyType(current, propName);
+                            object nextProp = CreatePropertyType(current, propName)!;
                             if (current != null)
                             {
                                 stack.Push(current);
@@ -101,7 +101,7 @@
 
                         XamlType xamlType = schemaContext.GetXamlType(typeName);
 
-                        object next = Activator.CreateInstance(xamlType.UnderlyingType);
+                        object next = Activator.CreateInstance(xamlType.UnderlyingType)!;
 
                         PopulateProperties(xamlType.UnderlyingType, next, reader, schemaContext);
 

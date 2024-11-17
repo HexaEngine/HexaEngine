@@ -123,7 +123,7 @@
 
         private void ValueChanged(object? sender, T? e)
         {
-            var idx = resourceRefList.IndexOf((ResourceRef<T>)sender);
+            var idx = resourceRefList.IndexOf((ResourceRef<T>)sender!);
             list[idx] = e;
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Replace, e, idx));
         }

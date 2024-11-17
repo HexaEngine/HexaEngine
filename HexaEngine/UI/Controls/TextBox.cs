@@ -69,11 +69,11 @@
 
             if (oldText == null)
             {
-                newText = ToStringFromUTF8(args.Text);
+                newText = ToStringFromUTF8(args.Text)!;
             }
             else
             {
-                newText = Text.Insert(cursorPosition, ToStringFromUTF8(args.Text));
+                newText = Text!.Insert(cursorPosition, ToStringFromUTF8(args.Text)!);
             }
 
             cursorPosition++;
@@ -99,7 +99,7 @@
                 {
                     string newText = text[..^1];
                     Text = newText;
-                    textLayout.Text = newText;
+                    textLayout!.Text = newText;
                     InvalidateMeasure();
                     cursorPosition--;
                 }
@@ -108,7 +108,7 @@
             {
                 string newText = Text + "\n";
                 Text = newText;
-                textLayout.Text = newText;
+                textLayout!.Text = newText;
                 InvalidateMeasure();
                 cursorPosition++;
             }
@@ -116,7 +116,7 @@
             {
                 string newText = Text + "\t";
                 Text = newText;
-                textLayout.Text = newText;
+                textLayout!.Text = newText;
                 InvalidateMeasure();
                 cursorPosition++;
             }
@@ -143,7 +143,7 @@
             textLayout.DrawText(commandList, Foreground);
 
             Vector2 cursorPos = textLayout.GetCursorPosition(cursorPosition);
-            commandList.DrawLine(cursorPos, cursorPos + new Vector2(0, textLayout.Metrics.LineHeight), CaretBrush, 1);
+            commandList.DrawLine(cursorPos, cursorPos + new Vector2(0, textLayout.Metrics.LineHeight), CaretBrush!, 1);
         }
     }
 }

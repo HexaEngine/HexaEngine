@@ -8,16 +8,16 @@
 
     public static unsafe class DebugDrawRenderer
     {
-        private static IGraphicsDevice device;
-        private static IGraphicsContext context;
-        private static IGraphicsPipelineState pso;
-        private static IBuffer vertexBuffer;
-        private static IBuffer indexBuffer;
-        private static IBuffer constantBuffer;
-        private static ISamplerState fontSampler;
-        private static IShaderResourceView fontTextureView;
+        private static IGraphicsDevice device = null!;
+        private static IGraphicsContext context = null!;
+        private static IGraphicsPipelineState pso = null!;
+        private static IBuffer vertexBuffer = null!;
+        private static IBuffer indexBuffer = null!;
+        private static IBuffer constantBuffer = null!;
+        private static ISamplerState fontSampler = null!;
+        private static IShaderResourceView fontTextureView = null!;
 
-        private static DebugDrawContext debugDrawContext;
+        private static DebugDrawContext debugDrawContext = null!;
 
         private static int vertexBufferSize = 5000;
         private static int indexBufferSize = 10000;
@@ -161,11 +161,11 @@
 
             public nint NativePointer { get; }
 
-            public string DebugName { get; set; }
+            public string? DebugName { get; set; }
 
             public bool IsDisposed { get; }
 
-            public event EventHandler OnDisposed;
+            public event EventHandler? OnDisposed;
 
             public void Dispose()
             {
@@ -221,7 +221,7 @@
             context.Unmap(vertexBuffer, 0);
             context.Unmap(indexBuffer, 0);
 
-            context.Write(constantBuffer, Matrix4x4.Transpose(data.Camera));
+            var camera = data.Camera;
 
             SetupRenderState(data);
 
@@ -233,6 +233,10 @@
                 for (int j = 0; j < list.Commands.Count; j++)
                 {
                     var cmd = list.Commands[j];
+
+                    Matrix4x4 mvp = cmd.Transform * camera;
+
+                    context.Write(constantBuffer, Matrix4x4.Transpose(mvp));
 
                     var texId = cmd.TextureId;
                     if (texId == 0)

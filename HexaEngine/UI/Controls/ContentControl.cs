@@ -42,11 +42,11 @@
 
                     if (textLayout == null)
                     {
-                        textLayout = CreateTextLayout(contentString, float.MaxValue, float.MaxValue);
+                        textLayout = CreateTextLayout(contentString!, float.MaxValue, float.MaxValue);
                     }
                     else
                     {
-                        textLayout.Text = contentString;
+                        textLayout.Text = contentString!;
                     }
                 }
                 else

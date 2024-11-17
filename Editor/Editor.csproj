@@ -39,4 +39,21 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="HexaEngine.Editor" />
+		<TrimmerRootAssembly Include="HexaEngine" />
+		<TrimmerRootAssembly Include="HexaEngine.Core" />
+		<TrimmerRootAssembly Include="HexaEngine.D3D11" />
+		<TrimmerRootAssembly Include="HexaEngine.D3D12" />
+		<TrimmerRootAssembly Include="HexaEngine.OpenAL" />
+		<TrimmerRootAssembly Include="HexaEngine.OpenGL" />
+		<TrimmerRootAssembly Include="HexaEngine.Vulkan" />
+		<TrimmerRootAssembly Include="HexaEngine.XAudio" />
+		<TrimmerRootAssembly Include="HexaEngine.Core" />
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+		<EmbeddedResource Include="ILLink.Descriptors.xml">
+			<LogicalName>ILLink.Descriptors.xml</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

@@ -5,19 +5,19 @@
 
     public class PostProcessingContext : IDisposable
     {
-        private Texture2D[] buffers;
+        private Texture2D[] buffers = null!;
         private Format format;
         private int width;
         private int height;
         private int bufferCount;
 
-        private readonly IGraphicsPipelineState copy;
+        private readonly IGraphicsPipelineState copy = null!;
 
         private int bufferIndex;
-        private Texture2D previous;
+        private Texture2D previous = null!;
         private bool disposedValue;
-        private Texture2D input;
-        private IRenderTargetView output;
+        private Texture2D input = null!;
+        private IRenderTargetView output = null!;
         private bool isfirst;
 
         public PostProcessingContext(IGraphicsDevice device, Format format, int width, int height, int bufferCount)
@@ -50,7 +50,7 @@
 
         public IRenderTargetView Output { get => output; set => output = value; }
 
-        public ITexture2D OutputTex { get; set; }
+        public ITexture2D OutputTex { get; set; } = null!;
 
         public Viewport OutputViewport { get; set; }
 

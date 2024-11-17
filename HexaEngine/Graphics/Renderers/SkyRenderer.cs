@@ -12,14 +12,14 @@
 
     public class SkyRenderer : IDisposable
     {
-        private readonly Sphere cube;
-        private readonly IGraphicsPipelineState skybox;
-        private readonly IGraphicsPipelineState uniformColorSky;
-        private readonly IGraphicsPipelineState hoseWilkieSky;
-        private readonly IGraphicsPipelineState preethamSky;
-        private readonly ConstantBuffer<CBWorld> worldBuffer;
+        private readonly Sphere cube = null!;
+        private readonly IGraphicsPipelineState skybox = null!;
+        private readonly IGraphicsPipelineState uniformColorSky = null!;
+        private readonly IGraphicsPipelineState hoseWilkieSky = null!;
+        private readonly IGraphicsPipelineState preethamSky = null!;
+        private readonly ConstantBuffer<CBWorld> worldBuffer = null!;
 
-        private Texture2D environment;
+        private Texture2D environment = null!;
 
         private bool initialized;
         private bool disposedValue;
@@ -102,7 +102,7 @@
         {
             initialized = false;
 
-            environment = null;
+            environment = null!;
         }
 
         public void Update(IGraphicsContext context)
@@ -118,7 +118,7 @@
 
         public void Draw(IGraphicsContext context, SkyType type)
         {
-            WeatherSystem.Current.SkyModel = type;
+            WeatherSystem.Current!.SkyModel = type;
 
             switch (type)
             {

@@ -22,9 +22,9 @@
     {
         private AssetRef modelAsset;
 
-        private ModelManager modelManager;
-        private MaterialManager materialManager;
-        private SkinnedMeshRenderer renderer;
+        private ModelManager modelManager = null!;
+        private MaterialManager materialManager = null!;
+        private SkinnedMeshRenderer renderer = null!;
         private SkinnedModel? model;
         private readonly MaterialAssetMapper materials = new();
 

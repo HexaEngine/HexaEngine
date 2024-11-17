@@ -10,10 +10,9 @@
 
     public class GBufferPass : RenderPass
     {
-        private ResourceRef<GBuffer> gbuffer;
-        private ResourceRef<Texture2D> lightBuffer;
-        private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer = null!;
+        private ResourceRef<Texture2D> lightBuffer = null!;
+        private ResourceRef<DepthStencil> depthStencil = null!;
 
         public GBufferPass(Windows.RendererFlags flags) : base("GBuffer")
         {
@@ -35,15 +34,14 @@
                 ));
             lightBuffer = creator.GetTexture2D("LightBuffer");
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var gbuffer = this.gbuffer.Value;
             var lightBuffer = this.lightBuffer.Value;
-            context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
-            context.ClearRenderTargetView(lightBuffer.RTV, Vector4.Zero);
+            context.ClearRenderTargetViews(gbuffer!.Count, gbuffer.PRTVs, Vector4.Zero);
+            context.ClearRenderTargetView(lightBuffer!.RTV!, Vector4.Zero);
 
             if (forceForward)
             {
@@ -60,7 +58,7 @@
 
             var depthStencil = this.depthStencil.Value;
 
-            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
+            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil!.DSV);
 
             context.SetViewport(gbuffer.Viewport);
 

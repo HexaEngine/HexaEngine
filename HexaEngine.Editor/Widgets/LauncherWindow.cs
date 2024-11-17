@@ -64,7 +64,7 @@
             {
                 Vector2 size = new(800, 500);
                 Vector2 mainViewportPos = ImGui.GetMainViewport().Pos;
-                Vector2 s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+                Vector2 s = main_viewport_size;
 
                 ImGui.SetNextWindowSize(size);
                 ImGui.SetNextWindowPos(mainViewportPos + (s / 2 - size / 2));

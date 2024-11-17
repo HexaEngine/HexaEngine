@@ -21,22 +21,22 @@
 
         private bool initialized;
 
-        private Matrix4x4[] globals;
-        private Matrix4x4[] locals;
-        private Matrix4x4[] boneGlobals;
-        private Matrix4x4[] boneLocals;
-        private PlainNode[] plainNodes;
-        private PlainNode[] bones;
-        private readonly ConstantBuffer<UPoint4> offsetBuffer;
-        private readonly StructuredBuffer<Matrix4x4> transformBuffer;
-        private readonly StructuredBuffer<uint> transformOffsetBuffer;
-        private readonly StructuredBuffer<Matrix4x4> boneTransformBuffer;
-        private readonly StructuredBuffer<uint> boneTransformOffsetBuffer;
-        private int[][] drawables;
+        private Matrix4x4[] globals = null!;
+        private Matrix4x4[] locals = null!;
+        private Matrix4x4[] boneGlobals = null!;
+        private Matrix4x4[] boneLocals = null!;
+        private PlainNode[] plainNodes = null!;
+        private PlainNode[] bones = null!;
+        private readonly ConstantBuffer<UPoint4> offsetBuffer = null!;
+        private readonly StructuredBuffer<Matrix4x4> transformBuffer = null!;
+        private readonly StructuredBuffer<uint> transformOffsetBuffer = null!;
+        private readonly StructuredBuffer<Matrix4x4> boneTransformBuffer = null!;
+        private readonly StructuredBuffer<uint> boneTransformOffsetBuffer = null!;
+        private int[][] drawables = null!;
         private uint bufferOffset;
         private uint boneBufferOffset;
-        private Mesh[] meshes;
-        private Material[] materials;
+        private Mesh[] meshes = null!;
+        private Material[] materials = null!;
 
         private readonly bool sharedBuffers;
         private bool disposedValue;
@@ -86,16 +86,16 @@
         {
             initialized = false;
 
-            globals = null;
-            locals = null;
-            boneGlobals = null;
-            boneLocals = null;
-            bones = null;
-            plainNodes = null;
-            drawables = null;
+            globals = null!;
+            locals = null!;
+            boneGlobals = null!;
+            boneLocals = null!;
+            bones = null!;
+            plainNodes = null!;
+            drawables = null!;
             bufferOffset = 0;
-            meshes = null;
-            materials = null;
+            meshes = null!;
+            materials = null!;
         }
 
         public void Prepare(SkinnedModel instance)
@@ -234,7 +234,7 @@
 
                 for (int j = 0; j < ((MeshData)mesh.Data).BoneCount; j++)
                 {
-                    var bone = ((MeshData)mesh.Data).Bones[j];
+                    var bone = ((MeshData)mesh.Data).Bones![j];
 
                     var id = GetBoneIdByName(bone.Name);
                     boneTransformBuffer.Add(Matrix4x4.Transpose(bone.Offset * boneGlobals[id]));

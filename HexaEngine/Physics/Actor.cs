@@ -32,7 +32,7 @@
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         [JsonIgnore]
         public bool IsSerializable { get; } = true;

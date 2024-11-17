@@ -19,7 +19,7 @@
 
         public QueryFlags Flags { get; }
 
-        public QuerySystem QuerySystem { get; set; }
+        public QuerySystem QuerySystem { get; set; } = null!;
 
         public GameObject this[int index] => ((IReadOnlyList<GameObject>)cache)[index];
 

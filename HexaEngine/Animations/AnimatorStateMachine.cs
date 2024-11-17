@@ -2,11 +2,11 @@
 {
     public class AnimatorStateMachine
     {
-        public AnimatorState DefaultState { get; set; }
+        public AnimatorState DefaultState { get; set; } = null!;
 
         public List<AnimatorTransition> Transitions { get; } = [];
 
-        public AnimatorState CurrentState { get; protected set; }
+        public AnimatorState CurrentState { get; protected set; } = null!;
 
         public event Action<AnimatorTransition>? Transition;
 

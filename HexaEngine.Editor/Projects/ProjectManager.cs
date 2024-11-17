@@ -469,7 +469,9 @@
                 string solutionName = Path.GetFileName(CurrentProjectFolder);
                 string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
 
-                ScriptAssemblyManager.Load(outputFilePath);
+                if (ScriptAssemblyManager.Load(outputFilePath) == null)
+                {
+                }
                 modal.Close();
             }
             catch (Exception ex)
@@ -526,7 +528,7 @@
             AnalyseLog(output);
             scriptProjectChanged = false;
 
-            return !CompilationResult.Success;
+            return CompilationResult.Success;
         }
 
         private static void Clean()

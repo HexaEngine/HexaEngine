@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scripts
 {
     using Hexa.NET.Logging;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
@@ -47,6 +48,7 @@
             string? folder = Path.GetDirectoryName(path);
             if (folder == null)
             {
+                SetInvalid(true);
                 return null;
             }
 
@@ -62,6 +64,12 @@
                 {
                     assembly = assemblyLoadContext.LoadFromStream(fs, fsPdb);
                 }
+                catch (Exception ex)
+                {
+                    Logger.LogAndShowError("Failed to load assembly", ex);
+                    SetInvalid(true);
+                    return null;
+                }
                 finally
                 {
                     fs.Close();
@@ -75,6 +83,12 @@
                 try
                 {
                     assembly = assemblyLoadContext.LoadFromStream(fs);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogAndShowError("Failed to load assembly", ex);
+                    SetInvalid(true);
+                    return null;
                 }
                 finally
                 {

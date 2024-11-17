@@ -20,10 +20,10 @@
         private readonly Dictionary<uint, VectorFontGlyph> glyphs = [];
         private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = [];
 
-        private IBuffer glyphBuffer;
-        private IBuffer curveBuffer;
-        private IShaderResourceView glyphBufferSRV;
-        private IShaderResourceView curveBufferSRV;
+        private IBuffer glyphBuffer = null!;
+        private IBuffer curveBuffer = null!;
+        private IShaderResourceView glyphBufferSRV = null!;
+        private IShaderResourceView curveBufferSRV = null!;
 
         private float fontSize;
         private bool hinting;

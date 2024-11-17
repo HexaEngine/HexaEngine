@@ -15,8 +15,8 @@
         private FTFace faceHandle;
         private FTFaceRec* face;
 
-        private ITexture2D texture2D;
-        private IShaderResourceView srv;
+        private ITexture2D texture2D = null!;
+        private IShaderResourceView srv = null!;
 
         private readonly List<SpriteFontGlyph> glyphList = [];
         private readonly Dictionary<uint, SpriteFontGlyph> glyphs = [];

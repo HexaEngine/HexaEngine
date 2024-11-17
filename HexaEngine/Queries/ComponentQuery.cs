@@ -20,7 +20,7 @@
 
         public QueryFlags Flags { get; }
 
-        public QuerySystem QuerySystem { get; set; }
+        public QuerySystem QuerySystem { get; set; } = null!;
 
         public IComponent this[int index] => ((IReadOnlyList<IComponent>)cache)[index];
 

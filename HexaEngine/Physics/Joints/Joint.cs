@@ -28,7 +28,7 @@
         [JsonIgnore]
         public bool IsSerializable { get; } = true;
 
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public event Action<IJointComponent>? OnRecreate;
 

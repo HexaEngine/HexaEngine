@@ -10,11 +10,11 @@
 
     public class OverlayPass : RenderPass
     {
-        private ResourceRef<IGraphicsPipelineState> copyPipeline;
-        private ResourceRef<ISamplerState> samplerState;
+        private ResourceRef<IGraphicsPipelineState> copyPipeline = null!;
+        private ResourceRef<ISamplerState> samplerState = null!;
 
-        private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<Texture2D> postFxBuffer;
+        private ResourceRef<DepthStencil> depthStencil = null!;
+        private ResourceRef<Texture2D> postFxBuffer = null!;
 
         public OverlayPass() : base("OverlayPass")
         {

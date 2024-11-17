@@ -11,12 +11,12 @@
 
     public class LightForwardPass : RenderPass
     {
-        private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<GBuffer> gbuffer;
+        private ResourceRef<DepthStencil> depthStencil = null!;
+        private ResourceRef<GBuffer> gbuffer = null!;
 
-        private ResourceRef<Texture2D> lightBuffer;
+        private ResourceRef<Texture2D> lightBuffer = null!;
 
-        private ResourceRef<ConstantBuffer<ForwardLightParams>> lightParamsBuffer;
+        private ResourceRef<ConstantBuffer<ForwardLightParams>> lightParamsBuffer = null!;
 
         private unsafe void** forwardRTVs;
         private const uint nForwardRTVs = 3;
@@ -62,7 +62,7 @@
             var gbuffer = this.gbuffer.Value;
 
             forwardRTVs[0] = (void*)lightBuffer.Value!.RTV!.NativePointer;
-            forwardRTVs[1] = gbuffer.PRTVs[1];
+            forwardRTVs[1] = gbuffer!.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];
 
             context.SetRenderTargets(nForwardRTVs, forwardRTVs, depthStencil.Value!.DSV);
@@ -73,7 +73,7 @@
 
             var cam = CameraManager.Current;
             var lightParamsBuffer = this.lightParamsBuffer.Value;
-            var lightParams = lightParamsBuffer.Local;
+            var lightParams = lightParamsBuffer!.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;
             lightParamsBuffer.Update(context);

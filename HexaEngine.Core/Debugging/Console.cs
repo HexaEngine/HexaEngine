@@ -355,21 +355,18 @@
 
             if (ImGui.BeginChild("ScrollRegion##", new Vector2(0, -footerHeightToReserve), 0, 0))
             {
+                Vector2 avail = ImGui.GetContentRegionAvail();
                 float scrollPos = ImGui.GetScrollY();
                 float lineHeight = ImGui.GetTextLineHeightWithSpacing();
-                int startLine = (int)(scrollPos / lineHeight);
+                int startLine = (int)MathF.Floor(scrollPos / lineHeight);
+                int endLine = (int)MathF.Ceiling(avail.Y / lineHeight) + startLine;
 
-                float windowHeight = ImGui.GetWindowHeight();
-                int visibleLines = (int)MathF.Ceiling(windowHeight / lineHeight);
-                int endLine = startLine + visibleLines;
-
+                startLine = Math.Max(startLine, 0);
                 endLine = Math.Min(endLine, messages.Count);
-
-                float dummyHeight = messages.Count * lineHeight;
 
                 Vector2 cursor = ImGui.GetCursorPos();
 
-                ImGui.Dummy(new(0.0f, dummyHeight));
+                ImGui.Dummy(new(1, startLine * lineHeight));
                 ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
 
                 // Display colored command output.
@@ -421,7 +418,7 @@
                     }
                 }
 
-                ImGui.SetCursorPos(cursor + new Vector2(0, dummyHeight));
+                ImGui.Dummy(new(1, (messages.Count - endLine) * lineHeight));
 
                 // Stop wrapping since we are done displaying console items.
                 if (!timeStamps)
@@ -432,7 +429,7 @@
                 // Auto-scroll logs.
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
                 {
-                    ImGuiP.SetScrollY(dummyHeight);
+                    ImGuiP.SetScrollY(messages.Count * lineHeight);
 
                     scrollToBottom = false;
                 }

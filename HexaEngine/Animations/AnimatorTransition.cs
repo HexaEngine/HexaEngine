@@ -2,9 +2,9 @@
 {
     public class AnimatorTransition
     {
-        public AnimatorState State { get; set; }
+        public AnimatorState State { get; set; } = null!;
 
-        public AnimatorStateTransition Transition { get; set; }
+        public AnimatorStateTransition Transition { get; set; } = null!;
 
         public AnimatorCondition Condition { get; set; }
     }

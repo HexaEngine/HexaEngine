@@ -5,8 +5,8 @@
 
     public class ClientServer : INetwork
     {
-        private Server server;
-        private Client client;
+        private Server server = null!;
+        private Client client = null!;
 
         public bool IsClient { get; } = true;
 

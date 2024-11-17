@@ -18,16 +18,16 @@
 
     public class ShadowMapPass : DrawPass
     {
-        private ResourceRef<ShadowAtlas> shadowAtlas;
+        private ResourceRef<ShadowAtlas> shadowAtlas = null!;
 
-        private ResourceRef<ConstantBuffer<PSMShadowParams>> psmBuffer;
-        private ResourceRef<ConstantBuffer<CSMShadowParams>> csmBuffer;
-        private ResourceRef<ConstantBuffer<DPSMShadowParams>> osmBuffer;
+        private ResourceRef<ConstantBuffer<PSMShadowParams>> psmBuffer = null!;
+        private ResourceRef<ConstantBuffer<CSMShadowParams>> csmBuffer = null!;
+        private ResourceRef<ConstantBuffer<DPSMShadowParams>> osmBuffer = null!;
 
-        private GaussianBlur blurFilter;
-        private CopyEffect copyEffect;
-        private ReprojectEffect reprojectEffect;
-        private ClearSliceEffect clearSliceEffect;
+        private GaussianBlur blurFilter = null!;
+        private CopyEffect copyEffect = null!;
+        private ReprojectEffect reprojectEffect = null!;
+        private ClearSliceEffect clearSliceEffect = null!;
 
         public ShadowMapPass() : base("ShadowMap")
         {
@@ -90,8 +90,8 @@
             profiler?.End("ShadowMap.UpdateAtlas");
         }
 
-        private Texture2D tex;
-        private DepthStencil depth;
+        private Texture2D tex = null!;
+        private DepthStencil depth = null!;
 
         private void Filter(IGraphicsContext context, Texture2D source)
         {
@@ -105,7 +105,7 @@
                 blurFilter.Resize(source.Format, source.Width, source.Height);
             }
 
-            blurFilter.Blur(context, source.SRV, source.RTV, source.Width, source.Height);
+            blurFilter.Blur(context, source.SRV!, source.RTV!, source.Width, source.Height);
         }
 
         private void FilterArray(IGraphicsContext context, Texture2D source, uint cascadeMask, CSMShadowParams old, CSMShadowParams now, bool reproject)
@@ -119,19 +119,19 @@
             {
                 if ((cascadeMask & (1 << i)) != 0)
                 {
-                    blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                    blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
                 }
                 else if (reproject)
                 {
                     Reproject(context, source, i, old, now);
-                    blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                    blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
                 }
             }
         }
 
         private void Copy(IGraphicsContext context, Texture2D source, Viewport sourceViewport, Viewport destinationRect)
         {
-            copyEffect.Copy(context, source.SRV, shadowAtlas.Value.RTV, sourceViewport, destinationRect);
+            copyEffect.Copy(context, source.SRV!, shadowAtlas.Value!.RTV, sourceViewport, destinationRect);
         }
 
         private void PrepareBuffers(IGraphicsContext context, Light light)
@@ -157,10 +157,10 @@
 
             PrepareBuffers(context, spotlight);
 
-            context.ClearRenderTargetView(tex.RTV, Vector4.One);
+            context.ClearRenderTargetView(tex.RTV!, Vector4.One);
             context.ClearDepthStencilView(depth, DepthStencilClearFlags.All, 1, 0);
 
-            var destinationViewport = spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value);
+            var destinationViewport = spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value!);
             Viewport sourceViewport = tex.Viewport;
 
             context.SetRenderTarget(tex.RTV, depth.DSV);
@@ -171,7 +171,7 @@
                 profiler?.Begin($"ShadowMap.UpdateSpot.{drawable.DebugName}");
                 if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                 {
-                    drawable.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
+                    drawable.DrawShadowMap(context, psmBuffer.Value!, ShadowType.Perspective);
                 }
                 profiler?.End($"ShadowMap.UpdateSpot.{drawable.DebugName}");
             }
@@ -199,10 +199,10 @@
             {
                 PrepareBuffers(context, pointLight);
 
-                context.ClearRenderTargetView(tex.RTV, Vector4.One);
+                context.ClearRenderTargetView(tex.RTV!, Vector4.One);
                 context.ClearDepthStencilView(depth, DepthStencilClearFlags.All, 1, 0);
 
-                var destinationViewport = pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value, i);
+                var destinationViewport = pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value!, i);
                 Viewport sourceViewport = tex.Viewport;
 
                 context.SetRenderTarget(tex.RTV, depth.DSV);
@@ -214,7 +214,7 @@
                     profiler?.Begin($"ShadowMap.UpdatePoint.{drawable.DebugName}");
                     if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                     {
-                        drawable.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
+                        drawable.DrawShadowMap(context, osmBuffer.Value!, ShadowType.Omnidirectional);
                     }
                     profiler?.End($"ShadowMap.UpdatePoint.{drawable.DebugName}");
                 }

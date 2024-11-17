@@ -21,7 +21,7 @@
 
             if (artifact == null)
             {
-                return null;
+                return null!;
             }
 
             return new(this, id, desc);

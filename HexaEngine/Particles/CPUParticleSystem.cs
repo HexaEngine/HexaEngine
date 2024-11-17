@@ -232,7 +232,7 @@
 
                 pb.Position = NewPosition;
 
-                Vector3 vec = NewPosition - camera.Transform.Position;
+                Vector3 vec = NewPosition - camera!.Transform.Position;
                 pb.DistanceToEye = vec.Length();
 
                 float alpha = MathUtil.Lerp(1, 0, MathUtil.Clamp01(fScaledLife - 0.8f) / 0.2f);

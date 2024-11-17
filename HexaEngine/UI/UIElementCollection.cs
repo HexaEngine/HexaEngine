@@ -25,7 +25,7 @@
 
         object ICollection.SyncRoot => this;
 
-        object? IList.this[int index] { get => this[index]; set => this[index] = (UIElement)value; }
+        object? IList.this[int index] { get => this[index]; set => this[index] = (UIElement)value!; }
 
         public event EventHandler<UIElement>? ElementAdded;
 

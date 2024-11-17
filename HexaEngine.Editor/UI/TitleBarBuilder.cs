@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.UI
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Graphics.Renderers;
     using System;
     using System.Numerics;
 
@@ -80,6 +81,7 @@
 
         public void Draw(TitleBarContext context)
         {
+            ImGuiManager.PushFont("WidgetsFont");
             var bg = ImGui.GetBackgroundDrawList();
             bg.AddRectFilled(context.Area.Min, context.Area.Max, context.BackgroundColor);
 
@@ -97,6 +99,7 @@
                     AlignContext(context);
                 }
             }
+            ImGuiManager.PopFont();
         }
 
         public void AlignContext(TitleBarContext context)

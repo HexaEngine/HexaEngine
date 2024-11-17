@@ -11,10 +11,10 @@
 
     public class PostProcessPass : DrawPass
     {
-        private PostProcessingManager postProcessingManager;
-        private ResourceRef<Texture2D> lightBuffer;
-        private ResourceRef<Texture2D> AOBuffer;
-        private ResourceRef<Texture2D> postFxBuffer;
+        private PostProcessingManager postProcessingManager = null!;
+        private ResourceRef<Texture2D> lightBuffer = null!;
+        private ResourceRef<Texture2D> AOBuffer = null!;
+        private ResourceRef<Texture2D> postFxBuffer = null!;
 
         public PostProcessPass() : base("PostProcess")
         {
@@ -59,10 +59,10 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            context.ClearRenderTargetView(AOBuffer.Value, Vector4.One);
-            context.ClearRenderTargetView(postFxBuffer.Value.RTV, default);
+            context.ClearRenderTargetView(AOBuffer.Value!, Vector4.One);
+            context.ClearRenderTargetView(postFxBuffer.Value!.RTV!, default);
             postProcessingManager.Enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoPostProcessing) == 0;
-            postProcessingManager.Input = lightBuffer.Value;
+            postProcessingManager.Input = lightBuffer.Value!;
             postProcessingManager.Output = postFxBuffer.Value;
             postProcessingManager.OutputTex = postFxBuffer.Value;
             postProcessingManager.Viewport = creator.Viewport;

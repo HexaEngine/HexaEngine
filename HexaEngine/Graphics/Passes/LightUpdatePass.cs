@@ -12,9 +12,9 @@
 
     public class LightUpdatePass : RenderPass
     {
-        public StructuredUavBuffer<ProbeData> GlobalProbes;
-        public StructuredUavBuffer<LightData> LightBuffer;
-        public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
+        public StructuredUavBuffer<ProbeData> GlobalProbes = null!;
+        public StructuredUavBuffer<LightData> LightBuffer = null!;
+        public StructuredUavBuffer<ShadowData> ShadowDataBuffer = null!;
 
         public LightUpdatePass() : base("LightUpdate")
         {
