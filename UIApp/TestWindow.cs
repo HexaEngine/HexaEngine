@@ -9,8 +9,10 @@
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.UI;
+    using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;
+    using HexaEngine.Windows;
     using System.Numerics;
 
     public sealed class TestWindow : CoreWindow
@@ -31,6 +33,8 @@
 
         public override Viewport WindowViewport { get; }
 
+        private readonly TextBox textBox = new() { FontSize = 30, MinWidth = 200, MinHeight = 30 * 6, AcceptsReturn = true, Background = new SolidColorBrush(Colors.Beige) };
+
         public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
             base.Initialize(audioDevice, graphicsDevice);
@@ -39,10 +43,12 @@
             swapChain = SwapChain;
             renderDispatcher = (ThreadDispatcher)Dispatcher;
 
-            swapChain.VSync = true;
+            //swapChain.VSync = true;
+            swapChain.LimitFPS = true;
+            swapChain.TargetFPS = 165;
 
             UISystem system = new();
-            system.Load(graphicsDevice);
+            system.Awake(null!);
             UISystem.Current = system;
 
             uirenderer = new(graphicsDevice);
@@ -58,11 +64,43 @@
         private void MakeUI()
         {
             XamlReader reader = new();
-            window = (UIWindow)reader.Parse("Test.xaml");
+            window = new UIWindow();
+            window.Width = Width;
+            window.Height = Height;
 
-            Width = (int)window.Width;
-            Height = (int)window.Height;
+            window.SetInputTransform(Matrix3x2.CreateTranslation(-new Vector2(X, Y)));
+
+            var grid = new Grid();
+            window.Content = textBox;
+
+            grid.ColumnDefinitions.Add(new(new(1, GridUnitType.Star)));
+            grid.ColumnDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
+            grid.ColumnDefinitions.Add(new(new(1, GridUnitType.Star)));
+
+            grid.RowDefinitions.Add(new(new(1, GridUnitType.Star)));
+            grid.RowDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
+            grid.RowDefinitions.Add(new(new(1, GridUnitType.Star)));
+
+            Button button = new Button();
+            button.Content = "Hello";
+
+            StackPanel panel = new();
+            //panel.Children.Add(textBox);
+            Grid.SetColumn(panel, 1);
+            Grid.SetRow(panel, 1);
+            grid.Children.Add(panel);
+
+            window.Background = new SolidColorBrush(Colors.Black);
             window.Show();
+            window.OnInvalidateVisual += OnInvalidateVisual;
+            window.InvalidateMeasure();
+        }
+
+        private bool invalidate = true;
+
+        private void OnInvalidateVisual(object? sender, EventArgs e)
+        {
+            invalidate = true;
         }
 
         /// <summary>
@@ -85,47 +123,48 @@
                 resetTime = false;
             }
 
-            commandList.BeginDraw();
-
-            window.Render(commandList);
-
-            commandList.Transform = Matrix3x2.Identity;
-
-            commandList.EndDraw();
-
-            // Clear render target view.
-            context.ClearRenderTargetView(compositionTexture.RTV, default);
-
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
 
-            // Wait for swap chain presentation.
-            swapChain.WaitForPresent();
+            if (invalidate)
+            {
+                commandList.BeginDraw();
 
-            // Set the render target to swap chain backbuffer.
-            context.SetRenderTarget(compositionTexture.RTV, null);
+                window.Render(commandList);
 
-            float L = 0;
-            float R = Width;
-            float T = 0;
-            float B = Height;
-            Matrix4x4 mvp = new
-                (
-                 2.0f / (R - L), 0.0f, 0.0f, 0.0f,
-                 0.0f, 2.0f / (T - B), 0.0f, 0.0f,
-                 0.0f, 0.0f, 0.5f, 0.0f,
-                 (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
-                 );
+                commandList.Transform = Matrix3x2.Identity;
 
-            // End the ImGui frame rendering.
-            uirenderer?.RenderDrawData(context, swapChain.Viewport, mvp, commandList);
+                commandList.EndDraw();
 
-            context.CopyResource(swapChain.Backbuffer, compositionTexture);
+                invalidate = false;
 
-            // Present and swap buffers.
-            swapChain.Present();
+                // Clear render target view.
+                context.ClearRenderTargetView(compositionTexture.RTV, default);
 
-            // Wait for swap chain presentation to complete.
+                // Set the render target to swap chain backbuffer.
+                context.SetRenderTarget(compositionTexture.RTV, null);
+
+                float L = 0;
+                float R = Width;
+                float T = 0;
+                float B = Height;
+                Matrix4x4 mvp = new
+                    (
+                     2.0f / (R - L), 0.0f, 0.0f, 0.0f,
+                     0.0f, 2.0f / (T - B), 0.0f, 0.0f,
+                     0.0f, 0.0f, 0.5f, 0.0f,
+                     (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
+                     );
+
+                // End the ImGui frame rendering.
+                uirenderer?.RenderDrawData(context, swapChain.Viewport, mvp, commandList);
+
+                context.CopyResource(swapChain.Backbuffer, compositionTexture);
+
+                // Present and swap buffers.
+                swapChain.Present();
+            }
+
             swapChain.Wait();
         }
 
@@ -145,6 +184,12 @@
 
             resize = true;
             base.OnResized(args);
+        }
+
+        protected override void OnMoved(MovedEventArgs args)
+        {
+            window.SetInputTransform(Matrix3x2.CreateTranslation(-new Vector2(args.NewX, args.NewY)));
+            base.OnMoved(args);
         }
 
         protected override void DisposeCore()

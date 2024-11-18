@@ -5,6 +5,7 @@
     using HexaEngine.UI.Markup;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
+    using YamlDotNet.Core.Tokens;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     [ContentProperty("Content")]
@@ -28,12 +29,20 @@
                 if (content is UIElement oldElement)
                 {
                     RemoveVisualChild(oldElement);
+                    oldElement.Uninitialize();
                 }
 
                 if (value is UIElement newElement)
                 {
+                    if (newElement.Parent != null)
+                    {
+                        throw new InvalidOperationException("The UIElement element already has a parent and cannot be added as a child to another UIElement.");
+                    }
                     AddVisualChild(newElement);
-                    newElement.Initialize();
+                    if (IsInitialized && !newElement.IsInitialized)
+                    {
+                        newElement.Initialize();
+                    }
                 }
 
                 if (value != null)
@@ -56,7 +65,7 @@
                 }
 
                 content = value;
-                InvalidateArrange();
+                InvalidateMeasure();
             }
         }
 
@@ -102,6 +111,19 @@
             if (content is UIElement element)
             {
                 element.Initialize();
+                return;
+            }
+
+            if (contentString != null)
+            {
+                if (textLayout == null)
+                {
+                    textLayout = CreateTextLayout(contentString!, float.MaxValue, float.MaxValue);
+                }
+                else
+                {
+                    textLayout.Text = contentString!;
+                }
             }
         }
 

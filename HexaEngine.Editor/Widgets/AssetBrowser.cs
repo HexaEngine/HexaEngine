@@ -643,7 +643,7 @@
 
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
-                    Clipboard.SetClipboardText(dir.Path);
+                    Clipboard.SetText(dir.Path);
                 }
 
                 if (ImGui.MenuItem($"{UwU.FolderOpen} Open Folder in Explorer"))
@@ -874,7 +874,7 @@
 
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
-                    Clipboard.SetClipboardText(file.Path);
+                    Clipboard.SetText(file.Path);
                 }
 
                 if (ImGui.MenuItem($"{UwU.FolderOpen} Open Containing Folder"))
@@ -968,7 +968,7 @@
 
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Full Path"))
                 {
-                    Clipboard.SetClipboardText(currentDir.FullName);
+                    Clipboard.SetText(currentDir.FullName);
                 }
 
                 if (ImGui.MenuItem($"{UwU.FolderOpen} Open Folder in Explorer"))

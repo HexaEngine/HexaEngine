@@ -197,13 +197,18 @@
             positionExtend += origin + desiredSize;
 
             Vector2 size = positionExtend - position;
-            size = ArrangeOverwrite(size);
-
-            positionExtend = position + size;
 
             Vector2 contentPosition = position;
             contentPosition.X += padding.Left;
             contentPosition.Y += padding.Top;
+
+            BaseOffset = Matrix3x2.CreateTranslation(position);
+            ContentOffset = Matrix3x2.CreateTranslation(contentPosition);
+
+            size = ArrangeOverwrite(size);
+
+            positionExtend = position + size;
+
             Vector2 contentPositionExtend = positionExtend;
             contentPositionExtend.X -= padding.Right;
             contentPositionExtend.Y -= padding.Bottom;
@@ -214,8 +219,6 @@
             RenderSize = size;
             BoundingBox = VisualClip = new RectangleF(position, size);
             InnerContentBounds = new RectangleF(contentPosition, contentSize);
-            BaseOffset = Matrix3x2.CreateTranslation(position);
-            ContentOffset = Matrix3x2.CreateTranslation(contentPosition);
         }
 
         protected virtual Vector2 ArrangeOverwrite(Vector2 size)

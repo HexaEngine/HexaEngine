@@ -5,6 +5,7 @@
     using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.UI.Graphics;
+    using Microsoft.CodeAnalysis.Text;
     using System;
     using System.Collections.Generic;
     using System.Numerics;
@@ -428,6 +429,11 @@
             for (int i = 0; i < textSpan.Length; i++)
             {
                 uint charcode = textSpan[i];
+                if (i + 1 < textSpan.Length && char.IsSurrogatePair(textSpan[i], textSpan[i + 1]))
+                {
+                    charcode = (uint)char.ConvertToUtf32((char)charcode, textSpan[i + 1]);
+                    i++;
+                }
 
                 if (charcode == '\r')
                 {
@@ -516,6 +522,11 @@
             for (int i = startIndex; i != endIndex; i += step)
             {
                 uint charcode = text[i];
+                if (i + 1 < text.Length && char.IsSurrogatePair(text[i], text[i + 1]))
+                {
+                    charcode = (uint)char.ConvertToUtf32((char)charcode, text[i + 1]);
+                    i++;
+                }
 
                 if (charcode == '\r')
                 {

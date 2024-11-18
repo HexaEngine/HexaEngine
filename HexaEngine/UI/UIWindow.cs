@@ -2,6 +2,7 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.UI.Controls;
@@ -9,8 +10,11 @@
 
     public class UIWindow : ContentControl, IChildContainer, IDisposable
     {
+        private UIElement? mouseFocused;
         private bool disposedValue;
         private bool shown;
+        private bool hovered;
+        private Matrix3x2 inputTransform = Matrix3x2.Identity;
 
         public Color BackgroundColor { get; set; } = Colors.White;
 
@@ -21,6 +25,8 @@
         public float X { get; set; }
 
         public float Y { get; set; }
+
+        public bool Hovered { get => hovered; }
 
         public event EventHandler? OnInvalidateVisual;
 
@@ -54,9 +60,6 @@
             Keyboard.KeyUp += KeyboardKeyUp;
             Keyboard.TextInput += KeyboardTextInput;
 
-            Application.MainWindow.Enter += MainWindowEnter;
-            Application.MainWindow.Leave += MainWindowLeave;
-
             base.Initialize();
             InvalidateArrange();
         }
@@ -85,41 +88,58 @@
             Focused?.RaiseEvent(e);
         }
 
-        private UIElement? mouseFocused;
-
         private void MouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
+            var position = e.Position;
+            Vector2 adjusted = Vector2.Transform(Mouse.Global, inputTransform);
+            e.Position = adjusted;
             e.RoutedEvent = MouseUpEvent;
             mouseFocused?.RaiseEvent(e);
+            e.Position = position;
         }
 
         private void MouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
+            var position = Mouse.Global;
+            Vector2 adjusted = Vector2.Transform(Mouse.Global, inputTransform);
+            e.Position = adjusted;
             e.RoutedEvent = MouseDownEvent;
             mouseFocused?.RaiseEvent(e);
-        }
-
-        private void MainWindowLeave(object? sender, Core.Windows.Events.LeaveEventArgs e)
-        {
-            mouseLeaveEventArgs.Handled = false;
-            mouseFocused?.RaiseEvent(mouseLeaveEventArgs);
-            mouseFocused = null;
-        }
-
-        private void MainWindowEnter(object? sender, Core.Windows.Events.EnterEventArgs e)
-        {
-            mouseEnterEventArgs.Handled = false;
-            RaiseEvent(mouseEnterEventArgs);
-            mouseFocused = this;
+            e.Position = position;
         }
 
         private void MouseMoved(object? sender, MouseMoveEventArgs e)
         {
-            var result = VisualTreeHelper.HitTest(this, new Vector2(e.X, e.Y));
+            var x = e.X;
+            var y = e.Y;
+            var position = new Vector2(x, y);
+            Vector2 adjusted = Vector2.Transform(position, inputTransform);
+
+            if (adjusted.X < X || adjusted.Y < Y || adjusted.X > X + Width || adjusted.Y > Y + Height)
+            {
+                if (hovered)
+                {
+                    hovered = false;
+                    OnMouseLeave();
+                }
+                return;
+            }
+
+            if (!hovered)
+            {
+                hovered = true;
+                OnMouseEnter();
+            }
+
+            var result = VisualTreeHelper.HitTest(this, adjusted);
             if (result.VisualHit == null)
             {
                 return;
             }
+
+            e.X = adjusted.X;
+            e.Y = adjusted.Y;
+
             var first = result.VisualHit.FindFirstObject<UIElement>();
 
             if (first != null)
@@ -129,6 +149,23 @@
                 e.RoutedEvent = MouseMoveEvent;
                 first.RaiseEvent(e);
             }
+
+            e.X = x;
+            e.Y = y;
+        }
+
+        protected virtual void OnMouseLeave()
+        {
+            mouseLeaveEventArgs.Handled = false;
+            mouseFocused?.RaiseEvent(mouseLeaveEventArgs);
+            mouseFocused = null;
+        }
+
+        protected virtual void OnMouseEnter()
+        {
+            mouseEnterEventArgs.Handled = false;
+            RaiseEvent(mouseEnterEventArgs);
+            mouseFocused = this;
         }
 
         private readonly MouseEventArgs mouseEnterEventArgs = new(MouseEnterEvent);
@@ -190,6 +227,15 @@
         {
             if (!disposedValue)
             {
+                Mouse.Moved -= MouseMoved;
+                Mouse.ButtonDown -= MouseButtonDown;
+                Mouse.ButtonUp -= MouseButtonUp;
+                Mouse.Wheel -= MouseWheel;
+
+                Keyboard.KeyDown -= KeyboardKeyDown;
+                Keyboard.KeyUp -= KeyboardKeyUp;
+                Keyboard.TextInput -= KeyboardTextInput;
+
                 Uninitialize();
                 disposedValue = true;
             }
@@ -199,6 +245,11 @@
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetInputTransform(Matrix3x2 inputTransform)
+        {
+            this.inputTransform = inputTransform;
         }
     }
 }

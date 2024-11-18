@@ -433,7 +433,7 @@
                 ImGuiManager.PopFont();
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Path"))
                 {
-                    Clipboard.SetClipboardText(entry.Path);
+                    Clipboard.SetText(entry.Path);
                 }
 
                 ImGui.EndPopup();

@@ -4,7 +4,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.UI;
 
     public class Program
     {

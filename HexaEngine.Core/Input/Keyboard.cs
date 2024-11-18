@@ -60,6 +60,7 @@
             keyboardEventArgs.State = KeyState.Down;
             keyboardEventArgs.KeyCode = keyCode;
             keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
+            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Keysym.Mod;
             KeyDown?.Invoke(null, keyboardEventArgs);
         }
 
@@ -73,6 +74,7 @@
             keyboardEventArgs.State = KeyState.Up;
             keyboardEventArgs.KeyCode = keyCode;
             keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
+            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Keysym.Mod;
             KeyUp?.Invoke(null, keyboardEventArgs);
         }
 

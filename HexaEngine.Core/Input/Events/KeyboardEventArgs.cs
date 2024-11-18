@@ -41,5 +41,10 @@
         /// Gets the scan code of the key.
         /// </summary>
         public ScanCode ScanCode { get; internal set; }
+
+        /// <summary>
+        /// Gets the key modifier.
+        /// </summary>
+        public KeyMod Modifier { get; internal set; }
     }
 }

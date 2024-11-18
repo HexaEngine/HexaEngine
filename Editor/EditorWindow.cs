@@ -184,7 +184,7 @@ namespace Editor
             SceneWindow.Update();
 
             drawing &= SceneWindow.IsVisible;
-            windowViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
+            windowViewport = sceneRenderer.OutputViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
             CPUProfiler.Global.End("Editor.Update");
 
             // Wait for swap chain presentation.
@@ -208,7 +208,7 @@ namespace Editor
                 CPUProfiler.Global.End("Scene.Update");
 
                 CPUProfiler.Global.Begin("Scene.Render");
-                sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
+                sceneRenderer.Render(context, scene, CameraManager.Current);
                 CPUProfiler.Global.End("Scene.Render");
             }
 

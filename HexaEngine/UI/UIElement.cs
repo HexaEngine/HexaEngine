@@ -94,6 +94,15 @@
 
         internal virtual void Uninitialize()
         {
+            if (!isInitialized)
+            {
+                return;
+            }
+            foreach (var route in eventRoutes)
+            {
+                route.Clear();
+            }
+            eventRoutes.Clear();
             isInitialized = false;
             OnUninitialized();
             UninitializeComponent();
@@ -114,7 +123,7 @@
                 var route = eventRoutes[i];
                 if (route.RoutedEvent == routedEvent)
                 {
-                    ((EventRoute<T>)route).Remove(this, value);
+                    ((EventRoute<T>)route).Add(this, value);
                 }
             }
         }
@@ -126,7 +135,7 @@
                 var route = eventRoutes[i];
                 if (route.RoutedEvent == routedEvent)
                 {
-                    ((EventRoute<T>)route).Add(this, value);
+                    ((EventRoute<T>)route).Remove(this, value);
                 }
             }
         }

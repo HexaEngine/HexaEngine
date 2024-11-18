@@ -12,6 +12,7 @@
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;
     using HexaEngine.Scripts;
+    using HexaEngine.UI;
     using HexaEngine.Volumes;
     using HexaEngine.Weather;
     using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,9 @@
             descriptors.AddSingleton<MaterialManager>();
             descriptors.AddSingleton<DrawLayerManager>();
             descriptors.AddSingleton<AnimationManager>();
+
+            if (!graphicsDisabled)
+                Register<UISystem>();
 
             Register<QuerySystem>();
             Register<TransformSystem>();
@@ -70,6 +74,29 @@
             }
 
             descriptors.AddSingleton<ISceneSystem, TSystem>();
+        }
+
+        public static void Remove<TTarget>() where TTarget : class, ISceneSystem
+        {
+            for (int i = 0; i < descriptors.Count; i++)
+            {
+                var descriptor = descriptors[i];
+                if (descriptor.ImplementationType == typeof(TTarget))
+                {
+                    descriptors.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public static void RemoveAt(int index)
+        {
+            descriptors.RemoveAt(index);
+        }
+
+        public static void Clear()
+        {
+            descriptors.Clear();
         }
 
         public static ServiceCollection GetDescriptors() => descriptors;

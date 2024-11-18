@@ -74,22 +74,22 @@
         /// <summary>
         /// Control key modifier (combining Left and Right Control keys).
         /// </summary>
-        Ctrl = 0xC0,
+        Ctrl = RCtrl | LCtrl,
 
         /// <summary>
         /// Shift key modifier (combining Left and Right Shift keys).
         /// </summary>
-        Shift = 3,
+        Shift = RShift | LShift,
 
         /// <summary>
         /// Alt key modifier (combining Left and Right Alt keys).
         /// </summary>
-        Alt = 0x300,
+        Alt = RAlt | LAlt,
 
         /// <summary>
         /// GUI (Windows key) modifier (combining Left and Right GUI keys).
         /// </summary>
-        Gui = 0xC00,
+        Gui = RGui | LGui,
 
         /// <summary>
         /// Reserved modifier.

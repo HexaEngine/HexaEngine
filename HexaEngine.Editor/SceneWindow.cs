@@ -165,13 +165,15 @@
                 HandleHotkeys();
             }
 
+            bool inEdit = Application.InEditMode;
+
             ImGuizmo.SetDrawlist();
             isVisible = true;
 
             var scene = SceneManager.Current;
             if (scene != null)
             {
-                if (ImGui.IsWindowHovered() && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
+                if (inEdit && ImGui.IsWindowHovered() && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
                 {
                     var ca = CameraManager.Current;
                     Vector3 rayDir = Mouse.ScreenToWorld(ca.Transform.Projection, ca.Transform.ViewInv, RenderViewport);
@@ -197,14 +199,14 @@
                 {
                     if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                     {
-                        if (ImGui.Button("3D"u8))
+                        if (inEdit && ImGui.Button("3D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim2D;
                         }
                     }
                     else
                     {
-                        if (ImGui.Button("2D"u8))
+                        if (inEdit && ImGui.Button("2D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim3D;
                         }
@@ -268,14 +270,14 @@
                     }
 
                     int cameraIndex = scene.Cameras.ActiveCameraIndex;
-                    if (ImGui.Combo("##ActiveCamCombo"u8, ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
+                    if (inEdit && ImGui.Combo("##ActiveCamCombo"u8, ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
                     {
                         scene.Cameras.ActiveCameraIndex = cameraIndex;
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.BeginMenu($"{UwU.Gear}"))
+                    if (inEdit && ImGui.BeginMenu($"{UwU.Gear}"))
                     {
                         ImGui.Checkbox("Fullscreen"u8, ref Fullframe);
 
@@ -366,7 +368,7 @@
 
             ImGui.PushItemWidth(100);
 
-            if (true)
+            if (Application.InEditMode)
             {
                 var mode = Inspector.Mode;
                 if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
@@ -409,21 +411,25 @@
 
         private static void HandleHotkeys()
         {
-            if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
+            if (Application.InEditMode)
             {
-                if (ImGuiP.IsKeyPressed(ImGuiKey.S))
+                if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                 {
-                    SceneManager.Save();
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.S))
+                    {
+                        SceneManager.Save();
+                    }
+                }
+
+                if (ImGuiP.IsKeyDown(ImGuiKey.F5))
+                {
+                    TransitionToState(EditorPlayState.Play);
                 }
             }
 
             if (ImGuiP.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
             {
                 TransitionToState(EditorPlayState.Edit);
-            }
-            if (ImGuiP.IsKeyDown(ImGuiKey.F5) && Application.InEditMode)
-            {
-                TransitionToState(EditorPlayState.Play);
             }
         }
 

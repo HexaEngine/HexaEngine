@@ -1,5 +1,8 @@
-﻿namespace HexaEngine.UI.Graphics.Text
+﻿using System.Diagnostics;
+
+namespace HexaEngine.UI.Graphics.Text
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public struct TextRange
     {
         public string Text;
@@ -36,6 +39,11 @@
         public override readonly string ToString()
         {
             return Text.Substring(Start, Length);
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return ToString();
         }
     }
 }

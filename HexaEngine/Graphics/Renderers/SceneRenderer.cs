@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-namespace HexaEngine.Graphics.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.Mathematics;
@@ -19,26 +17,49 @@ namespace HexaEngine.Graphics.Renderers
     using System;
     using System.Numerics;
 
+    public class RendererResizedEventArgs : EventArgs
+    {
+        public RendererResizedEventArgs(Vector2 oldSize, Vector2 newSize)
+        {
+            OldSize = oldSize;
+            NewSize = newSize;
+        }
+
+        public Vector2 OldSize { get; internal set; }
+
+        public Vector2 NewSize { get; internal set; }
+    }
+
+    public class OutputViewportChangedEventArgs : EventArgs
+    {
+        public Viewport OldViewport { get; internal set; }
+
+        public Viewport NewViewport { get; internal set; }
+    }
+
     public class SceneRenderer : ISceneRenderer
     {
-        private IGraphicsDevice device;
-        private ISwapChain swapChain;
-        private ICoreWindow window;
+        private IGraphicsDevice device = null!;
+        private ISwapChain swapChain = null!;
+        private ICoreWindow window = null!;
 
         private readonly RendererSettings settings = new();
-        private readonly HDRPipeline renderGraph;
-        private RenderGraphExecuter graphExecuter;
+        private readonly HDRPipeline renderGraph = null!;
+        private RenderGraphExecuter graphExecuter = null!;
 
-        private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer = null!;
 
         private bool initialized;
         private bool disposedValue;
 
-        private ConfigKey configKey;
+        private ConfigKey configKey = null!;
         private float RenderResolution;
         private int width;
         private int height;
         private bool enableProfiling = true;
+
+        private OutputViewportChangedEventArgs outputViewportChangedEventArgs = new();
+        private Viewport outputViewport;
 
         public ViewportShading Shading { get; set; }
 
@@ -62,18 +83,42 @@ namespace HexaEngine.Graphics.Renderers
             set
             {
                 OnRendererResizeBegin();
+                var oldWidth = width;
+                var oldHeight = height;
                 width = (int)value.X;
                 height = (int)value.Y;
+                Resized?.Invoke(this, new(new(oldWidth, oldHeight), value));
                 OnRendererResizeEnd(width, height);
             }
         }
+
+        public Viewport OutputViewport
+        {
+            get => outputViewport;
+            set
+            {
+                if (outputViewport == value)
+                {
+                    return;
+                }
+
+                outputViewportChangedEventArgs.OldViewport = outputViewport;
+                outputViewportChangedEventArgs.NewViewport = value;
+                OutputViewportChanged?.Invoke(this, outputViewportChangedEventArgs);
+                outputViewport = value;
+            }
+        }
+
+        public static event EventHandler<RendererResizedEventArgs>? Resized;
+
+        public static event EventHandler<OutputViewportChangedEventArgs>? OutputViewportChanged;
 
         public SceneRenderer(Windows.RendererFlags flags)
         {
             renderGraph = new(flags);
         }
 
-        public static SceneRenderer Current { get; private set; }
+        public static SceneRenderer Current { get; private set; } = null!;
 
         public SceneDrawFlags DrawFlags { get; set; }
 
@@ -209,7 +254,7 @@ namespace HexaEngine.Graphics.Renderers
         }
 
         [Profile]
-        public unsafe void Render(IGraphicsContext context, Hexa.NET.Mathematics.Viewport viewport, IScene scene, Camera camera)
+        public unsafe void Render(IGraphicsContext context, IScene scene, Camera camera)
         {
             if (!initialized)
             {
@@ -221,7 +266,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            var cameraBuffer = this.cameraBuffer.Value;
+            var cameraBuffer = this.cameraBuffer.Value!;
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
@@ -230,7 +275,7 @@ namespace HexaEngine.Graphics.Renderers
             scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
-            graphExecuter.ResourceBuilder.OutputViewport = viewport;
+            graphExecuter.ResourceBuilder.OutputViewport = outputViewport;
             graphExecuter.Execute(context, enableProfiling ? CPUProfiler.Global : null);
         }
 
@@ -246,7 +291,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            var cameraBuffer = this.cameraBuffer.Value;
+            var cameraBuffer = this.cameraBuffer.Value!;
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
@@ -293,7 +338,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 var texture = depth[i];
 
-                if (texture.SRV != null || !texture.SRV.IsDisposed)
+                if (texture.SRV != null || !texture.SRV!.IsDisposed)
                 {
                     Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
                 }
@@ -321,7 +366,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 var texture = tex[i];
 
-                if (texture.SRV != null || !texture.SRV.IsDisposed)
+                if (texture.SRV != null || !texture.SRV!.IsDisposed)
                 {
                     Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
                 }
@@ -399,7 +444,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 graphExecuter.Release();
 
-                Current = null;
+                Current = null!;
 
                 disposedValue = true;
             }

@@ -43,17 +43,17 @@
             return ColorConvertFloat4ToU32(i);
         }
 
-        public static void FillRect(this UICommandList list, RectangleF rectangle, Brush brush)
+        public static void FillRect(this UICommandList list, RectangleF rectangle, Brush brush, uint tint = uint.MaxValue)
         {
-            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, brush);
+            list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, brush, tint);
         }
 
-        public static void FillRectangle(this UICommandList list, Vector2 origin, Vector2 size, Brush brush)
+        public static void FillRectangle(this UICommandList list, Vector2 min, Vector2 max, Brush brush, uint tint = uint.MaxValue)
         {
-            list.FillRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush);
+            list.FillRect(min.Y, max.Y, min.X, max.X, brush, tint);
         }
 
-        public static unsafe void FillRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush)
+        public static unsafe void FillRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush, uint tint = uint.MaxValue)
         {
             Vector2 p0 = new(left, bottom); // bottom left corner
             Vector2 p1 = new(left, top); // top left corner
@@ -62,20 +62,20 @@
 
             Vector2* controlPoints = stackalloc Vector2[4] { p0, p1, p2, p3 };
 
-            list.FillConvexPath(controlPoints, 4, brush);
+            list.FillConvexPath(controlPoints, 4, brush, tint);
         }
 
-        public static void DrawRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush, float thickness)
+        public static void DrawRect(this UICommandList list, Vector2 origin, Vector2 size, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
                 return;
             }
 
-            list.DrawRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush, thickness);
+            list.DrawRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, brush, thickness, tint);
         }
 
-        public static unsafe void DrawRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush, float thickness)
+        public static unsafe void DrawRect(this UICommandList list, float top, float bottom, float left, float right, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
@@ -89,20 +89,20 @@
 
             Vector2* controlPoints = stackalloc Vector2[4] { p0, p1, p2, p3 };
 
-            list.DrawPath(controlPoints, 4, brush, thickness, true);
+            list.DrawPath(controlPoints, 4, brush, thickness, tint, true);
         }
 
-        public static void DrawRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush, float thickness)
+        public static void DrawRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
                 return;
             }
 
-            list.DrawRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, thickness);
+            list.DrawRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, thickness, tint);
         }
 
-        public static unsafe void DrawRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, float thickness)
+        public static unsafe void DrawRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
@@ -124,15 +124,15 @@
             DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
             DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
 
-            list.DrawPath(controlPoints, segments, brush, thickness, true);
+            list.DrawPath(controlPoints, segments, brush, thickness, tint, true);
         }
 
-        public static void FillRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush)
+        public static void FillRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, Vector2 radius, Brush brush, uint tint = uint.MaxValue)
         {
-            list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush);
+            list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, tint);
         }
 
-        public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush)
+        public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, uint tint = uint.MaxValue)
         {
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
@@ -149,7 +149,7 @@
             DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
             DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
 
-            list.FillConvexPath(controlPoints, segments, brush);
+            list.FillConvexPath(controlPoints, segments, brush, tint);
         }
 
         private static unsafe void DrawArcInternal(Vector2* controlPoints, Vector2 center, Vector2 radius, int segments, int offset, int arcOffset, float step)
@@ -163,7 +163,7 @@
             }
         }
 
-        public static unsafe void DrawLine(this UICommandList builder, Vector2 start, Vector2 end, Brush brush, float thickness)
+        public static unsafe void DrawLine(this UICommandList builder, Vector2 start, Vector2 end, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
@@ -172,10 +172,10 @@
 
             Vector2* controlPoints = stackalloc Vector2[2] { start, end };
 
-            builder.DrawPath(controlPoints, 2, brush, thickness, false);
+            builder.DrawPath(controlPoints, 2, brush, thickness, tint, false);
         }
 
-        public static unsafe void DrawEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush, float thickness)
+        public static unsafe void DrawEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
@@ -195,10 +195,10 @@
                 controlPoints[i] = new Vector2(x, y);
             }
 
-            list.DrawPath(controlPoints, segments, brush, thickness, true);
+            list.DrawPath(controlPoints, segments, brush, thickness, tint, true);
         }
 
-        public static unsafe void FillEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush)
+        public static unsafe void FillEllipse(this UICommandList list, Vector2 center, Vector2 radius, Brush brush, uint tint = uint.MaxValue)
         {
             const int segments = 32;
             const float step = MathF.PI * 2 / segments;
@@ -211,10 +211,10 @@
                 controlPoints[i] = new(x, y);
             }
 
-            list.FillConvexPath(controlPoints, segments, brush);
+            list.FillConvexPath(controlPoints, segments, brush, tint);
         }
 
-        public static unsafe void DrawArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush, float thickness)
+        public static unsafe void DrawArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush, float thickness, uint tint = uint.MaxValue)
         {
             if (thickness == 0)
             {
@@ -233,10 +233,10 @@
                 controlPoints[i] = new(x, y);
             }
 
-            list.DrawPath(controlPoints, segments + 1, brush, thickness, false);
+            list.DrawPath(controlPoints, segments + 1, brush, thickness, tint, false);
         }
 
-        public static unsafe void FillArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush)
+        public static unsafe void FillArc(this UICommandList list, Vector2 center, Vector2 radius, float startAngle, float endAngle, Brush brush, uint tint = uint.MaxValue)
         {
             const int segments = 32;
             float angleRange = endAngle - startAngle;
@@ -251,7 +251,7 @@
                 controlPoints[i + 1] = new(x, y);
             }
 
-            list.FillConvexPath(controlPoints, segments + 2, brush);
+            list.FillConvexPath(controlPoints, segments + 2, brush, tint);
         }
 
         public static void PrimRect(this UICommandList list, Vector2 a, Vector2 c, uint color)
@@ -322,9 +322,8 @@
 
         public static float AntiAliasSize { get; set; } = 1f;
 
-        public static unsafe void DrawPath(this UICommandList list, Vector2* points, int pointCount, Brush brush, float thickness, bool closed)
+        public static unsafe void DrawPath(this UICommandList list, Vector2* points, int pointCount, Brush brush, float thickness, uint color, bool closed)
         {
-            uint color = uint.MaxValue;
             if (pointCount < 2 || (color & COL32_A_MASK) == 0)
             {
                 return;
@@ -439,6 +438,11 @@
                     list.AddVertex(new(tempPoints[i * 4 + 2], uv, color));
                     list.AddVertex(new(tempPoints[i * 4 + 3], uv, colTrans));
                 }
+
+                if (!isStack)
+                {
+                    Marshal.FreeHGlobal((nint)tempNormals);
+                }
             }
             else
             {
@@ -472,10 +476,8 @@
             list.RecordDraw(UICommandType.DrawPrimitive, brush);
         }
 
-        public static unsafe void FillConvexPath(this UICommandList list, Vector2* points, int pointCount, Brush brush)
+        public static unsafe void FillConvexPath(this UICommandList list, Vector2* points, int pointCount, Brush brush, uint color)
         {
-            uint color = uint.MaxValue;
-
             if (pointCount < 3 || (color & COL32_A_MASK) == 0)
             {
                 return;

@@ -18,6 +18,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Microsoft.Extensions.DependencyInjection;
+    using Silk.NET.OpenAL;
     using System.Numerics;
 
     /// <summary>
@@ -253,7 +254,9 @@ namespace HexaEngine.Windows
             if (drawing && scene is not null)
             {
                 scene.GraphicsUpdate(context);
-                sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
+
+                sceneRenderer.OutputViewport = windowViewport;
+                sceneRenderer.Render(context, scene, CameraManager.Current);
             }
 
             // Invoke virtual method for post-render operations.

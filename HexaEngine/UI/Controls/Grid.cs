@@ -69,7 +69,6 @@
 
         public override void InitializeComponent()
         {
-            Children.ForEach(child => child.InitializeComponent());
             Children.ElementAdded += OnChildAdded;
             Children.ElementRemoved += OnChildRemoved;
         }

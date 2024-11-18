@@ -148,10 +148,10 @@
             float posX = actualWidth - scrollbarWidth;
 
             // Zeichnen der Scrollleisten-Spur
-            commandList.FillRectangle(new Vector2(posX, 0), new Vector2(scrollbarWidth, scrollbarHeight), Brushes.LightGray);
+            commandList.FillRectangle(new Vector2(posX, 0), new Vector2(posX, 0) + new Vector2(scrollbarWidth, scrollbarHeight), Brushes.LightGray);
 
             // Zeichnen des Scrollleisten-Daumens
-            commandList.FillRectangle(new Vector2(posX, thumbY), new Vector2(thumbWidth, thumbHeight), Brushes.DarkGray);
+            commandList.FillRectangle(new Vector2(posX, thumbY), new Vector2(posX, thumbY) + new Vector2(thumbWidth, thumbHeight), Brushes.DarkGray);
         }
     }
 }
