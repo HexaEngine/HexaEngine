@@ -32,7 +32,8 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 | D3D12    | 🚧 |
 | Vulkan   | 🚧 |
 | OpenGL   | ❌ | 
-(For more info on OpenGL, see #81)
+
+(For more info on OpenGL, see [#81](https://github.com/HexaEngine/HexaEngine/issues/81))
 
 ### Audio Backends
 | API          | Supported          |
