@@ -1011,7 +1011,6 @@
 		<ProjectReference Include="..\HexaEngine.D3D12\HexaEngine.D3D12.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-		<ProjectReference Include="..\HexaEngine.OpenGL\HexaEngine.OpenGL.csproj" />
 		<ProjectReference Include="..\HexaEngine.Vulkan\HexaEngine.Vulkan.csproj" />
 		<ProjectReference Include="..\HexaEngine.XAudio\HexaEngine.XAudio.csproj" />
 	</ItemGroup>

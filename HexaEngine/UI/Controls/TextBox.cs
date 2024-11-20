@@ -10,7 +10,6 @@
     using HexaEngine.UI.Graphics.Text;
     using HexaEngine.UI.Markup;
     using System;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
     using System.Text;
@@ -86,7 +85,7 @@
             base.OnLostFocus(args);
         }
 
-        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
             if (textLayout == null)
             {
@@ -463,9 +462,10 @@
                 int i = 0;
                 for (; i < textLayout.Metrics.LineMetrics.Count; i++)
                 {
-                    var lineStartIndex = textLayout.Metrics.LineMetrics[i].Text.Start;
-
-                    if (start >= lineStartIndex)
+                    var lineMetric = textLayout.Metrics.LineMetrics[i];
+                    int lineStartIndex = lineMetric.Text.Start;
+                    int lineEndIndex = lineMetric.Text.End;
+                    if (start >= lineStartIndex && start < lineEndIndex)
                     {
                         break;
                     }
@@ -488,7 +488,7 @@
                         ? new Vector2(textLayout.GetCursorPosition(end).X, lineMetric.Position.Y + lineHeight) // Partial line end
                         : lineMetric.Position + lineMetric.Size; // Full line end
 
-                    commandList.FillRectangle(lineStartPos, lineEndPos, selectionBrush!, tint);
+                    commandList.FillRect(lineStartPos, lineEndPos, selectionBrush!, tint);
 
                     if (isEnd)
                     {

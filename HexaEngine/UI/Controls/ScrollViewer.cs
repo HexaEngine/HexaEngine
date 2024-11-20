@@ -93,9 +93,9 @@
 
         public event RoutedEventHandler<ScrollChangedEventArgs> ScrollChanged { add => AddHandler(ScrollChangedEvent, value); remove => RemoveHandler(ScrollChangedEvent, value); }
 
-        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
-            return base.MeasureOverwrite(availableSize);
+            return base.MeasureOverride(availableSize);
         }
 
         protected override Vector2 ArrangeOverwrite(Vector2 size)
@@ -148,10 +148,10 @@
             float posX = actualWidth - scrollbarWidth;
 
             // Zeichnen der Scrollleisten-Spur
-            commandList.FillRectangle(new Vector2(posX, 0), new Vector2(posX, 0) + new Vector2(scrollbarWidth, scrollbarHeight), Brushes.LightGray);
+            commandList.FillRect(new Vector2(posX, 0), new Vector2(posX, 0) + new Vector2(scrollbarWidth, scrollbarHeight), Brushes.LightGray);
 
             // Zeichnen des Scrollleisten-Daumens
-            commandList.FillRectangle(new Vector2(posX, thumbY), new Vector2(posX, thumbY) + new Vector2(thumbWidth, thumbHeight), Brushes.DarkGray);
+            commandList.FillRect(new Vector2(posX, thumbY), new Vector2(posX, thumbY) + new Vector2(thumbWidth, thumbHeight), Brushes.DarkGray);
         }
     }
 }

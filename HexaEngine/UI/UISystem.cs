@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
+    using HexaEngine.UI.Animation;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Graphics.Text;
     using HexaEngine.Windows;
@@ -117,6 +118,9 @@
         {
             var window = Window;
             if (window == null) return;
+
+            AnimationScheduler.Tick();
+
             if (!invalidate) return;
 
             commandList.BeginDraw();

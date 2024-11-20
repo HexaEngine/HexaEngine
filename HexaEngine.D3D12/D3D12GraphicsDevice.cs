@@ -11,14 +11,6 @@
     using ShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
     using SubresourceData = Core.Graphics.SubresourceData;
 
-    public static class Helper
-    {
-        internal static ResourceFlags Convert(ResourceMiscFlag miscFlags)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public unsafe class D3D12GraphicsDevice : IGraphicsDevice
     {
         internal readonly ComPtr<ID3D12Device10> Device;

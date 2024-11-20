@@ -209,7 +209,7 @@
             return size;
         }
 
-        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
             Vector2 avail = availableSize;
 

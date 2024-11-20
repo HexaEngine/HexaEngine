@@ -71,7 +71,7 @@
 
         public string? ContentString => contentString;
 
-        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
             var borderSize = BorderThickness.Size;
 

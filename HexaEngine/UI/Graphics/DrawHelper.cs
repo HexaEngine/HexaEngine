@@ -48,7 +48,7 @@
             list.FillRect(rectangle.Top, rectangle.Bottom, rectangle.Left, rectangle.Right, brush, tint);
         }
 
-        public static void FillRectangle(this UICommandList list, Vector2 min, Vector2 max, Brush brush, uint tint = uint.MaxValue)
+        public static void FillRect(this UICommandList list, Vector2 min, Vector2 max, Brush brush, uint tint = uint.MaxValue)
         {
             list.FillRect(min.Y, max.Y, min.X, max.X, brush, tint);
         }
@@ -132,6 +132,11 @@
             list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, tint);
         }
 
+        public static void FillRoundedRect(this UICommandList list, Vector2 origin, Vector2 size, CornerRadius radius, Brush brush, uint tint = uint.MaxValue)
+        {
+            list.FillRoundedRect(origin.Y, origin.Y + size.Y, origin.X, origin.X + size.X, radius, brush, tint);
+        }
+
         public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, Vector2 radius, Brush brush, uint tint = uint.MaxValue)
         {
             const int segments = 32;
@@ -148,6 +153,31 @@
             DrawArcInternal(controlPoints, p0, radius, segments / 4, 8, 8, step);
             DrawArcInternal(controlPoints, p1, radius, segments / 4, 16, 16, step);
             DrawArcInternal(controlPoints, p2, radius, segments / 4, 24, 24, step);
+
+            list.FillConvexPath(controlPoints, segments, brush, tint);
+        }
+
+        public static unsafe void FillRoundedRect(this UICommandList list, float top, float bottom, float left, float right, CornerRadius radius, Brush brush, uint tint = uint.MaxValue)
+        {
+            const int segments = 32;
+            const float step = MathF.PI * 2 / segments;
+
+            Vector2* controlPoints = stackalloc Vector2[segments];
+
+            float radiusTopLeft = radius.TopLeft;
+            float radiusTopRight = radius.TopRight;
+            float radiusBottomRight = radius.BottomRight;
+            float radiusBottomLeft = radius.BottomLeft;
+
+            Vector2 p0 = new(left + radiusBottomLeft, bottom - radiusBottomLeft);     // bottom left corner
+            Vector2 p1 = new(left + radiusTopLeft, top + radiusTopLeft);              // top left corner
+            Vector2 p2 = new(right - radiusTopRight, top + radiusTopRight);           // top right corner
+            Vector2 p3 = new(right - radiusBottomRight, bottom - radiusBottomRight);  // bottom right corner
+
+            DrawArcInternal(controlPoints, p3, new Vector2(radiusBottomRight, radiusBottomRight), segments / 4, 0, 0, step);
+            DrawArcInternal(controlPoints, p0, new Vector2(radiusBottomLeft, radiusBottomLeft), segments / 4, 8, 8, step);
+            DrawArcInternal(controlPoints, p1, new Vector2(radiusTopLeft, radiusTopLeft), segments / 4, 16, 16, step);
+            DrawArcInternal(controlPoints, p2, new Vector2(radiusTopRight, radiusTopRight), segments / 4, 24, 24, step);
 
             list.FillConvexPath(controlPoints, segments, brush, tint);
         }
@@ -341,8 +371,6 @@
 
                 // Thicknesses <1.0 should behave like thickness 1.0
                 thickness = MathF.Max(thickness, 1.0f);
-                int integerThickness = (int)thickness;
-                float fractionalThickness = thickness - integerThickness;
 
                 int idxCount = thickLine ? count * 18 : count * 12;
                 int vtxCount = thickLine ? pointCount * 4 : pointCount * 3;

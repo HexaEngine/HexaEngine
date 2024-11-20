@@ -9,6 +9,7 @@
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.UI;
+    using HexaEngine.UI.Animation;
     using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;
@@ -32,8 +33,6 @@
         public override Viewport RenderViewport { get; }
 
         public override Viewport WindowViewport { get; }
-
-        private readonly TextBox textBox = new() { FontSize = 30, MinWidth = 200, MinHeight = 30 * 6, AcceptsReturn = true, Background = new SolidColorBrush(Colors.Beige) };
 
         public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
@@ -71,7 +70,6 @@
             window.SetInputTransform(Matrix3x2.CreateTranslation(-new Vector2(X, Y)));
 
             var grid = new Grid();
-            window.Content = textBox;
 
             grid.ColumnDefinitions.Add(new(new(1, GridUnitType.Star)));
             grid.ColumnDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
@@ -81,16 +79,26 @@
             grid.RowDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
             grid.RowDefinitions.Add(new(new(1, GridUnitType.Star)));
 
-            Button button = new Button();
-            button.Content = "Hello";
-
             StackPanel panel = new();
-            //panel.Children.Add(textBox);
+
+            TextBox textBox = new()
+            {
+                FontSize = 30,
+                MinWidth = 200,
+                MinHeight = 30,
+                AcceptsReturn = true,
+                Background = new SolidColorBrush(new(0x3c3c3cFF)),
+                Foreground = new SolidColorBrush(new(0xFFFFFFFF)),
+            };
+            panel.Children.Add(textBox);
+
             Grid.SetColumn(panel, 1);
             Grid.SetRow(panel, 1);
             grid.Children.Add(panel);
 
-            window.Background = new SolidColorBrush(Colors.Black);
+            window.Content = grid;
+
+            //  window.Background = new SolidColorBrush(Colors.Black);
             window.Show();
             window.OnInvalidateVisual += OnInvalidateVisual;
             window.InvalidateMeasure();
@@ -125,6 +133,8 @@
 
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
+
+            AnimationScheduler.Tick();
 
             if (invalidate)
             {

@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
     using Hexa.NET.Mathematics;
-    using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.UI.Controls;

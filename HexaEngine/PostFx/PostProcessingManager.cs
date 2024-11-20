@@ -16,7 +16,6 @@
         private readonly PostProcessingContext postContext;
         private readonly List<IPostFx> activeEffects = new();
         private readonly List<IPostFx> effects = [];
-        private readonly IGraphicsContext deferredContext;
         private readonly IGraphicsDevice device;
         private readonly PostProcessingFlags flags;
         private readonly PostFxGraphResourceBuilder creator;
@@ -42,10 +41,6 @@
             this.creator = new(creator, device, format, width, height);
 
             postContext = new(device, format, width, height, bufferCount);
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            deferredContext = device.CreateDeferredContext();
-#pragma warning restore CS0618 // Type or member is obsolete
             macros = [];
         }
 
@@ -611,7 +606,7 @@
 
             for (int i = 0; i < groups.Count; i++)
             {
-                groups[i].Execute(context, deferredContext, creator);
+                groups[i].Execute(context, creator);
             }
         }
 
@@ -642,7 +637,7 @@
             lock (_lock)
             {
                 IPostFx first = activeEffects[0];
-                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), true, false);
+                PostProcessingExecutionGroup group = new(device, first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), true, false);
                 group.Passes.Add(first);
                 groups.Add(group);
                 for (int i = 1; i < activeEffects.Count; i++)
@@ -653,7 +648,7 @@
                     if (group.IsDynamic != isDynamic)
                     {
                         var tmp = group;
-                        group = new(isDynamic, false, false);
+                        group = new(device, isDynamic, false, false);
                         tmp.Next = group;
                         groups.Add(group);
                     }
@@ -702,7 +697,6 @@
                 groups.Clear();
 
                 postContext.Dispose();
-                deferredContext.Dispose();
                 disposedValue = true;
             }
         }
