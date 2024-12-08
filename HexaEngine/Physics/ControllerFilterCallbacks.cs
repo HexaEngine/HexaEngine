@@ -13,7 +13,7 @@
         public ControllerFilterCallbacks(ControllerFilterCallbackDelegate func)
         {
             controllerFilterCallback = AllocT<PxControllerFilterCallback>();
-            Memset(controllerFilterCallback, 0, sizeof(PxControllerFilterCallback));
+            MemsetT(controllerFilterCallback, 0, sizeof(PxControllerFilterCallback));
             void** vTable = AllocArray(1);
             vTable[0] = (void*)Marshal.GetFunctionPointerForDelegate(func);
             controllerFilterCallback->vtable_ = vTable;

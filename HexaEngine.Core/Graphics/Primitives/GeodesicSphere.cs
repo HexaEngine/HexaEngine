@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -17,7 +17,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="GeodesicSphere"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         public GeodesicSphere() : base()
         {
         }
@@ -88,8 +87,8 @@
                 // The new index collection after subdivision.
                 UnsafeList<uint> newIndices = new();
 
-                uint triangleCount = indices.Size / 3;
-                for (uint iTriangle = 0; iTriangle < triangleCount; ++iTriangle)
+                int triangleCount = indices.Size / 3;
+                for (int iTriangle = 0; iTriangle < triangleCount; ++iTriangle)
                 {
                     // For each edge on this triangle, create a new vertex in the middle of that edge.
                     // The winding order of the triangles we output are the same as the winding order of the inputs.
@@ -115,12 +114,12 @@
                         if (subdividedEdges.TryGetValue(edge, out iv0))
                         {
                             outIndex = iv0;
-                            outVertex = vertexPositions[iv0];
+                            outVertex = vertexPositions[(int)iv0];
                         }
                         else
                         {
-                            outVertex = (vertexPositions[i0] + vertexPositions[i1]) * 0.5f;
-                            outIndex = vertexPositions.Size;
+                            outVertex = (vertexPositions[(int)i0] + vertexPositions[(int)i1]) * 0.5f;
+                            outIndex = (uint)vertexPositions.Size;
                             CheckIndexOverflow(outIndex);
                             vertexPositions.PushBack(outVertex);
                             subdividedEdges.Add(edge, outIndex);
@@ -162,7 +161,7 @@
 
             // Now that we've completed subdivision, fill in the final vertex collection
             UnsafeList<MeshVertex> vertices = new(vertexPositions.Size);
-            for (uint i = 0; i < vertexPositions.Size; i++)
+            for (int i = 0; i < vertexPositions.Size; i++)
             {
                 Vector3 p = vertexPositions[i];
 
@@ -202,8 +201,8 @@
             // completed sphere. If you imagine the vertices along that edge, they circumscribe a semicircular arc starting at
             // y=1 and ending at y=-1, and sweeping across the range of z=0 to z=1. x stays zero. It's along this edge that we
             // need to duplicate our vertices - and provide the correct texture coordinates.
-            uint preFixupVertexCount = vertices.Size;
-            for (uint i = 0; i < preFixupVertexCount; i++)
+            uint preFixupVertexCount = (uint)vertices.Size;
+            for (int i = 0; i < preFixupVertexCount; i++)
             {
                 bool isOnPrimeMeridian = MathUtil.NearEqual(
                     new Vector4(vertices[i].UV.X, vertices[i].UV.Y, 0, 0),
@@ -212,7 +211,7 @@
 
                 if (isOnPrimeMeridian)
                 {
-                    uint newIndex = vertices.Size; // the index of this vertex that we're about to add
+                    uint newIndex = (uint)vertices.Size; // the index of this vertex that we're about to add
                     CheckIndexOverflow(newIndex);
 
                     // copy this vertex, correct the texture coordinate, and add the vertex
@@ -221,7 +220,7 @@
                     vertices.PushBack(v);
 
                     // Now find all the triangles which contain this vertex and update them if necessary
-                    for (uint j = 0; j < indices.Size; j += 3)
+                    for (int j = 0; j < indices.Size; j += 3)
                     {
                         uint* triIndex0 = indices.GetPointer(j + 0);
                         uint* triIndex1 = indices.GetPointer(j + 1);
@@ -249,9 +248,9 @@
                         Trace.Assert(*triIndex0 == i);
                         Trace.Assert(*triIndex1 != i && *triIndex2 != i); // assume no degenerate triangles
 
-                        MeshVertex* v0 = vertices.GetPointer(*triIndex0);
-                        MeshVertex* v1 = vertices.GetPointer(*triIndex1);
-                        MeshVertex* v2 = vertices.GetPointer(*triIndex2);
+                        MeshVertex* v0 = vertices.GetPointer((int)*triIndex0);
+                        MeshVertex* v1 = vertices.GetPointer((int)*triIndex1);
+                        MeshVertex* v2 = vertices.GetPointer((int)*triIndex2);
 
                         // check the other two vertices to see if we might need to fix this triangle
 
@@ -273,10 +272,10 @@
 
             void fixPole(uint poleIndex)
             {
-                MeshVertex* poleVertex = vertices.GetPointer(poleIndex);
+                MeshVertex* poleVertex = vertices.GetPointer((int)poleIndex);
                 bool overwrittenPoleVertex = false; // overwriting the original pole vertex saves us one vertex
 
-                for (uint i = 0; i < indices.Size; i += 3)
+                for (int i = 0; i < indices.Size; i += 3)
                 {
                     // These pointers point to the three indices which make up this triangle. pPoleIndex is the pointer to the
                     // entry in the index array which represents the pole index, and the other two pointers point to the other
@@ -307,8 +306,8 @@
                         continue;
                     }
 
-                    MeshVertex* otherVertex0 = vertices.GetPointer(*pOtherIndex0);
-                    MeshVertex* otherVertex1 = vertices.GetPointer(*pOtherIndex1);
+                    MeshVertex* otherVertex0 = vertices.GetPointer((int)*pOtherIndex0);
+                    MeshVertex* otherVertex1 = vertices.GetPointer((int)*pOtherIndex1);
 
                     // Calculate the texcoords for the new pole vertex, add it to the vertices and update the index
                     MeshVertex newPoleVertex = *poleVertex;
@@ -317,14 +316,14 @@
 
                     if (!overwrittenPoleVertex)
                     {
-                        vertices[poleIndex] = newPoleVertex;
+                        vertices[(int)poleIndex] = newPoleVertex;
                         overwrittenPoleVertex = true;
                     }
                     else
                     {
-                        CheckIndexOverflow(vertices.Size);
+                        CheckIndexOverflow((uint)vertices.Size);
 
-                        *pPoleIndex = vertices.Size;
+                        *pPoleIndex = (uint)vertices.Size;
                         vertices.PushBack(newPoleVertex);
                     }
                 }
@@ -333,8 +332,8 @@
             fixPole(northPoleIndex);
             fixPole(southPoleIndex);
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices.Data, vertices.Size, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(indices.Data, indices.Size, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<MeshVertex>(vertices.Data, (uint)vertices.Size, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices.Data, (uint)indices.Size, CpuAccessFlags.None);
 
             vertices.Release();
             indices.Release();

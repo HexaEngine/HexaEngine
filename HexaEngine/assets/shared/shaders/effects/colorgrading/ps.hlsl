@@ -1,7 +1,7 @@
 #include "../../colorUtils.hlsl"
-Texture2D InputTex : register(t0);
-Texture1DArray CurvesTex : register(t1);
-SamplerState LinearClampSampler : register(s0);
+Texture2D inputTex : register(t0);
+Texture1DArray curvesTex : register(t1);
+SamplerState linearClampSampler : register(s0);
 
 #ifndef TONEMAP
 /*
@@ -281,21 +281,21 @@ float3 ApplyYrgbCurve(float3 c)
 	const float kHalfPixel = (1.0 / 128.0) / 2.0;
 	c += kHalfPixel.xxx;
 
-	float mr = CurvesTex.SampleLevel(LinearClampSampler, float2(c.r, 3), 0);
-	float mg = CurvesTex.SampleLevel(LinearClampSampler, float2(c.g, 3), 0);
-	float mb = CurvesTex.SampleLevel(LinearClampSampler, float2(c.b, 3), 0);
+	float mr = curvesTex.SampleLevel(linearClampSampler, float2(c.r, 3), 0);
+	float mg = curvesTex.SampleLevel(linearClampSampler, float2(c.g, 3), 0);
+	float mb = curvesTex.SampleLevel(linearClampSampler, float2(c.b, 3), 0);
 	c = saturate(float3(mr, mg, mb));
 
-	float r = CurvesTex.SampleLevel(LinearClampSampler, float2(c.r, 0), 0);
-	float g = CurvesTex.SampleLevel(LinearClampSampler, float2(c.g, 1), 0);
-	float b = CurvesTex.SampleLevel(LinearClampSampler, float2(c.b, 2), 0);
+	float r = curvesTex.SampleLevel(linearClampSampler, float2(c.r, 0), 0);
+	float g = curvesTex.SampleLevel(linearClampSampler, float2(c.g, 1), 0);
+	float b = curvesTex.SampleLevel(linearClampSampler, float2(c.b, 2), 0);
 
 	return saturate(float3(r, g, b));
 }
 
 float CurveHueHue(float hue)
 {
-    float offset = saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(hue, 4), 0)) - 0.5;
+    float offset = saturate(curvesTex.SampleLevel(linearClampSampler, float2(hue, 4), 0)) - 0.5;
     hue += offset;
     hue = RotateHue(hue, 0.0, 1.0);
     return hue;
@@ -303,22 +303,22 @@ float CurveHueHue(float hue)
 
 float CurveHueSat(float hue)
 {
-    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(hue, 5), 0)) * 2.0;
+    return saturate(curvesTex.SampleLevel(linearClampSampler, float2(hue, 5), 0)) * 2.0;
 }
 
 float CurveSatSat(float sat)
 {
-    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(sat, 6), 0)) * 2.0;
+    return saturate(curvesTex.SampleLevel(linearClampSampler, float2(sat, 6), 0)) * 2.0;
 }
 
 float CurveLumSat(float lum)
 {
-    return saturate(CurvesTex.SampleLevel(LinearClampSampler, float2(lum, 7), 0)) * 2.0;
+    return saturate(curvesTex.SampleLevel(linearClampSampler, float2(lum, 7), 0)) * 2.0;
 }
 
 float4 main(VSOut vs) : SV_Target
 {
-	float4 color = InputTex.Sample(LinearClampSampler, vs.Tex); // linear space.
+	float4 color = inputTex.Sample(linearClampSampler, vs.Tex); // linear space.
 
 	if (color.a == 0)
 		discard;

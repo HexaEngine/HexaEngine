@@ -16,6 +16,8 @@
 
         public virtual ToolFlags Flags { get; } = ToolFlags.Default;
 
+        public abstract IResourceBindingList Bindings { get; }
+
         public abstract void Init(IGraphicsDevice device);
 
         public abstract void DrawSettings();

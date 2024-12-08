@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
-    using HexaEngine.Mathematics;
     using System.Text;
 
     /// <summary>
@@ -87,7 +87,7 @@
         public static MaterialFile Read(Stream src)
         {
             MaterialFileHeader header = default;
-            header.Read(src);
+            header.Read(src, out Version version);
             Encoding encoding = header.Encoding ?? Encoding.UTF8;
             Endianness endianness = header.Endianness;
 
@@ -105,11 +105,13 @@
 
             material.Flags = (MaterialFlags)src.ReadInt32(endianness);
 
+            var textureVersion = version >= new Version(2, 0, 0, 1) ? new Version(2, 0, 0, 0) : new Version(1, 0, 0, 0);
+
             var textureCount = src.ReadInt32(endianness);
             material.Textures.Capacity = textureCount;
             for (int i = 0; i < textureCount; i++)
             {
-                material.Textures.Add(MaterialTexture.Read(src, encoding, endianness));
+                material.Textures.Add(MaterialTexture.Read(src, encoding, endianness, textureVersion));
             }
 
             var shaderCount = src.ReadInt32(endianness);

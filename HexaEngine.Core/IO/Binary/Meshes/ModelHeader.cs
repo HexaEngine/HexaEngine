@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Text;
 
@@ -18,7 +18,7 @@
         /// <summary>
         /// Current version of the model file format.
         /// </summary>
-        public static readonly Version Version = new(11, 0, 0, 1);
+        public static readonly Version Version = new(11, 0, 0, 3);
 
         /// <summary>
         /// Minimum supported version of the model file format.
@@ -92,7 +92,9 @@
 
             if (version == new Version(11, 0, 0, 0))
             {
+#pragma warning disable CS0618 // Legacy support.
                 MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+#pragma warning restore CS0618 // Legacy support.
             }
             else if (version == Version)
             {
@@ -131,7 +133,9 @@
 
             if (version == new Version(11, 0, 0, 0))
             {
+#pragma warning disable CS0618 // Legacy support.
                 MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+#pragma warning restore CS0618 // Legacy support.
             }
             else if (version == Version)
             {

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Dummy
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 
@@ -331,17 +331,12 @@
             throw new NotImplementedException();
         }
 
-        public void SetComputePipeline(IComputePipeline? pipeline)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public void SetPipelineState(IGraphicsPipelineState? state)
+        public void SetGraphicsPipelineState(IGraphicsPipelineState? state)
         {
             throw new NotImplementedException();
         }
@@ -487,6 +482,16 @@
         }
 
         public void Write<T>(IBuffer buffer, T value) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetComputePipelineState(IComputePipelineState? state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExecuteCommandBuffer(ICommandBuffer commandBuffer)
         {
             throw new NotImplementedException();
         }

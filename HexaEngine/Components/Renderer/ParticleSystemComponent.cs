@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
@@ -10,7 +11,6 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Particles;
     using HexaEngine.Scenes.Managers;
     using System;
@@ -18,15 +18,15 @@
 
     [EditorCategory("Particles")]
     [EditorComponent<ParticleSystemComponent>("GPU Particle System", false, false)]
-    public class ParticleSystemComponent : BaseRendererComponent, ISelectableRayTest
+    public class ParticleSystemComponent : BaseDrawableComponent, ISelectableRayTest
     {
-        private GPUParticleSystem renderer;
+        private GPUParticleSystem renderer = null!;
         private readonly ParticleEmitter emitter = new();
 
         private AssetRef particleTexturePath;
-        private Texture2D? particleTexture;
+        private Texture2D? particleTexture = null!;
 
-        private ResourceRef<DepthStencil> dsv;
+        private ResourceRef<DepthStencil> dsv = null!;
 
         public ParticleSystemComponent()
         {
@@ -120,7 +120,7 @@
                 return;
             }
 
-            renderer.Draw(context, dsv.Value.SRV);
+            renderer.Draw(context, dsv.Value!.SRV!);
         }
 
         public override void Bake(IGraphicsContext context)
@@ -156,7 +156,7 @@
         private Task UpdateTextureAsync()
         {
             Loaded = false;
-            emitter.ParticleTexture = null;
+            emitter.ParticleTexture = null!;
             var tmpTexture = particleTexture;
             particleTexture = null;
             tmpTexture?.Dispose();
@@ -164,7 +164,7 @@
             var state = new Tuple<IGraphicsDevice, ParticleSystemComponent>(Application.GraphicsDevice, this);
             return Task.Factory.StartNew((state) =>
             {
-                var p = (Tuple<IGraphicsDevice, ParticleSystemComponent>)state;
+                var p = (Tuple<IGraphicsDevice, ParticleSystemComponent>)state!;
                 var device = p.Item1;
                 var component = p.Item2;
                 var path = component.particleTexturePath.GetPath();

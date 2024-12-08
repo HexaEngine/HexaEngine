@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using System.ComponentModel;
 
     /// <summary>
@@ -117,6 +116,11 @@
         /// </summary>
         /// <param name="context">The graphics context.</param>
         public void Update(IGraphicsContext context);
+
+        /// <summary>
+        /// Called when a resource has changed.
+        /// </summary>
+        void UpdateBindings();
 
         public void ResetSettings();
     }

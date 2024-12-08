@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Collections;
+    using HexaEngine.Core.Collections;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
 
     public class ScriptGraph

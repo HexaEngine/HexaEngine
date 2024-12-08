@@ -1,19 +1,19 @@
 ﻿namespace HexaEngine.D3D12
 {
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D12;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
 
-    public class D3D12GraphicsPipeline
+    public unsafe class D3D12GraphicsPipeline
     {
-        private ComPtr<ID3D12PipelineState> pso;
+        internal Shader* vertexShaderBlob;
+        internal Shader* hullShaderBlob;
+        internal Shader* domainShaderBlob;
+        internal Shader* geometryShaderBlob;
+        internal Shader* pixelShaderBlob;
+        internal InputLayoutDesc inputLayoutDesc;
 
-        public D3D12GraphicsPipeline(ComPtr<ID3D12Device10> device)
-        {
-            GraphicsPipelineStateDesc desc;
-        }
+        internal Blob? signature;
 
-        private void Compile()
-        {
-        }
+        internal ComPtr<ID3D12RootSignature> rootSignature;
     }
 }

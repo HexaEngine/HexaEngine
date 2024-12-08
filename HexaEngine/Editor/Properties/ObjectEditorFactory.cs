@@ -5,7 +5,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using System.Xml.Linq;
 
     /// <summary>
     /// Factory class responsible for creating and managing object editors.
@@ -139,11 +138,11 @@
             return CreateEditor(typeof(T));
         }
 
-        private static readonly EditorPropertyAttribute dummy = new(null, EditorPropertyMode.Default);
+        private static readonly EditorPropertyAttribute dummy = new(null!, EditorPropertyMode.Default);
 
         public static IPropertyEditor? CreatePropertyEditor(PropertyInfo property)
         {
-            dummy.Name = null;
+            dummy.Name = null!;
             var nameAttr = property.GetCustomAttribute<EditorPropertyAttribute>() ?? dummy;
 
             if (string.IsNullOrEmpty(nameAttr.Name))

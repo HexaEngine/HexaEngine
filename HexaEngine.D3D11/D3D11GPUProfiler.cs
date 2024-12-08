@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using System.Collections.Generic;
-    using Query = Silk.NET.Direct3D11.Query;
+    using Query = Hexa.NET.D3D11.Query;
 
     public class D3D11GPUProfiler : IGPUProfiler
     {
@@ -72,10 +70,10 @@
                 {
                     QueryData queryData = new();
                     QueryDesc desc = new(Query.TimestampDisjoint);
-                    device.CreateQuery(desc, queryData.DisjointQuery.GetAddressOf());
+                    device.CreateQuery(&desc, out queryData.DisjointQuery);
                     desc = new(Query.Timestamp);
-                    device.CreateQuery(desc, queryData.TimestampQueryStart.GetAddressOf());
-                    device.CreateQuery(desc, queryData.TimestampQueryEnd.GetAddressOf());
+                    device.CreateQuery(&desc, out queryData.TimestampQueryStart);
+                    device.CreateQuery(&desc, out queryData.TimestampQueryEnd);
                     queries[i].Add(name, queryData);
                 }
 
@@ -145,7 +143,7 @@
 
                     if (query.BeginCalled && query.EndCalled)
                     {
-                        while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
+                        while (ctx.GetData(query.DisjointQuery.As<ID3D11Asynchronous>(), null, 0, 0) == 1)
                         {
                             if (!DisableLogging)
                             {
@@ -155,7 +153,7 @@
                             Thread.Sleep(1);
                         }
 
-                        ctx.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
+                        ctx.GetData(query.DisjointQuery.As<ID3D11Asynchronous>(), &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
                         if (disjoint.Disjoint)
                         {
                             if (!DisableLogging)
@@ -168,9 +166,9 @@
                             ulong begin = 0;
                             ulong end = 0;
 
-                            ctx.GetData(query.TimestampQueryStart, &begin, sizeof(ulong), 0);
+                            ctx.GetData(query.TimestampQueryStart.As<ID3D11Asynchronous>(), &begin, sizeof(ulong), 0);
 
-                            while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
+                            while (ctx.GetData(query.TimestampQueryEnd.As<ID3D11Asynchronous>(), null, 0, 0) == 1)
                             {
                                 if (!DisableLogging)
                                 {
@@ -179,7 +177,7 @@
 
                                 Thread.Sleep(1);
                             }
-                            ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
+                            ctx.GetData(query.TimestampQueryEnd.As<ID3D11Asynchronous>(), &end, sizeof(ulong), 0);
 
                             double delta = (double)(end - begin) / disjoint.Frequency;
 
@@ -209,8 +207,8 @@
             }
 
             var queryData = value;
-            ctx.Begin(queryData.DisjointQuery);
-            ctx.End(queryData.TimestampQueryStart);
+            ctx.Begin(queryData.DisjointQuery.As<ID3D11Asynchronous>());
+            ctx.End(queryData.TimestampQueryStart.As<ID3D11Asynchronous>());
             queryData.BeginCalled = true;
         }
 
@@ -229,8 +227,8 @@
                 return;
             }
 
-            ctx.End(queryData.TimestampQueryEnd);
-            ctx.End(queryData.DisjointQuery);
+            ctx.End(queryData.TimestampQueryEnd.As<ID3D11Asynchronous>());
+            ctx.End(queryData.DisjointQuery.As<ID3D11Asynchronous>());
             queryData.EndCalled = true;
         }
 
@@ -273,7 +271,7 @@
 
                     if (query.BeginCalled && query.EndCalled)
                     {
-                        while (deviceContext.GetData(query.DisjointQuery, null, 0, 0) == 1)
+                        while (deviceContext.GetData(query.DisjointQuery.As<ID3D11Asynchronous>(), null, 0, 0) == 1)
                         {
                             if (!DisableLogging)
                             {
@@ -283,7 +281,7 @@
                             Thread.Sleep(1);
                         }
 
-                        deviceContext.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
+                        deviceContext.GetData(query.DisjointQuery.As<ID3D11Asynchronous>(), &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
                         if (disjoint.Disjoint)
                         {
                             if (!DisableLogging)
@@ -296,9 +294,9 @@
                             ulong begin = 0;
                             ulong end = 0;
 
-                            deviceContext.GetData(query.TimestampQueryStart, &begin, sizeof(ulong), 0);
+                            deviceContext.GetData(query.TimestampQueryStart.As<ID3D11Asynchronous>(), &begin, sizeof(ulong), 0);
 
-                            while (deviceContext.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
+                            while (deviceContext.GetData(query.TimestampQueryEnd.As<ID3D11Asynchronous>(), null, 0, 0) == 1)
                             {
                                 if (!DisableLogging)
                                 {
@@ -307,7 +305,7 @@
 
                                 Thread.Sleep(1);
                             }
-                            deviceContext.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
+                            deviceContext.GetData(query.TimestampQueryEnd.As<ID3D11Asynchronous>(), &end, sizeof(ulong), 0);
 
                             double delta = (double)(end - begin) / disjoint.Frequency;
 
@@ -336,8 +334,8 @@
             }
 
             var queryData = value;
-            deviceContext.Begin(queryData.DisjointQuery);
-            deviceContext.End(queryData.TimestampQueryStart);
+            deviceContext.Begin(queryData.DisjointQuery.As<ID3D11Asynchronous>());
+            deviceContext.End(queryData.TimestampQueryStart.As<ID3D11Asynchronous>());
             queryData.BeginCalled = true;
         }
 
@@ -355,8 +353,8 @@
                 return;
             }
 
-            deviceContext.End(queryData.TimestampQueryEnd);
-            deviceContext.End(queryData.DisjointQuery);
+            deviceContext.End(queryData.TimestampQueryEnd.As<ID3D11Asynchronous>());
+            deviceContext.End(queryData.DisjointQuery.As<ID3D11Asynchronous>());
             queryData.EndCalled = true;
         }
 

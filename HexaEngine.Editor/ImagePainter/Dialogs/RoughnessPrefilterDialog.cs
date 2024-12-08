@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
@@ -130,7 +129,7 @@
                 if (ImGui.Button("Apply") && dstSrv != null)
                 {
                     var loader = device.TextureLoader;
-                    var image = loader.CaptureTexture(device.Context, dstTex);
+                    var image = loader.CaptureTexture(device.Context, dstTex!);
                     imagePainter.Load(image);
                     image.Dispose();
                     Discard();
@@ -165,7 +164,7 @@
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image(dstSRVs.Views[i].NativePointer, new(128, 128));
+                    ImGui.Image((ulong)dstSRVs.Views[i].NativePointer, new(128, 128));
                     if (i != 5)
                     {
                         ImGui.SameLine();
@@ -177,12 +176,12 @@
             {
                 if (useComputeShader)
                 {
-                    roughnessPrefilterCompute.Roughness = roughness;
+                    roughnessPrefilterCompute!.Roughness = roughness;
                     roughnessPrefilterCompute.Dispatch(context, size, size);
                 }
                 else
                 {
-                    roughnessPrefilter.Roughness = roughness;
+                    roughnessPrefilter!.Roughness = roughness;
                     roughnessPrefilter.Draw(context, size, size);
                 }
 

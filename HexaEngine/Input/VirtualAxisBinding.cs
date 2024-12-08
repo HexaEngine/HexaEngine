@@ -83,9 +83,9 @@
 
             bool isEmptyElement = reader.IsEmptyElement;
 
-            Type = Enum.Parse<VirtualAxisBindingType>(reader.GetAttribute("Type"));
-            DeviceId = int.Parse(reader.GetAttribute("DeviceId"));
-            Invert = bool.Parse(reader.GetAttribute("Invert"));
+            Type = Enum.Parse<VirtualAxisBindingType>(reader.GetAttribute("Type")!);
+            DeviceId = int.Parse(reader.GetAttribute("DeviceId")!);
+            Invert = bool.Parse(reader.GetAttribute("Invert")!);
 
             if (!isEmptyElement)
             {

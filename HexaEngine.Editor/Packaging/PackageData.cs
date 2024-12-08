@@ -4,10 +4,10 @@
 
     public class PackageData
     {
-        public Version TargetVersion { get; set; }
+        public Version TargetVersion { get; set; } = null!;
 
-        public PackageFileTree FileTree { get; set; }
+        public PackageFileTree FileTree { get; set; } = null!;
 
-        public byte[] Data { get; set; }
+        public byte[] Data { get; set; } = null!;
     }
 }

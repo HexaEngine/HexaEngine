@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.Components
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
     [EditorComponent<SphereSelectionComponent>("Sphere Selection", true, true)]
     public class SphereSelectionComponent : ISelectableRayTest
     {
-        private GameObject gameObject;
+        private GameObject gameObject = null!;
         private float radius = 0.5f;
 
         /// <summary>

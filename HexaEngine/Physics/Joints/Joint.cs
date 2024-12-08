@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Physics.Joints
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
@@ -28,7 +28,7 @@
         [JsonIgnore]
         public bool IsSerializable { get; } = true;
 
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public event Action<IJointComponent>? OnRecreate;
 

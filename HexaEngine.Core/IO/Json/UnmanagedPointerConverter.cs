@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Json
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
@@ -30,7 +30,7 @@
         /// <param name="existingValue">The existing value of the object being read.</param>
         /// <param name="serializer">The JSON serializer.</param>
         /// <returns>An instance of the unmanaged pointer.</returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             JToken token = JToken.ReadFrom(reader);
             if (token.Type != JTokenType.Bytes)
@@ -38,7 +38,7 @@
                 throw new InvalidDataException();
             }
 
-            byte[] value = token.Value<byte[]>();
+            byte[] value = token.Value<byte[]>()!;
             var ptr = AllocT<T>();
             MemoryMarshal.Cast<byte, T>(value.AsSpan()).CopyTo(new Span<T>(ptr, 1));
             return new Pointer<T>(ptr);
@@ -50,7 +50,7 @@
         /// <param name="writer">The JSON writer.</param>
         /// <param name="value">The instance of the unmanaged pointer to serialize.</param>
         /// <param name="serializer">The JSON serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             if (value is Pointer<T> ptr)
             {

@@ -1,8 +1,6 @@
 namespace HexaEngine.Network.Protocol
 {
     using Hexa.Protobuf;
-    using System;
-    using System.Buffers.Binary;
 
     [ProtobufRecord]
     public partial struct ProtocolError : IRecord

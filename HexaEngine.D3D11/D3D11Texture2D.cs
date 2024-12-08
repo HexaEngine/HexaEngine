@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
     public unsafe class D3D11Texture2D : DeviceChildBase, ITexture2D
@@ -12,7 +10,7 @@
         public D3D11Texture2D(ComPtr<ID3D11Texture2D> texture, Texture2DDescription description)
         {
             this.texture = texture;
-            nativePointer = new(texture);
+            nativePointer = new(texture.Handle);
             Description = description;
         }
 

@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System;
-    using System.Resources;
 
     public unsafe class TextFactory : IDisposable
     {
@@ -23,8 +23,8 @@
             this.device = device;
             FTError error;
             FTLibrary library;
-            error = (FTError)FreeType.FTInitFreeType(&library);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.InitFreeType(&library);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to initialize library, {error}");
             }
@@ -125,7 +125,7 @@
                 }
 
                 FTError error = (FTError)library.DoneFreeType();
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new Exception($"Failed to free \"FreeType Library\"");
                 }

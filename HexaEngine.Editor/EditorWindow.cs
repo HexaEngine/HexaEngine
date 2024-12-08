@@ -7,10 +7,10 @@
     {
         protected bool IsDocked;
         protected ImGuiWindowFlags Flags;
-        private bool windowEnded;
-        private bool wasShown;
-        private bool initialized;
-        private bool isShown;
+        protected bool windowEnded;
+        protected bool wasShown;
+        protected bool initialized;
+        protected bool isShown;
 
         protected abstract string Name { get; }
 
@@ -121,8 +121,8 @@
 
         public void Focus()
         {
-            ImGuiWindowPtr window = ImGui.FindWindowByName(Name);
-            ImGui.FocusWindow(window, ImGuiFocusRequestFlags.UnlessBelowModal);
+            ImGuiWindowPtr window = ImGuiP.FindWindowByName(Name);
+            ImGuiP.FocusWindow(window, ImGuiFocusRequestFlags.UnlessBelowModal);
         }
     }
 }

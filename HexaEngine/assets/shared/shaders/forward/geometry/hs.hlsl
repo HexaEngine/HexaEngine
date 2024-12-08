@@ -21,10 +21,23 @@ DomainInput main(InputPatch<HullInput, 3> patch, uint pointId : SV_OutputControl
 {
     DomainInput output;
 
-    output.pos = patch[pointId].pos;
+#if VtxColors
+    output.color = patch[patchId].color;
+#endif
+
+    output.position = patch[pointId].position;
+
+#if VtxUVs
     output.tex = patch[pointId].tex;
+#endif
+
+#if VtxNormals
     output.normal = patch[pointId].normal;
+#endif
+
+#if VtxTangents
     output.tangent = patch[pointId].tangent;
+#endif
 
     return output;
 }

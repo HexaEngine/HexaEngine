@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
 
     public unsafe class D3D11ShaderResourceView : DeviceChildBase, IShaderResourceView
     {
@@ -11,7 +9,7 @@
         public D3D11ShaderResourceView(ComPtr<ID3D11ShaderResourceView> srv, ShaderResourceViewDescription description)
         {
             this.srv = srv;
-            nativePointer = new(srv);
+            nativePointer = new(srv.Handle);
             Description = description;
         }
 

@@ -9,10 +9,10 @@
     [EditorDisplayName("User LUT")]
     public class UserLUT : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<LUTParams> paramsBuffer;
-        private ISamplerState samplerState;
-        private ISamplerState lutSamplerState;
+#nullable enable
 
         private Texture2D? LUT;
 
@@ -70,28 +70,25 @@
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(new LUTParams(), CpuAccessFlags.Write);
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            lutSamplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
             LUT = Texture2D.LoadFromAssets(lutTexPath);
+        }
+
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("lutTex", LUT?.SRV);
+            pipeline.Bindings.SetCBV("LUTParams", paramsBuffer);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
         {
-            nint* passSRVs = stackalloc nint[] { Input.NativePointer, LUT?.SRV?.NativePointer ?? 0 };
-            nint* passSMPs = stackalloc nint[] { samplerState.NativePointer, lutSamplerState.NativePointer };
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResources(0, 2, (void**)passSRVs);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSamplers(0, 2, (void**)passSMPs);
-            context.SetPipelineState(pipeline);
+
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            nint* empty = stackalloc nint[] { 0, 0 };
-            context.PSSetSamplers(0, 2, (void**)empty);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResources(0, 2, (void**)empty);
+            context.SetGraphicsPipelineState(null);
+
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
@@ -99,7 +96,6 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            samplerState.Dispose();
             paramsBuffer.Dispose();
             LUT?.Dispose();
         }

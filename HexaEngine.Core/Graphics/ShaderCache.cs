@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Security.Cryptography;
     using System;
@@ -26,8 +26,8 @@
         private static readonly SemaphoreSlim readSemaphore = new(MaxConcurrentReaders);
         private static readonly SemaphoreSlim writeSemaphore = new(1);
         private static readonly SemaphoreSlim fileSemaphore = new(1);
-        private static readonly ManualResetEvent writeHandle = new(true);
-        private static readonly ManualResetEvent readHandle = new(true);
+        private static readonly ManualResetEventSlim writeHandle = new(true);
+        private static readonly ManualResetEventSlim readHandle = new(true);
         private const int Version = 3;
 
         static ShaderCache()
@@ -81,7 +81,7 @@
             return signature[0];
         }
 
-        private static bool TryGetEntry(SHA256Signature key, [MaybeNullWhen(false)] out ShaderCacheEntry? entry)
+        private static bool TryGetEntry(SHA256Signature key, [NotNullWhen(true)] out ShaderCacheEntry? entry)
         {
             return keyToEntry.TryGetValue(key, out entry);
         }
@@ -298,7 +298,7 @@
             // block all read threads and wait for completion.
             writeHandle.Reset();
 
-            readHandle.WaitOne();
+            readHandle.Wait();
         }
 
         private static void EndWrite()
@@ -310,7 +310,7 @@
 
         private static void BeginRead()
         {
-            writeHandle.WaitOne();
+            writeHandle.Wait();
 
             readHandle.Reset();
 

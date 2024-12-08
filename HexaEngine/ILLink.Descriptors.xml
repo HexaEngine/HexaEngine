@@ -1,0 +1,4 @@
+﻿<linker>
+	<assembly fullname="HexaEngine" preserve="all">
+	</assembly>
+</linker>

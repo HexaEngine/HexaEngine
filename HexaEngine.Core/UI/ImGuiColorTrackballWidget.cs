@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -20,9 +20,9 @@
 
         public static bool ColorTrackballs(string label, Vector4* value, Vector2 size)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
 
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
             if (window->SkipItems != 0)
                 return false;
 
@@ -37,13 +37,13 @@
                 Max = cursorPos + size
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             ImGui.PushID(label);
 
-            bool hovered = ImGui.ItemHoverable(bb, id, 0);
+            bool hovered = ImGuiP.ItemHoverable(bb, id, 0);
 
             ImGuiStylePtr style = ImGui.GetStyle();
             ImGuiIOPtr io = ImGui.GetIO();
@@ -56,7 +56,7 @@
 
             bool modified = false;
 
-            ImGui.RenderTextClipped(bb.Min, bb.Max, label, (byte*)null, null, new(0.5f, 0), default);
+            ImGuiP.RenderTextClipped(bb.Min, bb.Max, label, (byte*)null, null, new(0.5f, 0), default);
 
             {
                 Vector2 wheelSize = size - new Vector2(0, slider_height + labelHeight * 2 + 20);
@@ -109,7 +109,7 @@
 
                             Vector2 gradient_p0 = new(center.X + MathF.Cos(a0) * wheel_r_inner, center.Y + MathF.Sin(a0) * wheel_r_inner);
                             Vector2 gradient_p1 = new(center.X + MathF.Cos(a1) * wheel_r_inner, center.Y + MathF.Sin(a1) * wheel_r_inner);
-                            ImGui.ShadeVertsLinearColorGradientKeepAlpha(drawList, vert_start_idx, vert_end_idx, gradient_p0, gradient_p1, col_hues[n], col_hues[n + 1]);
+                            ImGuiP.ShadeVertsLinearColorGradientKeepAlpha(drawList, vert_start_idx, vert_end_idx, gradient_p0, gradient_p1, col_hues[n], col_hues[n + 1]);
                         }
                     }
                 }
@@ -122,7 +122,7 @@
 
                     float distanceToCenter = Vector2.Distance(center, mousePos);
 
-                    if (distanceToCenter < radius && ImGui.IsMouseDown(ImGuiMouseButton.Left))
+                    if (distanceToCenter < radius && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
                     {
                         Vector2 relativeMousePos = mousePos - center;
 
@@ -157,13 +157,13 @@
 
                 float sliderWidth = (slider_bb.Max.X - slider_bb.Min.X);
 
-                ImGui.RenderFrame(slider_bb.Min, slider_bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
+                ImGuiP.RenderFrame(slider_bb.Min, slider_bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
 
                 float handle_radius = slider_height * 0.35f;
 
                 Vector2 handle_center = slider_center;
 
-                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGui.IsMouseDown(ImGuiMouseButton.Left))
+                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     Vector2 relativeMousePos = ImGui.GetMousePos() - handle_center;
                     handle_center.X += relativeMousePos.X;
@@ -182,11 +182,11 @@
                 ImRect text_bb = new() { Min = new Vector2(bb.Min.X, bb.Max.Y - labelHeight), Max = new Vector2(bb.Min.X, bb.Max.Y) + new Vector2(size.X, 0) };
 
                 float width = size.X;
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.X:N2}", (byte*)null, null, new(0, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.X:N2}", (byte*)null, null, new(0, 0), default);
                 drawList->AddLine(new Vector2(bb.Min.X, bb.Max.Y), new Vector2(bb.Min.X + textSize, bb.Max.Y), 0xFF0000FF, 2);
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Y:N2}", (byte*)null, null, new(0.5f, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Y:N2}", (byte*)null, null, new(0.5f, 0), default);
                 drawList->AddLine(new Vector2(text_bb.Min.X + width * 0.5f - textSize * 0.5f, bb.Max.Y), new Vector2(text_bb.Min.X + width * 0.5f + textSize * 0.5f, bb.Max.Y), 0xFF00FF00, 2);
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Z:N2}", (byte*)null, null, new(1f, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Z:N2}", (byte*)null, null, new(1f, 0), default);
                 drawList->AddLine(new Vector2(text_bb.Max.X - textSize, bb.Max.Y), new Vector2(text_bb.Max.X, bb.Max.Y), 0xFFFF0000, 2);
             }
 
@@ -227,9 +227,9 @@
 
         public static bool ColorTrackballs(string label, Vector3* value, Vector2 size)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
 
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
             if (window->SkipItems != 0)
                 return false;
 
@@ -244,13 +244,13 @@
                 Max = cursorPos + size
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, &bb, ImGuiItemFlags.None))
                 return false;
 
             ImGui.PushID(label);
 
-            bool hovered = ImGui.ItemHoverable(bb, id, 0);
+            bool hovered = ImGuiP.ItemHoverable(bb, id, 0);
 
             ImGuiStylePtr style = ImGui.GetStyle();
             ImGuiIOPtr io = ImGui.GetIO();
@@ -263,7 +263,7 @@
 
             bool modified = false;
 
-            ImGui.RenderTextClipped(bb.Min, bb.Max, label, (byte*)null, null, new(0.5f, 0), default);
+            ImGuiP.RenderTextClipped(bb.Min, bb.Max, label, (byte*)null, null, new(0.5f, 0), default);
 
             {
                 Vector2 wheelSize = size - new Vector2(0, slider_height + labelHeight * 2 + 20);
@@ -316,7 +316,7 @@
 
                             Vector2 gradient_p0 = new(center.X + MathF.Cos(a0) * wheel_r_inner, center.Y + MathF.Sin(a0) * wheel_r_inner);
                             Vector2 gradient_p1 = new(center.X + MathF.Cos(a1) * wheel_r_inner, center.Y + MathF.Sin(a1) * wheel_r_inner);
-                            ImGui.ShadeVertsLinearColorGradientKeepAlpha(drawList, vert_start_idx, vert_end_idx, gradient_p0, gradient_p1, col_hues[n], col_hues[n + 1]);
+                            ImGuiP.ShadeVertsLinearColorGradientKeepAlpha(drawList, vert_start_idx, vert_end_idx, gradient_p0, gradient_p1, col_hues[n], col_hues[n + 1]);
                         }
                     }
                 }
@@ -329,7 +329,7 @@
 
                     float distanceToCenter = Vector2.Distance(center, mousePos);
 
-                    if (distanceToCenter < radius && ImGui.IsMouseDown(ImGuiMouseButton.Left))
+                    if (distanceToCenter < radius && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
                     {
                         Vector2 relativeMousePos = mousePos - center;
 
@@ -364,13 +364,13 @@
 
                 float sliderWidth = (slider_bb.Max.X - slider_bb.Min.X);
 
-                ImGui.RenderFrame(slider_bb.Min, slider_bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
+                ImGuiP.RenderFrame(slider_bb.Min, slider_bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
 
                 float handle_radius = slider_height * 0.35f;
 
                 Vector2 handle_center = slider_center;
 
-                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGui.IsMouseDown(ImGuiMouseButton.Left))
+                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     Vector2 relativeMousePos = ImGui.GetMousePos() - handle_center;
                     handle_center.X += relativeMousePos.X;
@@ -389,11 +389,11 @@
                 ImRect text_bb = new() { Min = new Vector2(bb.Min.X, bb.Max.Y - labelHeight), Max = new Vector2(bb.Min.X, bb.Max.Y) + new Vector2(size.X, 0) };
 
                 float width = size.X;
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.X:N2}", (byte*)null, null, new(0, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.X:N2}", (byte*)null, null, new(0, 0), default);
                 drawList->AddLine(new Vector2(bb.Min.X, bb.Max.Y), new Vector2(bb.Min.X + textSize, bb.Max.Y), 0xFF0000FF, 2);
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Y:N2}", (byte*)null, null, new(0.5f, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Y:N2}", (byte*)null, null, new(0.5f, 0), default);
                 drawList->AddLine(new Vector2(text_bb.Min.X + width * 0.5f - textSize * 0.5f, bb.Max.Y), new Vector2(text_bb.Min.X + width * 0.5f + textSize * 0.5f, bb.Max.Y), 0xFF00FF00, 2);
-                ImGui.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Z:N2}", (byte*)null, null, new(1f, 0), default);
+                ImGuiP.RenderTextClipped(text_bb.Min, text_bb.Max, $"{col.Z:N2}", (byte*)null, null, new(1f, 0), default);
                 drawList->AddLine(new Vector2(text_bb.Max.X - textSize, bb.Max.Y), new Vector2(text_bb.Max.X, bb.Max.Y), 0xFFFF0000, 2);
             }
 

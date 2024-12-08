@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Analyzers.Tests
 {
     using HexaEngine.Analyzers;
-    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.NUnit.AnalyzerVerifier<InputAnalyzer>;
 
     public class InputAnalyzerTests

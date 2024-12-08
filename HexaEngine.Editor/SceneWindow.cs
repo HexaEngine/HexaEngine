@@ -2,14 +2,13 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
@@ -124,7 +123,8 @@
         {
             ImGuizmo.SetRect(ImGuiViewport.X, ImGuiViewport.Y, ImGuiViewport.Width, ImGuiViewport.Height);
             ImGuizmo.SetOrthographic(EditorCameraController.Dimension == EditorCameraDimension.Dim2D);
-            DebugDraw.SetViewport(RenderViewport);
+
+            //DebugDraw.SetViewport(RenderViewport);
         }
 
         public static void Focus()
@@ -141,11 +141,11 @@
                 flags |= ImGuiWindowFlags.UnsavedDocument;
             }
 
-            if (!ImGui.Begin("Scene", ref isShown, flags))
+            if (!ImGui.Begin("Scene"u8, ref isShown, flags))
             {
                 if (focus)
                 {
-                    ImGui.FocusWindow(ImGui.GetCurrentWindow(), ImGuiFocusRequestFlags.UnlessBelowModal);
+                    ImGuiP.FocusWindow(ImGuiP.GetCurrentWindow(), ImGuiFocusRequestFlags.UnlessBelowModal);
                 }
                 isVisible = false;
                 ImGui.End();
@@ -165,13 +165,15 @@
                 HandleHotkeys();
             }
 
+            bool inEdit = Application.InEditMode;
+
             ImGuizmo.SetDrawlist();
             isVisible = true;
 
             var scene = SceneManager.Current;
             if (scene != null)
             {
-                if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
+                if (inEdit && ImGui.IsWindowHovered() && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left) && CameraManager.Current != null)
                 {
                     var ca = CameraManager.Current;
                     Vector3 rayDir = Mouse.ScreenToWorld(ca.Transform.Projection, ca.Transform.ViewInv, RenderViewport);
@@ -182,7 +184,7 @@
                     GameObject? gameObject = scene.SelectObject(ray);
                     if (gameObject != null)
                     {
-                        if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                        if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                         {
                             SelectionCollection.Global.AddSelection(gameObject);
                         }
@@ -197,14 +199,14 @@
                 {
                     if (EditorCameraController.Dimension == EditorCameraDimension.Dim3D)
                     {
-                        if (ImGui.Button("3D"))
+                        if (inEdit && ImGui.Button("3D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim2D;
                         }
                     }
                     else
                     {
-                        if (ImGui.Button("2D"))
+                        if (inEdit && ImGui.Button("2D"u8))
                         {
                             EditorCameraController.Dimension = EditorCameraDimension.Dim3D;
                         }
@@ -268,58 +270,58 @@
                     }
 
                     int cameraIndex = scene.Cameras.ActiveCameraIndex;
-                    if (ImGui.Combo("##ActiveCamCombo", ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
+                    if (inEdit && ImGui.Combo("##ActiveCamCombo"u8, ref cameraIndex, (byte**)scene.Cameras.Names.Data, scene.Cameras.Count))
                     {
                         scene.Cameras.ActiveCameraIndex = cameraIndex;
                     }
 
                     ImGui.Separator();
 
-                    if (ImGui.BeginMenu($"{UwU.Gear}"))
+                    if (inEdit && ImGui.BeginMenu($"{UwU.Gear}"))
                     {
-                        ImGui.Checkbox("Fullscreen", ref Fullframe);
+                        ImGui.Checkbox("Fullscreen"u8, ref Fullframe);
 
-                        ImGui.SeparatorText("Camera Settings");
+                        ImGui.SeparatorText("Camera Settings"u8);
 
                         float fov = EditorCameraController.Fov;
-                        if (ImGui.SliderAngle("Fov", ref fov, 0, 180))
+                        if (ImGui.SliderAngle("Fov"u8, ref fov, 0, 180))
                         {
                             EditorCameraController.Fov = fov;
                         }
 
                         float far = EditorCameraController.Far;
-                        if (ImGui.InputFloat("Far", ref far))
+                        if (ImGui.InputFloat("Far"u8, ref far))
                         {
                             EditorCameraController.Far = far;
                         }
 
                         float speed = EditorCameraController.Speed;
-                        if (ImGui.InputFloat("Speed", ref speed))
+                        if (ImGui.InputFloat("Speed"u8, ref speed))
                         {
                             EditorCameraController.Speed = speed;
                         }
 
                         float sensitivity = EditorCameraController.MouseSensitivity;
-                        if (ImGui.InputFloat("Sensitivity", ref sensitivity))
+                        if (ImGui.InputFloat("Sensitivity"u8, ref sensitivity))
                         {
                             EditorCameraController.MouseSensitivity = sensitivity;
                         }
 
-                        ImGui.SeparatorText("Shading Mode");
+                        ImGui.SeparatorText("Shading Mode"u8);
 
                         SceneRenderer? renderer = SceneRenderer.Current;
 
                         if (renderer != null)
                         {
-                            if (ImGui.RadioButton("Wireframe", renderer.Shading == ViewportShading.Wireframe))
+                            if (ImGui.RadioButton("Wireframe"u8, renderer.Shading == ViewportShading.Wireframe))
                             {
                                 renderer.Shading = ViewportShading.Wireframe;
                             }
-                            if (ImGui.RadioButton("Solid", renderer.Shading == ViewportShading.Solid))
+                            if (ImGui.RadioButton("Solid"u8, renderer.Shading == ViewportShading.Solid))
                             {
                                 renderer.Shading = ViewportShading.Solid;
                             }
-                            if (ImGui.RadioButton("Rendered", renderer.Shading == ViewportShading.Rendered))
+                            if (ImGui.RadioButton("Rendered"u8, renderer.Shading == ViewportShading.Rendered))
                             {
                                 renderer.Shading = ViewportShading.Rendered;
                             }
@@ -339,8 +341,8 @@
             else
             {
                 // Get content region.
-                Vector2 vMin = ImGui.GetWindowContentRegionMin();
-                Vector2 vMax = ImGui.GetWindowContentRegionMax();
+                Vector2 vMin = ImGui.GetCursorPos();
+                Vector2 vMax = ImGui.GetWindowSize();
                 Vector2 wPos = ImGui.GetWindowPos();
 
                 // Viewport window.
@@ -366,60 +368,68 @@
 
             ImGui.PushItemWidth(100);
 
-            var mode = Inspector.Mode;
-            if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
+            if (Application.InEditMode)
             {
-                Inspector.Mode = mode;
+                var mode = Inspector.Mode;
+                if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
+                {
+                    Inspector.Mode = mode;
+                }
+
+                // something here causes gc pressue needs investigation.
+                ImGui.PopItemWidth();
+
+                if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Translate;
+                }
+                TooltipHelper.Tooltip("Translate");
+
+                if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Rotate;
+                }
+                TooltipHelper.Tooltip("Rotate");
+
+                if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Scale;
+                }
+                TooltipHelper.Tooltip("Scale");
+
+                if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
+                {
+                    Inspector.Operation = ImGuizmoOperation.Universal;
+                }
+                TooltipHelper.Tooltip("Translate & Rotate & Scale");
+
+                Inspector.Draw();
             }
-
-            ImGui.PopItemWidth();
-
-            if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Translate;
-            }
-            TooltipHelper.Tooltip("Translate");
-
-            if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Rotate;
-            }
-            TooltipHelper.Tooltip("Rotate");
-
-            if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Scale;
-            }
-            TooltipHelper.Tooltip("Scale");
-
-            if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
-            {
-                Inspector.Operation = ImGuizmoOperation.Universal;
-            }
-            TooltipHelper.Tooltip("Translate & Rotate & Scale");
-
-            Inspector.Draw();
 
             ImGui.End();
         }
 
         private static void HandleHotkeys()
         {
-            if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+            if (Application.InEditMode)
             {
-                if (ImGui.IsKeyPressed(ImGuiKey.S))
+                if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                 {
-                    SceneManager.Save();
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.S))
+                    {
+                        SceneManager.Save();
+                    }
+                }
+
+                if (ImGuiP.IsKeyDown(ImGuiKey.F5))
+                {
+                    TransitionToState(EditorPlayState.Play);
                 }
             }
 
-            if (ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
+            if (ImGuiP.IsKeyDown(ImGuiKey.Escape) && !Application.InEditMode)
             {
                 TransitionToState(EditorPlayState.Edit);
-            }
-            if (ImGui.IsKeyDown(ImGuiKey.F5) && Application.InEditMode)
-            {
-                TransitionToState(EditorPlayState.Play);
             }
         }
 

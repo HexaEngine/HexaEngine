@@ -8,7 +8,7 @@
     /// </summary>
     public static class Time
     {
-        private static long frame;
+        private static ulong frame;
         private static long last;
         private static long lastFixed;
         private static float fixedTime;
@@ -22,7 +22,7 @@
         /// <summary>
         /// Gets how many frames have passed since the start.
         /// </summary>
-        public static long Frame => frame;
+        public static ulong Frame => frame;
 
         /// <summary>
         /// Gets the time elapsed since the last frame in seconds.

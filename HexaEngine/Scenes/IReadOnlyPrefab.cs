@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Collections.Generic;
 
     public interface IReadOnlyPrefab

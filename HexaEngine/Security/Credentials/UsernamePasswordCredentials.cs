@@ -6,9 +6,9 @@
 
     public class UsernamePasswordCredentials : DisposableBase, ICredentials
     {
-        public SecureString Username { get; set; }
+        public SecureString Username { get; set; } = null!;
 
-        public SecureString Password { get; set; }
+        public SecureString Password { get; set; } = null!;
 
         public CredentialType Type => CredentialType.UsernamePassword;
 

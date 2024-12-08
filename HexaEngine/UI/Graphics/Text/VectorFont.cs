@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.UI.Graphics;
+    using Microsoft.CodeAnalysis.Text;
     using System;
     using System.Collections.Generic;
     using System.Numerics;
@@ -19,10 +21,10 @@
         private readonly Dictionary<uint, VectorFontGlyph> glyphs = [];
         private readonly Dictionary<uint, GlyphMetrics> glyphMetrics = [];
 
-        private IBuffer glyphBuffer;
-        private IBuffer curveBuffer;
-        private IShaderResourceView glyphBufferSRV;
-        private IShaderResourceView curveBufferSRV;
+        private IBuffer glyphBuffer = null!;
+        private IBuffer curveBuffer = null!;
+        private IShaderResourceView glyphBufferSRV = null!;
+        private IShaderResourceView curveBufferSRV = null!;
 
         private float fontSize;
         private bool hinting;
@@ -96,8 +98,8 @@
             FTError error;
 
             FTFace faceHandle;
-            error = (FTError)FreeType.FTNewFace(library, path, 0, &faceHandle);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.NewFace(library, path, 0, &faceHandle);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to load font file, {error}");
             }
@@ -124,7 +126,7 @@
                 emSize = fontSize * 64f;
 
                 error = (FTError)faceHandle.SetPixelSizes(0, (uint)MathF.Ceiling(fontSize));
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to set pixel sizes, {error}");
                 }
@@ -146,7 +148,7 @@
                 }
 
                 error = (FTError)faceHandle.LoadGlyph(glyphIndex, loadFlags);
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load glyph for character {charcode} : {error}");
                 }
@@ -154,8 +156,8 @@
                 BuildGlyph(charcode, glyphIndex);
             }
 
-            glyphBuffer = device.CreateBuffer(bufferGlyphs.Data, bufferGlyphs.Size, new BufferDescription((int)(bufferGlyphs.Size * sizeof(BufferGlyph)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferGlyph)));
-            curveBuffer = device.CreateBuffer(bufferCurves.Data, bufferCurves.Size, new BufferDescription((int)(bufferCurves.Size * sizeof(BufferCurve)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferCurve)));
+            glyphBuffer = device.CreateBuffer(bufferGlyphs.Data, (uint)bufferGlyphs.Size, new BufferDescription((int)(bufferGlyphs.Size * sizeof(BufferGlyph)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferGlyph)));
+            curveBuffer = device.CreateBuffer(bufferCurves.Data, (uint)bufferCurves.Size, new BufferDescription((int)(bufferCurves.Size * sizeof(BufferCurve)), BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(BufferCurve)));
 
             glyphBufferSRV = device.CreateShaderResourceView(glyphBuffer);
             curveBufferSRV = device.CreateShaderResourceView(curveBuffer);
@@ -173,19 +175,19 @@
             for (int i = 0; i < face->Glyph->Outline.NContours; i++)
             {
                 // Note: The end indices in face->glyph->outline.contours are inclusive.
-                ConvertContour(ref bufferCurves, &face->Glyph->Outline, start, face->Glyph->Outline.Contours[i], emSize);
+                ConvertContour(ref bufferCurves, &face->Glyph->Outline, start, (short)face->Glyph->Outline.Contours[i], emSize);
                 start = (short)(face->Glyph->Outline.Contours[i] + 1);
             }
 
             bufferGlyph.Count = (int)(bufferCurves.Size - bufferGlyph.Index);
 
-            uint bufferIndex = bufferGlyphs.Size;
+            int bufferIndex = bufferGlyphs.Size;
             bufferGlyphs.Add(bufferGlyph);
 
             VectorFontGlyph glyph = new()
             {
                 Index = glyphIndex,
-                BufferIndex = bufferIndex,
+                BufferIndex = (uint)bufferIndex,
                 CurveCount = bufferGlyph.Count,
                 Width = face->Glyph->Metrics.Width,
                 Height = face->Glyph->Metrics.Height,
@@ -214,7 +216,7 @@
         // This function takes a single contour (defined by firstIndex and
         // lastIndex, both inclusive) from outline and converts it into individual
         // quadratic bezier curves, which are added to the curves vector.
-        private void ConvertContour(ref UnsafeList<BufferCurve> curves, FTOutline* outline, short firstIndex, short lastIndex, float emSize)
+        private void ConvertContour(ref UnsafeList<BufferCurve> curves, FTOutline* outline, short firstIndex, short lastIndex, double emSize)
         {
             // See https://freetype.org/freetype2/docs/glyphs/glyphs-6.html
             // for a detailed description of the outline format.
@@ -287,22 +289,12 @@
                 dIndex = -1;
             }
 
-            Vector2 Convert(FTVector v)
-            {
-                return new Vector2(v.X / emSize, v.Y / emSize);
-            };
-
-            Vector2 Midpoint(Vector2 a, Vector2 b)
-            {
-                return 0.5f * (a + b);
-            };
-
             // Find a point that is on the curve and remove it from the list.
-            Vector2 first;
+            Vector2D first;
             bool firstOnCurve = (outline->Tags[firstIndex] & FreeType.FT_CURVE_TAG_ON) != 0;
             if (firstOnCurve)
             {
-                first = Convert(outline->Points[firstIndex]);
+                first = Convert(outline->Points[firstIndex], emSize);
                 firstIndex += dIndex;
             }
             else
@@ -310,23 +302,23 @@
                 bool lastOnCurve = (outline->Tags[lastIndex] & FreeType.FT_CURVE_TAG_ON) != 0;
                 if (lastOnCurve)
                 {
-                    first = Convert(outline->Points[lastIndex]);
+                    first = Convert(outline->Points[lastIndex], emSize);
                     lastIndex -= dIndex;
                 }
                 else
                 {
-                    first = Midpoint(Convert(outline->Points[firstIndex]), Convert(outline->Points[lastIndex]));
+                    first = Midpoint(Convert(outline->Points[firstIndex], emSize), Convert(outline->Points[lastIndex], emSize));
                     // This is a virtual point, so we don't have to remove it.
                 }
             }
 
-            Vector2 start = first;
-            Vector2 control = first;
-            Vector2 previous = first;
+            Vector2D start = first;
+            Vector2D control = first;
+            Vector2D previous = first;
             char previousTag = (char)FreeType.FT_CURVE_TAG_ON;
             for (short index = firstIndex; index != lastIndex + dIndex; index += dIndex)
             {
-                Vector2 current = Convert(outline->Points[index]);
+                Vector2D current = Convert(outline->Points[index], emSize);
                 char currentTag = (char)outline->Tags[index];
                 if (currentTag == FreeType.FT_CURVE_TAG_CUBIC)
                 {
@@ -337,15 +329,15 @@
                 {
                     if (previousTag == FreeType.FT_CURVE_TAG_CUBIC)
                     {
-                        Vector2 b0 = start;
-                        Vector2 b1 = control;
-                        Vector2 b2 = previous;
-                        Vector2 b3 = current;
+                        Vector2D b0 = start;
+                        Vector2D b1 = control;
+                        Vector2D b2 = previous;
+                        Vector2D b3 = current;
 
-                        Vector2 c0 = b0 + 0.75f * (b1 - b0);
-                        Vector2 c1 = b3 + 0.75f * (b2 - b3);
+                        Vector2D c0 = b0 + 0.75 * (b1 - b0);
+                        Vector2D c1 = b3 + 0.75 * (b2 - b3);
 
-                        Vector2 d = Midpoint(c0, c1);
+                        Vector2D d = Midpoint(c0, c1);
 
                         curves.Add(new(b0, c0, d));
                         curves.Add(new(d, c1, b3));
@@ -372,7 +364,7 @@
                     else
                     {
                         // Create virtual on point.
-                        Vector2 mid = Midpoint(previous, current);
+                        Vector2D mid = Midpoint(previous, current);
                         curves.Add(new(start, previous, mid));
                         start = mid;
                         control = mid;
@@ -385,15 +377,15 @@
             // Close the contour.
             if (previousTag == FreeType.FT_CURVE_TAG_CUBIC)
             {
-                Vector2 b0 = start;
-                Vector2 b1 = control;
-                Vector2 b2 = previous;
-                Vector2 b3 = first;
+                Vector2D b0 = start;
+                Vector2D b1 = control;
+                Vector2D b2 = previous;
+                Vector2D b3 = first;
 
-                Vector2 c0 = b0 + 0.75f * (b1 - b0);
-                Vector2 c1 = b3 + 0.75f * (b2 - b3);
+                Vector2D c0 = b0 + 0.75 * (b1 - b0);
+                Vector2D c1 = b3 + 0.75 * (b2 - b3);
 
-                Vector2 d = Midpoint(c0, c1);
+                Vector2D d = Midpoint(c0, c1);
 
                 curves.Add(new(b0, c0, d));
                 curves.Add(new(d, c1, b3));
@@ -409,7 +401,22 @@
             }
         }
 
+        private static Vector2D Convert(FTVector v, double emSize)
+        {
+            return new Vector2D(v.X / emSize, v.Y / emSize);
+        }
+
+        private static Vector2D Midpoint(Vector2D a, Vector2D b)
+        {
+            return 0.5 * (a + b);
+        }
+
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)
+        {
+            RenderText(commandList, origin, textSpan.AsSpan(), fontSize, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> textSpan, float fontSize, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
             int indexCount = 6 * textSpan.Length;
@@ -422,6 +429,11 @@
             for (int i = 0; i < textSpan.Length; i++)
             {
                 uint charcode = textSpan[i];
+                if (i + 1 < textSpan.Length && char.IsSurrogatePair(textSpan[i], textSpan[i + 1]))
+                {
+                    charcode = (uint)char.ConvertToUtf32((char)charcode, textSpan[i + 1]);
+                    i++;
+                }
 
                 if (charcode == '\r')
                 {
@@ -449,7 +461,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -488,6 +500,11 @@
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange text, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
+            RenderText(commandList, origin, text.AsSpan(), fontSize, whitespaceScale, incrementalTabStop, readingDirection, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> text, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
+        {
             int vertexCount = 4 * text.Length;
             int indexCount = 6 * text.Length;
 
@@ -505,6 +522,11 @@
             for (int i = startIndex; i != endIndex; i += step)
             {
                 uint charcode = text[i];
+                if (i + 1 < text.Length && char.IsSurrogatePair(text[i], text[i + 1]))
+                {
+                    charcode = (uint)char.ConvertToUtf32((char)charcode, text[i + 1]);
+                    i++;
+                }
 
                 if (charcode == '\r')
                 {
@@ -538,7 +560,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -595,7 +617,7 @@
         {
             FTVector ikerning;
             FTError error = (FTError)faceHandle.GetKerning(left, right, kerningMode, &ikerning);
-            if (error == FTError.FtErrOk)
+            if (error == FTError.Ok)
             {
                 kerning = new(ikerning.X, ikerning.Y);
                 return true;
@@ -605,6 +627,11 @@
         }
 
         public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop)
+        {
+            return MeasureSize(text.AsSpan(), fontSize, incrementalTabStop);
+        }
+
+        public Vector2 MeasureSize(ReadOnlySpan<char> text, float fontSize, float incrementalTabStop)
         {
             float x = 0;
             uint previous = 0;
@@ -624,7 +651,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, metrics.Glyph, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         x += kerning.X / emSize * fontSize;
                     }

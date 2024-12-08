@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes.Processing
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Terrains;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 
@@ -25,13 +25,13 @@
         public static unsafe bool ProcessMesh(MeshLODData pMesh)
         {
             const float angleEpsilon = 0.9999f;
-            UnsafeList<bool> vertexDone = new(pMesh.VertexCount);
+            UnsafeList<bool> vertexDone = new((int)pMesh.VertexCount);
 
             pMesh.Tangents = new Vector3[pMesh.VertexCount];
 
             Vector3[] meshPos = pMesh.Positions;
             Vector3[] meshNorm = pMesh.Normals;
-            Vector3[] meshTex = pMesh.UVs;
+            Vector2[] meshTex = pMesh.UVChannels[0].GetUV2D();
             Vector3[] meshTang = pMesh.Tangents;
 
             // calculate the tangent and bitangent for every face
@@ -111,7 +111,7 @@
 
             // in the second pass we now smooth out all tangents and bitangents at the same local position
             // if they are not too far off.
-            for (uint a = 0; a < pMesh.VertexCount; a++)
+            for (int a = 0; a < pMesh.VertexCount; a++)
             {
                 if (vertexDone[a])
                 {
@@ -127,13 +127,13 @@
                 vertexFinder.FindPositions(origPos, posEpsilon, verticesFound);
 
                 closeVertices.EnsureCapacity(verticesFound.Count + 5);
-                closeVertices.Add(a);
+                closeVertices.Add((uint)a);
 
                 // look among them for other vertices sharing the same normal and a close-enough tangent/bitangent
-                for (uint b = 0; b < verticesFound.Count; b++)
+                for (int b = 0; b < verticesFound.Count; b++)
                 {
                     uint idx = verticesFound[(int)b];
-                    if (vertexDone[idx])
+                    if (vertexDone[(int)idx])
                     {
                         continue;
                     }
@@ -150,7 +150,7 @@
 
                     // it's similar enough -> add it to the smoothing group
                     closeVertices.Add(idx);
-                    vertexDone[idx] = true;
+                    vertexDone[(int)idx] = true;
                 }
 
                 // smooth the tangents and bitangents of all vertices that were found to be close enough
@@ -186,7 +186,9 @@
             var nFace = pMesh.IndexCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertTangents, 0, (int)pMesh.VertexCount);
+            MemsetT(vertTangents, 0, (int)pMesh.VertexCount);
+
+            Vector2[] meshTex = pMesh.UVChannels[0].GetUV2D();
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -201,8 +203,8 @@
                 Vector3 v = vtxP2 - vtxP1;
                 Vector3 w = vtxP3 - vtxP1;
 
-                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
-                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
+                float sx = meshTex[i1].X - meshTex[i0].X, sy = meshTex[i1].Y - meshTex[i0].Y;
+                float tx = meshTex[i2].X - meshTex[i0].X, ty = meshTex[i2].Y - meshTex[i0].Y;
 
                 float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
 
@@ -244,7 +246,7 @@
             var nFace = pMesh.IndexCount / 3;
 
             Vector3* vertTangents = AllocT<Vector3>(pMesh.VertexCount);
-            Memset(vertTangents, 0, (int)pMesh.VertexCount);
+            MemsetT(vertTangents, 0, (int)pMesh.VertexCount);
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -311,7 +313,7 @@
         public static unsafe bool ProcessMesh2Parallel(TerrainCellLODData pMesh)
         {
             Vector3* tangents = AllocT<Vector3>(pMesh.FaceCount);
-            Memset(tangents, 0, (int)pMesh.FaceCount);
+            MemsetT(tangents, 0, (int)pMesh.FaceCount);
 
             var m_terrainHeight = (int)pMesh.Rows;
             var m_terrainWidth = (int)pMesh.Columns;

@@ -160,7 +160,7 @@ float3 BRDF_IBL(PixelParams surface, float ao)
 	specular *= ao * surface.EnergyCompensation;
 
 	return diffuse + specular;
-
+	
 	/*
 	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
 	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;

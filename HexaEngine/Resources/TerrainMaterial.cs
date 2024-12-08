@@ -11,8 +11,8 @@
     {
         public Guid Id;
         private MaterialShader shader;
-        private readonly MaterialTextureList textureListPS = [];
-        private readonly MaterialTextureList textureListDS = [];
+        private readonly MaterialTextureList textureList = [];
+
         private readonly TerrainLayerGroup group;
 
         public unsafe Guid Combine(Guid guid1, Guid guid2)
@@ -66,31 +66,23 @@
                     if (textureDesc.Type == MaterialTextureType.Displacement)
                     {
                         hasDisplacement = true;
-                        textureListDS.Add(texture);
                     }
-                    else
-                    {
-                        textureListPS.Add(texture);
-                    }
+                    textureList.Add(texture);
                 }
             }
             Id = guid;
 
-            textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 4;
-            textureListPS.Update();
-            textureListDS.StartTextureSlot = 1;
-            textureListDS.StartSamplerSlot = 1;
-            textureListDS.Update();
-
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(Id, [.. layerMacros], true, hasDisplacement);
             shader = ResourceManager.Shared.LoadMaterialShader<TerrainMaterial>(shaderDesc);
+
+            textureList.Update(shader);
         }
+
+        public MaterialShader Shader => shader;
 
         public void Update()
         {
-            textureListPS.DisposeResources();
-            textureListDS.DisposeResources();
+            textureList.DisposeResources();
 
             Guid guid = Guid.Empty;
             bool hasDisplacement = false;
@@ -121,22 +113,11 @@
                     var texture = ResourceManager.Shared.LoadTexture(textureDesc);
                     if (textureDesc.Type == MaterialTextureType.Displacement)
                     {
-                        textureListDS.Add(texture);
                         hasDisplacement = true;
                     }
-                    else
-                    {
-                        textureListPS.Add(texture);
-                    }
+                    textureList.Add(texture);
                 }
             }
-
-            textureListPS.StartTextureSlot = 12;
-            textureListPS.StartSamplerSlot = 4;
-            textureListPS.Update();
-            textureListDS.StartTextureSlot = 1;
-            textureListDS.StartSamplerSlot = 1;
-            textureListDS.Update();
 
             MaterialShaderDesc shaderDesc = GetMaterialShaderDesc(guid, [.. layerMacros], true, hasDisplacement);
 
@@ -151,10 +132,8 @@
                 ResourceManager.Shared.UpdateMaterialShader(shader, shaderDesc);
             }
             Id = guid;
-        }
 
-        public void Setup()
-        {
+            textureList.Update(shader);
         }
 
         private static MaterialShaderPassDesc[] GetMaterialShaderPasses(bool alphaBlend, bool tessellate)
@@ -245,9 +224,9 @@
                 pipelineDescDepth.DomainShader = "forward/terrain/depth/ds.hlsl";
             }
 
-            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward));
-            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred));
-            passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth));
+            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, false, "forward/terrain/surface.hlsl"));
+            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, false, "deferred/terrain/surface.hlsl"));
+            passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth, false));
 
             GraphicsPipelineDesc pipelineDescUnlit = new()
             {
@@ -310,9 +289,9 @@
                 Topology = PrimitiveTopology.TriangleList,
             };
 
-            passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc));
-            passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc));
-            passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc));
+            passes.Add(new("Directional", csmPipelineDesc, csmPipelineStateDesc, false));
+            passes.Add(new("Omnidirectional", osmPipelineDesc, osmPipelineStateDesc, false));
+            passes.Add(new("Perspective", psmPipelineDesc, psmPipelineStateDesc, false));
 
             //flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.DepthTest;
 
@@ -322,7 +301,18 @@
         private static MaterialShaderDesc GetMaterialShaderDesc(Guid id, ShaderMacro[] macros, bool alphaBlend, bool tessellate)
         {
             var passes = GetMaterialShaderPasses(alphaBlend, tessellate);
-            return new(id, [.. macros], TerrainCellData.InputElements, passes);
+            return new(id, [.. macros], [], TerrainCellData.InputElements, passes);
+        }
+
+        public MaterialShaderPass? GetPass(string passName)
+        {
+            var pass = shader.Find(passName);
+            if (pass == null)
+            {
+                return null;
+            }
+
+            return pass;
         }
 
         public bool BeginDraw(IGraphicsContext context, string passName)
@@ -338,17 +328,12 @@
                 return false;
             }
 
-            textureListPS.BindPS(context);
-            textureListDS.BindDS(context);
-
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            textureListPS.UnbindPS(context);
-            textureListDS.UnbindDS(context);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void DrawIndexedInstanced(IGraphicsContext context, string pass, uint indexCount, uint instanceCount, uint indexOffset = 0, int vertexOffset = 0, uint instanceOffset = 0)
@@ -383,19 +368,13 @@
 
         public void Dispose()
         {
-            for (int i = 0; i < textureListPS.Count; i++)
+            for (int i = 0; i < textureList.Count; i++)
             {
-                textureListPS[i]?.Dispose();
-            }
-
-            for (int i = 0; i < textureListDS.Count; i++)
-            {
-                textureListDS[i]?.Dispose();
+                textureList[i]?.Dispose();
             }
 
             shader.Dispose();
-            textureListPS.Dispose();
-            textureListDS.Dispose();
+            textureList.Dispose();
         }
     }
 }

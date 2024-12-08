@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Shaders
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.Text;
 
     /// <summary>

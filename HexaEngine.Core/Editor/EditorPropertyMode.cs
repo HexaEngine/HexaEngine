@@ -36,12 +36,6 @@
         TypeSelector,
 
         /// <summary>
-        /// File picker mode for editor properties.
-        /// </summary>
-        [Obsolete("Use AssetRefs instead.")]
-        Filepicker,
-
-        /// <summary>
         /// Reference selector mode for editor properties.
         /// </summary>
         ReferenceSelector,

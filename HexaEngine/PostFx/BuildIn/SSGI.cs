@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -13,16 +13,14 @@
     [EditorDisplayName("SSGI")]
     public class SSGI : PostFxBase
     {
+#nullable disable
         private PostFxGraphResourceBuilder creator;
         private IGraphicsPipelineState psoSSGI;
         private ConstantBuffer<SSGIParams> ssgiParamsBuffer;
         private ResourceRef<Texture2D> ssgiBuffer;
         private GaussianBlur blur;
-        private ISamplerState linearWrapSampler;
 
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<GBuffer> gbuffer;
+#nullable restore
 
         private float intensity = 1;
         private float distance = 10;
@@ -200,11 +198,6 @@
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             this.creator = creator;
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             List<ShaderMacro> shaderMacros = new(macros)
             {
@@ -250,6 +243,12 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            psoSSGI.Bindings.SetSRV("inputTex", Input);
+            psoSSGI.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             if (Output == null)
@@ -257,38 +256,22 @@
                 return;
             }
 
-            context.ClearRenderTargetView(ssgiBuffer.Value, default);
+            context.ClearRenderTargetView(ssgiBuffer.Value!, default);
 
             context.SetRenderTarget(ssgiBuffer.Value, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, depth.Value.SRV);
-            context.PSSetShaderResource(2, gbuffer.Value.SRVs[1]);
-            context.PSSetConstantBuffer(0, ssgiParamsBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-            context.PSSetSampler(0, linearWrapSampler);
-
-            context.SetPipelineState(psoSSGI);
-
+            context.SetGraphicsPipelineState(psoSSGI);
             context.DrawInstanced(4, 1, 0, 0);
-
-            context.SetPipelineState(null);
-
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(1, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(1, null);
-            context.PSSetShaderResource(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, ssgiBuffer.Value, Output, Viewport.Width, Viewport.Height);
+            blur.Blur(context, ssgiBuffer.Value!, Output, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()
         {
             creator.DisposeResource("SSGI_BUFFER");
             psoSSGI.Dispose();
-            linearWrapSampler.Dispose();
             ssgiParamsBuffer.Dispose();
             blur.Dispose();
         }

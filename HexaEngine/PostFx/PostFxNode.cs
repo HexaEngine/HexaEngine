@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.Collections;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Graphics.Graph;
     using System.Collections.Generic;
 
-    public class PostFxNode : INode
+    public class PostFxNode : INode<PostFxNode>
     {
         public PostFxNode(PostFxGraph graph, IPostFx postFx, PostFxNameRegistry nameRegistry, bool isComposeNode = false)
         {
@@ -36,7 +36,7 @@
 
         public GraphResourceContainer Container { get; }
 
-        List<INode> INode.Dependencies => Dependencies.Cast<INode>().ToList();
+        IEnumerable<PostFxNode> INode<PostFxNode>.Dependencies => Dependencies;
 
         public void Reset(bool clearContainer = false)
         {

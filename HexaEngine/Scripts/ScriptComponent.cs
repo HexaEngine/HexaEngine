@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Scripts
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Runtime.InteropServices;
 
@@ -24,13 +25,16 @@
     [EditorComponent<ScriptComponent>("Script Behaviour")]
     public class ScriptComponent : IScriptComponent
     {
-        private GameObject gameObject;
+        private GameObject gameObject = null!;
         private ScriptFlags flags;
         private object? instance;
-        private PropertyInfo[] properties;
+        private PropertyInfo[] properties = null!;
         private AssetRef scriptRef;
         private string? scriptTypeName;
+
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicMethods)]
         private Type? scriptType;
+
         private Dictionary<string, object?> propertyValues = new();
         private AwakeDelegate? awakeDelegate;
         private UpdateDelegate? updateDelegate;
@@ -203,19 +207,19 @@
                         }
                         else if (prop.PropertyType == typeof(float))
                         {
-                            value = propertyValues[prop.Name] = (float)(double)value;
+                            value = propertyValues[prop.Name] = (float)(double)value!;
                         }
                         else if (prop.PropertyType == typeof(uint))
                         {
-                            value = propertyValues[prop.Name] = (uint)(long)value;
+                            value = propertyValues[prop.Name] = (uint)(long)value!;
                         }
                         else if (prop.PropertyType == typeof(int))
                         {
-                            value = propertyValues[prop.Name] = (int)(long)value;
+                            value = propertyValues[prop.Name] = (int)(long)value!;
                         }
                         else if (prop.PropertyType.IsEnum)
                         {
-                            value = propertyValues[prop.Name] = Enum.ToObject(prop.PropertyType, (int)(long)value);
+                            value = propertyValues[prop.Name] = Enum.ToObject(prop.PropertyType, (int)(long)value!);
                         }
                         else if (!prop.PropertyType.IsInstanceOfType(value))
                         {
@@ -390,7 +394,7 @@
 
                 try
                 {
-                    instance = Activator.CreateInstance(scriptType);
+                    instance = Activator.CreateInstance(scriptType)!;
                     var methods = scriptType.GetMethods();
                     flags = ScriptFlags.None;
                     for (int i = 0; i < methods.Length; i++)
@@ -422,7 +426,7 @@
                                 continue;
                         }
 
-                        gameObjectProp = scriptType.GetProperty(nameof(GameObject));
+                        gameObjectProp = scriptType.GetProperty(nameof(GameObject))!;
                         gameObjectProp.SetValue(instance, gameObject);
                     }
 

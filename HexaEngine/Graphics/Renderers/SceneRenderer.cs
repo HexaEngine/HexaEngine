@@ -1,44 +1,65 @@
-﻿#nullable disable
-
-namespace HexaEngine.Graphics.Renderers
+﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Configuration;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Graphics.Filters;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
 
+    public class RendererResizedEventArgs : EventArgs
+    {
+        public RendererResizedEventArgs(Vector2 oldSize, Vector2 newSize)
+        {
+            OldSize = oldSize;
+            NewSize = newSize;
+        }
+
+        public Vector2 OldSize { get; internal set; }
+
+        public Vector2 NewSize { get; internal set; }
+    }
+
+    public class OutputViewportChangedEventArgs : EventArgs
+    {
+        public Viewport OldViewport { get; internal set; }
+
+        public Viewport NewViewport { get; internal set; }
+    }
+
     public class SceneRenderer : ISceneRenderer
     {
-        private IGraphicsDevice device;
-        private ISwapChain swapChain;
-        private ICoreWindow window;
+        private IGraphicsDevice device = null!;
+        private ISwapChain swapChain = null!;
+        private ICoreWindow window = null!;
 
         private readonly RendererSettings settings = new();
-        private readonly HDRPipeline renderGraph;
-        private RenderGraphExecuter graphExecuter;
+        private readonly HDRPipeline renderGraph = null!;
+        private RenderGraphExecuter graphExecuter = null!;
 
-        private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer = null!;
 
         private bool initialized;
         private bool disposedValue;
 
-        private ConfigKey configKey;
+        private ConfigKey configKey = null!;
         private float RenderResolution;
         private int width;
         private int height;
         private bool enableProfiling = true;
+
+        private OutputViewportChangedEventArgs outputViewportChangedEventArgs = new();
+        private Viewport outputViewport;
 
         public ViewportShading Shading { get; set; }
 
@@ -62,18 +83,42 @@ namespace HexaEngine.Graphics.Renderers
             set
             {
                 OnRendererResizeBegin();
+                var oldWidth = width;
+                var oldHeight = height;
                 width = (int)value.X;
                 height = (int)value.Y;
+                Resized?.Invoke(this, new(new(oldWidth, oldHeight), value));
                 OnRendererResizeEnd(width, height);
             }
         }
+
+        public Viewport OutputViewport
+        {
+            get => outputViewport;
+            set
+            {
+                if (outputViewport == value)
+                {
+                    return;
+                }
+
+                outputViewportChangedEventArgs.OldViewport = outputViewport;
+                outputViewportChangedEventArgs.NewViewport = value;
+                OutputViewportChanged?.Invoke(this, outputViewportChangedEventArgs);
+                outputViewport = value;
+            }
+        }
+
+        public static event EventHandler<RendererResizedEventArgs>? Resized;
+
+        public static event EventHandler<OutputViewportChangedEventArgs>? OutputViewportChanged;
 
         public SceneRenderer(Windows.RendererFlags flags)
         {
             renderGraph = new(flags);
         }
 
-        public static SceneRenderer Current { get; private set; }
+        public static SceneRenderer Current { get; private set; } = null!;
 
         public SceneDrawFlags DrawFlags { get; set; }
 
@@ -112,9 +157,9 @@ namespace HexaEngine.Graphics.Renderers
 
             cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write, ResourceCreationFlags.None);
             resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, ResourceCreationFlags.None);
-            resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
+            resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.All), ResourceCreationFlags.None);
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
-            graphExecuter.Init(CPUProfiler2.Global);
+            graphExecuter.Init(CPUProfiler.Global);
 
             initialized = true;
             Current = this;
@@ -199,7 +244,7 @@ namespace HexaEngine.Graphics.Renderers
             resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), ResourceCreationFlags.None);
 
-            graphExecuter.ResizeEnd(CPUProfiler2.Global);
+            graphExecuter.ResizeEnd(CPUProfiler.Global);
 
             var scene = SceneManager.Current;
             if (scene == null)
@@ -208,7 +253,8 @@ namespace HexaEngine.Graphics.Renderers
             }
         }
 
-        public unsafe void Render(IGraphicsContext context, Mathematics.Viewport viewport, IScene scene, Camera camera)
+        [Profile]
+        public unsafe void Render(IGraphicsContext context, IScene scene, Camera camera)
         {
             if (!initialized)
             {
@@ -220,7 +266,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            var cameraBuffer = this.cameraBuffer.Value;
+            var cameraBuffer = this.cameraBuffer.Value!;
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
@@ -229,11 +275,11 @@ namespace HexaEngine.Graphics.Renderers
             scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
-            graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
+            graphExecuter.ResourceBuilder.OutputViewport = outputViewport;
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler.Global : null);
         }
 
-        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Mathematics.Viewport viewport, IScene scene, Camera camera)
+        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Hexa.NET.Mathematics.Viewport viewport, IScene scene, Camera camera)
         {
             if (!initialized)
             {
@@ -245,7 +291,7 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-            var cameraBuffer = this.cameraBuffer.Value;
+            var cameraBuffer = this.cameraBuffer.Value!;
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
@@ -255,7 +301,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = target;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
-            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler.Global : null);
         }
 
         public void TakeScreenshot(IGraphicsContext context, string path)
@@ -269,7 +315,7 @@ namespace HexaEngine.Graphics.Renderers
 
             graphExecuter.ResourceBuilder.Output = tempTexture.RTV;
             graphExecuter.ResourceBuilder.OutputViewport = tempTexture.Viewport;
-            graphExecuter.Execute(context, enableProfiling ? CPUProfiler2.Global : null);
+            graphExecuter.Execute(context, enableProfiling ? CPUProfiler.Global : null);
 
             tempTexture.Dispose();
 
@@ -288,11 +334,11 @@ namespace HexaEngine.Graphics.Renderers
             var depth = graphExecuter.ResourceBuilder.DepthStencilBuffers;
             for (int i = 0; i < depth.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var texture = depth[i];
 
-                if (texture.SRV != null || !texture.SRV.IsDisposed)
+                if (texture.SRV != null || !texture.SRV!.IsDisposed)
                 {
                     Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
                 }
@@ -301,7 +347,7 @@ namespace HexaEngine.Graphics.Renderers
             var depthChain = graphExecuter.ResourceBuilder.DepthMipChains;
             for (int i = 0; i < depthChain.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var chain = depthChain[i];
 
@@ -316,11 +362,11 @@ namespace HexaEngine.Graphics.Renderers
             var tex = graphExecuter.ResourceBuilder.Textures;
             for (int i = 0; i < tex.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var texture = tex[i];
 
-                if (texture.SRV != null || !texture.SRV.IsDisposed)
+                if (texture.SRV != null || !texture.SRV!.IsDisposed)
                 {
                     Image(size, texture.Viewport, texture.DebugName ?? $"<unknown>##{i}", texture.SRV.NativePointer);
                 }
@@ -329,7 +375,7 @@ namespace HexaEngine.Graphics.Renderers
             var shadowAtlas = graphExecuter.ResourceBuilder.ShadowAtlas;
             for (int i = 0; i < shadowAtlas.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var atlas = shadowAtlas[i];
 
@@ -342,7 +388,7 @@ namespace HexaEngine.Graphics.Renderers
             var gBuffers = graphExecuter.ResourceBuilder.GBuffers;
             for (int i = 0; i < gBuffers.Count; i++)
             {
-                var size = ImGui.GetWindowContentRegionMax();
+                var size = ImGui.GetContentRegionAvail();
 
                 var gBuffer = gBuffers[i];
 
@@ -366,7 +412,7 @@ namespace HexaEngine.Graphics.Renderers
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image(srv, size);
+                ImGui.Image((ulong)srv, size);
             }
         }
 
@@ -383,7 +429,7 @@ namespace HexaEngine.Graphics.Renderers
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image(srv, size, tint);
+                ImGui.Image((ulong)srv, size, tint);
             }
         }
 
@@ -398,7 +444,7 @@ namespace HexaEngine.Graphics.Renderers
 
                 graphExecuter.Release();
 
-                Current = null;
+                Current = null!;
 
                 disposedValue = true;
             }

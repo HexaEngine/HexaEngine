@@ -2,16 +2,19 @@
 {
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Windows.Events;
-    using Silk.NET.SDL;
+    using Hexa.NET.SDL2;
     using System;
+    using VkSurfaceKHR = Hexa.NET.Vulkan.VkSurfaceKHR;
 
     public unsafe class VulkanSwapChain : ISwapChain
     {
         public VulkanGraphicsDevice device;
-        private Window* window;
+        private SDLWindow* window;
         private readonly VkSurfaceKHR surface;
+        private readonly SwapChainDescription? swapChainDescription;
+        private readonly SwapChainFullscreenDescription? fullscreenDescription;
         public VkSwapchainKHR SwapChain;
         public UnsafeList<VkImage> SwapChainImages = new();
         public VkFormat format;
@@ -27,13 +30,15 @@
         private bool framebufferWaitResize;
         private bool framebufferCreated;
         private bool disposedValue;
-        private const uint MAX_FRAMES_IN_FLIGHT = 2;
+        private const int MAX_FRAMES_IN_FLIGHT = 2;
 
-        public VulkanSwapChain(VulkanGraphicsDevice device, Window* window, VkSurfaceKHR surface)
+        public VulkanSwapChain(VulkanGraphicsDevice device, SDLWindow* window, VkSurfaceKHR surface, SwapChainDescription? swapChainDescription, SwapChainFullscreenDescription? fullscreenDescription)
         {
             this.device = device;
             this.window = window;
             this.surface = surface;
+            this.swapChainDescription = swapChainDescription;
+            this.fullscreenDescription = fullscreenDescription;
             CreateSwapChain();
             CreateImageViews();
             CreateSyncObjects();
@@ -101,7 +106,7 @@
 
             SwapChain = swapchainKHR;
             Vulkan.VkGetSwapchainImagesKHR(device.Device, swapchainKHR, &imageCount, null);
-            SwapChainImages.Resize(imageCount);
+            SwapChainImages.Resize((int)imageCount);
             Vulkan.VkGetSwapchainImagesKHR(device.Device, swapchainKHR, &imageCount, SwapChainImages.Data);
 
             format = surfaceFormat.Format;
@@ -185,7 +190,7 @@
 
         public int Height { get; }
 
-        public Mathematics.Viewport Viewport { get; }
+        public Hexa.NET.Mathematics.Viewport Viewport { get; }
 
         public bool VSync { get; set; }
 
@@ -220,7 +225,7 @@
 
             if (formatCount != 0)
             {
-                details.Formats.Resize(formatCount);
+                details.Formats.Resize((int)formatCount);
                 Vulkan.VkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.Data);
             }
 
@@ -229,7 +234,7 @@
 
             if (presentModeCount != 0)
             {
-                details.PresentModes.Resize(presentModeCount);
+                details.PresentModes.Resize((int)presentModeCount);
                 Vulkan.VkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.PresentModes.Data);
             }
 

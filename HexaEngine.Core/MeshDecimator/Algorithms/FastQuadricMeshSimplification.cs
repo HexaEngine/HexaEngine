@@ -41,9 +41,9 @@ SOFTWARE.
 
 #endregion
 
-using HexaEngine.Core.Debugging;
+using Hexa.NET.Logging;
+using Hexa.NET.Mathematics;
 using HexaEngine.Core.MeshDecimator.Collections;
-using HexaEngine.Mathematics;
 using System.Numerics;
 
 namespace HexaEngine.Core.MeshDecimator.Algorithms
@@ -55,11 +55,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(FastQuadricMeshSimplification));
 
-        #region Consts
-
         private const double DoubleEpsilon = 1.0E-3;
-
-        #endregion
 
         #region Classes
 
@@ -1344,7 +1340,7 @@ namespace HexaEngine.Core.MeshDecimator.Algorithms
             for (int i = 0; i < Mesh.UVChannelCount; i++)
             {
                 int uvDim = mesh.GetUVDimension(i);
-                string uvAttributeName = string.Format("uv{0}", i);
+                string uvAttributeName = $"uv{i}";
                 if (uvDim == 2)
                 {
                     vertUV2D ??= new UVChannels<Vector2>();

@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
@@ -14,7 +13,7 @@
     [EditorComponent<CharacterController>("Character Controller")]
     public sealed unsafe class CharacterController : ICharacterControllerComponent
     {
-        protected PxMaterial* material;
+        private PxMaterial* material;
         private CharacterControllerShape shape;
 
         private float dynamicFriction = 0.5f;
@@ -39,7 +38,7 @@
         private ControllerNonWalkableMode nonWalkableMode;
 
         private PxRigidDynamic* actor;
-        private RigidBody rigidBody;
+        private RigidBody rigidBody = null!;
         private bool isGrounded;
 
         /// <summary>
@@ -470,7 +469,7 @@
             {
                 Physics.Actor.mapper.RemoveMapping(actor);
                 rigidBody.CharacterController = null; // dereference here.
-                rigidBody = null;
+                rigidBody = null!;
                 actor = null;
                 controller->ReleaseMut();
                 controller = null;

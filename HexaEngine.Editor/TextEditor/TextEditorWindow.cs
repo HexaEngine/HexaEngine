@@ -1,186 +1,88 @@
 ﻿namespace HexaEngine.Editor.TextEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Dialogs;
-    using System.IO;
+    using System;
 
     [EditorWindowCategory("Tools")]
-    public class TextEditorWindow : EditorWindow
+    public class TextEditorWindow : Hexa.NET.ImGui.Widgets.Extras.TextEditor.TextEditorWindow, IEditorWindow
     {
-        internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TextEditor));
-        private readonly OpenFileDialog openDialog = new();
-        private readonly SaveFileDialog saveDialog = new();
-
-        private readonly List<TextEditorTab> tabs = new();
-        private TextEditorTab? currentTab;
+        private bool wasShown;
 
         public TextEditorWindow()
         {
-            Flags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar;
         }
+
+        public bool Initialized { get; }
 
         protected override string Name => "Text Editor";
 
-        public IReadOnlyList<TextEditorTab> Tabs => tabs;
+        bool IEditorWindow.IsShown => IsShown;
 
-        public TextEditorTab? CurrentTab => currentTab;
+        string IEditorWindow.Name => Name;
 
-        public void DrawMenuBar()
+        public event Action<IEditorWindow>? Shown;
+
+        public event Action<IEditorWindow>? Closed;
+
+        public void Init(IGraphicsDevice device)
         {
-            if (ImGui.BeginMenuBar())
-            {
-                if (ImGui.BeginMenu("File"))
-                {
-                    if (ImGui.MenuItem("\xE710 New"))
-                    {
-                        New();
-                    }
-
-                    if (ImGui.MenuItem("\xE845 Open"))
-                    {
-                        openDialog.Show();
-                    }
-
-                    ImGui.Separator();
-
-                    if (ImGui.MenuItem("\xE74E Save"))
-                    {
-                        Save();
-                    }
-
-                    if (ImGui.MenuItem("\xE74E Save As"))
-                    {
-                        saveDialog.Show();
-                    }
-
-                    ImGui.Separator();
-
-                    if (ImGui.MenuItem("\xE8BB Close"))
-                    {
-                        if (currentTab != null)
-                        {
-                            tabs.Remove(currentTab);
-                            currentTab = null;
-                        }
-                    }
-
-                    ImGui.EndMenu();
-                }
-                if (ImGui.BeginMenu("Edit"))
-                {
-                    if (ImGui.MenuItem("\xE7A7 Undo"))
-                    {
-                        currentTab?.History.Undo();
-                    }
-
-                    if (ImGui.MenuItem("\xE7A6 Redo"))
-                    {
-                        currentTab?.History.Redo();
-                    }
-
-                    ImGui.EndMenu();
-                }
-
-                ImGui.EndMenuBar();
-            }
         }
 
-        public void DrawWindows()
+        public void DrawContent(IGraphicsContext context)
         {
-            if (openDialog.Draw())
-            {
-                if (openDialog.Result == OpenFileResult.Ok)
-                {
-                    Open(openDialog.FullPath);
-                }
-            }
-
-            if (saveDialog.Draw())
-            {
-                if (saveDialog.Result == SaveFileResult.Ok)
-                {
-                    SaveAs(saveDialog.FullPath);
-                }
-            }
+            DrawContent();
         }
 
-        public void Open(string path)
+        public void DrawWindow(IGraphicsContext context)
         {
-            try
-            {
-                TextEditorTab tab = new(new(File.ReadAllText(path)), path);
-                tabs.Add(tab);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to load text file!");
-                Logger.Log(ex);
-                MessageBox.Show("Failed to load text file!", ex.Message);
-            }
-        }
-
-        public void New()
-        {
-            TextEditorTab tab = new("New File", new(string.Empty));
-            tabs.Add(tab);
-        }
-
-        public void Save()
-        {
-            if (currentTab?.CurrentFile != null)
-            {
-                SaveAs(currentTab.CurrentFile);
-            }
-        }
-
-        public unsafe void SaveAs(string path)
-        {
-            if (currentTab == null)
+            if (!IsShown)
             {
                 return;
             }
-            try
+
+            if (!ImGui.Begin(Name, ref IsShown, Flags))
             {
-                File.WriteAllText(path, currentTab.Source.Text->ToString());
-                currentTab.Source.Changed = false;
-                currentTab.CurrentFile = path;
+                if (wasShown)
+                {
+                    OnClosed();
+                }
+                wasShown = false;
+                ImGui.End();
+                return;
             }
-            catch (Exception ex)
+
+            if (!wasShown)
             {
-                Logger.Error("Failed to save text file!");
-                Logger.Log(ex);
-                MessageBox.Show("Failed to save text file!", ex.Message);
+                OnShown();
+            }
+            wasShown = true;
+
+            windowEnded = false;
+
+            DrawContent(context);
+
+            if (!windowEnded)
+            {
+                ImGui.End();
             }
         }
 
-        public override unsafe void DrawContent(IGraphicsContext context)
+        public void Focus()
         {
-            DrawWindows();
-            DrawMenuBar();
+            ImGuiWindowPtr window = ImGuiP.FindWindowByName(Name);
+            ImGuiP.FocusWindow(window, ImGuiFocusRequestFlags.UnlessBelowModal);
+        }
 
-            if (ImGui.BeginTabBar("##TextEditor"))
-            {
-                for (int i = 0; i < tabs.Count; i++)
-                {
-                    var tab = tabs[i];
-                    if (tab.IsFocused)
-                    {
-                        currentTab = tab;
-                    }
-                    if (!tab.IsOpen)
-                    {
-                        tab.Dispose();
-                        tabs.RemoveAt(i);
-                        i--;
-                    }
-                    tab.Draw();
-                }
-                ImGui.EndTabBar();
-            }
+        protected virtual void OnShown()
+        {
+            Shown?.Invoke(this);
+        }
+
+        protected virtual void OnClosed()
+        {
+            Closed?.Invoke(this);
         }
     }
 }

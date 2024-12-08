@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.Volumes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using System.Collections.Generic;
-    using System.Management;
     using System.Numerics;
 
     /// <summary>
@@ -22,7 +21,7 @@
         }
 
         [JsonIgnore]
-        public bool Enabled { get => (bool)Data["Enabled"]; set => Data["Enabled"] = value; }
+        public bool Enabled { get => (bool)Data["Enabled"]!; set => Data["Enabled"] = value; }
 
         public void Apply(object target, PostFxProxy proxyBase, float blend, VolumeTransitionMode mode)
         {

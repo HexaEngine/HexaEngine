@@ -24,7 +24,6 @@
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using System.Numerics;
 
     /// <summary>
@@ -59,7 +58,7 @@ namespace HexaEngine.Core.UI
         /// <param name="graphSize">Size of the graph (optional).</param>
         public static void PlotFlame(string label, ValuesGetter valuesGetter, void* data, int valuesCount, ref int selected, bool flip = false, int valuesOffset = 0, string? overlayText = null, float scaleMin = float.MaxValue, float scaleMax = float.MaxValue, Vector2 graphSize = default)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems == 1)
             {
                 return;
@@ -100,8 +99,8 @@ namespace HexaEngine.Core.UI
             ImRect frameBB = new() { Min = window->DC.CursorPos, Max = window->DC.CursorPos + graphSize };
             ImRect innerBB = new() { Min = frameBB.Min + style.FramePadding, Max = frameBB.Max - style.FramePadding };
             ImRect totalBB = new() { Min = frameBB.Min, Max = frameBB.Max + new Vector2(labelSize.X > 0.0f ? style.ItemInnerSpacing.X + labelSize.X : 0.0f, 0) };
-            ImGui.ItemSizeRect(totalBB, style.FramePadding.Y);
-            if (!ImGui.ItemAdd(totalBB, 0, &frameBB, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(totalBB, style.FramePadding.Y);
+            if (!ImGuiP.ItemAdd(totalBB, 0, &frameBB, ImGuiItemFlags.None))
             {
                 return;
             }
@@ -136,7 +135,7 @@ namespace HexaEngine.Core.UI
                 }
             }
 
-            ImGui.RenderFrame(frameBB.Min, frameBB.Max, ImGui.GetColorU32(ImGuiCol.FrameBg), true, style.FrameRounding);
+            ImGuiP.RenderFrame(frameBB.Min, frameBB.Max, ImGui.GetColorU32(ImGuiCol.FrameBg), true, style.FrameRounding);
 
             var duration = scaleMax - scaleMin;
             if (duration == 0)
@@ -189,7 +188,7 @@ namespace HexaEngine.Core.UI
                     bool v_hovered = false;
                     if (ImGui.IsMouseHoveringRect(pos0, pos1))
                     {
-                        if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                        if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
                         {
                             if (selected == i)
                             {
@@ -219,19 +218,19 @@ namespace HexaEngine.Core.UI
                     if (textSize.X < boxSize.X)
                     {
                         textOffset = new Vector2(0.1f, 0.1f) * (boxSize - textSize);
-                        ImGui.RenderText(pos0 + textOffset, caption, (byte*)null, true);
+                        ImGuiP.RenderText(pos0 + textOffset, caption, (byte*)null, true);
                     }
                 }
 
                 // Text overlay
                 if (overlayText != null)
                 {
-                    ImGui.RenderTextClipped(new Vector2(frameBB.Min.X, frameBB.Min.Y + style.FramePadding.Y), frameBB.Max, overlayText, (byte*)null, (Vector2*)null, new Vector2(0.5f, 0.0f), null);
+                    ImGuiP.RenderTextClipped(new Vector2(frameBB.Min.X, frameBB.Min.Y + style.FramePadding.Y), frameBB.Max, overlayText, (byte*)null, (Vector2*)null, new Vector2(0.5f, 0.0f), null);
                 }
 
                 if (labelSize.X > 0.0f)
                 {
-                    ImGui.RenderText(new Vector2(frameBB.Max.X + style.ItemInnerSpacing.X, innerBB.Min.Y), label, (byte*)null, true);
+                    ImGuiP.RenderText(new Vector2(frameBB.Max.X + style.ItemInnerSpacing.X, innerBB.Min.Y), label, (byte*)null, true);
                 }
             }
 

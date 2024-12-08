@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.UI.Graphics;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
@@ -55,7 +55,6 @@
             var horizontalAlign = HorizontalAlignment;
             var verticalAlign = VerticalAlignment;
             var marginSize = Margin.Size;
-            var paddingSize = Padding.Size;
 
             if (!float.IsNaN(width))
             {
@@ -92,11 +91,8 @@
             Vector2 actualAvailableSize = availableSize;
 
             actualAvailableSize -= marginSize;
-            actualAvailableSize -= paddingSize;
 
-            Vector2 desiredSize = MeasureOverwrite(actualAvailableSize);
-
-            desiredSize += paddingSize;
+            Vector2 desiredSize = MeasureOverride(actualAvailableSize);
 
             if (horizontalAlign == HorizontalAlignment.Stretch)
             {
@@ -123,7 +119,7 @@
             return desiredSize;
         }
 
-        protected virtual Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected virtual Vector2 MeasureOverride(Vector2 availableSize)
         {
             return default;
         }
@@ -138,7 +134,6 @@
             var horizontalAlign = HorizontalAlignment;
             var verticalAlign = VerticalAlignment;
             var margin = Margin;
-            var padding = Padding;
 
             switch (horizontalAlign)
             {
@@ -197,16 +192,17 @@
             positionExtend += origin + desiredSize;
 
             Vector2 size = positionExtend - position;
+
+            Vector2 contentPosition = position;
+
+            BaseOffset = Matrix3x2.CreateTranslation(position);
+            ContentOffset = Matrix3x2.CreateTranslation(contentPosition);
+
             size = ArrangeOverwrite(size);
 
             positionExtend = position + size;
 
-            Vector2 contentPosition = position;
-            contentPosition.X += padding.Left;
-            contentPosition.Y += padding.Top;
             Vector2 contentPositionExtend = positionExtend;
-            contentPositionExtend.X -= padding.Right;
-            contentPositionExtend.Y -= padding.Bottom;
             Vector2 contentSize = contentPositionExtend - contentPosition;
 
             ActualWidth = size.X;
@@ -214,8 +210,6 @@
             RenderSize = size;
             BoundingBox = VisualClip = new RectangleF(position, size);
             InnerContentBounds = new RectangleF(contentPosition, contentSize);
-            BaseOffset = Matrix3x2.CreateTranslation(position);
-            ContentOffset = Matrix3x2.CreateTranslation(contentPosition);
         }
 
         protected virtual Vector2 ArrangeOverwrite(Vector2 size)

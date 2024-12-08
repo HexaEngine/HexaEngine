@@ -12,6 +12,7 @@
         /// <summary>
         /// Draws and updates all the open message boxes.
         /// </summary>
+        [Profiling.Profile]
         public static void Draw()
         {
             lock (messageBoxes)

@@ -28,7 +28,7 @@
                 throw new InvalidDataException();
             }
 
-            byte[] value = token.Value<byte[]>();
+            byte[] value = token.Value<byte[]>()!;
 
             return MemoryMarshal.Cast<byte, T>(value.AsSpan())[0];
         }

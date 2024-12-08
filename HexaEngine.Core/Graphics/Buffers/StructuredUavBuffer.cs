@@ -4,6 +4,18 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    public struct CapacityChangedEventArgs
+    {
+        public int OldCapacity;
+        public int Capacity;
+
+        public CapacityChangedEventArgs(int oldCapacity, int capacity)
+        {
+            OldCapacity = oldCapacity;
+            Capacity = capacity;
+        }
+    }
+
     /// <summary>
     /// Represents a structured buffer with unordered access view (UAV) capabilities.
     /// </summary>
@@ -27,6 +39,8 @@
         private uint count;
         private bool isDirty;
         private uint capacity;
+
+        private EventHandlers<CapacityChangedEventArgs> handlers = new();
 
         private bool disposedValue;
 
@@ -252,6 +266,7 @@
 
                 var device = Application.GraphicsDevice;
 
+                var oldCapacity = capacity;
                 capacity = value;
                 count = capacity < count ? capacity : count;
                 srv.Dispose();
@@ -277,7 +292,15 @@
                 srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, srvFlags));
                 srv.DebugName = dbgName + ".SRV";
                 isDirty = true;
+
+                handlers.Invoke(this, new((int)oldCapacity, (int)value));
             }
+        }
+
+        public event EventHandler<CapacityChangedEventArgs> Resize
+        {
+            add => handlers.AddHandler(value);
+            remove => handlers.RemoveHandler(value);
         }
 
         /// <summary>
@@ -314,6 +337,8 @@
         /// Gets a value indicating whether the buffer is disposed.
         /// </summary>
         public bool IsDisposed => buffer.IsDisposed;
+
+        public T* Items => items;
 
         /// <summary>
         /// Resets the counter of items in the buffer to zero.
@@ -548,6 +573,8 @@
         {
             if (!disposedValue)
             {
+                handlers.Clear();
+
                 MemoryManager.Unregister(buffer);
                 MemoryManager.Unregister(copyBuffer);
                 srv.Dispose();

@@ -103,5 +103,94 @@
         {
             return !(left == right);
         }
+
+        public static implicit operator ComputePipelineDescEx(ComputePipelineDesc desc)
+        {
+            ComputePipelineDescEx result;
+            result.Source = desc.Path != null ? ShaderSource.FromFile(desc.Path) : null;
+            result.Entry = desc.Entry;
+            result.Macros = desc.Macros;
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Describes a compute pipeline.
+    /// </summary>
+    public struct ComputePipelineDescEx : IEquatable<ComputePipelineDescEx>
+    {
+        /// <summary>
+        /// Gets or sets the path to the compute shader.
+        /// </summary>
+        [XmlAttribute]
+        [DefaultValue(null)]
+        public ShaderSource? Source;
+
+        /// <summary>
+        /// Gets or sets the entry point name for the compute shader.
+        /// </summary>
+        [XmlAttribute]
+        [DefaultValue("main")]
+        public string Entry = "main";
+
+        /// <summary>
+        /// Gets or sets the shader macros for the compute shader.
+        /// </summary>
+        public ShaderMacro[]? Macros;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComputePipelineDesc"/> struct with default values.
+        /// </summary>
+        public ComputePipelineDescEx()
+        {
+            Source = null;
+            Entry = "main";
+        }
+
+        /// <inheritdoc/>
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ComputePipelineDescEx desc && Equals(desc);
+        }
+
+        /// <inheritdoc/>
+        public readonly bool Equals(ComputePipelineDescEx other)
+        {
+            return Source == other.Source &&
+                   Entry == other.Entry &&
+                   EqualityComparer<ShaderMacro[]?>.Default.Equals(Macros, other.Macros);
+        }
+
+        /// <inheritdoc/>
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Source, Entry, Macros);
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="ComputePipelineDescEx"/> instances are equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="ComputePipelineDescEx"/> to compare.</param>
+        /// <param name="right">The second <see cref="ComputePipelineDescEx"/> to compare.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="ComputePipelineDescEx"/> instances are equal; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool operator ==(ComputePipelineDescEx left, ComputePipelineDescEx right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="ComputePipelineDescEx"/> instances are not equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="ComputePipelineDescEx"/> to compare.</param>
+        /// <param name="right">The second <see cref="ComputePipelineDescEx"/> to compare.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="ComputePipelineDescEx"/> instances are not equal; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool operator !=(ComputePipelineDescEx left, ComputePipelineDescEx right)
+        {
+            return !(left == right);
+        }
     }
 }

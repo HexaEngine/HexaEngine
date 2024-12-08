@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Components.Physics.Collider
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
@@ -51,7 +51,7 @@
         { get => restitution; set { restitution = value; } }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public void Awake()
         {

@@ -1,12 +1,64 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
-    public interface IGraphicsDevice1 : IGraphicsDevice
+    public struct GraphicsDeviceCapabilities
     {
-        ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc);
+        public GraphicsDeviceCapabilitiesFlags Flags;
+
+        public readonly bool SupportsCommandLists => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsCommandLists) != 0;
+
+        public readonly bool SupportsComputeShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsComputeShaders) != 0;
+
+        public readonly bool SupportsGeometryShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsGeometryShaders) != 0;
+
+        public readonly bool SupportsRayTracing => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsRayTracing) != 0;
+
+        public readonly bool SupportsTessellationShaders => (Flags & GraphicsDeviceCapabilitiesFlags.SupportsTessellationShaders) != 0;
+    }
+
+    public enum GraphicsDeviceCapabilitiesFlags
+    {
+        None = 0,
+
+        /// <summary>
+        /// Indicates support for query objects.
+        /// </summary>
+        SupportsQuery = 1 << 0,
+
+        /// <summary>
+        /// Indicates support for geometry shaders.
+        /// </summary>
+        SupportsGeometryShaders = 1 << 1,
+
+        /// <summary>
+        /// Indicates support for compute shaders.
+        /// </summary>
+        SupportsComputeShaders = 1 << 2,
+
+        /// <summary>
+        /// Indicates support for tessellation shaders.
+        /// </summary>
+        SupportsTessellationShaders = 1 << 3,
+
+        /// <summary>
+        /// Indicates support for command lists, enabling pre-recorded command execution.
+        /// </summary>
+        SupportsCommandLists = 1 << 4,
+
+        SupportsConservativeRasterization = 1 << 5,
+
+        SupportsIndirectDraw = 1 << 6,
+
+        /// <summary>
+        /// Indicates support for ray tracing.
+        /// </summary>
+        SupportsRayTracing = 1 << 7,
+
+        Minimal = SupportsQuery | SupportsGeometryShaders | SupportsComputeShaders | SupportsTessellationShaders,
+        Full = SupportsGeometryShaders | SupportsComputeShaders | SupportsTessellationShaders | SupportsCommandLists | SupportsRayTracing,
     }
 
     /// <summary>
@@ -35,20 +87,27 @@
         IGPUProfiler Profiler { get; }
 
         /// <summary>
-        /// Creates a swap chain associated with a SDL window for rendering.
+        /// Gets the capabilities of the graphics device.
         /// </summary>
-        /// <param name="window">The SDL window to associate the swap chain with.</param>
-        /// <returns>The created swap chain.</returns>
-        ISwapChain CreateSwapChain(SdlWindow window);
-
-        IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline);
+        GraphicsDeviceCapabilities Capabilities { get; }
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.
         /// </summary>
         /// <param name="window">The SDL window to associate the swap chain with.</param>
         /// <returns>The created swap chain.</returns>
-        unsafe ISwapChain CreateSwapChain(Window* window);
+        ISwapChain CreateSwapChain(SdlWindow window);
+
+        IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline);
+
+        IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline);
+
+        /// <summary>
+        /// Creates a swap chain associated with a SDL window for rendering.
+        /// </summary>
+        /// <param name="window">The SDL window to associate the swap chain with.</param>
+        /// <returns>The created swap chain.</returns>
+        unsafe ISwapChain CreateSwapChain(SDLWindow* window);
 
         /// <summary>
         /// Creates a swap chain associated with a SDL window for rendering.
@@ -66,7 +125,7 @@
         /// <param name="swapChainDescription">The description of the swap chain.</param>
         /// <param name="fullscreenDescription">The description of the fullscreen mode.</param>
         /// <returns>The created swap chain.</returns>
-        unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
+        unsafe ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
 
         /// <summary>
         /// Creates a buffer with the given description.
@@ -93,6 +152,16 @@
         /// <param name="description">The description of the buffer.</param>
         /// <returns>The created buffer.</returns>
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged;
+
+        /// <summary>
+        /// Creates a buffer with the given description and initial values.
+        /// </summary>
+        /// <param name="values">The array of initial values.</param>
+        /// <param name="stride">The stride of the buffer.</param>
+        /// <param name="count">The number of values in the array.</param>
+        /// <param name="description">The description of the buffer.</param>
+        /// <returns>The created buffer.</returns>
+        unsafe IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description);
 
         /// <summary>
         /// Creates a depth-stencil view for a resource.
@@ -274,7 +343,10 @@
         /// Creates a deferred graphics context for command recording.
         /// </summary>
         /// <returns>The created deferred graphics context.</returns>
+        [Obsolete("Use command buffers")]
         IGraphicsContext CreateDeferredContext();
+
+        ICommandBuffer CreateCommandBuffer();
 
         /// <summary>
         /// Creates an unordered access view for a resource.
@@ -291,7 +363,7 @@
         /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
         /// <returns>The created graphics pipeline.</returns>
-        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Creates a graphics pipeline state object.
@@ -311,7 +383,7 @@
         /// <param name="filename">The file path of the caller (automatically provided by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically provided by the compiler).</param>
         /// <returns>The created graphics pipeline state.</returns>
-        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDesc pipelineDesc, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDescEx pipelineDesc, GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             var pipeline = CreateGraphicsPipeline(pipelineDesc, filename, line);
             var pso = CreateGraphicsPipelineState(pipeline, desc, filename, line);
@@ -332,13 +404,37 @@
         }
 
         /// <summary>
+        /// Creates a graphics pipeline state object.
+        /// </summary>
+        /// <param name="pipeline">The graphics pipeline containing shaders.</param>
+        /// <param name="filename">The file path of the caller (automatically provided).</param>
+        /// <param name="line">The line number of the caller (automatically provided).</param>
+        /// <returns>The created graphics pipeline state object.</returns>
+        IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+
+        /// <summary>
+        /// Creates a graphics pipeline state object.
+        /// </summary>
+        /// <param name="desc">The description of the compute pipeline.</param>
+        /// <param name="filename">The file path of the caller (automatically provided).</param>
+        /// <param name="line">The line number of the caller (automatically provided).</param>
+        /// <returns>The created graphics pipeline state object.</returns>
+        IComputePipelineState CreateComputePipelineState(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            var pipeline = CreateComputePipeline(desc, filename, line);
+            var pso = CreateComputePipelineState(pipeline, filename, line);
+            pipeline.Dispose();
+            return pso;
+        }
+
+        /// <summary>
         /// Creates a compute pipeline with the specified description.
         /// </summary>
         /// <param name="desc">The description of the compute pipeline.</param>
         /// <param name="filename">The file path of the caller (automatically filled by the compiler).</param>
         /// <param name="line">The line number of the caller (automatically filled by the compiler).</param>
         /// <returns>The created compute pipeline.</returns>
-        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+        IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Creates a fence object.
@@ -347,5 +443,13 @@
         /// <param name="flags">Flags to control fence behavior.</param>
         /// <returns>The created fence object.</returns>
         IFence CreateFence(ulong initialValue, FenceFlags flags);
+
+        void SetGlobalSRV(string name, IShaderResourceView? srv);
+
+        void SetGlobalCBV(string name, IBuffer? cbv);
+
+        void SetGlobalSampler(string name, ISamplerState? sampler);
+
+        void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
     }
 }

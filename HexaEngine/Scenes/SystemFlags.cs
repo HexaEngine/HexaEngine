@@ -56,13 +56,18 @@
         GraphicsUpdate = 1 << 8,
 
         /// <summary>
+        /// System <see cref="ISceneSystem.Update(float)"/> will be called every the camera moved.
+        /// </summary>
+        CameraUpdate = 1 << 9,
+
+        /// <summary>
         /// System will be called on load.
         /// </summary>
-        Load = 1 << 9,
+        Load = 1 << 10,
 
         /// <summary>
         /// System will be called on unload.
         /// </summary>
-        Unload = 1 << 10,
+        Unload = 1 << 11,
     }
 }

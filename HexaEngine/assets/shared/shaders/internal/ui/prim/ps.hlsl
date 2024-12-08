@@ -21,9 +21,9 @@ float4 main(PSIn input) : SV_TARGET
 	switch (brushType)
 	{
 		case 0:
-			return color;
+			return input.color * color;
 		case 1:
-			return color * brushTex.Sample(fontSampler, uv);
+			return input.color * color * brushTex.Sample(fontSampler, uv);
 	}
 
 	float4 startColor = float4(1.0f, 0.0f, 0.0f, 1.0f);

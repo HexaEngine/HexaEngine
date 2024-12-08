@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Systems
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;

@@ -30,7 +30,7 @@
             ImGui.TableSetColumnIndex(0);
             ImGui.Text(guiName.Name);
             ImGui.TableSetColumnIndex(1);
-            AssetRef val = (AssetRef)value;
+            AssetRef val = (AssetRef)value!;
 
             bool changed = ComboHelper.ComboForAssetRef(guiName.Id, ref val, assetType);
             if (changed)

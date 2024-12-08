@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using Hexa.NET.ImGui;
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
 
@@ -15,7 +13,7 @@
             IsShown = true;
         }
 
-        protected override string Name => $"{UwU.Bars} Properties";
+        protected override string Name { get; } = $"{UwU.Bars} Properties";
 
         public override void DrawContent(IGraphicsContext context)
         {

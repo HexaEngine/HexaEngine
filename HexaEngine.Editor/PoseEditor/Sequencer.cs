@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.PoseEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Animations;
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public class Sequencer : EditorWindow
@@ -24,13 +24,13 @@
 
         public float TimeToFrame(float time)
         {
-            float framerateInv = 1 / (float)Animation.TicksPerSecond;
+            float framerateInv = 1 / (float)Animation!.TicksPerSecond;
             return time / framerateInv;
         }
 
         public float FrameToTime(float frame)
         {
-            float framerateInv = 1 / (float)Animation.TicksPerSecond;
+            float framerateInv = 1 / (float)Animation!.TicksPerSecond;
             return frame * framerateInv;
         }
 
@@ -81,12 +81,12 @@
 
         public unsafe void DrawChannel(string label, ref NodeChannel channel, Vector2 maxSize)
         {
-            int frameCount = (int)(Animation.Duration * Animation.TicksPerSecond);
+            int frameCount = (int)(Animation!.Duration * Animation.TicksPerSecond);
             ImGui.InputText("Node:", ref channel.NodeName, 256);
             var cursor = ImGui.GetCursorPos();
             ImGui.PushID($"CH{channel.NodeName}");
 
-            ImGuiWindow* Window = ImGui.GetCurrentWindow();
+            ImGuiWindow* Window = ImGuiP.GetCurrentWindow();
             ImDrawListPtr DrawList = ImGui.GetWindowDrawList();
 
             bool isPopupOpen = false;
@@ -135,16 +135,16 @@
                 Max = Window->DC.CursorPos + cursorPos + size
             };
 
-            int id = ImGui.ImGuiWindowGetID(Window, label, (byte*)null);
-            bool hovered = ImGui.ItemHoverable(bb, id, ImGuiItemFlags.None);
+            uint id = ImGuiP.GetID(Window, label, (byte*)null);
+            bool hovered = ImGuiP.ItemHoverable(bb, id, ImGuiItemFlags.None);
 
-            ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);
+            ImGuiP.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, Style.FrameRounding);
 
             pos = bb.Min;
             size = bb.Max - bb.Min;
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, 0, null, ImGuiItemFlags.None))
             {
                 return;
             }
@@ -287,7 +287,7 @@
                 DrawList.AddCircleFilled(p1, 5, sclCol);
             }
 
-            if (ImGui.IsMouseHoveringRect(pos, pos + new Vector2(size.X, 70)) && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !isPopupOpen)
+            if (ImGui.IsMouseHoveringRect(pos, pos + new Vector2(size.X, 70)) && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left) && !isPopupOpen)
             {
                 var mousePos = ImGui.GetMousePos();
                 mousePos -= pos;
@@ -311,7 +311,7 @@
             scrollPos.Y += size.Y - Style.ScrollbarSize;
             Vector2 scrollSize = new(size.X, Style.ScrollbarSize);
             var scrollRect = new ImRect() { Min = scrollPos, Max = scrollPos + scrollSize };
-            ImGui.ScrollbarEx(scrollRect, 10, ImGuiAxis.X, ref scroll, (long)size.X, (long)maxWidth, ImDrawFlags.None);
+            ImGuiP.ScrollbarEx(scrollRect, 10, ImGuiAxis.X, ref scroll, (long)size.X, (long)maxWidth, ImDrawFlags.None);
 
             ImGui.PopID();
 

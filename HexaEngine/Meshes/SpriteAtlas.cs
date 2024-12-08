@@ -16,7 +16,7 @@
 
         public Vector2 Size => new(texture.Width, texture.Height);
 
-        public IShaderResourceView SRV => texture.SRV;
+        public IShaderResourceView SRV => texture.SRV!;
 
         public ISamplerState SamplerState => samplerState;
 

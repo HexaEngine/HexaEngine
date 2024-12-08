@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public partial class UIElement
@@ -21,14 +21,6 @@
         {
             get => GetValue(VerticalAlignmentProperty);
             set => SetValue(VerticalAlignmentProperty, value);
-        }
-
-        public static readonly DependencyProperty<Thickness> PaddingProperty = DependencyProperty.Register<UIElement, Thickness>(nameof(Padding), false, new FrameworkMetadata(Thickness.Zero) { AffectsArrange = true, AffectsMeasure = true });
-
-        public Thickness Padding
-        {
-            get => GetValue(PaddingProperty);
-            set => SetValue(PaddingProperty, value);
         }
 
         public static readonly DependencyProperty<Thickness> MarginProperty = DependencyProperty.Register<UIElement, Thickness>(nameof(Margin), false, new FrameworkMetadata(Thickness.Zero) { AffectsArrange = true, AffectsMeasure = true });

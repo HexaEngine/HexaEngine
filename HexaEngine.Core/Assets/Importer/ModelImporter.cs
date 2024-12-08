@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
+    using Hexa.NET.Utilities.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO;
@@ -12,8 +14,7 @@
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
     using HexaEngine.Core.UI;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Materials;
     using Silk.NET.Assimp;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -36,6 +37,7 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ModelImporter));
         private static readonly Assimp assimp = Assimp.GetApi();
+        private ImportContext context = null!;
 
         public Type? SettingsType { get; } = typeof(ModelImporterSettings);
 
@@ -45,8 +47,6 @@
 
         static unsafe ModelImporter()
         {
-            LogStream stream = new(new(Log));
-            assimp.AttachLogStream(&stream);
 #if DEBUG
             assimp.EnableVerboseLogging(Assimp.True);
 #endif
@@ -157,7 +157,11 @@
 
         public unsafe void Import(TargetPlatform targetPlatform, ImportContext context)
         {
+            this.context = context;
             ModelImporterSettings settings = context.GetOrCreateAdditionalMetadata<ModelImporterSettings>(SettingsKey);
+
+            LogStream stream = new(new(Log));
+            assimp.AttachLogStream(&stream);
 
             Logger.Info($"Importing model '{Path.GetFileName(context.SourcePath)}'.");
 
@@ -206,7 +210,21 @@
                 }
             }
 
-            var scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
+            context.SetSteps(7);
+
+            context.BeginStep(1, "Load File");
+            AssimpScene* scene = default;
+            try
+            {
+                scene = assimp.ImportFile(context.SourcePath, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour | ImporterFlags.SupportTextFlavour));
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                return false;
+            }
+            context.EndStep();
+
             *outScene = scene;
 
             if (scene == null)
@@ -216,7 +234,9 @@
                 return false;
             }
 
+            context.BeginStep(1, "Post Processing");
             scene = assimp.ApplyPostProcessing(scene, (uint)settings.PostProcessSteps);
+            context.EndStep();
 
             float unitScaleFactor = 1;
 
@@ -244,65 +264,66 @@
                 return false;
             }
 
+            context.BeginStep(1, "Importing Graph");
             if (!LoadSceneGraph(scene, out var root, out var nameToNode, out var pToNode))
             {
                 return false;
             }
+            context.EndStep();
 
             Guid[]? materialIds = null;
             MaterialFile[]? materials = null;
             List<string>? texturePaths = [];
             Dictionary<string, Guid>? texturePathToGuid = [];
 
-            ProgressContext progressContext = new(context, 4);
-
             if (settings.ImportMaterials)
             {
-                progressContext.BeginSubStep((int)scene->MNumMaterials);
-                if (!LoadMaterials(modelName, importDir, scene, context, progressContext, out materialIds, out materials, texturePaths, texturePathToGuid))
+                context.BeginStep((int)scene->MNumMaterials, "Importing Materials");
+                if (!LoadMaterials(modelName, importDir, scene, context, out materialIds, out materials, texturePaths, texturePathToGuid))
                 {
                     return false;
                 }
             }
-            progressContext.EndSubStep();
+            context.EndStep();
 
-            progressContext.BeginSubStep((int)scene->MNumMeshes);
-            if (!LoadMeshes(modelName, scene, context, progressContext, root, pToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
+            context.BeginStep((int)scene->MNumMeshes, "Importing Meshes");
+            if (!LoadMeshes(modelName, scene, context, root, pToNode, materialIds, out var meshes, out var nameToMesh, out var pToMesh))
             {
                 return false;
             }
-            progressContext.EndSubStep();
+            context.EndStep();
 
             if (CheckForProblems(meshes))
             {
                 return false;
             }
 
-            progressContext.BeginSubStep((int)scene->MNumAnimations);
+            context.BeginStep((int)scene->MNumAnimations, "Importing Animations");
             if (settings.ImportAnimationClips)
             {
-                if (!LoadAnimations(modelName, importDir, scene, context, progressContext, pToMesh))
+                if (!LoadAnimations(modelName, importDir, scene, context, pToMesh))
                 {
                     return false;
                 }
             }
-            progressContext.EndSubStep();
+            context.EndStep();
 
             if (settings.ImportTextures)
             {
-                progressContext.BeginSubStep(texturePaths.Count);
-                if (!LoadTextures(targetPlatform, settings, sourceDir, importDir, scene, context, progressContext, texturePaths, texturePathToGuid))
+                context.BeginStep(texturePaths.Count, "Importing Textures");
+                if (!LoadTextures(targetPlatform, settings, sourceDir, importDir, scene, context, texturePaths, texturePathToGuid))
                 {
                     return false;
                 }
             }
-            progressContext.EndSubStep();
+            context.EndStep();
 
             return true;
         }
 
-        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadTextures(TargetPlatform targetPlatform, ModelImporterSettings settings, string sourceDir, string outDir, AssimpScene* scene, ImportContext context, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
+            Logger.Info("Importing Textures");
             var device = Application.GraphicsDevice;
             var loader = device.TextureLoader;
 
@@ -346,10 +367,15 @@
                             continue;
                     }
 
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        fileName = $"{texturePath[1..]}.{sHint}";
+                    }
+
                     string targetPath = Path.Combine(outDir, fileName);
                     context.ImportChild(targetPath, guid, out string path);
                     image.SaveToFile(path, TexFileFormat.Auto, 0);
-                    progressContext.AddProgress();
+                    context.AddProgress($"Imported: {targetPath}");
                 }
                 else
                 {
@@ -366,7 +392,7 @@
                     string targetPath = Path.Combine(outDir, texturePath);
                     context.ImportChild(targetPath, provider, out var path);
                     System.IO.File.Copy(filePath, path, true);
-                    progressContext.AddProgress();
+                    context.AddProgress($"Imported: {targetPath}");
                 }
             }
 
@@ -386,7 +412,7 @@
             return false;
         }
 
-        private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
+        private unsafe bool LoadMaterials(string modelName, string outDir, AssimpScene* scene, ImportContext context, [MaybeNullWhen(false)] out Guid[] materialIds, [MaybeNullWhen(false)] out MaterialFile[] materials, List<string> texturePaths, Dictionary<string, Guid> texturePathToGuid)
         {
             //try
             {
@@ -427,7 +453,7 @@
                                 }
                             }
                             var index = textures.Count;
-                            textures.Add(new MaterialTexture() { Type = t });
+                            textures.Add(new MaterialTexture() { Type = t, Filter = TextureMapFilter.Anisotropic, MaxAnisotropy = MaterialTexture.MaxMaxAnisotropy, W = IO.Binary.Materials.TextureMapMode.Clamp, MinLOD = float.MinValue, MaxLOD = float.MaxValue });
                             return ref textures.GetInternalArray()[index];
                         }
 
@@ -443,7 +469,7 @@
                                 }
                             }
                             var index = textures.Count;
-                            textures.Add(new MaterialTexture() { Type = t, File = guid });
+                            textures.Add(new MaterialTexture() { Type = t, File = guid, Filter = TextureMapFilter.Anisotropic, MaxAnisotropy = MaterialTexture.MaxMaxAnisotropy, W = IO.Binary.Materials.TextureMapMode.Clamp, MinLOD = float.MinValue, MaxLOD = float.MaxValue });
                             return index;
                         }
 
@@ -605,6 +631,11 @@
                             case Assimp.MatkeyTextureBase:
                                 var filePath = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
 
+                                if (filePath.StartsWith("./") || filePath.StartsWith(".\\"))
+                                {
+                                    filePath = filePath[2..];
+                                }
+
                                 if (!texturePathToGuid.TryGetValue(filePath, out var guid))
                                 {
                                     guid = Guid.NewGuid();
@@ -625,15 +656,15 @@
                                 break;
 
                             case Assimp.MatkeyTexopBase:
-                                FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                //FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                                 break;
 
                             case Assimp.MatkeyMappingBase:
-                                FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                                //FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
                                 break;
 
                             case Assimp.MatkeyTexblendBase:
-                                FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                //FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                                 break;
 
                             case Assimp.MatkeyMappingmodeUBase:
@@ -692,8 +723,18 @@
                         material.Name = i.ToString();
                     }
 
+                    for (int j = 0; j < i; j++)
+                    {
+                        if (j != i && materials[j]?.Name == material.Name)
+                        {
+                            material.Name += i.ToString();
+                        }
+                    }
+
                     material.Properties = properties;
                     material.Textures = textures;
+
+                    MaterialNodeConverter.Convert(material, Logger);
 
                     // try
                     {
@@ -702,7 +743,7 @@
                         string targetPath = Path.Combine(outDir, $"{modelName}-{material.Name}.material");
                         context.ImportChild(targetPath, guid, out var path);
                         material.Save(path, Encoding.UTF8);
-                        progressContext.AddProgress();
+                        context.AddProgress($"Imported: {targetPath}");
                     }
                     //catch (Exception ex)
                     //{
@@ -724,7 +765,7 @@
             return true;
         }
 
-        private unsafe bool LoadAnimations(string modelName, string outDir, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadAnimations(string modelName, string outDir, AssimpScene* scene, ImportContext context, Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             try
             {
@@ -802,7 +843,7 @@
                         string targetPath = Path.Combine(outDir, $"{modelName}-{animation.Name}.animation");
                         context.ImportChild(targetPath, guid, out var path);
                         animation.Save(path, Encoding.UTF8);
-                        progressContext.AddProgress();
+                        context.AddProgress($"Imported: {targetPath}");
                     }
                     catch (Exception ex)
                     {
@@ -821,7 +862,7 @@
             return true;
         }
 
-        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, ProgressContext progressContext, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
+        private unsafe bool LoadMeshes(string modelName, AssimpScene* scene, ImportContext context, Node root, Dictionary<Pointer<AssimpNode>, Node> pToNode, Guid[]? materialIds, [MaybeNullWhen(false)] out MeshData[] meshes, [MaybeNullWhen(false)] out Dictionary<string, MeshData> nameToMesh, [MaybeNullWhen(false)] out Dictionary<Pointer<Mesh>, MeshData> pToMesh)
         {
             //try
             {
@@ -833,17 +874,73 @@
                     Mesh* msh = scene->MMeshes[i];
 
                     uint[] indices = new uint[msh->MNumFaces * 3];
-                    for (int j = 0; j < msh->MNumFaces; j++)
+                    fixed (uint* pFixedIndices = indices)
                     {
-                        var face = msh->MFaces[j];
-                        for (int k = 0; k < 3; k++)
+                        var pIndices = pFixedIndices;
+                        for (int j = 0; j < msh->MNumFaces; j++)
                         {
-                            indices[j * 3 + k] = face.MIndices[k];
+                            Silk.NET.Assimp.Face* face = &msh->MFaces[j];  // Pointer to the current face
+                            *pIndices++ = face->MIndices[0];
+                            *pIndices++ = face->MIndices[1];
+                            *pIndices++ = face->MIndices[2];
                         }
                     }
 
                     Vector4[]? colors = ToManaged(msh->MColors.Element0, msh->MNumVertices);
                     Vector3[]? positions = ToManaged(msh->MVertices, msh->MNumVertices);
+
+                    UVChannelInfo channelInfo;
+                    UVChannel[] channels = new UVChannel[UVChannelInfo.MaxChannels];
+                    UVType* pType = (UVType*)&channelInfo;
+
+                    for (int j = 0; j < UVChannelInfo.MaxChannels; j++)
+                    {
+                        var pUVs = msh->MTextureCoords[j];
+                        if (pUVs == null)
+                        {
+                            pType[j] = UVType.Empty;
+                            continue;
+                        }
+
+                        var componentCount = msh->MNumUVComponents[j];
+
+                        UVChannel channel = default;
+                        switch (componentCount)
+                        {
+                            case 2:
+                                {
+                                    var type = pType[j] = UVType.UV2D;
+                                    channel = new(type, msh->MNumVertices);
+                                    Vector2[] channelData = channel.GetUV2D();
+                                    for (int k = 0; k < msh->MNumVertices; k++)
+                                    {
+                                        Vector3 uvw = pUVs[k];
+                                        channelData[k] = new(uvw.X, uvw.Y);
+                                    }
+                                }
+                                break;
+
+                            case 3:
+                                {
+                                    var type = pType[j] = UVType.UV3D;
+                                    channel = new(type, msh->MNumVertices);
+                                    Vector3[] channelData = channel.GetUV3D();
+                                    for (int k = 0; k < msh->MNumVertices; k++)
+                                    {
+                                        channelData[k] = pUVs[k];
+                                    }
+                                }
+                                break;
+
+                            case 4: // assimp doesnt support 4D UVs
+                            default:
+                                pType[j] = UVType.Empty; // do not attempt to copy if invalid
+                                break;
+                        }
+
+                        channels[j] = channel;
+                    }
+
                     Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
                     Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
                     Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
@@ -890,6 +987,14 @@
                         }
                     }
 
+                    if (msh->MNumAnimMeshes > 0)
+                    {
+                        for (int j = 0; j < msh->MNumAnimMeshes; j++)
+                        {
+                            AnimMesh* animMesh = msh->MAnimMeshes[j];
+                        }
+                    }
+
                     Guid materialId = Guid.Empty;
                     if (materialIds != null)
                     {
@@ -932,7 +1037,7 @@
                         flags |= VertexFlags.Skinned;
                     }
 
-                    MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, bones);
+                    MeshData mesh = meshes[i] = new(name, Guid.NewGuid(), materialId, flags, channelInfo, bones);
 
                     BoneWeight[]? weights = null;
                     if (bones != null)
@@ -944,7 +1049,7 @@
                         }
                     }
 #nullable disable
-                    MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, uvs, normals, tangents, weights);
+                    MeshLODData data = new(0, msh->MNumVertices, msh->MNumFaces * 3, box, sphere, indices, colors, positions, channels, normals, tangents, weights);
 #nullable restore
                     mesh.LODs.Add(data);
 
@@ -980,8 +1085,8 @@
                     {
                         ModelFile modelFile = new(meshes, root);
                         context.EmitArtifact(modelName, AssetType.Model, out string path);
-                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.LZ4);
-                        progressContext.AddProgress();
+                        modelFile.Save(path, Encoding.UTF8, Endianness.LittleEndian, Compression.None);
+                        context.AddProgress($"Imported: {modelName}");
                     }
                     catch (Exception ex)
                     {
@@ -1067,10 +1172,12 @@
             before = after;
         }
 
-        private static unsafe void Log(byte* message, byte* userdata)
+        private unsafe void Log(byte* message, byte* userdata)
         {
             string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(message));
             Logger.Log(msg);
+
+            context.LogMessage(msg);
         }
 
         public static MaterialTextureType Convert(TextureType type)
@@ -1133,7 +1240,6 @@
             {
                 TextureMapMode.Wrap => IO.Binary.Materials.TextureMapMode.Wrap,
                 TextureMapMode.Clamp => IO.Binary.Materials.TextureMapMode.Clamp,
-                TextureMapMode.Decal => IO.Binary.Materials.TextureMapMode.Decal,
                 TextureMapMode.Mirror => IO.Binary.Materials.TextureMapMode.Mirror,
                 _ => throw new NotImplementedException(),
             };

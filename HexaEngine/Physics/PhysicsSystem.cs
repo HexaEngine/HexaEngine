@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Physics
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Components.Physics.Collider;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Caching;
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
@@ -241,7 +241,7 @@
 
                 PxRaycastHit* raycastHitBuffer;
 
-                bool ownsBuffer = maxHits > 128; // PxRaycastHit == 64 Bytes * 128 = 8192 Bytes.
+                bool ownsBuffer = maxHits > 128; // PxRaycastHit == 64 Bytes => 64 Bytes * 128 = 8192 Bytes.
                 if (ownsBuffer)
                 {
                     raycastHitBuffer = (PxRaycastHit*)Marshal.AllocHGlobal((nint)(sizeof(PxRaycastHit) * maxHits));

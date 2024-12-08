@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System.Threading.Tasks;
 
@@ -21,7 +21,7 @@
 
             if (artifact == null)
             {
-                return null;
+                return null!;
             }
 
             return new(this, id, desc);

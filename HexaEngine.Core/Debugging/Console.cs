@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Collections;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Utilities.Collections;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -303,6 +304,7 @@
         /// <summary>
         /// Draws the ImGuiConsole window, allowing for logging, message display, and command input.
         /// </summary>
+        [Profiling.Profile]
         public static void Draw()
         {
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, windowAlpha);
@@ -353,21 +355,18 @@
 
             if (ImGui.BeginChild("ScrollRegion##", new Vector2(0, -footerHeightToReserve), 0, 0))
             {
+                Vector2 avail = ImGui.GetContentRegionAvail();
                 float scrollPos = ImGui.GetScrollY();
                 float lineHeight = ImGui.GetTextLineHeightWithSpacing();
-                int startLine = (int)(scrollPos / lineHeight);
+                int startLine = (int)MathF.Floor(scrollPos / lineHeight);
+                int endLine = (int)MathF.Ceiling(avail.Y / lineHeight) + startLine;
 
-                float windowHeight = ImGui.GetWindowHeight();
-                int visibleLines = (int)MathF.Ceiling(windowHeight / lineHeight);
-                int endLine = startLine + visibleLines;
-
+                startLine = Math.Max(startLine, 0);
                 endLine = Math.Min(endLine, messages.Count);
-
-                float dummyHeight = messages.Count * lineHeight;
 
                 Vector2 cursor = ImGui.GetCursorPos();
 
-                ImGui.Dummy(new(0.0f, dummyHeight));
+                ImGui.Dummy(new(1, startLine * lineHeight));
                 ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
 
                 // Display colored command output.
@@ -419,7 +418,7 @@
                     }
                 }
 
-                ImGui.SetCursorPos(cursor + new Vector2(0, dummyHeight));
+                ImGui.Dummy(new(1, (messages.Count - endLine) * lineHeight));
 
                 // Stop wrapping since we are done displaying console items.
                 if (!timeStamps)
@@ -430,7 +429,7 @@
                 // Auto-scroll logs.
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
                 {
-                    ImGui.SetScrollY(dummyHeight);
+                    ImGuiP.SetScrollY(messages.Count * lineHeight);
 
                     scrollToBottom = false;
                 }
@@ -441,7 +440,7 @@
 
             if (cmdSuggestions.Count > 0)
             {
-                if (ImGui.BeginChild("Suggestions", new(0, suggestionHeight), ImGuiChildFlags.Border))
+                if (ImGui.BeginChild("Suggestions", new(0, suggestionHeight), ImGuiChildFlags.Borders))
                 {
                     for (int i = 0; i < cmdSuggestions.Count; i++)
                     {

@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Mathematics;
-    using Silk.NET.Core.Native;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -98,17 +97,17 @@
 
             if ((flags & TexFilterFlags.WrapU) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapu;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.WrapU;
             }
 
             if ((flags & TexFilterFlags.WrapV) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapv;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.WrapV;
             }
 
             if ((flags & TexFilterFlags.WrapW) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Wrapw;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.WrapW;
             }
 
             if ((flags & TexFilterFlags.Wrap) != 0)
@@ -118,17 +117,17 @@
 
             if ((flags & TexFilterFlags.MirrorU) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirroru;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.MirrorU;
             }
 
             if ((flags & TexFilterFlags.MirrorV) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirrorv;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.MirrorV;
             }
 
             if ((flags & TexFilterFlags.MirrorW) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Mirrorw;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.MirrorW;
             }
 
             if ((flags & TexFilterFlags.Mirror) != 0)
@@ -143,7 +142,7 @@
 
             if ((flags & TexFilterFlags.FloatX2Bias) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexFilterFlags.Floatx2Bias;
+                result |= Hexa.NET.DirectXTex.TexFilterFlags.FloatX2Bias;
             }
 
             if ((flags & TexFilterFlags.RGBCopyRed) != 0)
@@ -240,7 +239,7 @@
 
             if ((flags & TexCompressFlags.DitherA) != 0)
             {
-                result |= Hexa.NET.DirectXTex.TexCompressFlags.CompressaDither;
+                result |= Hexa.NET.DirectXTex.TexCompressFlags.ADither;
             }
 
             if ((flags & TexCompressFlags.Dither) != 0)
@@ -282,21 +281,21 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Map Convert(MapMode map)
+        public static Hexa.NET.D3D11.Map Convert(MapMode map)
         {
             return map switch
             {
-                MapMode.Read => Silk.NET.Direct3D11.Map.Read,
-                MapMode.Write => Silk.NET.Direct3D11.Map.Write,
-                MapMode.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
-                MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
-                MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
+                MapMode.Read => Hexa.NET.D3D11.Map.Read,
+                MapMode.Write => Hexa.NET.D3D11.Map.Write,
+                MapMode.ReadWrite => Hexa.NET.D3D11.Map.ReadWrite,
+                MapMode.WriteDiscard => Hexa.NET.D3D11.Map.WriteDiscard,
+                MapMode.WriteNoOverwrite => Hexa.NET.D3D11.Map.WriteNoOverwrite,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Viewport Convert(Viewport viewport)
+        public static Hexa.NET.D3D11.Viewport Convert(Viewport viewport)
         {
             return new()
             {
@@ -310,7 +309,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Convert(Viewport* srcViewports, Silk.NET.Direct3D11.Viewport* dstViewports, uint count)
+        public static void Convert(Viewport* srcViewports, Hexa.NET.D3D11.Viewport* dstViewports, uint count)
         {
             for (uint i = 0; i < count; i++)
             {
@@ -365,108 +364,108 @@
         public static uint PackRGBA(Vector4 color) => PackRGBA(color.X, color.Y, color.Z, color.W);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Core.Native.D3DPrimitiveTopology Convert(PrimitiveTopology topology)
+        public static Hexa.NET.D3DCommon.PrimitiveTopology Convert(PrimitiveTopology topology)
         {
             return topology switch
             {
-                PrimitiveTopology.Undefined => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyUndefined,
-                PrimitiveTopology.PointList => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyPointlist,
-                PrimitiveTopology.LineList => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyLinelist,
-                PrimitiveTopology.LineStrip => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyLinestrip,
-                PrimitiveTopology.TriangleList => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelist,
-                PrimitiveTopology.TriangleStrip => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestrip,
-                PrimitiveTopology.LineListAdjacency => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyLinelistAdj,
-                PrimitiveTopology.LineStripAdjacency => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyLinestripAdj,
-                PrimitiveTopology.TriangleListAdjacency => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelistAdj,
-                PrimitiveTopology.TriangleStripAdjacency => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestripAdj,
-                PrimitiveTopology.PatchListWith1ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology1ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith2ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology2ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith3ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology3ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith4ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology4ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith5ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology5ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith6ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology6ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith7ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology7ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith8ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology8ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith9ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology9ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith10ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology10ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith11ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology11ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith12ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology12ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith13ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology13ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith14ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology14ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith15ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology15ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith16ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology16ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith17ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology17ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith18ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology18ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith19ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology19ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith20ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology20ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith21ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology21ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith22ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology22ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith23ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology23ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith24ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology24ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith25ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology25ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith26ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology26ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith27ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology27ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith28ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology28ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith29ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology29ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith30ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology30ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith31ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology31ControlPointPatchlist,
-                PrimitiveTopology.PatchListWith32ControlPoints => Silk.NET.Core.Native.D3DPrimitiveTopology.D3DPrimitiveTopology32ControlPointPatchlist,
+                PrimitiveTopology.Undefined => Hexa.NET.D3DCommon.PrimitiveTopology.Undefined,
+                PrimitiveTopology.PointList => Hexa.NET.D3DCommon.PrimitiveTopology.Pointlist,
+                PrimitiveTopology.LineList => Hexa.NET.D3DCommon.PrimitiveTopology.Linelist,
+                PrimitiveTopology.LineStrip => Hexa.NET.D3DCommon.PrimitiveTopology.Linestrip,
+                PrimitiveTopology.TriangleList => Hexa.NET.D3DCommon.PrimitiveTopology.Trianglelist,
+                PrimitiveTopology.TriangleStrip => Hexa.NET.D3DCommon.PrimitiveTopology.Trianglestrip,
+                PrimitiveTopology.LineListAdjacency => Hexa.NET.D3DCommon.PrimitiveTopology.LinelistAdj,
+                PrimitiveTopology.LineStripAdjacency => Hexa.NET.D3DCommon.PrimitiveTopology.LinestripAdj,
+                PrimitiveTopology.TriangleListAdjacency => Hexa.NET.D3DCommon.PrimitiveTopology.TrianglelistAdj,
+                PrimitiveTopology.TriangleStripAdjacency => Hexa.NET.D3DCommon.PrimitiveTopology.TrianglestripAdj,
+                PrimitiveTopology.PatchListWith1ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology1ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith2ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology2ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith3ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology3ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith4ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology4ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith5ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology5ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith6ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology6ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith7ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology7ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith8ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology8ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith9ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology9ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith10ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology10ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith11ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology11ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith12ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology12ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith13ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology13ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith14ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology14ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith15ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology15ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith16ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology16ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith17ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology17ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith18ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology18ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith19ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology19ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith20ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology20ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith21ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology21ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith22ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology22ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith23ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology23ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith24ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology24ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith25ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology25ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith26ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology26ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith27ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology27ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith28ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology28ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith29ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology29ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith30ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology30ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith31ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology31ControlPointPatchlist,
+                PrimitiveTopology.PatchListWith32ControlPoints => Hexa.NET.D3DCommon.PrimitiveTopology.Topology32ControlPointPatchlist,
                 _ => throw new ArgumentOutOfRangeException(nameof(topology)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.MapFlag Convert(MapFlags flags)
+        public static Hexa.NET.D3D11.MapFlag Convert(MapFlags flags)
         {
             return flags switch
             {
-                MapFlags.DoNotWait => Silk.NET.Direct3D11.MapFlag.DONotWait,
+                MapFlags.DoNotWait => Hexa.NET.D3D11.MapFlag.DoNotWait,
                 MapFlags.None => 0,
                 _ => throw new ArgumentOutOfRangeException(nameof(flags)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ClearFlag Convert(DepthStencilClearFlags flags)
+        public static Hexa.NET.D3D11.ClearFlag Convert(DepthStencilClearFlags flags)
         {
             return flags switch
             {
                 DepthStencilClearFlags.None => 0,
-                DepthStencilClearFlags.Depth => Silk.NET.Direct3D11.ClearFlag.Depth,
-                DepthStencilClearFlags.Stencil => Silk.NET.Direct3D11.ClearFlag.Stencil,
-                DepthStencilClearFlags.All => Silk.NET.Direct3D11.ClearFlag.Depth | Silk.NET.Direct3D11.ClearFlag.Stencil,
+                DepthStencilClearFlags.Depth => Hexa.NET.D3D11.ClearFlag.Depth,
+                DepthStencilClearFlags.Stencil => Hexa.NET.D3D11.ClearFlag.Stencil,
+                DepthStencilClearFlags.All => Hexa.NET.D3D11.ClearFlag.Depth | Hexa.NET.D3D11.ClearFlag.Stencil,
                 _ => throw new ArgumentOutOfRangeException(nameof(flags)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Texture1DDescription ConvertBack(Silk.NET.Direct3D11.Texture1DDesc desc)
+        public static Texture1DDescription ConvertBack(Hexa.NET.D3D11.Texture1DDesc desc)
         {
             return new()
             {
                 Format = ConvertBack(desc.Format),
                 ArraySize = (int)desc.ArraySize,
-                BindFlags = ConvertBack((Silk.NET.Direct3D11.BindFlag)desc.BindFlags),
-                CPUAccessFlags = ConvertBack((Silk.NET.Direct3D11.CpuAccessFlag)desc.CPUAccessFlags),
+                BindFlags = ConvertBack((Hexa.NET.D3D11.BindFlag)desc.BindFlags),
+                CPUAccessFlags = ConvertBack((Hexa.NET.D3D11.CpuAccessFlag)desc.CPUAccessFlags),
                 MipLevels = (int)desc.MipLevels,
-                MiscFlags = ConvertBack((Silk.NET.Direct3D11.ResourceMiscFlag)desc.MiscFlags),
+                MiscFlags = ConvertBack((Hexa.NET.D3D11.ResourceMiscFlag)desc.MiscFlags),
                 Usage = ConvertBack(desc.Usage),
                 Width = (int)desc.Width
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Texture2DDescription ConvertBack(Silk.NET.Direct3D11.Texture2DDesc desc)
+        public static Texture2DDescription ConvertBack(Hexa.NET.D3D11.Texture2DDesc desc)
         {
             return new()
             {
                 Format = ConvertBack(desc.Format),
                 ArraySize = (int)desc.ArraySize,
-                BindFlags = ConvertBack((Silk.NET.Direct3D11.BindFlag)desc.BindFlags),
-                CPUAccessFlags = ConvertBack((Silk.NET.Direct3D11.CpuAccessFlag)desc.CPUAccessFlags),
+                BindFlags = ConvertBack((Hexa.NET.D3D11.BindFlag)desc.BindFlags),
+                CPUAccessFlags = ConvertBack((Hexa.NET.D3D11.CpuAccessFlag)desc.CPUAccessFlags),
                 Height = (int)desc.Height,
                 MipLevels = (int)desc.MipLevels,
-                MiscFlags = ConvertBack((Silk.NET.Direct3D11.ResourceMiscFlag)desc.MiscFlags),
+                MiscFlags = ConvertBack((Hexa.NET.D3D11.ResourceMiscFlag)desc.MiscFlags),
                 SampleDescription = ConvertBack(desc.SampleDesc),
                 Usage = ConvertBack(desc.Usage),
                 Width = (int)desc.Width
@@ -474,31 +473,31 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Texture3DDescription ConvertBack(Silk.NET.Direct3D11.Texture3DDesc desc)
+        public static Texture3DDescription ConvertBack(Hexa.NET.D3D11.Texture3DDesc desc)
         {
             return new()
             {
                 Format = ConvertBack(desc.Format),
                 Depth = (int)desc.Depth,
-                BindFlags = ConvertBack((Silk.NET.Direct3D11.BindFlag)desc.BindFlags),
-                CPUAccessFlags = ConvertBack((Silk.NET.Direct3D11.CpuAccessFlag)desc.CPUAccessFlags),
+                BindFlags = ConvertBack((Hexa.NET.D3D11.BindFlag)desc.BindFlags),
+                CPUAccessFlags = ConvertBack((Hexa.NET.D3D11.CpuAccessFlag)desc.CPUAccessFlags),
                 Height = (int)desc.Height,
                 MipLevels = (int)desc.MipLevels,
-                MiscFlags = ConvertBack((Silk.NET.Direct3D11.ResourceMiscFlag)desc.MiscFlags),
+                MiscFlags = ConvertBack((Hexa.NET.D3D11.ResourceMiscFlag)desc.MiscFlags),
                 Usage = ConvertBack(desc.Usage),
                 Width = (int)desc.Width
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static CpuAccessFlags ConvertBack(Silk.NET.Direct3D11.CpuAccessFlag flags)
+        public static CpuAccessFlags ConvertBack(Hexa.NET.D3D11.CpuAccessFlag flags)
         {
-            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.Write)
+            if (flags == Hexa.NET.D3D11.CpuAccessFlag.Write)
             {
                 return CpuAccessFlags.Write;
             }
 
-            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.Read)
+            if (flags == Hexa.NET.D3D11.CpuAccessFlag.Read)
             {
                 return CpuAccessFlags.Read;
             }
@@ -507,100 +506,100 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ResourceMiscFlag ConvertBack(Silk.NET.Direct3D11.ResourceMiscFlag flags)
+        private static ResourceMiscFlag ConvertBack(Hexa.NET.D3D11.ResourceMiscFlag flags)
         {
             ResourceMiscFlag result = 0;
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.GenerateMips) != 0)
             {
                 result |= ResourceMiscFlag.GenerateMips;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Shared) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.Shared) != 0)
             {
                 result |= ResourceMiscFlag.Shared;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.Texturecube) != 0)
             {
                 result |= ResourceMiscFlag.TextureCube;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.DrawindirectArgs) != 0)
             {
                 result |= ResourceMiscFlag.DrawIndirectArguments;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.BufferAllowRawViews) != 0)
             {
                 result |= ResourceMiscFlag.BufferAllowRawViews;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.BufferStructured) != 0)
             {
                 result |= ResourceMiscFlag.BufferStructured;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.Clamp) != 0)
             {
                 result |= ResourceMiscFlag.ResourceClamp;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.SharedKeyedmutex) != 0)
             {
                 result |= ResourceMiscFlag.SharedKeyedMutex;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.GdiCompatible) != 0)
             {
                 result |= ResourceMiscFlag.GdiCompatible;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.SharedNthandle) != 0)
             {
                 result |= ResourceMiscFlag.SharedNTHandle;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.RestrictedContent) != 0)
             {
                 result |= ResourceMiscFlag.RestrictedContent;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.RestrictSharedResource) != 0)
             {
                 result |= ResourceMiscFlag.RestrictSharedResource;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.RestrictSharedResourceDriver) != 0)
             {
                 result |= ResourceMiscFlag.RestrictSharedResourceDriver;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Guarded) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.Guarded) != 0)
             {
                 result |= ResourceMiscFlag.Guarded;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.TilePool) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.TilePool) != 0)
             {
                 result |= ResourceMiscFlag.TilePool;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Tiled) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.Tiled) != 0)
             {
                 result |= ResourceMiscFlag.Tiled;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.HwProtected) != 0)
             {
                 result |= ResourceMiscFlag.HardwareProtected;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.SharedDisplayable) != 0)
             {
                 result |= ResourceMiscFlag.SharedDisplayable;
             }
 
-            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter) != 0)
+            if ((flags & Hexa.NET.D3D11.ResourceMiscFlag.SharedExclusiveWriter) != 0)
             {
                 result |= ResourceMiscFlag.SharedExclusiveWriter;
             }
@@ -608,7 +607,7 @@
             return result;
         }
 
-        private static SampleDescription ConvertBack(Silk.NET.DXGI.SampleDesc sampleDesc)
+        private static SampleDescription ConvertBack(Hexa.NET.DXGI.SampleDesc sampleDesc)
         {
             return new()
             {
@@ -618,68 +617,68 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Usage ConvertBack(Silk.NET.Direct3D11.Usage usage)
+        private static Usage ConvertBack(Hexa.NET.D3D11.Usage usage)
         {
             return usage switch
             {
-                Silk.NET.Direct3D11.Usage.Default => Usage.Default,
-                Silk.NET.Direct3D11.Usage.Immutable => Usage.Immutable,
-                Silk.NET.Direct3D11.Usage.Dynamic => Usage.Dynamic,
-                Silk.NET.Direct3D11.Usage.Staging => Usage.Staging,
+                Hexa.NET.D3D11.Usage.Default => Usage.Default,
+                Hexa.NET.D3D11.Usage.Immutable => Usage.Immutable,
+                Hexa.NET.D3D11.Usage.Dynamic => Usage.Dynamic,
+                Hexa.NET.D3D11.Usage.Staging => Usage.Staging,
                 _ => throw new ArgumentOutOfRangeException(nameof(usage)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static BindFlags ConvertBack(Silk.NET.Direct3D11.BindFlag flags)
+        private static BindFlags ConvertBack(Hexa.NET.D3D11.BindFlag flags)
         {
             BindFlags result = 0;
-            if ((flags & Silk.NET.Direct3D11.BindFlag.VertexBuffer) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.VertexBuffer) != 0)
             {
                 result |= BindFlags.VertexBuffer;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.IndexBuffer) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.IndexBuffer) != 0)
             {
                 result |= BindFlags.IndexBuffer;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.ConstantBuffer) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.ConstantBuffer) != 0)
             {
                 result |= BindFlags.ConstantBuffer;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.ShaderResource) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.ShaderResource) != 0)
             {
                 result |= BindFlags.ShaderResource;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.StreamOutput) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.StreamOutput) != 0)
             {
                 result |= BindFlags.StreamOutput;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.RenderTarget) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.RenderTarget) != 0)
             {
                 result |= BindFlags.RenderTarget;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.UnorderedAccess) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.UnorderedAccess) != 0)
             {
                 result |= BindFlags.UnorderedAccess;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.DepthStencil) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.DepthStencil) != 0)
             {
                 result |= BindFlags.DepthStencil;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.Decoder) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.Decoder) != 0)
             {
                 result |= BindFlags.Decoder;
             }
 
-            if ((flags & Silk.NET.Direct3D11.BindFlag.VideoEncoder) != 0)
+            if ((flags & Hexa.NET.D3D11.BindFlag.VideoEncoder) != 0)
             {
                 result |= BindFlags.VideoEncoder;
             }
@@ -688,9 +687,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.SamplerDesc Convert(SamplerStateDescription description)
+        public static Hexa.NET.D3D11.SamplerDesc Convert(SamplerStateDescription description)
         {
-            Silk.NET.Direct3D11.SamplerDesc result = new()
+            Hexa.NET.D3D11.SamplerDesc result = new()
             {
                 AddressU = Convert(description.AddressU),
                 AddressV = Convert(description.AddressV),
@@ -707,162 +706,162 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Filter Convert(Filter filter)
+        public static Hexa.NET.D3D11.Filter Convert(Filter filter)
         {
             return filter switch
             {
-                Filter.MinMagMipPoint => Silk.NET.Direct3D11.Filter.MinMagMipPoint,
-                Filter.MinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinMagPointMipLinear,
-                Filter.MinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinPointMagLinearMipPoint,
-                Filter.MinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MinPointMagMipLinear,
-                Filter.MinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MinLinearMagMipPoint,
-                Filter.MinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinLinearMagPointMipLinear,
-                Filter.MinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinMagLinearMipPoint,
-                Filter.MinMagMipLinear => Silk.NET.Direct3D11.Filter.MinMagMipLinear,
-                Filter.Anisotropic => Silk.NET.Direct3D11.Filter.Anisotropic,
-                Filter.ComparisonMinMagMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinMagMipPoint,
-                Filter.ComparisonMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinMagPointMipLinear,
-                Filter.ComparisonMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinPointMagLinearMipPoint,
-                Filter.ComparisonMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinPointMagMipLinear,
-                Filter.ComparisonMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinLinearMagMipPoint,
-                Filter.ComparisonMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinLinearMagPointMipLinear,
-                Filter.ComparisonMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinMagLinearMipPoint,
-                Filter.ComparisonMinMagMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinMagMipLinear,
-                Filter.ComparisonAnisotropic => Silk.NET.Direct3D11.Filter.ComparisonAnisotropic,
-                Filter.MinimumMinMagMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinMagMipPoint,
-                Filter.MinimumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinMagPointMipLinear,
-                Filter.MinimumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinPointMagLinearMipPoint,
-                Filter.MinimumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinPointMagMipLinear,
-                Filter.MinimumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinLinearMagMipPoint,
-                Filter.MinimumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinLinearMagPointMipLinear,
-                Filter.MinimumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinMagLinearMipPoint,
-                Filter.MinimumMinMagMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinMagMipLinear,
-                Filter.MinimumAnisotropic => Silk.NET.Direct3D11.Filter.MinimumAnisotropic,
-                Filter.MaximumMinMagMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinMagMipPoint,
-                Filter.MaximumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinMagPointMipLinear,
-                Filter.MaximumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinPointMagLinearMipPoint,
-                Filter.MaximumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinPointMagMipLinear,
-                Filter.MaximumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinLinearMagMipPoint,
-                Filter.MaximumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinLinearMagPointMipLinear,
-                Filter.MaximumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinMagLinearMipPoint,
-                Filter.MaximumMinMagMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinMagMipLinear,
-                Filter.MaximumAnisotropic => Silk.NET.Direct3D11.Filter.MaximumAnisotropic,
+                Filter.MinMagMipPoint => Hexa.NET.D3D11.Filter.MinMagMipPoint,
+                Filter.MinMagPointMipLinear => Hexa.NET.D3D11.Filter.MinMagPointMipLinear,
+                Filter.MinPointMagLinearMipPoint => Hexa.NET.D3D11.Filter.MinPointMagLinearMipPoint,
+                Filter.MinPointMagMipLinear => Hexa.NET.D3D11.Filter.MinPointMagMipLinear,
+                Filter.MinLinearMagMipPoint => Hexa.NET.D3D11.Filter.MinLinearMagMipPoint,
+                Filter.MinLinearMagPointMipLinear => Hexa.NET.D3D11.Filter.MinLinearMagPointMipLinear,
+                Filter.MinMagLinearMipPoint => Hexa.NET.D3D11.Filter.MinMagLinearMipPoint,
+                Filter.MinMagMipLinear => Hexa.NET.D3D11.Filter.MinMagMipLinear,
+                Filter.Anisotropic => Hexa.NET.D3D11.Filter.Anisotropic,
+                Filter.ComparisonMinMagMipPoint => Hexa.NET.D3D11.Filter.ComparisonMinMagMipPoint,
+                Filter.ComparisonMinMagPointMipLinear => Hexa.NET.D3D11.Filter.ComparisonMinMagPointMipLinear,
+                Filter.ComparisonMinPointMagLinearMipPoint => Hexa.NET.D3D11.Filter.ComparisonMinPointMagLinearMipPoint,
+                Filter.ComparisonMinPointMagMipLinear => Hexa.NET.D3D11.Filter.ComparisonMinPointMagMipLinear,
+                Filter.ComparisonMinLinearMagMipPoint => Hexa.NET.D3D11.Filter.ComparisonMinLinearMagMipPoint,
+                Filter.ComparisonMinLinearMagPointMipLinear => Hexa.NET.D3D11.Filter.ComparisonMinLinearMagPointMipLinear,
+                Filter.ComparisonMinMagLinearMipPoint => Hexa.NET.D3D11.Filter.ComparisonMinMagLinearMipPoint,
+                Filter.ComparisonMinMagMipLinear => Hexa.NET.D3D11.Filter.ComparisonMinMagMipLinear,
+                Filter.ComparisonAnisotropic => Hexa.NET.D3D11.Filter.ComparisonAnisotropic,
+                Filter.MinimumMinMagMipPoint => Hexa.NET.D3D11.Filter.MinimumMinMagMipPoint,
+                Filter.MinimumMinMagPointMipLinear => Hexa.NET.D3D11.Filter.MinimumMinMagPointMipLinear,
+                Filter.MinimumMinPointMagLinearMipPoint => Hexa.NET.D3D11.Filter.MinimumMinPointMagLinearMipPoint,
+                Filter.MinimumMinPointMagMipLinear => Hexa.NET.D3D11.Filter.MinimumMinPointMagMipLinear,
+                Filter.MinimumMinLinearMagMipPoint => Hexa.NET.D3D11.Filter.MinimumMinLinearMagMipPoint,
+                Filter.MinimumMinLinearMagPointMipLinear => Hexa.NET.D3D11.Filter.MinimumMinLinearMagPointMipLinear,
+                Filter.MinimumMinMagLinearMipPoint => Hexa.NET.D3D11.Filter.MinimumMinMagLinearMipPoint,
+                Filter.MinimumMinMagMipLinear => Hexa.NET.D3D11.Filter.MinimumMinMagMipLinear,
+                Filter.MinimumAnisotropic => Hexa.NET.D3D11.Filter.MinimumAnisotropic,
+                Filter.MaximumMinMagMipPoint => Hexa.NET.D3D11.Filter.MaximumMinMagMipPoint,
+                Filter.MaximumMinMagPointMipLinear => Hexa.NET.D3D11.Filter.MaximumMinMagPointMipLinear,
+                Filter.MaximumMinPointMagLinearMipPoint => Hexa.NET.D3D11.Filter.MaximumMinPointMagLinearMipPoint,
+                Filter.MaximumMinPointMagMipLinear => Hexa.NET.D3D11.Filter.MaximumMinPointMagMipLinear,
+                Filter.MaximumMinLinearMagMipPoint => Hexa.NET.D3D11.Filter.MaximumMinLinearMagMipPoint,
+                Filter.MaximumMinLinearMagPointMipLinear => Hexa.NET.D3D11.Filter.MaximumMinLinearMagPointMipLinear,
+                Filter.MaximumMinMagLinearMipPoint => Hexa.NET.D3D11.Filter.MaximumMinMagLinearMipPoint,
+                Filter.MaximumMinMagMipLinear => Hexa.NET.D3D11.Filter.MaximumMinMagMipLinear,
+                Filter.MaximumAnisotropic => Hexa.NET.D3D11.Filter.MaximumAnisotropic,
                 _ => throw new ArgumentOutOfRangeException(nameof(filter)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.TextureAddressMode Convert(TextureAddressMode address)
+        public static Hexa.NET.D3D11.TextureAddressMode Convert(TextureAddressMode address)
         {
             return address switch
             {
-                TextureAddressMode.Wrap => Silk.NET.Direct3D11.TextureAddressMode.Wrap,
-                TextureAddressMode.Mirror => Silk.NET.Direct3D11.TextureAddressMode.Mirror,
-                TextureAddressMode.Clamp => Silk.NET.Direct3D11.TextureAddressMode.Clamp,
-                TextureAddressMode.Border => Silk.NET.Direct3D11.TextureAddressMode.Border,
-                TextureAddressMode.MirrorOnce => Silk.NET.Direct3D11.TextureAddressMode.MirrorOnce,
+                TextureAddressMode.Wrap => Hexa.NET.D3D11.TextureAddressMode.Wrap,
+                TextureAddressMode.Mirror => Hexa.NET.D3D11.TextureAddressMode.Mirror,
+                TextureAddressMode.Clamp => Hexa.NET.D3D11.TextureAddressMode.Clamp,
+                TextureAddressMode.Border => Hexa.NET.D3D11.TextureAddressMode.Border,
+                TextureAddressMode.MirrorOnce => Hexa.NET.D3D11.TextureAddressMode.MirrorOnce,
                 _ => throw new ArgumentOutOfRangeException(nameof(address)),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RenderTargetViewDesc Convert(RenderTargetViewDescription description)
+        public static Hexa.NET.D3D11.RenderTargetViewDesc Convert(RenderTargetViewDescription description)
         {
             return new()
             {
-                Anonymous = Convert(description, description.ViewDimension),
+                Union = Convert(description, description.ViewDimension),
                 Format = Convert(description.Format),
                 ViewDimension = Convert(description.ViewDimension),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RtvDimension Convert(RenderTargetViewDimension viewDimension)
+        public static Hexa.NET.D3D11.RtvDimension Convert(RenderTargetViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                RenderTargetViewDimension.Buffer => Silk.NET.Direct3D11.RtvDimension.Buffer,
-                RenderTargetViewDimension.Texture1D => Silk.NET.Direct3D11.RtvDimension.Texture1D,
-                RenderTargetViewDimension.Texture1DArray => Silk.NET.Direct3D11.RtvDimension.Texture1Darray,
-                RenderTargetViewDimension.Texture2D => Silk.NET.Direct3D11.RtvDimension.Texture2D,
-                RenderTargetViewDimension.Texture2DArray => Silk.NET.Direct3D11.RtvDimension.Texture2Darray,
-                RenderTargetViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.RtvDimension.Texture2Dms,
-                RenderTargetViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.RtvDimension.Texture2Dmsarray,
-                RenderTargetViewDimension.Texture3D => Silk.NET.Direct3D11.RtvDimension.Texture3D,
+                RenderTargetViewDimension.Buffer => Hexa.NET.D3D11.RtvDimension.Buffer,
+                RenderTargetViewDimension.Texture1D => Hexa.NET.D3D11.RtvDimension.Texture1D,
+                RenderTargetViewDimension.Texture1DArray => Hexa.NET.D3D11.RtvDimension.Texture1Darray,
+                RenderTargetViewDimension.Texture2D => Hexa.NET.D3D11.RtvDimension.Texture2D,
+                RenderTargetViewDimension.Texture2DArray => Hexa.NET.D3D11.RtvDimension.Texture2Darray,
+                RenderTargetViewDimension.Texture2DMultisampled => Hexa.NET.D3D11.RtvDimension.Texture2Dms,
+                RenderTargetViewDimension.Texture2DMultisampledArray => Hexa.NET.D3D11.RtvDimension.Texture2Dmsarray,
+                RenderTargetViewDimension.Texture3D => Hexa.NET.D3D11.RtvDimension.Texture3D,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RenderTargetViewDescUnion Convert(RenderTargetViewDescription description, RenderTargetViewDimension viewDimension)
+        public static Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion Convert(RenderTargetViewDescription description, RenderTargetViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                RenderTargetViewDimension.Buffer => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(buffer: Convert(description.Buffer)),
-                RenderTargetViewDimension.Texture1D => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture1D: Convert(description.Texture1D)),
-                RenderTargetViewDimension.Texture1DArray => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture1DArray: Convert(description.Texture1DArray)),
-                RenderTargetViewDimension.Texture2D => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2D: Convert(description.Texture2D)),
-                RenderTargetViewDimension.Texture2DArray => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2DArray: Convert(description.Texture2DArray)),
-                RenderTargetViewDimension.Texture2DMultisampled => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2DMS: Convert(description.Texture2DMS)),
-                RenderTargetViewDimension.Texture2DMultisampledArray => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture2DMSArray: Convert(description.Texture2DMSArray)),
-                RenderTargetViewDimension.Texture3D => new Silk.NET.Direct3D11.RenderTargetViewDescUnion(texture3D: Convert(description.Texture3D)),
+                RenderTargetViewDimension.Buffer => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Buffer = Convert(description.Buffer) },
+                RenderTargetViewDimension.Texture1D => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture1D = Convert(description.Texture1D) },
+                RenderTargetViewDimension.Texture1DArray => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture1DArray = Convert(description.Texture1DArray) },
+                RenderTargetViewDimension.Texture2D => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture2D = Convert(description.Texture2D) },
+                RenderTargetViewDimension.Texture2DArray => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture2DArray = Convert(description.Texture2DArray) },
+                RenderTargetViewDimension.Texture2DMultisampled => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture2DMS = Convert(description.Texture2DMS) },
+                RenderTargetViewDimension.Texture2DMultisampledArray => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture2DMSArray = Convert(description.Texture2DMSArray) },
+                RenderTargetViewDimension.Texture3D => new Hexa.NET.D3D11.RenderTargetViewDesc.RenderTargetViewDescUnion { Texture3D = Convert(description.Texture3D) },
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex3DRtv Convert(Texture3DRenderTargetView texture3D)
+        public static Hexa.NET.D3D11.Tex3DRtv Convert(Texture3DRenderTargetView texture3D)
         {
-            return new Silk.NET.Direct3D11.Tex3DRtv((uint)texture3D.MipSlice, (uint)texture3D.FirstWSlice, (uint)texture3D.WSize);
+            return new Hexa.NET.D3D11.Tex3DRtv((uint)texture3D.MipSlice, (uint)texture3D.FirstWSlice, (uint)texture3D.WSize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsArrayRtv Convert(Texture2DMultisampledArrayRenderTargetView texture2DMSArray)
+        public static Hexa.NET.D3D11.Tex2DmsArrayRtv Convert(Texture2DMultisampledArrayRenderTargetView texture2DMSArray)
         {
-            return new Silk.NET.Direct3D11.Tex2DmsArrayRtv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex2DmsArrayRtv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsRtv Convert(Texture2DMultisampledRenderTargetView texture2DMultisampled)
+        public static Hexa.NET.D3D11.Tex2DmsRtv Convert(Texture2DMultisampledRenderTargetView texture2DMultisampled)
         {
-            return new Silk.NET.Direct3D11.Tex2DmsRtv((uint)texture2DMultisampled.UnusedFieldNothingToDefine);
+            return new Hexa.NET.D3D11.Tex2DmsRtv((uint)texture2DMultisampled.UnusedFieldNothingToDefine);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DArrayRtv Convert(Texture2DArrayRenderTargetView texture2DArray)
+        public static Hexa.NET.D3D11.Tex2DArrayRtv Convert(Texture2DArrayRenderTargetView texture2DArray)
         {
-            return new Silk.NET.Direct3D11.Tex2DArrayRtv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex2DArrayRtv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DRtv Convert(Texture2DRenderTargetView texture2D)
+        public static Hexa.NET.D3D11.Tex2DRtv Convert(Texture2DRenderTargetView texture2D)
         {
-            return new Silk.NET.Direct3D11.Tex2DRtv((uint)texture2D.MipSlice);
+            return new Hexa.NET.D3D11.Tex2DRtv((uint)texture2D.MipSlice);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DArrayRtv Convert(Texture1DArrayRenderTargetView texture1DArray)
+        public static Hexa.NET.D3D11.Tex1DArrayRtv Convert(Texture1DArrayRenderTargetView texture1DArray)
         {
-            return new Silk.NET.Direct3D11.Tex1DArrayRtv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex1DArrayRtv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DRtv Convert(Texture1DRenderTargetView texture1D)
+        public static Hexa.NET.D3D11.Tex1DRtv Convert(Texture1DRenderTargetView texture1D)
         {
-            return new Silk.NET.Direct3D11.Tex1DRtv((uint)texture1D.MipSlice);
+            return new Hexa.NET.D3D11.Tex1DRtv((uint)texture1D.MipSlice);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BufferRtv Convert(BufferRenderTargetView buffer)
+        public static Hexa.NET.D3D11.BufferRtv Convert(BufferRenderTargetView buffer)
         {
             return new()
             {
-                Anonymous1 = new()
+                Union0 = new()
                 {
                     ElementOffset = (uint)buffer.ElementOffset,
                     FirstElement = (uint)buffer.FirstElement,
                 },
-                Anonymous2 = new()
+                Union1 = new()
                 {
                     ElementWidth = (uint)buffer.ElementWidth,
                     NumElements = (uint)buffer.NumElements,
@@ -871,36 +870,36 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DepthStencilViewDesc Convert(DepthStencilViewDescription description)
+        public static Hexa.NET.D3D11.DepthStencilViewDesc Convert(DepthStencilViewDescription description)
         {
             return new()
             {
                 Format = Convert(description.Format),
-                Anonymous = Convert(description, description.ViewDimension),
+                Union = Convert(description, description.ViewDimension),
                 Flags = (uint)Convert(description.Flags),
                 ViewDimension = Convert(description.ViewDimension)
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DsvDimension Convert(DepthStencilViewDimension viewDimension)
+        public static Hexa.NET.D3D11.DsvDimension Convert(DepthStencilViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                DepthStencilViewDimension.Texture1D => Silk.NET.Direct3D11.DsvDimension.Texture1D,
-                DepthStencilViewDimension.Texture1DArray => Silk.NET.Direct3D11.DsvDimension.Texture1Darray,
-                DepthStencilViewDimension.Texture2D => Silk.NET.Direct3D11.DsvDimension.Texture2D,
-                DepthStencilViewDimension.Texture2DArray => Silk.NET.Direct3D11.DsvDimension.Texture2Darray,
-                DepthStencilViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.DsvDimension.Texture2Dms,
-                DepthStencilViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.DsvDimension.Texture2Dmsarray,
+                DepthStencilViewDimension.Texture1D => Hexa.NET.D3D11.DsvDimension.Texture1D,
+                DepthStencilViewDimension.Texture1DArray => Hexa.NET.D3D11.DsvDimension.Texture1Darray,
+                DepthStencilViewDimension.Texture2D => Hexa.NET.D3D11.DsvDimension.Texture2D,
+                DepthStencilViewDimension.Texture2DArray => Hexa.NET.D3D11.DsvDimension.Texture2Darray,
+                DepthStencilViewDimension.Texture2DMultisampled => Hexa.NET.D3D11.DsvDimension.Texture2Dms,
+                DepthStencilViewDimension.Texture2DMultisampledArray => Hexa.NET.D3D11.DsvDimension.Texture2Dmsarray,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DsvFlag Convert(DepthStencilViewFlags flags)
+        public static Hexa.NET.D3D11.DsvFlag Convert(DepthStencilViewFlags flags)
         {
-            Silk.NET.Direct3D11.DsvFlag result = 0;
+            Hexa.NET.D3D11.DsvFlag result = 0;
             if (flags == DepthStencilViewFlags.None)
             {
                 return 0;
@@ -908,111 +907,112 @@
 
             if ((flags & DepthStencilViewFlags.ReadOnlyDepth) != 0)
             {
-                result |= Silk.NET.Direct3D11.DsvFlag.Depth;
+                result |= Hexa.NET.D3D11.DsvFlag.ReadOnlyDepth;
             }
 
             if ((flags & DepthStencilViewFlags.ReadOnlyStencil) != 0)
             {
-                result |= Silk.NET.Direct3D11.DsvFlag.Stencil;
+                result |= Hexa.NET.D3D11.DsvFlag.ReadOnlyStencil;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DepthStencilViewDescUnion Convert(DepthStencilViewDescription description, DepthStencilViewDimension viewDimension)
+        public static Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion Convert(DepthStencilViewDescription description, DepthStencilViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                DepthStencilViewDimension.Texture1D => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture1D: Convert(description.Texture1D)),
-                DepthStencilViewDimension.Texture1DArray => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture1DArray: Convert(description.Texture1DArray)),
-                DepthStencilViewDimension.Texture2D => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2D: Convert(description.Texture2D)),
-                DepthStencilViewDimension.Texture2DArray => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DArray: Convert(description.Texture2DArray)),
-                DepthStencilViewDimension.Texture2DMultisampled => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DMS: Convert(description.Texture2DMS)),
-                DepthStencilViewDimension.Texture2DMultisampledArray => new Silk.NET.Direct3D11.DepthStencilViewDescUnion(texture2DMSArray: Convert(description.Texture2DMSArray)),
+                DepthStencilViewDimension.Texture1D => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture1D = Convert(description.Texture1D) },
+                DepthStencilViewDimension.Texture1DArray => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture1DArray = Convert(description.Texture1DArray) },
+                DepthStencilViewDimension.Texture2D => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture2D = Convert(description.Texture2D) },
+                DepthStencilViewDimension.Texture2DArray => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture2DArray = Convert(description.Texture2DArray) },
+                DepthStencilViewDimension.Texture2DMultisampled => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture2DMS = Convert(description.Texture2DMS) },
+                DepthStencilViewDimension.Texture2DMultisampledArray => new Hexa.NET.D3D11.DepthStencilViewDesc.DepthStencilViewDescUnion { Texture2DMSArray = Convert(description.Texture2DMSArray) },
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsArrayDsv Convert(Texture2DMultisampledArrayDepthStencilView texture2DMSArray)
+        public static Hexa.NET.D3D11.Tex2DmsArrayDsv Convert(Texture2DMultisampledArrayDepthStencilView texture2DMSArray)
         {
-            return new Silk.NET.Direct3D11.Tex2DmsArrayDsv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex2DmsArrayDsv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsDsv Convert(Texture2DMultisampledDepthStencilView texture2DMS)
+        public static Hexa.NET.D3D11.Tex2DmsDsv Convert(Texture2DMultisampledDepthStencilView texture2DMS)
         {
-            return new Silk.NET.Direct3D11.Tex2DmsDsv((uint)texture2DMS.UnusedFieldNothingToDefine);
+            return new Hexa.NET.D3D11.Tex2DmsDsv((uint)texture2DMS.UnusedFieldNothingToDefine);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DArrayDsv Convert(Texture2DArrayDepthStencilView texture2DArray)
+        public static Hexa.NET.D3D11.Tex2DArrayDsv Convert(Texture2DArrayDepthStencilView texture2DArray)
         {
-            return new Silk.NET.Direct3D11.Tex2DArrayDsv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex2DArrayDsv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DDsv Convert(Texture2DDepthStencilView texture2D)
+        public static Hexa.NET.D3D11.Tex2DDsv Convert(Texture2DDepthStencilView texture2D)
         {
-            return new Silk.NET.Direct3D11.Tex2DDsv((uint)texture2D.MipSlice);
+            return new Hexa.NET.D3D11.Tex2DDsv((uint)texture2D.MipSlice);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DArrayDsv Convert(Texture1DArrayDepthStencilView texture1DArray)
+        public static Hexa.NET.D3D11.Tex1DArrayDsv Convert(Texture1DArrayDepthStencilView texture1DArray)
         {
-            return new Silk.NET.Direct3D11.Tex1DArrayDsv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
+            return new Hexa.NET.D3D11.Tex1DArrayDsv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DDsv Convert(Texture1DDepthStencilView texture1D)
+        public static Hexa.NET.D3D11.Tex1DDsv Convert(Texture1DDepthStencilView texture1D)
         {
-            return new Silk.NET.Direct3D11.Tex1DDsv((uint)texture1D.MipSlice);
+            return new Hexa.NET.D3D11.Tex1DDsv((uint)texture1D.MipSlice);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ShaderResourceViewDesc Convert(ShaderResourceViewDescription description)
+        public static Hexa.NET.D3D11.ShaderResourceViewDesc Convert(ShaderResourceViewDescription description)
         {
             return new()
             {
                 Format = Convert(description.Format),
                 ViewDimension = Convert(description.ViewDimension),
-                Anonymous = Convert(description, description.ViewDimension),
+                Union = Convert(description, description.ViewDimension),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ShaderResourceViewDescUnion Convert(ShaderResourceViewDescription description, ShaderResourceViewDimension dimension)
+        public static Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion Convert(ShaderResourceViewDescription description, ShaderResourceViewDimension dimension)
         {
             return dimension switch
             {
-                ShaderResourceViewDimension.Buffer => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(buffer: Convert(description.Buffer)),
-                ShaderResourceViewDimension.Texture1D => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture1D: Convert(description.Texture1D)),
-                ShaderResourceViewDimension.Texture1DArray => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture1DArray: Convert(description.Texture1DArray)),
-                ShaderResourceViewDimension.Texture2D => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture2D: Convert(description.Texture2D)),
-                ShaderResourceViewDimension.Texture2DArray => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture2DArray: Convert(description.Texture2DArray)),
-                ShaderResourceViewDimension.Texture2DMultisampled => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture2DMS: Convert(description.Texture2DMS)),
-                ShaderResourceViewDimension.Texture2DMultisampledArray => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture2DMSArray: Convert(description.Texture2DMSArray)),
-                ShaderResourceViewDimension.Texture3D => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(texture3D: Convert(description.Texture3D)),
-                ShaderResourceViewDimension.TextureCube => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(textureCube: Convert(description.TextureCube)),
-                ShaderResourceViewDimension.TextureCubeArray => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(textureCubeArray: Convert(description.TextureCubeArray)),
-                ShaderResourceViewDimension.BufferExtended => new Silk.NET.Direct3D11.ShaderResourceViewDescUnion(bufferEx: Convert(description.BufferEx)),
+                ShaderResourceViewDimension.Buffer => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Buffer = Convert(description.Buffer) },
+                ShaderResourceViewDimension.Texture1D => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture1D = Convert(description.Texture1D) },
+                ShaderResourceViewDimension.Texture1DArray => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture1DArray = Convert(description.Texture1DArray) },
+                ShaderResourceViewDimension.Texture2D => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture2D = Convert(description.Texture2D) },
+                ShaderResourceViewDimension.Texture2DArray => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture2DArray = Convert(description.Texture2DArray) },
+                ShaderResourceViewDimension.Texture2DMultisampled => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture2DMS = Convert(description.Texture2DMS) },
+                ShaderResourceViewDimension.Texture2DMultisampledArray => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture2DMSArray = Convert(description.Texture2DMSArray) },
+                ShaderResourceViewDimension.Texture3D => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { Texture3D = Convert(description.Texture3D) },
+                ShaderResourceViewDimension.TextureCube => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { TextureCube = Convert(description.TextureCube) },
+                ShaderResourceViewDimension.TextureCubeArray => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { TextureCubeArray = Convert(description.TextureCubeArray) },
+                ShaderResourceViewDimension.BufferExtended => new Hexa.NET.D3D11.ShaderResourceViewDesc.ShaderResourceViewDescUnion { BufferEx = Convert(description.BufferEx) },
+
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BufferexSrv Convert(BufferExtendedShaderResourceView bufferEx)
+        public static Hexa.NET.D3D11.BufferexSrv Convert(BufferExtendedShaderResourceView bufferEx)
         {
-            return new Silk.NET.Direct3D11.BufferexSrv((uint)bufferEx.FirstElement, (uint)bufferEx.NumElements, (uint)Convert(bufferEx.Flags));
+            return new Hexa.NET.D3D11.BufferexSrv((uint)bufferEx.FirstElement, (uint)bufferEx.NumElements, (uint)Convert(bufferEx.Flags));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BufferexSrvFlag Convert(BufferExtendedShaderResourceViewFlags flags)
+        public static Hexa.NET.D3D11.BufferexSrvFlag Convert(BufferExtendedShaderResourceViewFlags flags)
         {
             if ((flags & BufferExtendedShaderResourceViewFlags.Raw) != 0)
             {
-                return Silk.NET.Direct3D11.BufferexSrvFlag.Raw;
+                return Hexa.NET.D3D11.BufferexSrvFlag.Raw;
             }
             else
             {
@@ -1021,25 +1021,25 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.TexcubeArraySrv Convert(TextureCubeArrayShaderResourceView textureCubeArray)
+        public static Hexa.NET.D3D11.TexcubeArraySrv Convert(TextureCubeArrayShaderResourceView textureCubeArray)
         {
-            return new Silk.NET.Direct3D11.TexcubeArraySrv((uint?)textureCubeArray.MostDetailedMip, (uint?)textureCubeArray.MipLevels, (uint?)textureCubeArray.First2DArrayFace, (uint?)textureCubeArray.NumCubes);
+            return new Hexa.NET.D3D11.TexcubeArraySrv((uint)textureCubeArray.MostDetailedMip, (uint)textureCubeArray.MipLevels, (uint)textureCubeArray.First2DArrayFace, (uint)textureCubeArray.NumCubes);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.TexcubeSrv Convert(TextureCubeShaderResourceView textureCube)
+        public static Hexa.NET.D3D11.TexcubeSrv Convert(TextureCubeShaderResourceView textureCube)
         {
-            return new Silk.NET.Direct3D11.TexcubeSrv((uint)textureCube.MostDetailedMip, (uint)textureCube.MipLevels);
+            return new Hexa.NET.D3D11.TexcubeSrv((uint)textureCube.MostDetailedMip, (uint)textureCube.MipLevels);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex3DSrv Convert(Texture3DShaderResourceView texture3D)
+        public static Hexa.NET.D3D11.Tex3DSrv Convert(Texture3DShaderResourceView texture3D)
         {
-            return new Silk.NET.Direct3D11.Tex3DSrv((uint)texture3D.MostDetailedMip, (uint)texture3D.MipLevels);
+            return new Hexa.NET.D3D11.Tex3DSrv((uint)texture3D.MostDetailedMip, (uint)texture3D.MipLevels);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsArraySrv Convert(Texture2DMultisampledArrayShaderResourceView texture2DMSArray)
+        public static Hexa.NET.D3D11.Tex2DmsArraySrv Convert(Texture2DMultisampledArrayShaderResourceView texture2DMSArray)
         {
             return new()
             {
@@ -1049,13 +1049,13 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DmsSrv Convert(Texture2DMultisampledShaderResourceView texture2DMS)
+        public static Hexa.NET.D3D11.Tex2DmsSrv Convert(Texture2DMultisampledShaderResourceView texture2DMS)
         {
             return new() { UnusedFieldNothingToDefine = (uint)texture2DMS.UnusedFieldNothingToDefine };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DArraySrv Convert(Texture2DArrayShaderResourceView texture2DArray)
+        public static Hexa.NET.D3D11.Tex2DArraySrv Convert(Texture2DArrayShaderResourceView texture2DArray)
         {
             return new()
             {
@@ -1067,7 +1067,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex2DSrv Convert(Texture2DShaderResourceView texture2D)
+        public static Hexa.NET.D3D11.Tex2DSrv Convert(Texture2DShaderResourceView texture2D)
         {
             return new()
             {
@@ -1077,7 +1077,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DArraySrv Convert(Texture1DArrayShaderResourceView texture1DArray)
+        public static Hexa.NET.D3D11.Tex1DArraySrv Convert(Texture1DArrayShaderResourceView texture1DArray)
         {
             return new()
             {
@@ -1089,7 +1089,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Tex1DSrv Convert(Texture1DShaderResourceView texture1D)
+        public static Hexa.NET.D3D11.Tex1DSrv Convert(Texture1DShaderResourceView texture1D)
         {
             return new()
             {
@@ -1099,16 +1099,16 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BufferSrv Convert(BufferShaderResourceView buffer)
+        public static Hexa.NET.D3D11.BufferSrv Convert(BufferShaderResourceView buffer)
         {
             return new()
             {
-                Anonymous1 = new()
+                Union0 = new()
                 {
                     ElementOffset = (uint)buffer.ElementOffset,
                     FirstElement = (uint)buffer.FirstElement
                 },
-                Anonymous2 = new()
+                Union1 = new()
                 {
                     NumElements = (uint)buffer.NumElements,
                     ElementWidth = (uint)buffer.ElementWidth
@@ -1117,28 +1117,28 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Core.Native.D3DSrvDimension Convert(ShaderResourceViewDimension viewDimension)
+        public static Hexa.NET.D3DCommon.SrvDimension Convert(ShaderResourceViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                ShaderResourceViewDimension.Unknown => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionUnknown,
-                ShaderResourceViewDimension.Buffer => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionBuffer,
-                ShaderResourceViewDimension.Texture1D => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture1D,
-                ShaderResourceViewDimension.Texture1DArray => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture1Darray,
-                ShaderResourceViewDimension.Texture2D => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture2D,
-                ShaderResourceViewDimension.Texture2DArray => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture2Darray,
-                ShaderResourceViewDimension.Texture2DMultisampled => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture2Dms,
-                ShaderResourceViewDimension.Texture2DMultisampledArray => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture2Dmsarray,
-                ShaderResourceViewDimension.Texture3D => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexture3D,
-                ShaderResourceViewDimension.TextureCube => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexturecube,
-                ShaderResourceViewDimension.TextureCubeArray => Silk.NET.Core.Native.D3DSrvDimension.D3D101SrvDimensionTexturecubearray,
-                ShaderResourceViewDimension.BufferExtended => Silk.NET.Core.Native.D3DSrvDimension.D3D11SrvDimensionBufferex,
+                ShaderResourceViewDimension.Unknown => Hexa.NET.D3DCommon.SrvDimension.Unknown,
+                ShaderResourceViewDimension.Buffer => Hexa.NET.D3DCommon.SrvDimension.Buffer,
+                ShaderResourceViewDimension.Texture1D => Hexa.NET.D3DCommon.SrvDimension.Texture1D,
+                ShaderResourceViewDimension.Texture1DArray => Hexa.NET.D3DCommon.SrvDimension.Texture1Darray,
+                ShaderResourceViewDimension.Texture2D => Hexa.NET.D3DCommon.SrvDimension.Texture2D,
+                ShaderResourceViewDimension.Texture2DArray => Hexa.NET.D3DCommon.SrvDimension.Texture2Darray,
+                ShaderResourceViewDimension.Texture2DMultisampled => Hexa.NET.D3DCommon.SrvDimension.Texture2Dms,
+                ShaderResourceViewDimension.Texture2DMultisampledArray => Hexa.NET.D3DCommon.SrvDimension.Texture2Dmsarray,
+                ShaderResourceViewDimension.Texture3D => Hexa.NET.D3DCommon.SrvDimension.Texture3D,
+                ShaderResourceViewDimension.TextureCube => Hexa.NET.D3DCommon.SrvDimension.Texturecube,
+                ShaderResourceViewDimension.TextureCubeArray => Hexa.NET.D3DCommon.SrvDimension.Texturecubearray,
+                ShaderResourceViewDimension.BufferExtended => Hexa.NET.D3DCommon.SrvDimension.Bufferex,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Convert(SubresourceData[] datas, Silk.NET.Direct3D11.SubresourceData* subresourceDatas)
+        public static void Convert(SubresourceData[] datas, Hexa.NET.D3D11.SubresourceData* subresourceDatas)
         {
             for (int i = 0; i < datas.Length; i++)
             {
@@ -1147,7 +1147,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.SubresourceData Convert(SubresourceData data)
+        public static Hexa.NET.D3D11.SubresourceData Convert(SubresourceData data)
         {
             return new()
             {
@@ -1158,7 +1158,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Texture3DDesc Convert(Texture3DDescription description)
+        public static Hexa.NET.D3D11.Texture3DDesc Convert(Texture3DDescription description)
         {
             return new()
             {
@@ -1175,7 +1175,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Texture2DDesc Convert(Texture2DDescription description)
+        public static Hexa.NET.D3D11.Texture2DDesc Convert(Texture2DDescription description)
         {
             return new()
             {
@@ -1193,7 +1193,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.SampleDesc Convert(SampleDescription sampleDescription)
+        public static Hexa.NET.DXGI.SampleDesc Convert(SampleDescription sampleDescription)
         {
             return new()
             {
@@ -1203,7 +1203,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Texture1DDesc Convert(Texture1DDescription description)
+        public static Hexa.NET.D3D11.Texture1DDesc Convert(Texture1DDescription description)
         {
             return new()
             {
@@ -1219,7 +1219,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DepthStencilDesc Convert(DepthStencilDescription description)
+        public static Hexa.NET.D3D11.DepthStencilDesc Convert(DepthStencilDescription description)
         {
             return new()
             {
@@ -1235,7 +1235,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DepthStencilopDesc Convert(DepthStencilOperationDescription description)
+        public static Hexa.NET.D3D11.DepthStencilopDesc Convert(DepthStencilOperationDescription description)
         {
             return new()
             {
@@ -1247,77 +1247,77 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Silk.NET.Direct3D11.Query Convert(Query query)
+        internal static Hexa.NET.D3D11.Query Convert(Query query)
         {
             return query switch
             {
-                Query.Event => Silk.NET.Direct3D11.Query.Event,
-                Query.Occlusion => Silk.NET.Direct3D11.Query.Occlusion,
-                Query.Timestamp => Silk.NET.Direct3D11.Query.Timestamp,
-                Query.TimestampDisjoint => Silk.NET.Direct3D11.Query.TimestampDisjoint,
-                Query.PipelineStatistics => Silk.NET.Direct3D11.Query.PipelineStatistics,
-                Query.OcclusionPredicate => Silk.NET.Direct3D11.Query.OcclusionPredicate,
-                Query.SOStatistics => Silk.NET.Direct3D11.Query.SOStatistics,
-                Query.SOOverflowPredicate => Silk.NET.Direct3D11.Query.SOOverflowPredicate,
-                Query.SOStatisticsStream0 => Silk.NET.Direct3D11.Query.SOStatisticsStream0,
-                Query.SOOverflowPredicateStream0 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream0,
-                Query.SOStatisticsStream1 => Silk.NET.Direct3D11.Query.SOStatisticsStream1,
-                Query.SOOverflowPredicateStream1 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream1,
-                Query.SOStatisticsStream2 => Silk.NET.Direct3D11.Query.SOStatisticsStream2,
-                Query.SOOverflowPredicateStream2 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream2,
-                Query.SOStatisticsStream3 => Silk.NET.Direct3D11.Query.SOStatisticsStream3,
-                Query.SOOverflowPredicateStream3 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream3,
+                Query.Event => Hexa.NET.D3D11.Query.Event,
+                Query.Occlusion => Hexa.NET.D3D11.Query.Occlusion,
+                Query.Timestamp => Hexa.NET.D3D11.Query.Timestamp,
+                Query.TimestampDisjoint => Hexa.NET.D3D11.Query.TimestampDisjoint,
+                Query.PipelineStatistics => Hexa.NET.D3D11.Query.PipelineStatistics,
+                Query.OcclusionPredicate => Hexa.NET.D3D11.Query.OcclusionPredicate,
+                Query.SOStatistics => Hexa.NET.D3D11.Query.SoStatistics,
+                Query.SOOverflowPredicate => Hexa.NET.D3D11.Query.SoOverflowPredicate,
+                Query.SOStatisticsStream0 => Hexa.NET.D3D11.Query.SoStatisticsStream0,
+                Query.SOOverflowPredicateStream0 => Hexa.NET.D3D11.Query.SoOverflowPredicateStream0,
+                Query.SOStatisticsStream1 => Hexa.NET.D3D11.Query.SoStatisticsStream1,
+                Query.SOOverflowPredicateStream1 => Hexa.NET.D3D11.Query.SoOverflowPredicateStream1,
+                Query.SOStatisticsStream2 => Hexa.NET.D3D11.Query.SoStatisticsStream2,
+                Query.SOOverflowPredicateStream2 => Hexa.NET.D3D11.Query.SoOverflowPredicateStream2,
+                Query.SOStatisticsStream3 => Hexa.NET.D3D11.Query.SoStatisticsStream3,
+                Query.SOOverflowPredicateStream3 => Hexa.NET.D3D11.Query.SoOverflowPredicateStream3,
                 _ => throw new NotSupportedException()
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.StencilOp Convert(StencilOperation operation)
+        public static Hexa.NET.D3D11.StencilOp Convert(StencilOperation operation)
         {
             return operation switch
             {
-                StencilOperation.Keep => Silk.NET.Direct3D11.StencilOp.Keep,
-                StencilOperation.Zero => Silk.NET.Direct3D11.StencilOp.Zero,
-                StencilOperation.Replace => Silk.NET.Direct3D11.StencilOp.Replace,
-                StencilOperation.IncrementSaturate => Silk.NET.Direct3D11.StencilOp.IncrSat,
-                StencilOperation.DecrementSaturate => Silk.NET.Direct3D11.StencilOp.DecrSat,
-                StencilOperation.Invert => Silk.NET.Direct3D11.StencilOp.Invert,
-                StencilOperation.Increment => Silk.NET.Direct3D11.StencilOp.Incr,
-                StencilOperation.Decrement => Silk.NET.Direct3D11.StencilOp.Decr,
+                StencilOperation.Keep => Hexa.NET.D3D11.StencilOp.Keep,
+                StencilOperation.Zero => Hexa.NET.D3D11.StencilOp.Zero,
+                StencilOperation.Replace => Hexa.NET.D3D11.StencilOp.Replace,
+                StencilOperation.IncrementSaturate => Hexa.NET.D3D11.StencilOp.IncrSat,
+                StencilOperation.DecrementSaturate => Hexa.NET.D3D11.StencilOp.DecrSat,
+                StencilOperation.Invert => Hexa.NET.D3D11.StencilOp.Invert,
+                StencilOperation.Increment => Hexa.NET.D3D11.StencilOp.Incr,
+                StencilOperation.Decrement => Hexa.NET.D3D11.StencilOp.Decr,
                 _ => 0,
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ComparisonFunc Convert(ComparisonFunction function)
+        public static Hexa.NET.D3D11.ComparisonFunc Convert(ComparisonFunction function)
         {
             return function switch
             {
-                ComparisonFunction.Never => Silk.NET.Direct3D11.ComparisonFunc.Never,
-                ComparisonFunction.Less => Silk.NET.Direct3D11.ComparisonFunc.Less,
-                ComparisonFunction.Equal => Silk.NET.Direct3D11.ComparisonFunc.Equal,
-                ComparisonFunction.LessEqual => Silk.NET.Direct3D11.ComparisonFunc.LessEqual,
-                ComparisonFunction.Greater => Silk.NET.Direct3D11.ComparisonFunc.Greater,
-                ComparisonFunction.NotEqual => Silk.NET.Direct3D11.ComparisonFunc.NotEqual,
-                ComparisonFunction.GreaterEqual => Silk.NET.Direct3D11.ComparisonFunc.GreaterEqual,
-                ComparisonFunction.Always => Silk.NET.Direct3D11.ComparisonFunc.Always,
+                ComparisonFunction.Never => Hexa.NET.D3D11.ComparisonFunc.Never,
+                ComparisonFunction.Less => Hexa.NET.D3D11.ComparisonFunc.Less,
+                ComparisonFunction.Equal => Hexa.NET.D3D11.ComparisonFunc.Equal,
+                ComparisonFunction.LessEqual => Hexa.NET.D3D11.ComparisonFunc.LessEqual,
+                ComparisonFunction.Greater => Hexa.NET.D3D11.ComparisonFunc.Greater,
+                ComparisonFunction.NotEqual => Hexa.NET.D3D11.ComparisonFunc.NotEqual,
+                ComparisonFunction.GreaterEqual => Hexa.NET.D3D11.ComparisonFunc.GreaterEqual,
+                ComparisonFunction.Always => Hexa.NET.D3D11.ComparisonFunc.Always,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.DepthWriteMask Convert(DepthWriteMask mask)
+        public static Hexa.NET.D3D11.DepthWriteMask Convert(DepthWriteMask mask)
         {
             return mask switch
             {
-                DepthWriteMask.Zero => Silk.NET.Direct3D11.DepthWriteMask.Zero,
-                DepthWriteMask.All => Silk.NET.Direct3D11.DepthWriteMask.All,
+                DepthWriteMask.Zero => Hexa.NET.D3D11.DepthWriteMask.Zero,
+                DepthWriteMask.All => Hexa.NET.D3D11.DepthWriteMask.All,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RasterizerDesc2 Convert(RasterizerDescription description)
+        public static Hexa.NET.D3D11.RasterizerDesc2 Convert(RasterizerDescription description)
         {
             return new()
             {
@@ -1337,68 +1337,68 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.ConservativeRasterizationMode Convert(ConservativeRasterizationMode conservativeRaster)
+        private static Hexa.NET.D3D11.ConservativeRasterizationMode Convert(ConservativeRasterizationMode conservativeRaster)
         {
             return conservativeRaster switch
             {
-                ConservativeRasterizationMode.Off => Silk.NET.Direct3D11.ConservativeRasterizationMode.Off,
-                ConservativeRasterizationMode.On => Silk.NET.Direct3D11.ConservativeRasterizationMode.On,
+                ConservativeRasterizationMode.Off => Hexa.NET.D3D11.ConservativeRasterizationMode.Off,
+                ConservativeRasterizationMode.On => Hexa.NET.D3D11.ConservativeRasterizationMode.On,
                 _ => 0,
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.FillMode Convert(FillMode mode)
+        public static Hexa.NET.D3D11.FillMode Convert(FillMode mode)
         {
             return mode switch
             {
-                FillMode.Solid => Silk.NET.Direct3D11.FillMode.Solid,
-                FillMode.Wireframe => Silk.NET.Direct3D11.FillMode.Wireframe,
+                FillMode.Solid => Hexa.NET.D3D11.FillMode.Solid,
+                FillMode.Wireframe => Hexa.NET.D3D11.FillMode.Wireframe,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.CullMode Convert(CullMode mode)
+        public static Hexa.NET.D3D11.CullMode Convert(CullMode mode)
         {
             return mode switch
             {
-                CullMode.None => Silk.NET.Direct3D11.CullMode.None,
-                CullMode.Front => Silk.NET.Direct3D11.CullMode.Front,
-                CullMode.Back => Silk.NET.Direct3D11.CullMode.Back,
+                CullMode.None => Hexa.NET.D3D11.CullMode.None,
+                CullMode.Front => Hexa.NET.D3D11.CullMode.Front,
+                CullMode.Back => Hexa.NET.D3D11.CullMode.Back,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BlendDesc1 Convert(BlendDescription description)
+        public static Hexa.NET.D3D11.BlendDesc1 Convert(BlendDescription description)
         {
-            return new()
+            Hexa.NET.D3D11.BlendDesc1 result = new()
             {
                 AlphaToCoverageEnable = description.AlphaToCoverageEnable,
                 IndependentBlendEnable = description.IndependentBlendEnable,
-                RenderTarget = Convert(description.RenderTarget),
             };
+
+            Convert(description.RenderTarget, &result.RenderTarget_0);
+
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BlendDesc1.RenderTargetBuffer Convert(RenderTargetBlendDescription[] descriptions)
+        public static void Convert(Span<RenderTargetBlendDescription> descriptions, RenderTargetBlendDesc1* output)
         {
-            return new()
-            {
-                Element0 = Convert(descriptions[0]),
-                Element1 = Convert(descriptions[1]),
-                Element2 = Convert(descriptions[2]),
-                Element3 = Convert(descriptions[3]),
-                Element4 = Convert(descriptions[4]),
-                Element5 = Convert(descriptions[5]),
-                Element6 = Convert(descriptions[6]),
-                Element7 = Convert(descriptions[7]),
-            };
+            output[0] = Convert(descriptions[0]);
+            output[1] = Convert(descriptions[1]);
+            output[2] = Convert(descriptions[2]);
+            output[3] = Convert(descriptions[3]);
+            output[4] = Convert(descriptions[4]);
+            output[5] = Convert(descriptions[5]);
+            output[6] = Convert(descriptions[6]);
+            output[7] = Convert(descriptions[7]);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RenderTargetBlendDesc1 Convert(RenderTargetBlendDescription description)
+        public static Hexa.NET.D3D11.RenderTargetBlendDesc1 Convert(RenderTargetBlendDescription description)
         {
             return new()
             {
@@ -1416,104 +1416,104 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.LogicOp Convert(LogicOperation logicOperation)
+        private static Hexa.NET.D3D11.LogicOp Convert(LogicOperation logicOperation)
         {
             return logicOperation switch
             {
-                LogicOperation.Clear => Silk.NET.Direct3D11.LogicOp.Clear,
-                LogicOperation.Set => Silk.NET.Direct3D11.LogicOp.Set,
-                LogicOperation.Copy => Silk.NET.Direct3D11.LogicOp.Copy,
-                LogicOperation.CopyInverted => Silk.NET.Direct3D11.LogicOp.CopyInverted,
-                LogicOperation.Noop => Silk.NET.Direct3D11.LogicOp.Noop,
-                LogicOperation.Invert => Silk.NET.Direct3D11.LogicOp.Invert,
-                LogicOperation.And => Silk.NET.Direct3D11.LogicOp.And,
-                LogicOperation.Nand => Silk.NET.Direct3D11.LogicOp.Nand,
-                LogicOperation.Or => Silk.NET.Direct3D11.LogicOp.Or,
-                LogicOperation.Nor => Silk.NET.Direct3D11.LogicOp.Nor,
-                LogicOperation.Xor => Silk.NET.Direct3D11.LogicOp.Xor,
-                LogicOperation.Equiv => Silk.NET.Direct3D11.LogicOp.Equiv,
-                LogicOperation.AndReverse => Silk.NET.Direct3D11.LogicOp.AndReverse,
-                LogicOperation.AndInverted => Silk.NET.Direct3D11.LogicOp.AndInverted,
-                LogicOperation.OrReverse => Silk.NET.Direct3D11.LogicOp.OrReverse,
-                LogicOperation.OrInverted => Silk.NET.Direct3D11.LogicOp.OrInverted,
+                LogicOperation.Clear => Hexa.NET.D3D11.LogicOp.Clear,
+                LogicOperation.Set => Hexa.NET.D3D11.LogicOp.Set,
+                LogicOperation.Copy => Hexa.NET.D3D11.LogicOp.Copy,
+                LogicOperation.CopyInverted => Hexa.NET.D3D11.LogicOp.CopyInverted,
+                LogicOperation.Noop => Hexa.NET.D3D11.LogicOp.Noop,
+                LogicOperation.Invert => Hexa.NET.D3D11.LogicOp.Invert,
+                LogicOperation.And => Hexa.NET.D3D11.LogicOp.And,
+                LogicOperation.Nand => Hexa.NET.D3D11.LogicOp.Nand,
+                LogicOperation.Or => Hexa.NET.D3D11.LogicOp.Or,
+                LogicOperation.Nor => Hexa.NET.D3D11.LogicOp.Nor,
+                LogicOperation.Xor => Hexa.NET.D3D11.LogicOp.Xor,
+                LogicOperation.Equiv => Hexa.NET.D3D11.LogicOp.Equiv,
+                LogicOperation.AndReverse => Hexa.NET.D3D11.LogicOp.AndReverse,
+                LogicOperation.AndInverted => Hexa.NET.D3D11.LogicOp.AndInverted,
+                LogicOperation.OrReverse => Hexa.NET.D3D11.LogicOp.OrReverse,
+                LogicOperation.OrInverted => Hexa.NET.D3D11.LogicOp.OrInverted,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ColorWriteEnable Convert(ColorWriteEnable flags)
+        public static Hexa.NET.D3D11.ColorWriteEnable Convert(ColorWriteEnable flags)
         {
-            Silk.NET.Direct3D11.ColorWriteEnable result = 0;
+            Hexa.NET.D3D11.ColorWriteEnable result = 0;
             if (flags == ColorWriteEnable.All)
             {
-                return Silk.NET.Direct3D11.ColorWriteEnable.All;
+                return Hexa.NET.D3D11.ColorWriteEnable.All;
             }
 
             if ((flags & ColorWriteEnable.Red) != 0)
             {
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.Red;
+                result |= Hexa.NET.D3D11.ColorWriteEnable.Red;
             }
 
             if ((flags & ColorWriteEnable.Green) != 0)
             {
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.Green;
+                result |= Hexa.NET.D3D11.ColorWriteEnable.Green;
             }
 
             if ((flags & ColorWriteEnable.Blue) != 0)
             {
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.Blue;
+                result |= Hexa.NET.D3D11.ColorWriteEnable.Blue;
             }
 
             if ((flags & ColorWriteEnable.Alpha) != 0)
             {
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.Alpha;
+                result |= Hexa.NET.D3D11.ColorWriteEnable.Alpha;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Blend Convert(Blend blend)
+        public static Hexa.NET.D3D11.Blend Convert(Blend blend)
         {
             return blend switch
             {
-                Blend.Zero => Silk.NET.Direct3D11.Blend.Zero,
-                Blend.One => Silk.NET.Direct3D11.Blend.One,
-                Blend.SourceColor => Silk.NET.Direct3D11.Blend.SrcColor,
-                Blend.InverseSourceColor => Silk.NET.Direct3D11.Blend.InvSrcColor,
-                Blend.SourceAlpha => Silk.NET.Direct3D11.Blend.SrcAlpha,
-                Blend.InverseSourceAlpha => Silk.NET.Direct3D11.Blend.InvSrcAlpha,
-                Blend.DestinationAlpha => Silk.NET.Direct3D11.Blend.DestAlpha,
-                Blend.InverseDestinationAlpha => Silk.NET.Direct3D11.Blend.InvDestAlpha,
-                Blend.DestinationColor => Silk.NET.Direct3D11.Blend.DestColor,
-                Blend.InverseDestinationColor => Silk.NET.Direct3D11.Blend.InvDestColor,
-                Blend.SourceAlphaSaturate => Silk.NET.Direct3D11.Blend.SrcAlphaSat,
-                Blend.BlendFactor => Silk.NET.Direct3D11.Blend.BlendFactor,
-                Blend.InverseBlendFactor => Silk.NET.Direct3D11.Blend.InvBlendFactor,
-                Blend.Source1Color => Silk.NET.Direct3D11.Blend.Src1Color,
-                Blend.InverseSource1Color => Silk.NET.Direct3D11.Blend.InvSrc1Color,
-                Blend.Source1Alpha => Silk.NET.Direct3D11.Blend.Src1Alpha,
-                Blend.InverseSource1Alpha => Silk.NET.Direct3D11.Blend.InvSrc1Alpha,
+                Blend.Zero => Hexa.NET.D3D11.Blend.Zero,
+                Blend.One => Hexa.NET.D3D11.Blend.One,
+                Blend.SourceColor => Hexa.NET.D3D11.Blend.SrcColor,
+                Blend.InverseSourceColor => Hexa.NET.D3D11.Blend.InvSrcColor,
+                Blend.SourceAlpha => Hexa.NET.D3D11.Blend.SrcAlpha,
+                Blend.InverseSourceAlpha => Hexa.NET.D3D11.Blend.InvSrcAlpha,
+                Blend.DestinationAlpha => Hexa.NET.D3D11.Blend.DestAlpha,
+                Blend.InverseDestinationAlpha => Hexa.NET.D3D11.Blend.InvDestAlpha,
+                Blend.DestinationColor => Hexa.NET.D3D11.Blend.DestColor,
+                Blend.InverseDestinationColor => Hexa.NET.D3D11.Blend.InvDestColor,
+                Blend.SourceAlphaSaturate => Hexa.NET.D3D11.Blend.SrcAlphaSat,
+                Blend.BlendFactor => Hexa.NET.D3D11.Blend.Factor,
+                Blend.InverseBlendFactor => Hexa.NET.D3D11.Blend.InvBlendFactor,
+                Blend.Source1Color => Hexa.NET.D3D11.Blend.Src1Color,
+                Blend.InverseSource1Color => Hexa.NET.D3D11.Blend.InvSrc1Color,
+                Blend.Source1Alpha => Hexa.NET.D3D11.Blend.Src1Alpha,
+                Blend.InverseSource1Alpha => Hexa.NET.D3D11.Blend.InvSrc1Alpha,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BlendOp Convert(BlendOperation operation)
+        public static Hexa.NET.D3D11.BlendOp Convert(BlendOperation operation)
         {
             return operation switch
             {
-                BlendOperation.Add => Silk.NET.Direct3D11.BlendOp.Add,
-                BlendOperation.Subtract => Silk.NET.Direct3D11.BlendOp.Subtract,
-                BlendOperation.ReverseSubtract => Silk.NET.Direct3D11.BlendOp.RevSubtract,
-                BlendOperation.Min => Silk.NET.Direct3D11.BlendOp.Min,
-                BlendOperation.Max => Silk.NET.Direct3D11.BlendOp.Max,
+                BlendOperation.Add => Hexa.NET.D3D11.BlendOp.Add,
+                BlendOperation.Subtract => Hexa.NET.D3D11.BlendOp.Subtract,
+                BlendOperation.ReverseSubtract => Hexa.NET.D3D11.BlendOp.RevSubtract,
+                BlendOperation.Min => Hexa.NET.D3D11.BlendOp.Min,
+                BlendOperation.Max => Hexa.NET.D3D11.BlendOp.Max,
                 _ => 0
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BufferDesc Convert(BufferDescription description)
+        public static Hexa.NET.D3D11.BufferDesc Convert(BufferDescription description)
         {
             return new()
             {
@@ -1527,119 +1527,119 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.CpuAccessFlag Convert(CpuAccessFlags flags)
+        public static Hexa.NET.D3D11.CpuAccessFlag Convert(CpuAccessFlags flags)
         {
-            Silk.NET.Direct3D11.CpuAccessFlag result = 0;
+            Hexa.NET.D3D11.CpuAccessFlag result = 0;
             if ((flags & CpuAccessFlags.Write) != 0)
             {
-                result |= Silk.NET.Direct3D11.CpuAccessFlag.Write;
+                result |= Hexa.NET.D3D11.CpuAccessFlag.Write;
             }
 
             if ((flags & CpuAccessFlags.Read) != 0)
             {
-                result |= Silk.NET.Direct3D11.CpuAccessFlag.Read;
+                result |= Hexa.NET.D3D11.CpuAccessFlag.Read;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.ResourceMiscFlag Convert(ResourceMiscFlag flags)
+        public static Hexa.NET.D3D11.ResourceMiscFlag Convert(ResourceMiscFlag flags)
         {
-            Silk.NET.Direct3D11.ResourceMiscFlag result = 0;
+            Hexa.NET.D3D11.ResourceMiscFlag result = 0;
             if ((flags & ResourceMiscFlag.GenerateMips) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.GenerateMips;
             }
 
             if ((flags & ResourceMiscFlag.Shared) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Shared;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.Shared;
             }
 
             if ((flags & ResourceMiscFlag.TextureCube) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.Texturecube;
             }
 
             if ((flags & ResourceMiscFlag.DrawIndirectArguments) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.DrawindirectArgs;
             }
 
             if ((flags & ResourceMiscFlag.BufferAllowRawViews) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.BufferAllowRawViews;
             }
 
             if ((flags & ResourceMiscFlag.BufferStructured) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.BufferStructured;
             }
 
             if ((flags & ResourceMiscFlag.ResourceClamp) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.Clamp;
             }
 
             if ((flags & ResourceMiscFlag.SharedKeyedMutex) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.SharedKeyedmutex;
             }
 
             if ((flags & ResourceMiscFlag.GdiCompatible) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.GdiCompatible;
             }
 
             if ((flags & ResourceMiscFlag.SharedNTHandle) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.SharedNthandle;
             }
 
             if ((flags & ResourceMiscFlag.RestrictedContent) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.RestrictedContent;
             }
 
             if ((flags & ResourceMiscFlag.RestrictSharedResource) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.RestrictSharedResource;
             }
 
             if ((flags & ResourceMiscFlag.RestrictSharedResourceDriver) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.RestrictSharedResourceDriver;
             }
 
             if ((flags & ResourceMiscFlag.Guarded) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Guarded;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.Guarded;
             }
 
             if ((flags & ResourceMiscFlag.TilePool) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.TilePool;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.TilePool;
             }
 
             if ((flags & ResourceMiscFlag.Tiled) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Tiled;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.Tiled;
             }
 
             if ((flags & ResourceMiscFlag.HardwareProtected) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.HwProtected;
             }
 
             if ((flags & ResourceMiscFlag.SharedDisplayable) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.SharedDisplayable;
             }
 
             if ((flags & ResourceMiscFlag.SharedExclusiveWriter) != 0)
             {
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter;
+                result |= Hexa.NET.D3D11.ResourceMiscFlag.SharedExclusiveWriter;
             }
 
             if ((flags & ResourceMiscFlag.None) != 0)
@@ -1651,77 +1651,77 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.Usage Convert(Usage usage)
+        public static Hexa.NET.D3D11.Usage Convert(Usage usage)
         {
             return usage switch
             {
-                Usage.Default => Silk.NET.Direct3D11.Usage.Default,
-                Usage.Immutable => Silk.NET.Direct3D11.Usage.Immutable,
-                Usage.Dynamic => Silk.NET.Direct3D11.Usage.Dynamic,
-                Usage.Staging => Silk.NET.Direct3D11.Usage.Staging,
+                Usage.Default => Hexa.NET.D3D11.Usage.Default,
+                Usage.Immutable => Hexa.NET.D3D11.Usage.Immutable,
+                Usage.Dynamic => Hexa.NET.D3D11.Usage.Dynamic,
+                Usage.Staging => Hexa.NET.D3D11.Usage.Staging,
                 _ => throw new ArgumentOutOfRangeException(nameof(usage))
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BindFlag Convert(BindFlags flags)
+        public static Hexa.NET.D3D11.BindFlag Convert(BindFlags flags)
         {
-            Silk.NET.Direct3D11.BindFlag result = 0;
+            Hexa.NET.D3D11.BindFlag result = 0;
             if ((flags & BindFlags.VertexBuffer) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.VertexBuffer;
+                result |= Hexa.NET.D3D11.BindFlag.VertexBuffer;
             }
 
             if ((flags & BindFlags.IndexBuffer) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.IndexBuffer;
+                result |= Hexa.NET.D3D11.BindFlag.IndexBuffer;
             }
 
             if ((flags & BindFlags.ConstantBuffer) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.ConstantBuffer;
+                result |= Hexa.NET.D3D11.BindFlag.ConstantBuffer;
             }
 
             if ((flags & BindFlags.ShaderResource) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.ShaderResource;
+                result |= Hexa.NET.D3D11.BindFlag.ShaderResource;
             }
 
             if ((flags & BindFlags.StreamOutput) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.StreamOutput;
+                result |= Hexa.NET.D3D11.BindFlag.StreamOutput;
             }
 
             if ((flags & BindFlags.RenderTarget) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.RenderTarget;
+                result |= Hexa.NET.D3D11.BindFlag.RenderTarget;
             }
 
             if ((flags & BindFlags.DepthStencil) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.DepthStencil;
+                result |= Hexa.NET.D3D11.BindFlag.DepthStencil;
             }
 
             if ((flags & BindFlags.UnorderedAccess) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.UnorderedAccess;
+                result |= Hexa.NET.D3D11.BindFlag.UnorderedAccess;
             }
 
             if ((flags & BindFlags.Decoder) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.Decoder;
+                result |= Hexa.NET.D3D11.BindFlag.Decoder;
             }
 
             if ((flags & BindFlags.VideoEncoder) != 0)
             {
-                result |= Silk.NET.Direct3D11.BindFlag.VideoEncoder;
+                result |= Hexa.NET.D3D11.BindFlag.VideoEncoder;
             }
 
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Convert(InputElementDescription[] inputElements, Silk.NET.Direct3D11.InputElementDesc* descs)
+        public static void Convert(InputElementDescription[] inputElements, Hexa.NET.D3D11.InputElementDesc* descs)
         {
             for (int i = 0; i < inputElements.Length; i++)
             {
@@ -1730,7 +1730,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Free(Silk.NET.Direct3D11.InputElementDesc* descs, int count)
+        public static void Free(Hexa.NET.D3D11.InputElementDesc* descs, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -1739,7 +1739,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.InputElementDesc Convert(InputElementDescription description)
+        public static Hexa.NET.D3D11.InputElementDesc Convert(InputElementDescription description)
         {
             return new()
             {
@@ -1754,280 +1754,280 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.InputClassification Convert(InputClassification classification)
+        public static Hexa.NET.D3D11.InputClassification Convert(InputClassification classification)
         {
             return classification switch
             {
-                InputClassification.PerVertexData => Silk.NET.Direct3D11.InputClassification.PerVertexData,
-                InputClassification.PerInstanceData => Silk.NET.Direct3D11.InputClassification.PerInstanceData,
+                InputClassification.PerVertexData => Hexa.NET.D3D11.InputClassification.PerVertexData,
+                InputClassification.PerInstanceData => Hexa.NET.D3D11.InputClassification.PerInstanceData,
                 _ => throw new NotSupportedException()
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.Format Convert(Format format)
+        public static Hexa.NET.DXGI.Format Convert(Format format)
         {
             return format switch
             {
-                Format.Unknown => Silk.NET.DXGI.Format.FormatUnknown,
-                Format.R32G32B32A32Typeless => Silk.NET.DXGI.Format.FormatR32G32B32A32Typeless,
-                Format.R32G32B32A32Float => Silk.NET.DXGI.Format.FormatR32G32B32A32Float,
-                Format.R32G32B32A32UInt => Silk.NET.DXGI.Format.FormatR32G32B32A32Uint,
-                Format.R32G32B32A32SInt => Silk.NET.DXGI.Format.FormatR32G32B32A32Sint,
-                Format.R32G32B32Typeless => Silk.NET.DXGI.Format.FormatR32G32B32Typeless,
-                Format.R32G32B32Float => Silk.NET.DXGI.Format.FormatR32G32B32Float,
-                Format.R32G32B32UInt => Silk.NET.DXGI.Format.FormatR32G32B32Uint,
-                Format.R32G32B32SInt => Silk.NET.DXGI.Format.FormatR32G32B32Sint,
-                Format.R16G16B16A16Typeless => Silk.NET.DXGI.Format.FormatR16G16B16A16Typeless,
-                Format.R16G16B16A16Float => Silk.NET.DXGI.Format.FormatR16G16B16A16Float,
-                Format.R16G16B16A16UNorm => Silk.NET.DXGI.Format.FormatR16G16B16A16Unorm,
-                Format.R16G16B16A16UInt => Silk.NET.DXGI.Format.FormatR16G16B16A16Uint,
-                Format.R16G16B16A16SNorm => Silk.NET.DXGI.Format.FormatR16G16B16A16SNorm,
-                Format.R16G16B16A16Sint => Silk.NET.DXGI.Format.FormatR16G16B16A16Sint,
-                Format.R32G32Typeless => Silk.NET.DXGI.Format.FormatR32G32Typeless,
-                Format.R32G32Float => Silk.NET.DXGI.Format.FormatR32G32Float,
-                Format.R32G32UInt => Silk.NET.DXGI.Format.FormatR32G32Uint,
-                Format.R32G32SInt => Silk.NET.DXGI.Format.FormatR32G32Sint,
-                Format.R32G8X24Typeless => Silk.NET.DXGI.Format.FormatR32G8X24Typeless,
-                Format.D32FloatS8X24UInt => Silk.NET.DXGI.Format.FormatD32FloatS8X24Uint,
-                Format.R32FloatX8X24Typeless => Silk.NET.DXGI.Format.FormatR32FloatX8X24Typeless,
-                Format.X32TypelessG8X24UInt => Silk.NET.DXGI.Format.FormatX32TypelessG8X24Uint,
-                Format.R10G10B10A2Typeless => Silk.NET.DXGI.Format.FormatR10G10B10A2Typeless,
-                Format.R10G10B10A2UNorm => Silk.NET.DXGI.Format.FormatR10G10B10A2Unorm,
-                Format.R10G10B10A2UInt => Silk.NET.DXGI.Format.FormatR10G10B10A2Uint,
-                Format.R11G11B10Float => Silk.NET.DXGI.Format.FormatR11G11B10Float,
-                Format.R8G8B8A8Typeless => Silk.NET.DXGI.Format.FormatR8G8B8A8Typeless,
-                Format.R8G8B8A8UNorm => Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
-                Format.R8G8B8A8UNormSRGB => Silk.NET.DXGI.Format.FormatR8G8B8A8UnormSrgb,
-                Format.R8G8B8A8UInt => Silk.NET.DXGI.Format.FormatR8G8B8A8Uint,
-                Format.R8G8B8A8SNorm => Silk.NET.DXGI.Format.FormatR8G8B8A8SNorm,
-                Format.R8G8B8A8SInt => Silk.NET.DXGI.Format.FormatR8G8B8A8Sint,
-                Format.R16G16Typeless => Silk.NET.DXGI.Format.FormatR16G16Typeless,
-                Format.R16G16Float => Silk.NET.DXGI.Format.FormatR16G16Float,
-                Format.R16G16UNorm => Silk.NET.DXGI.Format.FormatR16G16Unorm,
-                Format.R16G16UInt => Silk.NET.DXGI.Format.FormatR16G16Uint,
-                Format.R16G16SNorm => Silk.NET.DXGI.Format.FormatR16G16SNorm,
-                Format.R16G16Sint => Silk.NET.DXGI.Format.FormatR16G16Sint,
-                Format.R32Typeless => Silk.NET.DXGI.Format.FormatR32Typeless,
-                Format.D32Float => Silk.NET.DXGI.Format.FormatD32Float,
-                Format.R32Float => Silk.NET.DXGI.Format.FormatR32Float,
-                Format.R32UInt => Silk.NET.DXGI.Format.FormatR32Uint,
-                Format.R32SInt => Silk.NET.DXGI.Format.FormatR32Sint,
-                Format.R24G8Typeless => Silk.NET.DXGI.Format.FormatR24G8Typeless,
-                Format.D24UNormS8UInt => Silk.NET.DXGI.Format.FormatD24UnormS8Uint,
-                Format.R24UNormX8Typeless => Silk.NET.DXGI.Format.FormatR24UnormX8Typeless,
-                Format.X24TypelessG8UInt => Silk.NET.DXGI.Format.FormatX24TypelessG8Uint,
-                Format.R8G8Typeless => Silk.NET.DXGI.Format.FormatR8G8Typeless,
-                Format.R8G8UNorm => Silk.NET.DXGI.Format.FormatR8G8Unorm,
-                Format.R8G8UInt => Silk.NET.DXGI.Format.FormatR8G8Uint,
-                Format.R8G8SNorm => Silk.NET.DXGI.Format.FormatR8G8SNorm,
-                Format.R8G8Sint => Silk.NET.DXGI.Format.FormatR8G8Sint,
-                Format.R16Typeless => Silk.NET.DXGI.Format.FormatR16Typeless,
-                Format.R16Float => Silk.NET.DXGI.Format.FormatR16Float,
-                Format.D16UNorm => Silk.NET.DXGI.Format.FormatD16Unorm,
-                Format.R16UNorm => Silk.NET.DXGI.Format.FormatR16Unorm,
-                Format.R16UInt => Silk.NET.DXGI.Format.FormatR16Uint,
-                Format.R16SNorm => Silk.NET.DXGI.Format.FormatR16SNorm,
-                Format.R16Sint => Silk.NET.DXGI.Format.FormatR16Sint,
-                Format.R8Typeless => Silk.NET.DXGI.Format.FormatR8Typeless,
-                Format.R8UNorm => Silk.NET.DXGI.Format.FormatR8Unorm,
-                Format.R8UInt => Silk.NET.DXGI.Format.FormatR8Uint,
-                Format.R8SNorm => Silk.NET.DXGI.Format.FormatR8SNorm,
-                Format.R8SInt => Silk.NET.DXGI.Format.FormatR8Sint,
-                Format.A8UNorm => Silk.NET.DXGI.Format.FormatA8Unorm,
-                Format.R1UNorm => Silk.NET.DXGI.Format.FormatR1Unorm,
-                Format.R9G9B9E5SharedExp => Silk.NET.DXGI.Format.FormatR9G9B9E5Sharedexp,
-                Format.R8G8B8G8UNorm => Silk.NET.DXGI.Format.FormatR8G8B8G8Unorm,
-                Format.G8R8G8B8UNorm => Silk.NET.DXGI.Format.FormatG8R8G8B8Unorm,
-                Format.BC1Typeless => Silk.NET.DXGI.Format.FormatBC1Typeless,
-                Format.BC1UNorm => Silk.NET.DXGI.Format.FormatBC1Unorm,
-                Format.BC1UNormSRGB => Silk.NET.DXGI.Format.FormatBC1UnormSrgb,
-                Format.BC2Typeless => Silk.NET.DXGI.Format.FormatBC2Typeless,
-                Format.BC2UNorm => Silk.NET.DXGI.Format.FormatBC2Unorm,
-                Format.BC2UNormSRGB => Silk.NET.DXGI.Format.FormatBC2UnormSrgb,
-                Format.BC3Typeless => Silk.NET.DXGI.Format.FormatBC3Typeless,
-                Format.BC3UNorm => Silk.NET.DXGI.Format.FormatBC3Unorm,
-                Format.BC3UNormSRGB => Silk.NET.DXGI.Format.FormatBC3UnormSrgb,
-                Format.BC4Typeless => Silk.NET.DXGI.Format.FormatBC4Typeless,
-                Format.BC4UNorm => Silk.NET.DXGI.Format.FormatBC4Unorm,
-                Format.BC4SNorm => Silk.NET.DXGI.Format.FormatBC4SNorm,
-                Format.BC5Typeless => Silk.NET.DXGI.Format.FormatBC5Typeless,
-                Format.BC5UNorm => Silk.NET.DXGI.Format.FormatBC5Unorm,
-                Format.BC5SNorm => Silk.NET.DXGI.Format.FormatBC5SNorm,
-                Format.B5G6R5UNorm => Silk.NET.DXGI.Format.FormatB5G6R5Unorm,
-                Format.B5G5R5A1UNorm => Silk.NET.DXGI.Format.FormatB5G5R5A1Unorm,
-                Format.B8G8R8A8UNorm => Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
-                Format.B8G8R8X8UNorm => Silk.NET.DXGI.Format.FormatB8G8R8X8Unorm,
-                Format.R10G10B10XRBiasA2UNorm => Silk.NET.DXGI.Format.FormatR10G10B10XRBiasA2Unorm,
-                Format.B8G8R8A8Typeless => Silk.NET.DXGI.Format.FormatB8G8R8A8Typeless,
-                Format.B8G8R8A8UNormSRGB => Silk.NET.DXGI.Format.FormatB8G8R8A8UnormSrgb,
-                Format.B8G8R8X8Typeless => Silk.NET.DXGI.Format.FormatB8G8R8X8Typeless,
-                Format.B8G8R8X8UNormSRGB => Silk.NET.DXGI.Format.FormatB8G8R8X8UnormSrgb,
-                Format.BC6HTypeless => Silk.NET.DXGI.Format.FormatBC6HTypeless,
-                Format.BC6HUF16 => Silk.NET.DXGI.Format.FormatBC6HUF16,
-                Format.BC6HSF16 => Silk.NET.DXGI.Format.FormatBC6HSF16,
-                Format.BC7Typeless => Silk.NET.DXGI.Format.FormatBC7Typeless,
-                Format.BC7UNorm => Silk.NET.DXGI.Format.FormatBC7Unorm,
-                Format.BC7UNormSRGB => Silk.NET.DXGI.Format.FormatBC7UnormSrgb,
-                Format.AYUV => Silk.NET.DXGI.Format.FormatAyuv,
-                Format.Y410 => Silk.NET.DXGI.Format.FormatY410,
-                Format.Y416 => Silk.NET.DXGI.Format.FormatY416,
-                Format.NV12 => Silk.NET.DXGI.Format.FormatNV12,
-                Format.P010 => Silk.NET.DXGI.Format.FormatP010,
-                Format.P016 => Silk.NET.DXGI.Format.FormatP016,
-                Format.Opaque420 => Silk.NET.DXGI.Format.Format420Opaque,
-                Format.YUY2 => Silk.NET.DXGI.Format.FormatYuy2,
-                Format.Y210 => Silk.NET.DXGI.Format.FormatY210,
-                Format.Y216 => Silk.NET.DXGI.Format.FormatY216,
-                Format.NV11 => Silk.NET.DXGI.Format.FormatNV11,
-                Format.AI44 => Silk.NET.DXGI.Format.FormatAI44,
-                Format.IA44 => Silk.NET.DXGI.Format.FormatIA44,
-                Format.P8 => Silk.NET.DXGI.Format.FormatP8,
-                Format.A8P8 => Silk.NET.DXGI.Format.FormatA8P8,
-                Format.B4G4R4A4UNorm => Silk.NET.DXGI.Format.FormatB4G4R4A4Unorm,
-                Format.P208 => Silk.NET.DXGI.Format.FormatP208,
-                Format.V208 => Silk.NET.DXGI.Format.FormatV208,
-                Format.V408 => Silk.NET.DXGI.Format.FormatV408,
-                Format.SamplerFeedbackMinMipOpaque => Silk.NET.DXGI.Format.FormatSamplerFeedbackMinMipOpaque,
-                Format.SamplerFeedbackMipRegionUsedOpaque => Silk.NET.DXGI.Format.FormatSamplerFeedbackMipRegionUsedOpaque,
-                Format.ForceUInt => Silk.NET.DXGI.Format.FormatForceUint,
-                _ => Silk.NET.DXGI.Format.FormatUnknown,
+                Format.Unknown => Hexa.NET.DXGI.Format.Unknown,
+                Format.R32G32B32A32Typeless => Hexa.NET.DXGI.Format.R32G32B32A32Typeless,
+                Format.R32G32B32A32Float => Hexa.NET.DXGI.Format.R32G32B32A32Float,
+                Format.R32G32B32A32UInt => Hexa.NET.DXGI.Format.R32G32B32A32Uint,
+                Format.R32G32B32A32SInt => Hexa.NET.DXGI.Format.R32G32B32A32Sint,
+                Format.R32G32B32Typeless => Hexa.NET.DXGI.Format.R32G32B32Typeless,
+                Format.R32G32B32Float => Hexa.NET.DXGI.Format.R32G32B32Float,
+                Format.R32G32B32UInt => Hexa.NET.DXGI.Format.R32G32B32Uint,
+                Format.R32G32B32SInt => Hexa.NET.DXGI.Format.R32G32B32Sint,
+                Format.R16G16B16A16Typeless => Hexa.NET.DXGI.Format.R16G16B16A16Typeless,
+                Format.R16G16B16A16Float => Hexa.NET.DXGI.Format.R16G16B16A16Float,
+                Format.R16G16B16A16UNorm => Hexa.NET.DXGI.Format.R16G16B16A16Unorm,
+                Format.R16G16B16A16UInt => Hexa.NET.DXGI.Format.R16G16B16A16Uint,
+                Format.R16G16B16A16SNorm => Hexa.NET.DXGI.Format.R16G16B16A16Snorm,
+                Format.R16G16B16A16Sint => Hexa.NET.DXGI.Format.R16G16B16A16Sint,
+                Format.R32G32Typeless => Hexa.NET.DXGI.Format.R32G32Typeless,
+                Format.R32G32Float => Hexa.NET.DXGI.Format.R32G32Float,
+                Format.R32G32UInt => Hexa.NET.DXGI.Format.R32G32Uint,
+                Format.R32G32SInt => Hexa.NET.DXGI.Format.R32G32Sint,
+                Format.R32G8X24Typeless => Hexa.NET.DXGI.Format.R32G8X24Typeless,
+                Format.D32FloatS8X24UInt => Hexa.NET.DXGI.Format.D32FloatS8X24Uint,
+                Format.R32FloatX8X24Typeless => Hexa.NET.DXGI.Format.R32FloatX8X24Typeless,
+                Format.X32TypelessG8X24UInt => Hexa.NET.DXGI.Format.X32TypelessG8X24Uint,
+                Format.R10G10B10A2Typeless => Hexa.NET.DXGI.Format.R10G10B10A2Typeless,
+                Format.R10G10B10A2UNorm => Hexa.NET.DXGI.Format.R10G10B10A2Unorm,
+                Format.R10G10B10A2UInt => Hexa.NET.DXGI.Format.R10G10B10A2Uint,
+                Format.R11G11B10Float => Hexa.NET.DXGI.Format.R11G11B10Float,
+                Format.R8G8B8A8Typeless => Hexa.NET.DXGI.Format.R8G8B8A8Typeless,
+                Format.R8G8B8A8UNorm => Hexa.NET.DXGI.Format.R8G8B8A8Unorm,
+                Format.R8G8B8A8UNormSRGB => Hexa.NET.DXGI.Format.R8G8B8A8UnormSrgb,
+                Format.R8G8B8A8UInt => Hexa.NET.DXGI.Format.R8G8B8A8Uint,
+                Format.R8G8B8A8SNorm => Hexa.NET.DXGI.Format.R8G8B8A8Snorm,
+                Format.R8G8B8A8SInt => Hexa.NET.DXGI.Format.R8G8B8A8Sint,
+                Format.R16G16Typeless => Hexa.NET.DXGI.Format.R16G16Typeless,
+                Format.R16G16Float => Hexa.NET.DXGI.Format.R16G16Float,
+                Format.R16G16UNorm => Hexa.NET.DXGI.Format.R16G16Unorm,
+                Format.R16G16UInt => Hexa.NET.DXGI.Format.R16G16Uint,
+                Format.R16G16SNorm => Hexa.NET.DXGI.Format.R16G16Snorm,
+                Format.R16G16Sint => Hexa.NET.DXGI.Format.R16G16Sint,
+                Format.R32Typeless => Hexa.NET.DXGI.Format.R32Typeless,
+                Format.D32Float => Hexa.NET.DXGI.Format.D32Float,
+                Format.R32Float => Hexa.NET.DXGI.Format.R32Float,
+                Format.R32UInt => Hexa.NET.DXGI.Format.R32Uint,
+                Format.R32SInt => Hexa.NET.DXGI.Format.R32Sint,
+                Format.R24G8Typeless => Hexa.NET.DXGI.Format.R24G8Typeless,
+                Format.D24UNormS8UInt => Hexa.NET.DXGI.Format.D24UnormS8Uint,
+                Format.R24UNormX8Typeless => Hexa.NET.DXGI.Format.R24UnormX8Typeless,
+                Format.X24TypelessG8UInt => Hexa.NET.DXGI.Format.X24TypelessG8Uint,
+                Format.R8G8Typeless => Hexa.NET.DXGI.Format.R8G8Typeless,
+                Format.R8G8UNorm => Hexa.NET.DXGI.Format.R8G8Unorm,
+                Format.R8G8UInt => Hexa.NET.DXGI.Format.R8G8Uint,
+                Format.R8G8SNorm => Hexa.NET.DXGI.Format.R8G8Snorm,
+                Format.R8G8Sint => Hexa.NET.DXGI.Format.R8G8Sint,
+                Format.R16Typeless => Hexa.NET.DXGI.Format.R16Typeless,
+                Format.R16Float => Hexa.NET.DXGI.Format.R16Float,
+                Format.D16UNorm => Hexa.NET.DXGI.Format.D16Unorm,
+                Format.R16UNorm => Hexa.NET.DXGI.Format.R16Unorm,
+                Format.R16UInt => Hexa.NET.DXGI.Format.R16Uint,
+                Format.R16SNorm => Hexa.NET.DXGI.Format.R16Snorm,
+                Format.R16Sint => Hexa.NET.DXGI.Format.R16Sint,
+                Format.R8Typeless => Hexa.NET.DXGI.Format.R8Typeless,
+                Format.R8UNorm => Hexa.NET.DXGI.Format.R8Unorm,
+                Format.R8UInt => Hexa.NET.DXGI.Format.R8Uint,
+                Format.R8SNorm => Hexa.NET.DXGI.Format.R8Snorm,
+                Format.R8SInt => Hexa.NET.DXGI.Format.R8Sint,
+                Format.A8UNorm => Hexa.NET.DXGI.Format.A8Unorm,
+                Format.R1UNorm => Hexa.NET.DXGI.Format.R1Unorm,
+                Format.R9G9B9E5SharedExp => Hexa.NET.DXGI.Format.R9G9B9E5Sharedexp,
+                Format.R8G8B8G8UNorm => Hexa.NET.DXGI.Format.R8G8B8G8Unorm,
+                Format.G8R8G8B8UNorm => Hexa.NET.DXGI.Format.G8R8G8B8Unorm,
+                Format.BC1Typeless => Hexa.NET.DXGI.Format.Bc1Typeless,
+                Format.BC1UNorm => Hexa.NET.DXGI.Format.Bc1Unorm,
+                Format.BC1UNormSRGB => Hexa.NET.DXGI.Format.Bc1UnormSrgb,
+                Format.BC2Typeless => Hexa.NET.DXGI.Format.Bc2Typeless,
+                Format.BC2UNorm => Hexa.NET.DXGI.Format.Bc2Unorm,
+                Format.BC2UNormSRGB => Hexa.NET.DXGI.Format.Bc2UnormSrgb,
+                Format.BC3Typeless => Hexa.NET.DXGI.Format.Bc3Typeless,
+                Format.BC3UNorm => Hexa.NET.DXGI.Format.Bc3Unorm,
+                Format.BC3UNormSRGB => Hexa.NET.DXGI.Format.Bc3UnormSrgb,
+                Format.BC4Typeless => Hexa.NET.DXGI.Format.Bc4Typeless,
+                Format.BC4UNorm => Hexa.NET.DXGI.Format.Bc4Unorm,
+                Format.BC4SNorm => Hexa.NET.DXGI.Format.Bc4Snorm,
+                Format.BC5Typeless => Hexa.NET.DXGI.Format.Bc5Typeless,
+                Format.BC5UNorm => Hexa.NET.DXGI.Format.Bc5Unorm,
+                Format.BC5SNorm => Hexa.NET.DXGI.Format.Bc5Snorm,
+                Format.B5G6R5UNorm => Hexa.NET.DXGI.Format.B5G6R5Unorm,
+                Format.B5G5R5A1UNorm => Hexa.NET.DXGI.Format.B5G5R5A1Unorm,
+                Format.B8G8R8A8UNorm => Hexa.NET.DXGI.Format.B8G8R8A8Unorm,
+                Format.B8G8R8X8UNorm => Hexa.NET.DXGI.Format.B8G8R8X8Unorm,
+                Format.R10G10B10XRBiasA2UNorm => Hexa.NET.DXGI.Format.R10G10B10XrBiasA2Unorm,
+                Format.B8G8R8A8Typeless => Hexa.NET.DXGI.Format.B8G8R8A8Typeless,
+                Format.B8G8R8A8UNormSRGB => Hexa.NET.DXGI.Format.B8G8R8A8UnormSrgb,
+                Format.B8G8R8X8Typeless => Hexa.NET.DXGI.Format.B8G8R8X8Typeless,
+                Format.B8G8R8X8UNormSRGB => Hexa.NET.DXGI.Format.B8G8R8X8UnormSrgb,
+                Format.BC6HTypeless => Hexa.NET.DXGI.Format.Bc6HTypeless,
+                Format.BC6HUF16 => Hexa.NET.DXGI.Format.Bc6HUf16,
+                Format.BC6HSF16 => Hexa.NET.DXGI.Format.Bc6HSf16,
+                Format.BC7Typeless => Hexa.NET.DXGI.Format.Bc7Typeless,
+                Format.BC7UNorm => Hexa.NET.DXGI.Format.Bc7Unorm,
+                Format.BC7UNormSRGB => Hexa.NET.DXGI.Format.Bc7UnormSrgb,
+                Format.AYUV => Hexa.NET.DXGI.Format.Ayuv,
+                Format.Y410 => Hexa.NET.DXGI.Format.Y410,
+                Format.Y416 => Hexa.NET.DXGI.Format.Y416,
+                Format.NV12 => Hexa.NET.DXGI.Format.Nv12,
+                Format.P010 => Hexa.NET.DXGI.Format.P010,
+                Format.P016 => Hexa.NET.DXGI.Format.P016,
+                Format.Opaque420 => Hexa.NET.DXGI.Format.Format420Opaque,
+                Format.YUY2 => Hexa.NET.DXGI.Format.Yuy2,
+                Format.Y210 => Hexa.NET.DXGI.Format.Y210,
+                Format.Y216 => Hexa.NET.DXGI.Format.Y216,
+                Format.NV11 => Hexa.NET.DXGI.Format.Nv11,
+                Format.AI44 => Hexa.NET.DXGI.Format.Ai44,
+                Format.IA44 => Hexa.NET.DXGI.Format.Ia44,
+                Format.P8 => Hexa.NET.DXGI.Format.P8,
+                Format.A8P8 => Hexa.NET.DXGI.Format.A8P8,
+                Format.B4G4R4A4UNorm => Hexa.NET.DXGI.Format.B4G4R4A4Unorm,
+                Format.P208 => Hexa.NET.DXGI.Format.P208,
+                Format.V208 => Hexa.NET.DXGI.Format.V208,
+                Format.V408 => Hexa.NET.DXGI.Format.V408,
+                Format.SamplerFeedbackMinMipOpaque => Hexa.NET.DXGI.Format.SamplerFeedbackMinMipOpaque,
+                Format.SamplerFeedbackMipRegionUsedOpaque => Hexa.NET.DXGI.Format.SamplerFeedbackMipRegionUsedOpaque,
+                Format.ForceUInt => Hexa.NET.DXGI.Format.ForceUint,
+                _ => Hexa.NET.DXGI.Format.Unknown,
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Format ConvertBack(Silk.NET.DXGI.Format format)
+        public static Format ConvertBack(Hexa.NET.DXGI.Format format)
         {
             return format switch
             {
-                Silk.NET.DXGI.Format.FormatUnknown => Format.Unknown,
-                Silk.NET.DXGI.Format.FormatR32G32B32A32Typeless => Format.R32G32B32A32Typeless,
-                Silk.NET.DXGI.Format.FormatR32G32B32A32Float => Format.R32G32B32A32Float,
-                Silk.NET.DXGI.Format.FormatR32G32B32A32Uint => Format.R32G32B32A32UInt,
-                Silk.NET.DXGI.Format.FormatR32G32B32A32Sint => Format.R32G32B32A32SInt,
-                Silk.NET.DXGI.Format.FormatR32G32B32Typeless => Format.R32G32B32Typeless,
-                Silk.NET.DXGI.Format.FormatR32G32B32Float => Format.R32G32B32Float,
-                Silk.NET.DXGI.Format.FormatR32G32B32Uint => Format.R32G32B32UInt,
-                Silk.NET.DXGI.Format.FormatR32G32B32Sint => Format.R32G32B32SInt,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16Typeless => Format.R16G16B16A16Typeless,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16Float => Format.R16G16B16A16Float,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16Unorm => Format.R16G16B16A16UNorm,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16Uint => Format.R16G16B16A16UInt,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16SNorm => Format.R16G16B16A16SNorm,
-                Silk.NET.DXGI.Format.FormatR16G16B16A16Sint => Format.R16G16B16A16Sint,
-                Silk.NET.DXGI.Format.FormatR32G32Typeless => Format.R32G32Typeless,
-                Silk.NET.DXGI.Format.FormatR32G32Float => Format.R32G32Float,
-                Silk.NET.DXGI.Format.FormatR32G32Uint => Format.R32G32UInt,
-                Silk.NET.DXGI.Format.FormatR32G32Sint => Format.R32G32SInt,
-                Silk.NET.DXGI.Format.FormatR32G8X24Typeless => Format.R32G8X24Typeless,
-                Silk.NET.DXGI.Format.FormatD32FloatS8X24Uint => Format.D32FloatS8X24UInt,
-                Silk.NET.DXGI.Format.FormatR32FloatX8X24Typeless => Format.R32FloatX8X24Typeless,
-                Silk.NET.DXGI.Format.FormatX32TypelessG8X24Uint => Format.X32TypelessG8X24UInt,
-                Silk.NET.DXGI.Format.FormatR10G10B10A2Typeless => Format.R10G10B10A2Typeless,
-                Silk.NET.DXGI.Format.FormatR10G10B10A2Unorm => Format.R10G10B10A2UNorm,
-                Silk.NET.DXGI.Format.FormatR10G10B10A2Uint => Format.R10G10B10A2UInt,
-                Silk.NET.DXGI.Format.FormatR11G11B10Float => Format.R11G11B10Float,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8Typeless => Format.R8G8B8A8Typeless,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm => Format.R8G8B8A8UNorm,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8UnormSrgb => Format.R8G8B8A8UNormSRGB,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8Uint => Format.R8G8B8A8UInt,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8SNorm => Format.R8G8B8A8SNorm,
-                Silk.NET.DXGI.Format.FormatR8G8B8A8Sint => Format.R8G8B8A8SInt,
-                Silk.NET.DXGI.Format.FormatR16G16Typeless => Format.R16G16Typeless,
-                Silk.NET.DXGI.Format.FormatR16G16Float => Format.R16G16Float,
-                Silk.NET.DXGI.Format.FormatR16G16Unorm => Format.R16G16UNorm,
-                Silk.NET.DXGI.Format.FormatR16G16Uint => Format.R16G16UInt,
-                Silk.NET.DXGI.Format.FormatR16G16SNorm => Format.R16G16SNorm,
-                Silk.NET.DXGI.Format.FormatR16G16Sint => Format.R16G16Sint,
-                Silk.NET.DXGI.Format.FormatR32Typeless => Format.R32Typeless,
-                Silk.NET.DXGI.Format.FormatD32Float => Format.D32Float,
-                Silk.NET.DXGI.Format.FormatR32Float => Format.R32Float,
-                Silk.NET.DXGI.Format.FormatR32Uint => Format.R32UInt,
-                Silk.NET.DXGI.Format.FormatR32Sint => Format.R32SInt,
-                Silk.NET.DXGI.Format.FormatR24G8Typeless => Format.R24G8Typeless,
-                Silk.NET.DXGI.Format.FormatD24UnormS8Uint => Format.D24UNormS8UInt,
-                Silk.NET.DXGI.Format.FormatR24UnormX8Typeless => Format.R24UNormX8Typeless,
-                Silk.NET.DXGI.Format.FormatX24TypelessG8Uint => Format.X24TypelessG8UInt,
-                Silk.NET.DXGI.Format.FormatR8G8Typeless => Format.R8G8Typeless,
-                Silk.NET.DXGI.Format.FormatR8G8Unorm => Format.R8G8UNorm,
-                Silk.NET.DXGI.Format.FormatR8G8Uint => Format.R8G8UInt,
-                Silk.NET.DXGI.Format.FormatR8G8SNorm => Format.R8G8SNorm,
-                Silk.NET.DXGI.Format.FormatR8G8Sint => Format.R8G8Sint,
-                Silk.NET.DXGI.Format.FormatR16Typeless => Format.R16Typeless,
-                Silk.NET.DXGI.Format.FormatR16Float => Format.R16Float,
-                Silk.NET.DXGI.Format.FormatD16Unorm => Format.D16UNorm,
-                Silk.NET.DXGI.Format.FormatR16Unorm => Format.R16UNorm,
-                Silk.NET.DXGI.Format.FormatR16Uint => Format.R16UInt,
-                Silk.NET.DXGI.Format.FormatR16SNorm => Format.R16SNorm,
-                Silk.NET.DXGI.Format.FormatR16Sint => Format.R16Sint,
-                Silk.NET.DXGI.Format.FormatR8Typeless => Format.R8Typeless,
-                Silk.NET.DXGI.Format.FormatR8Unorm => Format.R8UNorm,
-                Silk.NET.DXGI.Format.FormatR8Uint => Format.R8UInt,
-                Silk.NET.DXGI.Format.FormatR8SNorm => Format.R8SNorm,
-                Silk.NET.DXGI.Format.FormatR8Sint => Format.R8SInt,
-                Silk.NET.DXGI.Format.FormatA8Unorm => Format.A8UNorm,
-                Silk.NET.DXGI.Format.FormatR1Unorm => Format.R1UNorm,
-                Silk.NET.DXGI.Format.FormatR9G9B9E5Sharedexp => Format.R9G9B9E5SharedExp,
-                Silk.NET.DXGI.Format.FormatR8G8B8G8Unorm => Format.R8G8B8G8UNorm,
-                Silk.NET.DXGI.Format.FormatG8R8G8B8Unorm => Format.G8R8G8B8UNorm,
-                Silk.NET.DXGI.Format.FormatBC1Typeless => Format.BC1Typeless,
-                Silk.NET.DXGI.Format.FormatBC1Unorm => Format.BC1UNorm,
-                Silk.NET.DXGI.Format.FormatBC1UnormSrgb => Format.BC1UNormSRGB,
-                Silk.NET.DXGI.Format.FormatBC2Typeless => Format.BC2Typeless,
-                Silk.NET.DXGI.Format.FormatBC2Unorm => Format.BC2UNorm,
-                Silk.NET.DXGI.Format.FormatBC2UnormSrgb => Format.BC2UNormSRGB,
-                Silk.NET.DXGI.Format.FormatBC3Typeless => Format.BC3Typeless,
-                Silk.NET.DXGI.Format.FormatBC3Unorm => Format.BC3UNorm,
-                Silk.NET.DXGI.Format.FormatBC3UnormSrgb => Format.BC3UNormSRGB,
-                Silk.NET.DXGI.Format.FormatBC4Typeless => Format.BC4Typeless,
-                Silk.NET.DXGI.Format.FormatBC4Unorm => Format.BC4UNorm,
-                Silk.NET.DXGI.Format.FormatBC4SNorm => Format.BC4SNorm,
-                Silk.NET.DXGI.Format.FormatBC5Typeless => Format.BC5Typeless,
-                Silk.NET.DXGI.Format.FormatBC5Unorm => Format.BC5UNorm,
-                Silk.NET.DXGI.Format.FormatBC5SNorm => Format.BC5SNorm,
-                Silk.NET.DXGI.Format.FormatB5G6R5Unorm => Format.B5G6R5UNorm,
-                Silk.NET.DXGI.Format.FormatB5G5R5A1Unorm => Format.B5G5R5A1UNorm,
-                Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm => Format.B8G8R8A8UNorm,
-                Silk.NET.DXGI.Format.FormatB8G8R8X8Unorm => Format.B8G8R8X8UNorm,
-                Silk.NET.DXGI.Format.FormatR10G10B10XRBiasA2Unorm => Format.R10G10B10XRBiasA2UNorm,
-                Silk.NET.DXGI.Format.FormatB8G8R8A8Typeless => Format.B8G8R8A8Typeless,
-                Silk.NET.DXGI.Format.FormatB8G8R8A8UnormSrgb => Format.B8G8R8A8UNormSRGB,
-                Silk.NET.DXGI.Format.FormatB8G8R8X8Typeless => Format.B8G8R8X8Typeless,
-                Silk.NET.DXGI.Format.FormatB8G8R8X8UnormSrgb => Format.B8G8R8X8UNormSRGB,
-                Silk.NET.DXGI.Format.FormatBC6HTypeless => Format.BC6HTypeless,
-                Silk.NET.DXGI.Format.FormatBC6HUF16 => Format.BC6HUF16,
-                Silk.NET.DXGI.Format.FormatBC6HSF16 => Format.BC6HSF16,
-                Silk.NET.DXGI.Format.FormatBC7Typeless => Format.BC7Typeless,
-                Silk.NET.DXGI.Format.FormatBC7Unorm => Format.BC7UNorm,
-                Silk.NET.DXGI.Format.FormatBC7UnormSrgb => Format.BC7UNormSRGB,
-                Silk.NET.DXGI.Format.FormatAyuv => Format.AYUV,
-                Silk.NET.DXGI.Format.FormatY410 => Format.Y410,
-                Silk.NET.DXGI.Format.FormatY416 => Format.Y416,
-                Silk.NET.DXGI.Format.FormatNV12 => Format.NV12,
-                Silk.NET.DXGI.Format.FormatP010 => Format.P010,
-                Silk.NET.DXGI.Format.FormatP016 => Format.P016,
-                Silk.NET.DXGI.Format.Format420Opaque => Format.Opaque420,
-                Silk.NET.DXGI.Format.FormatYuy2 => Format.YUY2,
-                Silk.NET.DXGI.Format.FormatY210 => Format.Y210,
-                Silk.NET.DXGI.Format.FormatY216 => Format.Y216,
-                Silk.NET.DXGI.Format.FormatNV11 => Format.NV11,
-                Silk.NET.DXGI.Format.FormatAI44 => Format.AI44,
-                Silk.NET.DXGI.Format.FormatIA44 => Format.IA44,
-                Silk.NET.DXGI.Format.FormatP8 => Format.P8,
-                Silk.NET.DXGI.Format.FormatA8P8 => Format.A8P8,
-                Silk.NET.DXGI.Format.FormatB4G4R4A4Unorm => Format.B4G4R4A4UNorm,
-                Silk.NET.DXGI.Format.FormatP208 => Format.P208,
-                Silk.NET.DXGI.Format.FormatV208 => Format.V208,
-                Silk.NET.DXGI.Format.FormatV408 => Format.V408,
-                Silk.NET.DXGI.Format.FormatSamplerFeedbackMinMipOpaque => Format.SamplerFeedbackMinMipOpaque,
-                Silk.NET.DXGI.Format.FormatSamplerFeedbackMipRegionUsedOpaque => Format.SamplerFeedbackMipRegionUsedOpaque,
-                Silk.NET.DXGI.Format.FormatForceUint => Format.ForceUInt,
+                Hexa.NET.DXGI.Format.Unknown => Format.Unknown,
+                Hexa.NET.DXGI.Format.R32G32B32A32Typeless => Format.R32G32B32A32Typeless,
+                Hexa.NET.DXGI.Format.R32G32B32A32Float => Format.R32G32B32A32Float,
+                Hexa.NET.DXGI.Format.R32G32B32A32Uint => Format.R32G32B32A32UInt,
+                Hexa.NET.DXGI.Format.R32G32B32A32Sint => Format.R32G32B32A32SInt,
+                Hexa.NET.DXGI.Format.R32G32B32Typeless => Format.R32G32B32Typeless,
+                Hexa.NET.DXGI.Format.R32G32B32Float => Format.R32G32B32Float,
+                Hexa.NET.DXGI.Format.R32G32B32Uint => Format.R32G32B32UInt,
+                Hexa.NET.DXGI.Format.R32G32B32Sint => Format.R32G32B32SInt,
+                Hexa.NET.DXGI.Format.R16G16B16A16Typeless => Format.R16G16B16A16Typeless,
+                Hexa.NET.DXGI.Format.R16G16B16A16Float => Format.R16G16B16A16Float,
+                Hexa.NET.DXGI.Format.R16G16B16A16Unorm => Format.R16G16B16A16UNorm,
+                Hexa.NET.DXGI.Format.R16G16B16A16Uint => Format.R16G16B16A16UInt,
+                Hexa.NET.DXGI.Format.R16G16B16A16Snorm => Format.R16G16B16A16SNorm,
+                Hexa.NET.DXGI.Format.R16G16B16A16Sint => Format.R16G16B16A16Sint,
+                Hexa.NET.DXGI.Format.R32G32Typeless => Format.R32G32Typeless,
+                Hexa.NET.DXGI.Format.R32G32Float => Format.R32G32Float,
+                Hexa.NET.DXGI.Format.R32G32Uint => Format.R32G32UInt,
+                Hexa.NET.DXGI.Format.R32G32Sint => Format.R32G32SInt,
+                Hexa.NET.DXGI.Format.R32G8X24Typeless => Format.R32G8X24Typeless,
+                Hexa.NET.DXGI.Format.D32FloatS8X24Uint => Format.D32FloatS8X24UInt,
+                Hexa.NET.DXGI.Format.R32FloatX8X24Typeless => Format.R32FloatX8X24Typeless,
+                Hexa.NET.DXGI.Format.X32TypelessG8X24Uint => Format.X32TypelessG8X24UInt,
+                Hexa.NET.DXGI.Format.R10G10B10A2Typeless => Format.R10G10B10A2Typeless,
+                Hexa.NET.DXGI.Format.R10G10B10A2Unorm => Format.R10G10B10A2UNorm,
+                Hexa.NET.DXGI.Format.R10G10B10A2Uint => Format.R10G10B10A2UInt,
+                Hexa.NET.DXGI.Format.R11G11B10Float => Format.R11G11B10Float,
+                Hexa.NET.DXGI.Format.R8G8B8A8Typeless => Format.R8G8B8A8Typeless,
+                Hexa.NET.DXGI.Format.R8G8B8A8Unorm => Format.R8G8B8A8UNorm,
+                Hexa.NET.DXGI.Format.R8G8B8A8UnormSrgb => Format.R8G8B8A8UNormSRGB,
+                Hexa.NET.DXGI.Format.R8G8B8A8Uint => Format.R8G8B8A8UInt,
+                Hexa.NET.DXGI.Format.R8G8B8A8Snorm => Format.R8G8B8A8SNorm,
+                Hexa.NET.DXGI.Format.R8G8B8A8Sint => Format.R8G8B8A8SInt,
+                Hexa.NET.DXGI.Format.R16G16Typeless => Format.R16G16Typeless,
+                Hexa.NET.DXGI.Format.R16G16Float => Format.R16G16Float,
+                Hexa.NET.DXGI.Format.R16G16Unorm => Format.R16G16UNorm,
+                Hexa.NET.DXGI.Format.R16G16Uint => Format.R16G16UInt,
+                Hexa.NET.DXGI.Format.R16G16Snorm => Format.R16G16SNorm,
+                Hexa.NET.DXGI.Format.R16G16Sint => Format.R16G16Sint,
+                Hexa.NET.DXGI.Format.R32Typeless => Format.R32Typeless,
+                Hexa.NET.DXGI.Format.D32Float => Format.D32Float,
+                Hexa.NET.DXGI.Format.R32Float => Format.R32Float,
+                Hexa.NET.DXGI.Format.R32Uint => Format.R32UInt,
+                Hexa.NET.DXGI.Format.R32Sint => Format.R32SInt,
+                Hexa.NET.DXGI.Format.R24G8Typeless => Format.R24G8Typeless,
+                Hexa.NET.DXGI.Format.D24UnormS8Uint => Format.D24UNormS8UInt,
+                Hexa.NET.DXGI.Format.R24UnormX8Typeless => Format.R24UNormX8Typeless,
+                Hexa.NET.DXGI.Format.X24TypelessG8Uint => Format.X24TypelessG8UInt,
+                Hexa.NET.DXGI.Format.R8G8Typeless => Format.R8G8Typeless,
+                Hexa.NET.DXGI.Format.R8G8Unorm => Format.R8G8UNorm,
+                Hexa.NET.DXGI.Format.R8G8Uint => Format.R8G8UInt,
+                Hexa.NET.DXGI.Format.R8G8Snorm => Format.R8G8SNorm,
+                Hexa.NET.DXGI.Format.R8G8Sint => Format.R8G8Sint,
+                Hexa.NET.DXGI.Format.R16Typeless => Format.R16Typeless,
+                Hexa.NET.DXGI.Format.R16Float => Format.R16Float,
+                Hexa.NET.DXGI.Format.D16Unorm => Format.D16UNorm,
+                Hexa.NET.DXGI.Format.R16Unorm => Format.R16UNorm,
+                Hexa.NET.DXGI.Format.R16Uint => Format.R16UInt,
+                Hexa.NET.DXGI.Format.R16Snorm => Format.R16SNorm,
+                Hexa.NET.DXGI.Format.R16Sint => Format.R16Sint,
+                Hexa.NET.DXGI.Format.R8Typeless => Format.R8Typeless,
+                Hexa.NET.DXGI.Format.R8Unorm => Format.R8UNorm,
+                Hexa.NET.DXGI.Format.R8Uint => Format.R8UInt,
+                Hexa.NET.DXGI.Format.R8Snorm => Format.R8SNorm,
+                Hexa.NET.DXGI.Format.R8Sint => Format.R8SInt,
+                Hexa.NET.DXGI.Format.A8Unorm => Format.A8UNorm,
+                Hexa.NET.DXGI.Format.R1Unorm => Format.R1UNorm,
+                Hexa.NET.DXGI.Format.R9G9B9E5Sharedexp => Format.R9G9B9E5SharedExp,
+                Hexa.NET.DXGI.Format.R8G8B8G8Unorm => Format.R8G8B8G8UNorm,
+                Hexa.NET.DXGI.Format.G8R8G8B8Unorm => Format.G8R8G8B8UNorm,
+                Hexa.NET.DXGI.Format.Bc1Typeless => Format.BC1Typeless,
+                Hexa.NET.DXGI.Format.Bc1Unorm => Format.BC1UNorm,
+                Hexa.NET.DXGI.Format.Bc1UnormSrgb => Format.BC1UNormSRGB,
+                Hexa.NET.DXGI.Format.Bc2Typeless => Format.BC2Typeless,
+                Hexa.NET.DXGI.Format.Bc2Unorm => Format.BC2UNorm,
+                Hexa.NET.DXGI.Format.Bc2UnormSrgb => Format.BC2UNormSRGB,
+                Hexa.NET.DXGI.Format.Bc3Typeless => Format.BC3Typeless,
+                Hexa.NET.DXGI.Format.Bc3Unorm => Format.BC3UNorm,
+                Hexa.NET.DXGI.Format.Bc3UnormSrgb => Format.BC3UNormSRGB,
+                Hexa.NET.DXGI.Format.Bc4Typeless => Format.BC4Typeless,
+                Hexa.NET.DXGI.Format.Bc4Unorm => Format.BC4UNorm,
+                Hexa.NET.DXGI.Format.Bc4Snorm => Format.BC4SNorm,
+                Hexa.NET.DXGI.Format.Bc5Typeless => Format.BC5Typeless,
+                Hexa.NET.DXGI.Format.Bc5Unorm => Format.BC5UNorm,
+                Hexa.NET.DXGI.Format.Bc5Snorm => Format.BC5SNorm,
+                Hexa.NET.DXGI.Format.B5G6R5Unorm => Format.B5G6R5UNorm,
+                Hexa.NET.DXGI.Format.B5G5R5A1Unorm => Format.B5G5R5A1UNorm,
+                Hexa.NET.DXGI.Format.B8G8R8A8Unorm => Format.B8G8R8A8UNorm,
+                Hexa.NET.DXGI.Format.B8G8R8X8Unorm => Format.B8G8R8X8UNorm,
+                Hexa.NET.DXGI.Format.R10G10B10XrBiasA2Unorm => Format.R10G10B10XRBiasA2UNorm,
+                Hexa.NET.DXGI.Format.B8G8R8A8Typeless => Format.B8G8R8A8Typeless,
+                Hexa.NET.DXGI.Format.B8G8R8A8UnormSrgb => Format.B8G8R8A8UNormSRGB,
+                Hexa.NET.DXGI.Format.B8G8R8X8Typeless => Format.B8G8R8X8Typeless,
+                Hexa.NET.DXGI.Format.B8G8R8X8UnormSrgb => Format.B8G8R8X8UNormSRGB,
+                Hexa.NET.DXGI.Format.Bc6HTypeless => Format.BC6HTypeless,
+                Hexa.NET.DXGI.Format.Bc6HUf16 => Format.BC6HUF16,
+                Hexa.NET.DXGI.Format.Bc6HSf16 => Format.BC6HSF16,
+                Hexa.NET.DXGI.Format.Bc7Typeless => Format.BC7Typeless,
+                Hexa.NET.DXGI.Format.Bc7Unorm => Format.BC7UNorm,
+                Hexa.NET.DXGI.Format.Bc7UnormSrgb => Format.BC7UNormSRGB,
+                Hexa.NET.DXGI.Format.Ayuv => Format.AYUV,
+                Hexa.NET.DXGI.Format.Y410 => Format.Y410,
+                Hexa.NET.DXGI.Format.Y416 => Format.Y416,
+                Hexa.NET.DXGI.Format.Nv12 => Format.NV12,
+                Hexa.NET.DXGI.Format.P010 => Format.P010,
+                Hexa.NET.DXGI.Format.P016 => Format.P016,
+                Hexa.NET.DXGI.Format.Format420Opaque => Format.Opaque420,
+                Hexa.NET.DXGI.Format.Yuy2 => Format.YUY2,
+                Hexa.NET.DXGI.Format.Y210 => Format.Y210,
+                Hexa.NET.DXGI.Format.Y216 => Format.Y216,
+                Hexa.NET.DXGI.Format.Nv11 => Format.NV11,
+                Hexa.NET.DXGI.Format.Ai44 => Format.AI44,
+                Hexa.NET.DXGI.Format.Ia44 => Format.IA44,
+                Hexa.NET.DXGI.Format.P8 => Format.P8,
+                Hexa.NET.DXGI.Format.A8P8 => Format.A8P8,
+                Hexa.NET.DXGI.Format.B4G4R4A4Unorm => Format.B4G4R4A4UNorm,
+                Hexa.NET.DXGI.Format.P208 => Format.P208,
+                Hexa.NET.DXGI.Format.V208 => Format.V208,
+                Hexa.NET.DXGI.Format.V408 => Format.V408,
+                Hexa.NET.DXGI.Format.SamplerFeedbackMinMipOpaque => Format.SamplerFeedbackMinMipOpaque,
+                Hexa.NET.DXGI.Format.SamplerFeedbackMipRegionUsedOpaque => Format.SamplerFeedbackMipRegionUsedOpaque,
+                Hexa.NET.DXGI.Format.ForceUint => Format.ForceUInt,
                 _ => Format.Unknown,
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static ShaderInputBindDescription Convert(Silk.NET.Direct3D11.ShaderInputBindDesc shaderInputDesc)
+        internal static ShaderInputBindDescription Convert(Hexa.NET.D3D11.ShaderInputBindDesc shaderInputDesc)
         {
             return new()
             {
@@ -2043,69 +2043,69 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ShaderInputType Convert(D3DShaderInputType type)
+        private static ShaderInputType Convert(Hexa.NET.D3DCommon.ShaderInputType type)
         {
             return type switch
             {
-                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCBuffer,
-                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTBuffer,
-                D3DShaderInputType.D3DSitTexture => ShaderInputType.SitTexture,
-                D3DShaderInputType.D3DSitSampler => ShaderInputType.SitSampler,
-                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwTyped,
-                D3DShaderInputType.D3DSitStructured => ShaderInputType.SitStructured,
-                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwStructured,
-                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteAddress,
-                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
-                D3DShaderInputType.D3DSitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
-                D3DShaderInputType.D3DSitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
-                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
-                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
-                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
+                Hexa.NET.D3DCommon.ShaderInputType.SitCbuffer => ShaderInputType.SitCBuffer,
+                Hexa.NET.D3DCommon.ShaderInputType.SitTbuffer => ShaderInputType.SitTBuffer,
+                Hexa.NET.D3DCommon.ShaderInputType.SitTexture => ShaderInputType.SitTexture,
+                Hexa.NET.D3DCommon.ShaderInputType.SitSampler => ShaderInputType.SitSampler,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwtyped => ShaderInputType.SitUavRwTyped,
+                Hexa.NET.D3DCommon.ShaderInputType.SitStructured => ShaderInputType.SitStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwstructured => ShaderInputType.SitUavRwStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitByteaddress => ShaderInputType.SitByteAddress,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
+                Hexa.NET.D3DCommon.ShaderInputType.SitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ResourceReturnType Convert(D3DResourceReturnType returnType)
+        private static ResourceReturnType Convert(Hexa.NET.D3DCommon.ResourceReturnType returnType)
         {
             return returnType switch
             {
-                D3DResourceReturnType.None => ResourceReturnType.None,
-                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.UNorm,
-                D3DResourceReturnType.D3DReturnTypeSNorm => ResourceReturnType.SNorm,
-                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.SInt,
-                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.UInt,
-                D3DResourceReturnType.D3DReturnTypeFloat => ResourceReturnType.Float,
-                D3DResourceReturnType.D3DReturnTypeMixed => ResourceReturnType.Mixed,
-                D3DResourceReturnType.D3DReturnTypeDouble => ResourceReturnType.Double,
-                D3DResourceReturnType.D3DReturnTypeContinued => ResourceReturnType.Continued,
+                0 => ResourceReturnType.None,
+                Hexa.NET.D3DCommon.ResourceReturnType.Unorm => ResourceReturnType.UNorm,
+                Hexa.NET.D3DCommon.ResourceReturnType.Snorm => ResourceReturnType.SNorm,
+                Hexa.NET.D3DCommon.ResourceReturnType.Sint => ResourceReturnType.SInt,
+                Hexa.NET.D3DCommon.ResourceReturnType.Uint => ResourceReturnType.UInt,
+                Hexa.NET.D3DCommon.ResourceReturnType.Float => ResourceReturnType.Float,
+                Hexa.NET.D3DCommon.ResourceReturnType.Mixed => ResourceReturnType.Mixed,
+                Hexa.NET.D3DCommon.ResourceReturnType.Double => ResourceReturnType.Double,
+                Hexa.NET.D3DCommon.ResourceReturnType.Continued => ResourceReturnType.Continued,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static SrvDimension Convert(D3DSrvDimension dimension)
+        private static SrvDimension Convert(Hexa.NET.D3DCommon.SrvDimension dimension)
         {
             return dimension switch
             {
-                D3DSrvDimension.D3DSrvDimensionUnknown => SrvDimension.Unknown,
-                D3DSrvDimension.D3DSrvDimensionBuffer => SrvDimension.Buffer,
-                D3DSrvDimension.D3DSrvDimensionTexture1D => SrvDimension.Texture1D,
-                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1DArray,
-                D3DSrvDimension.D3DSrvDimensionTexture2D => SrvDimension.Texture2D,
-                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2DArray,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2DMS,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2DMSArray,
-                D3DSrvDimension.D3DSrvDimensionTexture3D => SrvDimension.Texture3D,
-                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.TextureCube,
-                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.TextureCubeArray,
-                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.BufferEx,
+                Hexa.NET.D3DCommon.SrvDimension.Unknown => SrvDimension.Unknown,
+                Hexa.NET.D3DCommon.SrvDimension.Buffer => SrvDimension.Buffer,
+                Hexa.NET.D3DCommon.SrvDimension.Texture1D => SrvDimension.Texture1D,
+                Hexa.NET.D3DCommon.SrvDimension.Texture1Darray => SrvDimension.Texture1DArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2D => SrvDimension.Texture2D,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Darray => SrvDimension.Texture2DArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Dms => SrvDimension.Texture2DMS,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Dmsarray => SrvDimension.Texture2DMSArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture3D => SrvDimension.Texture3D,
+                Hexa.NET.D3DCommon.SrvDimension.Texturecube => SrvDimension.TextureCube,
+                Hexa.NET.D3DCommon.SrvDimension.Texturecubearray => SrvDimension.TextureCubeArray,
+                Hexa.NET.D3DCommon.SrvDimension.Bufferex => SrvDimension.BufferEx,
                 _ => throw new NotSupportedException()
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static SignatureParameterDescription Convert(Silk.NET.Direct3D11.SignatureParameterDesc shaderInputDesc)
+        internal static SignatureParameterDescription Convert(Hexa.NET.D3D11.SignatureParameterDesc shaderInputDesc)
         {
             return new()
             {
@@ -2122,79 +2122,79 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Name Convert(D3DName systemValueType)
+        private static Name Convert(Hexa.NET.D3DCommon.Name systemValueType)
         {
             return systemValueType switch
             {
-                D3DName.D3DNameUndefined => Name.Undefined,
-                D3DName.D3DNamePosition => Name.Position,
-                D3DName.D3DNameClipDistance => Name.ClipDistance,
-                D3DName.D3DNameCullDistance => Name.CullDistance,
-                D3DName.D3DNameRenderTargetArrayIndex => Name.RenderTargetArrayIndex,
-                D3DName.D3DNameViewportArrayIndex => Name.ViewportArrayIndex,
-                D3DName.D3DNameVertexID => Name.VertexID,
-                D3DName.D3DNamePrimitiveID => Name.PrimitiveID,
-                D3DName.D3DNameInstanceID => Name.InstanceID,
-                D3DName.D3DNameIsFrontFace => Name.IsFrontFace,
-                D3DName.D3DNameSampleIndex => Name.SampleIndex,
-                D3DName.D3DNameFinalQuadEdgeTessfactor => Name.FinalQuadEdgeTessfactor,
-                D3DName.D3DNameFinalQuadInsideTessfactor => Name.FinalQuadInsideTessfactor,
-                D3DName.D3DNameFinalTriEdgeTessfactor => Name.FinalTriEdgeTessfactor,
-                D3DName.D3DNameFinalTriInsideTessfactor => Name.FinalTriInsideTessfactor,
-                D3DName.D3DNameFinalLineDetailTessfactor => Name.FinalLineDetailTessfactor,
-                D3DName.D3DNameFinalLineDensityTessfactor => Name.FinalLineDensityTessfactor,
-                D3DName.D3DNameBarycentrics => Name.Barycentrics,
-                D3DName.D3DNameShadingrate => Name.Shadingrate,
-                D3DName.D3DNameCullprimitive => Name.Cullprimitive,
-                D3DName.D3DNameTarget => Name.Target,
-                D3DName.D3DNameDepth => Name.Depth,
-                D3DName.D3DNameCoverage => Name.Coverage,
-                D3DName.D3DNameDepthGreaterEqual => Name.DepthGreaterEqual,
-                D3DName.D3DNameDepthLessEqual => Name.DepthLessEqual,
-                D3DName.D3DNameStencilRef => Name.StencilRef,
-                D3DName.D3DNameInnerCoverage => Name.InnerCoverage,
+                Hexa.NET.D3DCommon.Name.Undefined => Name.Undefined,
+                Hexa.NET.D3DCommon.Name.Position => Name.Position,
+                Hexa.NET.D3DCommon.Name.ClipDistance => Name.ClipDistance,
+                Hexa.NET.D3DCommon.Name.CullDistance => Name.CullDistance,
+                Hexa.NET.D3DCommon.Name.RenderTargetArrayIndex => Name.RenderTargetArrayIndex,
+                Hexa.NET.D3DCommon.Name.ViewportArrayIndex => Name.ViewportArrayIndex,
+                Hexa.NET.D3DCommon.Name.VertexId => Name.VertexID,
+                Hexa.NET.D3DCommon.Name.PrimitiveId => Name.PrimitiveID,
+                Hexa.NET.D3DCommon.Name.InstanceId => Name.InstanceID,
+                Hexa.NET.D3DCommon.Name.IsFrontFace => Name.IsFrontFace,
+                Hexa.NET.D3DCommon.Name.SampleIndex => Name.SampleIndex,
+                Hexa.NET.D3DCommon.Name.FinalQuadEdgeTessfactor => Name.FinalQuadEdgeTessfactor,
+                Hexa.NET.D3DCommon.Name.FinalQuadInsideTessfactor => Name.FinalQuadInsideTessfactor,
+                Hexa.NET.D3DCommon.Name.FinalTriEdgeTessfactor => Name.FinalTriEdgeTessfactor,
+                Hexa.NET.D3DCommon.Name.FinalTriInsideTessfactor => Name.FinalTriInsideTessfactor,
+                Hexa.NET.D3DCommon.Name.FinalLineDetailTessfactor => Name.FinalLineDetailTessfactor,
+                Hexa.NET.D3DCommon.Name.FinalLineDensityTessfactor => Name.FinalLineDensityTessfactor,
+                Hexa.NET.D3DCommon.Name.Barycentrics => Name.Barycentrics,
+                Hexa.NET.D3DCommon.Name.Shadingrate => Name.Shadingrate,
+                Hexa.NET.D3DCommon.Name.Cullprimitive => Name.Cullprimitive,
+                Hexa.NET.D3DCommon.Name.Target => Name.Target,
+                Hexa.NET.D3DCommon.Name.Depth => Name.Depth,
+                Hexa.NET.D3DCommon.Name.Coverage => Name.Coverage,
+                Hexa.NET.D3DCommon.Name.DepthGreaterEqual => Name.DepthGreaterEqual,
+                Hexa.NET.D3DCommon.Name.DepthLessEqual => Name.DepthLessEqual,
+                Hexa.NET.D3DCommon.Name.StencilRef => Name.StencilRef,
+                Hexa.NET.D3DCommon.Name.InnerCoverage => Name.InnerCoverage,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static MinPrecision Convert(D3DMinPrecision minPrecision)
+        private static MinPrecision Convert(Hexa.NET.D3DCommon.MinPrecision minPrecision)
         {
             return minPrecision switch
             {
-                D3DMinPrecision.Default => MinPrecision.Default,
-                D3DMinPrecision.Float16 => MinPrecision.Float16,
-                D3DMinPrecision.Float28 => MinPrecision.Float28,
-                D3DMinPrecision.Reserved => MinPrecision.Reserved,
-                D3DMinPrecision.Sint16 => MinPrecision.Sint16,
-                D3DMinPrecision.Uint16 => MinPrecision.Uint16,
-                D3DMinPrecision.Any16 => MinPrecision.Any16,
-                D3DMinPrecision.Any10 => MinPrecision.Any10,
+                Hexa.NET.D3DCommon.MinPrecision.Default => MinPrecision.Default,
+                Hexa.NET.D3DCommon.MinPrecision.Float16 => MinPrecision.Float16,
+                Hexa.NET.D3DCommon.MinPrecision.Float28 => MinPrecision.Float28,
+                Hexa.NET.D3DCommon.MinPrecision.Reserved => MinPrecision.Reserved,
+                Hexa.NET.D3DCommon.MinPrecision.Sint16 => MinPrecision.Sint16,
+                Hexa.NET.D3DCommon.MinPrecision.Uint16 => MinPrecision.Uint16,
+                Hexa.NET.D3DCommon.MinPrecision.Any16 => MinPrecision.Any16,
+                Hexa.NET.D3DCommon.MinPrecision.Any10 => MinPrecision.Any10,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static RegisterComponentType Convert(D3DRegisterComponentType componentType)
+        private static RegisterComponentType Convert(Hexa.NET.D3DCommon.RegisterComponentType componentType)
         {
             return componentType switch
             {
                 0 => RegisterComponentType.Unknown,
-                D3DRegisterComponentType.D3DRegisterComponentUint32 => RegisterComponentType.Uint32,
-                D3DRegisterComponentType.D3DRegisterComponentSint32 => RegisterComponentType.Sint32,
-                D3DRegisterComponentType.D3DRegisterComponentFloat32 => RegisterComponentType.Float32,
+                Hexa.NET.D3DCommon.RegisterComponentType.Uint32 => RegisterComponentType.Uint32,
+                Hexa.NET.D3DCommon.RegisterComponentType.Sint32 => RegisterComponentType.Sint32,
+                Hexa.NET.D3DCommon.RegisterComponentType.Float32 => RegisterComponentType.Float32,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Silk.NET.Direct3D11.UnorderedAccessViewDesc Convert(UnorderedAccessViewDescription description)
+        internal static Hexa.NET.D3D11.UnorderedAccessViewDesc Convert(UnorderedAccessViewDescription description)
         {
-            Silk.NET.Direct3D11.UnorderedAccessViewDesc result = new()
+            Hexa.NET.D3D11.UnorderedAccessViewDesc result = new()
             {
                 Format = Convert(description.Format),
                 ViewDimension = Convert(description.ViewDimension),
-                Anonymous = new(),
+                Union = new(),
             };
 
             switch (description.ViewDimension)
@@ -2203,34 +2203,34 @@
                     break;
 
                 case UnorderedAccessViewDimension.Buffer:
-                    result.Anonymous.Buffer = Convert(description.Buffer);
+                    result.Union.Buffer = Convert(description.Buffer);
                     break;
 
                 case UnorderedAccessViewDimension.Texture1D:
-                    result.Anonymous.Texture1D = Convert(description.Texture1D);
+                    result.Union.Texture1D = Convert(description.Texture1D);
                     break;
 
                 case UnorderedAccessViewDimension.Texture1DArray:
-                    result.Anonymous.Texture1DArray = Convert(description.Texture1DArray);
+                    result.Union.Texture1DArray = Convert(description.Texture1DArray);
                     break;
 
                 case UnorderedAccessViewDimension.Texture2D:
-                    result.Anonymous.Texture2D = Convert(description.Texture2D);
+                    result.Union.Texture2D = Convert(description.Texture2D);
                     break;
 
                 case UnorderedAccessViewDimension.Texture2DArray:
-                    result.Anonymous.Texture2DArray = Convert(description.Texture2DArray);
+                    result.Union.Texture2DArray = Convert(description.Texture2DArray);
                     break;
 
                 case UnorderedAccessViewDimension.Texture3D:
-                    result.Anonymous.Texture3D = Convert(description.Texture3D);
+                    result.Union.Texture3D = Convert(description.Texture3D);
                     break;
             }
             return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.Tex3DUav Convert(Texture3DUnorderedAccessView texture3D)
+        private static Hexa.NET.D3D11.Tex3DUav Convert(Texture3DUnorderedAccessView texture3D)
         {
             return new()
             {
@@ -2241,7 +2241,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.Tex2DArrayUav Convert(Texture2DArrayUnorderedAccessView texture2DArray)
+        private static Hexa.NET.D3D11.Tex2DArrayUav Convert(Texture2DArrayUnorderedAccessView texture2DArray)
         {
             return new()
             {
@@ -2252,7 +2252,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.Tex2DUav Convert(Texture2DUnorderedAccessView texture2D)
+        private static Hexa.NET.D3D11.Tex2DUav Convert(Texture2DUnorderedAccessView texture2D)
         {
             return new()
             {
@@ -2261,7 +2261,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.Tex1DArrayUav Convert(Texture1DArrayUnorderedAccessView texture1DArray)
+        private static Hexa.NET.D3D11.Tex1DArrayUav Convert(Texture1DArrayUnorderedAccessView texture1DArray)
         {
             return new()
             {
@@ -2272,7 +2272,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.Tex1DUav Convert(Texture1DUnorderedAccessView texture1D)
+        private static Hexa.NET.D3D11.Tex1DUav Convert(Texture1DUnorderedAccessView texture1D)
         {
             return new()
             {
@@ -2281,7 +2281,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.BufferUav Convert(BufferUnorderedAccessView buffer)
+        private static Hexa.NET.D3D11.BufferUav Convert(BufferUnorderedAccessView buffer)
         {
             return new()
             {
@@ -2292,30 +2292,30 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.BufferUavFlag Convert(BufferUnorderedAccessViewFlags flags)
+        private static Hexa.NET.D3D11.BufferUavFlag Convert(BufferUnorderedAccessViewFlags flags)
         {
             return flags switch
             {
-                BufferUnorderedAccessViewFlags.Raw => Silk.NET.Direct3D11.BufferUavFlag.Raw,
-                BufferUnorderedAccessViewFlags.Append => Silk.NET.Direct3D11.BufferUavFlag.Append,
-                BufferUnorderedAccessViewFlags.Counter => Silk.NET.Direct3D11.BufferUavFlag.Counter,
+                BufferUnorderedAccessViewFlags.Raw => Hexa.NET.D3D11.BufferUavFlag.Raw,
+                BufferUnorderedAccessViewFlags.Append => Hexa.NET.D3D11.BufferUavFlag.Append,
+                BufferUnorderedAccessViewFlags.Counter => Hexa.NET.D3D11.BufferUavFlag.Counter,
                 BufferUnorderedAccessViewFlags.None => 0,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.Direct3D11.UavDimension Convert(UnorderedAccessViewDimension viewDimension)
+        private static Hexa.NET.D3D11.UavDimension Convert(UnorderedAccessViewDimension viewDimension)
         {
             return viewDimension switch
             {
-                UnorderedAccessViewDimension.Unknown => Silk.NET.Direct3D11.UavDimension.Unknown,
-                UnorderedAccessViewDimension.Buffer => Silk.NET.Direct3D11.UavDimension.Buffer,
-                UnorderedAccessViewDimension.Texture1D => Silk.NET.Direct3D11.UavDimension.Texture1D,
-                UnorderedAccessViewDimension.Texture1DArray => Silk.NET.Direct3D11.UavDimension.Texture1Darray,
-                UnorderedAccessViewDimension.Texture2D => Silk.NET.Direct3D11.UavDimension.Texture2D,
-                UnorderedAccessViewDimension.Texture2DArray => Silk.NET.Direct3D11.UavDimension.Texture2Darray,
-                UnorderedAccessViewDimension.Texture3D => Silk.NET.Direct3D11.UavDimension.Texture3D,
+                UnorderedAccessViewDimension.Unknown => Hexa.NET.D3D11.UavDimension.Unknown,
+                UnorderedAccessViewDimension.Buffer => Hexa.NET.D3D11.UavDimension.Buffer,
+                UnorderedAccessViewDimension.Texture1D => Hexa.NET.D3D11.UavDimension.Texture1D,
+                UnorderedAccessViewDimension.Texture1DArray => Hexa.NET.D3D11.UavDimension.Texture1Darray,
+                UnorderedAccessViewDimension.Texture2D => Hexa.NET.D3D11.UavDimension.Texture2D,
+                UnorderedAccessViewDimension.Texture2DArray => Hexa.NET.D3D11.UavDimension.Texture2Darray,
+                UnorderedAccessViewDimension.Texture3D => Hexa.NET.D3D11.UavDimension.Texture3D,
                 _ => throw new NotSupportedException(),
             };
         }
@@ -2380,7 +2380,7 @@
         public static TexMetadata ConvertBack(Hexa.NET.DirectXTex.TexMetadata metadata)
         {
             TexMetadata texMetadata;
-            texMetadata.Format = ConvertBack((Silk.NET.DXGI.Format)metadata.Format);
+            texMetadata.Format = ConvertBack((Hexa.NET.DXGI.Format)metadata.Format);
             texMetadata.ArraySize = (int)metadata.ArraySize;
             texMetadata.Width = (int)metadata.Width;
             texMetadata.Height = (int)metadata.Height;
@@ -2432,13 +2432,13 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Maths.Box2D<int> Convert(Rect rect)
+        public static Rect32 Convert(Rect rect)
         {
-            return new((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom);
+            return *(Rect32*)(&rect);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.SwapChainDesc1 Convert(SwapChainDescription swapChainDescription)
+        public static Hexa.NET.DXGI.SwapChainDesc1 Convert(SwapChainDescription swapChainDescription)
         {
             return new()
             {
@@ -2457,69 +2457,69 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Silk.NET.DXGI.SwapChainFlag Convert(SwapChainFlags flags)
+        private static Hexa.NET.DXGI.SwapChainFlag Convert(SwapChainFlags flags)
         {
             return flags switch
             {
-                SwapChainFlags.None => Silk.NET.DXGI.SwapChainFlag.None,
-                SwapChainFlags.Nonprerotated => Silk.NET.DXGI.SwapChainFlag.Nonprerotated,
-                SwapChainFlags.AllowModeSwitch => Silk.NET.DXGI.SwapChainFlag.AllowModeSwitch,
-                SwapChainFlags.GdiCompatible => Silk.NET.DXGI.SwapChainFlag.GdiCompatible,
-                SwapChainFlags.RestrictedContent => Silk.NET.DXGI.SwapChainFlag.RestrictedContent,
-                SwapChainFlags.RestrictSharedResourceDriver => Silk.NET.DXGI.SwapChainFlag.RestrictSharedResourceDriver,
-                SwapChainFlags.DisplayOnly => Silk.NET.DXGI.SwapChainFlag.DisplayOnly,
-                SwapChainFlags.FrameLatencyWaitableObject => Silk.NET.DXGI.SwapChainFlag.FrameLatencyWaitableObject,
-                SwapChainFlags.ForegroundLayer => Silk.NET.DXGI.SwapChainFlag.ForegroundLayer,
-                SwapChainFlags.FullscreenVideo => Silk.NET.DXGI.SwapChainFlag.FullscreenVideo,
-                SwapChainFlags.YuvVideo => Silk.NET.DXGI.SwapChainFlag.YuvVideo,
-                SwapChainFlags.HWProtected => Silk.NET.DXGI.SwapChainFlag.HWProtected,
-                SwapChainFlags.AllowTearing => Silk.NET.DXGI.SwapChainFlag.AllowTearing,
-                SwapChainFlags.RestrictedToAllHolographicDisplays => Silk.NET.DXGI.SwapChainFlag.RestrictedToAllHolographicDisplays,
+                SwapChainFlags.None => 0,
+                SwapChainFlags.Nonprerotated => Hexa.NET.DXGI.SwapChainFlag.Nonprerotated,
+                SwapChainFlags.AllowModeSwitch => Hexa.NET.DXGI.SwapChainFlag.AllowModeSwitch,
+                SwapChainFlags.GdiCompatible => Hexa.NET.DXGI.SwapChainFlag.GdiCompatible,
+                SwapChainFlags.RestrictedContent => Hexa.NET.DXGI.SwapChainFlag.RestrictedContent,
+                SwapChainFlags.RestrictSharedResourceDriver => Hexa.NET.DXGI.SwapChainFlag.RestrictSharedResourceDriver,
+                SwapChainFlags.DisplayOnly => Hexa.NET.DXGI.SwapChainFlag.DisplayOnly,
+                SwapChainFlags.FrameLatencyWaitableObject => Hexa.NET.DXGI.SwapChainFlag.FrameLatencyWaitableObject,
+                SwapChainFlags.ForegroundLayer => Hexa.NET.DXGI.SwapChainFlag.ForegroundLayer,
+                SwapChainFlags.FullscreenVideo => Hexa.NET.DXGI.SwapChainFlag.FullscreenVideo,
+                SwapChainFlags.YuvVideo => Hexa.NET.DXGI.SwapChainFlag.YuvVideo,
+                SwapChainFlags.HWProtected => Hexa.NET.DXGI.SwapChainFlag.HwProtected,
+                SwapChainFlags.AllowTearing => Hexa.NET.DXGI.SwapChainFlag.AllowTearing,
+                SwapChainFlags.RestrictedToAllHolographicDisplays => Hexa.NET.DXGI.SwapChainFlag.RestrictedToAllHolographicDisplays,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.AlphaMode Convert(SwapChainAlphaMode alphaMode)
+        public static Hexa.NET.DXGI.AlphaMode Convert(SwapChainAlphaMode alphaMode)
         {
             return alphaMode switch
             {
-                SwapChainAlphaMode.Unspecified => Silk.NET.DXGI.AlphaMode.Unspecified,
-                SwapChainAlphaMode.Premultiplied => Silk.NET.DXGI.AlphaMode.Premultiplied,
-                SwapChainAlphaMode.Straight => Silk.NET.DXGI.AlphaMode.Straight,
-                SwapChainAlphaMode.Ignore => Silk.NET.DXGI.AlphaMode.Ignore,
-                SwapChainAlphaMode.ForceDword => Silk.NET.DXGI.AlphaMode.ForceDword,
+                SwapChainAlphaMode.Unspecified => Hexa.NET.DXGI.AlphaMode.Unspecified,
+                SwapChainAlphaMode.Premultiplied => Hexa.NET.DXGI.AlphaMode.Premultiplied,
+                SwapChainAlphaMode.Straight => Hexa.NET.DXGI.AlphaMode.Straight,
+                SwapChainAlphaMode.Ignore => Hexa.NET.DXGI.AlphaMode.Ignore,
+                SwapChainAlphaMode.ForceDword => Hexa.NET.DXGI.AlphaMode.ForceDword,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.SwapEffect Convert(SwapEffect swapEffect)
+        public static Hexa.NET.DXGI.SwapEffect Convert(SwapEffect swapEffect)
         {
             return swapEffect switch
             {
-                SwapEffect.Discard => Silk.NET.DXGI.SwapEffect.Discard,
-                SwapEffect.Sequential => Silk.NET.DXGI.SwapEffect.Sequential,
-                SwapEffect.FlipSequential => Silk.NET.DXGI.SwapEffect.FlipSequential,
-                SwapEffect.FlipDiscard => Silk.NET.DXGI.SwapEffect.FlipDiscard,
+                SwapEffect.Discard => Hexa.NET.DXGI.SwapEffect.Discard,
+                SwapEffect.Sequential => Hexa.NET.DXGI.SwapEffect.Sequential,
+                SwapEffect.FlipSequential => Hexa.NET.DXGI.SwapEffect.FlipSequential,
+                SwapEffect.FlipDiscard => Hexa.NET.DXGI.SwapEffect.FlipDiscard,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.Scaling Convert(Scaling scaling)
+        public static Hexa.NET.DXGI.Scaling Convert(Scaling scaling)
         {
             return scaling switch
             {
-                Scaling.Stretch => Silk.NET.DXGI.Scaling.Stretch,
-                Scaling.None => Silk.NET.DXGI.Scaling.None,
-                Scaling.AspectRatioStretch => Silk.NET.DXGI.Scaling.AspectRatioStretch,
+                Scaling.Stretch => Hexa.NET.DXGI.Scaling.Stretch,
+                Scaling.None => Hexa.NET.DXGI.Scaling.None,
+                Scaling.AspectRatioStretch => Hexa.NET.DXGI.Scaling.AspectRatioStretch,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.SwapChainFullscreenDesc Convert(SwapChainFullscreenDescription description)
+        public static Hexa.NET.DXGI.SwapChainFullscreenDesc Convert(SwapChainFullscreenDescription description)
         {
             return new()
             {
@@ -2531,7 +2531,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.Rational Convert(Rational value)
+        public static Hexa.NET.DXGI.Rational Convert(Rational value)
         {
             return new()
             {
@@ -2541,171 +2541,171 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.ModeScaling Convert(ModeScaling scaling)
+        public static Hexa.NET.DXGI.ModeScaling Convert(ModeScaling scaling)
         {
             return scaling switch
             {
-                ModeScaling.Unspecified => Silk.NET.DXGI.ModeScaling.Unspecified,
-                ModeScaling.Centered => Silk.NET.DXGI.ModeScaling.Centered,
-                ModeScaling.Stretched => Silk.NET.DXGI.ModeScaling.Stretched,
+                ModeScaling.Unspecified => Hexa.NET.DXGI.ModeScaling.Unspecified,
+                ModeScaling.Centered => Hexa.NET.DXGI.ModeScaling.Centered,
+                ModeScaling.Stretched => Hexa.NET.DXGI.ModeScaling.Stretched,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.DXGI.ModeScanlineOrder Convert(ModeScanlineOrder order)
+        public static Hexa.NET.DXGI.ModeScanlineOrder Convert(ModeScanlineOrder order)
         {
             return order switch
             {
-                ModeScanlineOrder.Unspecified => Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
-                ModeScanlineOrder.Progressive => Silk.NET.DXGI.ModeScanlineOrder.Progressive,
-                ModeScanlineOrder.UpperFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.UpperFieldFirst,
-                ModeScanlineOrder.LowerFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.LowerFieldFirst,
+                ModeScanlineOrder.Unspecified => Hexa.NET.DXGI.ModeScanlineOrder.Unspecified,
+                ModeScanlineOrder.Progressive => Hexa.NET.DXGI.ModeScanlineOrder.Progressive,
+                ModeScanlineOrder.UpperFieldFirst => Hexa.NET.DXGI.ModeScanlineOrder.UpperFieldFirst,
+                ModeScanlineOrder.LowerFieldFirst => Hexa.NET.DXGI.ModeScanlineOrder.LowerFieldFirst,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PrimitiveTopology ConvertBack(D3DPrimitiveTopology topology)
+        public static PrimitiveTopology ConvertBack(Hexa.NET.D3DCommon.PrimitiveTopology topology)
         {
             return topology switch
             {
-                D3DPrimitiveTopology.D3DPrimitiveTopologyUndefined => PrimitiveTopology.Undefined,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyPointlist => PrimitiveTopology.PointList,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyLinelist => PrimitiveTopology.LineList,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyLinestrip => PrimitiveTopology.LineStrip,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelist => PrimitiveTopology.TriangleList,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestrip => PrimitiveTopology.TriangleStrip,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyLinelistAdj => PrimitiveTopology.LineListAdjacency,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyLinestripAdj => PrimitiveTopology.LineStripAdjacency,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglelistAdj => PrimitiveTopology.TriangleListAdjacency,
-                D3DPrimitiveTopology.D3DPrimitiveTopologyTrianglestripAdj => PrimitiveTopology.TriangleStripAdjacency,
-                D3DPrimitiveTopology.D3DPrimitiveTopology1ControlPointPatchlist => PrimitiveTopology.PatchListWith1ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology2ControlPointPatchlist => PrimitiveTopology.PatchListWith2ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology3ControlPointPatchlist => PrimitiveTopology.PatchListWith3ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology4ControlPointPatchlist => PrimitiveTopology.PatchListWith4ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology5ControlPointPatchlist => PrimitiveTopology.PatchListWith5ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology6ControlPointPatchlist => PrimitiveTopology.PatchListWith6ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology7ControlPointPatchlist => PrimitiveTopology.PatchListWith7ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology8ControlPointPatchlist => PrimitiveTopology.PatchListWith8ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology9ControlPointPatchlist => PrimitiveTopology.PatchListWith9ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology10ControlPointPatchlist => PrimitiveTopology.PatchListWith10ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology11ControlPointPatchlist => PrimitiveTopology.PatchListWith11ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology12ControlPointPatchlist => PrimitiveTopology.PatchListWith12ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology13ControlPointPatchlist => PrimitiveTopology.PatchListWith13ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology14ControlPointPatchlist => PrimitiveTopology.PatchListWith14ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology15ControlPointPatchlist => PrimitiveTopology.PatchListWith15ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology16ControlPointPatchlist => PrimitiveTopology.PatchListWith16ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology17ControlPointPatchlist => PrimitiveTopology.PatchListWith17ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology18ControlPointPatchlist => PrimitiveTopology.PatchListWith18ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology19ControlPointPatchlist => PrimitiveTopology.PatchListWith19ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology20ControlPointPatchlist => PrimitiveTopology.PatchListWith20ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology21ControlPointPatchlist => PrimitiveTopology.PatchListWith21ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology22ControlPointPatchlist => PrimitiveTopology.PatchListWith22ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology23ControlPointPatchlist => PrimitiveTopology.PatchListWith23ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology24ControlPointPatchlist => PrimitiveTopology.PatchListWith24ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology25ControlPointPatchlist => PrimitiveTopology.PatchListWith25ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology26ControlPointPatchlist => PrimitiveTopology.PatchListWith26ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology27ControlPointPatchlist => PrimitiveTopology.PatchListWith27ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology28ControlPointPatchlist => PrimitiveTopology.PatchListWith28ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology29ControlPointPatchlist => PrimitiveTopology.PatchListWith29ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology30ControlPointPatchlist => PrimitiveTopology.PatchListWith30ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology31ControlPointPatchlist => PrimitiveTopology.PatchListWith31ControlPoints,
-                D3DPrimitiveTopology.D3DPrimitiveTopology32ControlPointPatchlist => PrimitiveTopology.PatchListWith32ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Undefined => PrimitiveTopology.Undefined,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Pointlist => PrimitiveTopology.PointList,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Linelist => PrimitiveTopology.LineList,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Linestrip => PrimitiveTopology.LineStrip,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Trianglelist => PrimitiveTopology.TriangleList,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Trianglestrip => PrimitiveTopology.TriangleStrip,
+                Hexa.NET.D3DCommon.PrimitiveTopology.LinelistAdj => PrimitiveTopology.LineListAdjacency,
+                Hexa.NET.D3DCommon.PrimitiveTopology.LinestripAdj => PrimitiveTopology.LineStripAdjacency,
+                Hexa.NET.D3DCommon.PrimitiveTopology.TrianglelistAdj => PrimitiveTopology.TriangleListAdjacency,
+                Hexa.NET.D3DCommon.PrimitiveTopology.TrianglestripAdj => PrimitiveTopology.TriangleStripAdjacency,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology1ControlPointPatchlist => PrimitiveTopology.PatchListWith1ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology2ControlPointPatchlist => PrimitiveTopology.PatchListWith2ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology3ControlPointPatchlist => PrimitiveTopology.PatchListWith3ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology4ControlPointPatchlist => PrimitiveTopology.PatchListWith4ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology5ControlPointPatchlist => PrimitiveTopology.PatchListWith5ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology6ControlPointPatchlist => PrimitiveTopology.PatchListWith6ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology7ControlPointPatchlist => PrimitiveTopology.PatchListWith7ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology8ControlPointPatchlist => PrimitiveTopology.PatchListWith8ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology9ControlPointPatchlist => PrimitiveTopology.PatchListWith9ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology10ControlPointPatchlist => PrimitiveTopology.PatchListWith10ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology11ControlPointPatchlist => PrimitiveTopology.PatchListWith11ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology12ControlPointPatchlist => PrimitiveTopology.PatchListWith12ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology13ControlPointPatchlist => PrimitiveTopology.PatchListWith13ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology14ControlPointPatchlist => PrimitiveTopology.PatchListWith14ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology15ControlPointPatchlist => PrimitiveTopology.PatchListWith15ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology16ControlPointPatchlist => PrimitiveTopology.PatchListWith16ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology17ControlPointPatchlist => PrimitiveTopology.PatchListWith17ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology18ControlPointPatchlist => PrimitiveTopology.PatchListWith18ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology19ControlPointPatchlist => PrimitiveTopology.PatchListWith19ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology20ControlPointPatchlist => PrimitiveTopology.PatchListWith20ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology21ControlPointPatchlist => PrimitiveTopology.PatchListWith21ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology22ControlPointPatchlist => PrimitiveTopology.PatchListWith22ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology23ControlPointPatchlist => PrimitiveTopology.PatchListWith23ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology24ControlPointPatchlist => PrimitiveTopology.PatchListWith24ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology25ControlPointPatchlist => PrimitiveTopology.PatchListWith25ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology26ControlPointPatchlist => PrimitiveTopology.PatchListWith26ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology27ControlPointPatchlist => PrimitiveTopology.PatchListWith27ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology28ControlPointPatchlist => PrimitiveTopology.PatchListWith28ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology29ControlPointPatchlist => PrimitiveTopology.PatchListWith29ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology30ControlPointPatchlist => PrimitiveTopology.PatchListWith30ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology31ControlPointPatchlist => PrimitiveTopology.PatchListWith31ControlPoints,
+                Hexa.NET.D3DCommon.PrimitiveTopology.Topology32ControlPointPatchlist => PrimitiveTopology.PatchListWith32ControlPoints,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Primitive ConvertBack(D3DPrimitive primitive)
+        public static Primitive ConvertBack(Hexa.NET.D3DCommon.Primitive primitive)
         {
             return primitive switch
             {
-                D3DPrimitive.D3DPrimitiveUndefined => Primitive.Undefined,
-                D3DPrimitive.D3DPrimitivePoint => Primitive.Point,
-                D3DPrimitive.D3DPrimitiveLine => Primitive.Line,
-                D3DPrimitive.D3DPrimitiveTriangle => Primitive.Triangle,
-                D3DPrimitive.D3DPrimitiveLineAdj => Primitive.LineAdj,
-                D3DPrimitive.D3DPrimitiveTriangleAdj => Primitive.TriangleAdj,
-                D3DPrimitive.D3DPrimitive1ControlPointPatch => Primitive.PatchListWith1ControlPoint,
-                D3DPrimitive.D3DPrimitive2ControlPointPatch => Primitive.PatchListWith2ControlPoint,
-                D3DPrimitive.D3DPrimitive3ControlPointPatch => Primitive.PatchListWith3ControlPoint,
-                D3DPrimitive.D3DPrimitive4ControlPointPatch => Primitive.PatchListWith4ControlPoint,
-                D3DPrimitive.D3DPrimitive5ControlPointPatch => Primitive.PatchListWith5ControlPoint,
-                D3DPrimitive.D3DPrimitive6ControlPointPatch => Primitive.PatchListWith6ControlPoint,
-                D3DPrimitive.D3DPrimitive7ControlPointPatch => Primitive.PatchListWith7ControlPoint,
-                D3DPrimitive.D3DPrimitive8ControlPointPatch => Primitive.PatchListWith8ControlPoint,
-                D3DPrimitive.D3DPrimitive9ControlPointPatch => Primitive.PatchListWith9ControlPoint,
-                D3DPrimitive.D3DPrimitive10ControlPointPatch => Primitive.PatchListWith10ControlPoint,
-                D3DPrimitive.D3DPrimitive11ControlPointPatch => Primitive.PatchListWith11ControlPoint,
-                D3DPrimitive.D3DPrimitive12ControlPointPatch => Primitive.PatchListWith12ControlPoint,
-                D3DPrimitive.D3DPrimitive13ControlPointPatch => Primitive.PatchListWith13ControlPoint,
-                D3DPrimitive.D3DPrimitive14ControlPointPatch => Primitive.PatchListWith14ControlPoint,
-                D3DPrimitive.D3DPrimitive15ControlPointPatch => Primitive.PatchListWith15ControlPoint,
-                D3DPrimitive.D3DPrimitive16ControlPointPatch => Primitive.PatchListWith16ControlPoint,
-                D3DPrimitive.D3DPrimitive17ControlPointPatch => Primitive.PatchListWith17ControlPoint,
-                D3DPrimitive.D3DPrimitive18ControlPointPatch => Primitive.PatchListWith18ControlPoint,
-                D3DPrimitive.D3DPrimitive19ControlPointPatch => Primitive.PatchListWith19ControlPoint,
-                D3DPrimitive.D3DPrimitive20ControlPointPatch => Primitive.PatchListWith20ControlPoint,
-                D3DPrimitive.D3DPrimitive21ControlPointPatch => Primitive.PatchListWith21ControlPoint,
-                D3DPrimitive.D3DPrimitive22ControlPointPatch => Primitive.PatchListWith22ControlPoint,
-                D3DPrimitive.D3DPrimitive23ControlPointPatch => Primitive.PatchListWith23ControlPoint,
-                D3DPrimitive.D3DPrimitive24ControlPointPatch => Primitive.PatchListWith24ControlPoint,
-                D3DPrimitive.D3DPrimitive25ControlPointPatch => Primitive.PatchListWith25ControlPoint,
-                D3DPrimitive.D3DPrimitive26ControlPointPatch => Primitive.PatchListWith26ControlPoint,
-                D3DPrimitive.D3DPrimitive27ControlPointPatch => Primitive.PatchListWith27ControlPoint,
-                D3DPrimitive.D3DPrimitive28ControlPointPatch => Primitive.PatchListWith28ControlPoint,
-                D3DPrimitive.D3DPrimitive29ControlPointPatch => Primitive.PatchListWith29ControlPoint,
-                D3DPrimitive.D3DPrimitive30ControlPointPatch => Primitive.PatchListWith30ControlPoint,
-                D3DPrimitive.D3DPrimitive31ControlPointPatch => Primitive.PatchListWith31ControlPoint,
-                D3DPrimitive.D3DPrimitive32ControlPointPatch => Primitive.PatchListWith32ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Undefined => Primitive.Undefined,
+                Hexa.NET.D3DCommon.Primitive.Point => Primitive.Point,
+                Hexa.NET.D3DCommon.Primitive.Line => Primitive.Line,
+                Hexa.NET.D3DCommon.Primitive.Triangle => Primitive.Triangle,
+                Hexa.NET.D3DCommon.Primitive.LineAdj => Primitive.LineAdj,
+                Hexa.NET.D3DCommon.Primitive.TriangleAdj => Primitive.TriangleAdj,
+                Hexa.NET.D3DCommon.Primitive.Primitive1ControlPointPatch => Primitive.PatchListWith1ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive2ControlPointPatch => Primitive.PatchListWith2ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive3ControlPointPatch => Primitive.PatchListWith3ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive4ControlPointPatch => Primitive.PatchListWith4ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive5ControlPointPatch => Primitive.PatchListWith5ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive6ControlPointPatch => Primitive.PatchListWith6ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive7ControlPointPatch => Primitive.PatchListWith7ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive8ControlPointPatch => Primitive.PatchListWith8ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive9ControlPointPatch => Primitive.PatchListWith9ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive10ControlPointPatch => Primitive.PatchListWith10ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive11ControlPointPatch => Primitive.PatchListWith11ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive12ControlPointPatch => Primitive.PatchListWith12ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive13ControlPointPatch => Primitive.PatchListWith13ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive14ControlPointPatch => Primitive.PatchListWith14ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive15ControlPointPatch => Primitive.PatchListWith15ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive16ControlPointPatch => Primitive.PatchListWith16ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive17ControlPointPatch => Primitive.PatchListWith17ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive18ControlPointPatch => Primitive.PatchListWith18ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive19ControlPointPatch => Primitive.PatchListWith19ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive20ControlPointPatch => Primitive.PatchListWith20ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive21ControlPointPatch => Primitive.PatchListWith21ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive22ControlPointPatch => Primitive.PatchListWith22ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive23ControlPointPatch => Primitive.PatchListWith23ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive24ControlPointPatch => Primitive.PatchListWith24ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive25ControlPointPatch => Primitive.PatchListWith25ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive26ControlPointPatch => Primitive.PatchListWith26ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive27ControlPointPatch => Primitive.PatchListWith27ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive28ControlPointPatch => Primitive.PatchListWith28ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive29ControlPointPatch => Primitive.PatchListWith29ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive30ControlPointPatch => Primitive.PatchListWith30ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive31ControlPointPatch => Primitive.PatchListWith31ControlPoint,
+                Hexa.NET.D3DCommon.Primitive.Primitive32ControlPointPatch => Primitive.PatchListWith32ControlPoint,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TessellatorOutputPrimitive ConvertBack(D3DTessellatorOutputPrimitive tessellatorOutputPrimitive)
+        public static TessellatorOutputPrimitive ConvertBack(Hexa.NET.D3DCommon.TessellatorOutputPrimitive tessellatorOutputPrimitive)
         {
             return tessellatorOutputPrimitive switch
             {
-                D3DTessellatorOutputPrimitive.D3DTessellatorOutputUndefined => TessellatorOutputPrimitive.Undefined,
-                D3DTessellatorOutputPrimitive.D3DTessellatorOutputPoint => TessellatorOutputPrimitive.Point,
-                D3DTessellatorOutputPrimitive.D3DTessellatorOutputLine => TessellatorOutputPrimitive.Line,
-                D3DTessellatorOutputPrimitive.D3DTessellatorOutputTriangleCW => TessellatorOutputPrimitive.TriangleCW,
-                D3DTessellatorOutputPrimitive.D3DTessellatorOutputTriangleCcw => TessellatorOutputPrimitive.TriangleCcw,
+                Hexa.NET.D3DCommon.TessellatorOutputPrimitive.Undefined => TessellatorOutputPrimitive.Undefined,
+                Hexa.NET.D3DCommon.TessellatorOutputPrimitive.Point => TessellatorOutputPrimitive.Point,
+                Hexa.NET.D3DCommon.TessellatorOutputPrimitive.Line => TessellatorOutputPrimitive.Line,
+                Hexa.NET.D3DCommon.TessellatorOutputPrimitive.TriangleCw => TessellatorOutputPrimitive.TriangleCW,
+                Hexa.NET.D3DCommon.TessellatorOutputPrimitive.TriangleCcw => TessellatorOutputPrimitive.TriangleCcw,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TessellatorPartitioning ConvertBack(D3DTessellatorPartitioning tessellatorPartitioning)
+        public static TessellatorPartitioning ConvertBack(Hexa.NET.D3DCommon.TessellatorPartitioning tessellatorPartitioning)
         {
             return tessellatorPartitioning switch
             {
-                D3DTessellatorPartitioning.D3DTessellatorPartitioningUndefined => TessellatorPartitioning.Undefined,
-                D3DTessellatorPartitioning.D3DTessellatorPartitioningInteger => TessellatorPartitioning.Integer,
-                D3DTessellatorPartitioning.D3DTessellatorPartitioningPow2 => TessellatorPartitioning.Pow2,
-                D3DTessellatorPartitioning.D3DTessellatorPartitioningFractionalOdd => TessellatorPartitioning.FractionalOdd,
-                D3DTessellatorPartitioning.D3DTessellatorPartitioningFractionalEven => TessellatorPartitioning.FractionalEven,
+                Hexa.NET.D3DCommon.TessellatorPartitioning.Undefined => TessellatorPartitioning.Undefined,
+                Hexa.NET.D3DCommon.TessellatorPartitioning.Integer => TessellatorPartitioning.Integer,
+                Hexa.NET.D3DCommon.TessellatorPartitioning.Pow2 => TessellatorPartitioning.Pow2,
+                Hexa.NET.D3DCommon.TessellatorPartitioning.FractionalOdd => TessellatorPartitioning.FractionalOdd,
+                Hexa.NET.D3DCommon.TessellatorPartitioning.FractionalEven => TessellatorPartitioning.FractionalEven,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TessellatorDomain ConvertBack(D3DTessellatorDomain tessellatorDomain)
+        public static TessellatorDomain ConvertBack(Hexa.NET.D3DCommon.TessellatorDomain tessellatorDomain)
         {
             return tessellatorDomain switch
             {
-                D3DTessellatorDomain.D3DTessellatorDomainUndefined => TessellatorDomain.Undefined,
-                D3DTessellatorDomain.D3DTessellatorDomainIsoline => TessellatorDomain.Isoline,
-                D3DTessellatorDomain.D3DTessellatorDomainTri => TessellatorDomain.Tri,
-                D3DTessellatorDomain.D3DTessellatorDomainQuad => TessellatorDomain.Quad,
+                Hexa.NET.D3DCommon.TessellatorDomain.Undefined => TessellatorDomain.Undefined,
+                Hexa.NET.D3DCommon.TessellatorDomain.Isoline => TessellatorDomain.Isoline,
+                Hexa.NET.D3DCommon.TessellatorDomain.Tri => TessellatorDomain.Tri,
+                Hexa.NET.D3DCommon.TessellatorDomain.Quad => TessellatorDomain.Quad,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ShaderBufferDesc ConvertBack(Silk.NET.Direct3D11.ShaderBufferDesc shaderBufferDesc)
+        public static ShaderBufferDesc ConvertBack(Hexa.NET.D3D11.ShaderBufferDesc shaderBufferDesc)
         {
             return new()
             {
@@ -2718,20 +2718,20 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static CBufferType ConvertBack(D3DCBufferType type)
+        public static CBufferType ConvertBack(Hexa.NET.D3DCommon.CbufferType type)
         {
             return type switch
             {
-                D3DCBufferType.D3DCTCbuffer => CBufferType.CBuffer,
-                D3DCBufferType.D3DCTTbuffer => CBufferType.TBuffer,
-                D3DCBufferType.D3DCTInterfacePointers => CBufferType.InterfacePointers,
-                D3DCBufferType.D3DCTResourceBindInfo => CBufferType.ResourceBindInfo,
+                Hexa.NET.D3DCommon.CbufferType.CtCbuffer => CBufferType.CBuffer,
+                Hexa.NET.D3DCommon.CbufferType.CtTbuffer => CBufferType.TBuffer,
+                Hexa.NET.D3DCommon.CbufferType.CtInterfacePointers => CBufferType.InterfacePointers,
+                Hexa.NET.D3DCommon.CbufferType.CtResourceBindInfo => CBufferType.ResourceBindInfo,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ShaderInputBindDescription ConvertBack(Silk.NET.Direct3D11.ShaderInputBindDesc shaderInputBindDesc)
+        public static ShaderInputBindDescription ConvertBack(Hexa.NET.D3D11.ShaderInputBindDesc shaderInputBindDesc)
         {
             return new()
             {
@@ -2747,69 +2747,69 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ShaderInputType ConvertBack(D3DShaderInputType type)
+        public static ShaderInputType ConvertBack(Hexa.NET.D3DCommon.ShaderInputType type)
         {
             return type switch
             {
-                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCBuffer,
-                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTBuffer,
-                D3DShaderInputType.D3DSitTexture => ShaderInputType.SitTexture,
-                D3DShaderInputType.D3DSitSampler => ShaderInputType.SitSampler,
-                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwTyped,
-                D3DShaderInputType.D3DSitStructured => ShaderInputType.SitStructured,
-                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwStructured,
-                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteAddress,
-                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
-                D3DShaderInputType.D3DSitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
-                D3DShaderInputType.D3DSitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
-                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
-                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
-                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
+                Hexa.NET.D3DCommon.ShaderInputType.SitCbuffer => ShaderInputType.SitCBuffer,
+                Hexa.NET.D3DCommon.ShaderInputType.SitTbuffer => ShaderInputType.SitTBuffer,
+                Hexa.NET.D3DCommon.ShaderInputType.SitTexture => ShaderInputType.SitTexture,
+                Hexa.NET.D3DCommon.ShaderInputType.SitSampler => ShaderInputType.SitSampler,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwtyped => ShaderInputType.SitUavRwTyped,
+                Hexa.NET.D3DCommon.ShaderInputType.SitStructured => ShaderInputType.SitStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwstructured => ShaderInputType.SitUavRwStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitByteaddress => ShaderInputType.SitByteAddress,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwbyteaddress => ShaderInputType.SitUavRwByteAddress,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavRwstructuredWithCounter => ShaderInputType.SitUavRwStructuredWithCounter,
+                Hexa.NET.D3DCommon.ShaderInputType.SitRtaccelerationstructure => ShaderInputType.SitRtAccelerationStructure,
+                Hexa.NET.D3DCommon.ShaderInputType.SitUavFeedbacktexture => ShaderInputType.SitUavFeedbackTexture,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ResourceReturnType ConvertBack(D3DResourceReturnType returnType)
+        public static ResourceReturnType ConvertBack(Hexa.NET.D3DCommon.ResourceReturnType returnType)
         {
             return returnType switch
             {
-                D3DResourceReturnType.None => ResourceReturnType.None,
-                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.UNorm,
-                D3DResourceReturnType.D3DReturnTypeSNorm => ResourceReturnType.SNorm,
-                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.SInt,
-                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.UInt,
-                D3DResourceReturnType.D3DReturnTypeFloat => ResourceReturnType.Float,
-                D3DResourceReturnType.D3DReturnTypeMixed => ResourceReturnType.Mixed,
-                D3DResourceReturnType.D3DReturnTypeDouble => ResourceReturnType.Double,
-                D3DResourceReturnType.D3DReturnTypeContinued => ResourceReturnType.Continued,
+                0 => ResourceReturnType.None,
+                Hexa.NET.D3DCommon.ResourceReturnType.Unorm => ResourceReturnType.UNorm,
+                Hexa.NET.D3DCommon.ResourceReturnType.Snorm => ResourceReturnType.SNorm,
+                Hexa.NET.D3DCommon.ResourceReturnType.Sint => ResourceReturnType.SInt,
+                Hexa.NET.D3DCommon.ResourceReturnType.Uint => ResourceReturnType.UInt,
+                Hexa.NET.D3DCommon.ResourceReturnType.Float => ResourceReturnType.Float,
+                Hexa.NET.D3DCommon.ResourceReturnType.Mixed => ResourceReturnType.Mixed,
+                Hexa.NET.D3DCommon.ResourceReturnType.Double => ResourceReturnType.Double,
+                Hexa.NET.D3DCommon.ResourceReturnType.Continued => ResourceReturnType.Continued,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static SrvDimension ConvertBack(D3DSrvDimension dimension)
+        public static SrvDimension ConvertBack(Hexa.NET.D3DCommon.SrvDimension dimension)
         {
             return dimension switch
             {
-                D3DSrvDimension.D3DSrvDimensionUnknown => SrvDimension.Unknown,
-                D3DSrvDimension.D3DSrvDimensionBuffer => SrvDimension.Buffer,
-                D3DSrvDimension.D3DSrvDimensionTexture1D => SrvDimension.Texture1D,
-                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1DArray,
-                D3DSrvDimension.D3DSrvDimensionTexture2D => SrvDimension.Texture2D,
-                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2DArray,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2DMS,
-                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2DMSArray,
-                D3DSrvDimension.D3DSrvDimensionTexture3D => SrvDimension.Texture3D,
-                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.TextureCube,
-                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.TextureCubeArray,
-                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.BufferEx,
+                Hexa.NET.D3DCommon.SrvDimension.Unknown => SrvDimension.Unknown,
+                Hexa.NET.D3DCommon.SrvDimension.Buffer => SrvDimension.Buffer,
+                Hexa.NET.D3DCommon.SrvDimension.Texture1D => SrvDimension.Texture1D,
+                Hexa.NET.D3DCommon.SrvDimension.Texture1Darray => SrvDimension.Texture1DArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2D => SrvDimension.Texture2D,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Darray => SrvDimension.Texture2DArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Dms => SrvDimension.Texture2DMS,
+                Hexa.NET.D3DCommon.SrvDimension.Texture2Dmsarray => SrvDimension.Texture2DMSArray,
+                Hexa.NET.D3DCommon.SrvDimension.Texture3D => SrvDimension.Texture3D,
+                Hexa.NET.D3DCommon.SrvDimension.Texturecube => SrvDimension.TextureCube,
+                Hexa.NET.D3DCommon.SrvDimension.Texturecubearray => SrvDimension.TextureCubeArray,
+                Hexa.NET.D3DCommon.SrvDimension.Bufferex => SrvDimension.BufferEx,
                 _ => throw new NotSupportedException(),
             };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ShaderVariableDesc ConvertBack(Silk.NET.Direct3D11.ShaderVariableDesc shaderVariableDesc)
+        public static ShaderVariableDesc ConvertBack(Hexa.NET.D3D11.ShaderVariableDesc shaderVariableDesc)
         {
             return new()
             {
@@ -2826,38 +2826,16 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.FenceFlag Convert(FenceFlags flags)
+        public static Hexa.NET.D3D11.FenceFlag Convert(FenceFlags flags)
         {
             return flags switch
             {
-                FenceFlags.None => Silk.NET.Direct3D11.FenceFlag.None,
-                FenceFlags.Shared => Silk.NET.Direct3D11.FenceFlag.Shared,
-                FenceFlags.SharedCrossAdapter => Silk.NET.Direct3D11.FenceFlag.SharedCrossAdapter,
-                FenceFlags.NonMonitored => Silk.NET.Direct3D11.FenceFlag.NonMonitored,
+                FenceFlags.None => Hexa.NET.D3D11.FenceFlag.None,
+                FenceFlags.Shared => Hexa.NET.D3D11.FenceFlag.Shared,
+                FenceFlags.SharedCrossAdapter => Hexa.NET.D3D11.FenceFlag.SharedCrossAdapter,
+                FenceFlags.NonMonitored => Hexa.NET.D3D11.FenceFlag.NonMonitored,
                 _ => throw new NotSupportedException(),
             };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Silk.NET.Direct3D11.Texture2DDesc Convert(CombinedTex2DDesc description)
-        {
-            Silk.NET.Direct3D11.Texture2DDesc desc;
-            desc.Format = Convert(description.Format);
-            desc.Width = (uint)description.Width;
-            desc.Height = (uint)description.Height;
-            desc.ArraySize = (uint)description.ArraySize;
-            desc.MipLevels = (uint)description.MipLevels;
-
-            Convert(description.CpuAccessFlags, description.GpuAccessFlags, out var usage, out var bindFlags);
-
-            desc.Usage = Convert(usage);
-            desc.BindFlags = (uint)Convert(bindFlags);
-
-            desc.CPUAccessFlags = (uint)Convert(description.CpuAccessFlags);
-            desc.MiscFlags = (uint)Convert(description.MiscFlag);
-            desc.SampleDesc = Convert(description.SampleDescription);
-
-            return desc;
         }
 
         internal static void Convert(CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, out Usage usage, out BindFlags bindFlags)

@@ -3,8 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
+    using HexaEngine.Graphics;
     using HexaEngine.PostFx;
 
     /// <summary>
@@ -13,17 +12,10 @@
     [EditorDisplayName("SSR")]
     public class SSR : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipelineSSR;
-
-        private ISamplerState pointClampSampler;
-        private ISamplerState linearClampSampler;
-        private ISamplerState linearBorderSampler;
-
         private ConstantBuffer<SSRParams> ssrParamsBuffer;
-
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<GBuffer> gbuffer;
+#nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
         private int maxRayCount = 16;
@@ -216,14 +208,6 @@
         /// <inheritdoc/>
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
-
-            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearBorderSampler = device.CreateSamplerState(SamplerStateDescription.LinearBorder);
-
             List<ShaderMacro> shaderMacros = new(macros)
             {
                 new("SSR_QUALITY", ((int)qualityPreset).ToString())
@@ -253,6 +237,12 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 
+        public override void UpdateBindings()
+        {
+            pipelineSSR.Bindings.SetSRV("inputTex", Input);
+            pipelineSSR.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
+        }
+
         /// <inheritdoc/>
         public override unsafe void Draw(IGraphicsContext context)
         {
@@ -271,44 +261,18 @@
                 ssrParams.RayStep = rayStep;
                 ssrParams.RayHitThreshold = rayHitThreshold;
                 ssrParamsBuffer.Update(context, ssrParams);
-                nint* cbvs = stackalloc nint[] { ssrParamsBuffer.NativePointer, camera.Value.NativePointer };
-                context.PSSetConstantBuffers(0, 2, (void**)cbvs);
-            }
-            else
-            {
-                context.PSSetConstantBuffer(1, camera.Value);
             }
 
-            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, Input.NativePointer, gbuffer.Value.SRVs[2].NativePointer };
-            context.PSSetShaderResources(0, 4, (void**)srvs);
-
-            nint* smps = stackalloc nint[] { pointClampSampler.NativePointer, linearClampSampler.NativePointer, linearBorderSampler.NativePointer };
-            context.PSSetSamplers(0, 3, (void**)smps);
-
-            context.SetPipelineState(pipelineSSR);
+            context.SetGraphicsPipelineState(pipelineSSR);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-
-            nint* emptySmps = stackalloc nint[3];
-            context.PSSetSamplers(0, 3, (void**)emptySmps);
-
-            nint* emptySrvs = stackalloc nint[4];
-            context.PSSetShaderResources(0, 4, (void**)emptySrvs);
-
-            nint* emptyCbvs = stackalloc nint[2];
-            context.PSSetConstantBuffers(0, 2, (void**)emptyCbvs);
-
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
         }
 
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
             pipelineSSR.Dispose();
-            pointClampSampler.Dispose();
-            linearClampSampler.Dispose();
-            linearBorderSampler.Dispose();
             ssrParamsBuffer?.Dispose();
             ssrParamsBuffer = null;
         }

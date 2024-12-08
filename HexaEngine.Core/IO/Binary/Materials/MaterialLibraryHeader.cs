@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Text;
 
     /// <summary>
@@ -16,12 +16,12 @@
         /// <summary>
         /// Current version of the material library file format.
         /// </summary>
-        public static readonly Version Version = 6;
+        public static readonly Version Version = new(2, 0, 0, 2);
 
         /// <summary>
         /// Minimum supported version of the material library file format.
         /// </summary>
-        public static readonly Version MinVersion = 5;
+        public static readonly Version MinVersion = new(2, 0, 0, 2);
 
         /// <summary>
         /// The endianness of the material library file.
@@ -47,16 +47,18 @@
         /// Reads the material library header from the specified stream.
         /// </summary>
         /// <param name="stream">The stream to read the header from.</param>
+        /// <param name="version"></param>
         /// <exception cref="InvalidDataException">Thrown if the magic number is not found or if there is a version mismatch.</exception>
-        public void Read(Stream stream)
+        public void Read(Stream stream, out Version version)
         {
+            version = default;
             if (!stream.Compare(MagicNumber))
             {
                 throw new InvalidDataException();
             }
 
             Endianness = (Endianness)stream.ReadByte();
-            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out version))
             {
                 throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }

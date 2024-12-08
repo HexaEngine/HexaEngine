@@ -105,13 +105,13 @@
         /// <param name="path">The path where the asset archive will be saved.</param>
         /// <param name="compression">The compression algorithm to use.</param>
         /// <param name="level">The compression level to apply.</param>
-        /// <param name="certificate"></param>
+        /// <param name="rsa"></param>
         public void Save(string path, Compression compression = Compression.None, CompressionLevel level = CompressionLevel.Optimal, RSA? rsa = null)
         {
             var fs = File.Create(path);
             AssetArchiveHeader header = new()
             {
-                Endianness = Mathematics.Endianness.LittleEndian,
+                Endianness = Hexa.NET.Mathematics.Endianness.LittleEndian,
                 Compression = compression,
                 Flags = AssetArchiveFlags.Normal,
                 Parts = [],

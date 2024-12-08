@@ -14,6 +14,8 @@
         public abstract void Invoke(RoutedEventArgs routedEvent);
 
         public abstract void Invoke(RoutedEventArgs routedEvent, object? stop);
+
+        public abstract void Clear();
     }
 
     public class EventRoute<TArgs> : EventRoute where TArgs : RoutedEventArgs
@@ -25,6 +27,12 @@
         public EventRoute(RoutedEvent<TArgs> routedEvent) : base(routedEvent)
         {
             this.routedEvent = routedEvent;
+        }
+
+        public override void Clear()
+        {
+            route.Clear();
+            targetToHandler.Clear();
         }
 
         public void Add(object target, RoutedEventHandler<TArgs> handler)
@@ -187,6 +195,8 @@
         public abstract EventRoute CreateEventRoute(object source);
 
         public abstract void AddToEventRoute(EventRoute eventRoute, object target);
+
+        public abstract void RemoveFromEventRoute(EventRoute eventRoute, object target);
     }
 
     public class RoutedEvent<TArgs> : RoutedEvent where TArgs : RoutedEventArgs
@@ -225,6 +235,20 @@
             {
                 var classHandler = classHandlers[i];
                 route.Add(target, classHandler);
+            }
+        }
+
+        public override void RemoveFromEventRoute(EventRoute eventRoute, object target)
+        {
+            if (eventRoute is not EventRoute<TArgs> route)
+            {
+                return;
+            }
+
+            for (int i = 0; i < classHandlers.Count; i++)
+            {
+                var classHandler = classHandlers[i];
+                route.Remove(target, classHandler);
             }
         }
 

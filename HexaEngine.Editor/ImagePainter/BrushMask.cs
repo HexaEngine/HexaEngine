@@ -35,15 +35,15 @@
 
         public string Id => name.Id;
 
-        public void Apply(IGraphicsContext context)
+        public void Apply(IGraphicsContext context, IResourceBindingList bindingList)
         {
-            context.PSSetShaderResource(0, _shaderResourceView);
-            context.PSSetSampler(0, _samplerState);
+            bindingList.SetSRV("brushMaskTex", _shaderResourceView);
+            bindingList.SetSampler("brushMaskSamplerState", _samplerState);
         }
 
         public void DrawPreview(Vector2 size)
         {
-            ImGui.Image(_shaderResourceView.NativePointer, size);
+            ImGui.Image((ulong)_shaderResourceView.NativePointer, size);
         }
 
         protected virtual void Dispose(bool disposing)

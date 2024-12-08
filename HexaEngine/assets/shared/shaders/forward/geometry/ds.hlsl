@@ -12,21 +12,36 @@ SamplerState heightTextureSampler : register(s0);
 PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const OutputPatch<DomainInput, 3> tri)
 {
 	PixelInput output;
+#if VtxColors
+    output.color = float4(bary.x * tri[0].color.rgb + bary.y * tri[1].color.rgb + bary.z * tri[2].color.rgb, 1);
+#endif
 
-	// Interpolate patch attributes to generated vertices.
-	output.position = float4(bary.x * tri[0].pos + bary.y * tri[1].pos + bary.z * tri[2].pos, 1);
+	output.position = float4(bary.x * tri[0].position + bary.y * tri[1].position + bary.z * tri[2].position, 1);
+
 #if (DEPTH != 1)
-	output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
-	output.normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
-	output.tangent = bary.x * tri[0].tangent + bary.y * tri[1].tangent + bary.z * tri[2].tangent;
+#if VtxUVs
+    output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
+#endif
+#if VtxNormals
+    output.normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
+#endif
+#if VtxTangents
+    output.tangent = bary.x * tri[0].tangent + bary.y * tri[1].tangent + bary.z * tri[2].tangent;
+#endif
 #else
-	float3 normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
-	float2 tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
+#if VtxUVs
+    output.tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
+#endif
+#if VtxNormals
+    output.normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
+#endif
 #endif
 
 	// Calculate the normal vector against the world matrix only.
 #if (DEPTH != 1)
+#if VtxNormals
 	output.normal = normalize(output.normal);
+#endif
 #endif
 
 #if HasHeightTex
@@ -45,12 +60,15 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 	output.position = mul(output.position, viewProj);
 
 #if (DEPTH != 1)
-	// Store the texture coordinates for the pixel shader.
+#if VtxUVs
 	output.tex = output.tex;
+#endif
 #endif
 
 #if (DEPTH != 1)
+#if VtxTangents
 	output.tangent = normalize(output.tangent);
+#endif
 #endif
 
 	return output;

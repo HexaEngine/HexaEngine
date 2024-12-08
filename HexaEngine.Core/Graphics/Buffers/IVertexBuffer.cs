@@ -20,6 +20,8 @@
         /// </summary>
         uint Stride { get; }
 
+        unsafe void* Items { get; }
+
         /// <summary>
         /// Binds the vertex buffer to the specified graphics context.
         /// </summary>

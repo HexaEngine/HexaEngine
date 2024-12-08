@@ -1,13 +1,13 @@
 ﻿namespace CrashReporter
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
     using HexaEngine;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;
@@ -25,7 +25,7 @@
         private readonly string? reportFile;
         private readonly string reportMessage;
 
-        public CrashWindow() : base(WindowPosCentered, WindowPosCentered, 700, 400, Silk.NET.SDL.WindowFlags.Borderless)
+        public CrashWindow()
         {
             var args = Environment.GetCommandLineArgs();
 

@@ -1,24 +1,23 @@
 ﻿namespace HexaEngine.Graphics.Culling
 {
-    using Hexa.NET.ImGui;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
+    using HexaEngine.Graphics;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Numerics;
 
     public class CullingManager
     {
 #nullable disable
-        private readonly IGraphicsDevice device;
         private CullingFlags cullingFlags = CullingFlags.All;
         private float depthBias = 0.0f;
 
-        private IComputePipeline culling;
+        private IComputePipelineState culling;
 
         private ConstantBuffer<CBCamera> occlusionCameraBuffer;
         private StructuredUavBuffer<uint> instanceOffsets;
@@ -32,18 +31,17 @@
         private StructuredBuffer<uint> instanceOffsetsNoCull;
         private StructuredBuffer<Matrix4x4> instanceDataNoCull;
 
+        private readonly EventHandlers<CapacityChangedEventArgs> resizedEventHandlers = new();
+
         private ConstantBuffer<OcclusionParams> occlusionParamBuffer;
         private SamplerState sampler;
-        private unsafe void** cullingSRVs;
-        private unsafe void** cullingUAVs;
-        private unsafe void** cullingCBVs;
         private readonly CullingContext context;
+        private CullingStats stats;
 #nullable enable
 
-        public unsafe CullingManager(IGraphicsDevice device)
+        public CullingManager(IGraphicsDevice device)
         {
-            this.device = device;
-            culling = device.CreateComputePipeline(new()
+            culling = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "compute/culling/culling.hlsl",
             });
@@ -61,17 +59,35 @@
             drawIndirectArgs = new(CpuAccessFlags.Write);
             visibleListBuffer = new(CpuAccessFlags.Read);
             sampler = new(new(Filter.MaximumMinMagLinearMipPoint, TextureAddressMode.Clamp));
-            cullingCBVs = AllocArray(2);
-            cullingCBVs[0] = (void*)occlusionParamBuffer.Buffer.NativePointer;
-            cullingCBVs[1] = (void*)occlusionCameraBuffer.Buffer.NativePointer;
-            cullingUAVs = AllocArray(4);
-            cullingUAVs[0] = (void*)instanceDataOutBuffer.UAV.NativePointer;
-            cullingUAVs[1] = (void*)instanceOffsets.UAV.NativePointer;
-            cullingUAVs[2] = (void*)swapBuffer.UAV.NativePointer;
-            cullingUAVs[3] = (void*)visibleListBuffer.UAV.NativePointer;
-            cullingSRVs = AllocArray(2);
-            cullingSRVs[1] = (void*)instanceDataBuffer.SRV.NativePointer;
+
+            var bindings = culling.Bindings;
+            bindings.SetCBV("CullingParams", occlusionParamBuffer);
+            bindings.SetCBV("CameraBuffer", occlusionCameraBuffer);
+
+            bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
+
+            bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
+            bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
+            bindings.SetUAV("drawArgs", swapBuffer.UAV);
+            bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
+
+            bindings.SetSampler("samplerPoint", sampler);
+
             context = new(instanceOffsetsNoCull, instanceDataNoCull, instanceOffsets, instanceDataOutBuffer, typeDataBuffer, instanceDataBuffer, swapBuffer, drawIndirectArgs, visibleListBuffer);
+
+            instanceDataBuffer.Resize += BufferResize;
+            instanceDataOutBuffer.Resize += BufferResize;
+            instanceOffsets.Resize += BufferResize;
+            swapBuffer.Resize += BufferResize;
+            visibleListBuffer.Resize += BufferResize;
+        }
+
+        private bool resized;
+
+        private void BufferResize(object? sender, CapacityChangedEventArgs e)
+        {
+            resized = true;
+            resizedEventHandlers.Invoke(this, e);
         }
 
         public static CullingManager Current { get; internal set; } = new(Application.GraphicsDevice);
@@ -82,41 +98,48 @@
 
         public float DepthBias { get => depthBias; set => depthBias = value; }
 
-        public StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
+        public CullingStats Stats { get => stats; }
 
-        public StructuredBuffer<Matrix4x4> InstanceDataNoCull => instanceDataNoCull;
-
-        public ConstantBuffer<CBCamera> OcclusionCameraBuffer => occlusionCameraBuffer;
-
-        public StructuredUavBuffer<uint> InstanceOffsets => instanceOffsets;
-
-        public StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
-
-        public StructuredBuffer<GPUInstance> InstanceDataBuffer => instanceDataBuffer;
-
-        public StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
-
-        public DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
+        public event EventHandler<CapacityChangedEventArgs> BuffersResized
+        {
+            add => resizedEventHandlers.AddHandler(value);
+            remove => resizedEventHandlers.RemoveHandler(value);
+        }
 
         public void UpdateCamera(IGraphicsContext context, Camera camera, Viewport viewport)
         {
             occlusionCameraBuffer.Update(context, new(camera, new(viewport.Width, viewport.Height)));
         }
 
-        private static Vector3 ExtractScale(Matrix4x4 matrix)
+        private Vector4 Frustum;
+        private float CamNear;
+        private float CamFar;
+
+        public void ComputePlanes(Camera camera)
         {
-            Vector3 scale;
-            scale.X = new Vector3(matrix.M11, matrix.M12, matrix.M13).Length();
-            scale.Y = new Vector3(matrix.M21, matrix.M22, matrix.M23).Length();
-            scale.Z = new Vector3(matrix.M31, matrix.M32, matrix.M33).Length();
+            Matrix4x4 projection = camera.Transform.Projection;
 
-            float det = matrix.GetDeterminant();
-            if (det < 0)
-            {
-                scale.X = -scale.X;
-            }
+            Matrix4x4 projectionT = Matrix4x4.Transpose(projection);
 
-            return scale;
+            Vector4 frustumX = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(0)); // x + w < 0
+            Vector4 frustumY = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(1)); // y + w < 0
+
+            Frustum = new(frustumX.X, frustumX.Z, frustumY.Y, frustumY.Z);
+            CamNear = camera.Near;
+            CamFar = camera.Far;
+        }
+
+        public bool IsVisible(Vector3 center, float radius)
+        {
+            bool visible = true;
+
+            // the left/top/right/bottom plane culling utilizes frustum symmetry to cull against two planes at the same time
+            visible = visible && center.Z * Frustum[1] - Math.Abs(center.X) * Frustum[0] > -radius;
+            visible = visible && center.Z * Frustum[3] - Math.Abs(center.Y) * Frustum[2] > -radius;
+            // the near/far plane culling uses camera space Z directly
+            visible = visible && center.Z + radius > CamNear && center.Z - radius < CamFar;
+
+            return visible;
         }
 
         public unsafe void ExecuteCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain, ICPUProfiler? profiler)
@@ -148,21 +171,23 @@
             };
             occlusionParamBuffer.Update(context);
 
-            cullingUAVs[0] = (void*)instanceDataOutBuffer.UAV.NativePointer;
-            cullingUAVs[1] = (void*)instanceOffsets.UAV.NativePointer;
-            cullingUAVs[2] = (void*)swapBuffer.UAV.NativePointer;
-            cullingUAVs[3] = (void*)visibleListBuffer.UAV.NativePointer;
+            if (resized)
+            {
+                var bindings = culling.Bindings;
 
-            cullingSRVs[1] = (void*)instanceDataBuffer.SRV.NativePointer;
-            cullingSRVs[0] = (void*)mipChain.SRV.NativePointer;
+                bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
 
-            uint* initialCount = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1) };
-            context.CSSetShaderResources(0, 2, cullingSRVs);
-            context.CSSetUnorderedAccessViews(4, cullingUAVs, initialCount);
-            context.CSSetSampler(0, sampler);
-            context.CSSetConstantBuffers(0, 2, cullingCBVs);
-            culling.Dispatch(context, (uint)instanceCount / 1024 + 1, 1, 1);
-            context.ClearState();
+                bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
+                bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
+                bindings.SetUAV("drawArgs", swapBuffer.UAV);
+                bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
+                resized = false;
+            }
+
+            culling.Bindings.SetSRV("inputRT", mipChain.SRV);
+            context.SetComputePipelineState(culling);
+            context.Dispatch((uint)instanceCount / 1024 + 1, 1, 1);
+            context.SetComputePipelineState(null);
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
 
@@ -177,23 +202,6 @@
             uint drawInstanceCount = 0;
             uint vertexCount = 0;
 
-            ImGui.InputFloat("Depth Bias", ref depthBias);
-
-            ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
-
-            if (drawBoundingSpheres)
-            {
-                for (int i = 0; i < instanceCount; i++)
-                {
-                    var instance = instanceDataBuffer[i];
-                    var world = Matrix4x4.Transpose(instance.World);
-
-                    var center = Vector3.Transform(instance.BoundingSphere.Center, world);
-                    var radius = instance.BoundingSphere.Radius * ExtractScale(world).Length();
-                    DebugDraw.DrawSphere(center, default, radius, Colors.White);
-                }
-            }
-
             for (int i = 0; i < this.context.TypeCount; i++)
             {
                 vertexCount += swapBuffer[i].IndexCountPerInstance * swapBuffer[i].InstanceCount;
@@ -201,31 +209,25 @@
                 drawCalls += swapBuffer[i].InstanceCount > 0 ? 1u : 0u;
             }
 
-            uint fmt = 0;
-            while (vertexCount > 1000)
-            {
-                vertexCount /= 1000;
-                fmt++;
-            }
-            char suffix = fmt switch
-            {
-                0 => ' ',
-                1 => 'K',
-                _ => 'M',
-            };
+            stats.DrawCalls = (uint)typeCount;
+            stats.DrawInstanceCount = (uint)instanceCount;
 
-            ImGui.Text($"Draw Calls: {typeCount}/{drawCalls}, Instances: {instanceCount}/{drawInstanceCount}, Vertices: {vertexCount}{suffix}");
+            stats.ActualDrawCalls = drawCalls;
+            stats.ActualDrawInstanceCount = drawInstanceCount;
 
-            var flags = (int)cullingFlags;
-            ImGui.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
-            ImGui.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
-            cullingFlags = (CullingFlags)flags;
+            stats.VertexCount = vertexCount;
+
+            stats.Instances = instanceDataBuffer.Items;
+            stats.InstanceCount = instanceDataBuffer.Count;
+
+            stats.Args = swapBuffer.Items;
+            stats.ArgsCount = swapBuffer.Count;
         }
 
-        private bool drawBoundingSpheres = false;
-
-        public unsafe void Release()
+        public void Release()
         {
+            resizedEventHandlers.Clear();
+
             occlusionCameraBuffer.Dispose();
             occlusionCameraBuffer = null;
             instanceOffsets.Dispose();
@@ -255,12 +257,6 @@
 
             sampler.Dispose();
             sampler = null;
-            Free(cullingSRVs);
-            cullingSRVs = null;
-            Free(cullingUAVs);
-            cullingUAVs = null;
-            Free(cullingCBVs);
-            cullingCBVs = null;
         }
     }
 }

@@ -2,13 +2,13 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak;PROFILE</DefineConstants>
+		<PublishAot>true</PublishAot>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
@@ -30,34 +30,42 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\native\linux-arm64\libmagicphysx.so">
+		<Content Include="..\native\linux-arm64\*.so">
 			<Link>runtimes\linux-arm64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\native\linux-x64\libmagicphysx.so">
+		<Content Include="..\native\linux-x64\*.so">
 			<Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\native\osx-arm64\libmagicphysx.dylib">
+		<Content Include="..\native\osx-arm64\*.dylib">
 			<Link>runtimes\osx-arm64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\native\osx-x64\libmagicphysx.dylib">
+		<Content Include="..\native\osx-x64\*.dylib">
 			<Link>runtimes\osx-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\native\win-x64\libmagicphysx.dll">
+		<Content Include="..\native\win-x64\*.dll">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
-	<Target Name="PublishPackAssets" AfterTargets="Publish">
-		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 2 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
-	</Target>
 	<ItemGroup>
-		<None Update="imgui.ini">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
+		<TrimmerRootAssembly Include="HexaEngine.Editor" />
+		<TrimmerRootAssembly Include="HexaEngine" />
+		<TrimmerRootAssembly Include="HexaEngine.Core" />
+		<TrimmerRootAssembly Include="HexaEngine.D3D11" />
+		<TrimmerRootAssembly Include="HexaEngine.D3D12" />
+		<TrimmerRootAssembly Include="HexaEngine.OpenAL" />
+		<TrimmerRootAssembly Include="HexaEngine.OpenGL" />
+		<TrimmerRootAssembly Include="HexaEngine.Vulkan" />
+		<TrimmerRootAssembly Include="HexaEngine.XAudio" />
+		<TrimmerRootAssembly Include="HexaEngine.Core" />
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+		<EmbeddedResource Include="ILLink.Descriptors.xml">
+			<LogicalName>ILLink.Descriptors.xml</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>

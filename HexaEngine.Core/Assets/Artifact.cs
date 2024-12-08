@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Assets
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.Buffers.Binary;
     using System.Text;
 
@@ -19,6 +19,7 @@
             SourceGuid = sourceGuid;
             Guid = guid;
             Type = type;
+            flags = ArtifactFlags.None;
         }
 
         [JsonIgnore]
@@ -36,7 +37,7 @@
         public AssetType Type { get; }
 
         [JsonIgnore]
-        public ArtifactFlags Flags { get; internal set; }
+        public ArtifactFlags Flags { get => flags; internal set => flags = value; }
 
         [JsonIgnore]
         public string Path => path ??= System.IO.Path.Combine(ArtifactDatabase.CacheFolder, Guid.ToString());
@@ -55,13 +56,13 @@
         public static Artifact Read(Stream stream)
         {
             Span<byte> buffer = stackalloc byte[16 + 16 + 16 + 4];
-            stream.Read(buffer);
+            stream.ReadExactly(buffer);
             var guid = new Guid(buffer[..16]);
             var sourceGuid = new Guid(buffer.Slice(16, 16));
             var parentGuid = new Guid(buffer.Slice(32, 16));
             var type = (AssetType)BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(48, 4));
             var name = stream.ReadString(Encoding.UTF8, Endianness.LittleEndian);
-            return new Artifact(name, parentGuid, sourceGuid, guid, type);
+            return new Artifact(name!, parentGuid, sourceGuid, guid, type);
         }
 
         public int Write(Span<byte> destination)

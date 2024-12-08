@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Profiling;
 
     public class RadiosityBakePass : RenderPass
     {

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Dummy
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -15,6 +15,7 @@
         public ITextureLoader TextureLoader { get; }
 
         public IGPUProfiler Profiler { get; }
+        public GraphicsDeviceCapabilities Capabilities { get; }
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
@@ -33,9 +34,29 @@
             return new DummyBuffer(description);
         }
 
+        public unsafe IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new DummyComputePipeline(desc);
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public IGraphicsContext CreateDeferredContext()
@@ -59,6 +80,11 @@
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }
@@ -88,7 +114,12 @@
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
             throw new NotImplementedException();
         }
@@ -123,17 +154,17 @@
             throw new NotImplementedException();
         }
 
-        public unsafe ISwapChain CreateSwapChain(Window* window)
+        public unsafe ISwapChain CreateSwapChain(SDLWindow* window)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }
 
         public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }
@@ -184,6 +215,26 @@
         }
 
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalCBV(string name, IBuffer? cbv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSampler(string name, ISamplerState? sampler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSRV(string name, IShaderResourceView? srv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
         {
             throw new NotImplementedException();
         }

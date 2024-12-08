@@ -46,6 +46,8 @@
             SetViewPoint(Vector3.Zero);
             viewBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
+            pipeline.Bindings.SetCBV("mvp", viewBuffer);
+            pipeline.Bindings.SetSampler("defaultSampler", sampler);
         }
 
         public void SetViewPoint(Vector3 camera)
@@ -86,10 +88,8 @@
             }
 
             context.SetViewport(new(width, height));
-            context.PSSetSampler(0, sampler);
-            context.PSSetShaderResource(0, Source);
-            context.VSSetConstantBuffer(0, viewBuffer);
-            context.SetPipelineState(pipeline);
+            pipeline.Bindings.SetSRV("inputTexture", Source);
+            context.SetGraphicsPipelineState(pipeline);
 
             for (int i = 0; i < 6; i++)
             {
@@ -98,10 +98,7 @@
                 cube.DrawAuto(context);
             }
 
-            context.SetPipelineState(null);
-            context.PSSetShaderResource(0, null);
-            context.VSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
 

@@ -12,7 +12,7 @@
          this Stream source,
          Stream destination,
          int bufferSize,
-         IProgress<long> progress = null,
+         IProgress<long>? progress = null,
          CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(source);
@@ -45,7 +45,6 @@
                     break;
                 }
             }
-            buffer = null;
         }
     }
 }

@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Particles
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Weather;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
-    using YamlDotNet.Core;
 
     //based on AMD GPU Particles Sample: https://github.com/GPUOpen-LibrariesAndSDKs/GPUParticles11
 
@@ -36,15 +33,15 @@
 
         private readonly IndexBuffer<uint> indexBuffer;
 
-        private readonly IComputePipeline particleInitDeadList;
-        private readonly IComputePipeline particleReset;
-        private readonly IComputePipeline particleEmit;
-        private readonly IComputePipeline particleSimulate;
+        private readonly IComputePipelineState particleInitDeadList;
+        private readonly IComputePipelineState particleReset;
+        private readonly IComputePipelineState particleEmit;
+        private readonly IComputePipelineState particleSimulate;
         private readonly IGraphicsPipelineState particles;
-        private readonly IComputePipeline particleSortInitArgs;
-        private readonly IComputePipeline particleSort512;
-        private readonly IComputePipeline particleBitonicSortStep;
-        private readonly IComputePipeline particleSortInner512;
+        private readonly IComputePipelineState particleSortInitArgs;
+        private readonly IComputePipelineState particleSort512;
+        private readonly IComputePipelineState particleBitonicSortStep;
+        private readonly IComputePipelineState particleSortInner512;
 
         private readonly ISamplerState linearClampSampler;
         private readonly ISamplerState linearWrapSampler;
@@ -188,14 +185,51 @@
 
             indexBuffer = new(indices, CpuAccessFlags.None);
 
-            particleInitDeadList = device.CreateComputePipeline(new("forward/particles/InitDeadListCS.hlsl"));
-            particleReset = device.CreateComputePipeline(new("forward/particles/ParticleResetCS.hlsl"));
-            particleEmit = device.CreateComputePipeline(new("forward/particles/ParticleEmitCS.hlsl"));
-            particleSimulate = device.CreateComputePipeline(new("forward/particles/ParticleSimulateCS.hlsl"));
-            particleSortInitArgs = device.CreateComputePipeline(new("forward/particles/InitSortDispatchArgsCS.hlsl"));
-            particleSort512 = device.CreateComputePipeline(new("forward/particles/Sort512CS.hlsl"));
-            particleBitonicSortStep = device.CreateComputePipeline(new("forward/particles/BitonicSortStepCS.hlsl"));
-            particleSortInner512 = device.CreateComputePipeline(new("forward/particles/SortInner512CS.hlsl"));
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+
+            particleInitDeadList = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitDeadListCS.hlsl"));
+            particleInitDeadList.Bindings.SetUAV("deadList", deadListBuffer.UAV, 0);
+
+            particleReset = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleResetCS.hlsl"));
+            particleReset.Bindings.SetUAV("ParticleBufferA", particleBufferA.UAV);
+            particleReset.Bindings.SetUAV("ParticleBufferB", particleBufferB.UAV);
+
+            particleEmit = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleEmitCS.hlsl"));
+            particleEmit.Bindings.SetCBV("DeadListCountCBuffer", deadListCountBuffer);
+            particleEmit.Bindings.SetCBV("EmitterCBuffer", emitterBuffer);
+            particleEmit.Bindings.SetSRV("RandomBuffer", randomTexture);
+            particleEmit.Bindings.SetUAV("ParticleBufferA", particleBufferA.UAV);
+            particleEmit.Bindings.SetUAV("ParticleBufferB", particleBufferB.UAV);
+            particleEmit.Bindings.SetUAV("DeadListToAllocFrom", deadListBuffer.UAV);
+            particleEmit.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
+
+            particleSimulate = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleSimulateCS.hlsl"));
+            particleEmit.Bindings.SetCBV("ComputeCBuffer", simulationBuffer);
+            particleEmit.Bindings.SetCBV("EmitterCBuffer", emitterBuffer);
+            particleSimulate.Bindings.SetUAV("ParticleBufferA", particleBufferA.UAV);
+            particleSimulate.Bindings.SetUAV("ParticleBufferB", particleBufferB.UAV);
+            particleSimulate.Bindings.SetUAV("DeadListToAddTo", deadListBuffer.UAV);
+            particleSimulate.Bindings.SetUAV("IndexBuffer", aliveIndexBuffer.UAV, 0);
+            particleSimulate.Bindings.SetUAV("ViewSpacePositions", viewSpacePositionsBuffer.UAV);
+            particleSimulate.Bindings.SetUAV("DrawArgs", indirectRenderArgsBuffer.UAV);
+
+            particleSortInitArgs = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitSortDispatchArgsCS.hlsl"));
+            particleSortInitArgs.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
+            particleSortInitArgs.Bindings.SetUAV("Data", indirectSortArgsBuffer.UAV);
+
+            particleSort512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/Sort512CS.hlsl"));
+            particleSort512.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
+            particleSort512.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
+
+            particleBitonicSortStep = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/BitonicSortStepCS.hlsl"));
+            particleBitonicSortStep.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
+            particleBitonicSortStep.Bindings.SetCBV("SortConstants", sortDispatchInfoBuffer);
+            particleBitonicSortStep.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
+
+            particleSortInner512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/SortInner512CS.hlsl"));
+            particleSortInner512.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
+            particleSortInner512.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
 
             particles = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -207,51 +241,33 @@
                 BlendFactor = Vector4.One,
                 Rasterizer = RasterizerDescription.CullBack,
             });
-
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+            particles.Bindings.SetCBV("ActiveListCountCBuffer", activeListCountBuffer);
+            particles.Bindings.SetSRV("ParticleBufferA", particleBufferA.SRV);
+            particles.Bindings.SetSRV("ViewSpacePositions", viewSpacePositionsBuffer.SRV);
+            particles.Bindings.SetSRV("IndexBuffer", aliveIndexBuffer.SRV);
+            particles.Bindings.SetSRV("ParticleTexture", emitter.ParticleTexture.SRV);
+            particles.Bindings.SetSampler("linearClampSampler", linearClampSampler);
         }
 
         public unsafe void InitializeDeadList(IGraphicsContext context)
         {
-            uint* initial_count = stackalloc uint[] { 0 };
-            nint* dead_list_uavs = stackalloc nint[] { deadListBuffer.UAV.NativePointer };
-            context.CSSetUnorderedAccessViews(0, 1, (void**)dead_list_uavs, initial_count);
-
-            context.SetComputePipeline(particleInitDeadList);
+            context.SetComputePipelineState(particleInitDeadList);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
-            context.SetComputePipeline(null);
-
-            dead_list_uavs[0] = 0;
-            context.CSSetUnorderedAccessViews(0, 1, (void**)dead_list_uavs, null);
+            context.SetComputePipelineState(null);
         }
 
         public unsafe void ResetParticles(IGraphicsContext context)
         {
-            nint* uavs = stackalloc nint[] { particleBufferA.UAV.NativePointer, particleBufferB.UAV.NativePointer };
-            uint* initial_counts = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1) };
-            context.CSSetUnorderedAccessViews(0, 2, (void**)uavs, initial_counts);
-
-            context.SetComputePipeline(particleReset);
+            context.SetComputePipelineState(particleReset);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
-            context.SetComputePipeline(null);
-
-            uavs[0] = 0;
-            uavs[1] = 0;
-            context.CSSetUnorderedAccessViews(0, 2, (void**)uavs, null);
+            context.SetComputePipelineState(null);
         }
 
         public unsafe void Emit(IGraphicsContext context)
         {
             if (emitter.NumberToEmit > 0)
             {
-                context.SetComputePipeline(particleEmit);
-
-                nint* uavs = stackalloc nint[] { particleBufferA.UAV.NativePointer, particleBufferB.UAV.NativePointer, deadListBuffer.UAV.NativePointer };
-                uint* initial_counts = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1) };
-                context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, initial_counts);
-
-                context.CSSetShaderResource(0, randomTexture.SRV);
+                context.SetComputePipelineState(particleEmit);
 
                 EmitterCBuffer emitterBufferData = default;
                 emitterBufferData.ElapsedTime = emitter.ElapsedTime;
@@ -268,22 +284,11 @@
                 emitterBufferData.CollisionThickness = emitter.CollisionThickness;
                 emitterBuffer.Update(context, emitterBufferData);
 
-                context.CSSetConstantBuffer(2, deadListCountBuffer);
-                context.CSSetConstantBuffer(4, emitterBuffer);
-
-                context.CSSetSampler(0, linearWrapSampler);
-
                 context.CopyStructureCount(deadListCountBuffer, 0, deadListBuffer.UAV);
                 uint thread_groups_x = (uint)Math.Ceiling(emitter.NumberToEmit * 1.0f / 1024);
                 context.Dispatch(thread_groups_x, 1, 1);
 
-                context.CSSetSampler(0, null);
-                context.CSSetShaderResource(0, null);
-
-                ZeroMemory(uavs, sizeof(nint) * 3);
-                context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, null);
-
-                context.SetComputePipeline(null);
+                context.SetComputePipelineState(null);
             }
         }
 
@@ -296,35 +301,11 @@
             simulationData.DeltaTime = Time.Delta;
             simulationBuffer.Update(context, simulationData);
 
-            nint* uavs = stackalloc nint[]
-            {
-                particleBufferA.UAV.NativePointer,
-                particleBufferB.UAV.NativePointer,
-                deadListBuffer.UAV.NativePointer,
-                aliveIndexBuffer.UAV.NativePointer,
-                viewSpacePositionsBuffer.UAV.NativePointer,
-                indirectRenderArgsBuffer.UAV.NativePointer
-            };
-            uint* initial_counts = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1), 0, unchecked((uint)-1), unchecked((uint)-1) };
-            context.CSSetUnorderedAccessViews(0, 6, (void**)uavs, initial_counts);
+            particleSimulate.Bindings.SetSRV("DepthBuffer", depthSRV);
 
-            nint* srvs = stackalloc nint[] { depthSRV.NativePointer };
-            context.CSSetShaderResources(0, 1, (void**)srvs);
-
-            context.CSSetConstantBuffer(4, emitterBuffer);
-            context.CSSetConstantBuffer(0, simulationBuffer);
-
-            context.SetComputePipeline(particleSimulate);
+            context.SetComputePipelineState(particleSimulate);
             context.Dispatch((uint)Math.Ceiling(MaxParticles * 1.0f / 256), 1, 1);
-
-            ZeroMemory(uavs, sizeof(nint) * 6);
-            context.CSSetUnorderedAccessViews(0, 6, (void**)uavs, null);
-
-            ZeroMemory(srvs, sizeof(nint));
-            context.CSSetShaderResources(0, 1, (void**)srvs);
-
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetConstantBuffer(4, null);
+            context.SetComputePipelineState(null);
 
             context.CopyStructureCount(activeListCountBuffer, 0, aliveIndexBuffer.UAV);
         }
@@ -369,40 +350,22 @@
 
         public unsafe void Rasterize(IGraphicsContext context, IShaderResourceView depthSRV)
         {
-            context.VSSetConstantBuffer(3, activeListCountBuffer);
             context.SetVertexBuffer(null, 0);
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
 
-            nint* vs_srvs = stackalloc nint[] { particleBufferA.SRV.NativePointer, viewSpacePositionsBuffer.SRV.NativePointer, aliveIndexBuffer.SRV.NativePointer };
-            nint* ps_srvs = stackalloc nint[] { emitter.ParticleTexture.SRV.NativePointer, depthSRV.NativePointer };
-            context.VSSetShaderResources(0, 3, (void**)vs_srvs);
-            context.PSSetShaderResources(0, 2, (void**)ps_srvs);
-            context.PSSetSampler(0, linearClampSampler);
+            particles.Bindings.SetSRV("DepthTexture", depthSRV);
 
-            context.SetPipelineState(particles);
+            context.SetGraphicsPipelineState(particles);
             context.DrawIndexedInstancedIndirect(indirectRenderArgsBuffer, 0);
-            context.SetPipelineState(null);
-
-            context.PSSetSampler(0, null);
-            ZeroMemory(vs_srvs, sizeof(nint) * 3);
-            context.VSSetShaderResources(0, 3, (void**)vs_srvs);
-            ZeroMemory(ps_srvs, sizeof(nint) * 2);
-            context.PSSetShaderResources(0, 2, (void**)ps_srvs);
+            context.SetGraphicsPipelineState(null);
         }
 
         public unsafe void Sort(IGraphicsContext context)
         {
-            context.CSSetConstantBuffer(0, activeListCountBuffer);
-            context.CSSetConstantBuffer(1, sortDispatchInfoBuffer);
-
             // Write the indirect args to a UAV
-            nint indirect_sort_args_uav = indirectSortArgsBuffer.UAV.NativePointer;
-            context.CSSetUnorderedAccessViews(0, 1, (void**)&indirect_sort_args_uav, null);
-            context.SetComputePipeline(particleSortInitArgs);
-            context.Dispatch(1, 1, 1);
 
-            nint uav = aliveIndexBuffer.UAV.NativePointer;
-            context.CSSetUnorderedAccessViews(0, 1, (void**)&uav, null);
+            context.SetComputePipelineState(particleSortInitArgs);
+            context.Dispatch(1, 1, 1);
 
             bool done = SortInitial(context);
             uint presorted = 512;
@@ -411,9 +374,6 @@
                 done = SortIncremental(context, presorted);
                 presorted *= 2;
             }
-
-            uav = 0;
-            context.CSSetUnorderedAccessViews(0, 1, (void**)&uav, null);
         }
 
         public bool SortInitial(IGraphicsContext context)
@@ -425,7 +385,7 @@
                 done = false;
             }
 
-            context.SetComputePipeline(particleSort512);
+            context.SetComputePipelineState(particleSort512);
             context.DispatchIndirect(indirectSortArgsBuffer, 0);
             return done;
         }
@@ -433,7 +393,7 @@
         public bool SortIncremental(IGraphicsContext context, uint presorted)
         {
             bool done = true;
-            context.SetComputePipeline(particleBitonicSortStep);
+            context.SetComputePipelineState(particleBitonicSortStep);
 
             uint num_thread_groups = 0;
             if (MaxParticles > presorted)
@@ -471,7 +431,7 @@
                 sortDispatchInfoBuffer.Update(context, sort_dispatch_info);
                 context.Dispatch(num_thread_groups, 1, 1);
             }
-            context.SetComputePipeline(particleSortInner512);
+            context.SetComputePipelineState(particleSortInner512);
             context.Dispatch(num_thread_groups, 1, 1);
 
             return done;

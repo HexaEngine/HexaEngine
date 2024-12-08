@@ -9,7 +9,7 @@
             Type = type;
         }
 
-        public byte[] Data { get; set; }
+        public byte[] Data { get; set; } = null!;
 
         public CredentialType Type { get; }
 

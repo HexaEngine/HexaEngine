@@ -1,5 +1,5 @@
-Texture2D txDiffuse : register(t0);
-SamplerState linear_wrap_sampler : register(s0);
+Texture2D sunTex : register(t0);
+SamplerState linearWrapSampler : register(s0);
 
 struct PS_INPUT
 {
@@ -9,5 +9,5 @@ struct PS_INPUT
 
 float4 main(PS_INPUT IN) : SV_TARGET
 {
-    return txDiffuse.Sample(linear_wrap_sampler, IN.TexCoord);
+    return sunTex.Sample(linearWrapSampler, IN.TexCoord);
 }

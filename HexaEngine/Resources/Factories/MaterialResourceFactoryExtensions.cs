@@ -53,7 +53,7 @@
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
 
-            modelMaterial.Shader = await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, shaderDesc);
+            modelMaterial.Shader = (await manager.UpdateMaterialShaderAsync(modelMaterial.Shader, shaderDesc))!;
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -107,7 +107,7 @@
             material.Update(desc);
             material.BeginUpdate();
 
-            material.Shader = await manager.UpdateMaterialShaderAsync(material.Shader, desc);
+            material.Shader = (await manager.UpdateMaterialShaderAsync(material.Shader, desc))!;
 
             for (int i = 0; i < material.TextureList.Count; i++)
             {

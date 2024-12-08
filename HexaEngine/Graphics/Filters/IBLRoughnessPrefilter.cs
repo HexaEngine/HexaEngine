@@ -56,6 +56,9 @@
             viewBuffer = new(CpuAccessFlags.Write);
             roughnessBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(new(Filter.MinMagMipLinear, TextureAddressMode.Clamp));
+            pipeline.Bindings.SetCBV("mvp", viewBuffer);
+            pipeline.Bindings.SetSampler("defaultSampler", sampler);
+            pipeline.Bindings.SetCBV("ParamsBuffer", roughnessBuffer);
         }
 
         public void SetViewPoint(Vector3 camera)
@@ -98,10 +101,7 @@
             context.Write(roughnessBuffer, new RoughnessParams() { Roughness = Roughness });
 
             context.SetViewport(new(width, height));
-            context.PSSetSampler(0, sampler);
-            context.PSSetShaderResource(0, Source);
-            context.PSSetConstantBuffer(0, roughnessBuffer);
-            context.VSSetConstantBuffer(0, viewBuffer);
+            pipeline.Bindings.SetSRV("inputTexture", Source);
 
             for (int i = 0; i < 6; i++)
             {
@@ -110,10 +110,6 @@
                 cube.DrawAuto(context, pipeline);
             }
 
-            context.VSSetConstantBuffer(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetSampler(0, null);
             context.SetRenderTarget(null, null);
         }
 

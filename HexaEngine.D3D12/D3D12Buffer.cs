@@ -1,6 +1,4 @@
 ﻿using HexaEngine.Core.Graphics;
-using Silk.NET.Core.Native;
-using Silk.NET.Direct3D12;
 
 namespace HexaEngine.D3D12
 {

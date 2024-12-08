@@ -3,47 +3,6 @@
     using System;
     using System.Numerics;
 
-    public struct LineMetrics
-    {
-        public TextRange Text;
-        public Vector2 Position;
-        public Vector2 Size;
-
-        public readonly int Length => Text.Length;
-
-        public readonly Vector2 Min => Position;
-
-        public readonly Vector2 Max => Position + Size;
-
-        public char this[int index]
-        {
-            get => Text[index];
-        }
-
-        public LineMetrics(TextRange text, Vector2 position, Vector2 size)
-        {
-            Text = text;
-            Position = position;
-            Size = size;
-        }
-    }
-
-    public struct CharacterMetrics
-    {
-        public string Text;
-        public int Index;
-        public float Width;
-
-        public CharacterMetrics(string text, int index, float width)
-        {
-            Text = text;
-            Index = index;
-            Width = width;
-        }
-
-        public readonly char Char => Text[Index];
-    }
-
     public class TextLayout : UIResource
     {
         private string text;
@@ -296,7 +255,7 @@
                 penX = nextPositionX;
             }
 
-            if (span.Start < text.Length)
+            if (span.Start <= text.Length)
             {
                 span.Length = text.Length - span.Start;
                 AddLine(new(0, penY), span);
@@ -312,9 +271,10 @@
 
         private bool EmitLine(ref float penX, ref float penY, float lineHeight, ref TextRange span, int i)
         {
-            span.Length = i - span.Start;
+            // adjust forward to account \n too.
+            span.Length = i - span.Start + 1;
             AddLine(new(0, penY), span);
-            span.Start = i;
+            span.Start = i + 1;
 
             penX = 0;
             penY += lineHeight;
@@ -410,12 +370,14 @@
             float penX = 0;
             float penY = 0;
 
+            int selectedLineMetricsIndex = 0;
             LineMetrics selectedLineMetrics = default;
             for (int i = 0; i < metrics.LineMetrics.Count; i++)
             {
                 var lineMetrics = metrics.LineMetrics[i];
                 if (lineMetrics.Text.Start <= index && lineMetrics.Text.End >= index)
                 {
+                    selectedLineMetricsIndex = i;
                     selectedLineMetrics = lineMetrics;
                     break;
                 }
@@ -425,6 +387,14 @@
             if (selectedLineMetrics.Length == 0)
             {
                 return default;
+            }
+
+            var textSpan = selectedLineMetrics.Text.AsSpan();
+            var column = index - selectedLineMetrics.Text.Start;
+            if (column > 1 && textSpan[column - 1] == '\n')
+            {
+                selectedLineMetrics = metrics.LineMetrics[selectedLineMetricsIndex + 1];
+                penY += lineHeight;
             }
 
             for (int i = selectedLineMetrics.Text.Start; i < selectedLineMetrics.Text.End; i++)

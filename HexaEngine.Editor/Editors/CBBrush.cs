@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public struct CBBrush

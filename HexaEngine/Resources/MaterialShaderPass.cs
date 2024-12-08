@@ -13,13 +13,15 @@
             pipelineState = device.CreateGraphicsPipelineState(pipeline, desc);
         }
 
-        public MaterialShaderPass(string name, IGraphicsDevice device, GraphicsPipelineDesc pipelineDesc, GraphicsPipelineStateDesc desc)
+        public MaterialShaderPass(string name, IGraphicsDevice device, GraphicsPipelineDescEx pipelineDesc, GraphicsPipelineStateDesc desc)
         {
             this.name = name;
             pipelineState = device.CreateGraphicsPipelineState(pipelineDesc, desc);
         }
 
         public string Name => name;
+
+        public IResourceBindingList Bindings => pipelineState.Bindings;
 
         public bool BeginDraw(IGraphicsContext context)
         {
@@ -28,13 +30,8 @@
                 return false;
             }
 
-            context.SetPipelineState(pipelineState);
+            context.SetGraphicsPipelineState(pipelineState);
             return true;
-        }
-
-        public void EndDraw(IGraphicsContext context)
-        {
-            context.SetPipelineState(null);
         }
 
         public void Dispose()

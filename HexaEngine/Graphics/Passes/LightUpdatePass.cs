@@ -1,20 +1,20 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
     public class LightUpdatePass : RenderPass
     {
-        public StructuredUavBuffer<ProbeData> GlobalProbes;
-        public StructuredUavBuffer<LightData> LightBuffer;
-        public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
+        public StructuredUavBuffer<ProbeData> GlobalProbes = null!;
+        public StructuredUavBuffer<LightData> LightBuffer = null!;
+        public StructuredUavBuffer<ShadowData> ShadowDataBuffer = null!;
 
         public LightUpdatePass() : base("LightUpdate")
         {
@@ -72,7 +72,7 @@
                             dir.QueueIndex = ShadowDataBuffer.Count;
                             LightBuffer.Add(new(dir));
                             ShadowDataBuffer.Add(new(dir, dir.ShadowMapSize));
-                            dir.UpdateShadowBuffer(ShadowDataBuffer, CameraManager.Current);
+                            dir.UpdateShadowBuffer(ShadowDataBuffer, CameraManager.Current!);
                             csmCount++;
                             break;
 

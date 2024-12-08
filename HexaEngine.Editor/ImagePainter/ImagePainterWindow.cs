@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
@@ -11,18 +12,18 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
     using System.Numerics;
+    using OpenFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.OpenFileDialog;
 
     [EditorWindowCategory("Tools")]
     public class ImagePainterWindow : EditorWindow
     {
         internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ImagePainter));
         private IGraphicsDevice device;
-        private readonly OpenFileDialog openDialog = new();
         private readonly ModalCollection<Modal> modals = new();
 
         private string? CurrentFile;
 
-        private ImageExporter exporter;
+        private ImageExporter exporter = null!;
         private Vector2 lastpos;
 
         private Vector2 last;
@@ -33,8 +34,10 @@
 
         private readonly ColorPicker colorPicker = new();
         private readonly Toolbox toolbox = new();
+
         private readonly ImageProperties imageProperties;
         private readonly ToolProperties toolProperties;
+
         private readonly Brushes brushes = new();
         private readonly ToolContext toolContext;
 
@@ -46,14 +49,15 @@
         private ImageSource? source;
         private ImageSourceOverlay? overlay;
 
-        private IGraphicsPipelineState copyPipeline;
+        private IGraphicsPipelineState copyPipeline = null!;
 
-        private ConstantBuffer<Vector4> colorCB;
+        private ConstantBuffer<Vector4> colorCB = null!;
 
-        private ISamplerState samplerState;
+        private ISamplerState samplerState = null!;
 
         public ImagePainterWindow()
         {
+            device = Application.GraphicsDevice;
             toolContext = new(this);
             imageProperties = new(this);
             toolProperties = new(toolbox);
@@ -136,7 +140,8 @@
                     }
                     if (ImGui.MenuItem(UwU.OpenFile + " Open"))
                     {
-                        openDialog.Show();
+                        OpenFileDialog dialog = new();
+                        dialog.Show(OpenFileCallback);
                     }
 
                     ImGui.Separator();
@@ -248,17 +253,16 @@
             }
         }
 
+        private void OpenFileCallback(object? sender, Hexa.NET.ImGui.Widgets.Dialogs.DialogResult result)
+        {
+            if (result != Hexa.NET.ImGui.Widgets.Dialogs.DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            Open(dialog.SelectedFile!);
+        }
+
         private void DrawWindows(IGraphicsContext context)
         {
             modals.Draw();
             exporter.Draw();
-            if (openDialog.Draw())
-            {
-                if (openDialog.Result == OpenFileResult.Ok)
-                {
-                    Open(openDialog.FullPath);
-                }
-            }
 
             colorPicker.DrawWindow(context);
             toolbox.DrawWindow(context);
@@ -296,12 +300,12 @@
                         zoom_changed = true;
                     }
 
-                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadAdd))
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadAdd))
                     {
                         new_zoom = zoom * zoom_step;
                         zoom_changed = true;
                     }
-                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadSubtract))
+                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadSubtract))
                     {
                         new_zoom = zoom / zoom_step;
                         zoom_changed = true;
@@ -316,20 +320,20 @@
 
                     var new_mouse_position_on_list = mouse_position_on_list * (size * new_zoom);
                     var new_scroll = new_mouse_position_on_list - mouse_position_on_window;
-                    ImGui.SetScrollX(new_scroll.X);
-                    ImGui.SetScrollY(new_scroll.Y);
+                    ImGuiP.SetScrollX(new_scroll.X);
+                    ImGuiP.SetScrollY(new_scroll.Y);
                     zoom = new_zoom;
                 }
 
-                if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                if (ImGuiP.IsMouseDown(ImGuiMouseButton.Middle))
                 {
                     if (delta.X != 0.0f)
                     {
-                        ImGui.SetScrollX(ImGui.GetScrollX() + delta.X);
+                        ImGuiP.SetScrollX(ImGui.GetScrollX() + delta.X);
                     }
                     if (delta.Y != 0.0f)
                     {
-                        ImGui.SetScrollY(ImGui.GetScrollY() + delta.Y);
+                        ImGuiP.SetScrollY(ImGui.GetScrollY() + delta.Y);
                     }
                 }
             }
@@ -353,20 +357,22 @@
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.Viewport);
-                context.PSSetShaderResource(0, source.SRV);
-                context.SetPipelineState(copyPipeline);
+                copyPipeline.Bindings.SetSRV("sourceTex", source.SRV);
+                context.SetGraphicsPipelineState(copyPipeline);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.ClearState();
+                context.SetGraphicsPipelineState(null);
+                context.SetRenderTarget(null, null);
 
                 var curPosGlob = ImGui.GetCursorScreenPos();
 
                 if (ImGui.IsMouseHoveringRect(curPosGlob, curPosGlob + size * zoom) && brushes.Current != null && toolbox.Current != null)
                 {
-                    var toolFlags = toolbox.Current.Flags;
+                    var tool = toolbox.Current;
+                    var toolFlags = tool.Flags;
                     var curPos = ImGui.GetMousePos() / zoom - curPosGlob / zoom;
                     var curPosD = curPos - lastpos;
                     lastpos = curPos;
-                    var changed = ImGui.IsMouseDown(ImGuiMouseButton.Left);
+                    var changed = ImGuiP.IsMouseDown(ImGuiMouseButton.Left);
                     var first = false;
                     var moved = ImGui.IsMouseDragging(ImGuiMouseButton.Left) && curPosD != Vector2.Zero;
 
@@ -382,9 +388,10 @@
                     }
                     isDown = changed;
 
-                    context.PSSetConstantBuffer(0, colorCB);
+                    var binds = tool.Bindings;
 
-                    brushes.Current.Apply(context);
+                    binds.SetCBV("BrushBuffer", colorCB);
+                    brushes.Current.Apply(context, binds);
 
                     toolContext.Position = curPos;
                     toolContext.Ratio = new Vector2(source.Viewport.Width, source.Viewport.Height) / size;
@@ -393,18 +400,18 @@
                     {
                         context.SetRenderTarget(source.RTV, overlay.DSV);
                         context.SetViewport(source.Viewport);
-                        toolbox.Current.Draw(context, toolContext);
+                        tool.Draw(context, toolContext);
                     }
                     else
                     {
                         context.SetRenderTarget(overlay.RTV, default);
-                        toolbox.Current.DrawPreview(context, toolContext);
+                        tool.DrawPreview(context, toolContext);
                     }
 
                     context.ClearState();
                 }
 
-                ImGui.Image(overlay.SRV.NativePointer, size * zoom);
+                ImGui.Image((ulong)overlay.SRV.NativePointer, size * zoom);
                 var focusedTmp = focused;
                 focused = ImGui.IsWindowFocused();
                 gotFocus = focused && !focusedTmp;

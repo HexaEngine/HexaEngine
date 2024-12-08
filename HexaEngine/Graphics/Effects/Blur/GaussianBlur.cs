@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics.Effects.Blur
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -68,6 +68,8 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(filename + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
+
+            SetupState();
         }
 
         public GaussianBlur(IGraphResourceBuilder creator, string name, Format format, int width, int height, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
@@ -107,6 +109,8 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
+
+            SetupState();
         }
 
         public GaussianBlur(PostFxGraphResourceBuilder creator, string name, Format format, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
@@ -143,6 +147,8 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateTexture2D(name + "_GAUSSIAN_BLUR_BUFFER", new(format, creator.Width, creator.Height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
+
+            SetupState();
         }
 
         public GaussianBlur(PostFxGraphResourceBuilder creator, string name, GaussianRadius radius = GaussianRadius.Radius3x3, bool alphaBlend = false, bool additive = false, bool scissors = false)
@@ -179,6 +185,17 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = creator.CreateBuffer(name + "_GAUSSIAN_BLUR_BUFFER", creationFlags: ResourceCreationFlags.Shared);
+
+            SetupState();
+        }
+
+        private void SetupState()
+        {
+            horizontal.Bindings.SetSampler("state", linearClampSampler);
+            horizontal.Bindings.SetCBV("params", paramsBuffer);
+
+            vertical.Bindings.SetSampler("state", linearClampSampler);
+            vertical.Bindings.SetCBV("params", paramsBuffer);
         }
 
         public BlurType Type => BlurType.Gaussian;
@@ -195,26 +212,18 @@
             gaussianBlurParams.TextureDimentions = new(width, height);
             paramsBuffer.Update(context, gaussianBlurParams);
 
-            context.SetRenderTarget(intermediateTex.Value.RTV, null);
+            context.SetRenderTarget(intermediateTex.Value!.RTV, null);
             context.SetViewport(new(width, height));
-            context.PSSetShaderResource(0, src);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            vertical.Bindings.SetSRV("tex", intermediateTex.Value);
+            horizontal.Bindings.SetSRV("tex", src);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
-
-            context.SetRenderTarget(null, null);
-            context.PSSetShaderResource(0, null);
+            context.SetGraphicsPipelineState(null);
 
             context.SetRenderTarget(dst, null);
-            context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
 
@@ -224,27 +233,21 @@
             gaussianBlurParams.TextureDimentions = new(srcWidth, srcHeight);
             paramsBuffer.Update(context, gaussianBlurParams);
 
-            context.SetRenderTarget(intermediateTex.Value.RTV, null);
+            context.SetRenderTarget(intermediateTex.Value!.RTV, null);
             context.SetViewport(new(intermediateTex.Value.Width, intermediateTex.Value.Height));
-            context.PSSetShaderResource(0, src);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            vertical.Bindings.SetSRV("tex", intermediateTex.Value);
+            horizontal.Bindings.SetSRV("tex", src);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
-
-            context.SetRenderTarget(null, null);
-            context.PSSetShaderResource(0, null);
+            context.SetGraphicsPipelineState(null);
 
             context.SetViewport(new(dstWidth, dstHeight));
             context.SetRenderTarget(dst, null);
-            context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
+            context.SetGraphicsPipelineState(null);
+
             context.SetRenderTarget(null, null);
         }
 
@@ -255,26 +258,20 @@
             paramsBuffer.Update(context, gaussianBlurParams);
 
             context.SetScissorRect(scissors.X, scissors.Y, scissors.Z, scissors.W);
-            context.SetRenderTarget(intermediateTex.Value.RTV, null);
+            context.SetRenderTarget(intermediateTex.Value!.RTV, null);
             context.SetViewport(new(width, height));
-            context.PSSetShaderResource(0, src);
-            context.PSSetSampler(0, linearClampSampler);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.SetPipelineState(horizontal);
+            vertical.Bindings.SetSRV("tex", intermediateTex.Value);
+            horizontal.Bindings.SetSRV("tex", src);
+            context.SetGraphicsPipelineState(horizontal);
             context.DrawInstanced(4, 1, 0, 0);
-
-            context.SetRenderTarget(null, null);
-            context.PSSetShaderResource(0, null);
+            context.SetGraphicsPipelineState(null);
 
             context.SetRenderTarget(dst, null);
-            context.PSSetShaderResource(0, intermediateTex.Value.SRV);
-            context.SetPipelineState(vertical);
+
+            context.SetGraphicsPipelineState(vertical);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetSampler(0, null);
-            context.PSSetShaderResource(0, null);
-            context.SetViewport(default);
+            context.SetGraphicsPipelineState(null);
+
             context.SetRenderTarget(null, null);
             context.SetScissorRect(0, 0, 0, 0);
         }
@@ -284,7 +281,7 @@
             Format = format;
             Width = width;
             Height = height;
-            intermediateTex.Value.Resize(format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex.Value!.Resize(format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
         protected virtual void Dispose(bool disposing)

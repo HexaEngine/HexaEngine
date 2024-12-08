@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Reflection;
@@ -29,22 +29,22 @@
         /// <summary>
         /// The input shader resource view.
         /// </summary>
-        protected IShaderResourceView Input;
+        protected IShaderResourceView Input = null!;
 
         /// <summary>
         /// The input resource.
         /// </summary>
-        protected IResource InputResource;
+        protected IResource InputResource = null!;
 
         /// <summary>
         /// The output render target view.
         /// </summary>
-        protected IRenderTargetView Output;
+        protected IRenderTargetView Output = null!;
 
         /// <summary>
         /// The output resource.
         /// </summary>
-        protected IResource OutputResource;
+        protected IResource OutputResource = null!;
 
         /// <summary>
         /// The viewport associated with the output.
@@ -157,6 +157,11 @@
         }
 
         /// <inheritdoc/>
+        public virtual void UpdateBindings()
+        {
+        }
+
+        /// <inheritdoc/>
         public virtual void Draw(IGraphicsContext context)
         {
         }
@@ -210,7 +215,7 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSet<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
-            if (target.Equals(value))
+            if (target!.Equals(value))
             {
                 return;
             }
@@ -228,7 +233,7 @@
         /// <param name="name">The name of the changed property.</param>
         protected void NotifyPropertyChangedAndSetAndReload<T>(ref T target, T value, [CallerMemberName] string name = "")
         {
-            if (target.Equals(value))
+            if (target!.Equals(value))
             {
                 return;
             }

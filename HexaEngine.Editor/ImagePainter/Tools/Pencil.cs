@@ -8,11 +8,13 @@
     public class Pencil : Tool
     {
         private Vector2 brushSize = Vector2.One;
-        private IGraphicsPipelineState brushPipeline;
+        private IGraphicsPipelineState brushPipeline = null!;
 
         public override string Icon => UwU.Pen + "##PencilTool";
 
         public override string Name => "Pencil";
+
+        public override IResourceBindingList Bindings => brushPipeline.Bindings;
 
         public override void Init(IGraphicsDevice device)
         {
@@ -49,17 +51,17 @@
         public override void Draw(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void Dispose()

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a display mode, which specifies the format, width, height, refresh rate, and driver data of a display.

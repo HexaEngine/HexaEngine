@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Physics
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
@@ -32,7 +32,7 @@
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         [JsonIgnore]
         public bool IsSerializable { get; } = true;

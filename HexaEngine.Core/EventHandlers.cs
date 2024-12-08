@@ -86,7 +86,7 @@
                 if (handlers == null) return;
                 for (int i = 0; i < handlers.Length; i++)
                 {
-                    handlers[i] = default;
+                    handlers[i] = default!;
                 }
                 handlers = null;
             }

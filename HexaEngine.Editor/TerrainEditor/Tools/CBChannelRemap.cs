@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
 
     public struct CBChannelRemap

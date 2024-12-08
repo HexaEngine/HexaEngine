@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -93,7 +93,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AddController(ControllerDeviceEvent even)
+        internal static void AddController(SDLControllerDeviceEvent even)
         {
             Gamepad gamepad = new(even.Which);
             gamepads.Add(gamepad);
@@ -104,7 +104,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void RemoveController(ControllerDeviceEvent even)
+        internal static void RemoveController(SDLControllerDeviceEvent even)
         {
             Gamepad gamepad = idToGamepads[even.Which];
             gamepadEventArgs.Timestamp = even.Timestamp;
@@ -117,14 +117,14 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnRemapped(ControllerDeviceEvent even)
+        internal static void OnRemapped(SDLControllerDeviceEvent even)
         {
             var result = idToGamepads[even.Which].OnRemapped();
             Remapped?.Invoke(result.Gamepad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnAxisMotion(ControllerAxisEvent even)
+        internal static void OnAxisMotion(SDLControllerAxisEvent even)
         {
             var result = idToGamepads[even.Which].OnAxisMotion(even);
             if (result == null)
@@ -137,42 +137,42 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnButtonDown(ControllerButtonEvent even)
+        internal static void OnButtonDown(SDLControllerButtonEvent even)
         {
             var result = idToGamepads[even.Which].OnButtonDown(even);
             ButtonDown?.Invoke(result.Gamepad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnButtonUp(ControllerButtonEvent even)
+        internal static void OnButtonUp(SDLControllerButtonEvent even)
         {
             var result = idToGamepads[even.Which].OnButtonUp(even);
             ButtonUp?.Invoke(result.Gamepad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnTouchPadDown(ControllerTouchpadEvent even)
+        internal static void OnTouchPadDown(SDLControllerTouchpadEvent even)
         {
             var result = idToGamepads[even.Which].OnTouchPadDown(even);
             TouchPadDown?.Invoke(result.Touchpad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnTouchPadMotion(ControllerTouchpadEvent even)
+        internal static void OnTouchPadMotion(SDLControllerTouchpadEvent even)
         {
             var result = idToGamepads[even.Which].OnTouchPadMotion(even);
             TouchPadMotion?.Invoke(result.Touchpad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnTouchPadUp(ControllerTouchpadEvent even)
+        internal static void OnTouchPadUp(SDLControllerTouchpadEvent even)
         {
             var result = idToGamepads[even.Which].OnTouchPadUp(even);
             TouchPadUp?.Invoke(result.Touchpad, result.EventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnSensorUpdate(ControllerSensorEvent even)
+        internal static void OnSensorUpdate(SDLControllerSensorEvent even)
         {
             var result = idToGamepads[even.Which].OnSensorUpdate(even);
             SensorUpdate?.Invoke(result.Sensor, result.EventArgs);

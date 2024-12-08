@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Vulkan
 {
     using Hexa.NET.Vulkan;
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
 
     public struct VkSwapChainSupportDetails
     {

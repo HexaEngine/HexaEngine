@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Editors
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Components;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;

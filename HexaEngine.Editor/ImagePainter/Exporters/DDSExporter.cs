@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.UI;
@@ -26,7 +25,7 @@
 
             ImGui.BeginListBox("Compression");
             int compressFlagsi = (int)compressFlags;
-            if (ImGui.CheckboxFlags("Uniform", ref compressFlagsi, (int)TexCompressFlags.Uniform))
+            if (ImGuiP.CheckboxFlags("Uniform", ref compressFlagsi, (int)TexCompressFlags.Uniform))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }
@@ -36,7 +35,7 @@
                 ImGui.SetTooltip("Uniform color weighting for BC1-3 compression; by default uses perceptual weighting");
             }
 
-            if (ImGui.CheckboxFlags("DitherA", ref compressFlagsi, (int)TexCompressFlags.DitherA))
+            if (ImGuiP.CheckboxFlags("DitherA", ref compressFlagsi, (int)TexCompressFlags.DitherA))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }
@@ -46,7 +45,7 @@
                 ImGui.SetTooltip("Enables dithering alpha for BC1-3 compression");
             }
 
-            if (ImGui.CheckboxFlags("DitherRGB", ref compressFlagsi, (int)TexCompressFlags.DitherRGB))
+            if (ImGuiP.CheckboxFlags("DitherRGB", ref compressFlagsi, (int)TexCompressFlags.DitherRGB))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }
@@ -56,7 +55,7 @@
                 ImGui.SetTooltip("Enables dithering RGB colors for BC1-3 compression");
             }
 
-            if (ImGui.CheckboxFlags("BC7Use3Sunsets", ref compressFlagsi, (int)TexCompressFlags.BC7Use3Sunsets))
+            if (ImGuiP.CheckboxFlags("BC7Use3Sunsets", ref compressFlagsi, (int)TexCompressFlags.BC7Use3Sunsets))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }
@@ -66,7 +65,7 @@
                 ImGui.SetTooltip("Enables exhaustive search for BC7 compress for mode 0 and 2; by default skips trying these modes");
             }
 
-            if (ImGui.CheckboxFlags("BC7Quick", ref compressFlagsi, (int)TexCompressFlags.BC7Quick))
+            if (ImGuiP.CheckboxFlags("BC7Quick", ref compressFlagsi, (int)TexCompressFlags.BC7Quick))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }
@@ -76,7 +75,7 @@
                 ImGui.SetTooltip("Minimal modes (usually mode 6) for BC7 compression");
             }
 
-            if (ImGui.CheckboxFlags("SRGB", ref compressFlagsi, (int)TexCompressFlags.SRGB))
+            if (ImGuiP.CheckboxFlags("SRGB", ref compressFlagsi, (int)TexCompressFlags.SRGB))
             {
                 compressFlags = (TexCompressFlags)compressFlagsi;
             }

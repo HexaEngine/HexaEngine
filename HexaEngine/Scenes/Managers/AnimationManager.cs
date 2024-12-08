@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Animations;
     using System.Collections.Generic;

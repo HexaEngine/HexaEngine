@@ -10,12 +10,14 @@
     {
         private Vector2 brushSize = Vector2.One;
         private float opacity = 1;
-        private IGraphicsPipelineState brushPipeline;
-        private ConstantBuffer<Vector4> opacityBuffer;
+        private IGraphicsPipelineState brushPipeline = null!;
+        private ConstantBuffer<Vector4> opacityBuffer = null!;
 
         public override string Icon => UwU.Eraser + "##EraserTool";
 
         public override string Name => "Eraser";
+
+        public override IResourceBindingList Bindings => brushPipeline.Bindings;
 
         public override void Init(IGraphicsDevice device)
         {
@@ -44,6 +46,7 @@
                 Topology = PrimitiveTopology.TriangleStrip,
             });
             opacityBuffer = new(CpuAccessFlags.Write);
+            brushPipeline.Bindings.SetCBV("OpacityBuffer", opacityBuffer);
         }
 
         public override void DrawSettings()
@@ -56,24 +59,20 @@
         {
             opacityBuffer.Update(context, new(opacity));
 
-            context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetConstantBuffer(1, null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
             opacityBuffer.Update(context, new(opacity));
 
-            context.PSSetConstantBuffer(1, opacityBuffer);
             context.SetViewport(toolContext.ComputeViewport(brushSize));
-            context.SetPipelineState(brushPipeline);
+            context.SetGraphicsPipelineState(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetConstantBuffer(1, null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public override void Dispose()

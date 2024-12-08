@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Weather;
@@ -15,10 +16,9 @@
     [EditorDisplayName("Volumetric Clouds")]
     public class VolumetricClouds : PostFxBase
     {
+#nullable disable
         private IGraphicsDevice device;
         private IGraphicsPipelineState pipeline;
-        private ISamplerState linearWrapSampler;
-        private ISamplerState pointWrapSampler;
 
         private Texture2D weatherTex;
         private Texture3D cloudTex;
@@ -29,9 +29,8 @@
 
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<DepthMipChain> depthMip;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private ResourceRef<ConstantBuffer<CBWeather>> weather;
-        private ResourceRef<GBuffer> gbuffer;
+
+#nullable restore
 
         public override string Name { get; } = "VolumetricClouds";
 
@@ -54,9 +53,6 @@
         {
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             depthMip = creator.GetDepthMipChain("HiZBuffer");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
-            gbuffer = creator.GetGBuffer("GBuffer");
 
             this.device = device;
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -70,9 +66,6 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-            pointWrapSampler = device.CreateSamplerState(SamplerStateDescription.PointWrap);
-
             weatherTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
             cloudTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
             worleyTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
@@ -81,8 +74,12 @@
             gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);
         }
 
-        public override void Update(IGraphicsContext context)
+        public override void UpdateBindings()
         {
+            pipeline.Bindings.SetSRV("weatherTex", weatherTex);
+            pipeline.Bindings.SetSRV("cloudTex", cloudTex);
+            pipeline.Bindings.SetSRV("worleyTex", worleyTex);
+            pipeline.Bindings.SetSRV("depthTex", depthMip.Value!.SRV);
         }
 
         public override unsafe void Draw(IGraphicsContext context)
@@ -92,22 +89,16 @@
                 return;
             }
 
-            context.ClearRenderTargetView(intermediateTex.RTV, default);
+            context.ClearRenderTargetView(intermediateTex.RTV!, default);
             context.SetRenderTarget(intermediateTex.RTV, depth.Value);
             context.SetViewport(Viewport);
-            nint* srvs = stackalloc nint[] { weatherTex.SRV.NativePointer, cloudTex.SRV.NativePointer, worleyTex.SRV.NativePointer, depthMip.Value.SRV.NativePointer };
-            context.PSSetShaderResources(0, 4, (void**)srvs);
-            nint* smps = stackalloc nint[] { linearWrapSampler.NativePointer, pointWrapSampler.NativePointer };
-            context.PSSetSamplers(0, 2, (void**)smps);
-            nint* cbcs = stackalloc nint[] { camera.Value.NativePointer, weather.Value.NativePointer };
-            context.PSSetConstantBuffers(1, 2, (void**)cbcs);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.ClearState();
+            context.SetGraphicsPipelineState(null);
 
-            gaussianBlur.Blur(context, intermediateTex.SRV, Output, (int)Viewport.Width, (int)Viewport.Height);
+            gaussianBlur.Blur(context, intermediateTex.SRV!, Output, (int)Viewport.Width, (int)Viewport.Height);
         }
 
         public override void Resize(int width, int height)
@@ -119,8 +110,6 @@
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            linearWrapSampler.Dispose();
-            pointWrapSampler.Dispose();
             weatherTex.Dispose();
             cloudTex.Dispose();
             worleyTex.Dispose();

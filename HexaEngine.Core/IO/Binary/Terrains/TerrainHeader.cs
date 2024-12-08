@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Text;
 
     /// <summary>

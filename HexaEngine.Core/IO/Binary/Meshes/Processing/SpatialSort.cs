@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes.Processing
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;

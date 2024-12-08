@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Fonts
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Text;
 

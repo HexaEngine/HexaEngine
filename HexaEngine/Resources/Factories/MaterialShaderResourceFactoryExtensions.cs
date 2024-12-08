@@ -1,7 +1,13 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core;
     using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Core.IO.Binary.Metadata;
+    using HexaEngine.Materials;
+    using System.Text;
+    using HexaEngine.Core.IO;
 
     public static class MaterialShaderResourceFactoryExtensions
     {
@@ -43,8 +49,40 @@
                 return;
             }
 
-            shader.Update(desc.GetShaderMacros());
+            var shaderDesc = shader.Description;
+
+            if (desc.Metadata.TryGet<MetadataStringEntry>(MaterialNodeConverter.MetadataSurfaceVersionKey, out var versionKey) && desc.Metadata.TryGet<MetadataStringEntry>(MaterialNodeConverter.MetadataSurfaceKey, out var shaderKey))
+            {
+                for (var i = 0; i < shaderDesc.Passes.Length; i++)
+                {
+                    var pass = shaderDesc.Passes[i];
+                    if (pass.SurfaceShader && pass.BaseShader != null)
+                    {
+                        var pipeline = pass.Pipeline;
+                        BuildSurfaceShader(desc.Guid, versionKey, shaderKey, ref pipeline, pass.BaseShader);
+                        pass.Pipeline = pipeline;
+                        shaderDesc.Passes[i] = pass;
+                    }
+                }
+            }
+
+            shaderDesc.Macros = desc.GetShaderMacros();
+
+            shader.Update(shaderDesc);
             shader.Reload();
+        }
+
+        public static void BuildSurfaceShader(Guid guid, MetadataStringEntry version, MetadataStringEntry shader, ref GraphicsPipelineDescEx pipelineDesc, string baseShader)
+        {
+            if (version.Value == MaterialNodeConverter.SurfaceVersion)
+            {
+                StringBuilder sb = new();
+                sb.AppendLine($"#include \"../../material.hlsl\"");
+                sb.AppendLine($"#include \"../../geometry.hlsl\"");
+                sb.AppendLine(shader.Value);
+                sb.AppendLine(FileSystem.ReadAllText(Paths.CurrentShaderPath + baseShader));
+                pipelineDesc.PixelShader = ShaderSource.FromCode($"{guid}", sb.ToString(), Path.GetDirectoryName(baseShader));
+            }
         }
 
         public static async Task<Resources.MaterialShader?> UpdateMaterialShaderAsync(this ResourceManager manager, Resources.MaterialShader? shader, MaterialShaderDesc desc)
@@ -66,7 +104,26 @@
                 return null;
             }
 
-            shader.Update(material.GetShaderMacros());
+            var shaderDesc = shader.Description;
+
+            if (material.Metadata.TryGet<MetadataStringEntry>(MaterialNodeConverter.MetadataSurfaceVersionKey, out var versionKey) && material.Metadata.TryGet<MetadataStringEntry>(MaterialNodeConverter.MetadataSurfaceKey, out var shaderKey))
+            {
+                for (var i = 0; i < shaderDesc.Passes.Length; i++)
+                {
+                    var pass = shaderDesc.Passes[i];
+                    if (pass.SurfaceShader && pass.BaseShader != null)
+                    {
+                        var pipeline = pass.Pipeline;
+                        BuildSurfaceShader(material.Guid, versionKey, shaderKey, ref pipeline, pass.BaseShader);
+                        pass.Pipeline = pipeline;
+                        shaderDesc.Passes[i] = pass;
+                    }
+                }
+            }
+
+            shaderDesc.Macros = material.GetShaderMacros();
+
+            shader.Update(shaderDesc);
             await shader.ReloadAsync();
             return shader;
         }

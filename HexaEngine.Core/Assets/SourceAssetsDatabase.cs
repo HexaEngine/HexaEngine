@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Core.Assets
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.UI;
     using System;
     using System.IO;
 
@@ -30,7 +31,7 @@
             }
             else
             {
-                pool.TryPop(out accessHandle.Semaphore);
+                pool.TryPop(out accessHandle.Semaphore!);
                 accessHandle.Semaphore ??= new(1);
                 accessHandle.Refs++;
                 handles[file] = accessHandle;
@@ -72,11 +73,11 @@
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
         private static readonly object _lock = new();
-        private static string rootFolder;
-        private static string rootAssetsFolder;
-        private static string cacheRootFolder;
-        private static string cacheFolder;
-        private static ThumbnailCache thumbnailCache;
+        private static string rootFolder = null!;
+        private static string rootAssetsFolder = null!;
+        private static string cacheRootFolder = null!;
+        private static string cacheFolder = null!;
+        private static ThumbnailCache thumbnailCache = null!;
         private static FileSystemWatcher? watcher;
         private static readonly List<SourceAssetMetadata> sourceAssets = [];
         private static readonly Dictionary<Guid, SourceAssetMetadata> guidToSourceAsset = [];
@@ -173,6 +174,8 @@
             progressMax = progressMax - files.Length + tasks.Count;
             progress.Report(progressValue / (float)progressMax);
 
+            initLock.Set();
+
             for (int i = 0; i < tasks.Count; i++)
             {
                 tasks[i].Start();
@@ -181,7 +184,7 @@
             return Task.WhenAll(tasks).ContinueWith(x =>
             {
                 logger.Info($"Initialized '{path}'");
-                initLock.Set();
+
                 ArtifactDatabase.Cleanup();
                 ArtifactDatabase.RefreshContent();
             });
@@ -426,7 +429,7 @@
 
         public static string CacheFolder => cacheFolder;
 
-        internal static SourceAssetMetadata AddFile(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IProgress<float>? progress)
+        internal static SourceAssetMetadata AddFile(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IImportProgress? progress)
         {
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
@@ -444,7 +447,7 @@
             return sourceAsset;
         }
 
-        internal static async Task<SourceAssetMetadata> AddFileAsync(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IProgress<float>? progress)
+        internal static async Task<SourceAssetMetadata> AddFileAsync(string? sourcePath, string path, string metadataFile, IGuidProvider? provider, IImportProgress? progress)
         {
             var crc32 = FileSystem.GetCrc32HashExtern(path);
             var lastModified = File.GetLastWriteTime(path);
@@ -462,7 +465,7 @@
             return sourceAsset;
         }
 
-        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IProgress<float>? progress)
+        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -483,7 +486,7 @@
             sourceAsset.Save();
         }
 
-        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IProgress<float>? progress)
+        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -498,10 +501,12 @@
             {
                 await importer.ImportAsync(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 
@@ -512,7 +517,7 @@
             sourceAsset.Save();
         }
 
-        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IProgress<float>? progress)
+        private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -527,10 +532,12 @@
             {
                 importer.Import(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 
@@ -539,7 +546,7 @@
             sourceAsset.Save();
         }
 
-        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IProgress<float>? progress)
+        private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
         {
             var extension = Path.GetExtension(path);
 
@@ -554,10 +561,12 @@
             {
                 await importer.ImportAsync(TargetPlatform.Windows, context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Log(ex);
+                MessageBox.Show("Failed to import. Rolling back...", ex.Message);
                 context.Rollback();
-                sourceAsset.Delete(DeleteBehavior.DeleteChildren);
+                //sourceAsset.Delete(DeleteBehavior.DeleteChildren);
                 return;
             }
 
@@ -566,7 +575,7 @@
             sourceAsset.Save();
         }
 
-        public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
@@ -608,7 +617,7 @@
             return AddFile(path, filePath, metadataFile, provider, progress);
         }
 
-        public static SourceAssetMetadata? ImportFile(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static SourceAssetMetadata? ImportFile(string path, string outputDir, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
 
@@ -671,7 +680,7 @@
             ImportFiles(Directory.GetFiles(folder));
         }
 
-        public static Task<SourceAssetMetadata> ImportFileAsync(string path, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
             var filename = Path.GetFileName(path);
@@ -688,7 +697,7 @@
             {
                 if (importedFiles.Contains(filePath))
                 {
-                    return Task.FromResult(GetMetadata(filePath));
+                    return Task.FromResult(GetMetadata(filePath))!;
                 }
                 importedFiles.Add(filePath);
             }
@@ -707,13 +716,13 @@
                     File.Delete(filePath);
                 }
 
-                return Task.FromResult<SourceAssetMetadata>(null);
+                return Task.FromResult<SourceAssetMetadata>(null!);
             }
 
             return AddFileAsync(null, filePath, metadataFile, provider, progress);
         }
 
-        public static Task<SourceAssetMetadata> ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IProgress<float>? progress = null)
+        public static Task<SourceAssetMetadata> ImportFileAsync(string path, string outputDir, IGuidProvider? provider = null, IImportProgress? progress = null)
         {
             initLock.Wait();
 
@@ -736,7 +745,7 @@
             {
                 if (importedFiles.Contains(filePath))
                 {
-                    return Task.FromResult(GetMetadata(filePath));
+                    return Task.FromResult(GetMetadata(filePath))!;
                 }
                 importedFiles.Add(filePath);
             }
@@ -755,7 +764,7 @@
                     File.Delete(filePath);
                 }
 
-                return Task.FromResult<SourceAssetMetadata>(null);
+                return Task.FromResult<SourceAssetMetadata>(null!);
             }
 
             return AddFileAsync(path, filePath, metadataFile, provider, progress);
@@ -787,7 +796,7 @@
 
             var path = Path.Combine(rootAssetsFolder, name);
 
-            var metadataFile = SourceAssetMetadata.GetMetadataFilePath(path) ?? throw new InvalidOperationException();
+            var metadataFile = SourceAssetMetadata.GetMetadataFilePathThrow(path);
             var metadata = AddFile(null, path, metadataFile, null, null);
 
             return metadata;

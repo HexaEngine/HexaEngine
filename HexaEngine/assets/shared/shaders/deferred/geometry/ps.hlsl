@@ -128,9 +128,23 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 [earlydepthstencil]
 GeometryData main(PixelInput input)
 {
+#if VtxColors
+    float4 baseColor = input.color;
+#else
     float4 baseColor = BaseColor;
+#endif
+
+#if VtxNormals
     float3 normal = normalize(input.normal);
+#else 
+    float3 normal = 0;
+#endif
+
+#if VtxTangents
     float3 tangent = normalize(input.tangent);
+#else
+    float3 tangent = 0;
+#endif
 
     float3 emissive = Emissive;
     float opacity = 1;
@@ -174,8 +188,8 @@ GeometryData main(PixelInput input)
 
 #if HasRoughnessMetallicTex
     float2 rm = roughnessMetallicTexture.Sample(roughnessMetallicTextureSampler, (float2) input.tex).gb;
-    roughness = rm.x;
-    metallic = rm.y;
+    roughness = rm.g;
+    metallic = rm.b;
 #endif
 
 #if HasAmbientOcclusionRoughnessMetallicTex

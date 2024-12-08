@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.UI.Controls
 {
-    using HexaEngine.UI.Graphics.Text;
-    using HexaEngine.UI.Graphics;
-    using HexaEngine.Mathematics;
-    using System.Numerics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Xml.Serialization;
-    using HexaEngine.Core.Windows.Events;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Input.Events;
+    using HexaEngine.Core.Windows.Events;
+    using HexaEngine.UI.Graphics;
+    using HexaEngine.UI.Graphics.Text;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Numerics;
+    using System.Xml.Serialization;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Control : FrameworkElement
@@ -39,7 +39,13 @@
 
         public Brush? Border { get => GetValue(BorderProperty); set => SetValue(BorderProperty, value); }
 
-        public static readonly DependencyProperty<Thickness> BorderThicknessProperty = DependencyProperty.Register<Control, Thickness>(nameof(BorderThickness), false, new(new Thickness(0)));
+        public static readonly DependencyProperty<Thickness> BorderThicknessProperty = DependencyProperty.Register<Control, Thickness>(nameof(BorderThickness), false, new FrameworkMetadata(new Thickness(0)) { AffectsArrange = true });
+
+        public Thickness BorderThickness { get => GetValue(BorderThicknessProperty); set => SetValue(BorderThicknessProperty, value); }
+
+        public static readonly DependencyProperty<Thickness> PaddingProperty = DependencyProperty.Register<Control, Thickness>(nameof(Padding), false, new FrameworkMetadata(Thickness.Zero) { AffectsArrange = true, AffectsMeasure = true });
+
+        public Thickness Padding { get => GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
 
         public static readonly RoutedEvent<MouseButtonEventArgs> MouseDoubleClickEvent = EventManager.Register<Control, MouseButtonEventArgs>(nameof(MouseDoubleClick), RoutingStrategy.Direct);
 
@@ -47,16 +53,6 @@
         {
             add => AddHandler(MouseDoubleClickEvent, value);
             remove => RemoveHandler(MouseDoubleClickEvent, value);
-        }
-
-        public Thickness BorderThickness
-        {
-            get => GetValue(BorderThicknessProperty);
-            set
-            {
-                SetValue(BorderThicknessProperty, value);
-                InvalidateArrange();
-            }
         }
 
         public static readonly DependencyProperty<string> FontFamilyNameProperty = DependencyProperty.Register<Control, string>(nameof(FontFamilyName), false, new("Arial"));

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Graphics.Filters;
@@ -126,12 +125,12 @@
                     ImGui.TextColored(new(0, 1, 0, 1), $"Filtering...");
                 }
 
-                ImGui.Image(dstSrv.NativePointer, new(128, 128));
+                ImGui.Image((ulong)dstSrv.NativePointer, new(128, 128));
             }
 
             if (compute)
             {
-                brdfLut.Draw(context, size, size);
+                brdfLut!.Draw(context, size, size);
 
                 compute = false;
             }

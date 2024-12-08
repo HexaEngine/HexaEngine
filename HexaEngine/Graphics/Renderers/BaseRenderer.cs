@@ -21,6 +21,10 @@
             return instance is T;
         }
 
+        public virtual void Prepare(T instance)
+        {
+        }
+
         public abstract void Bake(IGraphicsContext context, T instance);
 
         public void Bake(IGraphicsContext context, object instance)

@@ -52,6 +52,7 @@
             }
         }
 
+        [Profiling.Profile]
         public static void Draw()
         {
             lock (_lock)

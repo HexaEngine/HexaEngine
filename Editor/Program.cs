@@ -12,6 +12,7 @@
         {
             Application.Boot(GraphicsBackend.Vulkan, AudioBackend.OpenAL);
             EditorWindow window = new();
+
             Platform.Init(window, true);
             Application.Run(window);
             Platform.Shutdown();

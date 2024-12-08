@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -543,27 +543,27 @@
                 points[2].X = CurveTerminator;
             }
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             ImGuiContext* g = ImGui.GetCurrentContext();
 
-            int id = ImGui.ImGuiWindowGetID(window, label, (byte*)null);
+            uint id = ImGuiP.GetID(window, label, (byte*)null);
             if (window->SkipItems != 0)
                 return 0;
 
             ImRect bb = new() { Min = window->DC.CursorPos, Max = window->DC.CursorPos + size };
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, 0, null, 0))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, 0, null, 0))
                 return 0;
 
             ImGui.PushID(label);
 
             int currentSelection = selection != null ? *selection : -1;
 
-            bool hovered = ImGui.ItemHoverable(bb, id, 0);
+            bool hovered = ImGuiP.ItemHoverable(bb, id, 0);
 
             ImGuiStylePtr style = ImGui.GetStyle();
             ImGuiIOPtr io = ImGui.GetIO();
-            ImGui.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
+            ImGuiP.RenderFrame(bb.Min, bb.Max, ImGui.GetColorU32(ImGuiCol.FrameBg, 1), true, style.FrameRounding);
 
             float ht = bb.Max.Y - bb.Min.Y;
             float wd = bb.Max.X - bb.Min.X;
@@ -655,10 +655,10 @@
             if (draggingPoint)
             {
                 if (selection != null)
-                    ImGui.SetActiveID(id, window);
+                    ImGuiP.SetActiveID(id, window);
 
-                ImGui.SetFocusID(id, window);
-                ImGui.FocusWindow(window, ImGuiFocusRequestFlags.None);
+                ImGuiP.SetFocusID(id, window);
+                ImGuiP.FocusWindow(window, ImGuiFocusRequestFlags.None);
 
                 modified = 1;
 
@@ -689,9 +689,9 @@
                 }
             }
 
-            if (!ImGui.IsMouseDragging(0) && ImGui.GetActiveID() == id && selection != null && *selection != -1 && currentSelection == -1)
+            if (!ImGui.IsMouseDragging(0) && ImGuiP.GetActiveID() == id && selection != null && *selection != -1 && currentSelection == -1)
             {
-                ImGui.ClearActiveID();
+                ImGuiP.ClearActiveID();
             }
 
             uint gridColor1 = ImGui.GetColorU32(ImGuiCol.TextDisabled, 0.5f);
@@ -803,7 +803,7 @@
                 args[1] = (nint)(&pos.Y);
 
                 byte* textEnd = buf + ImGui.ImFormatStringV(buf, 128, " (%.2f,%.2f)", (nuint)args);
-                ImGui.RenderTextClipped(new Vector2(bb.Min.X, bb.Min.Y + style.FramePadding.Y), bb.Max, buf, textEnd, (Vector2*)null, new Vector2(1f, 1f), &bb);
+                ImGuiP.RenderTextClipped(new Vector2(bb.Min.X, bb.Min.Y + style.FramePadding.Y), bb.Max, buf, textEnd, (Vector2*)null, new Vector2(1f, 1f), &bb);
             }
 
             // curve selector

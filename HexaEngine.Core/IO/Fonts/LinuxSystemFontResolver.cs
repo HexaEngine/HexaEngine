@@ -105,7 +105,7 @@ namespace HexaEngine.UI.Graphics.Text
             }
         }
 
-        private static string GetString(IntPtr handle, string obj)
+        private static string? GetString(IntPtr handle, string obj)
         {
             var ptr = IntPtr.Zero;
             var result = FcPatternGetString(handle, obj, 0, ref ptr);
@@ -150,11 +150,8 @@ namespace HexaEngine.UI.Graphics.Text
             {
                 return ResolveFontConfig().Where(x => x.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)).ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-#if DEBUG
-                Console.Error.WriteLine(ex.ToString());
-#endif
                 return ResolveFallback().Where(x => x.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)).ToArray();
             }
         }
@@ -199,7 +196,7 @@ namespace HexaEngine.UI.Graphics.Text
                 Regex confRegex = new Regex("<dir>(?<dir>.*)</dir>", RegexOptions.Compiled);
                 using (var reader = new StreamReader(File.OpenRead("/etc/fonts/fonts.conf")))
                 {
-                    string line;
+                    string? line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         Match match = confRegex.Match(line);
@@ -218,12 +215,8 @@ namespace HexaEngine.UI.Graphics.Text
                     } // Whend
                 } // End Using reader
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-#if DEBUG
-                Console.Error.WriteLine(ex.Message);
-                Console.Error.WriteLine(ex.StackTrace);
-#endif
             }
 
             dirs.Add("/usr/share/fonts");

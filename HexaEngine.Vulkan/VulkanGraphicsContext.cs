@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 
@@ -452,11 +452,6 @@
             throw new NotImplementedException();
         }
 
-        public void SetComputePipeline(IComputePipeline? pipeline)
-        {
-            throw new NotImplementedException();
-        }
-
         public void DispatchIndirect(IBuffer dispatchArgs, uint offset)
         {
             throw new NotImplementedException();
@@ -532,7 +527,7 @@
             throw new NotImplementedException();
         }
 
-        public void SetPipelineState(IGraphicsPipelineState? state)
+        public void SetGraphicsPipelineState(IGraphicsPipelineState? state)
         {
             throw new NotImplementedException();
         }
@@ -543,6 +538,16 @@
         }
 
         public void UnsetResourceBindingList(IResourceBindingList rootDescriptorTable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExecuteCommandBuffer(ICommandBuffer commandBuffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetComputePipelineState(IComputePipelineState? state)
         {
             throw new NotImplementedException();
         }

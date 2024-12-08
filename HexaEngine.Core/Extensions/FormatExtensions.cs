@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
+    using HexaEngine.Core.IO.Binary.Meshes;
     using System.Globalization;
     using System.Numerics;
 
@@ -56,6 +57,27 @@
         public static string ToHLSL(this Vector4 vector)
         {
             return $"float4({vector.X.ToString(CultureInfo.InvariantCulture)}, {vector.Y.ToString(CultureInfo.InvariantCulture)}, {vector.Z.ToString(CultureInfo.InvariantCulture)}, {vector.W.ToString(CultureInfo.InvariantCulture)})";
+        }
+
+        /// <summary>
+        /// Converts a UVType to its HLSL type.
+        /// </summary>
+        /// <param name="uvType"></param>
+        /// <returns></returns>
+        public static string ToHLSL(this UVType uvType)
+        {
+            switch (uvType)
+            {
+                case UVType.UV2D:
+                    return "float2";
+
+                case UVType.UV3D:
+                    return "float3";
+
+                case UVType.UV4D:
+                    return "float4";
+            }
+            return string.Empty;
         }
     }
 }

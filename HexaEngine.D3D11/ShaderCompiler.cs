@@ -1,26 +1,32 @@
 ﻿//#define SHADER_FORCE_OPTIMIZE
 
+using Silk.NET.Core.Native;
+
 namespace HexaEngine.D3D11
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D.Compilers;
-    using Silk.NET.Direct3D11;
+    using HexaEngine.Core.Security.Cryptography;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
+    using Hexa.NET.D3DCompiler;
+    using Hexa.NET.D3DCommon;
+    using ShaderMacro = Core.Graphics.ShaderMacro;
+    using D3DShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
+    using D3DRegisterComponentType = Hexa.NET.D3DCommon.RegisterComponentType;
+    using HexaGen.Runtime.COM;
+    using Hexa.NET.D3D11;
 
     public class ShaderCompiler
     {
         private static readonly ILogger Logger = LoggerFactory.General;
-        private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
 
-        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
+        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
         {
             Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
@@ -56,7 +62,9 @@ namespace HexaEngine.D3D11
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
 
-            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+            string systemInclude = Paths.CurrentShaderPath;
+
+            IncludeHandler handler = new(Path.Combine(Paths.CurrentShaderPath, basePath) ?? string.Empty, systemInclude);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
             include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
             include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
@@ -93,7 +101,87 @@ namespace HexaEngine.D3D11
                 return false;
             }
 
-            shaderBlob = new(vBlob->Buffer.ToArray());
+            shaderBlob = new(vBlob->GetBufferPointer(), vBlob->GetBufferSize(), copy: true);
+            vBlob->Release();
+
+            Logger.Info($"Done: {sourceName}");
+
+            return true;
+        }
+
+        public static unsafe bool Compile(byte* pSource, int sourceLen, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
+        {
+            Logger.Info($"Compiling: {sourceName}");
+            shaderBlob = null;
+            error = null;
+            ShaderFlags flags = (ShaderFlags)(1 << 21);
+#if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
+            flags |= ShaderFlags.Debug | ShaderFlags.DebugNameForSource;
+#else
+            flags |= ShaderFlags.OptimizationLevel3;
+#endif
+
+            var pMacros = macros.Length > 0 ? AllocT<D3DShaderMacro>(macros.Length + 1) : null;
+
+            for (int i = 0; i < macros.Length; i++)
+            {
+                var macro = macros[i];
+                var pName = macro.Name.ToUTF8Ptr();
+                var pDef = macro.Definition.ToUTF8Ptr();
+                pMacros[i] = new(pName, pDef);
+            }
+            if (pMacros != null)
+            {
+                pMacros[macros.Length].Name = null;
+                pMacros[macros.Length].Definition = null;
+            }
+
+            byte* pEntryPoint = entryPoint.ToUTF8Ptr();
+            byte* pSourceName = sourceName.ToUTF8Ptr();
+            byte* pProfile = profile.ToUTF8Ptr();
+
+            ID3D10Blob* vBlob;
+            ID3D10Blob* vError;
+
+            string systemInclude = Paths.CurrentShaderPath;
+
+            IncludeHandler handler = new(Path.Combine(Paths.CurrentShaderPath, basePath), systemInclude);
+            ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
+            include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
+            include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
+            include->LpVtbl[1] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Close);
+
+            D3DCompiler.Compile(pSource, (nuint)sourceLen, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
+
+            Free(include->LpVtbl);
+            Free(include);
+
+            Free(pEntryPoint);
+            Free(pSourceName);
+            Free(pProfile);
+
+            for (int i = 0; i < macros.Length; i++)
+            {
+                var macro = pMacros[i];
+                Free(macro.Name);
+                Free(macro.Definition);
+            }
+
+            Free(pMacros);
+
+            if (vError != null)
+            {
+                error = ToStringFromUTF8((byte*)vError->GetBufferPointer());
+                vError->Release();
+            }
+
+            if (vBlob == null)
+            {
+                Logger.Error($"Error: {sourceName}");
+                return false;
+            }
+
+            shaderBlob = new(vBlob->GetBufferPointer(), vBlob->GetBufferSize(), copy: true);
             vBlob->Release();
 
             Logger.Info($"Done: {sourceName}");
@@ -103,31 +191,25 @@ namespace HexaEngine.D3D11
 
         public unsafe Blob GetInputSignature(Blob shader)
         {
-            lock (D3DCompiler)
-            {
-                ID3D10Blob* signature;
-                D3DCompiler.GetInputSignatureBlob((void*)shader.BufferPointer, (nuint)(int)shader.PointerSize, &signature);
-                Blob output = new(signature->Buffer.ToArray());
-                signature->Release();
-                return output;
-            }
+            ID3D10Blob* signature;
+            D3DCompiler.GetInputSignatureBlob((void*)shader.BufferPointer, (nuint)(int)shader.PointerSize, &signature);
+            Blob output = new(signature->GetBufferPointer(), signature->GetBufferSize(), copy: true);
+            signature->Release();
+            return output;
         }
 
         public unsafe Blob GetInputSignature(Shader* shader)
         {
-            lock (D3DCompiler)
-            {
-                ID3D10Blob* signature;
-                D3DCompiler.GetInputSignatureBlob(shader->Bytecode, shader->Length, &signature);
-                Blob output = new(signature->Buffer.ToArray());
-                signature->Release();
-                return output;
-            }
+            ID3D10Blob* signature;
+            D3DCompiler.GetInputSignatureBlob(shader->Bytecode, shader->Length, &signature);
+            Blob output = new(signature->GetBufferPointer(), signature->GetBufferSize(), copy: true);
+            signature->Release();
+            return output;
         }
 
-        public static unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
+        public static unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComObject<T>
         {
-            D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
+            D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector).ThrowIf();
         }
 
         public unsafe ShaderReflection Reflect(Shader* blob)
@@ -162,17 +244,17 @@ namespace HexaEngine.D3D11
             for (uint i = 0; i < shaderDesc.ConstantBuffers; i++)
             {
                 var cb = reflection.GetConstantBufferByIndex(i);
-                Silk.NET.Direct3D11.ShaderBufferDesc shaderBufferDesc;
+                Hexa.NET.D3D11.ShaderBufferDesc shaderBufferDesc;
                 cb->GetDesc(&shaderBufferDesc);
                 shaderReflection.ConstantBuffers[i] = Helper.ConvertBack(shaderBufferDesc);
                 for (uint j = 0; j < shaderBufferDesc.Variables; j++)
                 {
                     var vb = cb->GetVariableByIndex(j);
-                    Silk.NET.Direct3D11.ShaderVariableDesc shaderVariableDesc;
+                    Hexa.NET.D3D11.ShaderVariableDesc shaderVariableDesc;
                     vb->GetDesc(&shaderVariableDesc);
                     shaderReflection.ConstantBuffers[i].Variables[j] = Helper.ConvertBack(shaderVariableDesc);
                     var tb = vb->GetType();
-                    Silk.NET.Direct3D11.ShaderTypeDesc shaderTypeDesc;
+                    Hexa.NET.D3D11.ShaderTypeDesc shaderTypeDesc;
                     tb->GetDesc(&shaderTypeDesc);
                 }
             }
@@ -189,15 +271,29 @@ namespace HexaEngine.D3D11
             return shaderReflection;
         }
 
-        public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFile(string entry, ShaderSource source, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
-            var fullName = Paths.CurrentShaderPath + path;
-            uint crc = FileSystem.GetCrc32Hash(fullName);
             Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out _))
+            if (source is BytecodeShaderSource bytecodeShaderSource)
             {
-                Compile(FileSystem.ReadAllText(fullName), macros, entry, path, profile, out var shaderBlob, out string? error);
+                pShader = AllocT<Shader>();
+                pShader->Bytecode = AllocCopyT(bytecodeShaderSource.Bytecode);
+                pShader->Length = (nuint)bytecodeShaderSource.Bytecode.Length;
+                *shader = pShader;
+                return;
+            }
 
+            var data = source.GetData();
+            uint crc = Crc32.Compute(data);
+
+            if (bypassCache || !ShaderCache.GetShader(source.Identifier, crc, SourceLanguage.HLSL, macros, &pShader, out _))
+            {
+                Blob? shaderBlob; string? error;
+
+                fixed (byte* pData = data)
+                {
+                    Compile(pData, data.Length, macros, entry, source.Identifier, source.WorkingDir, profile, out shaderBlob, out error);
+                }
                 if (shaderBlob != null)
                 {
                     pShader = AllocT<Shader>();
@@ -212,58 +308,37 @@ namespace HexaEngine.D3D11
                     return;
                 }
 
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
+                ShaderCache.CacheShader(source.Identifier, crc, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
-        public unsafe void GetShaderOrCompileCode(string entry, string path, string code, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, ShaderSource source, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
         {
-            uint crc = FileSystem.GetCrc32HashFromText(code);
             Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out _))
+            if (source is BytecodeShaderSource bytecodeShaderSource)
             {
-                Compile(code, macros, entry, path, profile, out var shaderBlob, out string? error);
+                pShader = AllocT<Shader>();
+                pShader->Bytecode = AllocCopyT(bytecodeShaderSource.Bytecode);
+                pShader->Length = (nuint)bytecodeShaderSource.Bytecode.Length;
+                *shader = pShader;
 
-                if (shaderBlob != null)
+                signature = GetInputSignature(pShader);
+                inputElements = GetInputElementsFromSignature(pShader, signature);
+                return;
+            }
+
+            var data = source.GetData();
+            uint crc = Crc32.Compute(data);
+
+            if (bypassCache || !ShaderCache.GetShader(source.Identifier, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
+            {
+                Blob? shaderBlob; string? error;
+
+                fixed (byte* pData = data)
                 {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
+                    Compile(pData, data.Length, macros, entry, source.Identifier, source.WorkingDir, profile, out shaderBlob, out error);
                 }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    return;
-                }
-
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, [], pShader);
-            }
-            *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompileFileOrCode(string entry, string path, string? code, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
-        {
-            if (code == null)
-            {
-                GetShaderOrCompileFile(entry, path, profile, macros, shader, bypassCache);
-            }
-            else
-            {
-                GetShaderOrCompileCode(entry, path, code, profile, macros, shader, bypassCache);
-            }
-        }
-
-        public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            var fullName = Paths.CurrentShaderPath + path;
-            uint crc = FileSystem.GetCrc32Hash(fullName);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
-            {
-                Compile(FileSystem.ReadAllText(fullName), macros, entry, path, profile, out var shaderBlob, out string? error);
 
                 if (shaderBlob != null)
                 {
@@ -283,54 +358,10 @@ namespace HexaEngine.D3D11
 
                 signature = GetInputSignature(pShader);
                 inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
+                ShaderCache.CacheShader(source.Identifier, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
             }
             *shader = pShader;
             signature = GetInputSignature(pShader);
-        }
-
-        public unsafe void GetShaderOrCompileCodeWithInputSignature(string entry, string path, string code, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            uint crc = FileSystem.GetCrc32HashFromText(code);
-            Shader* pShader = null;
-            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
-            {
-                Compile(code, macros, entry, path, profile, out var shaderBlob, out string? error);
-
-                if (shaderBlob != null)
-                {
-                    pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                    pShader->Length = shaderBlob.PointerSize;
-                }
-
-                Logger.LogIfNotNull(error);
-
-                if (pShader == null)
-                {
-                    signature = null;
-                    inputElements = null;
-                    return;
-                }
-
-                signature = GetInputSignature(pShader);
-                inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
-            }
-            *shader = pShader;
-            signature = GetInputSignature(pShader);
-        }
-
-        public unsafe void GetShaderOrCompileFileOrCodeWithInputSignature(string entry, string path, string? code, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
-        {
-            if (code == null)
-            {
-                GetShaderOrCompileFileWithInputSignature(entry, path, profile, macros, shader, out inputElements, out signature, bypassCache);
-            }
-            else
-            {
-                GetShaderOrCompileCodeWithInputSignature(entry, path, code, profile, macros, shader, out inputElements, out signature, bypassCache);
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -360,9 +391,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -371,9 +402,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -382,9 +413,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32B32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32B32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32B32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -393,9 +424,9 @@ namespace HexaEngine.D3D11
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32A32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32A32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32A32Float,
+                        D3DRegisterComponentType.Uint32 => Format.R32G32B32A32UInt,
+                        D3DRegisterComponentType.Sint32 => Format.R32G32B32A32SInt,
+                        D3DRegisterComponentType.Float32 => Format.R32G32B32A32Float,
                         _ => Format.Unknown,
                     };
                 }

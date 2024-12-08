@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Binary.Meshes;
+    using HexaEngine.Core.Utilities;
+    using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using System;
@@ -12,24 +14,26 @@
 
     public class SkinnedMeshRenderer : IDisposable
     {
+        private ulong dirtyFrame;
+
         private bool initialized;
 
-        private Matrix4x4[] globals;
-        private Matrix4x4[] locals;
-        private Matrix4x4[] boneGlobals;
-        private Matrix4x4[] boneLocals;
-        private PlainNode[] plainNodes;
-        private PlainNode[] bones;
-        private readonly ConstantBuffer<UPoint4> offsetBuffer;
-        private readonly StructuredBuffer<Matrix4x4> transformBuffer;
-        private readonly StructuredBuffer<uint> transformOffsetBuffer;
-        private readonly StructuredBuffer<Matrix4x4> boneTransformBuffer;
-        private readonly StructuredBuffer<uint> boneTransformOffsetBuffer;
-        private int[][] drawables;
+        private Matrix4x4[] globals = null!;
+        private Matrix4x4[] locals = null!;
+        private Matrix4x4[] boneGlobals = null!;
+        private Matrix4x4[] boneLocals = null!;
+        private PlainNode[] plainNodes = null!;
+        private PlainNode[] bones = null!;
+        private readonly ConstantBuffer<UPoint4> offsetBuffer = null!;
+        private readonly StructuredBuffer<Matrix4x4> transformBuffer = null!;
+        private readonly StructuredBuffer<uint> transformOffsetBuffer = null!;
+        private readonly StructuredBuffer<Matrix4x4> boneTransformBuffer = null!;
+        private readonly StructuredBuffer<uint> boneTransformOffsetBuffer = null!;
+        private int[][] drawables = null!;
         private uint bufferOffset;
         private uint boneBufferOffset;
-        private Mesh[] meshes;
-        private Material[] materials;
+        private Mesh[] meshes = null!;
+        private Material[] materials = null!;
 
         private readonly bool sharedBuffers;
         private bool disposedValue;
@@ -65,23 +69,65 @@
             meshes = model.Meshes;
             materials = model.Materials;
 
+            CullingManager.Current.BuffersResized += TransformBufferResize;
+
             initialized = true;
+        }
+
+        private void TransformBufferResize(object? sender, CapacityChangedEventArgs e)
+        {
+            dirtyFrame = Time.Frame;
         }
 
         public void Uninitialize()
         {
             initialized = false;
 
-            globals = null;
-            locals = null;
-            boneGlobals = null;
-            boneLocals = null;
-            bones = null;
-            plainNodes = null;
-            drawables = null;
+            globals = null!;
+            locals = null!;
+            boneGlobals = null!;
+            boneLocals = null!;
+            bones = null!;
+            plainNodes = null!;
+            drawables = null!;
             bufferOffset = 0;
-            meshes = null;
-            materials = null;
+            meshes = null!;
+            materials = null!;
+        }
+
+        public void Prepare(SkinnedModel instance)
+        {
+            if (dirtyFrame == 0 || dirtyFrame == Time.Frame - 1)
+            {
+                foreach (Material material in instance.Materials)
+                {
+                    Prepare(material);
+                }
+            }
+        }
+
+        public void Prepare(Material material)
+        {
+            foreach (var pass in material.Shader.Passes)
+            {
+                var bindings = pass.Bindings;
+                bindings.SetCBV("offsetBuffer", offsetBuffer);
+                if (pass.Name == "Deferred" || pass.Name == "Forward")
+                {
+                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
+                }
+                else
+                {
+                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
+                    //bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
+                    //bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
+                }
+
+                bindings.SetSRV("boneMatrices", boneTransformBuffer.SRV);
+                bindings.SetSRV("boneMatrixOffsets", boneTransformOffsetBuffer.SRV);
+            }
         }
 
         private int GetBoneIdByName(string name)
@@ -102,7 +148,7 @@
             return -1;
         }
 
-        public void Update(IGraphicsContext context, Matrix4x4 transform)
+        public void Update(IGraphicsContext context, Matrix4x4 transform, SkinnedModel model)
         {
             if (!initialized)
             {
@@ -185,7 +231,7 @@
 
                 for (int j = 0; j < ((MeshData)mesh.Data).BoneCount; j++)
                 {
-                    var bone = ((MeshData)mesh.Data).Bones[j];
+                    var bone = ((MeshData)mesh.Data).Bones![j];
 
                     var id = GetBoneIdByName(bone.Name);
                     boneTransformBuffer.Add(Matrix4x4.Transpose(bone.Offset * boneGlobals[id]));
@@ -199,7 +245,7 @@
             }
         }
 
-        public void DrawForward(IGraphicsContext context)
+        public void DrawForward(IGraphicsContext context, SkinnedModel model)
         {
             if (!initialized)
             {
@@ -208,11 +254,7 @@
 
             uint boneOffset = 0;
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-            context.VSSetShaderResource(2, boneTransformBuffer.SRV);
-            context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
+            Prepare(model);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -236,15 +278,9 @@
                     boneOffset++;
                 }
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-            context.VSSetShaderResource(2, null);
-            context.VSSetShaderResource(3, null);
         }
 
-        public void DrawDeferred(IGraphicsContext context)
+        public void DrawDeferred(IGraphicsContext context, SkinnedModel model)
         {
             if (!initialized)
             {
@@ -253,11 +289,7 @@
 
             uint boneOffset = 0;
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-            context.VSSetShaderResource(2, boneTransformBuffer.SRV);
-            context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
+            Prepare(model);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -281,15 +313,9 @@
                     boneOffset++;
                 }
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-            context.VSSetShaderResource(2, null);
-            context.VSSetShaderResource(3, null);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public void DrawDepth(IGraphicsContext context, SkinnedModel model)
         {
             if (!initialized)
             {
@@ -298,11 +324,7 @@
 
             uint boneOffset = 0;
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-            context.VSSetShaderResource(2, boneTransformBuffer.SRV);
-            context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
+            Prepare(model);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -326,15 +348,9 @@
                     boneOffset++;
                 }
             }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-            context.VSSetShaderResource(2, null);
-            context.VSSetShaderResource(3, null);
         }
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public void DrawShadowMap(IGraphicsContext context, SkinnedModel model, IBuffer light, ShadowType type)
         {
             if (!initialized)
             {
@@ -343,14 +359,9 @@
 
             uint boneOffset = 0;
 
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-            context.VSSetShaderResource(2, boneTransformBuffer.SRV);
-            context.VSSetShaderResource(3, boneTransformOffsetBuffer.SRV);
-            context.VSSetConstantBuffer(1, light);
-            context.GSSetConstantBuffer(0, light);
-            context.PSSetConstantBuffer(0, light);
+            Prepare(model);
+
+            string name = EnumHelper<ShadowType>.GetName(type);
 
             for (uint i = 0; i < drawables.Length; i++)
             {
@@ -365,8 +376,19 @@
                     continue;
                 }
 
+                if (!material.BeginDraw(name, out var pass))
+                {
+                    continue;
+                }
+
+                pass.Bindings.SetCBV("lightBuffer", light);
+
                 mesh.BeginDraw(context);
-                material.DrawIndexedInstanced(context, type.ToString(), mesh.IndexCount, (uint)drawable.Length);
+                if (pass.BeginDraw(context))
+                {
+                    context.DrawIndexedInstanced(mesh.IndexCount, (uint)drawable.Length, 0, 0, 0);
+                }
+                material.EndDraw(context);
                 mesh.EndDraw(context);
 
                 if (((MeshData)mesh.Data).BoneCount > 0)
@@ -374,21 +396,13 @@
                     boneOffset++;
                 }
             }
-
-            context.PSSetConstantBuffer(0, null);
-            context.VSSetConstantBuffer(1, null);
-            context.GSSetConstantBuffer(0, null);
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-            context.VSSetShaderResource(2, null);
-            context.VSSetShaderResource(3, null);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
+                transformBuffer.Resize -= TransformBufferResize;
                 if (!sharedBuffers)
                 {
                     transformBuffer.Dispose();

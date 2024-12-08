@@ -30,15 +30,15 @@
         {
             var enums = attr.EnumValues;
             var names = attr.EnumNames;
-            int index = Array.IndexOf(enums, value);
+            int index = Array.IndexOf(enums!, value);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.Text(guiName.Name);
             ImGui.TableSetColumnIndex(1);
             ImGui.PushItemWidth(0);
-            if (ImGui.Combo(guiName.Id, ref index, names, names.Length))
+            if (ImGui.Combo(guiName.Id, ref index, names, names!.Length))
             {
-                value = enums.GetValue(index);
+                value = enums!.GetValue(index);
                 ImGui.PopItemWidth();
                 return true;
             }

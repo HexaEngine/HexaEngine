@@ -1,20 +1,20 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
 
     public class Skybox : IDisposable
     {
-        private readonly IGraphicsDevice device;
-        private readonly ISamplerState samplerState;
+        private readonly SamplerState samplerState;
         private Texture2D? environment;
 
         private bool loaded;
         private bool disposedValue;
 
-        public Skybox(IGraphicsDevice device)
+        public Skybox()
         {
-            this.device = device;
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+            samplerState = new(SamplerStateDescription.LinearWrap);
         }
 
         public ISamplerState SamplerState => samplerState;
@@ -29,15 +29,16 @@
             loaded = true;
         }
 
-        public async Task LoadAsync(string environmentPath)
+        public Task LoadAsync(AssetRef asset)
         {
-            environment = await Texture2D.CreateTextureAsync(new(environmentPath, TextureDimension.TextureCube));
+            environment = Texture2D.LoadFromAssets(asset, TextureDimension.TextureCube);
             loaded = true;
+            return Task.CompletedTask;
         }
 
         public void Unload()
         {
-            environment.Dispose();
+            environment?.Dispose();
             loaded = false;
         }
 

@@ -1,20 +1,16 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using System;
     using System.Numerics;
 
-    public class LauncherWindow : Modal
+    public class LauncherWindow : HexaEngine.Editor.Dialogs.Modal
     {
-        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
-        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
-        private static Action<OpenFileResult, string>? filePickerCallback;
-        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
         private string searchString = string.Empty;
         private HistoryEntry historyEntry;
         private bool first = false;
@@ -35,16 +31,6 @@
             {
                 base.Draw();
                 return;
-            }
-
-            if (filePicker.Draw())
-            {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
-            }
-
-            if (fileSaver.Draw())
-            {
-                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
             if (ImGui.BeginPopupModal("DeleteNonExistingProject"))
@@ -78,7 +64,7 @@
             {
                 Vector2 size = new(800, 500);
                 Vector2 mainViewportPos = ImGui.GetMainViewport().Pos;
-                Vector2 s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+                Vector2 s = main_viewport_size;
 
                 ImGui.SetNextWindowSize(size);
                 ImGui.SetNextWindowPos(mainViewportPos + (s / 2 - size / 2));
@@ -120,7 +106,7 @@
             var entries = ProjectHistory.Entries;
 
             Vector2 entryChildSize = new(entrySize.X, avail.Y);
-            ImGui.BeginChild("Entries", entryChildSize);
+            ImGui.BeginChild("Entries"u8, entryChildSize);
 
             ImGui.InputTextWithHint("##SearchBar", "Search ...", ref searchString, 1024);
 
@@ -163,7 +149,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("Today", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("Today"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 0;
                     }
                 }
@@ -176,7 +162,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("Yesterday", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("Yesterday"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 1;
                     }
                 }
@@ -189,7 +175,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("A week ago", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("A week ago"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 2;
                     }
                 }
@@ -202,7 +188,7 @@
                             ImGui.TreePop();
                         }
 
-                        open = ImGui.TreeNodeEx("A month ago", ImGuiTreeNodeFlags.DefaultOpen);
+                        open = ImGui.TreeNodeEx("A month ago"u8, ImGuiTreeNodeFlags.DefaultOpen);
                         activeNode = 3;
                     }
                 }
@@ -213,7 +199,7 @@
                         ImGui.TreePop();
                     }
 
-                    open = ImGui.TreeNode("Older");
+                    open = ImGui.TreeNode("Older"u8);
                     activeNode = 4;
                 }
 
@@ -227,7 +213,7 @@
             {
                 ImGui.TreePop();
             }
-
+            ImGui.Dummy(new(1));
             ImGui.EndChild();
 
             Vector2 childSize = new(widthSide - padding.X, avail.Y);
@@ -240,23 +226,10 @@
             }
             if (ImGui.Button($"{UwU.MagnifyingGlass} Open Project", new(childSize.X, 50)))
             {
-                filePicker.AllowedExtensions.Add(".hexproj");
-                filePicker.OnlyAllowFilteredExtensions = true;
-                filePickerCallback = (e, r) =>
-                {
-                    if (e == OpenFileResult.Ok)
-                    {
-                        if (File.Exists(r))
-                        {
-                            ProjectManager.Load(r);
-                            Close();
-                        }
-                    }
-
-                    filePicker.AllowedExtensions.Clear();
-                    filePicker.OnlyAllowFilteredExtensions = false;
-                };
-                filePicker.Show();
+                OpenFileDialog dialog = new();
+                dialog.AllowedExtensions.Add(".hexproj");
+                dialog.OnlyAllowFilteredExtensions = true;
+                dialog.Show(OpenProjectCallback);
             }
             if (ImGui.Button($"{UwU.Clone} Clone Project", new(childSize.X, 50)))
             {
@@ -264,6 +237,13 @@
             }
 
             ImGui.EndChild();
+        }
+
+        private void OpenProjectCallback(object? sender, DialogResult result)
+        {
+            if (result != DialogResult.Ok || sender is not OpenFileDialog dialog) return;
+            ProjectManager.Load(dialog.SelectedFile!);
+            Close();
         }
 
         private string newProjectName = "New Project";
@@ -453,7 +433,7 @@
                 ImGuiManager.PopFont();
                 if (ImGui.MenuItem($"{UwU.Copy} Copy Path"))
                 {
-                    Clipboard.SetClipboardText(entry.Path);
+                    Clipboard.SetText(entry.Path);
                 }
 
                 ImGui.EndPopup();

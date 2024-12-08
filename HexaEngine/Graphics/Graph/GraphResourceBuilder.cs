@@ -1,27 +1,15 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Reflection;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
-    public struct ResourceRefBinding<T> where T : class, INative, IDisposable
-    {
-        public ResourceRef<T> Ref;
-        public uint Slot;
-        public ShaderStage Stage;
-    }
-
-    public class ShaderResourceViewCollection
-    {
-        private List<ResourceRefBinding<IShaderResourceView>> bindings = new();
-    }
+    using System.Runtime.CompilerServices;
 
     public class GraphResourceBuilder : IGraphResourceBuilder
     {
@@ -71,7 +59,7 @@
         private readonly List<IGraphicsPipelineState> graphicsPipelineStates = new();
         private readonly List<ResourceDescriptor<GraphicsPipelineStateDescEx>> graphicsPipelineStateDescriptors = new();
 
-        private readonly List<IComputePipeline> computePipelines = new();
+        private readonly List<IComputePipelineState> computePipelineStates = new();
         private readonly List<ResourceDescriptor<ComputePipelineDesc>> computePipelineDescriptors = new();
 
         public IGraphicsDevice Device => device;
@@ -156,7 +144,7 @@
             ConstructList(textures3dDescriptors, textures3d);
             ConstructList(samplerStateDescriptors, samplerStates);
             ConstructList(graphicsPipelineStateDescriptors, graphicsPipelineStates);
-            ConstructList(computePipelineDescriptors, computePipelines);
+            ConstructList(computePipelineDescriptors, computePipelineStates);
         }
 
         internal void ReleaseResources()
@@ -181,7 +169,7 @@
             textures3d.Clear();
             samplerStates.Clear();
             graphicsPipelineStates.Clear();
-            computePipelines.Clear();
+            computePipelineStates.Clear();
 
             shadowAtlasDescriptors.Clear();
             depthMipChainDescriptors.Clear();
@@ -468,7 +456,7 @@
 
         public void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)
         {
-            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates);
+            UpdateResource(name, desc, (dev, desc) => dev.CreateGraphicsPipelineState(desc, name), graphicsPipelineStates);
         }
 
         public ResourceRef<IGraphicsPipelineState> GetGraphicsPipelineState(string name)
@@ -476,9 +464,9 @@
             return GetOrAddResource<IGraphicsPipelineState>(name);
         }
 
-        public void UpdateComputePipeline(string name, ComputePipelineDesc desc)
+        public void UpdateComputePipelineState(string name, ComputePipelineDesc desc)
         {
-            UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines);
+            UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipelineState(desc, name), computePipelineStates);
         }
 
         public ResourceRef<IComputePipeline> GetComputePipeline(string name)
@@ -504,14 +492,14 @@
             group.Add(resource);
         }
 
-        public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, computePipelineDescriptors, flags);
+            return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }
 
-        public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipeline(desc), computePipelines, computePipelineDescriptors, flags);
+            return CreateResource(name, description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }
 
         public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
@@ -650,7 +638,7 @@
 
             if ((flags & ResourceCreationFlags.LazyInit) == 0)
             {
-                ResourceDescriptor<TDesc> descriptor = resourceDescriptor != null ? (ResourceDescriptor<TDesc>)resourceDescriptor : new ResourceDescriptor<TDesc>(description, resourceRef.Resource, container, null, flags);
+                ResourceDescriptor<TDesc> descriptor = resourceDescriptor != null ? (ResourceDescriptor<TDesc>)resourceDescriptor : new ResourceDescriptor<TDesc>(description, resourceRef.Resource, container, null!, flags);
                 if (!contains)
                 {
                     descriptors.Add(descriptor);

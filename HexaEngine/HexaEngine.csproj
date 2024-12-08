@@ -1,34 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<DebugType>embedded</DebugType>
+		<Configurations>Debug;Release;TraceLeak;</Configurations>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<NoWarn>CS1591</NoWarn>
+
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
-		<Configurations>Debug;Release;TraceLeak;</Configurations>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<LangVersion>preview</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-		<DefineConstants>WINDOWS</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-		<DefineConstants>LINUX</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-		<DefineConstants>OSX</DefineConstants>
-	</PropertyGroup>
-
 	<ItemGroup>
+		<TrimmerRootAssembly Include="HexaEngine" />
+		<TrimmerRootAssembly Include="HexaEngine.Core" />
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+		<EmbeddedResource Include="ILLink.Descriptors.xml">
+			<LogicalName>ILLink.Descriptors.xml</LogicalName>
+		</EmbeddedResource>
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
@@ -44,10 +39,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.9.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
 		<PackageReference Include="MagicPhysX" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
 		<PackageReference Include="Hexa.Protobuf" Version="1.0.0" />
 		<PackageReference Include="Hexa.Protobuf.Analyzers" Version="1.0.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -60,6 +60,9 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\fonts\ARIALBD.TTF">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\CascadiaMono.ttf">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\fonts\fa-brands-400.ttf">
@@ -78,6 +81,15 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\fonts\Font Awesome 6 Free-Solid-900.otf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialIcons-Regular.ttf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialIconsRound-Regular.otf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\fonts\MaterialSymbolsRounded.ttf">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\icons\animation.png">
@@ -146,6 +158,9 @@
 		<None Update="assets\shared\shaders\compute\culling\sort.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\deferred\geometry\surface.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\blur\gaussian7x7.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -176,6 +191,15 @@
 		<None Update="assets\shared\shaders\effects\blur\gaussian3x3.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\filter\clear\cs.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\filter\reproject\cs.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\filter\reproject\ps.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\filter\remap\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -189,6 +213,21 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\geometry\psm\ps.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\surface.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\tsm\defs.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\tsm\gs.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\tsm\ps.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\tsm\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\sky\preethamFullSky.hlsl">
@@ -966,20 +1005,15 @@
 		</None>
 	</ItemGroup>
 
-
-
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 		<ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
 		<ProjectReference Include="..\HexaEngine.D3D12\HexaEngine.D3D12.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-		<ProjectReference Include="..\HexaEngine.OpenGL\HexaEngine.OpenGL.csproj" />
 		<ProjectReference Include="..\HexaEngine.Vulkan\HexaEngine.Vulkan.csproj" />
 		<ProjectReference Include="..\HexaEngine.XAudio\HexaEngine.XAudio.csproj" />
 	</ItemGroup>
-
-
 
 	<ItemGroup>
 		<PixelShader Include="assets\shaders\point\PixelShader.hlsl">
@@ -987,16 +1021,12 @@
 		</PixelShader>
 	</ItemGroup>
 
-
-
 	<ItemGroup>
 		<Folder Include="assets\shared\shaders\forward\sun\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 		<Folder Include="assets\shared\shaders\tools\mesh\textured\" />
 		<Folder Include="Physics\Network\" />
 	</ItemGroup>
-
-
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />

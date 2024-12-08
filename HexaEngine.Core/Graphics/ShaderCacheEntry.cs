@@ -47,6 +47,7 @@ namespace HexaEngine.Core.Graphics
 
         internal ShaderCacheEntry()
         {
+            InputElements = null!;
         }
 
         public void Lock()

@@ -1,24 +1,29 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
+    using HexaEngine.Core.Logging;
+    using HexaEngine.Core.Materials.Nodes.Functions;
+    using HexaEngine.Core.Materials.Nodes.Noise;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.MaterialEditor.Generator;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Nodes;
-    using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
-    using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
-    using HexaEngine.Editor.NodeEditor;
+    using HexaEngine.Materials;
+    using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Generator.Enums;
+    using HexaEngine.Materials.Nodes;
+    using HexaEngine.Materials.Nodes.Functions;
+    using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using System.Numerics;
     using System.Reflection;
     using System.Text;
 
@@ -26,23 +31,27 @@
     public class MaterialEditorWindow : EditorWindow
     {
         internal static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(MaterialEditor));
+
         private const string MetadataVersionKey = "MatNodes.Version";
         private const string MetadataKey = "MatNodes.Data";
-
         private const string Version = "1.0.0.1";
 
-        private IGraphicsDevice device;
+        private const string MetadataSurfaceVersionKey = "MatSurface.Version";
+        private const string MetadataSurfaceKey = "MatSurface.Data";
+        private const string SurfaceVersion = "1.0.0.0";
 
-        private NodeEditor? editor;
-        private InputNode geometryNode;
-        private BRDFShadingModelNode outputNode;
+        private IGraphicsDevice device = null!;
 
-        private (string, Type)[] intrinsicFuncs;
-        private (string, Type)[] operatorFuncs;
+        private ImNodesNodeEditor? editor;
+        private InputNode geometryNode = null!;
+        private BRDFShadingModelNode outputNode = null!;
+
+        private (string, Type)[] intrinsicFuncs = null!;
+        private (string, Type)[] operatorFuncs = null!;
         private readonly ShaderGenerator generator = new();
         private bool autoGenerate = true;
 
-        private Task updateMaterialTask;
+        private Task? updateMaterialTask;
 
         private readonly SemaphoreSlim semaphore = new(1);
 
@@ -53,12 +62,24 @@
         private bool unsavedData;
         private bool nameChanged;
         private bool unsavedDataDialogIsOpen;
-        private string path;
+
+        private string? path;
+
+        private bool showCode;
 
         public MaterialEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
+
+            NodeEditorRegistry.RegisterNodeSingleton<ComponentMaskNode, ComponentMaskNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<SplitNode, SplitNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<TypedNodeBase, TypedNodeBaseRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<ParallaxMapNode, ParallaxMapNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeInstanced<TextureFileNode, TextureFileNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<ConstantNode, ConstantNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<FlipUVNode, FlipUVNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<PackNode, PackNodeRenderer>();
 
             Application.OnEditorPlayStateTransition += ApplicationOnEditorPlayStateTransition;
             Application.MainWindow.Closing += MainWindowClosing;
@@ -153,14 +174,13 @@
                 var path = sourceMetadata.GetFullPath();
                 FileStream? stream = null;
 
-                stream = File.OpenRead(path);
-                MaterialFile materialFile = MaterialFile.Read(stream);
-                this.path = path;
-                MaterialFile = materialFile;
-                assetRef = value;
-
                 try
                 {
+                    stream = File.OpenRead(path);
+                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    this.path = path;
+                    MaterialFile = materialFile;
+                    assetRef = value;
                 }
                 catch (Exception ex)
                 {
@@ -208,7 +228,7 @@
                 {
                     if (string.IsNullOrEmpty(json) || version != Version)
                     {
-                        editor = new();
+                        editor = new(NodeEditorContextMenu);
                         geometryNode = new(editor.GetUniqueId(), false, false);
                         outputNode = new(editor.GetUniqueId(), false, false);
                         editor.AddNode(geometryNode);
@@ -217,7 +237,7 @@
                     }
                     else
                     {
-                        editor = NodeEditor.Deserialize(json);
+                        editor = ImNodesNodeEditor.Deserialize(json, NodeEditorContextMenu);
                     }
                 }
                 catch (Exception ex)
@@ -226,7 +246,7 @@
                     Logger.Error($"Failed to deserialize node material data: {value.Name}");
                     Logger.Log(ex);
 
-                    editor = new();
+                    editor = new(NodeEditorContextMenu);
                     geometryNode = new(editor.GetUniqueId(), false, false);
                     outputNode = new(editor.GetUniqueId(), false, false);
                     editor.AddNode(geometryNode);
@@ -234,8 +254,8 @@
                     editor.Initialize();
                 }
 
-                ExtractProperties(value, editor);
-                ExtractTextures(value, editor);
+                MaterialNodeConverter.ExtractProperties(value, editor);
+                MaterialNodeConverter.ExtractTextures(value, editor);
                 editor.Minimap = true;
                 editor.Location = Hexa.NET.ImNodes.ImNodesMiniMapLocation.TopRight;
                 editor.NodePinValueChanged += NodePinValueChanged;
@@ -246,306 +266,29 @@
 
                 foreach (var tex in editor.GetNodes<TextureFileNode>())
                 {
-                    tex.Device = device;
                     tex.Reload();
                     textureFiles.Add(tex);
                 }
             }
         }
 
-        protected override string Name { get; } = "Material Editor";
-
-        private static void ExtractProperties(MaterialData material, NodeEditor editor)
+        private void NodeEditorContextMenu()
         {
-            for (int i = 0; i < material.Properties.Count; i++)
-            {
-                var property = material.Properties[i];
-
-                foreach (var pin in PropertyPin.FindPropertyPins(editor, property.Name))
-                {
-                    if (property.ValueType == MaterialValueType.Float)
-                    {
-                        var vec = property.AsFloat();
-                        pin.ValueX = vec;
-                    }
-                    if (property.ValueType == MaterialValueType.Float2)
-                    {
-                        var vec = property.AsFloat2();
-                        pin.ValueX = vec.X;
-                        pin.ValueY = vec.Y;
-                    }
-                    if (property.ValueType == MaterialValueType.Float3)
-                    {
-                        var vec = property.AsFloat3();
-                        pin.ValueX = vec.X;
-                        pin.ValueY = vec.Y;
-                        pin.ValueZ = vec.Z;
-                    }
-                    if (property.ValueType == MaterialValueType.Float4)
-                    {
-                        var vec = property.AsFloat4();
-                        pin.ValueX = vec.X;
-                        pin.ValueY = vec.Y;
-                        pin.ValueZ = vec.Z;
-                        pin.ValueW = vec.W;
-                    }
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        private static void InsertProperties(MaterialData material, NodeEditor editor)
-        {
-            var outputNode = editor.GetNode<BRDFShadingModelNode>();
-            for (int i = 0; i < outputNode.Pins.Count; i++)
-            {
-                var pin = outputNode.Pins[i];
+        protected override string Name { get; } = $"{UwU.PenRuler} Material Editor";
 
-                if (pin.Kind != PinKind.Input || pin is not PropertyPin propertyPin)
-                {
-                    continue;
-                }
-
-                if (!Enum.TryParse<MaterialPropertyType>(propertyPin.PropertyName, true, out var type))
-                {
-                    continue;
-                }
-
-                var idx = material.GetPropertyIndex(type);
-                MaterialProperty property;
-
-                if (idx == -1)
-                {
-                    MaterialValueType valueType = type switch
-                    {
-                        MaterialPropertyType.Unknown => MaterialValueType.Unknown,
-                        MaterialPropertyType.ColorDiffuse => MaterialValueType.Float4,
-                        MaterialPropertyType.ColorAmbient => MaterialValueType.Float4,
-                        MaterialPropertyType.ColorSpecular => MaterialValueType.Float4,
-                        MaterialPropertyType.ColorTransparent => MaterialValueType.Float4,
-                        MaterialPropertyType.ColorReflective => MaterialValueType.Float4,
-                        MaterialPropertyType.BaseColor => MaterialValueType.Float4,
-                        MaterialPropertyType.Opacity => MaterialValueType.Float,
-                        MaterialPropertyType.Specular => MaterialValueType.Float,
-                        MaterialPropertyType.SpecularTint => MaterialValueType.Float,
-                        MaterialPropertyType.Glossiness => MaterialValueType.Float,
-                        MaterialPropertyType.AmbientOcclusion => MaterialValueType.Float,
-                        MaterialPropertyType.Metallic => MaterialValueType.Float,
-                        MaterialPropertyType.Roughness => MaterialValueType.Float,
-                        MaterialPropertyType.Cleancoat => MaterialValueType.Float,
-                        MaterialPropertyType.CleancoatGloss => MaterialValueType.Float,
-                        MaterialPropertyType.Sheen => MaterialValueType.Float,
-                        MaterialPropertyType.SheenTint => MaterialValueType.Float,
-                        MaterialPropertyType.Anisotropy => MaterialValueType.Float,
-                        MaterialPropertyType.Subsurface => MaterialValueType.Float,
-                        MaterialPropertyType.SubsurfaceColor => MaterialValueType.Float3,
-                        MaterialPropertyType.Transmission => MaterialValueType.Float3,
-                        MaterialPropertyType.Emissive => MaterialValueType.Float3,
-                        MaterialPropertyType.EmissiveIntensity => MaterialValueType.Float,
-                        MaterialPropertyType.VolumeThickness => MaterialValueType.Float,
-                        MaterialPropertyType.VolumeAttenuationDistance => MaterialValueType.Float,
-                        MaterialPropertyType.VolumeAttenuationColor => MaterialValueType.Float4,
-                        MaterialPropertyType.TwoSided => MaterialValueType.Bool,
-                        MaterialPropertyType.ShadingMode => MaterialValueType.Int32,
-                        MaterialPropertyType.EnableWireframe => MaterialValueType.Bool,
-                        MaterialPropertyType.BlendFunc => MaterialValueType.Int32,
-                        MaterialPropertyType.Transparency => MaterialValueType.Float,
-                        MaterialPropertyType.BumpScaling => MaterialValueType.Float,
-                        MaterialPropertyType.Shininess => MaterialValueType.Float,
-                        MaterialPropertyType.ShininessStrength => MaterialValueType.Float,
-                        MaterialPropertyType.Reflectance => MaterialValueType.Float,
-                        MaterialPropertyType.IOR => MaterialValueType.Float,
-                        MaterialPropertyType.DisplacementStrength => MaterialValueType.Float,
-                        _ => MaterialValueType.Unknown,
-                    };
-
-                    if (valueType == MaterialValueType.Unknown)
-                    {
-                        Logger.Warn("Unknown property type");
-                        continue;
-                    }
-
-                    property = new(type.ToString(), type, valueType, Mathematics.Endianness.LittleEndian);
-                    material.Properties.Add(property);
-                }
-                else
-                {
-                    property = material.Properties[idx];
-                }
-
-                if (property.ValueType == MaterialValueType.Float)
-                {
-                    property.SetFloat(propertyPin.ValueX);
-                }
-                if (property.ValueType == MaterialValueType.Float2)
-                {
-                    property.SetFloat2(propertyPin.Vector2);
-                }
-                if (property.ValueType == MaterialValueType.Float3)
-                {
-                    property.SetFloat3(propertyPin.Vector3);
-                }
-                if (property.ValueType == MaterialValueType.Float4)
-                {
-                    property.SetFloat4(propertyPin.Vector4);
-                }
-            }
-        }
-
-        private static void ExtractTextures(MaterialData material, NodeEditor editor)
-        {
-            for (int i = 0; i < material.Textures.Count; i++)
-            {
-                var texture = material.Textures[i];
-
-                if (texture.File == Guid.Empty)
-                {
-                    continue;
-                }
-
-                var textureNode = TextureFileNode.FindTextureFileNode(editor, texture.File);
-                if (textureNode != null)
-                {
-                    continue;
-                }
-
-                textureNode = new(editor.GetUniqueId(), true, false, null);
-                editor.AddNode(textureNode);
-                textureNode.Name = texture.Name;
-                textureNode.Path = texture.File;
-                textureNode.SamplerDescription = texture.GetSamplerDesc();
-                var output = textureNode.Pins[0];
-
-                if (texture.Type == MaterialTextureType.Normal)
-                {
-                    NormalMapNode normalMapNode = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(normalMapNode);
-                    editor.CreateLink(normalMapNode.Pins[1], output);
-                    output = normalMapNode.Pins[0];
-                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Normal"))
-                    {
-                        if (pin.CanCreateLink(output))
-                        {
-                            editor.CreateLink(pin, output);
-                        }
-                    }
-                    continue;
-                }
-
-                if (texture.Type == MaterialTextureType.RoughnessMetallic)
-                {
-                    SplitNode splitNode = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(splitNode);
-                    editor.CreateLink(splitNode.Pins[0], output);
-                    output = splitNode.Pins[1];
-                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Roughness"))
-                    {
-                        if (pin.CanCreateLink(output))
-                        {
-                            editor.CreateLink(pin, output);
-                        }
-                    }
-                    output = splitNode.Pins[2];
-                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Metallic"))
-                    {
-                        if (pin.CanCreateLink(output))
-                        {
-                            editor.CreateLink(pin, output);
-                        }
-                    }
-                    continue;
-                }
-
-                foreach (string aliasName in texture.GetNameAlias())
-                {
-                    foreach (var pin in PropertyPin.FindPropertyPins(editor, aliasName))
-                    {
-                        if (pin.CanCreateLink(output))
-                        {
-                            editor.CreateLink(pin, output);
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void InsertTextures(MaterialData material, NodeEditor editor)
-        {
-            material.Textures.Clear();
-            foreach (var textureNode in editor.GetNodes<TextureFileNode>())
-            {
-                if (textureNode.Path == Guid.Empty)
-                {
-                    continue;
-                }
-
-                var connection = textureNode.OutColor.FindLink<BRDFShadingModelNode>(PinKind.Input);
-
-                if (connection is not PropertyPin propertyPin)
-                {
-                    continue;
-                }
-
-                if (!Enum.TryParse<MaterialTextureType>(propertyPin.PropertyName, true, out var type))
-                {
-                    continue;
-                }
-
-                var desc = textureNode.SamplerDescription;
-
-                Core.IO.Binary.Materials.MaterialTexture texture;
-                texture.Type = type;
-                texture.File = textureNode.Path;
-                texture.Blend = BlendMode.Default;
-                texture.Op = TextureOp.Add;
-                texture.Mapping = 0;
-                texture.UVWSrc = 0;
-                texture.U = Core.IO.Binary.Materials.MaterialTexture.Convert(desc.AddressU);
-                texture.V = Core.IO.Binary.Materials.MaterialTexture.Convert(desc.AddressV);
-                texture.Flags = TextureFlags.None;
-
-                int index = material.GetTextureIndex(type);
-
-                if (index != -1)
-                {
-                    material.Textures[index] = texture;
-                }
-                else
-                {
-                    material.Textures.Add(texture);
-                }
-            }
-        }
-
-        public void Sort()
+        public void Layout()
         {
             if (editor == null)
             {
                 return;
             }
 
-            var groups = NodeEditor.TreeTraversal2(outputNode, true);
-            Array.Reverse(groups);
-            Vector2 padding = new(10);
-            Vector2 pos = padding;
-
-            float maxWidth = 0;
+            NodeLayout layout = new();
             editor.BeginModify();
-            for (int i = 0; i < groups.Length; i++)
-            {
-                var group = groups[i];
-                for (int j = 0; j < group.Length; j++)
-                {
-                    var node = group[j];
-                    node.Position = pos;
-                    var size = node.Size;
-                    pos.Y += size.Y + padding.Y;
-                    maxWidth = Math.Max(maxWidth, size.X);
-                }
-
-                pos.Y = padding.Y;
-                pos.X += maxWidth + padding.X;
-                maxWidth = 0;
-            }
+            layout.Layout(outputNode);
             editor.EndModify();
         }
 
@@ -558,65 +301,82 @@
 
         public void Save()
         {
-            if (material != null && editor != null)
+            try
             {
-                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value = Version;
-                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
-                InsertProperties(material, editor);
-                InsertTextures(material, editor);
-
-                var metadata = assetRef.GetSourceMetadata();
-                if (metadata != null)
+                if (material != null && editor != null)
                 {
-                    metadata.Lock();
-                    material.Save(metadata.GetFullPath(), Encoding.UTF8);
-                    metadata.ReleaseLock();
-                    SourceAssetsDatabase.Update(metadata, false);
+                    material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataVersionKey).Value = Version;
+                    material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
+                    MaterialNodeConverter.InsertProperties(material, editor);
+                    MaterialNodeConverter.InsertTextures(material, editor);
 
-                    if (nameChanged)
+                    var metadata = assetRef.GetSourceMetadata();
+                    if (metadata != null)
                     {
-                        metadata.Rename(material.Name);
+                        metadata.Lock();
+                        material.Save(metadata.GetFullPath(), Encoding.UTF8);
+                        metadata.ReleaseLock();
+                        metadata.Update();
+
+                        if (nameChanged)
+                        {
+                            metadata.Rename(material.Name);
+                        }
                     }
                 }
-            }
 
-            unsavedData = false;
-            nameChanged = false;
+                unsavedData = false;
+                nameChanged = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                Logger.Error($"Failed to save material file, {path}");
+                MessageBox.Show($"Failed to save material file, {path}", ex.Message);
+            }
         }
 
         public void CreateNew()
         {
-            string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
-            MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
-            material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Mathematics.Endianness.LittleEndian, 0f));
-            material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Mathematics.Endianness.LittleEndian, 0.4f));
-            material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Mathematics.Endianness.LittleEndian, 1f));
-            MaterialFile = material;
+            try
+            {
+                string fileName = SourceAssetsDatabase.GetFreeName("New Material.material");
+                MaterialFile material = new(Path.GetFileNameWithoutExtension(fileName), Guid.NewGuid(), MaterialData.Empty);
+                material.Properties.Add(new("Metallic", MaterialPropertyType.Metallic, Endianness.LittleEndian, 0f));
+                material.Properties.Add(new("Roughness", MaterialPropertyType.Roughness, Endianness.LittleEndian, 0.4f));
+                material.Properties.Add(new("AmbientOcclusion", MaterialPropertyType.AmbientOcclusion, Endianness.LittleEndian, 1f));
+                MaterialFile = material;
 
-            path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);
+                path = Path.Combine(SourceAssetsDatabase.RootAssetsFolder, fileName);
 
-            material.Save(path, Encoding.UTF8);
-            var metadata = SourceAssetsDatabase.ImportFile(path);
+                SourceAssetMetadata metadata = SourceAssetsDatabase.CreateFile(path);
+                material.Save(path, Encoding.UTF8);
+                metadata.Update(); // make sure that the artefact database knows about the file.
 
-            var artifact = ArtifactDatabase.GetArtifactForSource(metadata.Guid);
-            assetRef = artifact?.Guid ?? Guid.Empty;
-            unsavedData = true;
+                Artifact artifact = metadata.GetArtifact()!;
+                assetRef = artifact.Guid;
+                unsavedData = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                Logger.Error($"Failed to create material file, {path}");
+                MessageBox.Show($"Failed to create material file, {path}", ex.Message);
+            }
         }
 
         protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
 
-            generator.OnPreBuildTable += GeneratorOnPreBuildTable;
-
             if (material != null)
             {
                 MaterialFile = material;
             }
 
-            intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
-            intrinsicFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
-            operatorFuncs = Assembly.GetExecutingAssembly().GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
+            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
+            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
+            operatorFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
         }
 
         private void LinkRemoved(object? sender, Link e)
@@ -646,12 +406,6 @@
             unsavedData = true;
         }
 
-        private void GeneratorOnPreBuildTable(VariableTable table)
-        {
-            table.SetBaseSrv(2);
-            table.SetBaseSampler(2);
-        }
-
         protected override void DisposeCore()
         {
             Unload();
@@ -676,6 +430,25 @@
             }
 
             DrawMenuBar(context);
+
+            if (showCode && material != null)
+            {
+                if (ImGui.Begin("Code View"u8, ref showCode))
+                {
+                    if (ImGui.Button("Apply"))
+                    {
+                        ResourceManager.Shared.BeginNoGCRegion();
+                        ResourceManager.Shared.UpdateMaterial<Model>(material);
+                        ResourceManager.Shared.EndNoGCRegion();
+                    }
+                    var code = material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value ?? string.Empty;
+                    if (ImGui.InputTextMultiline("##Code", ref code, 4096, ImGui.GetContentRegionAvail()))
+                    {
+                        material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value = code;
+                    }
+                }
+                ImGui.End();
+            }
 
             ImGui.BeginTable("Table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable);
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
@@ -704,25 +477,25 @@
                 }
 
                 var flags = (int)material.Flags;
-                if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+                if (ImGuiP.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
+                if (ImGuiP.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Depth Test", ref flags, (int)MaterialFlags.DepthTest))
+                if (ImGuiP.CheckboxFlags("Depth Test", ref flags, (int)MaterialFlags.DepthTest))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
                     UpdateMaterial();
                 }
-                if (ImGui.CheckboxFlags("Depth Always", ref flags, (int)MaterialFlags.DepthAlways))
+                if (ImGuiP.CheckboxFlags("Depth Always", ref flags, (int)MaterialFlags.DepthAlways))
                 {
                     material.Flags = (MaterialFlags)flags;
                     unsavedData = true;
@@ -750,7 +523,7 @@
                 return;
             }
 
-            if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl) && ImGui.IsKeyDown(ImGuiKey.S))
+            if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyDown(ImGuiKey.S))
             {
                 Save();
             }
@@ -781,6 +554,13 @@
                         Unload();
                     }
 
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Show Code"))
+                    {
+                        ShowCode();
+                    }
+
                     ImGui.EndMenu();
                 }
 
@@ -790,10 +570,11 @@
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.MenuItem("Sort"))
+                if (ImGui.MenuItem("Layout"))
                 {
-                    Sort();
+                    Layout();
                 }
+
                 if (ImGui.MenuItem("Generate"))
                 {
                     UpdateMaterial();
@@ -803,6 +584,11 @@
 
                 ImGui.EndMenuBar();
             }
+        }
+
+        private void ShowCode()
+        {
+            showCode = !showCode;
         }
 
         private void DrawNodesMenu(IGraphicsContext context)
@@ -816,7 +602,7 @@
             {
                 if (ImGui.MenuItem("Texture File"))
                 {
-                    TextureFileNode node = new(editor.GetUniqueId(), true, false, context.Device);
+                    TextureFileNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                     textureFiles.Add(node);
                 }
@@ -831,17 +617,37 @@
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
                 }
+                if (ImGui.MenuItem("Parallax Map"))
+                {
+                    ParallaxMapNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
+                if (ImGui.MenuItem("Rotate UV"))
+                {
+                    RotateUVNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
+                if (ImGui.MenuItem("Flip UVs"))
+                {
+                    FlipUVNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
 
+                ImGui.EndMenu();
+            }
+
+            if (ImGui.BeginMenu("Noise"))
+            {
+                if (ImGui.MenuItem("Generic Noise"))
+                {
+                    GenericNoiseNode node = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(node);
+                }
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Constants"))
             {
-                if (ImGui.MenuItem("Converter"))
-                {
-                    ConvertNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
                 if (ImGui.MenuItem("Constant"))
                 {
                     ConstantNode node = new(editor.GetUniqueId(), true, false);
@@ -878,7 +684,7 @@
                     var func = operatorFuncs[i];
                     if (ImGui.MenuItem(func.Item1))
                     {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false);
+                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
                         editor.AddNode(node);
                     }
                 }
@@ -893,7 +699,7 @@
                     var func = intrinsicFuncs[i];
                     if (ImGui.MenuItem(func.Item1))
                     {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false);
+                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
                         editor.AddNode(node);
                     }
                 }
@@ -924,37 +730,46 @@
 
         private void UpdateMaterialTaskVoid()
         {
+            if (material == null || editor == null)
+                return;
             semaphore.Wait();
 
-            InsertProperties(material, editor);
-            InsertTextures(material, editor);
+            MaterialNodeConverter.InsertProperties(material, editor);
+            MaterialNodeConverter.InsertTextures(material, editor);
+
+            try
+            {
+                IOSignature inputSig = new("Pixel",
+            new SignatureDef("color", new(VectorType.Float4)),
+            new SignatureDef("pos", new(VectorType.Float4)),
+            new SignatureDef("uv", new(VectorType.Float3)),
+            new SignatureDef("normal", new(VectorType.Float3)),
+            new SignatureDef("tangent", new(VectorType.Float3)),
+            new SignatureDef("binormal", new(VectorType.Float3)));
+
+                IOSignature outputSig = new("Material",
+                    new SignatureDef("baseColor", new(VectorType.Float4)),
+                    new SignatureDef("normal", new(VectorType.Float3)),
+                    new SignatureDef("roughness", new(ScalarType.Float)),
+                    new SignatureDef("metallic", new(ScalarType.Float)),
+                    new SignatureDef("reflectance", new(ScalarType.Float)),
+                    new SignatureDef("ao", new(ScalarType.Float)),
+                    new SignatureDef("emissive", new(VectorType.Float4)));
+
+                string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
+
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceVersionKey).Value = SurfaceVersion;
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value = result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogAndShowError("Failed to generate shader code", ex);
+            }
 
             ResourceManager.Shared.BeginNoGCRegion();
             ResourceManager.Shared.UpdateMaterial<Model>(material);
             ResourceManager.Shared.EndNoGCRegion();
 
-            Directory.CreateDirectory("generated/" + "shaders/");
-            /*
-            IOSignature inputSig = new("Pixel",
-                new SignatureDef("pos", new(VectorType.Float4)),
-                new SignatureDef("uv", new(VectorType.Float3)),
-                new SignatureDef("normal", new(VectorType.Float3)),
-                new SignatureDef("tangent", new(VectorType.Float3)),
-                new SignatureDef("binormal", new(VectorType.Float3)));
-
-            IOSignature outputSig = new("Material",
-                new SignatureDef("baseColor", new(VectorType.Float4)),
-                new SignatureDef("normal", new(VectorType.Float3)),
-                new SignatureDef("roughness", new(ScalarType.Float)),
-                new SignatureDef("metallic", new(ScalarType.Float)),
-                new SignatureDef("reflectance", new(ScalarType.Float)),
-                new SignatureDef("ao", new(ScalarType.Float)),
-                new SignatureDef("emissive", new(VectorType.Float4)));
-
-            string result = generator.Generate(outputNode, editor.Nodes, "setupMaterial", false, false, inputSig, outputSig);
-
-            File.WriteAllText("assets/generated/shaders/generated/usercodeMaterial.hlsl", result);
-            */
             semaphore.Release();
         }
     }

@@ -4,7 +4,6 @@
     using HexaEngine.UI;
     using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
@@ -22,7 +21,7 @@
 
         public bool AutoWordSelection { get => GetValue(AutoWordSelectionProperty); set => SetValue(AutoWordSelectionProperty, value); }
 
-        public static readonly DependencyProperty<Brush> CaretBrushProperty = DependencyProperty.Register<TextBoxBase, Brush>(nameof(CaretBrush), false, new PropertyMetadata(Brushes.Black));
+        public static readonly DependencyProperty<Brush> CaretBrushProperty = DependencyProperty.Register<TextBoxBase, Brush>(nameof(CaretBrush), false, new FrameworkMetadata(Brushes.Black) { AffectsRender = true });
 
         public Brush? CaretBrush { get => GetValue(CaretBrushProperty); set => SetValue(CaretBrushProperty, value); }
 
@@ -38,9 +37,9 @@
 
         public bool IsInactiveSelectionHighlightEnabled { get => GetValue(IsInactiveSelectionHighlightEnabledProperty); set => SetValue(IsInactiveSelectionHighlightEnabledProperty, value); }
 
-        public static readonly DependencyProperty<bool> IsReadOnlyCaretVisibleProperty = DependencyProperty.Register<TextBoxBase, bool>(nameof(IsReadOnlyCaretVisible), false, new PropertyMetadata(false));
+        public static readonly DependencyProperty<bool> IsVisibleProperty = DependencyProperty.Register<TextBoxBase, bool>(nameof(IsCaretVisible), false, new FrameworkMetadata(false) { AffectsRender = true });
 
-        public bool IsReadOnlyCaretVisible { get => GetValue(IsReadOnlyCaretVisibleProperty); set => SetValue(IsReadOnlyCaretVisibleProperty, value); }
+        public bool IsCaretVisible { get => GetValue(IsVisibleProperty); set => SetValue(IsVisibleProperty, value); }
 
         public static readonly DependencyProperty<bool> IsReadOnlyProperty = DependencyProperty.Register<TextBoxBase, bool>(nameof(IsReadOnly), false, new PropertyMetadata(false));
 

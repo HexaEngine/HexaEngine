@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// Represents a mapped subresource with information about the data pointer, row pitch, and depth pitch.
     /// </summary>

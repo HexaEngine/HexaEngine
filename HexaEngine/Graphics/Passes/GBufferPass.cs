@@ -1,20 +1,18 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using System.Numerics;
 
     public class GBufferPass : RenderPass
     {
-        private ResourceRef<GBuffer> gbuffer;
-        private ResourceRef<Texture2D> lightBuffer;
-        private ResourceRef<DepthStencil> depthStencil;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer = null!;
+        private ResourceRef<Texture2D> lightBuffer = null!;
+        private ResourceRef<DepthStencil> depthStencil = null!;
 
         public GBufferPass(Windows.RendererFlags flags) : base("GBuffer")
         {
@@ -36,15 +34,14 @@
                 ));
             lightBuffer = creator.GetTexture2D("LightBuffer");
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
         }
 
         public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var gbuffer = this.gbuffer.Value;
             var lightBuffer = this.lightBuffer.Value;
-            context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
-            context.ClearRenderTargetView(lightBuffer.RTV, Vector4.Zero);
+            context.ClearRenderTargetViews(gbuffer!.Count, gbuffer.PRTVs, Vector4.Zero);
+            context.ClearRenderTargetView(lightBuffer!.RTV!, Vector4.Zero);
 
             if (forceForward)
             {
@@ -61,20 +58,16 @@
 
             var depthStencil = this.depthStencil.Value;
 
-            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
+            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil!.DSV);
 
             context.SetViewport(gbuffer.Viewport);
-            context.VSSetConstantBuffer(1, camera.Value);
-            context.DSSetConstantBuffer(1, camera.Value);
-            context.GSSetConstantBuffer(1, camera.Value);
-            context.CSSetConstantBuffer(1, camera.Value);
 
             profiler?.Begin("LightDeferred.Geometry");
-            RenderManager.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
+            RenderSystem.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
             profiler?.End("LightDeferred.Geometry");
 
             profiler?.Begin("LightDeferred.AlphaTest");
-            RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
+            RenderSystem.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
             profiler?.End("LightDeferred.AlphaTest");
 
             context.ClearState();

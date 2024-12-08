@@ -2,13 +2,12 @@
 
 namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System;
@@ -133,8 +132,8 @@ namespace HexaEngine.PostFx.BuildIn
         public void Draw(IGraphicsContext context)
         {
             context.SetRenderTargetsAndUnorderedAccessViews(null, null, 0, voxels.UAV);
-            context.PSSetShaderResource(1, lights.SRV);
-            context.SetPipelineState(voxelize);
+
+            context.SetGraphicsPipelineState(voxelize);
             context.SetViewport(new(VoxelResolution));
         }
     }

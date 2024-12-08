@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Input;
     using HexaEngine.Input.Events;
-    using System.Linq;
 
     public class InputManager : IInputManager
     {

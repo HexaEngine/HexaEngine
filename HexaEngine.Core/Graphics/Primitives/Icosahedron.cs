@@ -13,7 +13,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Icosahedron"/> class.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         public Icosahedron() : base()
         {
         }
@@ -21,7 +20,6 @@
         /// <summary>
         /// Initializes the icosahedron mesh with vertices and indices.
         /// </summary>
-        /// <param name="device">The graphics device used for mesh creation.</param>
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the icosahedron mesh.
         /// </returns>

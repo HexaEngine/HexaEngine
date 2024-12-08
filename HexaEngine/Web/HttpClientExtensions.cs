@@ -76,7 +76,7 @@
                 return;
             }
 
-            Progress<long> relativeProgress = new(totalBytes => progress.Report(totalBytes / (float)contentLength.Value));
+            Progress<long> relativeProgress = new(totalBytes => progress.Report(totalBytes / (float)contentLength!.Value));
             await download.CopyToAsync(ms, 8192, relativeProgress, cancellationToken);
             progress.Report(1f);
 
@@ -109,7 +109,7 @@
                 return;
             }
 
-            Progress<long> relativeProgress = new(totalBytes => progress.Report(totalBytes / (float)contentLength.Value));
+            Progress<long> relativeProgress = new(totalBytes => progress.Report(totalBytes / (float)contentLength!.Value));
             await download.CopyToAsync(ms, 8192, relativeProgress, cancellationToken);
             progress.Report(1f);
 

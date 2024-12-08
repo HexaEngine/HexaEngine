@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
 
@@ -11,7 +11,7 @@
         private BoundingFrustum[] frusta = new BoundingFrustum[6];
         private Matrix4x4[] matrices = new Matrix4x4[6];
 
-        private IComputePipeline irradiance;
+        private IComputePipeline irradiance = null!;
 
         private static Matrix4x4 GetProjectionMatrix(float far)
         {

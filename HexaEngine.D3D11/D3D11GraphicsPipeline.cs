@@ -2,15 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline
+    public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline, IPipeline
     {
         private readonly string dbgName;
         private readonly D3D11GraphicsDevice device;
-        private readonly GraphicsPipelineDesc desc;
+        private readonly GraphicsPipelineDescEx desc;
         private ShaderMacro[]? macros;
         internal ComPtr<ID3D11VertexShader> vs;
         internal ComPtr<ID3D11HullShader> hs;
@@ -29,7 +27,7 @@
         private bool valid;
         private volatile bool initialized;
 
-        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDescEx desc, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -42,7 +40,7 @@
 
         public string DebugName => dbgName;
 
-        public GraphicsPipelineDesc Description => desc;
+        public GraphicsPipelineDescEx Description => desc;
 
         public bool IsInitialized => initialized;
 
@@ -50,7 +48,7 @@
 
         public ShaderMacro[]? Macros { get => macros; set => macros = value; }
 
-        public event Action<IGraphicsPipeline>? OnCompile;
+        public event Action<IPipeline>? OnCompile;
 
         public event Action<IGraphicsPipeline, InputElementDescription[]?, Blob>? OnCreateLayout;
 
@@ -155,7 +153,7 @@
                 ComPtr<ID3D11VertexShader> vertexShader;
                 device.Device.CreateVertexShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &vertexShader.Handle);
                 vs = vertexShader;
-                Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
+                Utils.SetDebugName(vs.Handle, $"{dbgName}.{nameof(vs)}");
 
                 vertexShaderBlob = shader;
             }
@@ -173,7 +171,7 @@
                 ComPtr<ID3D11HullShader> hullShader;
                 device.Device.CreateHullShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &hullShader.Handle);
                 hs = hullShader;
-                Utils.SetDebugName(hs, $"{dbgName}.{nameof(hs)}");
+                Utils.SetDebugName(hs.Handle, $"{dbgName}.{nameof(hs)}");
 
                 hullShaderBlob = shader;
             }
@@ -191,7 +189,7 @@
                 ComPtr<ID3D11DomainShader> domainShader;
                 device.Device.CreateDomainShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &domainShader.Handle);
                 ds = domainShader;
-                Utils.SetDebugName(ds, $"{dbgName}.{nameof(hs)}");
+                Utils.SetDebugName(ds.Handle, $"{dbgName}.{nameof(hs)}");
 
                 domainShaderBlob = shader;
             }
@@ -209,7 +207,7 @@
                 ComPtr<ID3D11GeometryShader> geometryShader;
                 device.Device.CreateGeometryShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &geometryShader.Handle);
                 gs = geometryShader;
-                Utils.SetDebugName(gs, $"{dbgName}.{nameof(gs)}");
+                Utils.SetDebugName(gs.Handle, $"{dbgName}.{nameof(gs)}");
 
                 geometryShaderBlob = shader;
             }
@@ -227,7 +225,7 @@
                 ComPtr<ID3D11PixelShader> pixelShader;
                 device.Device.CreatePixelShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &pixelShader.Handle);
                 ps = pixelShader;
-                Utils.SetDebugName(ps, $"{dbgName}.{nameof(ps)}");
+                Utils.SetDebugName(ps.Handle, $"{dbgName}.{nameof(ps)}");
 
                 pixelShaderBlob = shader;
             }

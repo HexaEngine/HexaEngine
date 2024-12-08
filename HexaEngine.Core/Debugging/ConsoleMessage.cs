@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using Hexa.NET.Logging;
     using System;
 
     /// <summary>

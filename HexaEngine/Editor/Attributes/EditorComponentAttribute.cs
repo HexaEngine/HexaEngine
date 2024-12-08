@@ -111,7 +111,7 @@
         /// </summary>
         public Type[]? DisallowedTypes { get; }
 
-        public string Icon { get; init; }
+        public string Icon { get; init; } = null!;
     }
 
     /// <summary>

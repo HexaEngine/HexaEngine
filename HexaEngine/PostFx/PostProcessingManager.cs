@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Profiling;
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
 
@@ -16,7 +16,6 @@
         private readonly PostProcessingContext postContext;
         private readonly List<IPostFx> activeEffects = new();
         private readonly List<IPostFx> effects = [];
-        private readonly IGraphicsContext deferredContext;
         private readonly IGraphicsDevice device;
         private readonly PostProcessingFlags flags;
         private readonly PostFxGraphResourceBuilder creator;
@@ -42,8 +41,6 @@
             this.creator = new(creator, device, format, width, height);
 
             postContext = new(device, format, width, height, bufferCount);
-
-            deferredContext = device.CreateDeferredContext();
             macros = [];
         }
 
@@ -588,6 +585,10 @@
                 {
                     groups[i].SetupInputOutputs(postContext);
                 }
+                for (int i = 0; i < activeEffects.Count; i++)
+                {
+                    activeEffects[i].UpdateBindings();
+                }
                 isDirty = false;
             }
 
@@ -605,7 +606,7 @@
 
             for (int i = 0; i < groups.Count; i++)
             {
-                groups[i].Execute(context, deferredContext, creator);
+                groups[i].Execute(context, creator);
             }
         }
 
@@ -636,7 +637,7 @@
             lock (_lock)
             {
                 IPostFx first = activeEffects[0];
-                PostProcessingExecutionGroup group = new(first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), true, false);
+                PostProcessingExecutionGroup group = new(device, first.Flags.HasFlag(PostFxFlags.Dynamic) || flags.HasFlag(PostProcessingFlags.ForceDynamic), true, false);
                 group.Passes.Add(first);
                 groups.Add(group);
                 for (int i = 1; i < activeEffects.Count; i++)
@@ -647,7 +648,7 @@
                     if (group.IsDynamic != isDynamic)
                     {
                         var tmp = group;
-                        group = new(isDynamic, false, false);
+                        group = new(device, isDynamic, false, false);
                         tmp.Next = group;
                         groups.Add(group);
                     }
@@ -696,7 +697,6 @@
                 groups.Clear();
 
                 postContext.Dispose();
-                deferredContext.Dispose();
                 disposedValue = true;
             }
         }

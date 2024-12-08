@@ -1,19 +1,18 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.DXC;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D.Compilers;
+    using HexaGen.Runtime;
     using System;
     using System.Runtime.InteropServices;
-    using Buffer = Silk.NET.Direct3D.Compilers.Buffer;
+    using Buffer = Hexa.NET.DXC.Buffer;
 
     public unsafe class ShaderCompiler
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ShaderCompiler));
-        private static readonly DXC DXC = DXC.GetApi();
 
         private static Guid CLSID_DxcUtils = new(0x6245d6af, 0x66e0, 0x48fd, 0x80, 0xb4, 0x4d, 0x27, 0x17, 0x96, 0x74, 0x8c);
         private static Guid CLSID_DxcCompiler = new(0x73e22d93, 0xe6ce, 0x47f3, 0xb5, 0xbf, 0xf0, 0x66, 0x4f, 0x39, 0xc1, 0xb0);
@@ -23,12 +22,14 @@
             Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
             error = null;
-            DXC.CreateInstance(ref CLSID_DxcUtils, out ComPtr<IDxcUtils> utils).ThrowHResult();
-            DXC.CreateInstance(ref CLSID_DxcCompiler, out ComPtr<IDxcCompiler3> compiler).ThrowHResult();
+            ComPtr<IDxcUtils> utils = default;
+            DXC.CreateInstance(ref CLSID_DxcUtils, ComUtils.GuidPtrOf<IDxcUtils>(), (void**)utils.GetAddressOf()).ThrowIf();
+            ComPtr<IDxcCompiler3> compiler = default;
+            DXC.CreateInstance(ref CLSID_DxcCompiler, ComUtils.GuidPtrOf<IDxcCompiler3>(), (void**)compiler.GetAddressOf()).ThrowIf();
 
             StdString str = new(source);
             ComPtr<IDxcBlobEncoding> pSource = default;
-            utils.CreateBlob(str.Data, (uint)str.Size, DXC.CPUtf8, ref pSource).ThrowHResult();
+            utils.CreateBlob(str.Data, (uint)str.Size, DXC.DXC_CP_UTF8, out pSource).ThrowIf();
             str.Release();
 
             UnsafeList<StdWString> stringArgs = [];
@@ -46,14 +47,14 @@
             stringArgs.PushBack("-Qstrip_reflect");
 
 #if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
-            stringArgs.PushBack(DXC.ArgDebug);
-            stringArgs.PushBack(DXC.ArgSkipOptimizations);
-            stringArgs.PushBack(DXC.ArgDebugNameForSource);
+            stringArgs.PushBack(DXC.DXC_ARG_DEBUG);
+            stringArgs.PushBack(DXC.DXC_ARG_SKIP_OPTIMIZATIONS);
+            stringArgs.PushBack(DXC.DXC_ARG_DEBUG_NAME_FOR_SOURCE);
 #else
-            stringArgs.PushBack(DXC.ArgOptimizationLevel3);
+            stringArgs.PushBack(DXC.DXC_ARG_OPTIMIZATION_LEVEL3);
 #endif
 
-            UnsafeList<Pointer<char>> arguments = [];
+            UnsafeList<Hexa.NET.Utilities.Pointer<char>> arguments = [];
             for (int i = 0; i < stringArgs.Count; i++)
             {
                 arguments.PushBack(stringArgs[i].Data);
@@ -74,7 +75,8 @@
             include->LpVtbl[2] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Release);
             include->LpVtbl[3] = (void*)Marshal.GetFunctionPointerForDelegate(handler.LoadSource);
 
-            compiler.Compile(&sourceBuffer, (char**)arguments.Data, arguments.Size, pInclude, out ComPtr<IDxcResult> pCompileResult).ThrowHResult();
+            ComPtr<IDxcResult> pCompileResult = default;
+            compiler.Compile(&sourceBuffer, (char**)arguments.Data, (uint)arguments.Size, pInclude, ComUtils.GuidPtrOf<IDxcResult>(), (void**)pCompileResult.GetAddressOf()).ThrowIf();
 
             stringArgs.Release();
             arguments.Release();
@@ -94,14 +96,14 @@
 
             ComPtr<IDxcBlobUtf8> pErrors = default;
             ComPtr<IDxcBlobUtf16> pOutputName = default;
-            pCompileResult.GetOutput(OutKind.Errors, ref pErrors, ref pOutputName);
+            pCompileResult.GetOutput(OutKind.Errors, ref pErrors, out pOutputName);
             if (pErrors.Handle != null)
             {
                 error = pErrors.GetStringPointerS();
                 pErrors.Release();
             }
 
-            int status;
+            HResult status;
             pCompileResult.GetStatus(&status);
             if (HResult.IndicatesFailure(status))
             {

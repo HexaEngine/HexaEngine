@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Shapes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.TerrainEditor;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System.Numerics;
 

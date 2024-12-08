@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Numerics;
 

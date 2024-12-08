@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
-    using HexaEngine.Core.Debugging;
-    using Silk.NET.SDL;
+    using Hexa.NET.Logging;
+    using Hexa.NET.SDL2;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -9,6 +9,18 @@
     /// </summary>
     public static unsafe class SdlErrorHandlingExtensions
     {
+        private static Exception? GetErrorAsException()
+        {
+            byte* ex = SDL.GetError();
+
+            if (ex == null || ex[0] == '\0')
+            {
+                return null;
+            }
+
+            return new Exception(ToStringFromUTF8(ex));
+        }
+
         /// <summary>
         /// Checks the SDL function result and throws an exception if it's equal to 0.
         /// </summary>
@@ -20,7 +32,7 @@
 #if DEBUG
             if (result == 0)
             {
-                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
             }
             return result;
 #else
@@ -39,7 +51,7 @@
 #if DEBUG
             if (result < 0)
             {
-                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
             }
             return result;
 #else
@@ -57,7 +69,7 @@
         {
             if (result == 0)
             {
-                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
             }
             return result;
         }
@@ -68,7 +80,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SdlCheckError()
         {
-            LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+            LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
         }
 
         /// <summary>
@@ -81,7 +93,7 @@
         {
             if (ptr == null)
             {
-                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
             }
             return ptr;
         }
@@ -98,7 +110,7 @@
 #if DEBUG
             if (ptr == null)
             {
-                LoggerFactory.GetLogger(nameof(Sdl)).ThrowIfNotNull(Application.Sdl.GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
             }
             return ptr;
 #else

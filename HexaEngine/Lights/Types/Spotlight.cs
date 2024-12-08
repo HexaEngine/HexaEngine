@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System;
@@ -48,7 +48,7 @@
             return null;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
+        protected override void OnCreateShadowMap(ShadowAtlas atlas)
         {
             if (HasShadowMap)
             {
@@ -59,14 +59,14 @@
             last = ShadowMapResolution;
         }
 
-        public override void DestroyShadowMap()
+        protected override void OnDestroyShadowMap()
         {
             if (!HasShadowMap)
             {
                 return;
             }
 
-            atlasHandle.Dispose();
+            atlasHandle?.Dispose();
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
@@ -82,7 +82,7 @@
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
-            float texel = 1.0f / atlasHandle.Atlas.Size;
+            float texel = 1.0f / atlasHandle!.Atlas.Size;
 
             var vp = atlasHandle.Handle.Viewport;
             coords[0] = new Vector4(vp.X, vp.Y, vp.Width, vp.Height) * texel;
@@ -112,7 +112,7 @@
 
         public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)
         {
-            return false;
+#if false
             var distance = camera.DistanceTo(this);
 
             var distanceScaled = distance / Range;
@@ -144,8 +144,9 @@
             }
 
             atlasHandle = atlas.Alloc(size, cacheHandle);
-
             return true;
+#endif
+            return false;
         }
 
         public float GetConeRadius(float z)

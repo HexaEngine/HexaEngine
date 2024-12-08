@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
-    using Silk.NET.SDL;
     using System.Numerics;
     using System.Text;
     using static Extensions.SdlErrorHandlingExtensions;
@@ -19,9 +19,8 @@
     /// </summary>
     public unsafe class Joystick : IDisposable
     {
-        private static readonly Sdl sdl = Application.Sdl;
         private readonly int id;
-        internal readonly Silk.NET.SDL.Joystick* joystick;
+        internal readonly SDLJoystick* joystick;
         private readonly Dictionary<int, short> axes = new();
         private readonly Dictionary<int, (int, int)> balls = new();
         private readonly Dictionary<int, JoystickButtonState> buttons = new();
@@ -44,49 +43,49 @@
         public Joystick(int id)
         {
             this.id = id;
-            joystick = sdl.JoystickOpen(id);
+            joystick = SDL.JoystickOpen(id);
             if (joystick == null)
             {
                 SdlCheckError();
             }
 
-            var axisCount = sdl.JoystickNumAxes(joystick);
+            var axisCount = SDL.JoystickNumAxes(joystick);
             for (int i = 0; i < axisCount; i++)
             {
                 short state;
-                sdl.JoystickGetAxisInitialState(joystick, i, &state);
+                SDL.JoystickGetAxisInitialState(joystick, i, &state);
                 axes.Add(i, state);
             }
 
-            var ballCount = sdl.JoystickNumBalls(joystick);
+            var ballCount = SDL.JoystickNumBalls(joystick);
             for (int i = 0; i < ballCount; i++)
             {
                 int x;
                 int y;
-                sdl.JoystickGetBall(joystick, i, &x, &y);
+                SDL.JoystickGetBall(joystick, i, &x, &y);
                 balls.Add(i, new(x, y));
             }
 
-            var buttonCount = sdl.JoystickNumButtons(joystick);
+            var buttonCount = SDL.JoystickNumButtons(joystick);
             for (int i = 0; i < buttonCount; i++)
             {
-                var state = (JoystickButtonState)sdl.JoystickGetButton(joystick, i);
+                var state = (JoystickButtonState)SDL.JoystickGetButton(joystick, i);
                 buttons.Add(i, state);
             }
 
-            var hatCount = sdl.JoystickNumHats(joystick);
+            var hatCount = SDL.JoystickNumHats(joystick);
             for (int i = 0; i < hatCount; i++)
             {
-                var state = (JoystickHatState)sdl.JoystickGetHat(joystick, i);
+                var state = (JoystickHatState)SDL.JoystickGetHat(joystick, i);
                 hats.Add(i, state);
             }
 
-            var guid = sdl.JoystickGetGUID(joystick);
+            var guid = SDL.JoystickGetGUID(joystick);
             SdlCheckError();
             var buffer = AllocT<byte>(33);
-            sdl.JoystickGetGUIDString(guid, buffer, 33);
-            var size = StringSizeNullTerminated(buffer);
-            var value = Encoding.ASCII.GetString(buffer, size - 1);
+            SDL.JoystickGetGUIDString(guid, buffer, 33);
+            var size = StrLen(buffer);
+            var value = Encoding.ASCII.GetString(buffer, size);
             Free(buffer);
             this.guid = value;
         }
@@ -103,7 +102,7 @@
         {
             get
             {
-                var name = sdl.JoystickNameS(joystick);
+                var name = SDL.JoystickNameS(joystick);
                 if (name == null)
                 {
                     SdlCheckError();
@@ -116,22 +115,22 @@
         /// <summary>
         /// Gets the vendor ID of the joystick.
         /// </summary>
-        public ushort Vendor => sdl.JoystickGetVendor(joystick);
+        public ushort Vendor => SDL.JoystickGetVendor(joystick);
 
         /// <summary>
         /// Gets the product ID of the joystick.
         /// </summary>
-        public ushort Product => sdl.JoystickGetProduct(joystick);
+        public ushort Product => SDL.JoystickGetProduct(joystick);
 
         /// <summary>
         /// Gets the product version of the joystick.
         /// </summary>
-        public ushort ProductVersion => sdl.JoystickGetProductVersion(joystick);
+        public ushort ProductVersion => SDL.JoystickGetProductVersion(joystick);
 
         /// <summary>
         /// Gets the serial number of the joystick.
         /// </summary>
-        public string Serial => sdl.JoystickGetSerialS(joystick);
+        public string Serial => SDL.JoystickGetSerialS(joystick);
 
         /// <summary>
         /// Gets the unique identifier (GUID) of the joystick.
@@ -141,22 +140,22 @@
         /// <summary>
         /// Gets a value indicating whether the joystick is attached and available.
         /// </summary>
-        public bool IsAttached => sdl.JoystickGetAttached(joystick) == SdlBool.True;
+        public bool IsAttached => SDL.JoystickGetAttached(joystick) == SDLBool.True;
 
         /// <summary>
         /// Gets a value indicating whether the joystick is a virtual joystick.
         /// </summary>
-        public bool IsVirtual => sdl.JoystickIsVirtual(id) == SdlBool.True;
+        public bool IsVirtual => SDL.JoystickIsVirtual(id) == SDLBool.True;
 
         /// <summary>
         /// Gets a value indicating whether the joystick has LED support.
         /// </summary>
-        public bool HasLED => sdl.JoystickHasLED(joystick) == SdlBool.True;
+        public bool HasLED => SDL.JoystickHasLED(joystick) == SDLBool.True;
 
         /// <summary>
         /// Gets the type of the joystick.
         /// </summary>
-        public JoystickType Type => Helper.Convert(sdl.JoystickGetType(joystick));
+        public JoystickType Type => Helper.Convert(SDL.JoystickGetType(joystick));
 
         /// <summary>
         /// Gets or sets the deadzone value for joystick axes.
@@ -166,12 +165,12 @@
         /// <summary>
         /// Gets or sets the player index assigned to the joystick.
         /// </summary>
-        public int PlayerIndex { get => sdl.JoystickGetPlayerIndex(joystick); set => sdl.JoystickSetPlayerIndex(joystick, value); }
+        public int PlayerIndex { get => SDL.JoystickGetPlayerIndex(joystick); set => SDL.JoystickSetPlayerIndex(joystick, value); }
 
         /// <summary>
         /// Gets the current power level of the joystick.
         /// </summary>
-        public JoystickPowerLevel PowerLevel => Helper.Convert(sdl.JoystickCurrentPowerLevel(joystick));
+        public JoystickPowerLevel PowerLevel => Helper.Convert(SDL.JoystickCurrentPowerLevel(joystick));
 
         /// <summary>
         /// Gets the state of joystick axes as a dictionary with axis ID and their values.
@@ -226,7 +225,7 @@
         /// <param name="durationMs">The duration of the rumble effect in milliseconds.</param>
         public void Rumble(ushort lowFreq, ushort highFreq, uint durationMs)
         {
-            sdl.JoystickRumble(joystick, lowFreq, highFreq, durationMs);
+            SDL.JoystickRumble(joystick, lowFreq, highFreq, durationMs);
         }
 
         /// <summary>
@@ -237,7 +236,7 @@
         /// <param name="durationMs">The duration of the rumble effect in milliseconds.</param>
         public void RumbleTriggers(ushort left, ushort right, uint durationMs)
         {
-            sdl.JoystickRumbleTriggers(joystick, left, right, durationMs);
+            SDL.JoystickRumbleTriggers(joystick, left, right, durationMs);
         }
 
         /// <summary>
@@ -246,7 +245,7 @@
         /// <param name="color">A Vector4 specifying the LED color (red, green, blue, and alpha components).</param>
         public void SetLED(Vector4 color)
         {
-            sdl.JoystickSetLED(joystick, (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
+            SDL.JoystickSetLED(joystick, (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
         }
 
         /// <summary>
@@ -257,10 +256,10 @@
         /// <param name="blue">The blue color component (0 to 255).</param>
         public void SetLED(byte red, byte green, byte blue)
         {
-            sdl.JoystickSetLED(joystick, red, green, blue);
+            SDL.JoystickSetLED(joystick, red, green, blue);
         }
 
-        internal (Joystick Joystick, JoystickAxisMotionEventArgs AxisMotionEventArgs)? OnAxisMotion(JoyAxisEvent even)
+        internal (Joystick Joystick, JoystickAxisMotionEventArgs AxisMotionEventArgs)? OnAxisMotion(SDLJoyAxisEvent even)
         {
             if (Math.Abs((int)even.Value) < deadzone)
             {
@@ -282,7 +281,7 @@
             return (this, axisMotionEventArgs);
         }
 
-        internal (Joystick Joystick, JoystickBallMotionEventArgs BallMotionEventArgs) OnBallMotion(JoyBallEvent even)
+        internal (Joystick Joystick, JoystickBallMotionEventArgs BallMotionEventArgs) OnBallMotion(SDLJoyBallEvent even)
         {
             balls[even.Ball] = (even.Xrel, even.Yrel);
             ballMotionEventArgs.Timestamp = even.Timestamp;
@@ -295,7 +294,7 @@
             return (this, ballMotionEventArgs);
         }
 
-        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonDown(JoyButtonEvent even)
+        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonDown(SDLJoyButtonEvent even)
         {
             buttons[even.Button] = JoystickButtonState.Down;
             buttonEventArgs.Timestamp = even.Timestamp;
@@ -307,7 +306,7 @@
             return (this, buttonEventArgs);
         }
 
-        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonUp(JoyButtonEvent even)
+        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonUp(SDLJoyButtonEvent even)
         {
             buttons[even.Button] = JoystickButtonState.Up;
             buttonEventArgs.Timestamp = even.Timestamp;
@@ -319,7 +318,7 @@
             return (this, buttonEventArgs);
         }
 
-        internal (Joystick Joystick, JoystickHatMotionEventArgs HatMotionEventArgs) OnHatMotion(JoyHatEvent even)
+        internal (Joystick Joystick, JoystickHatMotionEventArgs HatMotionEventArgs) OnHatMotion(SDLJoyHatEvent even)
         {
             hats[even.Hat] = (JoystickHatState)even.Value;
             hatMotionEventArgs.Timestamp = even.Timestamp;
@@ -339,7 +338,7 @@
         {
             if (!disposedValue)
             {
-                sdl.JoystickClose(joystick);
+                SDL.JoystickClose(joystick);
                 disposedValue = true;
             }
         }

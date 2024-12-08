@@ -59,6 +59,8 @@ namespace HexaEngine.Graphics.Filters
             SetViewPoint(Vector3.Zero);
             mvpBuffer = new(CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicWrap);
+            pipeline.Bindings.SetCBV("MatrixBuffer", mvpBuffer);
+            pipeline.Bindings.SetSampler("samplerState", sampler);
         }
 
         public void SetViewPoint(Vector3 camera)
@@ -104,9 +106,7 @@ namespace HexaEngine.Graphics.Filters
             for (int i = 0; i < 6; i++)
             {
                 context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
-                context.VSSetConstantBuffer(0, mvpBuffer);
-                context.PSSetSampler(0, sampler);
-                context.PSSetShaderResource(0, Source);
+                pipeline.Bindings.SetSRV("cubemap", Source);
                 Targets.ClearAndSetTarget(context, i);
                 context.SetViewport(Targets.Viewport);
                 cube.DrawAuto(context, pipeline);
@@ -124,9 +124,7 @@ namespace HexaEngine.Graphics.Filters
             context.SetScissorRect(x, y, xsize + x, ysize + y);
             Targets.SetTarget(context, i);
             context.SetViewport(Targets.Viewport);
-            context.VSSetConstantBuffer(0, mvpBuffer);
-            context.PSSetShaderResource(0, Source);
-            context.PSSetSampler(0, sampler);
+            pipeline.Bindings.SetSRV("cubemap", Source);
             cube.DrawAuto(context, pipeline);
         }
 

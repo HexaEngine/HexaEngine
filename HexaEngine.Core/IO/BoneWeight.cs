@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using HexaEngine.Mathematics;
-    using System;
+    using Hexa.NET.Mathematics;
     using System.IO;
     using System.Numerics;
 

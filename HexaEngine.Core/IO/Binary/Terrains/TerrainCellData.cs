@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes;
-    using HexaEngine.Mathematics;
-    using K4os.Compression.LZ4;
     using System.IO;
-    using System.Numerics;
 
     /// <summary>
     /// Represents a terrain mesh generated from a height map.
@@ -345,6 +343,11 @@
                     heightMap[indexA] = other.heightMap[indexB] = (heightMap[indexA] + other.heightMap[indexB]) / 2;
                 }
             }
+        }
+
+        public ShaderMacro[] GetShaderMacros()
+        {
+            return []; // nothing needed terrain meshes have a static vertex layout.
         }
     }
 }

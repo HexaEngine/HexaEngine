@@ -15,8 +15,8 @@
         private FTFace faceHandle;
         private FTFaceRec* face;
 
-        private ITexture2D texture2D;
-        private IShaderResourceView srv;
+        private ITexture2D texture2D = null!;
+        private IShaderResourceView srv = null!;
 
         private readonly List<SpriteFontGlyph> glyphList = [];
         private readonly Dictionary<uint, SpriteFontGlyph> glyphs = [];
@@ -88,8 +88,8 @@
             FTError error;
 
             FTFace faceHandle;
-            error = (FTError)FreeType.FTNewFace(library, path, 0, &faceHandle);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.NewFace(library, path, 0, &faceHandle);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to load font file, {error}");
             }
@@ -104,7 +104,7 @@
                 emSize = fontSize * 64f;
 
                 error = (FTError)faceHandle.SetPixelSizes(0, (uint)MathF.Ceiling(fontSize));
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -128,7 +128,7 @@
                 }
 
                 error = (FTError)faceHandle.LoadGlyph(glyphIndex, loadFlags);
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -163,9 +163,9 @@
 
             if (glyph->Format != FTGlyphFormat.Bitmap)
             {
-                FTError error = (FTError)FreeType.FTRenderGlyph(new FTGlyphSlot((nint)face->Glyph), FTRenderMode.Normal);
+                FTError error = (FTError)FreeType.RenderGlyph(new FTGlyphSlot((nint)face->Glyph), FTRenderMode.Normal);
 
-                if (error != FTError.FtErrOk)
+                if (error != FTError.Ok)
                 {
                     throw new($"Failed to load font file, {error}");
                 }
@@ -202,6 +202,11 @@
         }
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, Brush brush)
+        {
+            RenderText(commandList, origin, textSpan.AsSpan(), fontSize, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> textSpan, float fontSize, Brush brush)
         {
             int indexCount = 6 * textSpan.Length;
             int vertexCount = 4 * textSpan.Length;
@@ -241,7 +246,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -272,6 +277,11 @@
         }
 
         public void RenderText(UICommandList commandList, Vector2 origin, TextRange textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
+        {
+            RenderText(commandList, origin, textSpan.AsSpan(), fontSize, whitespaceScale, incrementalTabStop, readingDirection, brush);
+        }
+
+        public void RenderText(UICommandList commandList, Vector2 origin, ReadOnlySpan<char> textSpan, float fontSize, float whitespaceScale, float incrementalTabStop, ReadingDirection readingDirection, Brush brush)
         {
             int vertexCount = 4 * textSpan.Length;
             int indexCount = 6 * textSpan.Length;
@@ -323,7 +333,7 @@
                 {
                     FTVector kerning;
                     FTError error = (FTError)faceHandle.GetKerning(previous, glyph.Index, kerningMode, &kerning);
-                    if (error == FTError.FtErrOk)
+                    if (error == FTError.Ok)
                     {
                         origin.X += kerning.X / emSize * fontSize;
                     }
@@ -364,7 +374,7 @@
         {
             FTVector ikerning;
             FTError error = (FTError)faceHandle.GetKerning(left, right, kerningMode, &ikerning);
-            if (error == FTError.FtErrOk)
+            if (error == FTError.Ok)
             {
                 kerning = new(ikerning.X, ikerning.Y);
                 return true;
@@ -384,10 +394,15 @@
 
         public Vector2 MeasureSize(TextRange text, float fontSize, float incrementalTabStop)
         {
+            return MeasureSize(text.AsSpan(), fontSize, incrementalTabStop);
+        }
+
+        public Vector2 MeasureSize(ReadOnlySpan<char> text, float fontSize, float incrementalTabStop)
+        {
             float x = 0;
             float y = 0;
             uint last = 0;
-            for (int i = text.Start; i < text.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
                 var c = text[i];
 

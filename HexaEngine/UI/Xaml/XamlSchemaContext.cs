@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.UI.Xaml
 {
-    using System;
-    using System.Reflection;
     using HexaEngine.UI.Markup;
     using HexaEngine.UI.Xaml.Schema;
+    using System;
+    using System.Reflection;
 
     public class XamlSchemaContext
     {
@@ -87,13 +87,13 @@
 
         private XamlType GetXamlTypeInternal(XamlTypeName xamlTypeName, Assembly? assembly)
         {
-            XmlnsDefinitionAttribute? xmlnsDefinition = definitions[assembly];
+            XmlnsDefinitionAttribute? xmlnsDefinition = definitions[assembly!];
             string @namespace = xmlnsDefinition?.ClrNamespace ?? string.Empty;
-            Type? clrType = assembly.GetType($"{@namespace}.{xamlTypeName.Name}");
+            Type? clrType = assembly!.GetType($"{@namespace}.{xamlTypeName.Name}")!;
 
             if (clrType == null)
             {
-                foreach (var item in assembly.DefinedTypes)
+                foreach (var item in assembly.DefinedTypes!)
                 {
                     if (item.Namespace == null || !item.Namespace.StartsWith(@namespace))
                     {
@@ -136,14 +136,14 @@
             }
             else if (Uri.IsWellFormedUriString(namespaceUri, UriKind.Absolute))
             {
-                clrNamespace = null;
-                assemblyPath = null;
+                clrNamespace = null!;
+                assemblyPath = null!;
                 return false;
             }
             else
             {
-                clrNamespace = null;
-                assemblyPath = null;
+                clrNamespace = null!;
+                assemblyPath = null!;
                 return false;
             }
         }

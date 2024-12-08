@@ -1,9 +1,10 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using Hexa.NET.OpenAL;
     using HexaEngine.Core.Audio;
-    using Silk.NET.OpenAL.Extensions.Enumeration;
     using System;
     using System.Collections.Generic;
+    using System.Text;
 
     public class OpenALAdapter : IAudioAdapter
     {
@@ -13,7 +14,7 @@
 
         public unsafe IAudioDevice CreateAudioDevice(string? name)
         {
-            Device* device = alc.OpenDevice(name);
+            ALCdevice* device = OpenAL.OpenDevice(name);
             CheckError(device);
             return new OpenALAudioDevice(device);
         }
@@ -25,15 +26,23 @@
 
         public unsafe List<string> GetAvailableDevices()
         {
-            List<string> devices;
-            if (alc.TryGetExtension<Enumeration>(null, out var enumeration))
+            List<string> devices = [];
+            if (OpenAL.IsExtensionPresent(null, "ALC_ENUMERATION_EXT") != 0)
             {
-                devices = new(enumeration.GetStringList(GetEnumerationContextStringList.DeviceSpecifiers));
+                var val = OpenAL.GetString(null, OpenAL.ALC_DEVICE_SPECIFIER);
+
+                while (val != null)
+                {
+                    int len = StrLen(val);
+                    devices.Add(Encoding.UTF8.GetString(val, len));
+                    val += len + 1;
+                    if (*val == '\0')
+                    {
+                        break;
+                    }
+                }
             }
-            else
-            {
-                throw new NotSupportedException();
-            }
+
             return devices;
         }
     }

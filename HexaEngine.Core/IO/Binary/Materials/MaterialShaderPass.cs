@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
-    using System;
     using System.Text;
 
     /// <summary>

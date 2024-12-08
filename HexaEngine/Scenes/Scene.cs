@@ -2,12 +2,12 @@
 
 namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scripts;
@@ -29,6 +29,7 @@ namespace HexaEngine.Scenes
         private readonly Dictionary<Guid, GameObject> guidToObject = [];
         private readonly Dictionary<Guid, IComponent> guidToComponent = [];
         private readonly CameraContainer cameraContainer = new();
+        private readonly SceneCameraTracker cameraTracker = new();
 
         private IServiceProvider serviceProvider;
         private IServiceCollection services;
@@ -164,6 +165,9 @@ namespace HexaEngine.Scenes
         public CameraContainer Cameras { get => cameraContainer; }
 
         [JsonIgnore]
+        public SceneCameraTracker CameraTracker { get => cameraTracker; }
+
+        [JsonIgnore]
         public LightManager LightManager => GetRequiredService<LightManager>();
 
         [JsonIgnore]
@@ -176,7 +180,7 @@ namespace HexaEngine.Scenes
         public ScriptManager Scripts => GetRequiredService<ScriptManager>();
 
         [JsonIgnore]
-        public RenderManager RenderManager => GetRequiredService<RenderManager>();
+        public RenderSystem RenderManager => GetRequiredService<RenderSystem>();
 
         [JsonIgnore]
         public MaterialManager MaterialManager => GetRequiredService<MaterialManager>();
@@ -416,6 +420,22 @@ namespace HexaEngine.Scenes
 #if PROFILE
                 Profiler.End(update[i]);
 #endif
+            }
+
+            if (cameraTracker.Tick())
+            {
+                var camUpdate = systems[SystemFlags.CameraUpdate];
+
+                for (int i = 0; i < camUpdate.Count; i++)
+                {
+#if PROFILE
+                    Profiler.Start(update[i]);
+#endif
+                    camUpdate[i].Update(delta);
+#if PROFILE
+                    Profiler.End(update[i]);
+#endif
+                }
             }
 
             var late = systems[SystemFlags.LateUpdate];

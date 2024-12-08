@@ -17,9 +17,5 @@
         public MetadataPathNotFoundException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
-
-        protected MetadataPathNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

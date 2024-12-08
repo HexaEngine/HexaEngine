@@ -4,6 +4,6 @@
 
     public class PackageFileTree
     {
-        public List<PackageFileMetadata> Files { get; set; }
+        public List<PackageFileMetadata> Files { get; set; } = null!;
     }
 }

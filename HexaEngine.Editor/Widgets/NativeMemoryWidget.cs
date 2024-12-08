@@ -1,10 +1,8 @@
-﻿using HexaEngine.Core.Extensions;
-
-namespace HexaEngine.Editor.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using System.Runtime.InteropServices;
 

@@ -2,18 +2,27 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
+    using System.Diagnostics.CodeAnalysis;
 
     public unsafe class Material : ResourceInstance, IDisposable
     {
         private MaterialData desc;
 
-        public MaterialShader Shader;
-        public MaterialTextureList TextureList = [];
-        public MaterialTextureList TextureListDS = [];
+        public MaterialShader Shader
+        {
+            get => shader; set
+            {
+                shader = value;
+                TextureList?.Dispose();
+                TextureList = new();
+            }
+        }
 
-        private readonly Dictionary<string, int> nameToPassIndex = [];
+        public MaterialTextureList TextureList;
+        private MaterialShader shader;
 
-        private volatile bool loaded;
+        private readonly SemaphoreSlim semaphore = new(1);
+        private int activeUseCount;
 
         public Material(IResourceFactory factory, MaterialData desc, ResourceGuid id) : base(factory, id)
         {
@@ -22,35 +31,95 @@
 
         public MaterialData Data => desc;
 
-        public bool BeginDraw(IGraphicsContext context, string passName)
+        public bool Dirty { get; set; }
+
+        public bool IsBeingModified => semaphore.CurrentCount == 0;
+
+        /// <summary>
+        /// Gets a pass by its name.
+        /// </summary>
+        /// <param name="passName"></param>
+        /// <remarks>Call <see cref="EndUse"/> after finishing access.</remarks>
+        /// <returns></returns>
+        public MaterialShaderPass? GetPass(string passName)
         {
-            if (!loaded)
+            if (IsBeingModified)
             {
-                return false;
+                return null;
             }
+
+            Interlocked.Increment(ref activeUseCount);
 
             var pass = Shader.Find(passName);
             if (pass == null)
             {
+                Interlocked.Decrement(ref activeUseCount);
+                return null;
+            }
+
+            return pass;
+        }
+
+        public bool BeginUse()
+        {
+            if (IsBeingModified)
+            {
+                return false;
+            }
+
+            Interlocked.Increment(ref activeUseCount);
+
+            return true;
+        }
+
+        public bool BeginDraw(string passName, [NotNullWhen(true)] out MaterialShaderPass? pass)
+        {
+            if (IsBeingModified)
+            {
+                pass = null;
+                return false;
+            }
+
+            Interlocked.Increment(ref activeUseCount);
+
+            pass = Shader.Find(passName);
+            return pass != null;
+        }
+
+        public bool BeginDraw(IGraphicsContext context, string passName)
+        {
+            if (IsBeingModified)
+            {
+                return false;
+            }
+
+            Interlocked.Increment(ref activeUseCount);
+
+            var pass = Shader.Find(passName);
+            if (pass == null)
+            {
+                Interlocked.Decrement(ref activeUseCount);
                 return false;
             }
 
             if (!pass.BeginDraw(context))
             {
+                Interlocked.Decrement(ref activeUseCount);
                 return false;
             }
-
-            TextureList.BindPS(context);
-            TextureListDS.BindDS(context);
 
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
-            TextureList.UnbindPS(context);
-            TextureListDS.UnbindDS(context);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
+            Interlocked.Decrement(ref activeUseCount);
+        }
+
+        public void EndUse()
+        {
+            Interlocked.Decrement(ref activeUseCount);
         }
 
         public void Update(MaterialData desc)
@@ -60,23 +129,27 @@
 
         public void BeginUpdate()
         {
-            loaded = false;
-            nameToPassIndex.Clear();
+            semaphore.Wait();
+
+            while (Interlocked.CompareExchange(ref activeUseCount, 0, 0) > 0)
+            {
+                Thread.Yield();
+            }
         }
 
         public void EndUpdate()
         {
 #nullable disable
-            TextureListDS.Update();
-            TextureList.Update();
-            loaded = true;
+            TextureList.Update(Shader);
+
+            Dirty = true;
+            semaphore.Release();
 #nullable enable
         }
 
         protected override void ReleaseResources()
         {
-            nameToPassIndex.Clear();
-            loaded = false;
+            semaphore.Wait();
         }
 
         public override string ToString()

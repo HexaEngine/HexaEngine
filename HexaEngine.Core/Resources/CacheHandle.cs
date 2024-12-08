@@ -43,7 +43,7 @@
             {
                 buffer = cache.AllocBuffer(stream.Length);
                 stream.Position = 0;
-                stream.Read(buffer.Span);
+                stream.ReadExactly(buffer.Span);
             }
 
             this.mode = mode;
@@ -133,13 +133,13 @@
                 buffer = cache.AllocBuffer(stream.Length);
                 size = (int)stream.Length;
                 stream.Position = 0;
-                stream.Read(buffer.Span);
+                stream.ReadExactly(buffer.Span);
 
                 return;
             }
 
             stream.Position = 0;
-            stream.Read(buffer.Span);
+            stream.ReadExactly(buffer.Span);
         }
 
         /// <inheritdoc/>
@@ -160,7 +160,7 @@
                 this.buffer = cache.AllocBuffer(stream.Length);
                 size = (int)stream.Length;
                 stream.Position = 0;
-                stream.Read(this.buffer.Span);
+                stream.ReadExactly(this.buffer.Span);
             }
 
             this.buffer.Span.Slice((int)position, count).CopyTo(buffer.AsSpan(offset));

@@ -1,27 +1,18 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.D3DCommon;
+    using Hexa.NET.DXGI;
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D12;
-    using Silk.NET.DXGI;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;
+    using ShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
     using SubresourceData = Core.Graphics.SubresourceData;
-
-    public static class Helper
-    {
-        internal static ResourceFlags Convert(ResourceMiscFlag miscFlags)
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     public unsafe class D3D12GraphicsDevice : IGraphicsDevice
     {
-        internal static readonly D3D12 D3D12 = D3D12.GetApi();
         internal readonly ComPtr<ID3D12Device10> Device;
         internal ComPtr<ID3D12CommandAllocator> CommandAllocator;
         internal ComPtr<ID3D12CommandQueue> CommandQueue;
@@ -34,21 +25,21 @@
         {
             if (debug)
             {
-                D3D12.GetDebugInterface(out Debug).ThrowHResult();
+                Hexa.NET.D3D12.D3D12.GetDebugInterface(out Debug).ThrowIf();
                 Debug.EnableDebugLayer();
             }
 
-            D3D12.CreateDevice(adapter.IDXGIAdapter, D3DFeatureLevel.Level122, out Device).ThrowHResult();
+            Hexa.NET.D3D12.D3D12.CreateDevice(adapter.IDXGIAdapter.As<IUnknown>(), FeatureLevel.Level122, out Device).ThrowIf();
 
             CommandQueueDesc commandQueueDesc = new()
             {
                 Type = CommandListType.Direct,
-                Flags = CommandQueueFlags.None,
+                Flags = CommandQueueFlags.FlagNone,
             };
 
-            Device.CreateCommandQueue(&commandQueueDesc, out CommandQueue).ThrowHResult();
+            Device.CreateCommandQueue(&commandQueueDesc, out CommandQueue).ThrowIf();
 
-            Device.CreateCommandAllocator(CommandListType.Direct, out CommandAllocator).ThrowHResult();
+            Device.CreateCommandAllocator(CommandListType.Direct, out CommandAllocator).ThrowIf();
 
             ComPtr<ID3D12GraphicsCommandList> list;
             Device.CreateCommandList(0, CommandListType.Direct, CommandAllocator, new ComPtr<ID3D12PipelineState>(), out list);
@@ -67,6 +58,7 @@
         public GraphicsBackend Backend => GraphicsBackend.D3D12;
 
         public IGPUProfiler Profiler { get; }
+        public GraphicsDeviceCapabilities Capabilities { get; }
 
         public event EventHandler? OnDisposed;
 
@@ -74,21 +66,21 @@
         {
             var resourceDesc = new ResourceDesc
             {
-                Dimension = Silk.NET.Direct3D12.ResourceDimension.Buffer,
+                Dimension = Hexa.NET.D3D12.ResourceDimension.Buffer,
                 Alignment = 0,
                 Width = (ulong)description.ByteWidth,
                 Height = 1,
                 DepthOrArraySize = 1,
                 MipLevels = 1,
-                Format = Silk.NET.DXGI.Format.FormatUnknown,
+                Format = Hexa.NET.DXGI.Format.Unknown,
                 SampleDesc = new SampleDesc(1, 0),
-                Layout = TextureLayout.LayoutRowMajor,
+                Layout = TextureLayout.RowMajor,
                 Flags = Helper.Convert(description.MiscFlags)
             };
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
-                resourceDesc.Flags |= ResourceFlags.AllowUnorderedAccess;
+                resourceDesc.Flags |= ResourceFlags.FlagAllowUnorderedAccess;
             }
 
             var heapProperties = description.Usage switch
@@ -98,48 +90,43 @@
                 _ => new HeapProperties(HeapType.Default)
             };
 
-            ResourceStates resourceStates = ResourceStates.Common;
+            ResourceStates resourceStates = ResourceStates.StateCommon;
             if ((description.BindFlags & BindFlags.VertexBuffer) != 0)
             {
-                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+                resourceStates |= ResourceStates.StateVertexAndConstantBuffer;
             }
 
             if ((description.BindFlags & BindFlags.IndexBuffer) != 0)
             {
-                resourceStates |= ResourceStates.IndexBuffer;
+                resourceStates |= ResourceStates.StateIndexBuffer;
             }
 
             if ((description.BindFlags & BindFlags.ConstantBuffer) != 0)
             {
-                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+                resourceStates |= ResourceStates.StateVertexAndConstantBuffer;
             }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                resourceStates |= ResourceStates.PixelShaderResource | ResourceStates.NonPixelShaderResource;
+                resourceStates |= ResourceStates.StatePixelShaderResource | ResourceStates.StateNonPixelShaderResource;
             }
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {
-                resourceStates |= ResourceStates.UnorderedAccess;
+                resourceStates |= ResourceStates.StateUnorderedAccess;
             }
 
-            Device.CreateCommittedResource(&heapProperties, HeapFlags.None, &resourceDesc, resourceStates, null, out ComPtr<ID3D12Resource2> buffer).ThrowHResult();
+            Device.CreateCommittedResource(&heapProperties, HeapFlags.FlagNone, &resourceDesc, resourceStates, null, out ComPtr<ID3D12Resource2> buffer).ThrowIf();
 
             return new D3D12Buffer(buffer, Device);
         }
 
-        public IBuffer CreateBuffer(void* src, uint length, BufferDescription description)
+        public IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
         {
             throw new NotImplementedException();
         }
 
         public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             throw new NotImplementedException();
         }
@@ -451,7 +438,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             throw new NotImplementedException();
         }
@@ -461,27 +448,7 @@
             throw new NotImplementedException();
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, Core.Graphics.GraphicsPipelineStateDesc state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, Core.Graphics.GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IComputePipeline CreateComputePipelineFromBytecode(ComputePipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }
@@ -491,17 +458,57 @@
             throw new NotImplementedException();
         }
 
-        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
-        {
-            throw new NotImplementedException();
-        }
-
         public IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, Core.Graphics.GraphicsPipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSRV(string name, IShaderResourceView? srv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalCBV(string name, IBuffer? cbv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSampler(string name, ISamplerState? sampler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }

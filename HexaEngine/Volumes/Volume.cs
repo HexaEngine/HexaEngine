@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Volumes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Scenes;
 

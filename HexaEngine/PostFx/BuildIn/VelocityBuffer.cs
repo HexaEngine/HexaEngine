@@ -4,24 +4,20 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
 
     [EditorDisplayName("Velocity Buffer")]
     public class VelocityBuffer : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<VelocityBufferParams> paramsBuffer;
-
-        private ISamplerState sampler;
-
         private ResourceRef<Texture2D> Velocity;
+        private PostFxGraphResourceBuilder creator;
+#nullable restore
 
         private float scale = 64;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
-        private PostFxGraphResourceBuilder creator;
 
         public override string Name => "VelocityBuffer";
 
@@ -62,9 +58,6 @@
         {
             this.creator = creator;
 
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
@@ -73,9 +66,6 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
             Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.None);
         }
 
@@ -88,17 +78,20 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            creator.Device.SetGlobalSRV("velocityBufferTex", Velocity.Value);
+            pipeline.Bindings.SetCBV("VelocityBufferParams", paramsBuffer);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Velocity.Value?.RTV, null);
             context.SetViewport(Viewport);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetConstantBuffer(1, camera.Value);
-            context.PSSetSampler(0, sampler);
-            context.PSSetShaderResource(0, depth.Value.SRV);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.ClearState();
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
         }
 
         public override void Resize(int width, int height)
@@ -111,7 +104,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            sampler.Dispose();
             creator.DisposeResource("VelocityBuffer");
         }
     }

@@ -5,14 +5,18 @@
     public struct MaterialShaderPassDesc
     {
         public string Name;
-        public GraphicsPipelineDesc Pipeline;
+        public GraphicsPipelineDescEx Pipeline;
         public GraphicsPipelineStateDesc State;
+        public bool SurfaceShader;
+        public string? BaseShader;
 
-        public MaterialShaderPassDesc(string name, GraphicsPipelineDesc pipeline, GraphicsPipelineStateDesc state)
+        public MaterialShaderPassDesc(string name, GraphicsPipelineDescEx pipeline, GraphicsPipelineStateDesc state, bool surfaceShader, string? baseShader = null)
         {
             Name = name;
             Pipeline = pipeline;
             State = state;
+            SurfaceShader = surfaceShader;
+            BaseShader = baseShader;
         }
     }
 }

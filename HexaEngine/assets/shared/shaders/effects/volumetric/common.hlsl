@@ -31,16 +31,16 @@ struct VolumetricLight
     float volumetricStrength;
 };
 
-SamplerState linear_clamp_sampler : register(s0);
+SamplerState linearClampSampler : register(s0);
 
-Texture2D<float> depthTx : register(t0);
+Texture2D<float> depthTex : register(t0);
 Texture2D shadowAtlas : register(t1);
 Texture2DArray cascadeShadowMaps : register(t2);
 
 StructuredBuffer<VolumetricLight> lights : register(t3);
 StructuredBuffer<ShadowData> shadowData : register(t4);
 
-cbuffer constants : register(b0)
+cbuffer VolumetricParams : register(b0)
 {
     uint lightCount;
     uint3 padd0;

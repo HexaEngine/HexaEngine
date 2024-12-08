@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
-    public struct BVHNode
+    public struct BVHNode<T>
     {
         public BoundingBox Box;
-        public int ObjectIndex;
+        public T Value;
         public int ParentIndex;
         public int Child1;
         public int Child2;

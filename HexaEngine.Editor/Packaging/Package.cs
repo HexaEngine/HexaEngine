@@ -1,10 +1,7 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
-    using HexaEngine.Mathematics;
-    using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
     using System.IO.Compression;
     using System.Text;
@@ -41,7 +38,7 @@
 
             Endianness = (Endianness)stream.ReadByte();
 
-            if (!stream.CompareVersion(MinVersion, Version, Endianness, out ulong version))
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
             {
                 throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }
@@ -85,9 +82,9 @@
 
     public class Package
     {
-        public PackageMetadata Metadata { get; set; }
+        public PackageMetadata Metadata { get; set; } = null!;
 
-        public List<PackageData> Data { get; set; }
+        public List<PackageData> Data { get; set; } = null!;
 
         public static PackageMetadata? ReadMetadata(string file)
         {
@@ -96,7 +93,7 @@
             try
             {
                 fs = File.OpenRead(file);
-                result = ReadMetadata(fs);
+                result = ReadMetadata(fs)!;
             }
             catch (Exception ex)
             {

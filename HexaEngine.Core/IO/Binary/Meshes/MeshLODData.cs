@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
-    using HexaEngine.Mathematics;
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
@@ -21,7 +20,7 @@
         private uint[] indices;
         private Vector4[] colors;
         private Vector3[] positions;
-        private Vector3[] uvs;
+        private UVChannel[] uvChannels;
         private Vector3[] normals;
         private Vector3[] tangents;
         private BoneWeight[]? boneWeights;
@@ -67,9 +66,9 @@
         public Vector3[] Positions { get => positions; set => positions = value; }
 
         /// <summary>
-        /// The array of 3D texture coordinates (UVs) of each vertex.
+        /// UV Channels.
         /// </summary>
-        public Vector3[] UVs { get => uvs; set => uvs = value; }
+        public UVChannel[] UVChannels { get => uvChannels; set => uvChannels = value; }
 
         /// <summary>
         /// The array of 3D normals associated with each vertex.
@@ -108,24 +107,24 @@
         /// <param name="indices">The indices.</param>
         /// <param name="colors">The vertex colors.</param>
         /// <param name="positions">The vertex positions.</param>
-        /// <param name="uVs">The vertex UV coords.</param>
+        /// <param name="uvChannels">The vertex UV coords.</param>
         /// <param name="normals">The vertex normals.</param>
         /// <param name="tangents">The vertex tangents.</param>
         /// <param name="boneWeights">The vertex bone weights.</param>
-        public MeshLODData(uint lodLevel, uint verticesCount, uint indicesCount, BoundingBox box, BoundingSphere sphere, uint[] indices, Vector4[] colors, Vector3[] positions, Vector3[] uVs, Vector3[] normals, Vector3[] tangents, BoneWeight[]? boneWeights)
+        public MeshLODData(uint lodLevel, uint verticesCount, uint indicesCount, BoundingBox box, BoundingSphere sphere, uint[] indices, Vector4[] colors, Vector3[] positions, UVChannel[] uvChannels, Vector3[] normals, Vector3[] tangents, BoneWeight[]? boneWeights)
         {
             LODLevel = lodLevel;
             VertexCount = verticesCount;
             IndexCount = indicesCount;
             Box = box;
             Sphere = sphere;
-            Indices = indices;
-            Colors = colors;
-            Positions = positions;
-            UVs = uVs;
-            Normals = normals;
-            Tangents = tangents;
-            BoneWeights = boneWeights;
+            this.indices = indices;
+            this.colors = colors;
+            this.positions = positions;
+            this.uvChannels = uvChannels;
+            this.normals = normals;
+            this.tangents = tangents;
+            this.boneWeights = boneWeights;
         }
 
         public unsafe uint GetSize(VertexFlags flags)
@@ -173,14 +172,14 @@
             return vertexStride;
         }
 
-        public static MeshLODData Read(Stream stream, VertexFlags flags, Endianness endianness)
+        public static MeshLODData Read(Stream stream, VertexFlags flags, Endianness endianness, Version version, UVChannelInfo info)
         {
             MeshLODData data = new();
-            data.ReadFrom(stream, flags, endianness);
+            data.ReadFrom(stream, flags, endianness, version, info);
             return data;
         }
 
-        public void ReadFrom(Stream stream, VertexFlags flags, Endianness endianness)
+        public unsafe void ReadFrom(Stream stream, VertexFlags flags, Endianness endianness, Version version, UVChannelInfo info)
         {
             this.flags = flags;
             LODLevel = stream.ReadUInt32(endianness);
@@ -202,11 +201,54 @@
                 positions = new Vector3[VertexCount];
                 stream.ReadArrayVector3(positions, endianness);
             }
+
             if ((flags & VertexFlags.UVs) != 0)
             {
-                uvs = new Vector3[VertexCount];
-                stream.ReadArrayVector3(uvs, endianness);
+                if (version <= new Version(1, 0, 0, 0))
+                {
+                    var uvs = new Vector3[VertexCount];
+                    stream.ReadArrayVector3(uvs, endianness);
+
+                    // The importer just expanded the 2D uvs to 3D uvs (This was a design choise mistake), so we compact them again back to uv 2D.
+                    var uv2Ds = uvs.Select(x => new Vector2(x.X, x.Y));
+                    UVChannel channel = default;
+                    channel.SetUVs(uv2Ds.ToArray());
+                    uvChannels = new UVChannel[UVChannelInfo.MaxChannels];
+                    uvChannels[0] = channel;
+                }
+                else
+                {
+                    UVType* pType = (UVType*)&info;
+                    uvChannels = new UVChannel[UVChannelInfo.MaxChannels];
+                    for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+                    {
+                        var type = pType[i];
+                        UVChannel uvChannel = new(type, vertexCount);
+                        switch (type)
+                        {
+                            case UVType.Empty:
+                                continue;
+
+                            case UVType.UV2D:
+                                stream.ReadArrayVector2(uvChannel.GetUV2D(), endianness);
+                                break;
+
+                            case UVType.UV3D:
+                                stream.ReadArrayVector3(uvChannel.GetUV3D(), endianness);
+                                break;
+
+                            case UVType.UV4D:
+                                stream.ReadArrayVector4(uvChannel.GetUV4D(), endianness);
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"Unsupported UV type: {type}");
+                        }
+                        uvChannels[i] = uvChannel;
+                    }
+                }
             }
+
             if ((flags & VertexFlags.Normals) != 0)
             {
                 normals = new Vector3[VertexCount];
@@ -248,9 +290,33 @@
             {
                 stream.WriteArrayVector3(positions, endianness);
             }
+
             if ((flags & VertexFlags.UVs) != 0)
             {
-                stream.WriteArrayVector3(uvs, endianness);
+                for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+                {
+                    UVChannel uvChannel = uvChannels[i];
+                    switch (uvChannel.Type)
+                    {
+                        case UVType.Empty:
+                            continue;
+
+                        case UVType.UV2D:
+                            stream.WriteArrayVector2(uvChannel.GetUV2D(), endianness);
+                            break;
+
+                        case UVType.UV3D:
+                            stream.WriteArrayVector3(uvChannel.GetUV3D(), endianness);
+                            break;
+
+                        case UVType.UV4D:
+                            stream.WriteArrayVector4(uvChannel.GetUV4D(), endianness);
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Unsupported UV type: {uvChannel.Type}");
+                    }
+                }
             }
             if ((flags & VertexFlags.Normals) != 0)
             {
@@ -565,88 +631,126 @@
             }
         }
 
+        private unsafe int ComputeStride()
+        {
+            int stride = 0;
+            if ((flags & VertexFlags.Colors) != 0)
+            {
+                stride += sizeof(Vector4);
+            }
+            if ((flags & VertexFlags.Positions) != 0)
+            {
+                stride += sizeof(Vector3);
+            }
+            if ((flags & VertexFlags.UVs) != 0)
+            {
+                for (int i = 0; i < uvChannels.Length; i++)
+                {
+                    switch (uvChannels[i].Type)
+                    {
+                        case UVType.UV2D:
+                            stride += sizeof(Vector2);
+                            break;
+
+                        case UVType.UV3D:
+                            stride += sizeof(Vector3);
+                            break;
+
+                        case UVType.UV4D:
+                            stride += sizeof(Vector4);
+                            break;
+                    }
+                }
+            }
+            if ((flags & VertexFlags.Normals) != 0)
+            {
+                stride += sizeof(Vector3);
+            }
+            if ((flags & VertexFlags.Tangents) != 0)
+            {
+                stride += sizeof(Vector3);
+            }
+            if ((flags & VertexFlags.Skinned) != 0)
+            {
+                stride += sizeof(Point4) + sizeof(Vector4);
+            }
+
+            return stride;
+        }
+
+        private static unsafe void Append<T>(void** data, T item) where T : unmanaged
+        {
+            T* p = (T*)*data;
+            *p = item;
+            p++;
+            *data = p;
+        }
+
         public unsafe IVertexBuffer CreateVertexBuffer(CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            if ((flags & VertexFlags.Skinned) == 0)
+            var stride = ComputeStride();
+            var size = stride * (int)VertexCount;
+            var vertices = (byte*)Alloc(size);
+            ZeroMemory(vertices, size);
+
+            WriteVertexData(stride, vertices);
+
+            VertexBuffer vertexBuffer = new(vertices, stride, VertexCount, transferOwnership: true, accessFlags);
+            return vertexBuffer;
+        }
+
+        private unsafe void WriteVertexData(int stride, byte* vertices)
+        {
+            for (int i = 0; i < VertexCount; i++)
             {
-                var stride = sizeof(MeshVertex);
-                var size = stride * (int)VertexCount;
-                var vertices = (MeshVertex*)Alloc(size);
-                ZeroMemory(vertices, size);
+                void* vertexPointer = vertices + i * stride; // Pointer to the start of each vertex
 
-                for (int i = 0; i < VertexCount; i++)
+                if ((flags & VertexFlags.Colors) != 0)
                 {
-                    MeshVertex vertex = default;
-
-                    if ((flags & VertexFlags.Positions) != 0)
-                    {
-                        vertex.Position = Positions[i];
-                    }
-
-                    if ((flags & VertexFlags.UVs) != 0)
-                    {
-                        vertex.UV = UVs[i];
-                    }
-
-                    if ((flags & VertexFlags.Normals) != 0)
-                    {
-                        vertex.Normal = Normals[i];
-                    }
-
-                    if ((flags & VertexFlags.Tangents) != 0)
-                    {
-                        vertex.Tangent = Tangents[i];
-                    }
-
-                    vertices[i] = vertex;
+                    Append(&vertexPointer, colors[i]);
                 }
 
-                VertexBuffer<MeshVertex> vertexBuffer = new(vertices, VertexCount, accessFlags);
-                Free(vertices);
-                return vertexBuffer;
-            }
-            else
-            {
-                var stride = sizeof(SkinnedMeshVertex);
-                var size = stride * (int)VertexCount;
-                var vertices = (SkinnedMeshVertex*)Alloc(size);
-                ZeroMemory(vertices, size);
-
-                for (int i = 0; i < VertexCount; i++)
+                if ((flags & VertexFlags.Positions) != 0)
                 {
-                    SkinnedMeshVertex vertex = default;
-
-                    if ((flags & VertexFlags.Positions) != 0)
-                    {
-                        vertex.Position = Positions[i];
-                    }
-
-                    if ((flags & VertexFlags.UVs) != 0)
-                    {
-                        vertex.UV = UVs[i];
-                    }
-
-                    if ((flags & VertexFlags.Normals) != 0)
-                    {
-                        vertex.Normal = Normals[i];
-                    }
-
-                    if ((flags & VertexFlags.Tangents) != 0)
-                    {
-                        vertex.Tangent = Tangents[i];
-                    }
-
-                    if ((flags & VertexFlags.Skinned) != 0)
-                    {
-                        (vertex.BoneIds, vertex.Weights) = (BoneWeights[i].BoneIds, BoneWeights[i].Weights);
-                    }
-
-                    vertices[i] = vertex;
+                    Append(&vertexPointer, positions[i]);
                 }
 
-                VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(vertices, VertexCount, accessFlags);
-                Free(vertices);
-                return vertexBuffer;
+                if ((flags & VertexFlags.UVs) != 0)
+                {
+                    for (int j = 0; j < uvChannels.Length; j++)
+                    {
+                        var uvChannel = uvChannels[j];
+                        switch (uvChannel.Type)
+                        {
+                            case UVType.UV2D:
+                                Append(&vertexPointer, uvChannel.GetUV2D()[i]);
+                                break;
+
+                            case UVType.UV3D:
+                                Append(&vertexPointer, uvChannel.GetUV3D()[i]);
+                                break;
+
+                            case UVType.UV4D:
+                                Append(&vertexPointer, uvChannel.GetUV4D()[i]);
+                                break;
+                        }
+                    }
+                }
+
+                if ((flags & VertexFlags.Normals) != 0)
+                {
+                    Append(&vertexPointer, normals[i]);
+                }
+
+                if ((flags & VertexFlags.Tangents) != 0)
+                {
+                    Append(&vertexPointer, tangents[i]);
+                }
+
+                if ((flags & VertexFlags.Skinned) != 0)
+                {
+                    Append(&vertexPointer, boneWeights![i]);
+                }
             }
         }
 
@@ -675,73 +779,36 @@
             return false;
         }
 
-        public bool WriteVertexBuffer(IGraphicsContext context, IVertexBuffer vb)
+        public unsafe bool WriteVertexBuffer(IGraphicsContext context, IVertexBuffer vb)
         {
-            if (vb is IVertexBuffer<MeshVertex> vertexBuffer)
+            var stride = ComputeStride();
+
+            if (vb.Stride != stride)
             {
-                for (int i = 0; i < VertexCount; i++)
-                {
-                    MeshVertex vertex = default;
-
-                    if ((flags & VertexFlags.Positions) != 0)
-                    {
-                        vertex.Position = Positions[i];
-                    }
-
-                    if ((flags & VertexFlags.UVs) != 0)
-                    {
-                        vertex.UV = UVs[i];
-                    }
-
-                    if ((flags & VertexFlags.Normals) != 0)
-                    {
-                        vertex.Normal = Normals[i];
-                    }
-
-                    if ((flags & VertexFlags.Tangents) != 0)
-                    {
-                        vertex.Tangent = Tangents[i];
-                    }
-
-                    vertexBuffer[i] = vertex;
-                }
+                throw new InvalidOperationException($"Buffer must match vertex stride. Is {vb.Stride} but should be {stride}");
             }
-            else if (vb is IVertexBuffer<SkinnedMeshVertex> skinnedMeshVertexBuffer)
+
+            if (vb.Count < VertexCount)
             {
-                for (int i = 0; i < VertexCount; i++)
-                {
-                    SkinnedMeshVertex vertex = default;
-
-                    if ((flags & VertexFlags.Positions) != 0)
-                    {
-                        vertex.Position = Positions[i];
-                    }
-
-                    if ((flags & VertexFlags.UVs) != 0)
-                    {
-                        vertex.UV = UVs[i];
-                    }
-
-                    if ((flags & VertexFlags.Normals) != 0)
-                    {
-                        vertex.Normal = Normals[i];
-                    }
-
-                    if ((flags & VertexFlags.Tangents) != 0)
-                    {
-                        vertex.Tangent = Tangents[i];
-                    }
-
-                    if ((flags & VertexFlags.Skinned) != 0)
-                    {
-                        (vertex.BoneIds, vertex.Weights) = (BoneWeights[i].BoneIds, BoneWeights[i].Weights);
-                    }
-
-                    skinnedMeshVertexBuffer[i] = vertex;
-                }
+                throw new InvalidOperationException("Buffer too small");
             }
+
+            WriteVertexData(stride, (byte*)vb.Items);
 
             return vb.Update(context);
+        }
+
+        public IEnumerable<UVChannel> GetUVChannels()
+        {
+            for (int i = 0; i < UVChannelInfo.MaxChannels; i++)
+            {
+                var channel = uvChannels[i];
+                if (channel.Type == UVType.Empty)
+                {
+                    continue;
+                }
+                yield return channel;
+            }
         }
     }
 }

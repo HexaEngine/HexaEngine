@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.UI.Graphics.Text
 {
     using Hexa.NET.FreeType;
-    using HexaEngine.Core;
     using System;
 
     public unsafe struct FontFileInfo : IEquatable<FontFileInfo>
@@ -23,8 +22,8 @@
         {
             FTError error;
             FTFace faceHandle;
-            error = (FTError)FreeType.FTNewFace(library, path, 0, &faceHandle);
-            if (error != FTError.FtErrOk)
+            error = (FTError)FreeType.NewFace(library, path, 0, &faceHandle);
+            if (error != FTError.Ok)
             {
                 throw new($"Failed to load font file, {error}");
             }

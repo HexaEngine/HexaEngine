@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Configuration
 {
     using HexaEngine.Core.Input;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;
     using System.Reflection;
@@ -339,7 +340,7 @@
         /// <summary>
         /// Converts the value to an enumeration of the specified type.
         /// </summary>
-        public object GetEnum(Type type)
+        public object GetEnum([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
         {
             if (Value == null)
             {

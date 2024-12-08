@@ -60,7 +60,7 @@
                     throw new InvalidOperationException();
                 }
 
-                ResolvedDependency resolvedDependency = new(dependency.dependency, packageSource, packageMetadata);
+                ResolvedDependency resolvedDependency = new(dependency.dependency, packageSource!, packageMetadata);
                 dependencyTree.Insert(dependency.parent, resolvedDependency);
                 dependencies.Add(resolvedDependency);
 

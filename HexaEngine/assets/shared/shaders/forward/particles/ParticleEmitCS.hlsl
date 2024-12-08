@@ -1,6 +1,6 @@
 #include "ParticleGlobals.hlsli"
 
-SamplerState linear_wrap_sampler : register(s0);
+SamplerState linearWrapSampler : register(s0);
 
 Texture2D								RandomBuffer			: register(t0);
 
@@ -21,10 +21,10 @@ void main(uint3 id : SV_DispatchThreadID)
 		GPUParticlePartB pb = (GPUParticlePartB)0;
 
 		float2 uv = float2(id.x / 1024.0, ElapsedTime);
-		float3 randomValues0 = RandomBuffer.SampleLevel(linear_wrap_sampler, uv, 0).xyz;
+		float3 randomValues0 = RandomBuffer.SampleLevel(linearWrapSampler, uv, 0).xyz;
 
         float2 uv2 = float2((id.x + 1) / 1024.0, ElapsedTime);
-        float3 randomValues1 = RandomBuffer.SampleLevel(linear_wrap_sampler, uv2, 0).xyz;
+        float3 randomValues1 = RandomBuffer.SampleLevel(linearWrapSampler, uv2, 0).xyz;
 
         pa.TintAndAlpha = float4(1, 1, 1, 1);
         pa.Rotation = 0;

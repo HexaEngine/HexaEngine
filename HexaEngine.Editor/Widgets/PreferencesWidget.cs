@@ -5,15 +5,10 @@
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.PostFx.BuildIn;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Globalization;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using System.Runtime.Intrinsics.X86;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
-    using System.Text;
 
     public class PreferencesWidget : EditorWindow
     {
@@ -401,7 +396,7 @@
 
                     ImGui.BeginChild(editor.Name, new Vector2(400, 120), flags);
 
-                    if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                    if (ImGui.IsWindowHovered() && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
                     {
                         EditorConfig.Default.SelectedExternalTextEditor = i;
                     }

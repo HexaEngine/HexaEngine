@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.SDL2;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
-    using Silk.NET.SDL;
     using System.Numerics;
 
     /// <summary>
@@ -260,13 +260,13 @@
         /// Creates an OpenGL context for the window.
         /// </summary>
         /// <returns>The created OpenGL context.</returns>
-        IGLContext OpenGLCreateContext();
+        HexaGen.Runtime.IGLContext OpenGLCreateContext();
 
         /// <summary>
         /// Gets the underlying native window pointer.
         /// </summary>
         /// <returns>A pointer to the native window.</returns>
-        unsafe Window* GetWindow();
+        unsafe SDLWindow* GetWindow();
 
         /// <summary>
         /// Gets the mouse position inside of the window client area.

@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor
+﻿//#define BypassLauncher
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
@@ -14,6 +16,7 @@
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.PostFx.BuildIn;
+    using HexaEngine.Profiling;
     using HexaEngine.Scripts;
     using HexaEngine.Volumes;
     using System.Diagnostics;
@@ -26,10 +29,11 @@
         public static void Init(IGraphicsDevice device)
         {
             MainMenuBar.Init(device);
-            IconManager.Init(device);
+            IconManager.Init();
             WindowManager.Init(device);
+#if !BypassLauncher
             PopupManager.Show<LauncherWindow>();
-
+#endif
             if (!EditorConfig.Default.SetupDone)
             {
                 PopupManager.Show<SetupWindow>();
@@ -55,9 +59,9 @@
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
             PropertyObjectEditorRegistry.RegisterEditor<AssetFileEditor>();
 
-            ObjectEditorFactory.RegisterEditor(typeof(ScriptComponent), new ScriptBehaviourEditor());
-            ObjectEditorFactory.RegisterEditor(typeof(TerrainRendererComponent), new TerrainObjectEditor());
-            ObjectEditorFactory.RegisterEditor(typeof(Volume), new VolumeObjectEditor());
+            ObjectEditorFactory.RegisterEditor<ScriptComponent>(new ScriptBehaviourEditor());
+            ObjectEditorFactory.RegisterEditor<TerrainRendererComponent>(new TerrainObjectEditor());
+            ObjectEditorFactory.RegisterEditor<Volume>(new VolumeObjectEditor());
             PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
         }
 
@@ -69,18 +73,14 @@
             PopupManager.Dispose();
         }
 
+        [Profile]
         public static void Draw(IGraphicsContext context)
         {
-            using (CPUProfiler2.Global.BeginBlock("MainMenuBar.Draw"))
-                MainMenuBar.Draw();
-            using (CPUProfiler2.Global.BeginBlock("WindowManager.Draw"))
-                WindowManager.Draw(context);
-            using (CPUProfiler2.Global.BeginBlock("ImGuiConsole.Draw"))
-                ImGuiConsole.Draw();
-            using (CPUProfiler2.Global.BeginBlock("MessageBoxes.Draw"))
-                MessageBoxes.Draw();
-            using (CPUProfiler2.Global.BeginBlock("PopupManager.Draw"))
-                PopupManager.Draw();
+            //MainMenuBar.Draw();
+            WindowManager.Draw(context);
+            ImGuiConsole.Draw();
+            MessageBoxes.Draw();
+            PopupManager.Draw();
         }
 
         public static void OpenFile(string? path)

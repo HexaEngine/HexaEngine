@@ -1,6 +1,6 @@
 #include "defs.hlsl"
 
-cbuffer LightBuffer : register(b0)
+cbuffer lightBuffer : register(b0)
 {
 	float4x4 lightView;
 	float4x4 lightViewProj;

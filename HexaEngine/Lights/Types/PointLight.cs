@@ -1,12 +1,12 @@
 ﻿namespace HexaEngine.Lights.Types
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -34,7 +34,7 @@
             return null;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
+        protected override void OnCreateShadowMap(ShadowAtlas atlas)
         {
             if (HasShadowMap)
             {
@@ -44,14 +44,14 @@
             atlasHandle = atlas.AllocRange(ShadowMapSize, 2);
         }
 
-        public override void DestroyShadowMap()
+        protected override void OnDestroyShadowMap()
         {
             if (!HasShadowMap)
             {
                 return;
             }
 
-            atlasHandle.Dispose();
+            atlasHandle!.Dispose();
         }
 
         public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
@@ -67,7 +67,7 @@
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
-            float texel = 1.0f / atlasHandle.Atlas.Size;
+            float texel = 1.0f / atlasHandle!.Atlas.Size;
 
             for (int i = 0; i < 2; i++)
             {

@@ -2,20 +2,46 @@
 {
     public interface IResourceBindingList : IDisposable
     {
-        void SetCBV(string name, IBuffer cbv);
+        IPipeline Pipeline { get; }
 
-        void SetCBV(string name, ShaderStage stage, IBuffer cbv);
+        IEnumerable<BindingValuePair> SRVs { get; }
 
-        void SetSampler(string name, ISamplerState sampler);
+        IEnumerable<BindingValuePair> CBVs { get; }
 
-        void SetSampler(string name, ShaderStage stage, ISamplerState sampler);
+        IEnumerable<BindingValuePair> UAVs { get; }
 
-        void SetSRV(string name, IShaderResourceView srv);
+        IEnumerable<BindingValuePair> Samplers { get; }
 
-        void SetSRV(string name, ShaderStage stage, IShaderResourceView srv);
+        void SetCBV(string name, IBuffer? cbv);
 
-        void SetUAV(string name, IUnorderedAccessView uav);
+        void SetCBV(string name, ShaderStage stage, IBuffer? cbv);
 
-        void SetUAV(string name, ShaderStage stage, IUnorderedAccessView uav);
+        void SetSampler(string name, ISamplerState? sampler);
+
+        void SetSampler(string name, ShaderStage stage, ISamplerState? sampler);
+
+        void SetSRV(string name, IShaderResourceView? srv);
+
+        void SetSRV(string name, ShaderStage stage, IShaderResourceView? srv);
+
+        void SetUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
+
+        void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
+    }
+
+    public enum ShaderParameterType
+    {
+        SRV,
+        UAV,
+        CBV,
+        Sampler,
+    }
+
+    public unsafe struct BindingValuePair
+    {
+        public string Name;
+        public ShaderStage Stage;
+        public ShaderParameterType Type;
+        public void* Value;
     }
 }

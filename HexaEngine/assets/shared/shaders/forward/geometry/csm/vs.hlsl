@@ -1,8 +1,8 @@
 #include "defs.hlsl"
 
-cbuffer cb
+cbuffer offsetBuffer
 {
-    uint offset;
+	uint offset;
 }
 
 StructuredBuffer<float4x4> worldMatrices;
@@ -15,42 +15,42 @@ StructuredBuffer<uint> boneMatrixOffsets;
 
 GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
-    float4 totalPosition = 0;
+	float4 totalPosition = 0;
 
-    uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
-    for (int i = 0; i < MaxBoneInfluence; i++)
-    {
-        if (input.boneIds[i] == -1)
-            continue;
-        if (input.boneIds[i] >= MaxBones)
-        {
-            totalPosition = float4(input.pos, 1.0f);
-            break;
-        }
+	uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
+	for (int i = 0; i < MaxBoneInfluence; i++)
+	{
+		if (input.boneIds[i] == -1)
+			continue;
+		if (input.boneIds[i] >= MaxBones)
+		{
+			totalPosition = float4(input.position, 1.0f);
+			break;
+		}
 
-        float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
-        totalPosition += localPosition * input.weights[i];
-    }
+		float4 localPosition = mul(float4(input.position, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
+		totalPosition += localPosition * input.weights[i];
+	}
 
-    GeometryInput output;
+	GeometryInput output;
 
-    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.pos = mul(totalPosition, mat).xyz;
+	output.pos = mul(totalPosition, mat).xyz;
 
-    return output;
+	return output;
 }
 
 #else
 
 GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
-    GeometryInput output;
+	GeometryInput output;
 
-    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.pos = mul(float4(input.pos, 1), mat).xyz;
+	output.pos = mul(float4(input.position, 1), mat).xyz;
 
-    return output;
+	return output;
 }
 #endif

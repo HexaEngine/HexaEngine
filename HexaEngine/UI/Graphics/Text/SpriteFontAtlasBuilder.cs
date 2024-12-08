@@ -109,7 +109,7 @@
                         case FTPixelMode.Lcd:
                             break;
 
-                        case FTPixelMode.Lcdv:
+                        case FTPixelMode.LcdV:
                             break;
 
                         case FTPixelMode.Bgra:

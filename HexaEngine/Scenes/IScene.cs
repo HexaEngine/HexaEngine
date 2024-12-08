@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Queries;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scripts;
@@ -52,7 +52,7 @@
 
         QuerySystem QueryManager { get; }
 
-        RenderManager RenderManager { get; }
+        RenderSystem RenderManager { get; }
 
         GameObject Root { get; }
 

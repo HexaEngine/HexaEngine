@@ -1,6 +1,6 @@
 namespace HexaEngine.Network.Protocol
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using HexaEngine.Input;
     using System;
     using System.Buffers.Binary;

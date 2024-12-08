@@ -17,7 +17,7 @@
         public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public void Awake()
         {

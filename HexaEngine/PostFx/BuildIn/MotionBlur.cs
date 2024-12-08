@@ -10,10 +10,10 @@
     [EditorDisplayName("Motion Blur")]
     public class MotionBlur : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<MotionBlurParams> paramsBuffer;
-        private ISamplerState sampler;
-        private ResourceRef<Texture2D> Velocity;
+#nullable restore
 
         private MotionBlurQualityPreset qualityPreset = MotionBlurQualityPreset.High;
         private float strength = 1;
@@ -108,9 +108,6 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            Velocity = creator.GetTexture2D("VelocityBuffer");
 
             Viewport = new(width, height);
         }
@@ -124,32 +121,20 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetCBV("MotionBlurCB", paramsBuffer);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
-            nint* srvs = stackalloc nint[2];
-            srvs[0] = Input.NativePointer;
-            srvs[1] = Velocity.Value.SRV.NativePointer;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-            context.PSSetSampler(0, sampler);
-
-            context.PSSetConstantBuffer(0, paramsBuffer);
-
-            context.SetPipelineState(pipeline);
-
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-
-            context.SetPipelineState(null);
-
-            context.PSSetConstantBuffer(0, null);
-
-            context.PSSetSampler(0, null);
-            ZeroMemory(srvs, sizeof(nint) * 2);
-            context.PSSetShaderResources(0, 2, (void**)srvs);
-
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
 
@@ -157,7 +142,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            sampler.Dispose();
         }
     }
 }

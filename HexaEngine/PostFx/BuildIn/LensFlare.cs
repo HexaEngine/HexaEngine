@@ -1,20 +1,21 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using System.Numerics;
 
     [EditorDisplayName("Lens Flare")]
     public class LensFlare : PostFxBase
     {
+#nullable disable
         private IGraphicsPipelineState downsamplePipeline;
         private ConstantBuffer<DownsampleParams> downsampleCB;
-        private ISamplerState samplerState;
+
         private ResourceRef<Texture2D> downsampleBuffer;
         private Viewport downsampleViewport;
         private ResourceRef<Texture2D> accumBuffer;
@@ -26,7 +27,7 @@
 
         private IGraphicsPipelineState blendPipeline;
         private Texture2D lensDirt;
-
+#nullable restore
         private Vector4 scale = new(0.02f);
         private Vector4 bias = new(-3);
         private uint ghosts = 8;
@@ -110,7 +111,7 @@
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             downsampleCB = new(CpuAccessFlags.Write);
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
             downsampleViewport = creator.ViewportHalf;
 
@@ -140,37 +141,40 @@
             lensCB.Update(context, new(ghosts, ghostDispersal, downsampleViewport.Size, haloWidth, distortion));
         }
 
+        public override void UpdateBindings()
+        {
+            downsamplePipeline.Bindings.SetSRV("inputTexture", Input);
+            downsamplePipeline.Bindings.SetCBV("DownsampleParams", downsampleCB);
+
+            lensPipeline.Bindings.SetSRV("inputTexture", Input);
+            lensPipeline.Bindings.SetCBV("LensParams", lensCB);
+        }
+
         public override void Draw(IGraphicsContext context)
         {
             // downsample and threshold
-            context.SetPipelineState(downsamplePipeline);
-            context.SetRenderTarget(downsampleBuffer.Value.RTV, null);
+            context.SetGraphicsPipelineState(downsamplePipeline);
+            context.SetRenderTarget(downsampleBuffer.Value!.RTV, null);
             context.SetViewport(downsampleBuffer.Value.Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetSampler(0, samplerState);
-            context.PSSetConstantBuffer(0, downsampleCB);
             context.DrawInstanced(4, 1, 0, 0);
 
             // lens
-            context.SetPipelineState(lensPipeline);
-            context.SetRenderTarget(accumBuffer.Value.RTV, null);
+            context.SetGraphicsPipelineState(lensPipeline);
+            context.SetRenderTarget(accumBuffer.Value!.RTV, null);
             context.SetViewport(accumBuffer.Value.Viewport);
-            context.PSSetShaderResource(0, downsampleBuffer.Value.SRV);
-            context.PSSetConstantBuffer(0, lensCB);
             context.DrawInstanced(4, 1, 0, 0);
         }
 
         public override void Compose(IGraphicsContext context)
         {
             // upscale, blur and blend
-            blur.Blur(context, accumBuffer.Value.SRV, Output, accumBuffer.Value.Viewport.Width, accumBuffer.Value.Viewport.Height, Viewport.Width, Viewport.Height);
+            blur.Blur(context, accumBuffer.Value!.SRV!, Output, accumBuffer.Value.Viewport.Width, accumBuffer.Value.Viewport.Height, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()
         {
             downsamplePipeline.Dispose();
             downsampleCB.Dispose();
-            samplerState.Dispose();
             lensPipeline.Dispose();
             lensCB.Dispose();
             blur.Dispose();

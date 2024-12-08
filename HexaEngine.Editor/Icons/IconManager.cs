@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Editor.Icons
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Textures;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Themes;
-    using HexaEngine.Mathematics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
@@ -19,10 +20,10 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(IconManager));
         private static readonly List<Icon> icons = [];
-        private static IGraphicsDevice device;
-        private static Icon Default;
+        private static IGraphicsDevice device = Application.GraphicsDevice;
+        private static Icon Default = null!;
         private static readonly AtlasBuilder atlasBuilder = new(256 * 8 + 2, 2048, Format.R8G8B8A8UNorm);
-        private static Texture2D iconAtlas;
+        private static Texture2D iconAtlas = null!;
         private static readonly List<IconGlyphTileInfo> glyphs = new();
         private static readonly Dictionary<Guid, IconGlyphTileInfo> keyToGlyph = new();
         private static readonly IconCache iconCache = new("cache/iconcache.bin");
@@ -30,18 +31,15 @@
         /// <summary>
         /// Initializes the IconManager, loads icons from XML, and sets up default icons.
         /// </summary>
-        /// <param name="device">The graphics device for rendering icons.</param>
-        internal static unsafe void Init(IGraphicsDevice device)
+        internal static unsafe void Init()
         {
-            IconManager.device = device;
-
             Default = new Icon(device, atlasBuilder);
 
             try
             {
                 var serializer = new XmlSerializer(typeof(IconsDescription));
                 var fs = FileSystem.OpenText("assets/icons/icons.xml");
-                var desc = (IconsDescription)serializer.Deserialize(fs);
+                var desc = (IconsDescription)serializer.Deserialize(fs)!;
 
                 var theme = ThemeManager.ThemeName;
 

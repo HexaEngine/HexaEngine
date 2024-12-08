@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Windows.Events
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
     public static class EventManager
@@ -40,7 +41,7 @@
             return [];
         }
 
-        public static RoutedEvent<TArgs> Register<TOwner, TArgs>(string name, RoutingStrategy routingStrategy) where TArgs : RoutedEventArgs
+        public static RoutedEvent<TArgs> Register<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicEvents)] TOwner, TArgs>(string name, RoutingStrategy routingStrategy) where TArgs : RoutedEventArgs
         {
             Type ownerType = typeof(TOwner);
             EventInfo eventInfo = ownerType.GetEvent(name) ?? throw new ArgumentException($"Couldn't find event '{name}' in '{ownerType}'");

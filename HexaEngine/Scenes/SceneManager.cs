@@ -1,16 +1,15 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
-    using HexaEngine.Physics;
+    using HexaEngine.Lights;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
     using System;
-    using System.IO;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -533,6 +532,11 @@
         {
             SceneChangedEventArgs sceneChangedEventArgs = new(changeType, oldScene, newScene);
             SceneChanged?.Invoke(null, sceneChangedEventArgs);
+        }
+
+        internal static void Shutdown()
+        {
+            LightManager.Shutdown();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO.Binary.Animations;
     using System;
 

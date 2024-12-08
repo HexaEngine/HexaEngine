@@ -2,22 +2,22 @@
 {
     using Hexa.NET.Vulkan;
     using HexaEngine.Core;
+    using Hexa.NET.SDL2;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
-    using Silk.NET.SDL;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using VkInstance = Hexa.NET.Vulkan.VkInstance;
+    using VkSurfaceKHR = Hexa.NET.Vulkan.VkSurfaceKHR;
 
     public unsafe class VulkanAdapter : IGraphicsAdapter, IDisposable
     {
-        public static readonly Sdl Sdl = Application.Sdl;
-
         public VkInstance Instance;
         public VkDebugUtilsMessengerEXT DebugMessenger;
         public VkPhysicalDevice PhysicalDevice;
@@ -75,10 +75,10 @@
         private byte** GetRequiredInstanceExtensions(out uint count)
         {
             uint rcount = 0;
-            Sdl.VulkanGetInstanceExtensions(null, &rcount, (byte**)null);
+            SDL.VulkanGetInstanceExtensions(null, &rcount, (byte**)null);
 
             byte** extensions = (byte**)AllocArray(rcount);
-            Sdl.VulkanGetInstanceExtensions(null, &rcount, extensions);
+            SDL.VulkanGetInstanceExtensions(null, &rcount, extensions);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -152,7 +152,7 @@
             uint extensionCount;
             Vulkan.VkEnumerateDeviceExtensionProperties(device, (byte*)null, &extensionCount, null);
 
-            UnsafeList<VkExtensionProperties> availableExtensions = new(extensionCount);
+            UnsafeList<VkExtensionProperties> availableExtensions = new((int)extensionCount);
             Vulkan.VkEnumerateDeviceExtensionProperties(device, (byte*)null, &extensionCount, availableExtensions.Data);
 
             SortedSet<string> requiredExtensions = new(DeviceExtensions);
@@ -456,17 +456,22 @@
             throw new NotImplementedException();
         }
 
-        private VkSurfaceKHR CreateSurface(Window* window)
+        private VkSurfaceKHR CreateSurface(SDLWindow* window)
         {
             VkSurfaceKHR surface;
             VkHandle handle = new(Instance.Handle);
-            Sdl.VulkanCreateSurface(window, handle, (VkNonDispatchableHandle*)&surface);
+            SDL.VulkanCreateSurface(window, Instance.Handle, (Hexa.NET.SDL2.VkSurfaceKHR*)&surface);
             return surface;
         }
 
-        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, Window* window)
+        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, SDLWindow* window)
         {
-            return new VulkanSwapChain(device, window, CreateSurface(window));
+            return new VulkanSwapChain(device, window, CreateSurface(window), null, null);
+        }
+
+        internal VulkanSwapChain CreateSwapChain(VulkanGraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            return new VulkanSwapChain(device, window, CreateSurface(window), swapChainDescription, fullscreenDescription);
         }
 
         protected virtual void Dispose(bool disposing)

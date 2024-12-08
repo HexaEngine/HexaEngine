@@ -1,14 +1,15 @@
 ﻿namespace HexaEngine.OpenAL
 {
     using HexaEngine.Core.Audio;
+    using Hexa.NET.OpenAL;
     using System.Numerics;
 
     public class OpenALSourceVoice : ISourceVoice
     {
         public const int SourceSpatializeSoft = 0x1214;
-        private readonly uint source;
+        private uint source;
         private readonly IAudioStream stream;
-        private SourceState state;
+        private int state;
         private bool disposedValue;
         private ISubmixVoice? submix;
 
@@ -19,21 +20,21 @@
         {
             source = sourceVoice;
             stream = audioStream;
-            al.SetSourceProperty(source, SourceFloat.ReferenceDistance, 1);
-            al.SetSourceProperty(source, SourceFloat.MaxDistance, float.PositiveInfinity);
-            al.SetSourceProperty(source, SourceFloat.RolloffFactor, 1);
-            al.SetSourceProperty(source, SourceFloat.Pitch, 1);
-            al.SetSourceProperty(source, SourceFloat.Gain, 1);
-            al.SetSourceProperty(source, SourceFloat.MinGain, 0);
-            al.SetSourceProperty(source, SourceFloat.MaxGain, 1);
-            al.SetSourceProperty(source, SourceFloat.ConeInnerAngle, 360);
-            al.SetSourceProperty(source, SourceFloat.ConeOuterAngle, 360);
-            al.SetSourceProperty(source, SourceFloat.ConeOuterGain, 0);
-            al.SetSourceProperty(source, SourceVector3.Position, Vector3.Zero);
-            al.SetSourceProperty(source, SourceVector3.Velocity, Vector3.Zero);
-            al.SetSourceProperty(source, SourceVector3.Direction, Vector3.Zero);
-            al.SetSourceProperty(source, SourceBoolean.Looping, false);
-            al.SetSourceProperty(source, (SourceBoolean)SourceSpatializeSoft, true);
+            OpenAL.SetSourceProperty(source, ALEnum.ReferenceDistance, 1f);
+            OpenAL.SetSourceProperty(source, ALEnum.MaxDistance, float.PositiveInfinity);
+            OpenAL.SetSourceProperty(source, ALEnum.RolloffFactor, 1f);
+            OpenAL.SetSourceProperty(source, ALEnum.Pitch, 1f);
+            OpenAL.SetSourceProperty(source, ALEnum.Gain, 1f);
+            OpenAL.SetSourceProperty(source, ALEnum.MinGain, 0f);
+            OpenAL.SetSourceProperty(source, ALEnum.MaxGain, 1f);
+            OpenAL.SetSourceProperty(source, ALEnum.ConeInnerAngle, 360f);
+            OpenAL.SetSourceProperty(source, ALEnum.ConeOuterAngle, 360f);
+            OpenAL.SetSourceProperty(source, ALEnum.ConeOuterGain, 0);
+            OpenAL.SetSourceProperty(source, ALEnum.Position, Vector3.Zero);
+            OpenAL.SetSourceProperty(source, ALEnum.Velocity, Vector3.Zero);
+            OpenAL.SetSourceProperty(source, ALEnum.Direction, Vector3.Zero);
+            OpenAL.SetSourceProperty(source, ALEnum.Looping, 0);
+            OpenAL.SetSourceProperty(source, (ALEnum)SourceSpatializeSoft, 1);
             audioStream.Initialize(source);
         }
 
@@ -71,7 +72,7 @@
             set
             {
                 pitch = value;
-                al.SetSourceProperty(source, SourceFloat.Pitch, value);
+                OpenAL.SetSourceProperty(source, ALEnum.Pitch, 0f);
             }
         }
 
@@ -90,11 +91,11 @@
                 gain = value;
                 if (submix != null)
                 {
-                    al.SetSourceProperty(source, SourceFloat.Gain, value * submix.Gain);
+                    OpenAL.SetSourceProperty(source, ALEnum.Gain, value * submix.Gain);
                 }
                 else
                 {
-                    al.SetSourceProperty(source, SourceFloat.Gain, value);
+                    OpenAL.SetSourceProperty(source, ALEnum.Gain, value);
                 }
             }
         }
@@ -126,27 +127,27 @@
         {
             if (Emitter != null)
             {
-                al.SetSourceProperty(source, SourceFloat.ReferenceDistance, Emitter.ReferenceDistance);
-                al.SetSourceProperty(source, SourceFloat.MaxDistance, Emitter.MaxDistance);
-                al.SetSourceProperty(source, SourceFloat.RolloffFactor, Emitter.RolloffFactor);
-                al.SetSourceProperty(source, SourceFloat.MinGain, Emitter.MinGain);
-                al.SetSourceProperty(source, SourceFloat.MaxGain, Emitter.MaxGain);
-                al.SetSourceProperty(source, SourceFloat.ConeInnerAngle, Emitter.ConeInnerAngle);
-                al.SetSourceProperty(source, SourceFloat.ConeOuterAngle, Emitter.ConeOuterAngle);
-                al.SetSourceProperty(source, SourceFloat.ConeOuterGain, Emitter.ConeOuterGain);
-                al.SetSourceProperty(source, SourceVector3.Position, Emitter.Position);
-                al.SetSourceProperty(source, SourceVector3.Velocity, Emitter.Velocity);
-                al.SetSourceProperty(source, SourceVector3.Direction, Emitter.Direction);
+                OpenAL.SetSourceProperty(source, ALEnum.ReferenceDistance, Emitter.ReferenceDistance);
+                OpenAL.SetSourceProperty(source, ALEnum.MaxDistance, Emitter.MaxDistance);
+                OpenAL.SetSourceProperty(source, ALEnum.RolloffFactor, Emitter.RolloffFactor);
+                OpenAL.SetSourceProperty(source, ALEnum.MinGain, Emitter.MinGain);
+                OpenAL.SetSourceProperty(source, ALEnum.MaxGain, Emitter.MaxGain);
+                OpenAL.SetSourceProperty(source, ALEnum.ConeInnerAngle, Emitter.ConeInnerAngle);
+                OpenAL.SetSourceProperty(source, ALEnum.ConeOuterAngle, Emitter.ConeOuterAngle);
+                OpenAL.SetSourceProperty(source, ALEnum.ConeOuterGain, Emitter.ConeOuterGain);
+                OpenAL.SetSourceProperty(source, ALEnum.Position, Emitter.Position);
+                OpenAL.SetSourceProperty(source, ALEnum.Velocity, Emitter.Velocity);
+                OpenAL.SetSourceProperty(source, ALEnum.Direction, Emitter.Direction);
             }
 
-            al.GetSourceProperty(source, GetSourceInteger.SourceState, out int stateValue);
-            var newState = (SourceState)stateValue;
+            OpenAL.GetBufferProperty(source, ALEnum.SourceState, out int stateValue);
+            var newState = stateValue;
             if (newState != state)
             {
                 state = newState;
                 OnStateChanged?.Invoke(Convert(state));
             }
-            if (state == SourceState.Playing)
+            if (state == (int)ALEnum.Playing)
             {
                 stream.Update(source);
             }
@@ -154,40 +155,40 @@
 
         public void Play()
         {
-            al.SourcePlay(source);
+            OpenAL.SourcePlay(source);
             OnPlay?.Invoke();
         }
 
         public void Stop()
         {
-            al.SourceStop(source);
+            OpenAL.SourceStop(source);
             stream.Reset();
             OnStop?.Invoke();
         }
 
         public void Pause()
         {
-            al.SourcePause(source);
+            OpenAL.SourcePause(source);
             OnPause?.Invoke();
         }
 
         public void Rewind()
         {
-            al.SourceRewind(source);
+            OpenAL.SourceRewind(source);
             stream.Reset();
             OnRewind?.Invoke();
         }
 
         private void Submix_GainChanged(float submixGain)
         {
-            al.SetSourceProperty(source, SourceFloat.Gain, gain * submixGain);
+            OpenAL.SetSourceProperty(source, ALEnum.Gain, gain * submixGain);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                al.DeleteBuffer(source);
+                OpenAL.DeleteBuffers(1, ref source);
                 disposedValue = true;
             }
         }

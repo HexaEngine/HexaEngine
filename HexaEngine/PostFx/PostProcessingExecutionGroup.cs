@@ -3,17 +3,27 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
 
-    public class PostProcessingExecutionGroup(bool isDynamicGroup, bool isFirst, bool isLastGroup) : IDisposable
+    public class PostProcessingExecutionGroup : IDisposable
     {
-        private bool isDynamicGroup = isDynamicGroup;
-        private bool isFirst = isFirst;
-        private bool isLastGroup = isLastGroup;
-        private ICommandList? commandList;
-        private PostProcessingExecutionGroup next;
+        private bool isDynamicGroup;
+        private bool isFirst;
+        private bool isLastGroup;
+        private readonly ICommandBuffer commandBuffer = null!;
+        private PostProcessingExecutionGroup next = null!;
+        private bool isDirty = true;
 
         public List<IPostFx> Passes = [];
 
-        public ICommandList? CommandList => commandList;
+        public PostProcessingExecutionGroup(IGraphicsDevice device, bool isDynamicGroup, bool isFirst, bool isLastGroup)
+        {
+            this.isDynamicGroup = isDynamicGroup;
+            this.isFirst = isFirst;
+            this.isLastGroup = isLastGroup;
+            if (!isDynamicGroup)
+            {
+                commandBuffer = device.CreateCommandBuffer();
+            }
+        }
 
         public bool IsFirst { get => isFirst; set => isFirst = value; }
 
@@ -23,18 +33,24 @@
 
         public PostProcessingExecutionGroup Next { get => next; set => next = value; }
 
-        public ICommandList Record(IGraphicsContext context, GraphResourceBuilder creator)
+        public void Record(GraphResourceBuilder creator)
         {
             if (isDynamicGroup)
             {
                 throw new InvalidOperationException($"Cannot record a dynamic group, that contains conditional render code.");
             }
 
-            context.ClearState();
+            if (!isDirty)
+            {
+                return;
+            }
 
-            Draw(context, creator);
+            commandBuffer.Begin();
 
-            return context.FinishCommandList(true);
+            Draw(commandBuffer, creator);
+
+            commandBuffer.End();
+            isDirty = false;
         }
 
         public void SetupInputOutputs(PostProcessingContext postContext)
@@ -62,7 +78,7 @@
 
                 if ((flags & PostFxFlags.NoInput) == 0 && (flags & PostFxFlags.ComposeTarget) == 0)
                 {
-                    effect.SetInput(postContext.Previous.SRV, postContext.Previous);
+                    effect.SetInput(postContext.Previous.SRV!, postContext.Previous);
                 }
 
                 if ((flags & PostFxFlags.NoOutput) == 0 && (flags & PostFxFlags.Compose) == 0)
@@ -75,7 +91,7 @@
                     }
                     else
                     {
-                        effect.SetOutput(buffer.RTV, buffer, buffer.Viewport);
+                        effect.SetOutput(buffer.RTV!, buffer, buffer.Viewport);
                     }
 
                     bool skipSwap = false;
@@ -118,7 +134,7 @@
             }
         }
 
-        public void Execute(IGraphicsContext context, IGraphicsContext deferredContext, GraphResourceBuilder creator)
+        public void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (isDynamicGroup)
             {
@@ -126,22 +142,21 @@
             }
             else
             {
-                commandList ??= Record(deferredContext, creator);
-                context.ExecuteCommandList(commandList, false);
+                Record(creator);
+                context.ExecuteCommandBuffer(commandBuffer);
             }
         }
 
         public void Invalidate()
         {
-            commandList?.Dispose();
-            commandList = null;
+            isDirty = true;
         }
 
         public void Dispose()
         {
-            commandList?.Dispose();
-            commandList = null;
+            GC.SuppressFinalize(this);
             Passes.Clear();
+            commandBuffer.Dispose();
         }
     }
 }

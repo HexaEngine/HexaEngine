@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Unsafes;
+    using Hexa.NET.Utilities;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -22,5 +22,30 @@
         /// Occurs when the device child is disposed.
         /// </summary>
         event EventHandler? OnDisposed;
+    }
+
+    public static class IDeviceChildExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public static unsafe T* GetAs<T>(this IDeviceChild? child) where T : unmanaged
+        {
+            if (child == null)
+            {
+                return null;
+            }
+
+            return (T*)child.NativePointer;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public static unsafe nint GetPointer(this IDeviceChild? child)
+        {
+            if (child == null)
+            {
+                return 0;
+            }
+
+            return child.NativePointer;
+        }
     }
 }

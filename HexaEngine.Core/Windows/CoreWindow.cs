@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.SDL2;
+    using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Threading;
-    using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System;
 
     public abstract class CoreWindow : SdlWindow, ICoreWindow
@@ -14,26 +14,26 @@
         /// <summary>
         /// Creates a new instance of the <see cref="CoreWindow"/> class.
         /// </summary>
-        public CoreWindow(WindowFlags flags = WindowFlags.Resizable) : base(flags)
+        public CoreWindow(SDLWindowFlags flags = SDLWindowFlags.Resizable) : base(flags)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the <see cref="CoreWindow"/> class.
         /// </summary>
-        public CoreWindow(int x, int y, int width, int height, WindowFlags flags = WindowFlags.Resizable) : base(x, y, width, height, flags)
+        public CoreWindow(int x, int y, int width, int height, SDLWindowFlags flags = SDLWindowFlags.Resizable) : base(x, y, width, height, flags)
         {
         }
 
-        public IThreadDispatcher Dispatcher { get; private set; }
+        public IThreadDispatcher Dispatcher { get; private set; } = null!;
 
-        public IAudioDevice AudioDevice { get; private set; }
+        public IAudioDevice AudioDevice { get; private set; } = null!;
 
-        public IGraphicsDevice GraphicsDevice { get; private set; }
+        public IGraphicsDevice GraphicsDevice { get; private set; } = null!;
 
-        public IGraphicsContext GraphicsContext { get; private set; }
+        public IGraphicsContext GraphicsContext { get; private set; } = null!;
 
-        public ISwapChain SwapChain { get; private set; }
+        public ISwapChain SwapChain { get; private set; } = null!;
 
         public abstract Viewport RenderViewport { get; }
 

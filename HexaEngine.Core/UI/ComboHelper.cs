@@ -81,7 +81,7 @@
                 return;
             }
 
-            values = Enum.GetValues(type).Cast<object>().ToArray();
+            values = type.GetEnumValuesAsUnderlyingType().Cast<object>().ToArray();
             names = Enum.GetNames(type);
             ComboEnumHelper.values.Add(type, values);
             ComboEnumHelper.names.Add(type, names);

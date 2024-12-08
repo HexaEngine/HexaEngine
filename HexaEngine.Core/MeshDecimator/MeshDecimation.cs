@@ -30,8 +30,6 @@ using HexaEngine.Core.MeshDecimator.Algorithms;
 
 namespace HexaEngine.Core.MeshDecimator
 {
-    #region Algorithm
-
     /// <summary>
     /// The decimation algorithms.
     /// </summary>
@@ -48,17 +46,11 @@ namespace HexaEngine.Core.MeshDecimator
         FastQuadricMesh
     }
 
-    #endregion
-
     /// <summary>
     /// The mesh decimation API.
     /// </summary>
     public static class MeshDecimation
     {
-        #region Public Methods
-
-        #region Create Algorithm
-
         /// <summary>
         /// Creates a specific decimation algorithm.
         /// </summary>
@@ -73,10 +65,6 @@ namespace HexaEngine.Core.MeshDecimator
             };
             return alg;
         }
-
-        #endregion
-
-        #region Decimate Mesh
 
         /// <summary>
         /// Decimates a mesh.
@@ -137,10 +125,6 @@ namespace HexaEngine.Core.MeshDecimator
             return algorithm.ToMesh();
         }
 
-        #endregion
-
-        #region Decimate Mesh Lossless
-
         /// <summary>
         /// Decimates a mesh without losing any quality.
         /// </summary>
@@ -187,9 +171,5 @@ namespace HexaEngine.Core.MeshDecimator
             algorithm.DecimateMeshLossless();
             return algorithm.ToMesh();
         }
-
-        #endregion
-
-        #endregion
     }
 }

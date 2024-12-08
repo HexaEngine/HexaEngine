@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Profiling;
 
     public class RenderGraphExecuter
     {
@@ -40,7 +40,15 @@
                 pass.Init(resourceCreator, profiler);
                 resourceCreator.Container = null;
             }
+
             resourceCreator.CreateResources();
+
+            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            {
+                var idx = renderGraph.SortedNodeIndices[i];
+                var pass = renderPasses[idx];
+                pass.Prepare(resourceCreator);
+            }
         }
 
         public void TriggerOneHit()
@@ -61,6 +69,7 @@
             }
         }
 
+        [Profiling.Profile]
         public void Execute(IGraphicsContext context, ICPUProfiler? profiler)
         {
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)

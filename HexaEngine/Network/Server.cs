@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Network
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Network.Protocol;
     using System.Net;
 
@@ -8,7 +8,7 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Server));
         private readonly HexaProtoServer server;
-        private Task acceptTask;
+        private Task acceptTask = null!;
         private bool running = true;
         private readonly List<ServerClientHandler> handlers = [];
         private readonly CancellationTokenSource acceptTaskCancellation = new();

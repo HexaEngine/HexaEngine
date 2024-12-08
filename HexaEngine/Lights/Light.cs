@@ -1,16 +1,19 @@
 ﻿namespace HexaEngine.Lights
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Components;
     using HexaEngine.Configuration;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
     using System.Numerics;
 
     public abstract class Light : LightSource
     {
+        protected EventHandlers<Light, IShaderResourceView?> lightShadowMapChangedHandlers = new();
+
         private float range = 50;
         private bool shadowMapEnable;
         private ShadowResolution shadowMapResolution;
@@ -24,7 +27,7 @@
         private float contactShadowsMaxRayDistance;
         private float contactShadowsMaxDepthDistance;
         private bool volumetricsEnable;
-        private float volumetricsMultiplier;
+        private float volumetricsMultiplier = 1.0f;
 
         public Light()
         {
@@ -127,13 +130,19 @@
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Enable")]
-        public bool VolumetricsEnable { get => volumetricsEnable; set => volumetricsEnable = value; }
+        public bool VolumetricsEnable { get => volumetricsEnable; set => SetAndNotifyWithEqualsTest(ref volumetricsEnable, value); }
 
         [EditorCategory("Volumetrics")]
         [EditorProperty("Multiplier")]
-        public float VolumetricsMultiplier { get => volumetricsMultiplier; set => volumetricsMultiplier = value; }
+        public float VolumetricsMultiplier { get => volumetricsMultiplier; set => SetAndNotifyWithEqualsTest(ref volumetricsMultiplier, value); }
 
         #endregion Volumetrics
+
+        public event EventHandler<Light, IShaderResourceView?> ShadowMapChanged
+        {
+            add => lightShadowMapChangedHandlers.AddHandler(value);
+            remove => lightShadowMapChangedHandlers.RemoveHandler(value);
+        }
 
         public abstract bool HasShadowMap { get; }
 
@@ -154,10 +163,28 @@
 
         public abstract bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas);
 
-        public abstract void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas);
+        public void CreateShadowMap(ShadowAtlas atlas)
+        {
+            OnCreateShadowMap(atlas);
+            lightShadowMapChangedHandlers?.Invoke(this, GetShadowMap());
+        }
 
-        public abstract void DestroyShadowMap();
+        protected abstract void OnCreateShadowMap(ShadowAtlas atlas);
+
+        public void DestroyShadowMap()
+        {
+            OnDestroyShadowMap();
+            lightShadowMapChangedHandlers?.Invoke(this, null);
+        }
+
+        protected abstract void OnDestroyShadowMap();
 
         public uint GetQueueIndex() => QueueIndex;
+
+        public override void Uninitialize()
+        {
+            base.Uninitialize();
+            lightShadowMapChangedHandlers.Clear();
+        }
     }
 }

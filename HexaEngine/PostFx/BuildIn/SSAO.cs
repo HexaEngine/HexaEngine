@@ -2,13 +2,13 @@
 
 namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using System.Numerics;
 
@@ -22,12 +22,7 @@ namespace HexaEngine.PostFx.BuildIn
         private Texture2D intermediateTex;
         private GaussianBlur blur;
 
-        private ISamplerState samplerLinear;
-
         private ResourceRef<Texture2D> ao;
-        private ResourceRef<DepthStencil> depth;
-        private ResourceRef<GBuffer> gbuffer;
-        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         private Viewport viewport;
 
@@ -97,9 +92,6 @@ namespace HexaEngine.PostFx.BuildIn
             this.device = device;
 
             ao = creator.GetTexture2D("#AOBuffer");
-            depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            gbuffer = creator.GetGBuffer("GBuffer");
 
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -132,7 +124,6 @@ namespace HexaEngine.PostFx.BuildIn
                 noiseTex = new(description, initialData);
             }
 
-            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
 
@@ -156,25 +147,21 @@ namespace HexaEngine.PostFx.BuildIn
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("noiseTex", noiseTex);
+            pipeline.Bindings.SetCBV("SSAOParams", paramsBuffer);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
             context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
-            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
-            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
             context.SetRenderTarget(intermediateTex.RTV, null);
             context.SetViewport(viewport);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
-            context.PSSetSampler(0, samplerLinear);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            ZeroMemory(srvs, sizeof(nint) * 3);
-            ZeroMemory(cbs, sizeof(nint) * 2);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
+            context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
             blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
@@ -187,7 +174,6 @@ namespace HexaEngine.PostFx.BuildIn
             noiseTex.Dispose();
             intermediateTex.Dispose();
             blur.Dispose();
-            samplerLinear.Dispose();
         }
     }
 }

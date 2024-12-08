@@ -148,7 +148,7 @@
 
             image.data = AllocT<byte>(image.byteCount);
             Span<byte> span = new(image.data, image.byteCount);
-            src.Read(span);
+            src.ReadExactly(span);
             return image;
         }
 

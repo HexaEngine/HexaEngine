@@ -29,7 +29,7 @@
         { get => isActive; set { listener.IsActive = value; isActive = value; } }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         public void Awake()
         {

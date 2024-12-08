@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.UI;
     using System;
     using System.Numerics;
@@ -23,7 +23,7 @@
         BottomRight = 1 << 6,
     }
 
-    public sealed class ProgressModal : Modal, IDisposable, IProgress<float>
+    public sealed class ProgressModal : Modal, IProgress<float>
     {
         private readonly string title;
         private readonly string message;
@@ -83,7 +83,6 @@
             }
             if ((progressFlags & ProgressFlags.NoModal) != 0)
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 30);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
                 ImGui.PushStyleColor(ImGuiCol.WindowBg, 0xff1c1c1c);
@@ -92,21 +91,17 @@
                     DrawContent();
                     ImGui.End();
                 }
-                ImGui.PopStyleColor();
-                ImGui.PopStyleColor();
-                ImGui.PopStyleVar();
+                ImGui.PopStyleColor(2);
                 ImGui.PopStyleVar();
             }
             else
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, 30);
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 30);
                 ImGui.PushStyleColor(ImGuiCol.Border, 0xff4c4c4c);
 
                 base.Draw();
 
                 ImGui.PopStyleColor();
-                ImGui.PopStyleVar();
                 ImGui.PopStyleVar();
             }
         }
@@ -124,7 +119,7 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else if ((progressFlags & ProgressFlags.BottomLeft) != 0)
             {
@@ -132,13 +127,13 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += size.Y - windowSize.Y - offsetY;
                 pos.X += offsetX;
-                ImGui.SetWindowPos(winPos = pos);
+                ImGuiP.SetWindowPos(winPos = pos);
             }
             else
             {
                 Vector2 mainViewportPos = mainViewport.Pos;
                 var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
-                ImGui.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
+                ImGuiP.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
             }
 
             if (type == ProgressType.Spinner)
@@ -150,7 +145,7 @@
             if (type == ProgressType.Bar)
             {
                 const float padding = 5;
-                var win = ImGui.GetCurrentWindow();
+                var win = ImGuiP.GetCurrentWindow();
                 var pos = win.OuterRectClipped.Min + new Vector2(padding);
                 var drawList = ImGui.GetWindowDrawList();
                 drawList.PushClipRect(win.OuterRectClipped.Min, win.OuterRectClipped.Max);
@@ -167,14 +162,14 @@
             ImGui.Text(message);
         }
 
+        public void Report(float value)
+        {
+            progress = MathUtil.Clamp01(value);
+        }
+
         public void Dispose()
         {
             Close();
-        }
-
-        public void Report(float value)
-        {
-            progress = value;
         }
     }
 }

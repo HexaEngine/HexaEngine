@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -506,12 +506,7 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
-		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
-		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.21.0" />
-		<PackageReference Include="Silk.NET.Vulkan" Version="2.21.0" />
-	</ItemGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />

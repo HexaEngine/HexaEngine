@@ -14,7 +14,7 @@
 
         public Prefab()
         {
-            root = new(null);
+            root = new(null!);
         }
 
         public Prefab(SceneRootNode root)

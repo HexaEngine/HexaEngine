@@ -4,7 +4,7 @@
 
     public static class Input
     {
-        public static IInputManager Current { get; internal set; }
+        public static IInputManager Current { get; internal set; } = null!;
 
         public static float GetAxis(string name)
         {

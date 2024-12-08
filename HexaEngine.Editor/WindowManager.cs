@@ -1,14 +1,19 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Widgets;
+    using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.PoseEditor;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Profiling;
+    using HexaEngine.Windows;
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
@@ -22,6 +27,8 @@
         static WindowManager()
         {
             categories.Add(Default);
+
+            Register<OutputWidget>();
 
             Register<PreferencesWidget>();
             Register<PipelineWidget>();
@@ -49,6 +56,9 @@
             Register<NativeMemoryWidget>();
             Register<InputManagerWindow>();
             Register<PackageManagerWidget>();
+            Register<ErrorListWidget>();
+
+            Register<GraphicsDebugger>();
 
             Register<BakeWindow>();
         }
@@ -56,6 +66,8 @@
         public static IReadOnlyList<IEditorWindow> Windows => windows;
 
         public static IReadOnlyList<EditorWindowCategory> Categories => categories;
+
+        public static bool BlockInput { get; internal set; }
 
         public static EditorWindowCategory? GetCategory(string categoryName)
         {
@@ -182,6 +194,14 @@
             category.Add(window);
         }
 
+        public static void ShowWindow<T>() where T : IEditorWindow, new()
+        {
+            IEditorWindow window = new T();
+            window.Shown += Shown;
+            window.Closed += ClosedDestroy;
+            windows.Add(window);
+        }
+
         public static void Register(IEditorWindow window)
         {
             window.Shown += Shown;
@@ -253,6 +273,11 @@
         {
         }
 
+        private static void ClosedDestroy(IEditorWindow window)
+        {
+            windows.Remove(window);
+        }
+
         private static void Shown(IEditorWindow window)
         {
             if (!window.Initialized && device != null)
@@ -274,8 +299,11 @@
             }
         }
 
+        [Profiling.Profile]
         public static void Draw(IGraphicsContext context)
         {
+            ImGui.BeginDisabled(BlockInput);
+
             for (int i = 0; i < windows.Count; i++)
             {
                 var window = windows[i];
@@ -285,9 +313,18 @@
                     continue;
                 }
 
-                using (CPUProfiler2.Global.BeginBlock(window.Name))
-                    window.DrawWindow(context);
+                CPUProfiler.Global.Begin(window.Name);
+                window.DrawWindow(context);
+                CPUProfiler.Global.End(window.Name);
             }
+
+            ImGui.EndDisabled();
+
+            ImGuiManager.PushFont("WidgetsFont");
+            DialogManager.Draw();
+            MessageBoxes.Draw();
+            AnimationManager.Tick();
+            ImGuiManager.PopFont();
         }
 
         public static unsafe void DrawMenu()

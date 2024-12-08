@@ -2,17 +2,14 @@
 
 namespace HexaEngine.Core.UI
 {
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public static unsafe class ImGuiCurveEditor
     {
-        private static float NODE_SLOT_RADIUS = 4.0f;
-
-        private static Vector2 node_pos;
-        private static int last_node_id;
+        private const float NODE_SLOT_RADIUS = 4.0f;
 
         public enum CurveEditorFlags
         {
@@ -53,10 +50,10 @@ namespace HexaEngine.Core.UI
             size.X = size.X < 0 ? ImGui.CalcItemWidth() + (style.FramePadding.X * 2) : size.X;
             size.Y = size.Y < 0 ? HEIGHT : size.Y;
 
-            ImGuiWindow* parent_window = ImGui.GetCurrentWindow();
+            ImGuiWindow* parent_window = ImGuiP.GetCurrentWindow();
             ImDrawList* DrawList = ImGui.GetWindowDrawList();
 
-            int id = ImGui.ImGuiWindowGetID(parent_window, label, (byte*)null);
+            uint id = ImGuiP.GetID(parent_window, label, (byte*)null);
             if (!ImGui.BeginChild(id, size, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
                 ImGui.EndChild();
@@ -69,7 +66,7 @@ namespace HexaEngine.Core.UI
                 *newCount = pointsCount;
             }
 
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems != 0)
             {
                 ImGui.EndChild();
@@ -187,7 +184,7 @@ namespace HexaEngine.Core.UI
                 window->StateStorage.SetFloat((int)StorageValues.WIDTH, width);
                 window->StateStorage.SetFloat((int)StorageValues.HEIGHT, height);
             }
-            if (ImGui.IsMouseReleased((ImGuiMouseButton)1))
+            if (ImGuiP.IsMouseReleased((ImGuiMouseButton)1))
             {
                 window->StateStorage.SetBool((int)StorageValues.IS_PANNING, false);
             }
@@ -258,7 +255,7 @@ namespace HexaEngine.Core.UI
                     }
 
                     bool changed = false;
-                    if (ImGui.IsItemActive() && ImGui.IsMouseClicked(0))
+                    if (ImGui.IsItemActive() && ImGuiP.IsMouseClicked(0))
                     {
                         window->StateStorage.SetFloat((int)StorageValues.POINT_START_X, pos.X);
                         window->StateStorage.SetFloat((int)StorageValues.POINT_START_Y, pos.Y);
@@ -398,7 +395,7 @@ namespace HexaEngine.Core.UI
 
             ImGui.InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
-            if (ImGui.IsItemActive() && ImGui.IsMouseDoubleClicked(0) && newCount != null)
+            if (ImGui.IsItemActive() && ImGuiP.IsMouseDoubleClicked(0) && newCount != null)
             {
                 Vector2 mp = ImGui.GetMousePos();
                 Vector2 new_p = invTransform(mp);
@@ -433,7 +430,7 @@ namespace HexaEngine.Core.UI
                 }
             }
 
-            if (hovered_idx >= 0 && ImGui.IsMouseDoubleClicked(0) && (newCount != null) && pointsCount > 2)
+            if (hovered_idx >= 0 && ImGuiP.IsMouseDoubleClicked(0) && (newCount != null) && pointsCount > 2)
             {
                 Vector2* points = (Vector2*)values;
                 --*newCount;
@@ -456,7 +453,7 @@ namespace HexaEngine.Core.UI
             }
 
             ImGui.EndChild();
-            ImGui.RenderText(new Vector2(frame_bb.Max.X + style.ItemInnerSpacing.X, inner_bb.Min.Y), label, (byte*)null, true);
+            ImGuiP.RenderText(new Vector2(frame_bb.Max.X + style.ItemInnerSpacing.X, inner_bb.Min.Y), label, (byte*)null, true);
             return changed_idx;
         }
     }

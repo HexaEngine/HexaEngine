@@ -7,7 +7,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Numerics;
     using System.Reflection;
 
     /// <summary>
@@ -35,7 +34,7 @@
             } while (iteratingType != null);
 
             var props = type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance)
-                .OrderBy(x => orderList.IndexOf(x.DeclaringType))
+                .OrderBy(x => orderList.IndexOf(x.DeclaringType!))
                 .ToArray();
 
             return props;
@@ -52,7 +51,7 @@
             } while (iteratingType != null);
 
             var props = type.GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance)
-                .OrderBy(x => orderList.IndexOf(x.DeclaringType))
+                .OrderBy(x => orderList.IndexOf(x.DeclaringType!))
                 .ToArray();
 
             return props;

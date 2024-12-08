@@ -25,7 +25,7 @@
 
         object ICollection.SyncRoot => this;
 
-        object? IList.this[int index] { get => this[index]; set => this[index] = (UIElement)value; }
+        object? IList.this[int index] { get => this[index]; set => this[index] = (UIElement)value!; }
 
         public event EventHandler<UIElement>? ElementAdded;
 
@@ -33,32 +33,78 @@
 
         public void Add(UIElement item)
         {
+            if (item.Parent != null)
+            {
+                throw new InvalidOperationException("The UIElement element already has a parent and cannot be added as a child to another UIElement.");
+            }
             item.Parent = parent;
-            ((ICollection<UIElement>)objects).Add(item);
+            objects.Add(item);
             ElementAdded?.Invoke(this, item);
             parent.AddVisualChild(item);
-            parent.InvalidateArrange();
+            if (parent.IsInitialized && !item.IsInitialized)
+            {
+                item.Initialize();
+            }
+            parent.InvalidateMeasure();
         }
 
         public void Clear()
         {
-            ((ICollection<UIElement>)objects).Clear();
             foreach (var element in objects)
             {
                 parent.RemoveVisualChild(element);
+                element.Uninitialize();
                 element.Parent = null;
                 ElementRemoved?.Invoke(this, element);
             }
+            objects.Clear();
+            parent.InvalidateMeasure();
         }
 
         public void AddRange(UIElement[] items)
         {
-            foreach (var element in items)
+            foreach (var item in items)
             {
-                element.Parent = parent;
-                ElementAdded?.Invoke(this, element);
+                if (item.Parent != null)
+                {
+                    throw new InvalidOperationException("The UIElement element already has a parent and cannot be added as a child to another UIElement.");
+                }
+
+                ElementAdded?.Invoke(this, item);
+                parent.AddVisualChild(item);
+                if (parent.IsInitialized && !item.IsInitialized)
+                {
+                    item.Initialize();
+                }
             }
             objects.AddRange(items);
+            parent.InvalidateMeasure();
+        }
+
+        public bool Remove(UIElement item)
+        {
+            if (objects.Remove(item))
+            {
+                parent.RemoveVisualChild(item);
+                item.Uninitialize();
+                item.Parent = null;
+
+                ElementRemoved?.Invoke(this, item);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void RemoveAt(int index)
+        {
+            var item = objects[index];
+            parent.RemoveVisualChild(item);
+            item.Uninitialize();
+            item.Parent = null;
+
+            objects.RemoveAt(index);
+            ElementRemoved?.Invoke(this, item);
         }
 
         public bool Contains(UIElement item)
@@ -90,22 +136,6 @@
         {
             item.Parent = parent;
             ((IList<UIElement>)objects).Insert(index, item);
-        }
-
-        public bool Remove(UIElement item)
-        {
-            item.Parent = null;
-            var result = ((ICollection<UIElement>)objects).Remove(item);
-            ElementRemoved?.Invoke(this, item);
-            return result;
-        }
-
-        public void RemoveAt(int index)
-        {
-            var obj = objects[index];
-            obj.Parent = null;
-            ((IList<UIElement>)objects).RemoveAt(index);
-            ElementRemoved?.Invoke(this, obj);
         }
 
         public void ForEach(Action<UIElement> p)

@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
-    using HexaEngine.Core.Graphics.Buffers;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.IO.Binary.Meshes.Processing;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Numerics;
-    using HexaEngine.Core.IO.Binary.Meshes;
-    using System.Diagnostics;
 
     public struct GenerationStats
     {

@@ -1,15 +1,15 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Direct3D11;
     using System;
     using System.Text;
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild
     {
         protected IntPtr nativePointer;
+#if DEBUG
         private string? debugName;
-
+#endif
         public static readonly Guid D3DDebugObjectName = new(0x429b8c22, 0x9188, 0x4b0c, 0x87, 0x42, 0xac, 0xb0, 0xbf, 0x85, 0xc2, 0x00);
 
         public virtual string? DebugName
@@ -59,12 +59,12 @@
                         Encoding.UTF8.GetBytes(src, value.Length, pName, byteCount);
                     }
 
-                    child->SetPrivateData(&guid, (uint)Encoding.UTF8.GetByteCount(value), pName).ThrowHResult();
+                    child->SetPrivateData(&guid, (uint)Encoding.UTF8.GetByteCount(value), pName).ThrowIf();
                     Free(pName);
                 }
                 else
                 {
-                    child->SetPrivateData(&guid, 0, null).ThrowHResult();
+                    child->SetPrivateData(&guid, 0, null).ThrowIf();
                 }
 
                 debugName = value;

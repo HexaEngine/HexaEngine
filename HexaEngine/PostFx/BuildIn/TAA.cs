@@ -9,14 +9,14 @@
     [EditorDisplayName("TAA")]
     public class TAA : PostFxBase
     {
+#nullable disable
         private PostFxGraphResourceBuilder creator;
         private IGraphicsPipelineState pipeline;
-        private ISamplerState sampler;
 
         private ConstantBuffer<TAAParams> paramsBuffer;
 
-        private ResourceRef<Texture2D> Velocity;
         private ResourceRef<Texture2D> Previous;
+#nullable restore
 
         private float alpha = 0.1f;
         private float colorBoxSigma = 0.3f;
@@ -91,9 +91,7 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             paramsBuffer = new(CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = creator.GetTexture2D("VelocityBuffer");
             Previous = creator.CreateBuffer("TAA_PREVIOUS_BUFFER", creationFlags: ResourceCreationFlags.None);
 
             Viewport = new(width, height);
@@ -113,42 +111,32 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("previousTex", Previous.Value);
+            pipeline.Bindings.SetCBV("PerFrameCB", paramsBuffer);
+        }
+
         public override unsafe void Draw(IGraphicsContext context)
         {
-            if (Output == null)
-            {
-                return;
-            }
-
-            nint* srvs = stackalloc nint[3];
-            srvs[0] = Input.NativePointer;
-            srvs[1] = Velocity.Value.SRV.NativePointer;
-            srvs[2] = Previous.Value.SRV.NativePointer;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, sampler);
 
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
 
             context.DrawInstanced(4, 1, 0, 0);
 
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
 
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            ZeroMemory(srvs, sizeof(nint) * 3);
-            context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, default);
-            context.CopyResource(Previous.Value, OutputResource);
+            context.CopyResource(Previous.Value!, OutputResource);
         }
 
         protected override void DisposeCore()
         {
             pipeline.Dispose();
-            sampler.Dispose();
             paramsBuffer.Dispose();
             creator.DisposeResource("Previous");
         }

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Text;
 
@@ -136,7 +136,7 @@
 
             for (int i = 0; i < header.Layers; i++)
             {
-                layers.Add(TerrainLayer.Read(stream, header.Encoding, header.Endianness));
+                layers.Add(TerrainLayer.Read(stream, header.Encoding!, header.Endianness));
             }
 
             for (int i = 0; i < header.LayerGroups; i++)

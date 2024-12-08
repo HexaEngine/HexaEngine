@@ -2,14 +2,13 @@
 {
     using Hexa.NET.ImGui;
     using System;
-    using System.Diagnostics;
     using System.Numerics;
 
     public static class ImGuiBufferingBar
     {
         public static unsafe void BufferingBar(string label, float value, Vector2 size, uint backgroundColor, uint foregroundColor)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems == 1)
             {
                 return;
@@ -18,7 +17,7 @@
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             ImGuiContextPtr g = ImGui.GetCurrentContext();
             ImGuiStylePtr style = ImGui.GetStyle();
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             var cursorPos = ImGui.GetCursorPos();
 
@@ -28,8 +27,8 @@
             cursorPos -= window->WindowPadding;
 
             ImRect bb = new() { Min = pos + cursorPos, Max = pos + cursorPos + size };
-            ImGui.ItemSizeRect(bb, style.FramePadding.Y);
-            if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, style.FramePadding.Y);
+            if (!ImGuiP.ItemAdd(bb, id, null, ImGuiItemFlags.None))
             {
                 return;
             }
@@ -64,7 +63,7 @@
     {
         public static unsafe void Spinner(string label, float radius, float thickness, uint color)
         {
-            ImGuiWindow* window = ImGui.GetCurrentWindow();
+            ImGuiWindow* window = ImGuiP.GetCurrentWindow();
             if (window->SkipItems == 1)
             {
                 return;
@@ -73,7 +72,7 @@
             ImDrawList* drawList = ImGui.GetWindowDrawList();
             var g = ImGui.GetCurrentContext();
             var style = ImGui.GetStyle();
-            int id = ImGui.GetID(label);
+            uint id = ImGui.GetID(label);
 
             var cursorPos = ImGui.GetCursorPos();
 
@@ -86,8 +85,8 @@
                 Max = window->DC.CursorPos + cursorPos + size
             };
 
-            ImGui.ItemSizeRect(bb, -1);
-            if (!ImGui.ItemAdd(bb, id, null, ImGuiItemFlags.None))
+            ImGuiP.ItemSize(bb, -1);
+            if (!ImGuiP.ItemAdd(bb, id, null, ImGuiItemFlags.None))
             {
                 return;
             }

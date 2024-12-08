@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Utilities;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Editor.Attributes;
     using Newtonsoft.Json;
 
     public enum ExternalTextEditorType
@@ -48,15 +47,15 @@
 
         public bool SetupDone { get; set; }
 
-        public string ProjectsFolder { get; set; }
+        public string ProjectsFolder { get; set; } = null!;
 
         public int Width { get; set; } = 1280;
 
         public int Height { get; set; } = 720;
 
-        public int X { get; set; } = SdlWindow.WindowPosCentered;
+        public int X { get; set; } = (int)SdlWindow.WindowPosCentered;
 
-        public int Y { get; set; } = SdlWindow.WindowPosCentered;
+        public int Y { get; set; } = (int)SdlWindow.WindowPosCentered;
 
         public float MouseSensitivity { get; set; } = 1;
 
@@ -70,6 +69,8 @@
 
         public static EditorConfig Default { get; } = Load();
 
+        public string? SelectedLayout { get; set; }
+
         public void Save()
         {
             File.WriteAllText(configPath, JsonConvert.SerializeObject(this));
@@ -80,7 +81,7 @@
             EditorConfig config;
             if (File.Exists(configPath))
             {
-                config = JsonConvert.DeserializeObject<EditorConfig>(File.ReadAllText(configPath));
+                config = JsonConvert.DeserializeObject<EditorConfig>(File.ReadAllText(configPath)) ?? new();
             }
             else
             {

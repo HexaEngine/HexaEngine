@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public enum Tonemapper
@@ -204,7 +204,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<ColorGradingParams> paramsBuffer;
-        private ISamplerState samplerState;
         private Texture1D curvesTex;
 #nullable restore
         private float shoulderStrength = 0.2f;
@@ -572,7 +571,6 @@
             GraphicsPipelineStateDesc.DefaultFullscreen
            );
 
-            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             curvesTex = curves.GetTexture(CpuAccessFlags.None);
         }
 
@@ -639,22 +637,21 @@
             }
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("inputTex", Input);
+            pipeline.Bindings.SetSRV("curvesTex", curvesTex);
+            pipeline.Bindings.SetCBV("TonemapParams", paramsBuffer);
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, curvesTex.SRV);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
-            context.PSSetShaderResource(1, null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }
@@ -664,7 +661,6 @@
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();
-            samplerState.Dispose();
             curvesTex.Dispose();
         }
     }

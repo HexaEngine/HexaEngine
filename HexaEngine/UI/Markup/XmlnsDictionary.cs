@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.UI.Markup
 {
+    using HexaEngine.UI.Xaml;
     using System;
     using System.Collections;
     using System.Diagnostics.CodeAnalysis;
-    using HexaEngine.UI.Xaml;
 
     public class XmlnsDictionary : IDictionary<string, string>, IDictionary, IXamlNamespaceResolver
     {

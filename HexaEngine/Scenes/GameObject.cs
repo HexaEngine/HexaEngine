@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
     using HexaEngine.Core.Editor;
-    using HexaEngine.Mathematics;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
 
     public delegate void GameObjectOnEnabledChanged(GameObject gameObject, bool enabled);
 

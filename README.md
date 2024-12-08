@@ -9,6 +9,11 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 ## Community
 - Discord: [https://discord.gg/VawN5d8HMh](https://discord.gg/VawN5d8HMh)
 
+## Sub-Projects/Modules
+- [Hexa.NET.DebugDraw](https://github.com/HexaEngine/Hexa.NET.DebugDraw) A library for drawing basic 3D shapes in immediate-mode.
+- [Hexa.NET.Math](https://github.com/HexaEngine/Hexa.NET.Math) A math library for Game Engines (Vector math to Sky models).
+- [Hexa.NET.Utilities](https://github.com/HexaEngine/Hexa.NET.Utilities) A utility library for working with unmanaged memory and more.
+
 ## Build
 - .NET SDK 8.0
 
@@ -26,7 +31,9 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 | D3D11    | ✅ |
 | D3D12    | 🚧 |
 | Vulkan   | 🚧 |
-| OpenGL   | 🚧 |
+| OpenGL   | ❌ | 
+
+(For more info on OpenGL, see [#81](https://github.com/HexaEngine/HexaEngine/issues/81))
 
 ### Audio Backends
 | API          | Supported          |
@@ -133,7 +140,7 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 - Emitters
 
 ## Screenshots
-- Comming soon
+![image](https://github.com/user-attachments/assets/81428c20-44c6-4fcd-bd4a-b861cecf9851)
 
 # Credits
 - [imgui](https://github.com/ocornut/imgui)

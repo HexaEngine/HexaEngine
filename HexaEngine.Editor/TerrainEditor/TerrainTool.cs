@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Noise;
     using System.Numerics;
 
     public abstract class TerrainTool : IDisposable

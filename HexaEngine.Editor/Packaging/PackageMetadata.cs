@@ -3,16 +3,15 @@
     using HexaEngine.Core.IO;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
     using System.Xml;
 
     public class PackageMetadata
     {
         public const string PackageMetadataFormatVersion = "1.0.0.0";
 
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public Version Version { get; set; }
 
@@ -30,7 +29,7 @@
 
         public string? LicenceUrl { get; set; }
 
-        public string Licence { get; set; }
+        public string Licence { get; set; } = null!;
 
         public string? ReadmeUrl { get; set; }
 

@@ -2,7 +2,7 @@
 {
     public class AnimatorState
     {
-        public IMotion Motion { get; set; }
+        public IMotion Motion { get; set; } = null!;
 
         public float Speed { get; set; }
 

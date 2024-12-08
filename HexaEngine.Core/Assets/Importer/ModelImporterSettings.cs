@@ -5,7 +5,17 @@
 
     public class ModelImporterSettings
     {
-        public PostProcessSteps PostProcessSteps { get; set; } = PostProcessSteps.FlipUVs | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData | PostProcessSteps.FindDegenerates | PostProcessSteps.ImproveCacheLocality | PostProcessSteps.Triangulate | PostProcessSteps.FindInstances | PostProcessSteps.LimitBoneWeights;
+        public PostProcessSteps PostProcessSteps { get; set; } =
+            PostProcessSteps.FlipUVs |
+            PostProcessSteps.CalculateTangentSpace |
+            PostProcessSteps.MakeLeftHanded |
+            PostProcessSteps.FindInvalidData |
+            PostProcessSteps.FindDegenerates |
+            PostProcessSteps.ImproveCacheLocality |
+            PostProcessSteps.Triangulate |
+            PostProcessSteps.FindInstances |
+            PostProcessSteps.LimitBoneWeights |
+            PostProcessSteps.RemoveRedundantMaterials;
 
         [JsonIgnore]
         [EditorProperty("Optimize Meshes")]

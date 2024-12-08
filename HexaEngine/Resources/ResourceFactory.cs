@@ -68,7 +68,7 @@
                 var instance = CreateInstance(resourceManager, id, instanceData);
                 if (instance == null)
                 {
-                    return instance;
+                    return instance!;
                 }
 
                 instances.TryAdd(id, instance);
@@ -110,7 +110,7 @@
                     instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
                     {
-                        return instance;
+                        return instance!;
                     }
 
                     instances.TryAdd(id, instance);
@@ -187,7 +187,7 @@
                     instance = CreateInstance(resourceManager, id, instanceData);
                     if (instance == null)
                     {
-                        return instance;
+                        return instance!;
                     }
 
                     var result = instances.TryAdd(id, instance);

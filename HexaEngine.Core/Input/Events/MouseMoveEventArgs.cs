@@ -1,4 +1,7 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿using Hexa.NET.Mathematics;
+using System.Numerics;
+
+namespace HexaEngine.Core.Input.Events
 {
     /// <summary>
     /// Provides data for mouse motion events.
@@ -30,21 +33,26 @@
         /// <summary>
         /// Gets the X coordinate of the mouse cursor.
         /// </summary>
-        public float X { get; internal set; }
+        public float X { get; set; }
 
         /// <summary>
         /// Gets the Y coordinate of the mouse cursor.
         /// </summary>
-        public float Y { get; internal set; }
+        public float Y { get; set; }
 
         /// <summary>
         /// Gets the relative X motion of the mouse cursor.
         /// </summary>
-        public float RelX { get; internal set; }
+        public float RelX { get; set; }
 
         /// <summary>
         /// Gets the relative Y motion of the mouse cursor.
         /// </summary>
-        public float RelY { get; internal set; }
+        public float RelY { get; set; }
+
+        /// <summary>
+        /// Gets the mouse position.
+        /// </summary>
+        public Point2 Position => new((int)X, (int)Y);
     }
 }

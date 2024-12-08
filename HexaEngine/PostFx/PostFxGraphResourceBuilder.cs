@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostFxGraphResourceBuilder : IGraphResourceBuilder
@@ -181,9 +181,9 @@
             return resourceBuilder.TryGetResource(name, out resourceRef);
         }
 
-        public void UpdateComputePipeline(string name, ComputePipelineDesc desc)
+        public void UpdateComputePipelineState(string name, ComputePipelineDesc desc)
         {
-            resourceBuilder.UpdateComputePipeline(name, desc);
+            resourceBuilder.UpdateComputePipelineState(name, desc);
         }
 
         public void UpdateDepthMipChain(string name, DepthStencilBufferDescription description)
@@ -256,14 +256,14 @@
             resourceBuilder.UpdateResource(name, desc, constructor, group);
         }
 
-        public ResourceRef<IComputePipeline> CreateComputePipeline(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return resourceBuilder.CreateComputePipeline(description, flags);
+            return resourceBuilder.CreateComputePipelineState(description, flags);
         }
 
-        public ResourceRef<IComputePipeline> CreateComputePipeline(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
         {
-            return resourceBuilder.CreateComputePipeline(name, description, flags);
+            return resourceBuilder.CreateComputePipelineState(name, description, flags);
         }
 
         public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged

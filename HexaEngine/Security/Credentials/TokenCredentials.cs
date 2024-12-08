@@ -6,7 +6,7 @@
 
     public class TokenCredentials : DisposableBase, ICredentials
     {
-        public SecureString Token { get; set; }
+        public SecureString Token { get; set; } = null!;
 
         public CredentialType Type => CredentialType.Token;
 

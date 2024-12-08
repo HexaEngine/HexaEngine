@@ -31,7 +31,7 @@
 
         public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-            Vector4 val = (Vector4)value;
+            Vector4 val = (Vector4)value!;
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

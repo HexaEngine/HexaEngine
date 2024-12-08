@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -394,17 +394,17 @@
 
         nint IDepthStencilView.NativePointer => dsv.NativePointer;
 
-        UnorderedAccessViewDescription IUnorderedAccessView.Description => uav.Description;
+        UnorderedAccessViewDescription IUnorderedAccessView.Description => uav!.Description;
 
-        string? IUnorderedAccessView.DebugName { get => uav.DebugName; set => uav.DebugName = value; }
+        string? IUnorderedAccessView.DebugName { get => uav!.DebugName; set => uav!.DebugName = value; }
 
-        nint IUnorderedAccessView.NativePointer => uav.NativePointer;
+        nint IUnorderedAccessView.NativePointer => uav!.NativePointer;
 
-        ShaderResourceViewDescription IShaderResourceView.Description => srv.Description;
+        ShaderResourceViewDescription IShaderResourceView.Description => srv!.Description;
 
-        string? IShaderResourceView.DebugName { get => srv.DebugName; set => srv.DebugName = value; }
+        string? IShaderResourceView.DebugName { get => srv!.DebugName; set => srv!.DebugName = value; }
 
-        nint IShaderResourceView.NativePointer => srv.NativePointer;
+        nint IShaderResourceView.NativePointer => srv!.NativePointer;
 
         private static Format GetDepthResourceFormat(Format depthFormat)
         {

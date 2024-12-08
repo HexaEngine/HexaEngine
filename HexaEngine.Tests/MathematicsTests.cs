@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Tests
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System;
     using System.Numerics;
-    using System.Runtime.Intrinsics.X86;
-    using System.Runtime.Intrinsics;
 
     public class MathematicsTests
     {

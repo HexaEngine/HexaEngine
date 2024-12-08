@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
     public unsafe class D3D11Buffer : DeviceChildBase, IBuffer
@@ -12,7 +10,7 @@
         internal D3D11Buffer(ComPtr<ID3D11Buffer> buffer, BufferDescription desc)
         {
             this.buffer = buffer;
-            nativePointer = new(buffer);
+            nativePointer = new(buffer.Handle);
             Description = desc;
             Length = desc.ByteWidth;
         }

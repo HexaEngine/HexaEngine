@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Assets
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.IO;
 
     public static class ArtifactDatabase

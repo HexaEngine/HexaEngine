@@ -1,5 +1,5 @@
 ﻿#nullable disable
-
+/*
 namespace HexaEngine.PostFx.BuildIn
 {
     using HexaEngine.Core.Graphics;
@@ -153,3 +153,4 @@ namespace HexaEngine.PostFx.BuildIn
         }
     }
 }
+*/

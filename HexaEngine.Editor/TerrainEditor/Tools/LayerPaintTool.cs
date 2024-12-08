@@ -1,34 +1,32 @@
 ﻿namespace HexaEngine.Editor.TerrainEditor.Tools
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.MaterialEditor;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System.Numerics;
 
     public class LayerPaintTool : TerrainTool
     {
-        private IGraphicsPipelineState maskEdit;
+        private IGraphicsPipelineState maskEdit = null!;
 
-        private IComputePipeline occupationCheckPipeline;
-        private IComputePipeline channelRemapPipeline;
+        private IComputePipelineState occupationCheckPipeline = null!;
+        private IComputePipelineState channelRemapPipeline = null!;
 
-        private Texture2D maskTexBuffer;
-        private ISamplerState maskSampler;
+        private Texture2D maskTexBuffer = null!;
+        private ISamplerState maskSampler = null!;
 
-        private ConstantBuffer<CBBrush> brushBuffer;
-        private ConstantBuffer<CBColorMask> maskBuffer;
-        private ConstantBuffer<CBChannelRemap> remapBuffer;
+        private ConstantBuffer<CBBrush> brushBuffer = null!;
+        private ConstantBuffer<CBColorMask> maskBuffer = null!;
+        private ConstantBuffer<CBChannelRemap> remapBuffer = null!;
 
-        private StructuredUavBuffer<UPoint4> channelBuffer;
+        private StructuredUavBuffer<UPoint4> channelBuffer = null!;
 
         private int selectedLayerIndex;
 
@@ -58,12 +56,12 @@
                 Topology = PrimitiveTopology.TriangleStrip,
             });
 
-            occupationCheckPipeline = device.CreateComputePipeline(new()
+            occupationCheckPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "tools/terrain/mask/occupation.hlsl",
             });
 
-            channelRemapPipeline = device.CreateComputePipeline(new()
+            channelRemapPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "tools/terrain/mask/remap.hlsl",
             });
@@ -74,6 +72,18 @@
             brushBuffer = new(CpuAccessFlags.Write);
             remapBuffer = new(CpuAccessFlags.Write);
             channelBuffer = new(1, CpuAccessFlags.Read);
+
+            maskEdit.Bindings.SetCBV("BrushBuffer", brushBuffer);
+            maskEdit.Bindings.SetCBV("MaskBuffer", maskBuffer);
+
+            maskEdit.Bindings.SetSRV("maskTex", maskTexBuffer.SRV);
+            maskEdit.Bindings.SetSampler("samplerLinearClamp", maskSampler);
+
+            occupationCheckPipeline.Bindings.SetCBV("ParamsBuffer", remapBuffer);
+            occupationCheckPipeline.Bindings.SetUAV("outputBuffer", channelBuffer.UAV);
+
+            channelRemapPipeline.Bindings.SetCBV("ParamsBuffer", remapBuffer);
+            channelRemapPipeline.Bindings.SetUAV("outputTex", maskTexBuffer.UAV!);
         }
 
         protected override void DisposeCore()
@@ -97,21 +107,14 @@
 
             channelBuffer.Clear(context);
 
-            context.CSSetConstantBuffer(0, remapBuffer);
-            context.CSSetShaderResource(0, texture.SRV);
-            context.CSSetUnorderedAccessView(0, (void*)channelBuffer.UAV.NativePointer);
-
-            context.SetComputePipeline(occupationCheckPipeline);
+            occupationCheckPipeline.Bindings.SetSRV("maskTex", texture.SRV!);
+            context.SetComputePipelineState(occupationCheckPipeline);
 
             uint numGroupsX = (uint)Math.Ceiling(size.X / 32);
             uint numGroupsY = (uint)Math.Ceiling(size.Y / 32);
             context.Dispatch(numGroupsX, numGroupsY, 1);
 
-            context.SetComputePipeline(null);
-
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetUnorderedAccessView(0, null);
+            context.SetComputePipelineState(null);
 
             channelBuffer.Read(context);
 
@@ -123,21 +126,14 @@
             Vector2 size = texture.Viewport.Size;
             remapBuffer.Update(context, new(size, source, destination, factor));
 
-            context.CSSetConstantBuffer(0, remapBuffer);
-            context.CSSetShaderResource(0, texture.SRV);
-            context.CSSetUnorderedAccessView(0, (void*)maskTexBuffer.UAV.NativePointer);
-
-            context.SetComputePipeline(channelRemapPipeline);
+            channelRemapPipeline.Bindings.SetSRV("maskTex", texture.SRV!);
+            context.SetComputePipelineState(channelRemapPipeline);
 
             uint numGroupsX = (uint)Math.Ceiling(size.X / 32);
             uint numGroupsY = (uint)Math.Ceiling(size.Y / 32);
             context.Dispatch(numGroupsX, numGroupsY, 1);
 
-            context.SetComputePipeline(null);
-
-            context.CSSetConstantBuffer(0, null);
-            context.CSSetShaderResource(0, null);
-            context.CSSetUnorderedAccessView(0, null);
+            context.SetComputePipelineState(null);
 
             maskTexBuffer.CopyTo(context, texture);
         }
@@ -283,23 +279,14 @@
 
                 context.CopyResource(maskTexBuffer, maskTex);
 
-                context.PSSetShaderResource(0, maskTexBuffer.SRV);
-                context.PSSetSampler(0, maskSampler);
-                context.PSSetConstantBuffer(0, brushBuffer);
-                context.PSSetConstantBuffer(1, maskBuffer);
                 context.SetRenderTarget(maskTex.RTV, null);
                 context.SetViewport(vp);
 
-                context.SetPipelineState(maskEdit);
+                context.SetGraphicsPipelineState(maskEdit);
                 context.DrawInstanced(4, 1, 0, 0);
-                context.SetPipelineState(null);
+                context.SetGraphicsPipelineState(null);
 
-                context.SetViewport(default);
                 context.SetRenderTarget(null, null);
-                context.PSSetShaderResource(0, null);
-                context.PSSetSampler(0, null);
-                context.PSSetConstantBuffer(0, null);
-                context.PSSetConstantBuffer(1, null);
 
                 CheckDrawLayer(context, cell, layer, ref updated);
 

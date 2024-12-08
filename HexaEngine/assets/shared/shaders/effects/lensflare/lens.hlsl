@@ -1,4 +1,4 @@
-cbuffer DownsampleParams : register(b0)
+cbuffer LensParams : register(b0)
 {
     uint uGhosts;
     float uGhostDispersal;

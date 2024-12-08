@@ -1,12 +1,14 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Physics;
     using HexaEngine.Scenes;
     using HexaEngine.Scripts;
@@ -88,7 +90,7 @@
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        protected override string Name => $"{UwU.Sitemap} Hierarchy";
+        protected override string Name { get; } = $"{UwU.Sitemap} Hierarchy";
 
         public override void DrawContent(IGraphicsContext context)
         {
@@ -123,52 +125,54 @@
                 levelColor = sceneLevelColor;
             }
 
-            ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths);
-            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-
-            ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
-            ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
-
-            ImGuiTablePtr table = ImGui.GetCurrentTable();
-
-            ImGui.Indent();
-            ImGui.TableHeadersRow();
-            ImGui.Unindent();
-
-            if (ImGui.BeginDragDropTarget())
+            if (ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths))
             {
-                unsafe
+                ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+
+                ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
+                ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
+
+                ImGuiTablePtr table = ImGuiP.GetCurrentTable();
+
+                ImGui.Indent();
+                ImGui.TableHeadersRow();
+                ImGui.Unindent();
+
+                if (ImGui.BeginDragDropTarget())
                 {
-                    var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
-                    if (!payload.IsNull)
+                    unsafe
                     {
-                        Guid id = *(Guid*)payload.Data;
-                        var child = scene.FindByGuid(id);
-                        if (child != null)
+                        var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
+                        if (!payload.IsNull)
                         {
-                            scene.AddChild(child);
+                            Guid id = *(Guid*)payload.Data;
+                            var child = scene.FindByGuid(id);
+                            if (child != null)
+                            {
+                                scene.AddChild(child);
+                            }
                         }
                     }
+                    ImGui.EndDragDropTarget();
                 }
-                ImGui.EndDragDropTarget();
-            }
-            if (scene.IsPrefabScene)
-            {
-                DisplayNode(scene.Root, true, false, drawList, table, avail, 0, true);
-            }
-            else
-            {
-                for (int i = 0; i < scene.Root.Children.Count; i++)
+                if (scene.IsPrefabScene)
                 {
-                    var element = scene.Root.Children[i];
-                    bool isLast = i == scene.Root.Children.Count - 1;
-                    DisplayNode(element, false, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                    DisplayNode(scene.Root, true, false, drawList, table, avail, 0, true);
                 }
-            }
+                else
+                {
+                    for (int i = 0; i < scene.Root.Children.Count; i++)
+                    {
+                        var element = scene.Root.Children[i];
+                        bool isLast = i == scene.Root.Children.Count - 1;
+                        DisplayNode(element, false, !element.Name.Contains(searchString), drawList, table, avail, 0, isLast);
+                    }
+                }
 
-            ImGui.PopStyleColor();
-            ImGui.PopStyleColor();
-            ImGui.EndTable();
+                ImGui.PopStyleColor();
+                ImGui.PopStyleColor();
+                ImGui.EndTable();
+            }
 
             if (scene.IsPrefabScene)
             {
@@ -232,7 +236,7 @@
                         if (ImGui.MenuItem(item.Key))
                         {
                             var node = item.Value.Constructor();
-                            var name = scene.GetAvailableName(item.Key);
+                            var name = scene!.GetAvailableName(item.Key);
                             node.Name = name;
                             scene.AddChild(node);
                             scene.UnsavedChanged = true;
@@ -250,7 +254,7 @@
 
         private static void DisplayNodeContextMenu(GameObject element)
         {
-            if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonMask))
+            if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonRight))
             {
                 if (ImGui.MenuItem($"{UwU.MagnifyingGlassPlus} Focus"))
                 {
@@ -277,7 +281,15 @@
                         var item = SelectionCollection.Global[i];
                         if (item is GameObject gameObject)
                         {
-                            element.GetScene().AddChild(Instantiator.Instantiate(gameObject));
+                            try
+                            {
+                                var instance = Instantiator.Instantiate(gameObject) ?? throw new Exception("Failed to Clone object.");
+                                element.GetScene().AddChild(instance);
+                            }
+                            catch (Exception ex)
+                            {
+                                LoggerFactory.General.LogAndShowError("Failed to Clone object.", ex);
+                            }
                         }
                     }
                 }
@@ -352,7 +364,7 @@
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
 
-            ImRect rect = ImGui.TableGetCellBgRect(table, 1);
+            ImRect rect = ImGuiP.TableGetCellBgRect(table, 0);
             rect.Max.X = avail.X + rect.Min.X;
             rect.Max.Y += ImGui.GetTextLineHeight();
 
@@ -467,7 +479,7 @@
                         //Guid id = *(Guid*)payload.Data;
                         //var gameObject = SceneManager.Current.FindByGuid(id);
                         SelectionCollection.Global.MoveSelection(element);
-                        SceneManager.Current.UnsavedChanged = true;
+                        SceneManager.Current!.UnsavedChanged = true;
                     }
                 }
                 ImGui.EndDragDropTarget();
@@ -487,7 +499,7 @@
 
         private void HandleInput(GameObject element, bool hovered)
         {
-            if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            if (hovered && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
             {
                 if (ImGui.GetIO().KeyCtrl)
                 {
@@ -498,7 +510,7 @@
                     var last = SelectionCollection.Global.Last<GameObject>();
                     if (last != null)
                     {
-                        SelectionCollection.Global.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
+                        SelectionCollection.Global.AddMultipleSelection(SceneManager.Current!.GetRange(last, element));
                     }
                 }
                 else if (!element.IsEditorSelected)
@@ -506,7 +518,7 @@
                     SelectionCollection.Global.AddOverwriteSelection(element);
                 }
             }
-            if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            if (hovered && ImGuiP.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 ImGui.OpenPopup(element.FullName);
                 if (!element.IsEditorSelected && !ImGui.GetIO().KeyCtrl)
@@ -516,20 +528,20 @@
             }
             if (focused)
             {
-                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center != element.Transform.GlobalPosition)
+                if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center != element.Transform.GlobalPosition)
                 {
                     EditorCameraController.Center = element.Transform.GlobalPosition;
                 }
-                else if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center == element.Transform.GlobalPosition)
+                else if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.F) && EditorCameraController.Center == element.Transform.GlobalPosition)
                 {
                     EditorCameraController.Center = Vector3.Zero;
                 }
-                if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
+                if (element.IsEditorSelected && ImGuiP.IsKeyReleased(ImGuiKey.Delete))
                 {
-                    SceneManager.Current.UnsavedChanged = true;
+                    SceneManager.Current!.UnsavedChanged = true;
                     SelectionCollection.Global.PurgeSelection();
                 }
-                if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
+                if (element.IsEditorSelected && ImGuiP.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGuiP.IsKeyReleased(ImGuiKey.U))
                 {
                     SelectionCollection.Global.ClearSelection();
                 }
@@ -560,9 +572,9 @@
         private static unsafe void ToUTF8(ref UnsafeList<char> str, ref UnsafeList<byte> pOutStr)
         {
             int byteSize = Encoding.UTF8.GetByteCount(str.Data, (int)str.Size);
-            pOutStr.Reserve((uint)byteSize + 1);
+            pOutStr.Reserve((int)byteSize + 1);
             Encoding.UTF8.GetBytes(str.Data, (int)str.Size, pOutStr.Data, byteSize);
-            pOutStr.Resize((uint)byteSize);
+            pOutStr.Resize((int)byteSize);
             pOutStr[pOutStr.Size] = (byte)'\0';
         }
 
@@ -576,7 +588,7 @@
                 labelBuffer.PushBack(UwU.Scroll);
             }
 
-            if (element.HasComponent<IRendererComponent>())
+            if (element.HasComponent<IDrawable>())
             {
                 labelBuffer.PushBack(UwU.DrawPolygon);
             }

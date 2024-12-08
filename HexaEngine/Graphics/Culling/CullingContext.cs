@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Graphics.Culling
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public class CullingContext

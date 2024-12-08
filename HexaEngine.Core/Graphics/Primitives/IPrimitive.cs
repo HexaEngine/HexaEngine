@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
     using System;
 
     /// <summary>

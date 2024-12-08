@@ -1,8 +1,8 @@
 namespace HexaEngine.Tests
 {
+    using HexaEngine.Editor.Tools;
     using NUnit.Framework;
     using System.Collections.Generic;
-    using HexaEngine.Editor.Tools;
 
     [TestFixture]
     public class ArgumentsParserInjectionTests

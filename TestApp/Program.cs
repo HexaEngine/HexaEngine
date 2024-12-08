@@ -1,104 +1,75 @@
 ﻿namespace TestApp
 {
-    using HexaEngine;
-    using HexaEngine.Core;
-    using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
-    using HexaEngine.Network;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scripts;
+    using HexaEngine.Graphics;
     using System;
-    using System.Net;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public static unsafe partial class Program
     {
-        private sealed class ConsoleLogWriter : ILogWriter
-        {
-            public void Clear()
-            {
-                Console.Clear();
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public void Flush()
-            {
-            }
-
-            public void Write(string message)
-            {
-                Console.Write(message);
-            }
-
-            public Task WriteAsync(string message)
-            {
-                Console.Write(message);
-                return Task.CompletedTask;
-            }
-        }
-
-        /// <summary>
-        /// The factor to convert degrees to radians.
-        /// </summary>
-        public const double DegToRadFactor = float.Pi / 180;
-
-        /// <summary>
-        /// The factor to convert radians to degrees.
-        /// </summary>
-        public const double RadToDefFactor = 180 / float.Pi;
-
-        /// <summary>
-        /// Converts a <see cref="Vector3"/> from radians to degrees.
-        /// </summary>
-        /// <param name="v">The input vector in radians.</param>
-        /// <returns>A <see cref="Vector3"/> with values converted to degrees.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToDeg(this Vector3 v)
-        {
-            return new Vector3((float)(v.X * RadToDefFactor), (float)(v.Y * RadToDefFactor), (float)(v.Z * RadToDefFactor));
-        }
-
-        /// <summary>
-        /// Converts a <see cref="Vector3"/> from degrees to radians.
-        /// </summary>
-        /// <param name="v">The input vector in degrees.</param>
-        /// <returns>A <see cref="Vector3"/> with values converted to radians.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToRad(this Vector3 v)
-        {
-            // Using doubles reduces floating-point error.
-            return new Vector3((float)(v.X * DegToRadFactor), (float)(v.Y * DegToRadFactor), (float)(v.Z * DegToRadFactor));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToYawPitchRoll(this Quaternion r)
-        {
-            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
-            float pitch = MathF.Asin((float)Math.Clamp(2.0f * (r.X * r.W - r.Y * r.Z), -1, 1));
-            float roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
-            return new Vector3(yaw, pitch, roll);
-        }
-
         public static void Main(string[] args)
         {
-            Vector3 rotationEulerDeg = new(480, 45, 20);
-            Vector3 rotationEulerRad = rotationEulerDeg.ToRad();
-            Quaternion quat = Quaternion.CreateFromYawPitchRoll(rotationEulerRad.X, rotationEulerRad.Y, rotationEulerRad.Z);
-            Vector3 rotationEulerRad2 = quat.ToYawPitchRoll();
-            Vector3 rotationEulerDeg2 = rotationEulerRad2.ToDeg();
+            Viewport mainViewport = new(80, 80, 2560, 1440);
+            Viewport renderViewport = new(30, 40, 860, 483.75f);
+            Viewport virtualWindow = new(0, 0, 1920, 1080);
 
-            Console.WriteLine("Original Degrees \t\t\t\t" + rotationEulerDeg);
-            Console.WriteLine("Original Radiants \t\t\t\t" + rotationEulerRad);
-            Console.WriteLine("(Euler to qaut to euler) Converted Radiants \t" + rotationEulerRad2);
-            Console.WriteLine("Converted Degrees \t\t\t\t" + rotationEulerDeg2);
+            Matrix3x2 translationToRenderViewport = Matrix3x2.CreateTranslation(-(mainViewport.Offset + renderViewport.Offset));
+
+            Vector2 scaleToRenderViewport = Vector2.One / renderViewport.Size;
+            Matrix3x2 scaleMatrixToRenderViewport = Matrix3x2.CreateScale(scaleToRenderViewport);
+
+            Vector2 scaleToVirtualWindow = virtualWindow.Size;
+            Matrix3x2 scaleMatrixToVirtualWindow = Matrix3x2.CreateScale(scaleToVirtualWindow);
+
+            Matrix3x2 inputTransform = translationToRenderViewport * scaleMatrixToRenderViewport * scaleMatrixToVirtualWindow;
+
+            var pos1Test = mainViewport.Offset + renderViewport.Offset + renderViewport.Size;
+
+            var pos0 = Vector2.Transform(mainViewport.Offset + renderViewport.Offset, inputTransform);
+            var pos1 = Vector2.Transform(pos1Test, inputTransform);
+
+            pos1Test -= mainViewport.Offset;
+            pos1Test -= renderViewport.Offset;
+            pos1Test /= renderViewport.Size;
+            pos1Test *= virtualWindow.Size;
+
+            if (pos0 != virtualWindow.Offset)
+            {
+                throw new Exception();
+            }
+
+            if (pos1 != virtualWindow.Size)
+            {
+                throw new Exception();
+            }
+        }
+
+        /*
+        public static void Main(string[] args)
+        {
+            string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(root);
+            Directory.CreateDirectory(Path.Combine(root, "assets"));
+            SourceAssetsDatabase.Init(root, new ProgressDummy()).Wait();
+
+            var path = "gltftest/DamagedHelmet.gltf";
+
+            SourceAssetMetadata metadata = new(path, Guid.Empty, DateTime.Now, 0x0);
+            metadata.Save();
+            ImportContext context = new(DefaultGuidProvider.Instance, metadata, "gltftest/DamagedHelmet.gltf", null);
+
+            SourceAssetsDatabase.ImportFile(path);
+        }
+        */
+
+        private struct ProgressDummy : IProgress<float>
+        {
+            public readonly void Report(float value)
+            {
+            }
         }
 
         /* public static void Main()

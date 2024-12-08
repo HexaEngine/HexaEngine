@@ -4,7 +4,7 @@
 
     public class XamlType
     {
-        private readonly Type underlyingType;
+        private readonly Type underlyingType = null!;
 
         protected XamlType(string typeName, IList<XamlType> typeArguments, XamlSchemaContext schemaContext)
         {

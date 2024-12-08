@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Extensions;
+    using Hexa.NET.Utilities.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
     using System.Text;
 
+    [Obsolete("Legacy Component. Use MaterialEditorWindow instead.")]
     public class MaterialLibraryEditorWindow : EditorWindow
     {
         private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
@@ -184,11 +184,8 @@
         private MaterialPropertyType newPropType;
         private MaterialValueType newPropValueType;
 
-        private string newTexPath = string.Empty;
-        private MaterialTextureType newTexType;
         private bool isActive;
         private bool hasChanged;
-        private bool hasFileSaved;
 
         public bool EditMaterial(MaterialData material)
         {
@@ -234,12 +231,12 @@
             }
 
             var flags = (int)material.Flags;
-            if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+            if (ImGuiP.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
             {
                 material.Flags = (MaterialFlags)flags;
                 hasChanged = true;
             }
-            if (ImGui.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
+            if (ImGuiP.CheckboxFlags("Alpha Test", ref flags, (int)MaterialFlags.AlphaTest))
             {
                 material.Flags = (MaterialFlags)flags;
                 hasChanged = true;
@@ -285,13 +282,15 @@
                 isActive |= ImGui.IsItemActive();
 
                 /*  var file = tex.File;
-                  if (ImGui.InputText($"File##{i}", ref file, 1024))
-                  {
-                      material.Textures.MutateItem(i, x => { x.File = file; return x; });
-                      hasChanged = true;
-                  }
-                  isActive |= ImGui.IsItemActive();*/
+                if (ImGui.InputText($"File##{i}", ref file, 1024))
+                {
+                    material.Textures.MutateItem(i, x => { x.File = file; return x; });
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+                */
 
+                /*
                 var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
                 if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
                 {
@@ -315,6 +314,7 @@
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
+                */
 
                 var uvwSrc = tex.UVWSrc;
                 if (ImGui.InputInt($"UVWSrc##{i}", ref uvwSrc))
@@ -341,19 +341,19 @@
                 isActive |= ImGui.IsItemActive();
 
                 var texFlags = (int)tex.Flags;
-                if (ImGui.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
+                if (ImGuiP.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.Invert; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
-                if (ImGui.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
+                if (ImGuiP.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.UseAlpha; return x; });
                     hasChanged = true;
                 }
                 isActive |= ImGui.IsItemActive();
-                if (ImGui.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
+                if (ImGuiP.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
                 {
                     material.Textures.MutateItem(i, x => { x.Flags ^= TextureFlags.IgnoreAlpha; return x; });
                     hasChanged = true;
@@ -370,7 +370,6 @@
             if (hasChanged && !isActive)
             {
                 hasChanged = false;
-                hasFileSaved = false;
                 result = true;
             }
 

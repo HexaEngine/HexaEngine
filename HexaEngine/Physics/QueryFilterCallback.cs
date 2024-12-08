@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Physics
 {
+    using Hexa.NET.Utilities;
     using HexaEngine.Components.Physics.Collider;
-    using HexaEngine.Core.Unsafes;
     using MagicPhysX;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -13,8 +13,8 @@
     {
         internal PxQueryFilterCallback* queryFilterCallback;
         private bool disposedValue;
-        private readonly QueryFilterCallbackDelegate callback;
-        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter;
+        private readonly QueryFilterCallbackDelegate callback = null!;
+        private readonly Func<Pointer<FilterData>, Pointer<QueryHit>, QueryHitType> postFilter = null!;
 
         public QueryFilterCallback(RigidBody actorToIgnore)
         {

@@ -2039,18 +2039,18 @@ struct VVSOutput {
 	float2 tex	: TEXCOORD0;
 };
 
-Texture2D<float4> g_txProcessed : register(t0);
-SamplerState g_samLinear : register(s0);
+Texture2D<float4> inputTex : register(t0);
+SamplerState linearClampSampler : register(s0);
 
 float4 main(VVSOutput input) : SV_Target
 {
 	uint dx, dy;
-	g_txProcessed.GetDimensions(dx, dy);
+	inputTex.GetDimensions(dx, dy);
 	float2 rcpro = rcp(float2(dx, dy));
 
 	FxaaTex t;
-	t.smpl = g_samLinear;
-	t.tex = g_txProcessed;
+	t.smpl = linearClampSampler;
+	t.tex = inputTex;
 
 	return FxaaPixelShader(input.tex, 0, t, t, t, rcpro, 0, 0, 0, 1.0, 0.166, 0.0312, 0, 0, 0, 0);
 }

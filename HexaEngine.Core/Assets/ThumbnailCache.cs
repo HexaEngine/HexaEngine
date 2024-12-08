@@ -7,7 +7,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents a cache policy interface.
@@ -146,7 +145,7 @@
         /// <returns>The read <see cref="ThumbnailCacheEntry"/>.</returns>
         public static ThumbnailCacheEntry Read(Stream stream, Span<byte> buffer)
         {
-            stream.Read(buffer);
+            stream.ReadExactly(buffer);
             Guid key = new(buffer.Slice(0, 16));
             long size = BinaryPrimitives.ReadInt64LittleEndian(buffer[16..]);
             long position = BinaryPrimitives.ReadInt64LittleEndian(buffer[24..]);
@@ -675,7 +674,7 @@
 
             cacheStream.Position = entry.Position;
             var span = entry.AsSpan();
-            cacheStream.Read(span);
+            cacheStream.ReadExactly(span);
 
             cacheFileSemaphore.Release();
         }
@@ -839,7 +838,7 @@
                 fs.Close();
                 return;
             }
-            var version = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var version = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             if (version != Version)
             {
                 EndWrite();
@@ -847,9 +846,9 @@
                 return;
             }
 
-            writtenBytes = fs.ReadInt64(Mathematics.Endianness.LittleEndian);
+            writtenBytes = fs.ReadInt64(Hexa.NET.Mathematics.Endianness.LittleEndian);
 
-            var count = fs.ReadInt32(Mathematics.Endianness.LittleEndian);
+            var count = fs.ReadInt32(Hexa.NET.Mathematics.Endianness.LittleEndian);
             entries.EnsureCapacity(count);
 
             Span<byte> buffer = stackalloc byte[ThumbnailCacheEntry.EntrySize];
@@ -877,9 +876,9 @@
 
             var fs = File.Create(indexFile);
 
-            fs.WriteInt32(Version, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt64(writtenBytes, Mathematics.Endianness.LittleEndian);
-            fs.WriteInt32(entries.Count, Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(Version, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt64(writtenBytes, Hexa.NET.Mathematics.Endianness.LittleEndian);
+            fs.WriteInt32(entries.Count, Hexa.NET.Mathematics.Endianness.LittleEndian);
 
             Span<byte> buffer = stackalloc byte[ThumbnailCacheEntry.EntrySize];
             for (var i = 0; i < entries.Count; i++)

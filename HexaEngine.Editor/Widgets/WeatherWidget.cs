@@ -115,6 +115,89 @@
             {
                 manager.PhaseFunctionG = phaseFunctionG;
             }
+
+            var fogColor = manager.FogColor;
+            if (ImGui.ColorEdit3("Fog Color", ref fogColor))
+            {
+                manager.FogColor = fogColor;
+            }
+
+            var fogIntensity = manager.FogIntensity;
+            if (ImGui.InputFloat("Fog Intensity", ref fogIntensity))
+            {
+                manager.FogIntensity = fogIntensity;
+            }
+
+            var fogStart = manager.FogStart;
+            if (ImGui.InputFloat("Fog Start", ref fogStart))
+            {
+                manager.FogStart = fogStart;
+            }
+
+            var fogEnd = manager.FogEnd;
+            if (ImGui.InputFloat("Fog End", ref fogEnd))
+            {
+                manager.FogEnd = fogEnd;
+            }
+
+            var fogHeight = manager.FogHeight;
+            if (ImGui.InputFloat("Fog Height", ref fogHeight))
+            {
+                manager.FogHeight = fogHeight;
+            }
+
+            var fogMode = manager.FogMode;
+            bool useHeightBased = (fogMode & FogMode.HeightBased) != 0;
+            var fogModeIndex = Array.IndexOf(modes, (FogMode)((int)fogMode & 0x3));
+            if (ImGui.Combo("Fog Mode"u8, ref fogModeIndex, "Linear\0Exponential\0Exponential Squared\0"u8))
+            {
+                manager.FogMode = modes[fogModeIndex] | (useHeightBased ? FogMode.HeightBased : FogMode.Linear);
+            }
+
+            if (ImGui.Checkbox("Fog Height Based", ref useHeightBased))
+            {
+                if (useHeightBased)
+                {
+                    fogMode |= FogMode.HeightBased;
+                }
+                else
+                {
+                    fogMode &= ~FogMode.HeightBased;
+                }
+                manager.FogMode = fogMode;
+            }
+
+            var fogDensity = manager.FogDensity;
+            if (ImGui.InputFloat("Fog Density", ref fogDensity))
+            {
+                manager.FogDensity = fogDensity;
+            }
+
+            var sunColor = manager.SunColor;
+            if (ImGui.ColorEdit3("Sun Color", ref sunColor))
+            {
+                manager.SunColor = sunColor;
+            }
+
+            var sunIntensity = manager.SunIntensity;
+            if (ImGui.InputFloat("Sun Intensity", ref sunIntensity))
+            {
+                manager.SunIntensity = sunIntensity;
+            }
+
+            var sunRadius = manager.SunRadius;
+            if (ImGui.InputFloat("Sun Radius", ref sunRadius))
+            {
+                manager.SunRadius = sunRadius;
+            }
+
+            var sunFalloff = manager.SunFalloff;
+            if (ImGui.InputFloat("Sun Falloff", ref sunFalloff))
+            {
+                manager.SunFalloff = sunFalloff;
+            }
         }
+
+        private static readonly FogMode[] modes = [FogMode.Linear, FogMode.Exp, FogMode.Exp2];
     }
 }

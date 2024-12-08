@@ -3,7 +3,7 @@
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.SDL;
+    using Hexa.NET.SDL2;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;
@@ -31,12 +31,14 @@
 
         public VkPhysicalDevice PhysicalDevice => vulkanAdapter.PhysicalDevice;
 
+        public GraphicsDeviceCapabilities Capabilities { get; }
+
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return CreateSwapChain(window.GetWindow());
         }
 
-        public ISwapChain CreateSwapChain(Window* window)
+        public ISwapChain CreateSwapChain(SDLWindow* window)
         {
             return vulkanAdapter.CreateSwapChain(this, window);
         }
@@ -46,9 +48,9 @@
             return CreateSwapChain(window.GetWindow(), swapChainDescription, fullscreenDescription);
         }
 
-        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        public ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            throw new NotImplementedException();
+            return vulkanAdapter.CreateSwapChain(this, window, swapChainDescription, fullscreenDescription);
         }
 
         public IBuffer CreateBuffer(BufferDescription description)
@@ -93,7 +95,12 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)
         {
             throw new NotImplementedException();
         }
@@ -293,16 +300,6 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
-        {
-            throw new NotImplementedException();
-        }
-
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
         {
             throw new NotImplementedException();
@@ -383,32 +380,7 @@
             throw new NotImplementedException();
         }
 
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineStateDesc state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IComputePipeline CreateComputePipelineFromBytecode(ComputePipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
-        {
-            throw new NotImplementedException();
-        }
-
         public IFence CreateFence(ulong initialValue, FenceFlags flags)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICombinedTex2D CreateTex2D(CombinedTex2DDesc desc)
         {
             throw new NotImplementedException();
         }
@@ -418,7 +390,12 @@
             throw new NotImplementedException();
         }
 
-        public IResourceBindingList CreateRootDescriptorTable(IGraphicsPipeline pipeline)
+        public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
             throw new NotImplementedException();
         }
@@ -426,6 +403,46 @@
         protected override void DisposeCore()
         {
             Device.DestroyDevice(null);
+        }
+
+        public ICommandBuffer CreateCommandBuffer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSRV(string name, IShaderResourceView? srv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalCBV(string name, IBuffer? cbv)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalSampler(string name, ISamplerState? sampler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
         }
     }
 }

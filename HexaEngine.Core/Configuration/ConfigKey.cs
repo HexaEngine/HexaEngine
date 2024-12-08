@@ -1247,11 +1247,13 @@
 #nullable disable
             if (e != null)
             {
+#pragma warning disable IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
                 property.SetValue(t, configValue.GetEnum(type));
             }
             else
             {
                 property.SetValue(t, Activator.CreateInstance(type));
+#pragma warning restore IL2072 // Target parameter argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.
             }
 #nullable enable
         }

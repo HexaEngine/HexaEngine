@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.PostFx.BuildIn
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
@@ -15,7 +14,6 @@
 #nullable disable
         private IGraphicsPipelineState pipeline;
         private ConstantBuffer<GrainParams> paramsBuffer;
-        private ResourceRef<ISamplerState> samplerState;
         private float grainIntensity = 0.05f;
         private float grainSize = 1.6f;
         private bool grainColored = false;
@@ -87,8 +85,6 @@
                 PixelShader = "effects/grain/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-
-            samplerState = creator.CreateSamplerState("LinearClamp", SamplerStateDescription.LinearClamp);
         }
 
         public override void Update(IGraphicsContext context)
@@ -96,20 +92,20 @@
             paramsBuffer.Update(context, new(Viewport.Width, Viewport.Height, Time.CumulativeFrameTime, grainIntensity, grainSize, grainColored, grainColorAmount, grainLumaAmount));
         }
 
+        public override void UpdateBindings()
+        {
+            pipeline.Bindings.SetSRV("hdrTexture", Input);
+            pipeline.Bindings.SetCBV("Params", paramsBuffer);
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, Input);
-            context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetSampler(0, samplerState.Value);
-            context.SetPipelineState(pipeline);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.SetPipelineState(null);
-            context.PSSetSampler(0, null);
-            context.PSSetConstantBuffer(0, null);
-            context.PSSetShaderResource(0, null);
+            context.SetGraphicsPipelineState(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
         }

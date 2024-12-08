@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics.Effects.Noise
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -73,6 +73,8 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             scaleBuffer = new(new NoiseParams(), CpuAccessFlags.Write);
+
+            pipeline.Bindings.SetCBV("ParamBuffer", scaleBuffer);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -80,13 +82,10 @@
         {
             context.SetRenderTarget(rtv, null);
             context.SetViewport(viewport);
-            context.SetPipelineState(pipeline);
-            context.PSSetConstantBuffer(0, scaleBuffer);
+            context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
-            context.SetViewport(default);
-            context.SetPipelineState(null);
+            context.SetGraphicsPipelineState(null);
         }
 
         public void Draw(IGraphicsContext context, IRenderTargetView rtv, Viewport viewport)

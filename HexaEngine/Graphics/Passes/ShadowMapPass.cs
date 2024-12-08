@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Configuration;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
@@ -11,21 +11,23 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public class ShadowMapPass : DrawPass
     {
-        private ResourceRef<ShadowAtlas> shadowAtlas;
+        private ResourceRef<ShadowAtlas> shadowAtlas = null!;
 
-        private ResourceRef<ConstantBuffer<PSMShadowParams>> psmBuffer;
-        private ResourceRef<ConstantBuffer<CSMShadowParams>> csmBuffer;
-        private ResourceRef<ConstantBuffer<DPSMShadowParams>> osmBuffer;
+        private ResourceRef<ConstantBuffer<PSMShadowParams>> psmBuffer = null!;
+        private ResourceRef<ConstantBuffer<CSMShadowParams>> csmBuffer = null!;
+        private ResourceRef<ConstantBuffer<DPSMShadowParams>> osmBuffer = null!;
 
-        private GaussianBlur blurFilter;
-        private CopyEffect copyEffect;
+        private GaussianBlur blurFilter = null!;
+        private CopyEffect copyEffect = null!;
+        private ReprojectEffect reprojectEffect = null!;
+        private ClearSliceEffect clearSliceEffect = null!;
 
         public ShadowMapPass() : base("ShadowMap")
         {
@@ -40,6 +42,8 @@
             osmBuffer = creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write);
             blurFilter = new(creator, "GaussianBlur", Format.R32G32Float, 1, 1);
             copyEffect = new(creator, "CopyPass", CopyFilter.None);
+            clearSliceEffect = new(creator);
+            reprojectEffect = new(creator);
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -52,7 +56,7 @@
 
             var camera = CameraManager.Current;
 
-            var renderers = scene.RenderManager.Renderers;
+            var tree = scene.RenderManager.DrawablesTree;
             var lights = scene.LightManager;
 
             profiler?.Begin("ShadowMap.UpdateBuffer");
@@ -70,15 +74,15 @@
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        DoDirectional(context, profiler, camera, renderers, lights, light);
+                        DoDirectional(context, profiler, camera, tree, lights, light);
                         break;
 
                     case LightType.Point:
-                        DoPoint(context, profiler, renderers, lights, light);
+                        DoPoint(context, profiler, tree, lights, light);
                         break;
 
                     case LightType.Spot:
-                        DoSpot(context, profiler, renderers, lights, light);
+                        DoSpot(context, profiler, tree, lights, light);
                         break;
                 }
                 light.InUpdateQueue = false;
@@ -86,8 +90,8 @@
             profiler?.End("ShadowMap.UpdateAtlas");
         }
 
-        private Texture2D tex;
-        private DepthStencil depth;
+        private Texture2D tex = null!;
+        private DepthStencil depth = null!;
 
         private void Filter(IGraphicsContext context, Texture2D source)
         {
@@ -101,10 +105,10 @@
                 blurFilter.Resize(source.Format, source.Width, source.Height);
             }
 
-            blurFilter.Blur(context, source.SRV, source.RTV, source.Width, source.Height);
+            blurFilter.Blur(context, source.SRV!, source.RTV!, source.Width, source.Height);
         }
 
-        private void FilterArray(IGraphicsContext context, Texture2D source)
+        private void FilterArray(IGraphicsContext context, Texture2D source, uint cascadeMask, CSMShadowParams old, CSMShadowParams now, bool reproject)
         {
             if (source.Width != blurFilter.Width || source.Height != blurFilter.Height || source.Format != blurFilter.Format)
             {
@@ -113,13 +117,21 @@
 
             for (int i = 0; i < source.ArraySize; i++)
             {
-                blurFilter.Blur(context, source.SRVArraySlices[i], source.RTVArraySlices[i], source.Width, source.Height);
+                if ((cascadeMask & (1 << i)) != 0)
+                {
+                    blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
+                }
+                else if (reproject)
+                {
+                    Reproject(context, source, i, old, now);
+                    blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
+                }
             }
         }
 
         private void Copy(IGraphicsContext context, Texture2D source, Viewport sourceViewport, Viewport destinationRect)
         {
-            copyEffect.Copy(context, source.SRV, shadowAtlas.Value.RTV, sourceViewport, destinationRect);
+            copyEffect.Copy(context, source.SRV!, shadowAtlas.Value!.RTV, sourceViewport, destinationRect);
         }
 
         private void PrepareBuffers(IGraphicsContext context, Light light)
@@ -136,34 +148,32 @@
             }
         }
 
-        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private readonly Stack<int> stack = [];
+
+        private void DoSpot(IGraphicsContext context, ICPUProfiler? profiler, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdateSpot");
             var spotlight = (Spotlight)light;
 
             PrepareBuffers(context, spotlight);
 
-            context.ClearRenderTargetView(tex.RTV, Vector4.One);
+            context.ClearRenderTargetView(tex.RTV!, Vector4.One);
             context.ClearDepthStencilView(depth, DepthStencilClearFlags.All, 1, 0);
 
-            var destinationViewport = spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value);
+            var destinationViewport = spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer, psmBuffer.Value!);
             Viewport sourceViewport = tex.Viewport;
 
             context.SetRenderTarget(tex.RTV, depth.DSV);
             context.SetViewport(sourceViewport);
-
-            for (int i = 0; i < renderers.Count; i++)
+            foreach (var node in tree.Enumerate(SpotFilter, stack, spotlight.ShadowFrustum))
             {
-                var renderer = renderers[i];
-                profiler?.Begin($"ShadowMap.UpdateSpot.{renderer.DebugName}");
-                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                var drawable = node.Value;
+                profiler?.Begin($"ShadowMap.UpdateSpot.{drawable.DebugName}");
+                if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                 {
-                    if (spotlight.IntersectFrustum(renderer.BoundingBox))
-                    {
-                        renderer.DrawShadowMap(context, psmBuffer.Value, ShadowType.Perspective);
-                    }
+                    drawable.DrawShadowMap(context, psmBuffer.Value!, ShadowType.Perspective);
                 }
-                profiler?.End($"ShadowMap.UpdateSpot.{renderer.DebugName}");
+                profiler?.End($"ShadowMap.UpdateSpot.{drawable.DebugName}");
             }
 
             Filter(context, tex);
@@ -172,7 +182,16 @@
             profiler?.End("ShadowMap.UpdateSpot");
         }
 
-        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private static BVHFilterResult SpotFilter(BVHNode<IDrawable> node, BoundingFrustum frustum)
+        {
+            if (node.Box.Intersects(frustum))
+            {
+                return BVHFilterResult.Keep;
+            }
+            return BVHFilterResult.Skip;
+        }
+
+        private void DoPoint(IGraphicsContext context, ICPUProfiler? profiler, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
             profiler?.Begin("ShadowMap.UpdatePoint");
             var pointLight = (PointLight)light;
@@ -180,27 +199,24 @@
             {
                 PrepareBuffers(context, pointLight);
 
-                context.ClearRenderTargetView(tex.RTV, Vector4.One);
+                context.ClearRenderTargetView(tex.RTV!, Vector4.One);
                 context.ClearDepthStencilView(depth, DepthStencilClearFlags.All, 1, 0);
 
-                var destinationViewport = pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value, i);
+                var destinationViewport = pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, osmBuffer.Value!, i);
                 Viewport sourceViewport = tex.Viewport;
 
                 context.SetRenderTarget(tex.RTV, depth.DSV);
                 context.SetViewport(sourceViewport);
 
-                for (int j = 0; j < renderers.Count; j++)
+                foreach (var node in tree.Enumerate(PointFilter, stack, pointLight.ShadowBox))
                 {
-                    var renderer = renderers[j];
-                    profiler?.Begin($"ShadowMap.UpdatePoint.{renderer.DebugName}");
-                    if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                    var drawable = node.Value;
+                    profiler?.Begin($"ShadowMap.UpdatePoint.{drawable.DebugName}");
+                    if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                     {
-                        if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
-                        {
-                            renderer.DrawShadowMap(context, osmBuffer.Value, ShadowType.Omnidirectional);
-                        }
+                        drawable.DrawShadowMap(context, osmBuffer.Value!, ShadowType.Omnidirectional);
                     }
-                    profiler?.End($"ShadowMap.UpdatePoint.{renderer.DebugName}");
+                    profiler?.End($"ShadowMap.UpdatePoint.{drawable.DebugName}");
                 }
 
                 Filter(context, tex);
@@ -209,39 +225,80 @@
             profiler?.End("ShadowMap.UpdatePoint");
         }
 
-        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, IReadOnlyList<IRendererComponent> renderers, LightManager lights, LightSource light)
+        private static BVHFilterResult PointFilter(BVHNode<IDrawable> node, BoundingBox box)
         {
+            if (node.Box.Intersects(box))
+            {
+                return BVHFilterResult.Keep;
+            }
+            return BVHFilterResult.Skip;
+        }
+
+        private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
+        {
+            var old = csmBuffer.Value![0];
             profiler?.Begin("ShadowMap.UpdateDirectional");
             var directionalLight = (DirectionalLight)light;
-            directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value, camera);
-            for (int i = 0; i < renderers.Count; i++)
+            if (!directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value!, camera!, out uint cascadeMask, out var reproject))
             {
-                var renderer = renderers[i];
-                profiler?.Begin($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
-                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                return; // false return means nothing to update.
+            }
+
+            var map = directionalLight.GetMap()!;
+            var csmDepthBuffer = directionalLight.GetDepthStencil()!;
+
+            clearSliceEffect.Clear(context, map.UAV!, (uint)map.Width, (uint)map.Height, (uint)map.ArraySize, cascadeMask);
+            context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
+
+            context.SetRenderTarget(map.RTV, csmDepthBuffer.DSV);
+            context.SetViewport(map.Viewport);
+
+            var now = csmBuffer.Value![0];
+
+            foreach (var node in tree.Enumerate(CascadeFilter, stack, (directionalLight.ShadowFrustra, cascadeMask)))
+            {
+                var drawable = node.Value;
+                profiler?.Begin($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
+                if ((drawable.Flags & RendererFlags.CastShadows) != 0)
                 {
-                    for (int j = 0; j < directionalLight.ShadowFrustra.Count; j++)
-                    {
-                        if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
-                        {
-                            renderer.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
-                            break;
-                        }
-                    }
+                    drawable.DrawShadowMap(context, csmBuffer.Value, ShadowType.Directional);
                 }
-                profiler?.End($"ShadowMap.UpdateDirectional.{renderer.DebugName}");
+                profiler?.End($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
             }
-            var map = directionalLight.GetMap();
-            if (map != null)
-            {
-                FilterArray(context, map);
-            }
+
+            FilterArray(context, map, cascadeMask, old, now, reproject);
 
             profiler?.End("ShadowMap.UpdateDirectional");
         }
 
+        private static BVHFilterResult CascadeFilter(BVHNode<IDrawable> node, (IReadOnlyList<BoundingFrustum> frusta, uint mask) args)
+        {
+            (IReadOnlyList<BoundingFrustum> frusta, uint mask) = args;
+            for (int i = 0; i < frusta.Count; i++)
+            {
+                if ((mask & (1u << i)) != 0 && frusta[i].Intersects(node.Box))
+                {
+                    return BVHFilterResult.Keep;
+                }
+            }
+            return BVHFilterResult.Skip;
+        }
+
+        private unsafe void Reproject(IGraphicsContext context, Texture2D texture, int slice, CSMShadowParams old, CSMShadowParams now)
+        {
+            var oldViewProj = Matrix4x4.Transpose(old[slice]);
+            var newViewProj = now[slice];
+
+            Matrix4x4.Invert(oldViewProj, out var oldViewProjInv);
+            oldViewProjInv = Matrix4x4.Transpose(oldViewProjInv);
+
+            reprojectEffect.Reproject(context, texture.UAVArraySlices![slice], (uint)texture.Width, (uint)texture.Height, oldViewProjInv, newViewProj, ReprojectFlags.VSM);
+        }
+
         public override void Release()
         {
+            clearSliceEffect.Dispose();
+            reprojectEffect.Dispose();
             copyEffect.Dispose();
             blurFilter.Dispose();
             tex?.Dispose();

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Jobs
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Threading;

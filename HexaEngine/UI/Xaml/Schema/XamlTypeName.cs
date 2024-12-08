@@ -27,11 +27,11 @@
             TypeArguments = new(xamlType.TypeArguments.Select(x => new XamlTypeName(x)));
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string Namespace { get; set; }
+        public string Namespace { get; set; } = null!;
 
-        public List<XamlTypeName> TypeArguments { get; }
+        public List<XamlTypeName> TypeArguments { get; } = null!;
 
         public static XamlTypeName Parse(string typeName, IXamlNamespaceResolver namespaceResolver)
         {

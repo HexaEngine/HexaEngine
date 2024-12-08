@@ -19,7 +19,7 @@
         }
 
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public List<VirtualAxis> VirtualAxes { get; } = new();
 
@@ -32,7 +32,7 @@
         {
             reader.MoveToContent();
 
-            Name = reader.GetAttribute("Name");
+            Name = reader.GetAttribute("Name")!;
 
             reader.ReadStartElement();
 

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Silk.NET.SDL;
+    using Hexa.NET.SDL2;
     using static Extensions.SdlErrorHandlingExtensions;
 
     /// <summary>
@@ -8,14 +8,13 @@
     /// </summary>
     public unsafe class Haptic
     {
-        private static readonly Sdl sdl = Application.Sdl;
         private readonly int id;
-        private readonly Silk.NET.SDL.Haptic* haptic;
+        private readonly SDLHaptic* haptic;
 
-        private Haptic(Silk.NET.SDL.Haptic* haptic)
+        private Haptic(SDLHaptic* haptic)
         {
             this.haptic = haptic;
-            id = sdl.HapticIndex(haptic).SdlThrowIfNeg();
+            id = SDL.HapticIndex(haptic).SdlThrowIfNeg();
         }
 
         /// <summary>
@@ -26,32 +25,32 @@
         /// <summary>
         /// Gets the name of the haptic feedback device.
         /// </summary>
-        public string Name => sdl.HapticNameS(id);
+        public string Name => SDL.HapticNameS(id);
 
         /// <summary>
         /// Gets the number of axes (directions) supported by the haptic feedback device.
         /// </summary>
-        public int AxesCount => sdl.HapticNumAxes(haptic);
+        public int AxesCount => SDL.HapticNumAxes(haptic);
 
         /// <summary>
         /// Gets the number of effects (force feedback patterns) that can be stored and played by the haptic feedback device.
         /// </summary>
-        public int EffectsCount => sdl.HapticNumEffects(haptic);
+        public int EffectsCount => SDL.HapticNumEffects(haptic);
 
         /// <summary>
         /// Gets the number of effects currently playing on the haptic feedback device.
         /// </summary>
-        public int EffectsPlayingCount => sdl.HapticNumEffectsPlaying(haptic);
+        public int EffectsPlayingCount => SDL.HapticNumEffectsPlaying(haptic);
 
         /// <summary>
         /// Gets a value indicating whether the haptic feedback device supports rumble (vibration) effects.
         /// </summary>
-        public bool RumbleSupported => sdl.HapticRumbleSupported(haptic) == 1;
+        public bool RumbleSupported => SDL.HapticRumbleSupported(haptic) == 1;
 
         /// <summary>
         /// Gets a set of flags that specify the types of haptic effects supported by the device.
         /// </summary>
-        public HapticEffectFlags EffectsSupported => (HapticEffectFlags)sdl.HapticQuery(haptic);
+        public HapticEffectFlags EffectsSupported => (HapticEffectFlags)SDL.HapticQuery(haptic);
 
         /// <summary>
         /// Opens a haptic device associated with a gamepad and returns a <see cref="Haptic"/> instance for it.
@@ -60,7 +59,7 @@
         /// <returns>A <see cref="Haptic"/> instance representing the haptic feedback device.</returns>
         public static Haptic OpenFromGamepad(Gamepad gamepad)
         {
-            return new(sdl.HapticOpenFromJoystick(gamepad.joystick));
+            return new(SDL.HapticOpenFromJoystick(gamepad.joystick));
         }
 
         /// <summary>
@@ -70,7 +69,7 @@
         /// <returns>A <see cref="Haptic"/> instance representing the haptic feedback device.</returns>
         public static Haptic OpenFromJoystick(Joystick joystick)
         {
-            return new(sdl.HapticOpenFromJoystick(joystick.joystick));
+            return new(SDL.HapticOpenFromJoystick(joystick.joystick));
         }
 
         /// <summary>
@@ -79,7 +78,7 @@
         /// <returns>A <see cref="Haptic"/> instance representing the haptic feedback device.</returns>
         public static Haptic OpenFromMouse()
         {
-            return new(sdl.HapticOpenFromMouse());
+            return new(SDL.HapticOpenFromMouse());
         }
 
         /// <summary>
@@ -89,7 +88,7 @@
         /// <returns>A <see cref="Haptic"/> instance representing the haptic feedback device.</returns>
         public static Haptic OpenFromIndex(int index)
         {
-            return new(sdl.HapticOpen(index));
+            return new(SDL.HapticOpen(index));
         }
     }
 }

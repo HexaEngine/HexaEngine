@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Core.Graphics.Shaders
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Shaderc;
-    using HexaEngine.SPIRVCross;
+    using Hexa.NET.Shaderc;
+    using Hexa.NET.SPIRVCross;
     using Silk.NET.Core.Native;
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -134,15 +134,15 @@
             byte* pFilename = (byte*)Marshal.StringToCoTaskMemUTF8(filename);
             byte* pSource = (byte*)Marshal.StringToCoTaskMemUTF8(source);
 
-            ShadercIncludeResolveFn include = new((nint)(delegate*<void*, byte*, int, byte*, nuint, ShadercIncludeResult*>)&Include);
-            ShadercIncludeResultReleaseFn release = new((nint)(delegate*<void*, ShadercIncludeResult*, void>)&IncludeRelease);
+            ShadercIncludeResolveFn include = Include;
+            ShadercIncludeResultReleaseFn release = IncludeRelease;
 
-            ShadercCompiler compiler = Shaderc.ShadercCompilerInitialize();
+            ShadercCompiler compiler = Shaderc.CompilerInitialize();
 
-            ShadercCompileOptions options = Shaderc.ShadercCompileOptionsInitialize();
-            Shaderc.ShadercCompileOptionsSetOptimizationLevel(options, ShadercOptimizationLevel.Performance);
+            ShadercCompileOptions options = Shaderc.CompileOptionsInitialize();
+            Shaderc.CompileOptionsSetOptimizationLevel(options, ShadercOptimizationLevel.Performance);
             options.SetGenerateDebugInfo();
-            Shaderc.ShadercCompileOptionsSetSourceLanguage(options, sourceLanguage);
+            Shaderc.CompileOptionsSetSourceLanguage(options, sourceLanguage);
 
             for (int i = 0; i < macros.Length; i++)
             {
@@ -159,7 +159,7 @@
             byte* pBasePath = basePath.ToUTF8Ptr();
             options.SetIncludeCallbacks(include, release, pBasePath);
 
-            ShadercCompilationResult result = Shaderc.ShadercCompileIntoSpv(compiler, pSource, sourceSize, shaderKind, pFilename, pEntrypoint, options);
+            ShadercCompilationResult result = Shaderc.CompileIntoSpv(compiler, pSource, sourceSize, shaderKind, pFilename, pEntrypoint, options);
 
             Free(pBasePath);
 
@@ -171,13 +171,13 @@
 
             if (status == ShadercCompilationStatus.Success)
             {
-                if (Shaderc.ShadercResultGetNumWarnings(result) > 0)
+                if (Shaderc.ResultGetNumWarnings(result) > 0)
                 {
-                    error = ToStringFromUTF8(Shaderc.ShadercResultGetErrorMessage(result));
+                    error = ToStringFromUTF8(Shaderc.ResultGetErrorMessage(result));
                 }
 
-                var length = Shaderc.ShadercResultGetLength(result);
-                var bytecode = Shaderc.ShadercResultGetBytes(result);
+                var length = Shaderc.ResultGetLength(result);
+                var bytecode = Shaderc.ResultGetBytes(result);
 
                 il.Bytecode = (byte*)Alloc(length);
                 il.Length = (int)length;
@@ -190,7 +190,7 @@
                 return true;
             }
 
-            error = ToStringFromUTF8(Shaderc.ShadercResultGetErrorMessage(result)) ?? string.Empty;
+            error = ToStringFromUTF8(Shaderc.ResultGetErrorMessage(result)) ?? string.Empty;
 
             result.Release();
             options.Release();
@@ -277,10 +277,10 @@
             SpvcParsedIr ir;
             SpvcCompiler compiler;
             SpvcCompilerOptions options;
-            SpvcErrorCallback errorCallback = new((nint)(delegate*<void*, byte*, void>)&ErrorCallback);
+            SpvcErrorCallback errorCallback = ErrorCallback;
 
             // Create context.
-            if (!SPIRV.SpvcContextCreate(&context).CheckResult())
+            if (!SPIRVCross.ContextCreate(&context).CheckResult())
             {
                 return false;
             }
@@ -289,7 +289,7 @@
             context.SetErrorCallback(errorCallback, null);
 
             // Parse the SPIR-V.
-            if (!context.ParseSpirv((SpvId*)il.Bytecode, word_count, &ir).CheckResult(context))
+            if (!context.ParseSpirv((uint*)il.Bytecode, word_count, &ir).CheckResult(context))
             {
                 context.Destroy();
                 return false;

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Packaging
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using System.Collections.Generic;
 
     public class PackageManager
@@ -55,7 +55,7 @@
                 throw new InvalidOperationException($"Couldn't find package '{identifier}'.");
             }
 
-            string location = cache.Set(identifier, metadata, packageSource);
+            string location = cache.Set(identifier, metadata!, packageSource!);
         }
     }
 }

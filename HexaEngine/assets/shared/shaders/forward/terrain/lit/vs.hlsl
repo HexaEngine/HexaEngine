@@ -4,7 +4,7 @@
 #define TILESIZE float2(32, 32)
 #endif
 
-cbuffer cb
+cbuffer offsetBuffer
 {
     uint offset;
 }

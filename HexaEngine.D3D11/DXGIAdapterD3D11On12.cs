@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
     using Silk.NET.Core.Contexts;
-    using Silk.NET.DXGI;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D11On12 : DXGIAdapterD3D11
@@ -29,7 +28,7 @@
         {
             AdapterDesc1 desc;
             IDXGIAdapter.GetDesc1(&desc);
-            string name = new(desc.Description);
+            string name = new(&desc.Description_0);
 
             LoggerFactory.General.Info("Backend: Using Graphics API: D3D11On12");
             LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");

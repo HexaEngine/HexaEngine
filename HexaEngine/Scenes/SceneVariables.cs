@@ -1,13 +1,9 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Collections;
+    using Hexa.NET.Utilities.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
-    /// <summary>
-    /// Thread safe wrapper around a dictionary with helper methods integrated
-    /// </summary>
-    /// <seealso cref="IDictionary&lt;string, string&gt;" />
     public class SceneVariables : ObservableDictionary<string, string>
     {
         private readonly object _lock = new();
@@ -73,7 +69,7 @@
             }
         }
 
-        public override bool TryGetValue(string key, [MaybeNullWhen(false)] out string? value)
+        public override bool TryGetValue(string key, out string value)
         {
             lock (_lock)
             {

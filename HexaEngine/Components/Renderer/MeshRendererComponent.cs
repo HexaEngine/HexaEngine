@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
@@ -10,7 +11,6 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
@@ -18,17 +18,17 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
-    public class MeshRendererComponent : BaseRendererComponent, ILODRendererComponent, ISelectableRayTest
+    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
     {
-        private ModelManager modelManager;
-        private MaterialManager materialManager;
+        private ModelManager modelManager = null!;
+        private MaterialManager materialManager = null!;
         private Model? model;
         private AssetRef modelAsset;
         private int maxLODLevel;
         private int minLODLevel;
         private int currentLODLevel;
 
-        private static MeshRenderer meshRenderer1;
+        private static MeshRenderer meshRenderer1 = null!;
         private static int instances;
 
         static MeshRendererComponent()
@@ -382,6 +382,7 @@
                     component.QueueIndex = (uint)RenderQueueIndex.Transparency;
                 }
                 component.GameObject.SendUpdateTransformed();
+                component.Invalidate();
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
 

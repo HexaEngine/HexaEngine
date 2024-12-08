@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Mathematics;
     using System;
     using System.ComponentModel;
 
@@ -89,6 +89,10 @@
         public void ResetSettings()
         {
             // nothing to do.
+        }
+
+        public void UpdateBindings()
+        {
         }
     }
 }

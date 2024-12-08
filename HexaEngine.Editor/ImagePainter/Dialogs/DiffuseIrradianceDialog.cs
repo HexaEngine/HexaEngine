@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
@@ -21,10 +20,9 @@
         private IUnorderedAccessView? dstUav;
         private RenderTargetViewArray? dstRTVs;
         private ShaderResourceViewArray? dstSRVs;
-        private IBLDiffuseIrradiance? diffuseIrradiance;
+
         private IBLDiffuseIrradianceCompute? diffuseIrradianceCompute;
 
-        private bool useComputeShader = true;
         private bool compute;
 
         public override string Name => "Bake Irradiance";
@@ -55,8 +53,6 @@
             dstUav?.Dispose();
             dstUav = null;
 
-            diffuseIrradiance?.Dispose();
-            diffuseIrradiance = null;
             diffuseIrradianceCompute?.Dispose();
             diffuseIrradianceCompute = null;
         }
@@ -69,7 +65,6 @@
                 ImGui.BeginDisabled(true);
             }
 
-            ImGui.Checkbox("Use compute shader", ref useComputeShader);
             uint tSize = size;
             ImGui.InputScalar("cube map size", ImGuiDataType.U32, &tSize);
             size = tSize;
@@ -82,7 +77,6 @@
                     {
                         Discard();
 
-                        diffuseIrradiance = new(device);
                         diffuseIrradianceCompute = new(device);
 
                         var image = imagePainter.Source.ToScratchImage(device);
@@ -104,9 +98,6 @@
 
                         dstRTVs = new(device, dstTex, 6, new(desc.Width, desc.Height));
                         dstSRVs = new(device, dstTex, 6);
-
-                        diffuseIrradiance.Targets = dstRTVs;
-                        diffuseIrradiance.Source = srcSrv;
 
                         diffuseIrradianceCompute.Target = dstUav;
                         diffuseIrradianceCompute.Source = srcSrv;
@@ -164,7 +155,7 @@
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image(dstSRVs.Views[i].NativePointer, new(128, 128));
+                    ImGui.Image((ulong)dstSRVs.Views[i].NativePointer, new(128, 128));
                     if (i != 5)
                     {
                         ImGui.SameLine();
@@ -174,14 +165,7 @@
 
             if (compute)
             {
-                if (useComputeShader)
-                {
-                    diffuseIrradianceCompute.Dispatch(context, size, size);
-                }
-                else
-                {
-                    diffuseIrradiance.Draw(context, size, size);
-                }
+                diffuseIrradianceCompute!.Dispatch(context, size, size);
 
                 compute = false;
                 srcTex?.Dispose();

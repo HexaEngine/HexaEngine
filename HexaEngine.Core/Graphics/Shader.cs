@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Unsafes;
-    using System.Collections.Generic;
+    using Hexa.NET.Utilities;
     using System.Runtime.InteropServices;
 
     /// <summary>

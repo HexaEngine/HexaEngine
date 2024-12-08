@@ -1,8 +1,6 @@
-﻿using HexaEngine.Core.Debugging;
-
-namespace HexaEngine.Core.Assets
+﻿namespace HexaEngine.Core.Assets
 {
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
 
     public class ImportContext
     {
@@ -12,17 +10,17 @@ namespace HexaEngine.Core.Assets
         private readonly List<Artifact> lastArtifacts = [];
         private readonly List<Guid> toRemove = [];
         private readonly string? importSourcePath;
-        private readonly IProgress<float>? progress;
+        private readonly ProgressContext? progress;
 
         private readonly string tempDir;
 
-        private struct ImportFileOperation(string tempPath, string target, FileOperationMode mode, IGuidProvider? guidProvider, IProgress<float>? progress)
+        private struct ImportFileOperation(string tempPath, string target, FileOperationMode mode, IGuidProvider? guidProvider, IImportProgress? progress)
         {
             public string TempPath = tempPath;
             public string TargetPath = target;
             public FileOperationMode Mode = mode;
             public IGuidProvider? GuidProvider = guidProvider;
-            public IProgress<float>? Progress = progress;
+            public IImportProgress? Progress = progress;
         }
 
         private struct DatabaseOperation(Artifact artifact, DatabaseOperationMode mode)
@@ -49,18 +47,18 @@ namespace HexaEngine.Core.Assets
         private readonly Dictionary<string, string> tempFileMap = [];
         private readonly List<DatabaseOperation> databaseOperations = [];
 
-        public ImportContext(IGuidProvider provider, SourceAssetMetadata sourceAsset, string? importSourcePath, IProgress<float>? progress)
+        public ImportContext(IGuidProvider provider, SourceAssetMetadata sourceAsset, string? importSourcePath, IImportProgress? progress)
         {
             this.provider = provider;
             this.sourceAsset = sourceAsset;
             this.importSourcePath = importSourcePath;
-            this.progress = progress;
+            this.progress = progress != null ? new(progress, 1) : null;
             tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDir);
             Logger.Info($"Using temp dir '{tempDir}' for sandbox.");
         }
 
-        public ImportContext(IGuidProvider provider, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, string? importSourcePath, IProgress<float>? progress) : this(provider, sourceAsset, importSourcePath, progress)
+        public ImportContext(IGuidProvider provider, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, string? importSourcePath, IImportProgress? progress) : this(provider, sourceAsset, importSourcePath, progress)
         {
             lastArtifacts = artifacts;
             toRemove = artifacts.Select(x => x.Guid).ToList();
@@ -85,6 +83,7 @@ namespace HexaEngine.Core.Assets
 
         internal void Commit()
         {
+            progress?.BeginStep(1, "Post import steps");
             try
             {
                 for (int i = 0; i < fileOperations.Count; i++)
@@ -95,14 +94,17 @@ namespace HexaEngine.Core.Assets
                     {
                         case FileOperationMode.Move:
                             MoveTempFile(operation, false);
+                            LogMessage(LogSeverity.Info, $"Moved: {operation.TempPath} -> {operation.TargetPath}");
                             break;
 
                         case FileOperationMode.MoveOverwrite:
                             MoveTempFile(operation, true);
+                            LogMessage(LogSeverity.Info, $"Moved (Overwrite): {operation.TempPath} -> {operation.TargetPath}");
                             break;
 
                         case FileOperationMode.Import:
                             SourceAssetsDatabase.ImportFile(operation.TempPath, operation.TargetPath, operation.GuidProvider, operation.Progress);
+                            LogMessage(LogSeverity.Info, $"Imported: {operation.TempPath}");
                             break;
                     }
 
@@ -116,6 +118,7 @@ namespace HexaEngine.Core.Assets
                     {
                         case DatabaseOperationMode.Insert:
                             ArtifactDatabase.AddArtifact(operation.Artifact);
+                            LogMessage(LogSeverity.Info, $"Imported: {operation.Artifact.Name}");
                             break;
 
                         case DatabaseOperationMode.Update:
@@ -124,6 +127,7 @@ namespace HexaEngine.Core.Assets
 
                         case DatabaseOperationMode.Delete:
                             ArtifactDatabase.RemoveArtifact(operation.Artifact);
+                            LogMessage(LogSeverity.Info, $"Deleted: {operation.Artifact.Name}");
                             break;
                     }
                 }
@@ -139,6 +143,7 @@ namespace HexaEngine.Core.Assets
             }
 
             Logger.Info($"Committed sandbox '{sourceAsset}' '{tempDir}'.");
+            progress?.EndStep();
         }
 
         private static void MoveTempFile(ImportFileOperation tempFile, bool overwrite)
@@ -152,6 +157,7 @@ namespace HexaEngine.Core.Assets
 
         internal void Rollback()
         {
+            progress?.BeginStep(1, "Rollback...");
             for (int i = 0; i < databaseOperations.Count; i++)
             {
                 var operation = databaseOperations[i];
@@ -180,6 +186,7 @@ namespace HexaEngine.Core.Assets
             Directory.Delete(tempDir, true);
 
             Logger.Info($"Rolled back sandbox '{sourceAsset}' '{tempDir}'.");
+            progress?.EndStep();
         }
 
         private Guid GetGuid(string name)
@@ -187,12 +194,37 @@ namespace HexaEngine.Core.Assets
             return provider.GetGuid(name);
         }
 
-        public void ReportProgress(float value)
+        public void SetSteps(int stepCount)
         {
-            progress?.Report(value);
+            progress?.SetSteps(stepCount + 1); // 1 for the commit step.
         }
 
-        private string MapFileToTempFile(string path, FileOperationMode mode, IGuidProvider? guidProvider, IProgress<float>? progress)
+        public void BeginStep(int items, string value)
+        {
+            progress?.BeginStep(items, value);
+        }
+
+        public void EndStep()
+        {
+            progress?.EndStep();
+        }
+
+        public void LogMessage(LogSeverity severity, string message)
+        {
+            progress?.LogMessage(severity, message);
+        }
+
+        public void LogMessage(string message)
+        {
+            progress?.LogMessage(message);
+        }
+
+        public void AddProgress(string message)
+        {
+            progress?.AddProgress(message);
+        }
+
+        private string MapFileToTempFile(string path, FileOperationMode mode, IGuidProvider? guidProvider, IImportProgress? progress)
         {
             var tempFile = Path.Combine(tempDir, Path.GetFileName(path));
             fileOperations.Add(new(tempFile, path, mode, guidProvider, progress));

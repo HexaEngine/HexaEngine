@@ -1,17 +1,16 @@
 ﻿namespace HexaEngine.Particles
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
     using System.Numerics;
 
     public class CPUParticleSystem
     {
-        private UnsafeList<uint> deadList = new(MaxParticles);
+        private UnsafeList<int> deadList = new(MaxParticles);
         private UnsafeList<CPUParticleA> particlesA = new(MaxParticles);
         private UnsafeList<CPUParticleB> particlesB = new(MaxParticles);
         private UnsafeList<ViewSpacePositionRadius> viewSpacePositions = new(MaxParticles);
@@ -83,7 +82,7 @@
 
         private void InitializeDeadList(int index)
         {
-            deadList[index] = (uint)index;
+            deadList[index] = (int)index;
         }
 
         public void ResetParticles()
@@ -125,7 +124,7 @@
                 pb.StartSize = emitter.StartSize;
                 pb.EndSize = emitter.EndSize;
 
-                uint index;
+                int index;
                 lock (_lock)
                 {
                     index = *deadList.Back;
@@ -233,7 +232,7 @@
 
                 pb.Position = NewPosition;
 
-                Vector3 vec = NewPosition - camera.Transform.Position;
+                Vector3 vec = NewPosition - camera!.Transform.Position;
                 pb.DistanceToEye = vec.Length();
 
                 float alpha = MathUtil.Lerp(1, 0, MathUtil.Clamp01(fScaledLife - 0.8f) / 0.2f);
@@ -248,12 +247,12 @@
                     pb.Age = -1;
                     lock (_lock)
                     {
-                        deadList.PushBack((uint)id);
+                        deadList.PushBack((int)id);
                     }
                 }
                 else
                 {
-                    uint index = aliveIndexBuffer.InterlockedIncrementCounter();
+                    int index = aliveIndexBuffer.InterlockedIncrementCounter();
                     aliveIndexBuffer[index] = new(pb.DistanceToEye, id);
                     uint dstIdx = 0;
 

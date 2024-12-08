@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Textures.Raw;
     using HexaEngine.Core.UI;

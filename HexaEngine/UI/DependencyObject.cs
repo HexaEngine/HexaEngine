@@ -1,63 +1,6 @@
 ﻿namespace HexaEngine.UI
 {
-    using YamlDotNet.Core.Tokens;
-
-    public interface IDependencyElement
-    {
-        public string? Name { get; set; }
-
-        public DependencyObject? Parent { get; set; }
-
-        public T? ResolveObject<T>() where T : DependencyObject
-        {
-            if (Parent is null)
-            {
-                return null;
-            }
-
-            if (Parent is T t)
-            {
-                return t;
-            }
-
-            return Parent.ResolveObject<T>();
-        }
-
-        public DependencyObject? ResolveObject(string name)
-        {
-            if (Parent is null)
-            {
-                return null;
-            }
-
-            if (Parent.Name == name)
-            {
-                return Parent;
-            }
-
-            return Parent.ResolveObject(name);
-        }
-    }
-
-    public interface IChildContainer : IDependencyElement
-    {
-        UIElementCollection Children { get; }
-    }
-
-    public interface ICompositionTarget : IDependencyElement
-    {
-        public void Invalidate()
-        {
-            if (Parent is ICompositionTarget target)
-            {
-                target.Invalidate();
-            }
-        }
-
-        protected void OnComposeTarget();
-    }
-
-    public abstract class DependencyObject : IDependencyElement
+    public abstract class DependencyObject : DispatcherObject, IDependencyElement
     {
         public string? Name { get; set; }
 
@@ -169,6 +112,11 @@
                 if (frameworkMetadata.AffectsArrange)
                 {
                     element.InvalidateArrange();
+                }
+
+                if (frameworkMetadata.AffectsRender)
+                {
+                    element.InvalidateVisual();
                 }
             }
 

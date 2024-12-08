@@ -16,7 +16,6 @@ cbuffer ParamsBuffer
 };
 
 TextureCube inputTexture : register(t0);
-
 SamplerState defaultSampler : register(s0);
 
 // ----------------------------------------------------------------------------

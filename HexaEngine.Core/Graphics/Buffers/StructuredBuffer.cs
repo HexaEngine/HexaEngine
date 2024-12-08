@@ -21,6 +21,8 @@
         private volatile bool isDirty;
         private uint capacity;
 
+        private EventHandlers<CapacityChangedEventArgs> handlers = new();
+
         private bool disposedValue;
 
         /// <summary>
@@ -123,6 +125,7 @@
                     return;
                 }
 
+                var oldCapacity = capacity;
                 var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
@@ -140,7 +143,15 @@
                 MemoryManager.Register(buffer);
                 srv = device.CreateShaderResourceView(buffer);
                 srv.DebugName = dbgName + ".SRV";
+
+                handlers.Invoke(this, new((int)oldCapacity, (int)value));
             }
+        }
+
+        public event EventHandler<CapacityChangedEventArgs> Resize
+        {
+            add => handlers.AddHandler(value);
+            remove => handlers.RemoveHandler(value);
         }
 
         /// <summary>
@@ -172,6 +183,11 @@
         /// Gets a value indicating whether the buffer is disposed.
         /// </summary>
         public bool IsDisposed => buffer.IsDisposed;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public T* Items => items;
 
         /// <summary>
         /// Gets or sets the element at the specified index in the buffer.
@@ -364,6 +380,8 @@
         {
             if (!disposedValue)
             {
+                handlers.Clear();
+
                 MemoryManager.Unregister(buffer);
                 srv.Dispose();
                 buffer.Dispose();

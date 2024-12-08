@@ -23,7 +23,7 @@
         private readonly Dictionary<ResourceBinding, ImAttribute> resourceBindings = new();
         private ViewMode viewMode = ViewMode.NodeTree;
 
-        private string viewSettings;
+        private string viewSettings = null!;
 
         private enum ViewMode
         {
@@ -197,6 +197,7 @@
                 {
                     var pass = passes[i];
                     var node = renderGraph.GetGraphNodeByName(pass.Name);
+                    if (node == null) continue;
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -351,10 +352,10 @@
                     ImGui.Text(node.Name);
                     ImNodes.EndNodeTitleBar();
 
-                    ImNodes.BeginInputAttribute(imNode.Input, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginInputAttribute(imNode.Input, PinShape.CircleFilled);
                     ImNodes.EndInputAttribute();
                     ImGui.SameLine();
-                    ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginOutputAttribute(imNode.Output, PinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
                     for (int j = 0; j < node.Dependencies.Count; j++)
@@ -369,7 +370,7 @@
                     {
                         var dep = node.WriteDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginOutputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
+                        ImNodes.BeginOutputAttribute(atrri.Id, PinShape.CircleFilled);
                         ImGui.Text(dep.Name);
                         ImNodes.EndOutputAttribute();
                     }
@@ -378,7 +379,7 @@
                     {
                         var dep = node.ReadDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginInputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
+                        ImNodes.BeginInputAttribute(atrri.Id, PinShape.CircleFilled);
                         ImGui.Text(dep.Name);
                         ImNodes.EndInputAttribute();
                     }
@@ -426,7 +427,7 @@
                     return node.Key;
                 }
             }
-            return default;
+            return default!;
         }
     }
 }

@@ -11,7 +11,7 @@
 #endif
 
 #if SSR_QUALITY == 0
-cbuffer CBSSRSettings : register(b0)
+cbuffer SSRParams : register(b0)
 {
 	int SSR_MAX_RAY_COUNT;
 	int SSR_RAY_STEPS;
@@ -42,13 +42,13 @@ cbuffer CBSSRSettings : register(b0)
 #define SSR_RAY_HIT_THRESHOLD 2.00f
 #endif
 
-SamplerState point_clamp_sampler : register(s0);
-SamplerState linear_clamp_sampler : register(s1);
-SamplerState linear_border_sampler : register(s2);
+SamplerState pointClampSampler : register(s0);
+SamplerState linearClampSampler : register(s1);
+SamplerState linearBorderSampler : register(s2);
 
-Texture2D<float> depthTx : register(t0);
-Texture2D normalMetallicTx : register(t1);
-Texture2D sceneTx : register(t2);
+Texture2D inputTex : register(t0);
+Texture2D<float> depthTex : register(t1);
+Texture2D normalTex : register(t2);
 
 struct VertexOut
 {
@@ -67,7 +67,7 @@ float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 		vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 
 		// linearize depth here
-		fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+		fDepth = depthTex.SampleLevel(pointClampSampler, vProjectedCoord.xy, 0);
 		float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
 		float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
@@ -83,7 +83,7 @@ float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 	vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 
 	// linearize depth here
-	fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+	fDepth = depthTex.SampleLevel(pointClampSampler, vProjectedCoord.xy, 0);
 	float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
 	float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
@@ -102,7 +102,7 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
 		vProjectedCoord.xy /= vProjectedCoord.w;
 		vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 
-		fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+		fDepth = depthTex.SampleLevel(pointClampSampler, vProjectedCoord.xy, 0);
 
 		float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
 
@@ -127,9 +127,15 @@ bool bInsideScreen(in float2 vCoord)
 
 float4 main(VertexOut pin) : SV_TARGET
 {
-	float4 NormalRoughness = normalMetallicTx.Sample(linear_border_sampler, pin.Tex);
+	float depth = depthTex.Sample(linearClampSampler, pin.Tex);
+
+	float4 scene_color = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0);
+
+	if (depth == 1)
+		return scene_color;
+
+	float4 NormalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
 	float roughness = NormalRoughness.a;
-	float4 scene_color = sceneTx.SampleLevel(linear_clamp_sampler, pin.Tex, 0);
 
 	if (roughness > 0.8f)
 		return scene_color;
@@ -138,7 +144,6 @@ float4 main(VertexOut pin) : SV_TARGET
 	Normal = 2 * Normal - 1.0;
 	Normal = normalize(mul(Normal, (float3x3)view));
 
-	float depth = depthTx.Sample(linear_clamp_sampler, pin.Tex);
 	float3 Position = GetPositionVS(pin.Tex, depth);
 	float3 ReflectDir = normalize(reflect(Position, Normal));
 
@@ -155,6 +160,6 @@ float4 main(VertexOut pin) : SV_TARGET
 			* (vCoords.w) // / 2 + 0.5f) // rayhit binary fade
 			);
 
-	float3 reflectionColor = reflectionIntensity * sceneTx.SampleLevel(linear_clamp_sampler, vCoords.xy, 0).rgb;
+	float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(linearClampSampler, vCoords.xy, 0).rgb;
 	return scene_color + (1 - roughness) * max(0, float4(reflectionColor, 1.0f));
 }

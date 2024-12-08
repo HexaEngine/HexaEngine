@@ -1,18 +1,15 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
-    using HexaEngine.Mathematics;
     using System;
     using System.ComponentModel;
 
     public sealed class CopyPass : IPostFx
     {
-        private IShaderResourceView Input;
-        private IResource InputResource;
-        private IRenderTargetView Output;
-        private IResource OutputResource;
-        private Viewport Viewport;
+        private IResource InputResource = null!;
+        private IResource OutputResource = null!;
 
         public string Name { get; } = "Copy";
 
@@ -40,6 +37,10 @@
         {
         }
 
+        public void UpdateBindings()
+        {
+        }
+
         public void Draw(IGraphicsContext context)
         {
             context.CopyResource(OutputResource, InputResource);
@@ -56,14 +57,11 @@
 
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
-            Output = view;
             OutputResource = resource;
-            Viewport = viewport;
         }
 
         public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
-            Input = view;
             InputResource = resource;
         }
 

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics.Buffers
 {
-    using System;
-    using System.Runtime.CompilerServices;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using System;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents a buffer designed for unordered access (UAV) and shader resource view (SRV) usage
@@ -292,7 +292,7 @@
         /// </summary>
         public void Clear()
         {
-            Memset(items, 0, capacity);
+            MemsetT(items, 0, capacity);
             count = 0;
         }
 

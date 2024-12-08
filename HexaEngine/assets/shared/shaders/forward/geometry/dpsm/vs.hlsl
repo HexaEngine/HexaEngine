@@ -1,17 +1,20 @@
 #include "defs.hlsl"
 
-cbuffer cb
+cbuffer offsetBuffer
 {
-    uint offset;
+	uint offset;
 }
 
-cbuffer LightView : register(b1)
+cbuffer lightBuffer : register(b1)
 {
-    float4x4 view;
-    float lightNear;
-    float lightFar;
-    float hemiDir;
+	float4x4 view;
+	float lightNear;
+	float lightFar;
+	float hemiDir;
 };
+
+#define DPSM_BIAS 0.1
+#define Z_BIAS_THRESHOLD 0.1
 
 StructuredBuffer<float4x4> worldMatrices;
 StructuredBuffer<uint> worldMatrixOffsets;
@@ -19,42 +22,42 @@ StructuredBuffer<uint> worldMatrixOffsets;
 // Function to transform vertex to DPSM space
 inline PixelInput TransformToDPSMSpace(uint instanceId, float3 position)
 {
-    PixelInput output;
+	PixelInput output;
 
-    float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-    output.position = mul(float4(position, 1), mat).xyzw;
+	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
+	output.position = mul(float4(position, 1), mat).xyzw;
 
-    // transform vertex to DP-space
-    output.position = mul(output.position, view);
-    output.position /= output.position.w;
+	// transform vertex to DP-space
+	output.position = mul(output.position, view);
+	output.position /= output.position.w;
 
-    // for the back-map z has to be inverted
-    output.position.z *= hemiDir;
+	// for the back-map z has to be inverted
+	output.position.z *= hemiDir;
 
-    // because the origin is at 0 the proj-vector
+	// because the origin is at 0 the proj-vector
 	// matches the vertex-position
-    float len = length(output.position.xyz);
+	float len = length(output.position.xyz);
 
-    // normalize
-    output.position /= len;
+	// normalize
+	output.position /= len;
 
-    // save for clipping
-    output.clip = output.position.z;
+	// save for clipping
+	output.clip = output.position.z + DPSM_BIAS * (abs(output.position.z) < Z_BIAS_THRESHOLD);
 
-    // calc "normal" on intersection, by adding the
+	// calc "normal" on intersection, by adding the
 	// reflection-vector(0,0,1) and divide through
 	// his z to get the texture coords
-    output.position.x /= output.position.z + 1.0f;
-    output.position.y /= output.position.z + 1.0f;
+	output.position.x /= output.position.z + 1.0f;
+	output.position.y /= output.position.z + 1.0f;
 
-    // set z for z-buffering and neutralize w
-    output.position.z = (len - lightNear) / (lightFar - lightNear);
-    output.position.w = 1.0;
+	// set z for z-buffering and neutralize w
+	output.position.z = (len - lightNear) / (lightFar - lightNear);
+	output.position.w = 1.0;
 
-    // DP-depth
-    output.depth = output.position.z;
+	// DP-depth
+	output.depth = output.position.z;
 
-    return output;
+	return output;
 }
 
 #if Tessellation
@@ -64,9 +67,9 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.pos = mul(float4(input.pos, 1), mat).xyz;
+	output.pos = mul(float4(input.position, 1), mat).xyz;
 
-    output.TessFactor = TessellationFactor;
+	output.TessFactor = TessellationFactor;
 	return output;
 }
 
@@ -77,32 +80,32 @@ StructuredBuffer<uint> boneMatrixOffsets;
 
 PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
-    float4 totalPosition = 0;
+	float4 totalPosition = 0;
 
-    uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
-    for (int i = 0; i < MaxBoneInfluence; i++)
-    {
-        if (input.boneIds[i] == -1)
-            continue;
-        if (input.boneIds[i] >= MaxBones)
-        {
-            totalPosition = float4(input.pos, 1.0f);
-            break;
-        }
+	uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
+	for (int i = 0; i < MaxBoneInfluence; i++)
+	{
+		if (input.boneIds[i] == -1)
+			continue;
+		if (input.boneIds[i] >= MaxBones)
+		{
+			totalPosition = float4(input.position, 1.0f);
+			break;
+		}
 
-        float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
-        totalPosition += localPosition * input.weights[i];
-    }
+		float4 localPosition = mul(float4(input.position, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
+		totalPosition += localPosition * input.weights[i];
+	}
 
-    PixelInput output = TransformToDPSMSpace(instanceId, totalPosition.xyz);
-    return output;
+	PixelInput output = TransformToDPSMSpace(instanceId, totalPosition.xyz);
+	return output;
 }
 
 #else
 
 PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
-    PixelInput output = TransformToDPSMSpace(instanceId, input.pos);
-    return output;
+	PixelInput output = TransformToDPSMSpace(instanceId, input.position);
+	return output;
 }
 #endif

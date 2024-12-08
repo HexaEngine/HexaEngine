@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Weather
 {
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.Mathematics.Sky;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -7,10 +9,9 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Mathematics.Sky;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
     using System.Runtime.InteropServices;
 
@@ -21,6 +22,15 @@
         HosekWilkie,
         Preetham,
         Custom,
+    }
+
+    [Flags]
+    public enum FogMode
+    {
+        Linear = 0,
+        Exp = 1,
+        Exp2 = 2,
+        HeightBased = 4,
     }
 
     /// <summary>
@@ -64,6 +74,17 @@
         private float phaseFunctionG = 0.2f;
         private SkyType skyModel;
         private float overcast;
+        private Vector3 fogColor;
+        private float fogIntensity;
+        private float fogHeight;
+        private float fogStart;
+        private float fogEnd;
+        private FogMode fogMode;
+        private float fogDensity;
+        private Vector3 sunColor = new(1, 1, 0.5f);
+        private float sunIntensity = 10;
+        private float sunRadius = 0.05f;
+        private float sunFalloff = 2;
 
         /// <summary>
         /// Gets a value indicating whether the weather has a sun.
@@ -262,10 +283,109 @@
             }
         }
 
+        public Vector3 FogColor
+        {
+            get => fogColor;
+            set
+            {
+                fogColor = value; isDirty = true;
+            }
+        }
+
+        public float FogIntensity
+        {
+            get => fogIntensity;
+            set
+            {
+                fogIntensity = value; isDirty = true;
+            }
+        }
+
+        public float FogStart
+        {
+            get => fogStart;
+            set
+            {
+                fogStart = value; isDirty = true;
+            }
+        }
+
+        public float FogEnd
+        {
+            get => fogEnd;
+            set
+            {
+                fogEnd = value; isDirty = true;
+            }
+        }
+
+        public float FogHeight
+        {
+            get => fogHeight;
+            set
+            {
+                fogHeight = value; isDirty = true;
+            }
+        }
+
+        public FogMode FogMode
+        {
+            get => fogMode;
+            set
+            {
+                fogMode = value; isDirty = true;
+            }
+        }
+
+        public float FogDensity
+        {
+            get => fogDensity;
+            set
+            {
+                fogDensity = value; isDirty = true;
+            }
+        }
+
+        public Vector3 SunColor
+        {
+            get => sunColor;
+            set
+            {
+                sunColor = value; isDirty = true;
+            }
+        }
+
+        public float SunIntensity
+        {
+            get => sunIntensity;
+            set
+            {
+                sunIntensity = value; isDirty = true;
+            }
+        }
+
+        public float SunRadius
+        {
+            get => sunRadius;
+            set
+            {
+                sunRadius = value; isDirty = true;
+            }
+        }
+
+        public float SunFalloff
+        {
+            get => sunFalloff;
+            set
+            {
+                sunFalloff = value; isDirty = true;
+            }
+        }
+
         /// <summary>
         /// Gets the constant buffer containing weather information for graphics rendering.
         /// </summary>
-        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value;
+        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value!;
 
         /// <inheritdoc/>
         public string Name { get; } = "Weather System";
@@ -293,6 +413,7 @@
         /// Updates the WeatherManager and contributes weather-related information to graphics rendering.
         /// </summary>
         /// <param name="context">The graphics context for rendering updates.</param>
+        [Profiling.Profile]
         public void Update(IGraphicsContext context)
         {
             var manager = LightManager.Current;
@@ -337,11 +458,22 @@
             weather.DensityFactor = densityFactor;
             weather.CloudType = cloudType;
             weather.PhaseFunctionG = phaseFunctionG;
+            weather.FogColor = fogColor;
+            weather.FogIntensity = fogIntensity;
+            weather.FogStart = fogStart;
+            weather.FogEnd = fogEnd;
+            weather.FogHeight = fogHeight;
+            weather.FogMode = (int)fogMode;
+            weather.FogDensity = fogDensity;
+            weather.SunColor = sunColor;
+            weather.SunIntensity = sunIntensity;
+            weather.SunRadius = sunRadius;
+            weather.SunFalloff = sunFalloff;
 
             Vector3 sunDir = Vector3.Normalize(new Vector3(weather.LightDir.X, weather.LightDir.Y, weather.LightDir.Z));
             if (skyModel == SkyType.HosekWilkie)
             {
-                SkyParameters skyParams = Mathematics.Sky.HosekWilkie.SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir, overcast);
+                SkyParameters skyParams = Hexa.NET.Mathematics.Sky.HosekWilkie.SkyModel.CalculateSkyParameters(turbidity, groundAlbedo, sunDir, overcast);
 
                 weather.A = skyParams[(int)EnumSkyParams.A];
                 weather.B = skyParams[(int)EnumSkyParams.B];
@@ -357,7 +489,7 @@
 
             if (skyModel == SkyType.Preetham)
             {
-                SkyParameters skyParams = Mathematics.Sky.Preetham.SkyModel.CalculateSkyParameters(turbidity, sunDir, overcast, 1);
+                SkyParameters skyParams = Hexa.NET.Mathematics.Sky.Preetham.SkyModel.CalculateSkyParameters(turbidity, sunDir, overcast, 1);
 
                 weather.A = skyParams[(int)EnumSkyParams.A];
                 weather.B = skyParams[(int)EnumSkyParams.B];
@@ -367,7 +499,7 @@
                 weather.F = skyParams[(int)EnumSkyParams.F];
             }
 
-            weatherBuffer?.Value?.Update(context, weather);
+            weatherBuffer!.Value!.Update(context, weather);
             isDirty = false;
         }
     }
@@ -402,7 +534,7 @@
 
     public unsafe class WeatherParameterDefinition
     {
-        public string Name { get; }
+        public string Name { get; } = null!;
 
         public WeatherParameterType Type { get; }
 
@@ -484,7 +616,7 @@
 
         public long Id { get; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public List<WeatherParameter> Parameters { get; } = new();
 

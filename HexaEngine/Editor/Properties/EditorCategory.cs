@@ -166,7 +166,7 @@
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
 
-            if (ImGui.TreeNodeEx(guiName.UniqueName))
+            if (ImGui.TreeNodeEx(guiName.UniqueName, ImGuiTreeNodeFlags.SpanAllColumns))
             {
                 Color();
                 ImGui.TableSetColumnIndex(0);
@@ -214,7 +214,7 @@
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
 
-            if (ImGui.TreeNodeEx(guiName.UniqueName))
+            if (ImGui.TreeNodeEx(guiName.UniqueName, ImGuiTreeNodeFlags.SpanAllColumns))
             {
                 Color();
                 ImGui.TableSetColumnIndex(0);

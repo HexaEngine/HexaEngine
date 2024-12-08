@@ -9,7 +9,7 @@
         {
         }
 
-        public Texture2D ParticleTexture;
+        public Texture2D ParticleTexture = null!;
         public Vector4 Position = new(0, 0, 0, 0);
         public Vector4 Velocity = new(0, 5, 0, 0);
         public Vector4 PositionVariance = new(0, 0, 0, 0);

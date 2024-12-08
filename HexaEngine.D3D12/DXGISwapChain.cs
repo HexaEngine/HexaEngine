@@ -2,8 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
-    using Silk.NET.Direct3D12;
-    using Silk.NET.DXGI;
+    using Hexa.NET.DXGI;
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
@@ -37,12 +36,12 @@
             DescriptorHeapDesc descriptorHeapDesc = new()
             {
                 Type = DescriptorHeapType.Rtv,
-                Flags = DescriptorHeapFlags.None,
+                Flags = DescriptorHeapFlags.FlagNone,
                 NumDescriptors = bufferCount,
             };
 
             ID3D12DescriptorHeap* heap;
-            device.Device.CreateDescriptorHeap(&descriptorHeapDesc, Utils.Guid(ID3D12DescriptorHeap.Guid), (void**)&heap).ThrowHResult();
+            device.Device.CreateDescriptorHeap(&descriptorHeapDesc, Utils.Guid(ID3D12DescriptorHeap.Guid), (void**)&heap).ThrowIf();
             descriptorHeap = heap;
 
             uint rtvDescriptorSize = device.Device.GetDescriptorHandleIncrementSize(DescriptorHeapType.Rtv);
@@ -76,7 +75,7 @@
 
         public int Height { get; private set; }
 
-        public Mathematics.Viewport Viewport { get; private set; }
+        public Hexa.NET.Mathematics.Viewport Viewport { get; private set; }
 
         public event EventHandler? Resizing;
 
@@ -100,7 +99,7 @@
             }
             else
             {
-                swapChain->Present(0, DXGI.PresentAllowTearing | DXGI.PresentDONotWait);
+                swapChain->Present(0, (uint)DXGI.DXGI_PRESENT_ALLOW_TEARING);
             }
         }
 
@@ -116,7 +115,7 @@
             }
             else
             {
-                swapChain->Present(0, DXGI.PresentAllowTearing);
+                swapChain->Present(0, (uint)DXGI.DXGI_PRESENT_ALLOW_TEARING);
             }
         }
 
@@ -161,7 +160,7 @@
             BackbufferRTV.Dispose();
             BackbufferDSV.Dispose();
 
-            swapChain->ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+            swapChain->ResizeBuffers(2, (uint)width, (uint)height, Hexa.NET.DXGI.Format.B8G8R8A8Unorm, (uint)flags);
             Width = width;
             Height = height;
             Viewport = new(0, 0, Width, Height);

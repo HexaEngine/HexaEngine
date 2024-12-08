@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Core.Debugging;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Security;
     using HexaEngine.Security.Credentials;
@@ -136,7 +136,7 @@
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ProjectVersionControl));
         private static readonly object _lock = new();
-        private static readonly Identity identity;
+        private static readonly Identity identity = null!;
 
         private static FileSystemWatcher? watcher;
         private static readonly List<string> changedFiles = [];
@@ -145,13 +145,11 @@
 
         public static Repository? Repository { get; private set; }
 
-        public static string HeadName => Repository.Head.FriendlyName;
+        public static string HeadName => Repository!.Head.FriendlyName;
 
-        public static Branch Head => Repository.Head;
+        public static Branch Head => Repository!.Head;
 
         public static object SyncObject => _lock;
-
-        public static event Action<string>? FileChanged;
 
         static ProjectVersionControl()
         {

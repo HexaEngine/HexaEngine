@@ -3,14 +3,17 @@
 
 namespace Editor
 {
+    using Hexa.NET.DebugDraw;
+    using Hexa.NET.Logging;
     using HexaEngine;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.UI;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
@@ -34,6 +37,7 @@ namespace Editor
         {
             Flags = RendererFlags.None;
             Title = "Editor";
+            TitleBar = new TitleBar();
         }
 
         private bool firstTime = true;
@@ -77,6 +81,7 @@ namespace Editor
         protected override void OnRendererInitialize(IGraphicsDevice device)
         {
             imGuiRenderer = new(this, graphicsDevice, graphicsContext);
+            DebugDrawRenderer.Init(device);
 
             initEditorTask = Task.Factory.StartNew(() =>
             {
@@ -128,8 +133,8 @@ namespace Editor
             // Begin profiling frame and total time if profiling is enabled.
             Application.GPUProfiler.BeginFrame();
             Application.GPUProfiler.Begin(GraphicsContext, "Total");
-            CPUProfiler2.Global.BeginFrame();
-            CPUProfiler2.Global.Begin("Total");
+            CPUProfiler.Global.BeginFrame();
+            CPUProfiler.Global.Begin("Total");
 #endif
 
             // Resize the swap chain if necessary.
@@ -146,40 +151,41 @@ namespace Editor
                 resetTime = false;
             }
 
-            CPUProfiler2.Global.Begin("SwapChain.Clear");
+            CPUProfiler.Global.Begin("SwapChain.Clear");
             // Clear depth-stencil and render target views.
             context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.ClearRenderTargetView(swapChain.BackbufferRTV, new Vector4(0.10f, 0.10f, 0.10f, 1.00f));
-            CPUProfiler2.Global.End("SwapChain.Clear");
+            CPUProfiler.Global.End("SwapChain.Clear");
 
-            CPUProfiler2.Global.Begin("Dispatcher.Execute");
+            CPUProfiler.Global.Begin("Dispatcher.Execute");
             // Execute rendering commands from the render dispatcher.
             renderDispatcher.ExecuteQueue();
-            CPUProfiler2.Global.End("Dispatcher.Execute");
+            CPUProfiler.Global.End("Dispatcher.Execute");
 
-            CPUProfiler2.Global.Begin("ImGui.NewFrame");
+            CPUProfiler.Global.Begin("ImGui.NewFrame");
             // Start ImGui frame rendering.
             imGuiRenderer?.NewFrame();
-            CPUProfiler2.Global.End("ImGui.NewFrame");
+            CPUProfiler.Global.End("ImGui.NewFrame");
 
             // Invoke virtual method for pre-render operations.
             OnRenderBegin(context);
 
+            if (editorInitialized)
+            {
+                TitleBar?.Draw();
+            }
+
             // Determine if rendering should occur based on initialization status.
             var drawing = rendererInitialized;
 
-            CPUProfiler2.Global.Begin("Editor.Update");
+            CPUProfiler.Global.Begin("Editor.Update");
             // Update and draw the frame viewer.
             SceneWindow.SourceViewport = Viewport;
             SceneWindow.Update();
-            SceneWindow.Draw();
+
             drawing &= SceneWindow.IsVisible;
-            windowViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
-            CPUProfiler2.Global.End("Editor.Update");
-
-            // Set the camera for DebugDraw based on the current camera's view projection matrix.
-
-            DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
+            windowViewport = sceneRenderer.OutputViewport = Application.InEditorMode ? SceneWindow.RenderViewport : Viewport;
+            CPUProfiler.Global.End("Editor.Update");
 
             // Wait for swap chain presentation.
             swapChain.WaitForPresent();
@@ -197,21 +203,22 @@ namespace Editor
                 // Do fixed update tick if necessary.
                 Time.FixedUpdateTick();
 #endif
-                CPUProfiler2.Global.Begin("Scene.Update");
+                CPUProfiler.Global.Begin("Scene.Update");
                 scene.GraphicsUpdate(context);
-                CPUProfiler2.Global.End("Scene.Update");
+                CPUProfiler.Global.End("Scene.Update");
 
-                CPUProfiler2.Global.Begin("Scene.Render");
-                sceneRenderer.Render(context, windowViewport, scene, CameraManager.Current);
-                CPUProfiler2.Global.End("Scene.Render");
+                CPUProfiler.Global.Begin("Scene.Render");
+                sceneRenderer.Render(context, scene, CameraManager.Current);
+                CPUProfiler.Global.End("Scene.Render");
             }
 
             // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
             if (editorInitialized)
             {
-                CPUProfiler2.Global.Begin("Editor");
+                // Set the camera for DebugDraw based on the current camera's view projection matrix.
+                DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
                 Designer.Draw(context);
-                CPUProfiler2.Global.End("Editor");
+                SceneWindow.Draw();
             }
 
             // Invoke virtual method for post-render operations.
@@ -223,27 +230,27 @@ namespace Editor
 #if PROFILE
             // Begin profiling ImGui if profiling is enabled.
             Application.GPUProfiler.Begin(GraphicsContext, "ImGui");
-            CPUProfiler2.Global.Begin("ImGui");
+            CPUProfiler.Global.Begin("ImGui");
 #endif
 
             // End the ImGui frame rendering.
             imGuiRenderer?.EndFrame();
 #if PROFILE
             // End profiling ImGui if profiling is enabled.
-            CPUProfiler2.Global.End("ImGui");
+            CPUProfiler.Global.End("ImGui");
             Application.GPUProfiler.End(GraphicsContext, "ImGui");
 #endif
             // Invoke virtual method for post-render operations.
             OnRenderEnd(context);
 
             // Present and swap buffers.
-            CPUProfiler2.Global.Begin("SwapChain.Present");
+            CPUProfiler.Global.Begin("SwapChain.Present");
             swapChain.Present();
-            CPUProfiler2.Global.End("SwapChain.Present");
+            CPUProfiler.Global.End("SwapChain.Present");
             // Wait for swap chain presentation to complete.
-            CPUProfiler2.Global.Begin("SwapChain.Wait");
+            CPUProfiler.Global.Begin("SwapChain.Wait");
             swapChain.Wait();
-            CPUProfiler2.Global.End("SwapChain.Wait");
+            CPUProfiler.Global.End("SwapChain.Wait");
 #if !SINGLE_THREADED
             // Signal and wait for synchronization with the update thread.
             syncBarrier.SignalAndWait();
@@ -251,8 +258,8 @@ namespace Editor
 
 #if PROFILE
             // End profiling frame and total time if profiling is enabled.
-            CPUProfiler2.Global.End("Total");
-            CPUProfiler2.Global.EndFrame();
+            CPUProfiler.Global.End("Total");
+            CPUProfiler.Global.EndFrame();
             Application.GPUProfiler.End(GraphicsContext, "Total");
             Application.GPUProfiler.EndFrame(context);
 #endif
@@ -264,6 +271,7 @@ namespace Editor
             {
                 initEditorTask.Wait();
             }
+            DebugDrawRenderer.Shutdown();
             imGuiRenderer.Dispose();
             Designer.Dispose();
         }

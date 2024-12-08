@@ -34,9 +34,22 @@
             A = color.W;
         }
 
+        public ColorRGBA(uint color)
+        {
+            R = ((color >> 24) & 0xff) / (float)byte.MaxValue;
+            G = ((color >> 16) & 0xff) / (float)byte.MaxValue;
+            B = ((color >> 8) & 0xff) / (float)byte.MaxValue;
+            A = (color & 0xff) / (float)byte.MaxValue;
+        }
+
         public static implicit operator Vector4(ColorRGBA c)
         {
             return new(c.R, c.G, c.B, c.A);
+        }
+
+        public static implicit operator ColorRGBA(uint color)
+        {
+            return new(color);
         }
     }
 }

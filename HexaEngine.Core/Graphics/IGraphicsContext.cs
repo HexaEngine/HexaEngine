@@ -1,74 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
     using System.Numerics;
-
-    public interface IGraphicsContext1 : IGraphicsContext
-    {
-        public void VSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void VSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void VSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void HSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void HSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void HSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void DSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void DSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void DSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void GSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void GSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void GSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void PSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void PSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void PSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void CSSetShaderResource(uint slot, ICombinedTex2D? tex);
-
-        public void CSSetShaderResources(uint slot, IList<ICombinedTex2D?> tex);
-
-        public void CSSetShaderResources(uint slot, Span<ICombinedTex2D?> tex);
-
-        public void SetRenderTarget(ICombinedTex2D? target, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargets(IList<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargets(Span<ICombinedTex2D?> targets, ICombinedTex2D? depthStencil);
-
-        public void SetRenderTargetsAndUnorderedAccessViews(ICombinedTex2D? renderTargetView, ICombinedTex2D? depthStencilView, uint uavSlot, ICombinedTex2D? unorderedAccessView, uint uavInitialCount = unchecked((uint)-1));
-
-        public unsafe void SetRenderTargetsAndUnorderedAccessViews(IList<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, IList<ICombinedTex2D?> unorderedAccessViews, IList<uint> uavInitialCounts);
-
-        public unsafe void SetRenderTargetsAndUnorderedAccessViews(Span<ICombinedTex2D?> views, ICombinedTex2D? depthStencilView, uint uavSlot, Span<ICombinedTex2D?> unorderedAccessViews, Span<uint> uavInitialCounts);
-
-        public void CSSetUnorderedAccessView(uint slot, ICombinedTex2D? tex, uint uavInitialCount = unchecked((uint)-1));
-
-        public void CSSetUnorderedAccessViews(uint slot, IList<ICombinedTex2D?> tex, IList<uint> uavInitialCounts);
-
-        public void CSSetUnorderedAccessViews(uint slot, Span<ICombinedTex2D?> tex, Span<uint> uavInitialCounts);
-
-        public void ClearDepthStencilView(ICombinedTex2D depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
-
-        public void ClearRenderTargetView(ICombinedTex2D renderTargetView, Vector4 value);
-
-        public void ClearUnorderedAccessViewFloat(ICombinedTex2D uav, float r, float g, float b, float a);
-
-        public void ClearUnorderedAccessViewUint(ICombinedTex2D uav, uint r, uint g, uint b, uint a);
-
-        public void ClearView(ICombinedTex2D tex, Vector4 color, Rect rect);
-    }
 
     /// <summary>
     /// Provides an interface for graphics context management and operations on a graphics device.
@@ -85,16 +18,16 @@
         IGraphicsDevice Device { get; }
 
         /// <summary>
+        /// Sets the active compute pipeline state for rendering.
+        /// </summary>
+        /// <param name="state">The compute pipeline state to set. Pass null to unset the active pipeline state.</param>
+        void SetComputePipelineState(IComputePipelineState? state);
+
+        /// <summary>
         /// Sets the active graphics pipeline state for rendering.
         /// </summary>
         /// <param name="state">The graphics pipeline state to set. Pass null to unset the active pipeline state.</param>
-        void SetPipelineState(IGraphicsPipelineState? state);
-
-        /// <summary>
-        /// Sets the active compute pipeline for GPU computation.
-        /// </summary>
-        /// <param name="pipeline">The compute pipeline to set. Pass null to unset the active pipeline.</param>
-        void SetComputePipeline(IComputePipeline? pipeline);
+        void SetGraphicsPipelineState(IGraphicsPipelineState? state);
 
         /// <summary>
         /// Copies data from one resource to another.
@@ -228,276 +161,6 @@
         /// <param name="format">The format of the indices in the buffer.</param>
         /// <param name="offset">The offset (in bytes) to start reading from the buffer.</param>
         void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
-
-        /// <summary>
-        /// Sets a constant buffer for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets a constant buffer for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets a constant buffer for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets a constant buffer for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets a constant buffer for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets a constant buffer for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="constantBuffer">The constant buffer to set.</param>
-        void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void VSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void HSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void DSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void GSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void PSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets an array of constant buffers for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The constant buffer slot to set.</param>
-        /// <param name="count">The number of constant buffers to set.</param>
-        /// <param name="constantBuffers">An array of pointers to constant buffers.</param>
-        unsafe void CSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
-
-        /// <summary>
-        /// Sets a shader resource view for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets a shader resource view for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets a shader resource view for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets a shader resource view for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets a shader resource view for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets a shader resource view for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="shaderResourceView">The shader resource view to set.</param>
-        void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void VSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void HSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void DSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void GSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void PSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets an array of shader resource views for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The shader resource view slot to set.</param>
-        /// <param name="count">The number of shader resource views to set.</param>
-        /// <param name="shaderResourceViews">An array of pointers to shader resource views.</param>
-        unsafe void CSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
-
-        /// <summary>
-        /// Sets a sampler state for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void VSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets a sampler state for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void HSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets a sampler state for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void DSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets a sampler state for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void GSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets a sampler state for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void PSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets a sampler state for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="sampler">The sampler state to set.</param>
-        void CSSetSampler(uint slot, ISamplerState? sampler);
-
-        /// <summary>
-        /// Sets an array of sampler states for the vertex shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void VSSetSamplers(uint slot, uint count, void** samplers);
-
-        /// <summary>
-        /// Sets an array of sampler states for the hull shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void HSSetSamplers(uint slot, uint count, void** samplers);
-
-        /// <summary>
-        /// Sets an array of sampler states for the domain shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void DSSetSamplers(uint slot, uint count, void** samplers);
-
-        /// <summary>
-        /// Sets an array of sampler states for the geometry shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void GSSetSamplers(uint slot, uint count, void** samplers);
-
-        /// <summary>
-        /// Sets an array of sampler states for the pixel shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void PSSetSamplers(uint slot, uint count, void** samplers);
-
-        /// <summary>
-        /// Sets an array of sampler states for the compute shader stage.
-        /// </summary>
-        /// <param name="slot">The sampler state slot to set.</param>
-        /// <param name="count">The number of sampler states to set.</param>
-        /// <param name="samplers">An array of pointers to sampler states.</param>
-        unsafe void CSSetSamplers(uint slot, uint count, void** samplers);
 
         /// <summary>
         /// Clears the specified render target view with the specified clear color.
@@ -673,6 +336,7 @@
         /// </summary>
         /// <param name="commandList">The command list to execute.</param>
         /// <param name="restoreState">True to restore the rendering state after execution; otherwise, false.</param>
+        [Obsolete("Use command buffers")]
         void ExecuteCommandList(ICommandList commandList, bool restoreState);
 
         /// <summary>
@@ -680,7 +344,10 @@
         /// </summary>
         /// <param name="restoreState">True to restore the rendering state after finishing; otherwise, false.</param>
         /// <returns>A new command list that can be used for rendering commands.</returns>
+        [Obsolete("Use command buffers")]
         ICommandList FinishCommandList(bool restoreState);
+
+        void ExecuteCommandBuffer(ICommandBuffer commandBuffer);
 
         /// <summary>
         /// Updates a subresource of a resource.
@@ -689,38 +356,6 @@
         /// <param name="destSubresource">The index of the destination subresource.</param>
         /// <param name="subresource">The subresource data containing the update.</param>
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
-
-        /// <summary>
-        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
-        /// </summary>
-        /// <param name="offset">The starting slot to which the unordered access views will be bound.</param>
-        /// <param name="count">The number of unordered access views to set.</param>
-        /// <param name="views">An array of pointers to unordered access views to set.</param>
-        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
-        unsafe void CSSetUnorderedAccessViews(uint offset, uint count, void** views, uint* uavInitialCounts);
-
-        /// <summary>
-        /// Sets unordered access views for the compute shader stage using an array of views and initial counts.
-        /// </summary>
-        /// <param name="count">The number of unordered access views to set.</param>
-        /// <param name="views">An array of pointers to unordered access views to set.</param>
-        /// <param name="uavInitialCounts">An array of initial counts for the unordered access views.</param>
-        unsafe void CSSetUnorderedAccessViews(uint count, void** views, uint* uavInitialCounts);
-
-        /// <summary>
-        /// Sets an unordered access view for the compute shader stage at a specified slot with an initial count.
-        /// </summary>
-        /// <param name="offset">The slot at which to bind the unordered access view.</param>
-        /// <param name="view">A pointer to the unordered access view to set.</param>
-        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
-        unsafe void CSSetUnorderedAccessView(uint offset, void* view, uint uavInitialCounts = unchecked((uint)-1));
-
-        /// <summary>
-        /// Sets an unordered access view for the compute shader stage at slot 0 with an initial count.
-        /// </summary>
-        /// <param name="view">A pointer to the unordered access view to set.</param>
-        /// <param name="uavInitialCounts">The initial count for the unordered access view.</param>
-        unsafe void CSSetUnorderedAccessView(void* view, uint uavInitialCounts = unchecked((uint)-1)) => CSSetUnorderedAccessView(0, view, uavInitialCounts);
 
         /// <summary>
         /// Sets render targets for rendering using an array of views and an optional depth-stencil view.

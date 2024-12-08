@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Collections;
+    using HexaEngine.Core.Collections;
     using System;
 
     public class RenderGraph

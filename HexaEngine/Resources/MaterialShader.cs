@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
+    using System.Collections.Frozen;
     using System.Threading.Tasks;
 
     public class MaterialShader : ResourceInstance, IDisposable
     {
         private readonly IGraphicsDevice device;
         private readonly List<MaterialShaderPass> passes = [];
-        private readonly Dictionary<string, MaterialShaderPass> nameToPass = [];
+        private FrozenDictionary<string, MaterialShaderPass> nameToPass = null!;
         private MaterialShaderDesc desc;
         private volatile bool initialized;
 
@@ -18,6 +19,8 @@
         }
 
         public IReadOnlyList<MaterialShaderPass> Passes => passes;
+
+        public MaterialShaderDesc Description => desc;
 
         public void Initialize()
         {
@@ -30,7 +33,8 @@
             {
                 return;
             }
-            ShaderMacro[] globalMacros = desc.Macros;
+            Dictionary<string, MaterialShaderPass> dict = new();
+            ShaderMacro[] globalMacros = [.. desc.Macros, .. desc.MeshMacros];
             for (int i = 0; i < desc.Passes.Length; i++)
             {
                 MaterialShaderPassDesc passDesc = desc.Passes[i];
@@ -38,8 +42,9 @@
                 passDesc.Pipeline.Macros = [.. passDesc.Pipeline.Macros, .. globalMacros];
                 MaterialShaderPass pass = new(passDesc.Name, device, passDesc.Pipeline, passDesc.State);
                 passes.Add(pass);
-                nameToPass.Add(pass.Name, pass);
+                dict.Add(pass.Name, pass);
             }
+            nameToPass = dict.ToFrozenDictionary();
             initialized = true;
         }
 
@@ -102,7 +107,6 @@
                 passes[i].Dispose();
             }
             passes.Clear();
-            nameToPass.Clear();
         }
     }
 }

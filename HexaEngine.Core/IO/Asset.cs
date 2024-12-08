@@ -163,7 +163,7 @@
         {
             var fs = FileSystem.OpenRead(fullPath);
             var buffer = new byte[fs.Length];
-            fs.Read(buffer, 0, buffer.Length);
+            fs.ReadExactly(buffer);
             fs.Close();
             return buffer;
         }
@@ -176,7 +176,7 @@
         {
             var fs = FileSystem.OpenRead(fullPath);
             var blob = new FileBlob((nint)fs.Length);
-            fs.Read(blob.AsSpan());
+            fs.ReadExactly(blob.AsSpan());
             fs.Close();
             return blob;
         }

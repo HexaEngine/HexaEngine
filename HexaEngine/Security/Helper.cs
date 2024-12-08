@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Security
 {
-    using HexaEngine.Core;
     using HexaEngine.Security.Credentials;
     using System.Buffers.Binary;
     using System.Runtime.CompilerServices;

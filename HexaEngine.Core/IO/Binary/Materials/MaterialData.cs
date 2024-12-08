@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Materials
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Metadata;
-    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Text;
 
@@ -365,8 +365,9 @@
         /// <param name="src">The <see cref="Stream"/> to read from.</param>
         /// <param name="encoding">The character encoding to use for reading strings.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
+        /// <param name="version"></param>
         /// <returns>A <see cref="MaterialData"/> instance read from the stream.</returns>
-        public static MaterialData Read(Stream src, Encoding encoding, Endianness endianness)
+        public static MaterialData Read(Stream src, Encoding encoding, Endianness endianness, Version version)
         {
             MaterialData material = new();
             material.Name = src.ReadString(encoding, endianness) ?? string.Empty;
@@ -382,11 +383,13 @@
 
             material.Flags = (MaterialFlags)src.ReadInt32(endianness);
 
+            var textureVersion = version >= new Version(2, 0, 0, 0) ? new Version(2, 0, 0, 0) : new Version(1, 0, 0, 0);
+
             var textureCount = src.ReadInt32(endianness);
             material.Textures.Capacity = textureCount;
             for (int i = 0; i < textureCount; i++)
             {
-                material.Textures.Add(MaterialTexture.Read(src, encoding, endianness));
+                material.Textures.Add(MaterialTexture.Read(src, encoding, endianness, textureVersion));
             }
 
             var shaderCount = src.ReadInt32(endianness);

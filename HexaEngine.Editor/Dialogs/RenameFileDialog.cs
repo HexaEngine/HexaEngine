@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
 
+    [Obsolete("Use Widgets instead.")]
     public class RenameFileDialog
     {
         private bool shown;

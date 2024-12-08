@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Terrains
 {
-    using HexaEngine.Mathematics;
+    using Hexa.NET.Mathematics;
 
     /// <summary>
     /// Represents a group of terrain layers.
@@ -120,7 +120,7 @@
         {
             if (index == count - 1)
             {
-                layers[index] = null;
+                layers[index] = null!;
                 count--;
                 return;
             }

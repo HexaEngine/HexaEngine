@@ -19,6 +19,7 @@
 
         void DrawMenu();
 
+        [Profiling.Profile]
         void DrawWindow(IGraphicsContext context);
 
         void Init(IGraphicsDevice device);

@@ -9,7 +9,6 @@
     public class Brushes : EditorWindow
     {
         private static readonly List<BrushMask> masks = new();
-        private IGraphicsDevice device;
         private BrushMask? current;
 
         protected override string Name => "Masks";
@@ -18,7 +17,6 @@
 
         protected override void InitWindow(IGraphicsDevice device)
         {
-            this.device = device;
             string[] brushes = FileSystem.GetFiles("assets/textures/brushes");
             for (int i = 0; i < brushes.Length; i++)
             {

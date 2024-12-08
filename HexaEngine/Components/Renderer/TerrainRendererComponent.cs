@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Binary.Terrains;
@@ -11,20 +12,18 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
-    using System.Numerics;
     using System.Text;
 
     [EditorCategory("Renderer")]
     [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
-    public class TerrainRendererComponent : BaseRendererComponent, ISelectableRayTest
+    public class TerrainRendererComponent : BaseDrawableComponent, ISelectableRayTest
     {
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;
 
-        private static TerrainRenderer renderer1;
+        private static TerrainRenderer renderer1 = null!;
         private static int instances;
         private int currentLODLevel;
         private int maxLODLevel;

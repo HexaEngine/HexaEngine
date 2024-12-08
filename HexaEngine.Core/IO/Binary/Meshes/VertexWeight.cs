@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
 
     /// <summary>
     /// Represents a vertex weight, consisting of a vertex ID and a weight.

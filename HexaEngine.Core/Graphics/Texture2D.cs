@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
     public sealed unsafe class Texture2D : Texture<ITexture2D, Texture2DDescription>, ITexture2D, IShaderResourceView, IRenderTargetView, IUnorderedAccessView
@@ -122,7 +121,7 @@
         public SampleDescription SampleDescription => sampleDescription;
 
         /// <summary>
-        /// Gets the <see cref="Mathematics.Viewport"/> of the texture.
+        /// Gets the <see cref="Hexa.NET.Mathematics.Viewport"/> of the texture.
         /// </summary>
         public Viewport Viewport => new(width, height);
 
@@ -343,6 +342,8 @@
         /// Reads data from the texture using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context used to read the data.</param>
+        /// <param name="data"></param>
+        /// <param name="dataSize"></param>
         public void Read(IGraphicsContext context, void* data, uint dataSize)
         {
             if (!CanRead)
@@ -395,7 +396,7 @@
         /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
         public static Texture2D LoadFromAssets(AssetRef assetRef)
         {
-            return new(new TextureFileDescription(assetRef.GetPath()));
+            return new(new TextureFileDescription(assetRef.GetPath()!));
         }
 
         /// <summary>
@@ -406,7 +407,7 @@
         /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
         public static Texture2D LoadFromAssets(AssetRef assetRef, TextureDimension forceDim)
         {
-            return new(new TextureFileDescription(assetRef.GetPath(), forceDim));
+            return new(new TextureFileDescription(assetRef.GetPath()!, forceDim));
         }
 
         /// <summary>
@@ -417,9 +418,9 @@
         [Obsolete("For legacy code, don't use.")]
         public static Task<Texture2D> CreateTextureAsync(TextureFileDescription description)
         {
-            return Task.Factory.StartNew((object state) =>
+            return Task.Factory.StartNew((object? state) =>
             {
-                var data = (TextureFileDescription)state;
+                var data = (TextureFileDescription)state!;
                 return new Texture2D(data);
             }, description);
         }

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Profiling;
 
     public class RenderPass
     {
@@ -13,7 +13,7 @@
         private readonly RenderPassType type;
         private readonly RenderPassMetadata metadata;
         private int index = 0;
-        private RenderGraphNode node;
+        private RenderGraphNode node = null!;
 
         public RenderPass(string name, RenderPassType type = RenderPassType.Default)
         {
@@ -51,6 +51,10 @@
         }
 
         public virtual void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
+        {
+        }
+
+        public virtual void Prepare(GraphResourceBuilder creator)
         {
         }
 
@@ -191,8 +195,8 @@
         {
         }
 
-        public IRenderTargetView RenderTargetView { get; set; }
+        public IRenderTargetView RenderTargetView { get; set; } = null!;
 
-        public IDepthStencilView DepthStencilView { get; set; }
+        public IDepthStencilView DepthStencilView { get; set; } = null!;
     }
 }

@@ -27,7 +27,7 @@
             ImGui.TableSetColumnIndex(0);
             ImGui.Text(guiName.Name);
             ImGui.TableSetColumnIndex(1);
-            bool val = (bool)value;
+            bool val = (bool)value!;
             if (ImGui.Checkbox(guiName.Id, ref val))
             {
                 value = val;

@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Logging;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Scenes;
@@ -13,7 +13,7 @@
     public class BakeWindow : EditorWindow
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger("Baking");
-        private MeshBaker2 baker;
+        private MeshBaker2 baker = null!;
         private Task? task;
         private CancellationTokenSource cancellationToken = new();
 
@@ -50,7 +50,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image(baker.Texture.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.Texture.SRVArraySlices![i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();
@@ -59,7 +59,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image(baker.TextureFinal.SRVArraySlices[i].NativePointer, new(256));
+                ImGui.Image((ulong)baker.TextureFinal.SRVArraySlices![i].NativePointer, new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();
@@ -84,7 +84,7 @@
 
             var renderers = current.RenderManager;
 
-            var sky = renderers.Renderers.FirstOrDefault(x => x is SkyRendererComponent);
+            var sky = renderers.Drawables.FirstOrDefault(x => x is SkyRendererComponent);
 
             if (sky == null)
             {
@@ -96,7 +96,7 @@
 
             task = Task.Run(() =>
             {
-                foreach (var renderer in renderers.Renderers)
+                foreach (var renderer in renderers.Drawables)
                 {
                     if (renderer is MeshRendererComponent rendererComponent && rendererComponent.ModelInstance != null)
                     {

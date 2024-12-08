@@ -1,34 +1,48 @@
-#ifndef GEOMETRY_HLSL_INCLUDED
-#define GEOMETRY_HLSL_INCLUDED
+#ifndef GEOMETRY_H_INCLUDED
+#define GEOMETRY_H_INCLUDED
 
-#ifndef VtxColor
-#define VtxColor 0
+#include "camera.hlsl"
+#include "tessellation.hlsl"
+#include "gbuffer.hlsl"
+
+struct Pixel
+{
+	float4 color;
+	float3 pos;
+	VtxUV0Type uv;
+	float3 normal;
+	float3 tangent;
+	float3 binormal;
+	float3 viewDir;
+};
+
+#ifndef VtxColors
+#define VtxColors 0
 #endif
-#ifndef VtxPosition
-#define VtxPosition 0
+
+#ifndef VtxUVs
+#define VtxUVs 0
 #endif
-#ifndef VtxUV
-#define VtxUV 0
+
+#ifndef VtxNormals
+#define VtxNormals 0
 #endif
-#ifndef VtxNormal
-#define VtxNormal 0
+
+#ifndef VtxTangents
+#define VtxTangents 0
 #endif
-#ifndef VtxTangent
-#define VtxTangent 0
-#endif
-#ifndef VtxBitangent
-#define VtxBitangent 0
-#endif
+
 #ifndef VtxSkinned
 #define VtxSkinned 0
 #endif
 
-#ifndef Tessellation
-#define Tessellation 0
+// Ensure that VtxPos is defined, if not, throw a compilation error
+#ifndef VtxPos
+#error "Vertex position (VtxPos) is required but not defined!"
 #endif
 
-#ifndef TessellationFactor
-#define TessellationFactor 1
+#ifndef Tessellation
+#define Tessellation 0
 #endif
 
 #ifndef MaxBones
@@ -41,116 +55,94 @@
 
 struct VertexInput
 {
-
-#if VtxPosition
-    float3 pos : POSITION;
+#if VtxColors
+	float4 color : COLOR;
 #endif
-#if VtxUV
-    float3 tex : TEXCOORD;
+#if VtxPos
+	float3 position : POSITION;
 #endif
-#if VtxNormal
-    float3 normal : NORMAL;
+#if VtxUVs
+	VtxUV0Type tex : TEXCOORD;
 #endif
-#if VtxColor
-    float4 color : COLOR;
+#if VtxNormals
+	float3 normal : NORMAL;
 #endif
-#if VtxTangent
-    float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
+#if VtxTangents
+	float3 tangent : TANGENT;
 #endif
 
 #if VtxSkinned
-    int4 boneIds : BLENDINDICES;
-    float4 weights : BLENDWEIGHT;
+	int4 boneIds : BLENDINDICES;
+	float4 weights : BLENDWEIGHT;
 #endif
 };
 
 struct HullInput
 {
-#if VtxColor
-    float4 color : COLOR;
+#if VtxColors
+	float4 color : COLOR;
 #endif
-#if VtxPosition
-    float3 pos : POSITION;
+#if VtxPos
+	float3 position : POSITION;
 #endif
-#if VtxUV
-    float3 tex : TEXCOORD;
+#if VtxUVs
+	VtxUV0Type tex : TEXCOORD;
 #endif
-#if VtxNormal
-    float3 normal : NORMAL;
+#if VtxNormals
+	float3 normal : NORMAL;
 #endif
-#if VtxTangent
-    float3 tangent : TANGENT;
+#if VtxTangents
+	float3 tangent : TANGENT;
 #endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
-#endif
-#if VtxSkinned
-    int4 boneIds : BLENDINDICES;
-    float4 weights : BLENDWEIGHT;
-#endif
-    float TessFactor : TESS;
+	float TessFactor : TESS;
 };
 
 struct DomainInput
 {
-#if VtxColor
-    float4 color : COLOR;
+#if VtxColors
+	float4 color : COLOR;
 #endif
-#if VtxPosition
-    float3 pos : POSITION;
+#if VtxPos
+	float3 position : POSITION;
 #endif
-#if VtxUV
-    float3 tex : TEXCOORD;
+#if VtxUVs
+	VtxUV0Type tex : TEXCOORD;
 #endif
-#if VtxNormal
-    float3 normal : NORMAL;
+#if VtxNormals
+	float3 normal : NORMAL;
 #endif
-#if VtxTangent
-    float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
-#endif
-#if VtxSkinned
-    int4 boneIds : BLENDINDICES;
-    float4 weights : BLENDWEIGHT;
+#if VtxTangents
+	float3 tangent : TANGENT;
 #endif
 };
 
 struct PixelInput
 {
-#if VtxColor
-    float4 color : COLOR;
+#if VtxColors
+	float4 color : COLOR;
 #endif
-#if VtxPosition
-    float4 position : SV_POSITION;
-    float3 pos : POSITION;
+#if VtxPos
+	float4 position : SV_POSITION;
+	float3 pos : POSITION;
 #endif
-#if VtxUV
-    float3 tex : TEXCOORD;
+#if VtxUVs
+	VtxUV0Type tex : TEXCOORD;
 #endif
-#if VtxNormal
-    float3 normal : NORMAL;
+#if VtxNormals
+	float3 normal : NORMAL;
 #endif
-#if VtxTangent
-    float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
-    float3 bitangent : BINORMAL;
-#endif
-
-#if VtxPosition
-    float depth : DEPTH;
+#if VtxTangents
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+	float3 tangentViewPos : TEXCOORD4;
+	float3 tangentPos : TEXCOORD5;
 #endif
 };
 
 struct PatchTess
 {
-    float EdgeTess[3] : SV_TessFactor;
-    float InsideTess : SV_InsideTessFactor;
+	float EdgeTess[3] : SV_TessFactor;
+	float InsideTess : SV_InsideTessFactor;
 };
 
 #endif

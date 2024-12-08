@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Mathematics;
 
     /// <summary>
     /// Provides data for mouse button input events.
@@ -33,21 +33,21 @@
         /// <summary>
         /// Gets the mouse button associated with the event.
         /// </summary>
-        public MouseButton Button { get; internal set; }
+        public MouseButton Button { get; set; }
 
         /// <summary>
         /// Gets the state of the mouse button (Up or Down).
         /// </summary>
-        public MouseButtonState State { get; internal set; }
+        public MouseButtonState State { get; set; }
 
         /// <summary>
         /// Gets the number of clicks associated with the event.
         /// </summary>
-        public int Clicks { get; internal set; }
+        public int Clicks { get; set; }
 
         /// <summary>
         /// Gets the mouse position on the window.
         /// </summary>
-        public Point2 Position { get; internal set; }
+        public Point2 Position { get; set; }
     }
 }

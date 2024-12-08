@@ -5,7 +5,7 @@
 
     public class BinaryCredentials : DisposableBase, ICredentials
     {
-        public byte[] Data { get; set; }
+        public byte[] Data { get; set; } = null!;
 
         public CredentialType Type => CredentialType.Binary;
 

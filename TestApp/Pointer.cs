@@ -16,7 +16,7 @@
         /// </summary>
         public Pointer()
         {
-            Data = Alloc<T>();
+            Data = AllocT<T>();
         }
 
         /// <summary>
@@ -41,7 +41,6 @@
             Utils.Free(Data);
             Data = null;
         }
-
 
         /// <summary>
         /// Casts the <see cref="Pointer{T}"/> to a <see cref="Pointer{CastTo}"/> of the specified type.

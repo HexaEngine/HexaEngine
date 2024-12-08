@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
@@ -9,21 +11,20 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System;
     using System.Numerics;
 
     [EditorCategory("Renderer")]
     [EditorComponent<SpriteRendererComponent>("Sprite Renderer")]
-    public class SpriteRendererComponent : BaseRendererComponent
+    public class SpriteRendererComponent : BaseDrawableComponent
     {
         private IGraphicsDevice? device;
-        private SpriteRenderer renderer;
-        private SpriteBatch spriteBatch;
+        private SpriteRenderer renderer = null!;
+        private SpriteBatch spriteBatch = null!;
         private SpriteAtlas? spriteAtlas;
         private Sprite sprite = new();
-        private string atlasPath = string.Empty;
+        private AssetRef texturePath;
 
         [JsonIgnore]
         public override string DebugName { get; protected set; } = nameof(SpriteRenderer);
@@ -34,12 +35,12 @@
         [JsonIgnore]
         public override RendererFlags Flags { get; } = RendererFlags.Draw;
 
-        [EditorProperty("Atlas", startingPath: null)]
-        public string AtlasPath
+        [EditorProperty("Texture", AssetType.Texture2D)]
+        public AssetRef TexturePath
         {
-            get => atlasPath; set
+            get => texturePath; set
             {
-                atlasPath = value;
+                texturePath = value;
 
                 UpdateAtlasAsync();
             }
@@ -80,7 +81,7 @@
         protected override void UnloadCore()
         {
             renderer.Dispose();
-            spriteAtlas.Dispose();
+            spriteAtlas?.Dispose();
             spriteBatch.Dispose();
         }
 
@@ -137,9 +138,9 @@
 
                 var device = component.device;
 
-                var path = Paths.CurrentAssetsPath + component.atlasPath;
+                var path = component.texturePath.GetPath();
 
-                if (FileSystem.Exists(path))
+                if (File.Exists(path))
                 {
                     component.spriteAtlas = new(device, SamplerStateDescription.PointClamp, path);
                     component.Loaded = true;

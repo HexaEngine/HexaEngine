@@ -38,7 +38,7 @@
         /// <summary>
         /// Gets the condition function.
         /// </summary>
-        public EditorPropertyCondition Condition { get; set; }
+        public EditorPropertyCondition Condition { get; set; } = null!;
 
         /// <summary>
         /// Gets the name of the method.

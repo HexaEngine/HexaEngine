@@ -4,7 +4,7 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-cbuffer CBBrush
+cbuffer BrushBuffer
 {
     float3 location;
     float radius;

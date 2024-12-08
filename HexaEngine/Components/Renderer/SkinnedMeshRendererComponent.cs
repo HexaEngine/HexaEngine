@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Logging;
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
@@ -10,22 +11,20 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
-    public class SkinnedMeshRendererComponent : BaseRendererComponent
+    public class SkinnedMeshRendererComponent : BaseDrawableComponent
     {
         private AssetRef modelAsset;
 
-        private ModelManager modelManager;
-        private MaterialManager materialManager;
-        private SkinnedMeshRenderer renderer;
+        private ModelManager modelManager = null!;
+        private MaterialManager materialManager = null!;
+        private SkinnedMeshRenderer renderer = null!;
         private SkinnedModel? model;
         private readonly MaterialAssetMapper materials = new();
 
@@ -142,17 +141,17 @@
 
         public override void Update(IGraphicsContext context)
         {
-            renderer.Update(context, GameObject.Transform.Global);
+            renderer.Update(context, GameObject.Transform.Global, model!);
         }
 
         public override void DrawDepth(IGraphicsContext context)
         {
-            renderer.DrawDepth(context);
+            renderer.DrawDepth(context, model!);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            renderer.DrawShadowMap(context, light, type);
+            renderer.DrawShadowMap(context, model!, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
@@ -163,11 +162,11 @@
         {
             if (path == RenderPath.Deferred)
             {
-                renderer.DrawDeferred(context);
+                renderer.DrawDeferred(context, model!);
             }
             else
             {
-                renderer.DrawForward(context);
+                renderer.DrawForward(context, model!);
             }
         }
 

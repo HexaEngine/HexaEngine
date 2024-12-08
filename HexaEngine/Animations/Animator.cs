@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Animations
 {
-    using HexaEngine.Components.Physics;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -33,7 +32,7 @@
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; set; } = null!;
 
         [JsonIgnore]
         public bool IsSerializable { get; } = true;
@@ -304,11 +303,11 @@
                     var local = BlendChannel(lastAnimation, currentAnimation, i, blend);
                     if (currentChannel.Node.IsBone)
                     {
-                        renderer.SetBoneLocal(local, currentChannel.Node.Id);
+                        renderer!.SetBoneLocal(local, currentChannel.Node.Id);
                     }
                     else
                     {
-                        renderer.SetLocal(local, currentChannel.Node.Id);
+                        renderer!.SetLocal(local, currentChannel.Node.Id);
                     }
                 }
             }
@@ -319,11 +318,11 @@
                     var channel = currentAnimation.NodeChannels[i];
                     if (channel.Node.IsBone)
                     {
-                        renderer.SetBoneLocal(channel.Local, channel.Node.Id);
+                        renderer!.SetBoneLocal(channel.Local, channel.Node.Id);
                     }
                     else
                     {
-                        renderer.SetLocal(channel.Local, channel.Node.Id);
+                        renderer!.SetLocal(channel.Local, channel.Node.Id);
                     }
                 }
             }

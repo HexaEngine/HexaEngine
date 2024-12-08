@@ -84,19 +84,19 @@
                     }
                     else if (property.PropertyType == typeof(float))
                     {
-                        propertyData[property.Name] = (float)(double)value;
+                        propertyData[property.Name] = (float)(double)value!;
                     }
                     else if (property.PropertyType == typeof(uint))
                     {
-                        propertyData[property.Name] = (uint)(long)value;
+                        propertyData[property.Name] = (uint)(long)value!;
                     }
                     else if (property.PropertyType == typeof(int))
                     {
-                        propertyData[property.Name] = (int)(long)value;
+                        propertyData[property.Name] = (int)(long)value!;
                     }
                     else if (property.PropertyType.IsEnum)
                     {
-                        propertyData[property.Name] = Enum.ToObject(property.PropertyType, (int)(long)value);
+                        propertyData[property.Name] = Enum.ToObject(property.PropertyType, (int)(long)value!);
                     }
                     else if (!property.PropertyType.IsInstanceOfType(value))
                     {

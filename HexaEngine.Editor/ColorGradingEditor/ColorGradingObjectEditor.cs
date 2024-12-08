@@ -11,7 +11,6 @@
     using HexaEngine.Volumes;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Drawing;
     using System.Numerics;
     using System.Reflection;
 

@@ -6,10 +6,10 @@ struct PS_INPUT
 };
 
 SamplerState samplerState;
-Texture2D tex;
+Texture2D fontTex;
 
 float4 main(PS_INPUT pixel) : SV_TARGET
 {
-    float4 color = pixel.color * tex.Sample(samplerState, pixel.tex);
+    float4 color = pixel.color * fontTex.Sample(samplerState, pixel.tex);
     return color;
 }

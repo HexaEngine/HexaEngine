@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Components.Renderer
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
@@ -8,19 +9,17 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Weather;
     using System;
 
     [EditorCategory("Renderer")]
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]
-    public class SkyRendererComponent : BaseRendererComponent
+    public class SkyRendererComponent : BaseDrawableComponent
     {
-        private SkyRenderer renderer;
-        private Skybox skybox;
+        private SkyRenderer renderer = null!;
+        private Skybox skybox = null!;
 
-        private IGraphicsDevice? device;
         private AssetRef environmentPath;
         private SkyType skyType;
 
@@ -48,11 +47,6 @@
             set
             {
                 environmentPath = value;
-                if (device == null)
-                {
-                    return;
-                }
-
                 UpdateEnvAsync();
             }
         }
@@ -107,7 +101,7 @@
             Loaded = false;
             renderer?.Uninitialize();
             var tmpSkybox = skybox;
-            skybox = null;
+            skybox = null!;
             tmpSkybox?.Dispose();
 
             return Job.Run("Sky Load Job", this, state =>
@@ -117,19 +111,12 @@
                     return;
                 }
 
-                if (component.device == null)
-                {
-                    return;
-                }
-
-                var device = component.device;
-
                 var path = component.environmentPath.GetPath();
 
                 if (path != null && File.Exists(path))
                 {
-                    component.skybox = new(device);
-                    component.skybox.LoadAsync(path).Wait();
+                    component.skybox = new();
+                    component.skybox.LoadAsync(component.environmentPath).Wait();
                     component.renderer.Initialize(component.skybox);
                     component.Loaded = true;
                 }

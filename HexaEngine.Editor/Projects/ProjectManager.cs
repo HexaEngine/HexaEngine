@@ -1,11 +1,11 @@
 ﻿namespace HexaEngine.Editor.Projects
 {
+    using Hexa.NET.Logging;
     using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Binary.Archives;
+    using HexaEngine.Core.Logging;
     using HexaEngine.Core.UI;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Dialogs;
@@ -15,7 +15,6 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
 
@@ -37,11 +36,11 @@
         {
             ReferencedAssemblyNames.Add("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("HexaEngine.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("Hexa.NET.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("Hexa.NET.Utilities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.D3D11, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.D3D12, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Vulkan, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("HexaEngine.OpenGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.OpenAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.XAudio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("Silk.NET.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -69,8 +68,6 @@
         public static event ProjectUnloadedHandler? ProjectUnloaded;
 
         public static event ProjectLoadingHandler? ProjectLoading;
-
-        public static event ProjectLoadFailedHandler? ProjectLoadFailed;
 
         public static event ProjectLoadedHandler? ProjectLoaded;
 
@@ -101,7 +98,7 @@
 
                     loaded = true;
 
-                    CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath);
+                    CurrentProjectFolder = Path.GetDirectoryName(CurrentProjectFilePath) ?? throw new Exception($"GetDirectoryName returned null for '{CurrentProjectFilePath}'");
 
                     HexaProjectReader reader = new(path);
 
@@ -356,47 +353,134 @@
             semaphore.Release();
         }
 
+        public static void OpenFileInEditor(string filePath, int line = -1, int column = -1)
+        {
+            semaphore.Wait();
+            if (CurrentProjectFolder == null)
+            {
+                semaphore.Release();
+                return;
+            }
+
+            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            string solutionPath = Path.Combine(CurrentProjectFolder, solutionName + ".sln");
+
+            ProcessStartInfo psi = new();
+
+            switch (EditorConfig.Default.ExternalTextEditorType)
+            {
+                case ExternalTextEditorType.VisualStudio:
+                    if (filePath != null && line > 0)
+                    {
+                        // Open specific file at a specific line and column
+                        psi.FileName = "devenv";
+                        psi.Arguments = $"/edit \"{filePath}\" /command \"edit.goto {line},{column}\"";
+                    }
+                    else
+                    {
+                        // Open the solution normally
+                        psi.FileName = "cmd";
+                        psi.Arguments = $"/c start /B devenv \"{solutionPath}\"";
+                    }
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                case ExternalTextEditorType.VSCode:
+                    psi.FileName = "cmd";
+                    string codeArguments = filePath == null ? CurrentProjectFolder : $"{filePath}:{line}:{column}";
+                    psi.Arguments = $"/c start /B code --goto \"{codeArguments}\"";
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                case ExternalTextEditorType.Custom:
+                    var editorIndex = EditorConfig.Default.SelectedExternalTextEditor;
+                    var editors = EditorConfig.Default.ExternalTextEditors;
+                    var editor = editorIndex >= 0 && editorIndex < editors.Count ? editors[editorIndex] : null;
+                    if (editor == null)
+                    {
+                        semaphore.Release();
+                        return;
+                    }
+                    psi.FileName = editor.ProgramPath;
+                    psi.Arguments = ArgumentsParser.Parse(editor.CommandLine, new Dictionary<string, string>
+                    {
+                        { "solutionPath", $"\"{solutionPath}\"" },
+                        { "solutionName", $"\"{solutionName}\"" },
+                        { "projectFolder", $"\"{CurrentProjectFolder}\"" }
+                    });
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    break;
+
+                default:
+                    semaphore.Release();
+                    return;
+            }
+
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open external text editor", ex.Message);
+                Logger.Error("Failed to open external text editor");
+                Logger.Log(ex);
+            }
+
+            semaphore.Release();
+        }
+
         public static void BuildScripts(bool force = false)
         {
             semaphore.Wait();
 
-            if (!scriptProjectChanged && !force)
+            try
             {
-                semaphore.Release();
-                return;
-            }
+                if (!scriptProjectChanged && !force)
+                {
+                    return;
+                }
 
-            ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay | ProgressFlags.NoModal | ProgressFlags.BottomLeft, new(0.01f, 0.01f));
-            PopupManager.Show(modal);
+                ProgressModal modal = new("Building Scripts", "Building Scripts ...", ProgressType.Spinner, ProgressFlags.NoOverlay | ProgressFlags.NoModal | ProgressFlags.BottomLeft, new(0.01f, 0.01f));
+                PopupManager.Show(modal);
 
-            ScriptAssemblyManager.Unload();
-            if (CurrentProjectFolder == null)
-            {
-                ScriptAssemblyManager.SetInvalid(true);
-                semaphore.Release();
+                ScriptAssemblyManager.Unload();
+                if (CurrentProjectFolder == null)
+                {
+                    ScriptAssemblyManager.SetInvalid(true);
+                    modal.Close();
+                    return;
+                }
+
+                if (!Build())
+                {
+                    ScriptAssemblyManager.SetInvalid(true);
+                    scriptProjectBuildFailed = true;
+                    modal.Close();
+                    return;
+                }
+
+                scriptProjectBuildFailed = false;
+
+                string solutionName = Path.GetFileName(CurrentProjectFolder);
+                string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
+
+                if (ScriptAssemblyManager.Load(outputFilePath) == null)
+                {
+                }
                 modal.Close();
-                return;
             }
-
-            if (!Build())
+            catch (Exception ex)
             {
-                ScriptAssemblyManager.SetInvalid(true);
-                scriptProjectBuildFailed = true;
-                semaphore.Release();
-                modal.Close();
-                return;
+                Logger.LogAndShowError("Fatal: Failed to build script assembly.", ex);
             }
-
-            scriptProjectBuildFailed = false;
-
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
-            string outputFilePath = Path.Combine(CurrentProjectFolder, solutionName, "bin", $"{solutionName}.dll");
-
-            ScriptAssemblyManager.Load(outputFilePath);
-
-            modal.Close();
-
-            semaphore.Release();
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         public static Task BuildScriptsAsync(bool force = false)
@@ -426,26 +510,36 @@
             semaphore.Release();
         }
 
+        public static ScriptCompilationResult? CompilationResult { get; private set; }
+
+        public static event Action<ScriptCompilationResult>? CompilationComplete;
+
         private static bool Build()
         {
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            if (CurrentProjectFolder == null) return false;
+            string solutionName = Path.GetFileName(CurrentProjectFolder) ?? throw new Exception();
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
 
             string output = Dotnet.Build(projectFilePath, Path.Combine(CurrentProjectFolder, solutionName, "bin"));
-            bool failed = output.Contains("FAILED");
+
+            CompilationResult = ScriptCompilationResult.FromMSBuildLog(output);
+            CompilationComplete?.Invoke(CompilationResult);
             AnalyseLog(output);
             scriptProjectChanged = false;
 
-            return !failed;
+            return CompilationResult.Success;
         }
 
         private static void Clean()
         {
-            string solutionName = Path.GetFileName(CurrentProjectFolder);
+            if (CurrentProjectFolder == null) return;
+            string solutionName = Path.GetFileName(CurrentProjectFolder) ?? throw new Exception();
             string projectFilePath = Path.Combine(CurrentProjectFolder, solutionName, $"{solutionName}.csproj");
             AnalyseLog(Dotnet.Clean(projectFilePath));
             scriptProjectChanged = true;
         }
+
+        private static readonly ILogger BuildLogger = LoggerFactory.GetLogger("Build");
 
         private static void AnalyseLog(string message)
         {
@@ -454,15 +548,15 @@
             {
                 if (line.Contains("0 Warning(s)"))
                 {
-                    LoggerFactory.General.Info(line);
+                    BuildLogger.Info(line);
                 }
                 else if (line.Contains("0 Error(s)"))
                 {
-                    LoggerFactory.General.Info(line);
+                    BuildLogger.Info(line);
                 }
                 else
                 {
-                    LoggerFactory.General.Log(line);
+                    BuildLogger.Log(line);
                 }
             }
         }
@@ -530,7 +624,7 @@
             string scriptPublishPath = Path.Combine(scriptProjPath, "bin", "Publish");
             PublishOptions scriptPublishOptions = new()
             {
-                Framework = "net8.0",
+                Framework = "net9.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = false,
@@ -599,7 +693,7 @@
             Logger.Log(Dotnet.AddDlls(appTempProjPath,
                 Path.GetFullPath("HexaEngine.dll"),
                 Path.GetFullPath("HexaEngine.Core.dll"),
-                Path.GetFullPath("HexaEngine.Mathematics.dll"),
+                Path.GetFullPath("Hexa.NET.Mathematics.dll"),
                 Path.GetFullPath("HexaEngine.D3D11.dll"),
                 Path.GetFullPath("HexaEngine.D3D12.dll"),
                 Path.GetFullPath("HexaEngine.Vulkan.dll"),
@@ -615,7 +709,7 @@
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
-                Framework = "net8.0",
+                Framework = "net9.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = settings.ReadyToRun,
@@ -628,7 +722,7 @@
 
             // copy native runtimes
             string localRuntimesPath = Path.GetFullPath("runtimes");
-            string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier, "native");
+            string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier!, "native");
 
             CopyDirectory(targetRuntimePath, appTempPublishPath, true);
 

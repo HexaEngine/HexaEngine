@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.UI.Controls
 {
-    using HexaEngine.Mathematics;
-    using HexaEngine.UI.Graphics;
+    using Hexa.NET.Mathematics;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
@@ -70,7 +69,6 @@
 
         public override void InitializeComponent()
         {
-            Children.ForEach(child => child.InitializeComponent());
             Children.ElementAdded += OnChildAdded;
             Children.ElementRemoved += OnChildRemoved;
         }
@@ -211,7 +209,7 @@
             return size;
         }
 
-        protected override Vector2 MeasureOverwrite(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
             Vector2 avail = availableSize;
 

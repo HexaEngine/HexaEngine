@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Graphics.Culling
 {
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public struct OcclusionParams

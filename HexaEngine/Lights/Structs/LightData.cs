@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Lights.Structs
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
     using System.Numerics;
 
     public struct LightData

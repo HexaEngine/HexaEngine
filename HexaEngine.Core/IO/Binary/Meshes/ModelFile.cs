@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Meshes
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Numerics;
     using System.Text;
@@ -84,7 +84,6 @@
         /// </summary>
         /// <param name="path">The path from which the model file will be loaded.</param>
         /// <param name="loadMode"></param>
-        /// <param name="stream"></param>
         /// <returns>The loaded model file.</returns>
         public static ModelFile Load(string path, MeshLoadMode loadMode)
         {
@@ -116,9 +115,19 @@
 
             model.root = Node.ReadFrom(fs, model.Header.Encoding, model.header.Endianness);
 
+            Version meshDataSubVersion;
+            if (model.header.FileVersion > new Version(11, 0, 0, 1))
+            {
+                meshDataSubVersion = new(1, 0, 0, 1);
+            }
+            else
+            {
+                meshDataSubVersion = new(1, 0, 0, 0);
+            }
+
             for (int i = 0; i < (int)model.header.MeshCount; i++)
             {
-                model.meshes.Add(MeshData.Read(fs, model.Header.Encoding, model.header.Endianness, model.header.Compression, loadMode));
+                model.meshes.Add(MeshData.Read(fs, model.Header.Encoding, model.header.Endianness, model.header.Compression, loadMode, meshDataSubVersion));
             }
 
             return model;
