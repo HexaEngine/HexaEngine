@@ -1,21 +1,20 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Vulkan;
+    using Hexa.NET.SDL2;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;
 
     public unsafe class VulkanGraphicsDevice : DeviceChildBase, IGraphicsDevice
     {
-        public readonly Vk Vk = VulkanAdapter.Vk;
         private readonly VulkanAdapter vulkanAdapter;
-        public Device Device;
-        public Queue Queue;
+        public VkDevice Device;
+        public VkQueue Queue;
 
-        public VulkanGraphicsDevice(VulkanAdapter vulkanAdapter, Device device, Queue queue)
+        public VulkanGraphicsDevice(VulkanAdapter vulkanAdapter, VkDevice device, VkQueue queue)
         {
             this.vulkanAdapter = vulkanAdapter;
             Device = device;
@@ -30,7 +29,7 @@
 
         public IGPUProfiler Profiler { get; }
 
-        public PhysicalDevice PhysicalDevice => vulkanAdapter.PhysicalDevice;
+        public VkPhysicalDevice PhysicalDevice => vulkanAdapter.PhysicalDevice;
 
         public GraphicsDeviceCapabilities Capabilities { get; }
 
@@ -56,37 +55,37 @@
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
-            BufferCreateInfo info = default;
-            info.SharingMode = SharingMode.Concurrent;
+            VkBufferCreateInfo info = default;
+            info.SharingMode = VkSharingMode.Concurrent;
             info.Size = (ulong)description.ByteWidth;
 
             if ((description.BindFlags & BindFlags.VertexBuffer) != 0)
             {
-                info.Usage |= BufferUsageFlags.VertexBufferBit;
+                info.Usage |= (uint)VkBufferUsageFlagBits.VertexBufferBit;
             }
 
             if ((description.BindFlags & BindFlags.IndexBuffer) != 0)
             {
-                info.Usage |= BufferUsageFlags.IndexBufferBit;
+                info.Usage |= (uint)VkBufferUsageFlagBits.IndexBufferBit;
             }
 
             if ((description.BindFlags & BindFlags.ConstantBuffer) != 0)
             {
-                info.Usage |= BufferUsageFlags.UniformBufferBit;
+                info.Usage |= (uint)VkBufferUsageFlagBits.UniformBufferBit;
             }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
-                info.Usage |= BufferUsageFlags.ShaderBindingTableBitKhr;
+                info.Usage |= (uint)VkBufferUsageFlagBits.ShaderBindingTableBitKhr;
             }
 
             if ((description.MiscFlags & ResourceMiscFlag.DrawIndirectArguments) == 0)
             {
-                info.Usage |= BufferUsageFlags.IndirectBufferBit;
+                info.Usage |= (uint)VkBufferUsageFlagBits.IndirectBufferBit;
             }
 
-            Silk.NET.Vulkan.Buffer buffer;
-            Vk.CreateBuffer(Device, &info, null, &buffer);
+            VkBuffer buffer;
+            Vulkan.VkCreateBuffer(Device, &info, null, &buffer);
 
             throw new NotImplementedException();
         }
@@ -403,7 +402,7 @@
 
         protected override void DisposeCore()
         {
-            Vk.DestroyDevice(Device, null);
+            Device.DestroyDevice(null);
         }
 
         public ICommandBuffer CreateCommandBuffer()

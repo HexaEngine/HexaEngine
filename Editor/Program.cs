@@ -9,7 +9,7 @@
     {
         public static void Main(string[] args)
         {
-            Application.Boot(GraphicsBackend.D3D11, AudioBackend.Auto);
+            Application.Boot(GraphicsBackend.D3D11, AudioBackend.OpenAL);
             EditorWindow window = new();
 
             Platform.Init(window, true);
