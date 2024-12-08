@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IAudioDevice </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IAudioDevice ">
+      
+      <meta name="description" content="Represents an audio device that provides audio-related functionality and resources.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Audio_IAudioDevice.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Audio.IAudioDevice%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Audio.IAudioDevice">
+
+
+
+  <h1 id="HexaEngine_Core_Audio_IAudioDevice" data-uid="HexaEngine.Core.Audio.IAudioDevice" class="text-break">
+Interface IAudioDevice  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Audio.html">Audio</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents an audio device that provides audio-related functionality and resources.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IAudioDevice : IDisposable</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable.dispose">IDisposable.Dispose()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_Current_" data-uid="HexaEngine.Core.Audio.IAudioDevice.Current*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_Current" data-uid="HexaEngine.Core.Audio.IAudioDevice.Current">
+  Current
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the current audio context associated with the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAudioContext? Current { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioContext.html">IAudioContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_Default_" data-uid="HexaEngine.Core.Audio.IAudioDevice.Default*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_Default" data-uid="HexaEngine.Core.Audio.IAudioDevice.Default">
+  Default
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default audio context provided by the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAudioContext Default { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioContext.html">IAudioContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateContext_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateContext*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateContext" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateContext">
+  CreateContext()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new audio context for managing audio operations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAudioContext CreateContext()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioContext.html">IAudioContext</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.IAudioContext.html">IAudioContext</a> interface representing the new audio context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateEmitter_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateEmitter*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateEmitter" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateEmitter">
+  CreateEmitter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new audio emitter for sound positioning and effects.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IEmitter CreateEmitter()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IEmitter.html">IEmitter</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.IEmitter.html">IEmitter</a> interface representing the new audio emitter.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateListener_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateListener*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateListener_HexaEngine_Core_Audio_IMasteringVoice_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateListener(HexaEngine.Core.Audio.IMasteringVoice)">
+  CreateListener(IMasteringVoice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new audio listener for sound positioning and environmental effects.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IListener CreateListener(IMasteringVoice voice)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>voice</code> <a class="xref" href="HexaEngine.Core.Audio.IMasteringVoice.html">IMasteringVoice</a></dt>
+    <dd><p>The mastering voice to attach the listener to.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IListener.html">IListener</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.IListener.html">IListener</a> interface representing the new audio listener.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateMasteringVoice_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateMasteringVoice*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateMasteringVoice_System_String_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateMasteringVoice(System.String)">
+  CreateMasteringVoice(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a mastering voice for controlling the final mixed audio output.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMasteringVoice CreateMasteringVoice(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A name for the mastering voice.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IMasteringVoice.html">IMasteringVoice</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.IMasteringVoice.html">IMasteringVoice</a> interface representing the new mastering voice.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateSourceVoice_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateSourceVoice*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateSourceVoice_HexaEngine_Core_Audio_IAudioStream_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateSourceVoice(HexaEngine.Core.Audio.IAudioStream)">
+  CreateSourceVoice(IAudioStream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new audio source voice for playing audio streams.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISourceVoice CreateSourceVoice(IAudioStream audioStream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>audioStream</code> <a class="xref" href="HexaEngine.Core.Audio.IAudioStream.html">IAudioStream</a></dt>
+    <dd><p>The audio stream to associate with the source voice.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.ISourceVoice.html">ISourceVoice</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.ISourceVoice.html">ISourceVoice</a> interface representing the new source voice.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateSubmixVoice_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateSubmixVoice*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateSubmixVoice_System_String_HexaEngine_Core_Audio_IMasteringVoice_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateSubmixVoice(System.String,HexaEngine.Core.Audio.IMasteringVoice)">
+  CreateSubmixVoice(string, IMasteringVoice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a submix voice for processing and mixing audio from multiple source voices.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISubmixVoice CreateSubmixVoice(string name, IMasteringVoice voice)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A name for the submix voice.</p>
+</dd>
+    <dt><code>voice</code> <a class="xref" href="HexaEngine.Core.Audio.IMasteringVoice.html">IMasteringVoice</a></dt>
+    <dd><p>The mastering voice to attach the submix voice to.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.ISubmixVoice.html">ISubmixVoice</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.ISubmixVoice.html">ISubmixVoice</a> interface representing the new submix voice.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_CreateWaveAudioStream_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateWaveAudioStream*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_CreateWaveAudioStream_System_IO_Stream_" data-uid="HexaEngine.Core.Audio.IAudioDevice.CreateWaveAudioStream(System.IO.Stream)">
+  CreateWaveAudioStream(Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates an audio stream from a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> for playing wave audio data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAudioStream CreateWaveAudioStream(Stream stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream containing the wave audio data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioStream.html">IAudioStream</a></dt>
+    <dd><p>An instance of the <a class="xref" href="HexaEngine.Core.Audio.IAudioStream.html">IAudioStream</a> interface representing the new audio stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Audio_IAudioDevice_ProcessAudio_" data-uid="HexaEngine.Core.Audio.IAudioDevice.ProcessAudio*"></a>
+
+  <h3 id="HexaEngine_Core_Audio_IAudioDevice_ProcessAudio" data-uid="HexaEngine.Core.Audio.IAudioDevice.ProcessAudio">
+  ProcessAudio()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Processes audio operations, updating the audio context and voice states.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ProcessAudio()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Audio/IAudioDevice.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
