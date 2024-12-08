@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.OpenAL
 {
     using HexaEngine.Core.Audio;
-    using Silk.NET.OpenAL;
+    using Hexa.NET.OpenAL;
 
     public unsafe class OpenALAudioDevice : IAudioDevice
     {
@@ -11,17 +11,17 @@
         public const int ALC_FALSE = 0;
 
         private readonly List<OpenALSourceVoice> sources = new();
-        public readonly Device* Device;
+        public readonly ALCdevice* Device;
         internal readonly OpenALAudioContext context;
         private bool disposedValue;
         private OpenALAudioContext? current;
 
-        internal OpenALAudioDevice(Device* device)
+        internal OpenALAudioDevice(ALCdevice* device)
         {
             Device = device;
-            var pcontext = alc.CreateContext(Device, null);
+            var pcontext = OpenAL.CreateContext(Device, null);
             CheckError(Device);
-            al.DistanceModel(DistanceModel.InverseDistanceClamped);
+            OpenAL.DistanceModel(ALEnum.InverseDistanceClamped);
             CheckError(Device);
             context = new(this, pcontext);
             Current = context;
@@ -46,11 +46,11 @@
 
                 if (value != null)
                 {
-                    alc.MakeContextCurrent(context.Context);
+                    OpenAL.MakeContextCurrent(context.Context);
                 }
                 else
                 {
-                    alc.MakeContextCurrent(null);
+                    OpenAL.MakeContextCurrent(null);
                 }
 
                 CheckError(Device);
@@ -60,11 +60,11 @@
 
         public bool EnableHRTF(bool enable)
         {
-            if (alc.IsExtensionPresent("ALC_SOFT_HRTF"))
+            if (OpenAL.IsExtensionPresent(null, "ALC_SOFT_HRTF") != 0)
             {
-                delegate*<Device*, int*, int> alcResetDeviceSOFT = (delegate*<Device*, int*, int>)al.GetProcAddress("alcResetDeviceSOFT");
+                delegate*<ALCdevice*, int*, int> alcResetDeviceSOFT = (delegate*<ALCdevice*, int*, int>)OpenAL.GetProcAddress("alcResetDeviceSOFT");
 
-                int* attributes = Alloc<int>(3);
+                int* attributes = AllocT(3);
                 attributes[0] = ALC_HRTF_SOFT;
                 attributes[1] = enable ? ALC_TRUE : ALC_FALSE;
                 attributes[2] = 0;
@@ -72,8 +72,7 @@
                 var result = alcResetDeviceSOFT(Device, attributes);
 
                 int hrtfenabled = 0;
-                delegate*<Device*, int, int, int*, void> alcGetIntegerv = (delegate*<Device*, int, int, int*, void>)al.GetProcAddress("alcGetIntegerv");
-                alcGetIntegerv(Device, ALC_HRTF_SOFT, 1, &hrtfenabled);
+                OpenAL.GetIntegerv(Device, ALC_HRTF_SOFT, 1, &hrtfenabled);
                 Free(attributes);
 
                 return hrtfenabled == 1;
@@ -83,7 +82,7 @@
 
         public IAudioContext CreateContext()
         {
-            var context = alc.CreateContext(Device, null);
+            var context = OpenAL.CreateContext(Device, null);
             CheckError(Device);
             return new OpenALAudioContext(this, context);
         }
@@ -105,7 +104,8 @@
 
         public ISourceVoice CreateSourceVoice(IAudioStream audioStream)
         {
-            var source = al.GenSource();
+            uint source;
+            OpenAL.GenSources(1, &source);
             var sourceVoice = new OpenALSourceVoice(source, audioStream);
             sources.Add(sourceVoice);
             return sourceVoice;
@@ -133,7 +133,7 @@
         {
             if (!disposedValue)
             {
-                alc.CloseDevice(Device);
+                OpenAL.CloseDevice(Device);
                 disposedValue = true;
             }
         }

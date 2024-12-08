@@ -10,7 +10,6 @@
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Meshes;
-    using Silk.NET.OpenAL;
     using System.Numerics;
 
     public class LayerPaintTool : TerrainTool

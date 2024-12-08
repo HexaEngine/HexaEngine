@@ -46,7 +46,7 @@
                 Register<LightManager>();
             Register<PhysicsSystem>();
             if (!graphicsDisabled)
-                Register<RenderManager>();
+                Register<RenderSystem>();
             Register<WeatherSystem>();
             Register<ObjectPickerManager>();
             if (!graphicsDisabled)

@@ -10,14 +10,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Silk.NET.OpenAL" Version="2.22.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.Enumeration" Version="2.22.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.EXT" Version="2.22.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Extensions.Soft" Version="2.22.0" PrivateAssets="contentfiles;build" />
-		<PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.23.1" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Hexa.NET.OpenAL" Version="1.2.2" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	</ItemGroup>
 

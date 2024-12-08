@@ -9,7 +9,6 @@
     using HexaEngine.Editor.Plugins;
     using HexaEngine.Jobs;
     using HexaEngine.OpenAL;
-    using HexaEngine.OpenGL;
     using HexaEngine.Scripts;
     using HexaEngine.Vulkan;
     using HexaEngine.Windows;
@@ -46,10 +45,6 @@
 
                 case GraphicsBackend.Vulkan:
                     VulkanAdapter.Init(window, Application.GraphicsDebugging);
-                    break;
-
-                case GraphicsBackend.OpenGL:
-                    OpenGLAdapter.Init(window, Application.GraphicsDebugging);
                     break;
 
                 case GraphicsBackend.Metal:

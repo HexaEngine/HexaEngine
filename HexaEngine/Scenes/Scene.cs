@@ -180,7 +180,7 @@ namespace HexaEngine.Scenes
         public ScriptManager Scripts => GetRequiredService<ScriptManager>();
 
         [JsonIgnore]
-        public RenderManager RenderManager => GetRequiredService<RenderManager>();
+        public RenderSystem RenderManager => GetRequiredService<RenderSystem>();
 
         [JsonIgnore]
         public MaterialManager MaterialManager => GetRequiredService<MaterialManager>();

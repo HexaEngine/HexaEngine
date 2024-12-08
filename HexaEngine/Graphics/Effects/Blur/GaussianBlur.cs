@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using Silk.NET.OpenAL;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

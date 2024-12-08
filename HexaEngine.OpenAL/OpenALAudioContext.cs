@@ -1,17 +1,18 @@
 ﻿namespace HexaEngine.OpenAL
 {
     using HexaEngine.Core.Audio;
+    using Hexa.NET.OpenAL;
 
     public unsafe class OpenALAudioContext : IAudioContext
     {
         internal readonly OpenALAudioDevice AudioDevice;
-        internal readonly Device* Device;
-        public readonly Context* Context;
+        internal readonly ALCdevice* Device;
+        public readonly ALCcontext* Context;
         private bool disposedValue;
 
         public nint NativePointer => (nint)Context;
 
-        internal OpenALAudioContext(OpenALAudioDevice audioDevice, Context* context)
+        internal OpenALAudioContext(OpenALAudioDevice audioDevice, ALCcontext* context)
         {
             AudioDevice = audioDevice;
             Device = audioDevice.Device;
@@ -22,7 +23,7 @@
         {
             if (!disposedValue)
             {
-                alc.DestroyContext(Context);
+                OpenAL.DestroyContext(Context);
                 disposedValue = true;
             }
         }

@@ -63,11 +63,11 @@
             context.SetViewport(gbuffer.Viewport);
 
             profiler?.Begin("LightDeferred.Geometry");
-            RenderManager.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
+            RenderSystem.ExecuteGroup(renderers.GeometryQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
             profiler?.End("LightDeferred.Geometry");
 
             profiler?.Begin("LightDeferred.AlphaTest");
-            RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
+            RenderSystem.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightDeferred", RenderPath.Deferred);
             profiler?.End("LightDeferred.AlphaTest");
 
             context.ClearState();

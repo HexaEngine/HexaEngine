@@ -3,10 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
-    using Silk.NET.OpenAL;
     using System.Numerics;
 
     [EditorDisplayName("Velocity Buffer")]

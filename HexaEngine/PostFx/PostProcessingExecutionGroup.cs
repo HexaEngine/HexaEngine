@@ -46,7 +46,6 @@
             }
 
             commandBuffer.Begin();
-            commandBuffer.ClearState();
 
             Draw(commandBuffer, creator);
 

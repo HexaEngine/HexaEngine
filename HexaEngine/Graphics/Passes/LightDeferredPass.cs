@@ -198,7 +198,7 @@ namespace HexaEngine.Graphics.Passes
             context.SetViewport(creator.Viewport);
 
             profiler?.Begin("LightForward.Background");
-            RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
+            RenderSystem.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.Background");
 
             context.Device.Profiler.Begin(context, "Light.Deferred");

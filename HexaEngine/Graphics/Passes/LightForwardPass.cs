@@ -85,24 +85,24 @@
             if (forceForward)
             {
                 profiler?.Begin("LightForward.Background");
-                RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
+                RenderSystem.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.Background");
 
                 profiler?.Begin("LightForward.Geometry");
-                RenderManager.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
+                RenderSystem.ExecuteGroup(renderers.BackgroundQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.Geometry");
 
                 profiler?.Begin("LightForward.AlphaTest");
-                RenderManager.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightForward", RenderPath.Forward);
+                RenderSystem.ExecuteGroup(renderers.AlphaTestQueue, context, profiler, "LightForward", RenderPath.Forward);
                 profiler?.End("LightForward.AlphaTest");
             }
 
             profiler?.Begin("LightForward.GeometryLast");
-            RenderManager.ExecuteGroup(renderers.GeometryLastQueue, context, profiler, "LightForward", RenderPath.Forward);
+            RenderSystem.ExecuteGroup(renderers.GeometryLastQueue, context, profiler, "LightForward", RenderPath.Forward);
             profiler?.End("LightForward.GeometryLast");
 
             profiler?.Begin("LightForward.Transparency");
-            RenderManager.ExecuteGroup(renderers.TransparencyQueue, context, profiler, "LightForward", RenderPath.Forward, forwardRTVs, nForwardRTVs, depthStencil.Value.DSV);
+            RenderSystem.ExecuteGroup(renderers.TransparencyQueue, context, profiler, "LightForward", RenderPath.Forward, forwardRTVs, nForwardRTVs, depthStencil.Value.DSV);
             profiler?.End("LightForward.Transparency");
 
             profiler?.Begin("LightForward.End");

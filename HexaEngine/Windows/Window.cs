@@ -11,14 +11,12 @@ namespace HexaEngine.Windows
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Graphics.Renderers;
-    using HexaEngine.Lights;
     using HexaEngine.Profiling;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Microsoft.Extensions.DependencyInjection;
-    using Silk.NET.OpenAL;
     using System.Numerics;
 
     /// <summary>

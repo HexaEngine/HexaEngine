@@ -44,19 +44,19 @@
             culling.Context.Reset();
 
             profiler?.Begin("VisibilityTest.Geometry");
-            RenderManager.ExecuteGroupVisibilityTest(renderers.GeometryQueue, CullingManager.Current.Context, profiler, "Geometry");
+            RenderSystem.ExecuteGroupVisibilityTest(renderers.GeometryQueue, CullingManager.Current.Context, profiler, "Geometry");
             profiler?.End("VisibilityTest.Geometry");
 
             profiler?.Begin("VisibilityTest.AlphaTest");
-            RenderManager.ExecuteGroupVisibilityTest(renderers.AlphaTestQueue, CullingManager.Current.Context, profiler, "AlphaTest");
+            RenderSystem.ExecuteGroupVisibilityTest(renderers.AlphaTestQueue, CullingManager.Current.Context, profiler, "AlphaTest");
             profiler?.End("VisibilityTest.AlphaTest");
 
             profiler?.Begin("VisibilityTest.Transparency");
-            RenderManager.ExecuteGroupVisibilityTest(renderers.TransparencyQueue, CullingManager.Current.Context, profiler, "Transparency");
+            RenderSystem.ExecuteGroupVisibilityTest(renderers.TransparencyQueue, CullingManager.Current.Context, profiler, "Transparency");
             profiler?.End("VisibilityTest.Transparency");
 
             profiler?.Begin("VisibilityTest.GeometryLast");
-            RenderManager.ExecuteGroupVisibilityTest(renderers.GeometryLastQueue, CullingManager.Current.Context, profiler, "GeometryLast");
+            RenderSystem.ExecuteGroupVisibilityTest(renderers.GeometryLastQueue, CullingManager.Current.Context, profiler, "GeometryLast");
             profiler?.End("VisibilityTest.GeometryLast");
 
             profiler?.Begin("VisibilityTest.Update");
@@ -70,15 +70,15 @@
             context.SetViewport(depthStencilBuffer.Viewport);
 
             profiler?.Begin("PrePass.Geometry");
-            RenderManager.ExecuteGroupDepth(renderers.GeometryQueue, context, profiler, "Geometry");
+            RenderSystem.ExecuteGroupDepth(renderers.GeometryQueue, context, profiler, "Geometry");
             profiler?.End("PrePass.Geometry");
 
             profiler?.Begin("PrePass.AlphaTest");
-            RenderManager.ExecuteGroupDepth(renderers.AlphaTestQueue, context, profiler, "AlphaTest");
+            RenderSystem.ExecuteGroupDepth(renderers.AlphaTestQueue, context, profiler, "AlphaTest");
             profiler?.End("PrePass.AlphaTest");
 
             profiler?.Begin("PrePass.GeometryLast");
-            RenderManager.ExecuteGroupDepth(renderers.GeometryLastQueue, context, profiler, "GeometryLast");
+            RenderSystem.ExecuteGroupDepth(renderers.GeometryLastQueue, context, profiler, "GeometryLast");
             profiler?.End("PrePass.GeometryLast");
 
             context.ClearState();

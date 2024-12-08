@@ -41,7 +41,6 @@
             ReferencedAssemblyNames.Add("HexaEngine.D3D11, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.D3D12, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Vulkan, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("HexaEngine.OpenGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.OpenAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.XAudio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("Silk.NET.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");

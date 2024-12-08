@@ -6,7 +6,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Weather;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
 

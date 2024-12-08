@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS0618 // Type or member is obsolete
-
-namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Graphics
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
@@ -13,212 +11,17 @@ namespace HexaEngine.Graphics
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    public enum QueueGroupFlags
-    {
-        None,
-        Dynamic
-    }
-
-    public class RenderQueueGroup : IDisposable
-    {
-        private ICommandList? commandList;
-        private readonly RenderQueueIndex index;
-        private QueueGroupFlags flags;
-        private readonly List<IDrawable> renderers = [];
-        private readonly string pass;
-        private uint baseIndex;
-        private uint lastIndex;
-        private bool disposedValue;
-
-        public RenderQueueGroup(RenderQueueIndex index, QueueGroupFlags flags, string pass)
-        {
-            this.index = index;
-            this.flags = flags;
-            this.pass = pass;
-        }
-
-        public RenderQueueIndex Index => index;
-
-        public uint BaseIndex => baseIndex;
-
-        public uint LastIndex => lastIndex;
-
-        public bool IsDynamic
-        {
-            get => (flags & QueueGroupFlags.Dynamic) != 0;
-            set
-            {
-                if (value)
-                {
-                    flags |= QueueGroupFlags.Dynamic;
-                }
-                else
-                {
-                    flags &= ~QueueGroupFlags.Dynamic;
-                }
-            }
-        }
-
-        public int Count => renderers.Count;
-
-        public void Add(IDrawable renderer)
-        {
-            renderers.Add(renderer);
-            renderers.Sort(SortRendererAscending.Instance);
-            lastIndex = renderers[0].QueueIndex;
-            baseIndex = renderers[^1].QueueIndex;
-        }
-
-        public void Remove(IDrawable renderer)
-        {
-            if (renderers.Remove(renderer))
-            {
-                if (renderers.Count > 0)
-                {
-                    lastIndex = renderers[0].QueueIndex;
-                    baseIndex = renderers[^1].QueueIndex;
-                }
-                else
-                {
-                    lastIndex = (uint)index;
-                }
-            }
-        }
-
-        public void Clear()
-        {
-            renderers.Clear();
-            lastIndex = (uint)index;
-        }
-
-        public void Invalidate()
-        {
-            var tmp = commandList;
-            commandList = null;
-            tmp?.Dispose();
-        }
-
-        public void ExecuteGroup(IGraphicsContext context, IGraphicsContext deferredContext)
-        {
-            if (IsDynamic)
-            {
-                RecordList(context);
-            }
-
-            if (commandList == null)
-            {
-                RecordList(deferredContext);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-            else
-            {
-                context.ExecuteCommandList(commandList, false);
-            }
-        }
-
-        private void RecordList(IGraphicsContext deferred)
-        {
-            for (var i = 0; i < renderers.Count; i++)
-            {
-                renderers[i].Draw(deferred, pass);
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                renderers.Clear();
-                commandList?.Dispose();
-                commandList = null;
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-    }
-
-    public class RenderQueue
-    {
-        private readonly List<RenderQueueGroup> groups = new();
-        private readonly List<IDrawable> renderers = new();
-        private readonly IGraphicsContext deferred;
-        private RenderQueueIndex queueIndex;
-        private string pass = null!;
-
-        public RenderQueue(IGraphicsContext deferred)
-        {
-            this.deferred = deferred;
-        }
-
-        public void Execute(IGraphicsContext context)
-        {
-            for (int i = 0; i < groups.Count; i++)
-            {
-                groups[i].ExecuteGroup(context, deferred);
-            }
-        }
-
-        public void Add(IDrawable component)
-        {
-            renderers.Add(component);
-
-            uint index = component.QueueIndex;
-            RendererFlags flags = component.Flags;
-            bool isDynamic = (flags & RendererFlags.Dynamic) != 0;
-            RenderQueueGroup? groupLast = null;
-            for (int i = 0; i < groups.Count; i++)
-            {
-                var group = groups[i];
-                RenderQueueGroup? next = i + 1 < groups.Count ? groups[i + 1] : null;
-
-                if (group.BaseIndex > index)
-                {
-                    continue;
-                }
-
-                if ((next?.BaseIndex ?? uint.MaxValue) <= index)
-                {
-                    break;
-                }
-
-                if (group.IsDynamic == isDynamic)
-                {
-                    groupLast = group;
-                }
-            }
-
-            if (groupLast == null)
-            {
-                groupLast = new(queueIndex, isDynamic ? QueueGroupFlags.Dynamic : QueueGroupFlags.None, pass);
-                groups.Add(groupLast);
-            }
-
-            groupLast.Add(component);
-        }
-
-        public void Remove(IDrawable component)
-        {
-        }
-    }
-
-    public class RenderManager : ISceneSystem
+    public class RenderSystem : ISceneSystem
     {
         private readonly IGraphicsDevice device;
-        private readonly IGraphicsContext deferredContext;
         private readonly ComponentTypeQuery<IDrawable> drawables = new();
-        private readonly List<IDrawable> backgroundQueue = new();
-        private readonly List<IDrawable> geometryQueue = new();
-        private readonly List<IDrawable> alphaTestQueue = new();
-        private readonly List<IDrawable> geometryLastQueue = new();
-        private readonly List<IDrawable> transparencyQueue = new();
-        private readonly List<IDrawable> overlayQueue = new();
-        private readonly SortRendererAscending comparer = new();
+        private readonly List<IDrawable> backgroundQueue = [];
+        private readonly List<IDrawable> geometryQueue = [];
+        private readonly List<IDrawable> alphaTestQueue = [];
+        private readonly List<IDrawable> geometryLastQueue = [];
+        private readonly List<IDrawable> transparencyQueue = [];
+        private readonly List<IDrawable> overlayQueue = [];
+
         private readonly LightManager lights;
         private readonly CullingManager culling;
 
@@ -226,14 +29,14 @@ namespace HexaEngine.Graphics
 
         private bool isLoaded;
 
-        public string Name => "Renderers";
+        public string Name { get; } = "Render System";
 
         public SystemFlags Flags => SystemFlags.Awake | SystemFlags.Destroy | SystemFlags.Load | SystemFlags.Unload;
 
-        public RenderManager(IGraphicsDevice device, LightManager lights)
+        public RenderSystem(IGraphicsDevice device, LightManager lights)
         {
             this.device = device;
-            deferredContext = device.CreateDeferredContext();
+
             drawables.OnAdded += DrawableOnAdded;
             drawables.OnRemoved += DrawableOnRemoved;
             this.lights = lights;
@@ -396,7 +199,6 @@ namespace HexaEngine.Graphics
 
         public void Destroy()
         {
-            deferredContext.Dispose();
             for (int i = 0; i < drawables.Count; i++)
             {
                 drawables[i].Destroy();
@@ -429,8 +231,6 @@ namespace HexaEngine.Graphics
             RemoveFromQueue(drawable);
         }
 
-        private int currentObjectId = 0;
-
         private void DrawableOnAdded(GameObject gameObject, IDrawable drawable)
         {
             if (isLoaded)
@@ -453,36 +253,36 @@ namespace HexaEngine.Graphics
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
             {
                 backgroundQueue.Add(renderer);
-                backgroundQueue.Sort(comparer);
+                backgroundQueue.Sort(SortRendererAscending.Instance);
                 return;
             }
             if (renderer.QueueIndex < (uint)RenderQueueIndex.AlphaTest)
             {
                 geometryQueue.Add(renderer);
-                geometryQueue.Sort(comparer);
+                geometryQueue.Sort(SortRendererAscending.Instance);
                 return;
             }
             if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
             {
                 alphaTestQueue.Add(renderer);
-                alphaTestQueue.Sort(comparer);
+                alphaTestQueue.Sort(SortRendererAscending.Instance);
                 return;
             }
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
             {
                 geometryLastQueue.Add(renderer);
-                geometryLastQueue.Sort(comparer);
+                geometryLastQueue.Sort(SortRendererAscending.Instance);
                 return;
             }
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
             {
                 transparencyQueue.Add(renderer);
-                transparencyQueue.Sort(comparer);
+                transparencyQueue.Sort(SortRendererAscending.Instance);
                 return;
             }
 
             overlayQueue.Add(renderer);
-            overlayQueue.Sort(comparer);
+            overlayQueue.Sort(SortRendererAscending.Instance);
         }
 
         public bool RemoveFromQueue(IDrawable renderer)
@@ -568,5 +368,3 @@ namespace HexaEngine.Graphics
         }
     }
 }
-
-#pragma warning restore CS0618 // Type or member is obsolete

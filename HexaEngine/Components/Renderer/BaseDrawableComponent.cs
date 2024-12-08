@@ -168,9 +168,19 @@
             }
         }
 
-        public void Draw(IGraphicsContext deferred, string pass)
+        public virtual void Draw(IGraphicsContext context, string pass)
         {
-            throw new NotImplementedException();
+            if (!loaded || !GameObject.IsVisible)
+            {
+                return;
+            }
+
+            switch (pass)
+            {
+                case "Depth":
+                    DrawDepth(context);
+                    break;
+            }
         }
     }
 }

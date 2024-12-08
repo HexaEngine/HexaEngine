@@ -48,9 +48,9 @@
         private static bool initialized = false;
         private static bool exiting = false;
         private static bool supressQuitApp = false;
-        private static readonly Dictionary<uint, ICoreWindow> windowIdToWindow = new();
-        private static readonly List<ICoreWindow> windows = new();
-        private static readonly List<Func<SDLEvent, bool>> hooks = new();
+        private static readonly Dictionary<uint, ICoreWindow> windowIdToWindow = [];
+        private static readonly List<ICoreWindow> windows = [];
+        private static readonly List<Func<SDLEvent, bool>> hooks = [];
 
         private static bool inEditorMode;
         private static EditorPlayState editorPlayState;

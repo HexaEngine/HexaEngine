@@ -5,7 +5,7 @@
 
     public readonly struct SortRendererAscending : IComparer<IDrawable>
     {
-        public static readonly SortRendererAscending Instance;
+        public static readonly SortRendererAscending Instance = new();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly int IComparer<IDrawable>.Compare(IDrawable? a, IDrawable? b)

@@ -52,7 +52,7 @@
 
         QuerySystem QueryManager { get; }
 
-        RenderManager RenderManager { get; }
+        RenderSystem RenderManager { get; }
 
         GameObject Root { get; }
 

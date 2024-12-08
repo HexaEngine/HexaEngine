@@ -3,15 +3,12 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
 

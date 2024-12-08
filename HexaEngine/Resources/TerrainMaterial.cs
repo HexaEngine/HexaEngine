@@ -5,7 +5,6 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Resources.Factories;
-    using Silk.NET.OpenAL;
     using System.Numerics;
 
     public class TerrainMaterial
