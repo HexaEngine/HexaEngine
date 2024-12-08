@@ -1,13 +1,10 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.Shaderc;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Shaderc;
-    using HexaEngine.SPIRVCross;
     using Silk.NET.Core.Native;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
@@ -15,7 +12,7 @@
     {
         public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, ShadercShaderKind shaderKind, out Blob? shaderBlob, out string? error)
         {
-            ShadercCompiler compiler = Shaderc.ShadercCompilerInitialize();
+            ShadercCompiler compiler = Shaderc.CompilerInitialize();
 
             ReadOnlySpan<char> extension = Path.GetExtension(sourceName.AsSpan());
 
@@ -31,7 +28,7 @@
             byte* pFilename = (byte*)Marshal.StringToCoTaskMemUTF8(sourceName);
             byte* pSource = (byte*)Marshal.StringToCoTaskMemUTF8(source);
 
-            ShadercCompileOptions options = Shaderc.ShadercCompileOptionsInitialize();
+            ShadercCompileOptions options = Shaderc.CompileOptionsInitialize();
             options.SetOptimizationLevel(ShadercOptimizationLevel.Performance);
             options.SetSourceLanguage(sourceLanguage);
             options.SetTargetSpirv(ShadercSpirvVersion.Version16);
@@ -48,11 +45,11 @@
             }
 
             IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
-            ShadercIncludeResolveFn include = Marshal.GetFunctionPointerForDelegate(handler.Include);
-            ShadercIncludeResultReleaseFn release = Marshal.GetFunctionPointerForDelegate(handler.IncludeRelease);
+            ShadercIncludeResolveFn include = handler.Include;
+            ShadercIncludeResultReleaseFn release = handler.IncludeRelease;
             options.SetIncludeCallbacks(include, release, null);
 
-            ShadercCompilationResult result = Shaderc.ShadercCompileIntoSpv(compiler, pSource, sourceSize, shaderKind, pFilename, pEntrypoint, options);
+            ShadercCompilationResult result = compiler.CompileIntoSpv(pSource, sourceSize, shaderKind, pFilename, pEntrypoint, options);
 
             Marshal.FreeCoTaskMem((nint)pSource);
             Marshal.FreeCoTaskMem((nint)pEntrypoint);

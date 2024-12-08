@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using HexaEngine.Core;
+    using Hexa.NET.Shaderc;
     using HexaEngine.Core.IO;
-    using HexaEngine.Shaderc;
 
     public unsafe class IncludeHandler
     {

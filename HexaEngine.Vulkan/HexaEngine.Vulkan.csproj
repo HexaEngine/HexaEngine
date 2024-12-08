@@ -9,9 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Hexa.NET.Vulkan" Version="1.0.2-alpha" />
-		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
-		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
+		<PackageReference Include="Hexa.NET.Vulkan" Version="1.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
