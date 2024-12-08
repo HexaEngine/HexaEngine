@@ -16,6 +16,10 @@
 
         public bool IsValid { get; }
 
+        GraphicsPipelineDescEx IGraphicsPipeline.Description { get; }
+
+        public event Action<IPipeline>? OnCompile;
+
         public void Dispose()
         {
             throw new NotImplementedException();

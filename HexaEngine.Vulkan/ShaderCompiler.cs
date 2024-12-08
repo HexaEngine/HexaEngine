@@ -73,7 +73,7 @@
 
                 var length = result.GetLength();
                 var bytecode = result.GetBytes();
-                Blob blob = new((byte*)Alloc(length), length);
+                Blob blob = new((nint)AllocT<byte>(length), new PointerSize((nint)length));
 
                 Memcpy(bytecode, (void*)blob.BufferPointer, length, length);
 

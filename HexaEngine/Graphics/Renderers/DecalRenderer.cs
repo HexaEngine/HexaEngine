@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
-    using Silk.NET.Vulkan;
     using System.Numerics;
 
     public struct GPUDecal
