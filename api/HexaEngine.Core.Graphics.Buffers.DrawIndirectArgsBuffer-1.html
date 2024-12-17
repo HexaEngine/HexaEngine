@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DrawIndirectArgsBuffer&lt;T&gt; </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DrawIndirectArgsBuffer&lt;T&gt; ">
+      
+      <meta name="description" content="Represents a buffer for draw indirect arguments in graphics rendering.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1" class="text-break">
+Class DrawIndirectArgsBuffer&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Core.Graphics.Buffers.html">Buffers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a buffer for draw indirect arguments in graphics rendering.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class DrawIndirectArgsBuffer&lt;T&gt; : IBuffer, IResource, IDeviceChild, INative, IDisposable where T : unmanaged</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of elements stored in the buffer.</p>
+</dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">DrawIndirectArgsBuffer&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></div>
+      <div><span class="xref">INative</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor(HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  DrawIndirectArgsBuffer(CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer&lt;T&gt;</a> class with default capacity and specified CPU access flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawIndirectArgsBuffer(CpuAccessFlags cpuAccessFlags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called (optional).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called (optional).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor(System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  DrawIndirectArgsBuffer(uint, CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer&lt;T&gt;</a> class with specified initial capacity and CPU access flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawIndirectArgsBuffer(uint initialCapacity, CpuAccessFlags cpuAccessFlags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial capacity of the buffer.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called (optional).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called (optional).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor__0__System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor(`0*,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  DrawIndirectArgsBuffer(T*, uint, CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer&lt;T&gt;</a> class with an array of initial data elements, count, and specified CPU access flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawIndirectArgsBuffer(T* initialData, uint count, CpuAccessFlags cpuAccessFlags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initialData</code> T*</dt>
+    <dd><p>An array of initial data to populate the buffer.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements in the initial data array.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called (optional).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called (optional).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1__ctor__0_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.#ctor(`0,HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  DrawIndirectArgsBuffer(T, CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer&lt;T&gt;</a> class with a single initial data element and specified CPU access flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawIndirectArgsBuffer(T initialData, CpuAccessFlags cpuAccessFlags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initialData</code> <span class="xref">T</span></dt>
+    <dd><p>The initial data to populate the buffer.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called (optional).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called (optional).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Buffer_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Buffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Buffer" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Buffer">
+  Buffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the underlying buffer used to store draw indirect arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBuffer Buffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Capacity_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Capacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Capacity" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Capacity">
+  Capacity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the capacity of the draw indirect arguments buffer.
+Adjusting the capacity reallocates the internal buffer if needed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Capacity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Capacity_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>When setting the capacity to a smaller value, the existing data in the buffer remains intact, but extra capacity is freed.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_DebugName_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.DebugName*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_DebugName" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the debug name of the draw indirect arguments buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? DebugName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Description_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Description*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Description" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Description">
+  Description
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the description of the draw indirect arguments buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BufferDescription Description { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dimension_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dimension*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dimension" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the resource dimension of the draw indirect arguments buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceDimension Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_IsDisposed_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.IsDisposed*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_IsDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.IsDisposed">
+  IsDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L252"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the draw indirect arguments buffer has been disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDisposed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Length_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Length*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Length" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Length">
+  Length
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the draw indirect arguments buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_NativePointer_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.NativePointer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_NativePointer" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.NativePointer">
+  NativePointer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the native pointer to the draw indirect arguments buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public nint NativePointer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Add_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Add__0_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Add(`0)">
+  Add(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L312"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a draw indirect argument to the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(T args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <span class="xref">T</span></dt>
+    <dd><p>The draw indirect argument to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Clear_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Clear" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L271"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the draw indirect arguments buffer, setting all elements to zero and resetting the count to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_CopyTo_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.CopyTo*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_CopyTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.CopyTo(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IResource)">
+  CopyTo(IGraphicsContext, IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L353"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies the contents of this buffer to another resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CopyTo(IGraphicsContext context, IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used for the copy operation.</p>
+</dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The destination resource to copy to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dispose_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dispose" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L381"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dispose_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Dispose_System_Boolean_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Releases unmanaged and - optionally - managed resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> to release both managed and unmanaged resources; <code>false</code> to release only unmanaged resources.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_EnsureCapacity_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.EnsureCapacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_EnsureCapacity_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.EnsureCapacity(System.UInt32)">
+  EnsureCapacity(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L282"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ensures that the draw indirect arguments buffer has the specified capacity.
+If the current capacity is less than the specified value, the buffer is resized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EnsureCapacity(uint capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The desired capacity of the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Remove_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Remove*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Remove_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Remove(System.Int32)">
+  Remove(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes a draw indirect argument from the buffer at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Remove(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the draw indirect argument to remove.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_ResetCounter_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.ResetCounter*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_ResetCounter" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.ResetCounter">
+  ResetCounter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resets the count of draw indirect arguments to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetCounter()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Update_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Update*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the contents of the buffer with the current draw indirect arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used for the update operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the buffer was updated, false if no update was needed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_1_OnDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer`1.OnDisposed">
+  OnDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the device child is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? OnDisposed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/DrawIndirectArgsBuffer.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

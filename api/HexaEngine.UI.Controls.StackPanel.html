@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class StackPanel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class StackPanel ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_UI_Controls_StackPanel.md&amp;value=---%0Auid%3A%20HexaEngine.UI.Controls.StackPanel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.UI.Controls.StackPanel">
+
+
+
+  <h1 id="HexaEngine_UI_Controls_StackPanel" data-uid="HexaEngine.UI.Controls.StackPanel" class="text-break">
+Class StackPanel  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.UI.html">UI</a>.<a class="xref" href="HexaEngine.UI.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class StackPanel : Panel, IInputElement, IAddChild, IChildContainer, IDependencyElement</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DispatcherObject.html">DispatcherObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DependencyObject.html">DependencyObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Visual.html">Visual</a></div>
+      <div><a class="xref" href="HexaEngine.UI.UIElement.html">UIElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.FrameworkElement.html">FrameworkElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Controls.Panel.html">Panel</a></div>
+      <div><span class="xref">StackPanel</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.UI.IInputElement.html">IInputElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Markup.IAddChild.html">IAddChild</a></div>
+      <div><a class="xref" href="HexaEngine.UI.IChildContainer.html">IChildContainer</a></div>
+      <div><a class="xref" href="HexaEngine.UI.IDependencyElement.html">IDependencyElement</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Panel.html#HexaEngine_UI_Controls_Panel_Children">Panel.Children</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Panel.html#HexaEngine_UI_Controls_Panel_BackgroundProperty">Panel.BackgroundProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Panel.html#HexaEngine_UI_Controls_Panel_Background">Panel.Background</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Panel.html#HexaEngine_UI_Controls_Panel_Render_HexaEngine_UI_Graphics_UICommandList_">Panel.Render(UICommandList)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Panel.html#HexaEngine_UI_Controls_Panel_OnRender_HexaEngine_UI_Graphics_UICommandList_">Panel.OnRender(UICommandList)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualWidthProperty">FrameworkElement.ActualWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualHeightProperty">FrameworkElement.ActualHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualWidth">FrameworkElement.ActualWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualHeight">FrameworkElement.ActualHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_DataContextProperty">FrameworkElement.DataContextProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_DataContext">FrameworkElement.DataContext</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_StyleProperty">FrameworkElement.StyleProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_Style">FrameworkElement.Style</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_MeasureCore_System_Numerics_Vector2_">FrameworkElement.MeasureCore(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ArrangeCore_Hexa_NET_Mathematics_RectangleF_">FrameworkElement.ArrangeCore(RectangleF)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Initialized">UIElement.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Uninitialized">UIElement.Uninitialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsInitialized">UIElement.IsInitialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VisibilityProperty">UIElement.VisibilityProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Visibility">UIElement.Visibility</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsEnabledProperty">UIElement.IsEnabledProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsEnabled">UIElement.IsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_FocusableProperty">UIElement.FocusableProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focusable">UIElement.Focusable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RenderSize">UIElement.RenderSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnInitialized">UIElement.OnInitialized()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnUninitialized">UIElement.OnUninitialized()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_AddToEventRoute_HexaEngine_Core_Windows_Events_EventRoute_">UIElement.AddToEventRoute(EventRoute)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_UninitializeComponent">UIElement.UninitializeComponent()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_AddHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__">UIElement.AddHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RemoveHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__">UIElement.RemoveHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RaiseEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_">UIElement.RaiseEvent(RoutedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RouteEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_System_Object_">UIElement.RouteEvent(RoutedEventArgs, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TextInputEvent">UIElement.TextInputEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TextInput">UIElement.TextInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyUpEvent">UIElement.KeyUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyUp">UIElement.KeyUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyDownEvent">UIElement.KeyDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyDown">UIElement.KeyDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseUpEvent">UIElement.MouseUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseUp">UIElement.MouseUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseDownEvent">UIElement.MouseDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseDown">UIElement.MouseDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonUpEvent">UIElement.MouseLeftButtonUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonUp">UIElement.MouseLeftButtonUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonDownEvent">UIElement.MouseRightButtonDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonDown">UIElement.MouseRightButtonDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonUpEvent">UIElement.MouseRightButtonUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonUp">UIElement.MouseRightButtonUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonDownEvent">UIElement.MouseLeftButtonDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonDown">UIElement.MouseLeftButtonDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseEnterEvent">UIElement.MouseEnterEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseEnter">UIElement.MouseEnter</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeaveEvent">UIElement.MouseLeaveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeave">UIElement.MouseLeave</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseMoveEvent">UIElement.MouseMoveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseMove">UIElement.MouseMove</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseWheelEvent">UIElement.MouseWheelEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseWheel">UIElement.MouseWheel</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_GotFocusEvent">UIElement.GotFocusEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_GotFocus">UIElement.GotFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_LostFocusEvent">UIElement.LostFocusEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_LostFocus">UIElement.LostFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchEnterEvent">UIElement.TouchEnterEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchEnter">UIElement.TouchEnter</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchLeaveEvent">UIElement.TouchLeaveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchLeave">UIElement.TouchLeave</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchMoveEvent">UIElement.TouchMoveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchMove">UIElement.TouchMove</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchDownEvent">UIElement.TouchDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchDown">UIElement.TouchDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchUpEvent">UIElement.TouchUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchUp">UIElement.TouchUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focused">UIElement.Focused</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Captured">UIElement.Captured</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsKeyboardFocused">UIElement.IsKeyboardFocused</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsMouseCaptured">UIElement.IsMouseCaptured</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsMouseOver">UIElement.IsMouseOver</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnGotFocus_HexaEngine_Core_Windows_Events_FocusGainedEventArgs_">UIElement.OnGotFocus(FocusGainedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnLostFocus_HexaEngine_Core_Windows_Events_FocusLostEventArgs_">UIElement.OnLostFocus(FocusLostEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTextInput_HexaEngine_Core_Input_Events_TextInputEventArgs_">UIElement.OnTextInput(TextInputEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnKeyDown_HexaEngine_Core_Input_Events_KeyboardEventArgs_">UIElement.OnKeyDown(KeyboardEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnKeyUp_HexaEngine_Core_Input_Events_KeyboardEventArgs_">UIElement.OnKeyUp(KeyboardEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseDown(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseUp(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeftButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseLeftButtonDown(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeftButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseLeftButtonUp(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseRightButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseRightButtonDown(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseRightButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseRightButtonUp(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseEnter_HexaEngine_Core_Input_Events_MouseEventArgs_">UIElement.OnMouseEnter(MouseEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeave_HexaEngine_Core_Input_Events_MouseEventArgs_">UIElement.OnMouseLeave(MouseEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseMove_HexaEngine_Core_Input_Events_MouseMoveEventArgs_">UIElement.OnMouseMove(MouseMoveEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseWheel_HexaEngine_Core_Input_Events_MouseWheelEventArgs_">UIElement.OnMouseWheel(MouseWheelEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchEnter_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchEnter(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchLeave_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchLeave(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchMove_HexaEngine_Core_Input_Events_TouchMoveEventArgs_">UIElement.OnTouchMove(TouchMoveEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchDown_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchDown(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchUp_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchUp(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focus">UIElement.Focus()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HorizontalAlignmentProperty">UIElement.HorizontalAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HorizontalAlignment">UIElement.HorizontalAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VerticalAlignmentProperty">UIElement.VerticalAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VerticalAlignment">UIElement.VerticalAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MarginProperty">UIElement.MarginProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Margin">UIElement.Margin</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_WidthProperty">UIElement.WidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Width">UIElement.Width</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HeightProperty">UIElement.HeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Height">UIElement.Height</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinWidthProperty">UIElement.MinWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinWidth">UIElement.MinWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinHeightProperty">UIElement.MinHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinHeight">UIElement.MinHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxWidthProperty">UIElement.MaxWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxWidth">UIElement.MaxWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxHeightProperty">UIElement.MaxHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxHeight">UIElement.MaxHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_DesiredSize">UIElement.DesiredSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateArrange">UIElement.InvalidateArrange()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateMeasure">UIElement.InvalidateMeasure()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateVisual">UIElement.InvalidateVisual()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Measure_System_Numerics_Vector2_">UIElement.Measure(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Arrange_Hexa_NET_Mathematics_RectangleF_">UIElement.Arrange(RectangleF)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualParent">Visual.VisualParent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualChildren">Visual.VisualChildren</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_DependencyObjectType">Visual.DependencyObjectType</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BaseOffset">Visual.BaseOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_ContentOffset">Visual.ContentOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualOffset">Visual.VisualOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BoundingBox">Visual.BoundingBox</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_InnerContentBounds">Visual.InnerContentBounds</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualClip">Visual.VisualClip</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointFromScreen_System_Numerics_Vector2_">Visual.PointFromScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointToScreen_System_Numerics_Vector2_">Visual.PointToScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_AddVisualChild_HexaEngine_UI_Visual_">Visual.AddVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_RemoveVisualChild_HexaEngine_UI_Visual_">Visual.RemoveVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsDescendantOf_HexaEngine_UI_DependencyObject_">Visual.IsDescendantOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsAncestorOf_HexaEngine_UI_DependencyObject_">Visual.IsAncestorOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_FindCommonVisualAncestor_HexaEngine_UI_DependencyObject_">Visual.FindCommonVisualAncestor(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Name">DependencyObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Parent">DependencyObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_FindFirstObject__1">DependencyObject.FindFirstObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject__1">DependencyObject.ResolveObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject_System_String_">DependencyObject.ResolveObject(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_OnPropertyChanged_HexaEngine_UI_DependencyPropertyChangedEventArgs_">DependencyObject.OnPropertyChanged(DependencyPropertyChangedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue_HexaEngine_UI_DependencyProperty_">DependencyObject.GetValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue_HexaEngine_UI_DependencyProperty_System_Object_">DependencyObject.SetValue(DependencyProperty, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue__1_HexaEngine_UI_DependencyProperty___0__">DependencyObject.GetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue__1_HexaEngine_UI_DependencyProperty___0____0_">DependencyObject.SetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;, TType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ClearValue_HexaEngine_UI_DependencyProperty_">DependencyObject.ClearValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_CoerceValue_HexaEngine_UI_DependencyProperty_">DependencyObject.CoerceValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DispatcherObject.html#HexaEngine_UI_DispatcherObject_Dispatcher">DispatcherObject.Dispatcher</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_Direction_" data-uid="HexaEngine.UI.Controls.StackPanel.Direction*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_Direction" data-uid="HexaEngine.UI.Controls.StackPanel.Direction">
+  Direction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StackPanelDirection Direction { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Controls.StackPanelDirection.html">StackPanelDirection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_ArrangeOverwrite_" data-uid="HexaEngine.UI.Controls.StackPanel.ArrangeOverwrite*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_ArrangeOverwrite_System_Numerics_Vector2_" data-uid="HexaEngine.UI.Controls.StackPanel.ArrangeOverwrite(System.Numerics.Vector2)">
+  ArrangeOverwrite(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 ArrangeOverwrite(Vector2 size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_Initialize_" data-uid="HexaEngine.UI.Controls.StackPanel.Initialize*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_Initialize" data-uid="HexaEngine.UI.Controls.StackPanel.Initialize">
+  Initialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Initialize()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_InitializeComponent_" data-uid="HexaEngine.UI.Controls.StackPanel.InitializeComponent*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_InitializeComponent" data-uid="HexaEngine.UI.Controls.StackPanel.InitializeComponent">
+  InitializeComponent()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void InitializeComponent()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_MeasureOverride_" data-uid="HexaEngine.UI.Controls.StackPanel.MeasureOverride*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_MeasureOverride_System_Numerics_Vector2_" data-uid="HexaEngine.UI.Controls.StackPanel.MeasureOverride(System.Numerics.Vector2)">
+  MeasureOverride(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 MeasureOverride(Vector2 availableSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>availableSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_OnChildAdded_" data-uid="HexaEngine.UI.Controls.StackPanel.OnChildAdded*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_OnChildAdded_System_Object_HexaEngine_UI_UIElement_" data-uid="HexaEngine.UI.Controls.StackPanel.OnChildAdded(System.Object,HexaEngine.UI.UIElement)">
+  OnChildAdded(object?, UIElement)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnChildAdded(object? sender, UIElement e)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>e</code> <a class="xref" href="HexaEngine.UI.UIElement.html">UIElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_StackPanel_OnChildRemoved_" data-uid="HexaEngine.UI.Controls.StackPanel.OnChildRemoved*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_StackPanel_OnChildRemoved_System_Object_HexaEngine_UI_UIElement_" data-uid="HexaEngine.UI.Controls.StackPanel.OnChildRemoved(System.Object,HexaEngine.UI.UIElement)">
+  OnChildRemoved(object?, UIElement)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnChildRemoved(object? sender, UIElement e)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>e</code> <a class="xref" href="HexaEngine.UI.UIElement.html">UIElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/StackPanel.cs/#L6" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
